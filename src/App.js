@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
+import Box from '@mui/material/Box';
+import MuiSlider from '@mui/material/Slider';
 import logo from './logo-ses-ai.svg';
 import './App.css';
 
@@ -37,23 +39,23 @@ const NodePopup = ({ node, onClose }) => {
   
   return (
     <div className="popup-overlay" onClick={onClose}>
-      <div className="popup-content" onClick={e => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose}>×</button>
-        <h2>Node Details</h2>
+      <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
+        <button className="close-button white-text" onClick={onClose}>×</button>
+        <h2 className="white-text">Node Details</h2>
         <div className="popup-data">
-          <h3>SMILES</h3>
-          <p>{node.smiles}</p>
+          <h3 className="white-text">SMILES</h3>
+          <p className="dark-field">{node.smiles}</p>
           
-          <h3>UMAP Coordinates</h3>
-          <p>X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
+          <h3 className="white-text">UMAP Coordinates</h3>
+          <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
           
-          <h3>Properties</h3>
-          <table className="property-table">
+          <h3 className="white-text">Properties</h3>
+          <table className="property-table dark-table">
             <tbody>
               {Object.entries(node.properties || {}).map(([key, value]) => (
                 <tr key={key}>
-                  <td className="property-name">{key}</td>
-                  <td className="property-value">
+                  <td className="property-name white-text">{key}</td>
+                  <td className="property-value white-text">
                     {value !== null && value !== undefined 
                       ? typeof value === 'number' 
                         ? value.toFixed(6) 
@@ -65,9 +67,9 @@ const NodePopup = ({ node, onClose }) => {
             </tbody>
           </table>
           
-          <h3>Raw Data</h3>
-          <pre className="raw-data">
-            {JSON.stringify(node, null, 2)}
+          <h3 className="white-text">All Data</h3>
+          <pre className="raw-data dark-field">
+            {JSON.stringify(node.rawData, null, 2)}
           </pre>
         </div>
       </div>
@@ -75,27 +77,53 @@ const NodePopup = ({ node, onClose }) => {
   );
 };
 
-// Simple Slider component
+// Material UI Slider component
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
+  const handleChange = (event, newValue) => {
+    onChange(property, newValue);
+  };
+
+  const formatValue = (value) => {
+    if (typeof value === 'number') {
+      return value.toFixed(2);
+    }
+    return value;
+  };
+
   return (
     <div className={`slider-container ${active ? 'active-filter' : 'inactive-filter'}`}>
       <div className="slider-header">
         <span className="slider-label">{label}</span>
         <span className="slider-value">
-          {active ? value.toFixed(2) : "Off"}
+          {active 
+            ? `${formatValue(value[0])} - ${formatValue(value[1])}` 
+            : "Off"}
         </span>
       </div>
-      <div className="slider-track-container">
-        <input
-          type="range"
+      <Box sx={{ width: '100%', padding: '5px 0' }}>
+        <MuiSlider
+          size="small"
+          value={value}
           min={min}
           max={max}
           step={(max - min) / 100}
-          value={value}
-          onChange={(e) => onChange(property, parseFloat(e.target.value))}
-          className={`simple-slider ${active ? 'active' : 'inactive'}`}
+          onChange={handleChange}
+          valueLabelDisplay="auto"
+          disableSwap
+          sx={{
+            color: '#0080ff',
+            '& .MuiSlider-thumb': {
+              backgroundColor: active ? '#0080ff' : '#a0a0a0',
+            },
+            '& .MuiSlider-track': {
+              backgroundColor: active ? '#0080ff' : '#a0a0a0',
+            },
+            '& .MuiSlider-rail': {
+              backgroundColor: '#e0e0e0',
+            }
+          }}
         />
-      </div>
+      </Box>
     </div>
   );
 };
@@ -181,13 +209,13 @@ const App = () => {
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
   
-  // New filter implementation with active flag
+  // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
-    molwt: { min: 0, max: 1000, current: 1000, active: false },
-    homo_eV: { min: -10, max: 0, current: -10, active: false },
-    lumo_eV: { min: -5, max: 5, current: 5, active: false },
-    esp_max_eV: { min: -2, max: 2, current: 2, active: false },
-    esp_min_eV: { min: -2, max: 0, current: -2, active: false }
+    molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
+    homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
+    lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
+    esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
+    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false }
   });
   
   // Use refs to avoid dependency issues in useEffect
@@ -260,7 +288,7 @@ const App = () => {
                 newFilterRanges[key] = {
                   min: min,
                   max: max,
-                  current: max, // Initialize to max value (filter effectively off)
+                  range: [min, max], // Initialize range to full data range (filter effectively off)
                   active: false
                 };
               }
@@ -284,15 +312,16 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply filters based on slider values
+  // Apply filters based on range slider values
   useEffect(() => {
     if (graphData.length === 0) return;
     const filtered = graphData.filter(node => {
       for (const [property, range] of Object.entries(filterRanges)) {
         if (!range.active) continue;
         const nodeValue = node.properties[property];
-        // If property is above the current slider value, filter it out
-        if (nodeValue !== undefined && nodeValue !== null && nodeValue > range.current) {
+        // If property is outside the range, filter it out
+        if (nodeValue !== undefined && nodeValue !== null && 
+            (nodeValue < range.range[0] || nodeValue > range.range[1])) {
           return false;
         }
       }
@@ -304,12 +333,12 @@ const App = () => {
   }, [graphData, filterRanges, filteredGraphData]);
 
   // Handle filter slider change
-  const handleFilterChange = (property, value) => {
+  const handleFilterChange = (property, newValue) => {
     setFilterRanges(prev => ({
       ...prev,
       [property]: {
         ...prev[property],
-        current: value,
+        range: newValue,
         active: true
       }
     }));
@@ -321,7 +350,7 @@ const App = () => {
       ...prev,
       [property]: {
         ...prev[property],
-        current: prev[property].max,
+        range: [prev[property].min, prev[property].max],
         active: false
       }
     }));
@@ -334,7 +363,7 @@ const App = () => {
       for (const [key, range] of Object.entries(prev)) {
         newRanges[key] = {
           ...range,
-          current: range.max,
+          range: [range.min, range.max],
           active: false
         };
       }
@@ -375,7 +404,12 @@ const App = () => {
     },
     hoverinfo: 'text',
     text: filteredGraphData.map(node => 
-      `SMILES: ${node.smiles}<br>MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}`
+      `SMILES: ${node.smiles}<br>` +
+      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
     )
   }];
 
@@ -562,7 +596,7 @@ const App = () => {
                   <div key={property} className="filter-wrapper">
                     <Slider
                       property={property}
-                      value={range.current}
+                      value={range.range}
                       min={range.min}
                       max={range.max}
                       onChange={handleFilterChange}
