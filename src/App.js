@@ -404,6 +404,7 @@ const App = () => {
     },
     hoverinfo: 'text',
     text: filteredGraphData.map(node => 
+      `<b>Molecule Information:</b><br>` +
       `SMILES: ${node.smiles}<br>` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
       `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
@@ -427,7 +428,16 @@ const App = () => {
     xaxis: { showgrid: false, zeroline: false, visible: false },
     yaxis: { showgrid: false, zeroline: false, visible: false },
     showlegend: false,
-    hovermode: 'closest'
+    hovermode: 'closest',
+    hoverlabel: {
+      bgcolor: '#000',
+      bordercolor: '#333',
+      font: {
+        family: 'Arial, sans-serif',
+        size: 12,
+        color: '#fff'
+      }
+    }
   };
 
   const plotlyConfig = {
@@ -550,35 +560,6 @@ const App = () => {
             </div>
             
             <div className="info-panel">
-              <h2>Node Details</h2>
-              {selectedNode ? (
-                <div className="node-details">
-                  <div><strong>ID:</strong> {selectedNode.id}</div>
-                  <div><strong>SMILES:</strong> {selectedNode.smiles}</div>
-                  <div>
-                    <strong>UMAP Position:</strong> ({selectedNode.x.toFixed(3)}, {selectedNode.y.toFixed(3)})
-                  </div>
-                  <div>
-                    <strong>Mol Weight:</strong> {selectedNode.properties?.molwt ? selectedNode.properties.molwt.toFixed(2) : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>HOMO (eV):</strong> {selectedNode.properties?.homo_eV ? selectedNode.properties.homo_eV.toFixed(4) : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>LUMO (eV):</strong> {selectedNode.properties?.lumo_eV ? selectedNode.properties.lumo_eV.toFixed(4) : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>ESP Min (eV):</strong> {selectedNode.properties?.esp_min_eV ? selectedNode.properties.esp_min_eV.toFixed(4) : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>ESP Max (eV):</strong> {selectedNode.properties?.esp_max_eV ? selectedNode.properties.esp_max_eV.toFixed(4) : 'N/A'}
-                  </div>
-                </div>
-              ) : (
-                <p>Click on a node to view details</p>
-              )}
-              
-              <hr />
               <h2>
                 Filters 
                 {activeFilterCount > 0 && (
