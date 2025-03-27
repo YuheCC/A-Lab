@@ -1,0 +1,602 @@
+import React, { useState, useEffect, useRef } from 'react';
+import Papa from 'papaparse';
+import Plotly from 'plotly.js-basic-dist';
+import createPlotlyComponent from 'react-plotly.js/factory';
+import logo from './logo-ses-ai.svg';
+import './App.css';
+
+// Create a Plotly Component using the plotly.js factory
+const Plot = createPlotlyComponent(Plotly);
+
+// Navigation bar component
+const Navbar = ({ activePage }) => {
+  return (
+    <nav className="navbar">
+      <div className="navbar-title">
+        <img src={logo} alt="SES AI Logo" className="navbar-logo" />
+      </div>
+      <div className="navbar-links">
+        <a href="#" className="navbar-link">Products</a>
+        <a href="#" className="navbar-link">Technology</a>
+        <a href="#" className="navbar-link">Company</a>
+        <a href="#" className="navbar-link">Media</a>
+        <a
+          href="#"
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search') ? 'active' : ''}`}
+        >
+          Molecular Universe
+        </a>
+      </div>
+    </nav>
+  );
+};
+
+// Popup component to display node data
+const NodePopup = ({ node, onClose }) => {
+  if (!node) return null;
+  
+  return (
+    <div className="popup-overlay" onClick={onClose}>
+      <div className="popup-content" onClick={e => e.stopPropagation()}>
+        <button className="close-button" onClick={onClose}>×</button>
+        <h2>Node Details</h2>
+        <div className="popup-data">
+          <h3>SMILES</h3>
+          <p>{node.smiles}</p>
+          
+          <h3>UMAP Coordinates</h3>
+          <p>X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
+          
+          <h3>Properties</h3>
+          <table className="property-table">
+            <tbody>
+              {Object.entries(node.properties || {}).map(([key, value]) => (
+                <tr key={key}>
+                  <td className="property-name">{key}</td>
+                  <td className="property-value">
+                    {value !== null && value !== undefined 
+                      ? typeof value === 'number' 
+                        ? value.toFixed(6) 
+                        : value.toString()
+                      : 'N/A'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          <h3>Raw Data</h3>
+          <pre className="raw-data">
+            {JSON.stringify(node, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Simple Slider component
+const Slider = ({ property, value, min, max, onChange, label, active }) => {
+  return (
+    <div className={`slider-container ${active ? 'active-filter' : 'inactive-filter'}`}>
+      <div className="slider-header">
+        <span className="slider-label">{label}</span>
+        <span className="slider-value">
+          {active ? value.toFixed(2) : "Off"}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={(max - min) / 100}
+        value={value}
+        onChange={(e) => onChange(property, parseFloat(e.target.value))}
+        className={`simple-slider white-slider ${active ? 'active' : 'inactive'}`}
+      />
+    </div>
+  );
+};
+
+// About component
+const About = () => {
+  return (
+    <div className="about-container">
+      <div className="about-content-wrapper">
+        <div className="about-content">
+          <p>
+            SES AI scientists have amassed a complete "molecular universe" of over 87 million molecules along with a vast database of their various properties to serve both public and private industry searches for compounds that will propel future technologies. Initially built to serve our internal search for molecules that could build better lithium metal batteries, the molecular universe now serves beyond this initial mission. SES AI has decided to provide both free and subscription tiered access to the world. Read on to learn more about the specifics of the Molecular Universe.
+          </p>
+        </div>
+        <h3>About the Universe Map</h3>
+        <div className="blue-line"></div>
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [graphData, setGraphData] = useState([]);
+  const [filteredGraphData, setFilteredGraphData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [activePage, setActivePage] = useState('explorer');
+  const [searchType, setSearchType] = useState('Lookup');
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  // New filter implementation with active flag
+  const [filterRanges, setFilterRanges] = useState({
+    molwt: { min: 0, max: 1000, current: 1000, active: false },
+    homo_eV: { min: -10, max: 0, current: -10, active: false },
+    lumo_eV: { min: -5, max: 5, current: 5, active: false },
+    esp_max_eV: { min: -2, max: 2, current: 2, active: false },
+    esp_min_eV: { min: -2, max: 0, current: -2, active: false }
+  });
+  
+  // Use refs to avoid dependency issues in useEffect
+  const filterRangesRef = useRef(filterRanges);
+  useEffect(() => {
+    filterRangesRef.current = filterRanges;
+  }, [filterRanges]);
+  
+  // Labels for filters
+  const filterLabels = {
+    molwt: "Molecular Weight",
+    homo_eV: "HOMO (eV)",
+    lumo_eV: "LUMO (eV)",
+    esp_max_eV: "Max ESP (eV)",
+    esp_min_eV: "Min ESP (eV)"
+  };
+  const filterLabelsRef = useRef(filterLabels);
+
+  const MAX_NODES = 500000;
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+        }
+        const text = await response.text();
+        Papa.parse(text, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.errors.length > 0) {
+              console.error("Parse errors:", results.errors);
+            }
+            const nodes = results.data
+              .filter(row => row && row.umap_0 !== undefined && row.umap_1 !== undefined && row.smiles)
+              .slice(0, MAX_NODES)
+              .map((row, index) => ({
+                id: index.toString(),
+                x: Number(row.umap_0),
+                y: Number(row.umap_1),
+                smiles: row.smiles,
+                properties: {
+                  molwt: row.molwt,
+                  homo_eV: row.homo_eV,
+                  lumo_eV: row.lumo_eV,
+                  esp_min_eV: row.esp_min_eV,
+                  esp_max_eV: row.esp_max_eV
+                },
+                rawData: row
+              }));
+            
+            setGraphData(nodes);
+            setFilteredGraphData(nodes);
+            
+            // Initialize filter ranges based on actual data
+            const currentFilterRanges = filterRangesRef.current;
+            const currentFilterLabels = filterLabelsRef.current;
+            const newFilterRanges = { ...currentFilterRanges };
+            Object.keys(currentFilterLabels).forEach(key => {
+              const values = nodes
+                .map(node => node.properties[key])
+                .filter(v => v !== undefined && v !== null);
+              if (values.length > 0) {
+                const min = Math.min(...values);
+                const max = Math.max(...values);
+                newFilterRanges[key] = {
+                  min: min,
+                  max: max,
+                  current: max, // Initialize to max value (filter effectively off)
+                  active: false
+                };
+              }
+            });
+            setFilterRanges(newFilterRanges);
+            setLoading(false);
+          },
+          error: (error) => {
+            console.error("Error parsing CSV:", error);
+            setError(`Parse error: ${error}`);
+            setLoading(false);
+          }
+        });
+      } catch (err) {
+        console.error("Error loading data:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    }
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Apply filters based on slider values
+  useEffect(() => {
+    if (graphData.length === 0) return;
+    const filtered = graphData.filter(node => {
+      for (const [property, range] of Object.entries(filterRanges)) {
+        if (!range.active) continue;
+        const nodeValue = node.properties[property];
+        // If property is above the current slider value, filter it out
+        if (nodeValue !== undefined && nodeValue !== null && nodeValue > range.current) {
+          return false;
+        }
+      }
+      return true;
+    });
+    if (JSON.stringify(filtered) !== JSON.stringify(filteredGraphData)) {
+      setFilteredGraphData(filtered);
+    }
+  }, [graphData, filterRanges, filteredGraphData]);
+
+  // Handle filter slider change
+  const handleFilterChange = (property, value) => {
+    setFilterRanges(prev => ({
+      ...prev,
+      [property]: {
+        ...prev[property],
+        current: value,
+        active: true
+      }
+    }));
+  };
+
+  // Reset a specific filter
+  const resetFilter = (property) => {
+    setFilterRanges(prev => ({
+      ...prev,
+      [property]: {
+        ...prev[property],
+        current: prev[property].max,
+        active: false
+      }
+    }));
+  };
+
+  // Reset all filters
+  const resetAllFilters = () => {
+    setFilterRanges(prev => {
+      const newRanges = {};
+      for (const [key, range] of Object.entries(prev)) {
+        newRanges[key] = {
+          ...range,
+          current: range.max,
+          active: false
+        };
+      }
+      return newRanges;
+    });
+  };
+
+  // Handle clicks on Plotly points
+  const handlePointClick = (data) => {
+    if (!data.points || data.points.length === 0) return;
+    const pointIndex = data.points[0].pointIndex;
+    const node = filteredGraphData[pointIndex];
+    if (node) {
+      setSelectedNode(node);
+      setShowPopup(true);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  // Prepare Plotly data using the filtered graph data
+  const plotlyData = [{
+    x: filteredGraphData.map(node => node.x),
+    y: filteredGraphData.map(node => node.y),
+    mode: 'markers',
+    type: 'scattergl',
+    marker: {
+      size: 5,
+      color: filteredGraphData.map(node => node.x),
+      colorscale: [
+        [0, '#3498db'],
+        [0.5, '#2ecc71'],
+        [1, '#e74c3c']
+      ],
+      opacity: 0.7
+    },
+    hoverinfo: 'text',
+    text: filteredGraphData.map(node => 
+      `SMILES: ${node.smiles}<br>MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}`
+    )
+  }];
+
+  const plotlyLayout = {
+    autosize: true,
+    height: 600,
+    plot_bgcolor: '#ffffff',
+    paper_bgcolor: '#ffffff',
+    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+    font: {
+      family: 'Arial, sans-serif',
+      size: 12,
+      color: '#333'
+    },
+    xaxis: { showgrid: false, zeroline: false, visible: false },
+    yaxis: { showgrid: false, zeroline: false, visible: false },
+    showlegend: false,
+    hovermode: 'closest'
+  };
+
+  const plotlyConfig = {
+    displayModeBar: true,
+    responsive: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
+  };
+
+  // Count how many filters are active
+  const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
+
+  // Add a ref and click-outside handler for the search dropdown
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="App">
+      {/* Navbar */}
+      <Navbar activePage={activePage} />
+      
+      <header className="App-header">
+        <div className="header-content">
+          <div className="header-links">
+            <a 
+              href="#"
+              className={`header-link ${activePage === 'about' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); setActivePage('about'); }}
+            >
+              About
+            </a>
+            <a 
+              href="#"
+              className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); setActivePage('explorer'); }}
+            >
+              Explorer Map
+            </a>
+            <a 
+              href="#"
+              className={`header-link ${activePage === 'search' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); setActivePage('search'); }}
+            >
+              Search
+            </a>
+          </div>
+        </div>
+        <div className="stats-container">
+          {activePage === 'explorer' && (
+            <>
+              <div>Showing: {filteredGraphData.length} of {graphData.length} nodes</div>
+              <div>Filters: {activeFilterCount} active</div>
+              {loading && <div>Loading...</div>}
+            </>
+          )}
+        </div>
+      </header>
+      
+      <div className="main-container">
+        {activePage === 'explorer' ? (
+          <>
+            <div className="graph-container">
+              <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {filteredGraphData.length > 0 ? (
+                  <Plot
+                    data={plotlyData}
+                    layout={plotlyLayout}
+                    config={plotlyConfig}
+                    style={{ width: '100%', height: '100%' }}
+                    onClick={handlePointClick}
+                  />
+                ) : (
+                  <div className="loading-message">
+                    {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="info-panel">
+              <h2>Node Details</h2>
+              {selectedNode ? (
+                <div className="node-details">
+                  <div><strong>ID:</strong> {selectedNode.id}</div>
+                  <div><strong>SMILES:</strong> {selectedNode.smiles}</div>
+                  <div>
+                    <strong>UMAP Position:</strong> ({selectedNode.x.toFixed(3)}, {selectedNode.y.toFixed(3)})
+                  </div>
+                  <div>
+                    <strong>Mol Weight:</strong> {selectedNode.properties?.molwt ? selectedNode.properties.molwt.toFixed(2) : 'N/A'}
+                  </div>
+                  <div>
+                    <strong>HOMO (eV):</strong> {selectedNode.properties?.homo_eV ? selectedNode.properties.homo_eV.toFixed(4) : 'N/A'}
+                  </div>
+                  <div>
+                    <strong>LUMO (eV):</strong> {selectedNode.properties?.lumo_eV ? selectedNode.properties.lumo_eV.toFixed(4) : 'N/A'}
+                  </div>
+                  <div>
+                    <strong>ESP Min (eV):</strong> {selectedNode.properties?.esp_min_eV ? selectedNode.properties.esp_min_eV.toFixed(4) : 'N/A'}
+                  </div>
+                  <div>
+                    <strong>ESP Max (eV):</strong> {selectedNode.properties?.esp_max_eV ? selectedNode.properties.esp_max_eV.toFixed(4) : 'N/A'}
+                  </div>
+                </div>
+              ) : (
+                <p>Click on a node to view details</p>
+              )}
+              
+              <hr />
+              <h2>
+                Filters 
+                {activeFilterCount > 0 && (
+                  <button 
+                    className="reset-button" 
+                    onClick={resetAllFilters}
+                    title="Reset all filters"
+                  >
+                    Reset All
+                  </button>
+                )}
+              </h2>
+              <div className="sliders-container">
+                {Object.entries(filterRanges).map(([property, range]) => (
+                  <div key={property} className="filter-wrapper">
+                    <Slider
+                      property={property}
+                      value={range.current}
+                      min={range.min}
+                      max={range.max}
+                      onChange={handleFilterChange}
+                      label={filterLabels[property]}
+                      active={range.active}
+                    />
+                    {range.active && (
+                      <button 
+                        className="reset-filter-button" 
+                        onClick={() => resetFilter(property)}
+                        title="Reset this filter"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : activePage === 'about' ? (
+          <About />
+        ) : (
+          // SEARCH PAGE CONTENT:
+          <div className="search-container">
+            {/* Search bar container */}
+            <div 
+              className="search-bar-container" 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                width: '550px',
+                margin: '0 auto',
+                position: 'relative'
+              }}
+              ref={dropdownRef}
+            >
+              {/* The Lookup button + dropdown */}
+              <button
+                className="lookup-button"
+                style={{
+                  backgroundColor: '#4CAF50', // green
+                  color: '#fff',
+                  border: 'none',
+                  padding: '0 20px',
+                  height: '40px',
+                  cursor: 'pointer',
+                  borderRadius: '4px 0 0 4px'
+                }}
+                onClick={() => setShowDropdown(!showDropdown)}
+              >
+                {searchType}
+              </button>
+              
+              {/* The dropdown menu that appears when showDropdown is true */}
+              {showDropdown && (
+                <div
+                  className="dropdown-menu"
+                  style={{
+                    position: 'absolute',
+                    top: '42px',
+                    left: 0,
+                    backgroundColor: '#fff',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    width: '120px',
+                    zIndex: 10
+                  }}
+                >
+                  <div
+                    className="dropdown-item"
+                    style={{
+                      padding: '8px 12px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      setSearchType('Ask A Question');
+                      setShowDropdown(false);
+                    }}
+                  >
+                    Ask A Question
+                  </div>
+                  <div
+                    className="dropdown-item"
+                    style={{
+                      padding: '8px 12px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      setSearchType('Lookup');
+                      setShowDropdown(false);
+                    }}
+                  >
+                    Lookup
+                  </div>
+                </div>
+              )}
+              
+              {/* The text input for searching */}
+              <input
+                type="text"
+                placeholder={searchType === 'Lookup' ? "Search..." : "Ask a question..."}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  border: '1px solid #ccc',
+                  borderRadius: '0 4px 4px 0',
+                  padding: '0 10px',
+                  outline: 'none'
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {showPopup && selectedNode && (
+        <NodePopup node={selectedNode} onClose={handleClosePopup} />
+      )}
+    </div>
+  );
+};
+
+export default App;
