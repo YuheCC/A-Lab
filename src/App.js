@@ -179,6 +179,7 @@ const App = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
+  const [searchedMolecule, setSearchedMolecule] = useState(null);
   
   // New filter implementation with active flag
   const [filterRanges, setFilterRanges] = useState({
@@ -425,8 +426,17 @@ const App = () => {
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
+    setSearchedMolecule(null);
 
     try {
+      // First, find the molecule in our CSV data
+      const matchingMolecule = graphData.find(node => 
+        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+      );
+      
+      setSearchedMolecule(matchingMolecule);
+
+      // Then fetch the molecule visualization
       const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
       if (!response.ok) {
         throw new Error('Failed to fetch molecule data');
@@ -702,9 +712,51 @@ const App = () => {
                 
                 {searchResult && (
                   <div className="search-result">
-                    <div className="search-result-header">
-                      Results found for: <span className="smiles-string">{searchInput.trim()}</span>
-                    </div>
+                    
+                    {searchedMolecule ? (
+                      <div className="molecule-properties">
+                        <h3>Molecule Properties:</h3>
+                        <table className="property-table">
+                          <tbody>
+                            <tr>
+                              <td className="property-name">Molecular Weight</td>
+                              <td className="property-value">
+                                {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(4) : 'N/A'}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="property-name">HOMO (eV)</td>
+                              <td className="property-value">
+                                {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="property-name">LUMO (eV)</td>
+                              <td className="property-value">
+                                {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="property-name">ESP Min (eV)</td>
+                              <td className="property-value">
+                                {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="property-name">ESP Max (eV)</td>
+                              <td className="property-value">
+                                {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="molecule-not-found">
+                        <p>This molecule was not found in our database.</p>
+                      </div>
+                    )}
+                    
                     <img 
                       src={searchResult} 
                       alt="Molecule visualization" 
