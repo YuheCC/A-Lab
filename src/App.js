@@ -193,6 +193,30 @@ const About = () => {
   );
 };
 
+// Chatbot component
+const ChatbotInterface = () => {
+  return (
+    <div className="chatbot-container">
+      <div className="chatbot-content">
+        <h2>AI Molecular Assistant</h2>
+        <div className="chat-messages">
+          <div className="system-message">
+            <p>Welcome to the Molecular Universe AI Assistant. How can I help you today?</p>
+          </div>
+        </div>
+        <div className="chat-input-container">
+          <textarea 
+            className="chat-input" 
+            placeholder="Ask a question about molecules, properties, or chemical structures..."
+            rows={3}
+          />
+          <button className="send-button">Send</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -525,6 +549,13 @@ const App = () => {
             >
               Search
             </a>
+            <a 
+              href="#"
+              className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); setActivePage('chatbot'); }}
+            >
+              Chatbot
+            </a>
           </div>
         </div>
         <div className="stats-container">
@@ -600,6 +631,8 @@ const App = () => {
           </>
         ) : activePage === 'about' ? (
           <About />
+        ) : activePage === 'chatbot' ? (
+          <ChatbotInterface />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
@@ -772,17 +805,19 @@ const App = () => {
                       </div>
                     )}
                     
-                    <img 
-                      src={searchResult} 
-                      alt="Molecule visualization" 
-                      style={{
-                        maxWidth: '100%',
-                        height: 'auto',
-                        marginTop: '20px',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                      }}
-                    />
+                    {searchedMolecule && (
+                      <img 
+                        src={searchResult} 
+                        alt="Molecule visualization" 
+                        style={{
+                          maxWidth: '100%',
+                          height: 'auto',
+                          marginTop: '20px',
+                          borderRadius: '8px',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}
+                      />
+                    )}
                   </div>
                 )}
               </div>
