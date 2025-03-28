@@ -378,6 +378,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
+  const [userPermissions, setUserPermissions] = useState('basic');
   
   // API URL from environment variables
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
@@ -413,6 +414,8 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
+      const permissions = localStorage.getItem('permissions') || 'basic';
+      setUserPermissions(permissions);
       
       if (!token) {
         setIsAuthenticated(false);
@@ -431,19 +434,21 @@ const App = () => {
           const data = await response.json();
           setIsAuthenticated(true);
           setUsername(data.username);
+          setUserPermissions(data.permissions || 'basic');
           if (activePage === 'login') {
             setActivePage('explorer');
           }
         } else {
-          // Token is invalid, clear storage
           localStorage.removeItem('token');
           localStorage.removeItem('username');
           localStorage.removeItem('permissions');
           setIsAuthenticated(false);
+          setUserPermissions('basic');
         }
       } catch (err) {
         console.error('Auth verification error:', err);
         setIsAuthenticated(false);
+        setUserPermissions('basic');
       } finally {
         setAuthLoading(false);
       }
@@ -724,24 +729,38 @@ const App = () => {
     setIsAuthenticated(false);
   };
 
-  // Add useEffect for route handling
+  // Update useEffect for route handling
   useEffect(() => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
-      if (path === '/login' && !isAuthenticated) {
-        setActivePage('login');
+      
+      // If not authenticated, only allow access to About page
+      if (!isAuthenticated) {
+        if (path === '/about') {
+          setActivePage('about');
+        } else {
+          // Redirect to login for any other route
+          window.history.pushState({}, '', '/login');
+          setActivePage('login');
+        }
+        return;
+      }
+
+      // For authenticated users, handle routes based on permissions
+      if (path === '/login') {
+        // Redirect to about if already authenticated
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
       } else if (path === '/about') {
         setActivePage('about');
-      } else if (path === '/explorer') {
-        setActivePage('explorer');
-      } else if (path === '/search') {
-        setActivePage('search');
-      } else if (path === '/chatbot') {
-        setActivePage('chatbot');
-      } else if (path === '/enterprise') {
-        setActivePage('enterprise');
       } else if (path === '/') {
-        setActivePage('explorer');
+        // Redirect root to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      } else {
+        // Redirect any other route to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
       }
     };
 
@@ -751,7 +770,7 @@ const App = () => {
     // Listen for route changes
     window.addEventListener('popstate', handleRouteChange);
     return () => window.removeEventListener('popstate', handleRouteChange);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, userPermissions]);
 
   // Update handleSignIn to use proper navigation
   const handleSignIn = () => {
@@ -759,11 +778,66 @@ const App = () => {
     setActivePage('login');
   };
 
-  // Update navigation handlers to use proper routing
+  // Update handleNavigation to check permissions
   const handleNavigation = (page) => {
-    const path = page === 'explorer' ? '/' : `/${page}`;
-    window.history.pushState({}, '', path);
+    if (!checkPageAccess(page)) {
+      setActivePage('permissions-error');
+      return;
+    }
     setActivePage(page);
+  };
+
+  // Move checkPageAccess inside App component
+  const checkPageAccess = (page) => {
+    // Basic users can only access About page
+    if (userPermissions === 'basic') {
+      return page === 'about';
+    }
+    
+    // Premium users can access About, Filter, Simple Search, and Chat
+    if (userPermissions === 'premium') {
+      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
+    }
+    
+    // Admin users can access everything
+    if (userPermissions === 'admin') {
+      return true;
+    }
+    
+    // Default to no access
+    return false;
+  };
+
+  // Update PermissionsError component to show different messages based on user type
+  const PermissionsError = () => {
+    let message = '';
+    let buttonText = '';
+    let buttonAction = () => {};
+
+    if (userPermissions === 'basic') {
+      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
+      buttonText = 'View Pricing';
+      buttonAction = () => window.location.href = '/pricing';
+    } else if (userPermissions === 'premium') {
+      message = 'This feature is only available for admin users. Please contact your administrator for access.';
+      buttonText = 'Contact Admin';
+      buttonAction = () => window.location.href = '/contact';
+    }
+
+    return (
+      <div className="permissions-error-container">
+        <div className="permissions-error-content">
+          <h2>Access Restricted</h2>
+          <p>{message}</p>
+          <button 
+            className="upgrade-button"
+            onClick={buttonAction}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </div>
+    );
   };
 
   // If authentication is still being checked, show loading spinner
@@ -839,7 +913,9 @@ const App = () => {
       </header>
       
       <div className="main-container">
-        {activePage === 'explorer' ? (
+        {activePage === 'permissions-error' ? (
+          <PermissionsError />
+        ) : activePage === 'explorer' ? (
           <>
             <div className="graph-container">
               <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -901,9 +977,9 @@ const App = () => {
         ) : activePage === 'about' ? (
           <About />
         ) : activePage === 'chatbot' ? (
-          <ChatbotInterface />
+          checkPageAccess('chatbot') ? <ChatbotInterface /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
-          <EnterpriseSearch />
+          checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
