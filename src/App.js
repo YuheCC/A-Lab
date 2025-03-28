@@ -681,6 +681,36 @@ const App = () => {
     )
   }];
 
+  // Count how many filters are active
+  const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
+
+  // Create dynamic search layout with animation effect
+  const [arrowOffset, setArrowOffset] = useState(-40);
+  
+  // Add bouncing arrow animation when molecule is highlighted
+  useEffect(() => {
+    if (highlightedMolecule) {
+      let direction = -1; // Start moving up
+      let current = -40;
+      const min = -60;
+      const max = -30;
+      
+      const interval = setInterval(() => {
+        current += direction * 2;
+        
+        if (current <= min) {
+          direction = 1; // Change to moving down
+        } else if (current >= max) {
+          direction = -1; // Change to moving up
+        }
+        
+        setArrowOffset(current);
+      }, 50);
+      
+      return () => clearInterval(interval);
+    }
+  }, [highlightedMolecule]);
+  
   const plotlyLayout = {
     autosize: true,
     height: 600,
@@ -704,7 +734,60 @@ const App = () => {
         size: 12,
         color: '#fff'
       }
-    }
+    },
+    annotations: highlightedMolecule ? [
+      {
+        x: highlightedMolecule.x,
+        y: highlightedMolecule.y,
+        xref: 'x',
+        yref: 'y',
+        text: 'Found Match!',
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1.5,
+        arrowwidth: 2,
+        arrowcolor: '#FF5722',
+        ax: 0,
+        ay: -40,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 12
+        }
+      }
+    ] : []
+  };
+  
+  // Create search mode layout with bouncing arrow
+  const searchLayout = {
+    ...plotlyLayout,
+    annotations: highlightedMolecule ? [
+      {
+        x: highlightedMolecule.x,
+        y: highlightedMolecule.y,
+        xref: 'x',
+        yref: 'y',
+        text: 'Found Match!',
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1.5,
+        arrowwidth: 2,
+        arrowcolor: '#FF5722',
+        ax: 0,
+        ay: arrowOffset,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 12
+        }
+      }
+    ] : []
   };
 
   const plotlyConfig = {
@@ -713,9 +796,6 @@ const App = () => {
     scrollZoom: true,
     modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
   };
-
-  // Count how many filters are active
-  const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
   // Add a ref and click-outside handler for the search dropdown
   const dropdownRef = useRef(null);
@@ -1035,16 +1115,8 @@ const App = () => {
                     {filteredGraphData.length > 0 ? (
                       <Plot
                         data={searchPlotlyData}
-                        layout={{
-                          ...plotlyLayout,
-                          autosize: true,
-                          height: null,
-                          width: null,
-                        }}
-                        config={{
-                          ...plotlyConfig,
-                          responsive: true
-                        }}
+                        layout={searchLayout}
+                        config={plotlyConfig}
                         style={{ width: '100%', height: '100%' }}
                         onClick={handlePointClick}
                         useResizeHandler={true}
