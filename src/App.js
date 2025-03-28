@@ -217,6 +217,17 @@ const ChatbotInterface = () => {
   );
 };
 
+// Enterprise Search component
+const EnterpriseSearch = () => {
+  return (
+    <div className="enterprise-container">
+      <div className="enterprise-content">
+        <h1>Enterprise Search</h1>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -258,7 +269,7 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 500000;
+  const MAX_NODES = 71000;
 
   useEffect(() => {
     async function loadData() {
@@ -489,7 +500,7 @@ const App = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (searchType !== 'Lookup' || !searchInput.trim()) return;
+    if (!searchInput.trim()) return;
 
     setSearchLoading(true);
     setSearchError(null);
@@ -504,10 +515,10 @@ const App = () => {
       
       setSearchedMolecule(matchingMolecule);
 
-      // Then fetch the molecule visualization
+      // Then fetch the molecule visualization from Python server
       const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch molecule data');
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
       const data = await response.blob();
       const imageUrl = URL.createObjectURL(data);
@@ -540,7 +551,7 @@ const App = () => {
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); setActivePage('explorer'); }}
             >
-              Universe Map
+              Filter
             </a>
             <a 
               href="#"
@@ -554,16 +565,23 @@ const App = () => {
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); setActivePage('chatbot'); }}
             >
-              Chatbot
+              Chat
+            </a>
+            <a 
+              href="#"
+              className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); setActivePage('enterprise'); }}
+            >
+              Enterprise Search
             </a>
           </div>
         </div>
         <div className="stats-container">
           {activePage === 'explorer' && (
             <>
-              <div>Showing: {filteredGraphData.length} of {graphData.length} nodes</div>
-              <div>Filters: {activeFilterCount} active</div>
-              {loading && <div>Loading...</div>}
+              {/* <div>Showing: {filteredGraphData.length} of {graphData.length} nodes</div> */}
+              {/* <div>Filters: {activeFilterCount} active</div> */}
+              {/* {loading && <div>Loading...</div>} */}
             </>
           )}
         </div>
@@ -633,202 +651,155 @@ const App = () => {
           <About />
         ) : activePage === 'chatbot' ? (
           <ChatbotInterface />
+        ) : activePage === 'enterprise' ? (
+          <EnterpriseSearch />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
-            {/* Search bar container */}
-            <div className="search-content">
-              <div 
-                className="search-bar-container" 
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '550px',
-                  margin: '0 auto',
-                  position: 'relative'
-                }}
-                ref={dropdownRef}
-              >
-                {/* The Lookup button + dropdown */}
-                <button
-                  className="lookup-button"
-                  style={{
-                    backgroundColor: '#4CAF50',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0 20px',
-                    height: '40px',
-                    cursor: 'pointer',
-                    borderRadius: '4px 0 0 4px'
-                  }}
-                  onClick={() => {
-                    if (searchType === 'Lookup' && searchInput.trim()) {
-                      handleSearch();
-                    } else {
-                      setShowDropdown(!showDropdown);
-                    }
-                  }}
-                >
-                  {searchType} ▼
-                </button>
-                
-                {/* The dropdown menu that appears when showDropdown is true */}
-                {showDropdown && (
-                  <div
-                    className="dropdown-menu"
-                    style={{
-                      position: 'absolute',
-                      top: '42px',
-                      left: 0,
-                      backgroundColor: '#fff',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      width: '120px',
-                      zIndex: 10,
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    <div
-                      className="dropdown-item"
-                      style={{
-                        padding: '8px 12px',
-                        cursor: 'pointer',
-                        borderBottom: '1px solid #eee',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}
-                      onClick={() => {
-                        setSearchType('Ask A Question');
-                        setShowDropdown(false);
-                      }}
-                    >
-                      Ask A Question
-                    </div>
-                    <div
-                      className="dropdown-item"
-                      style={{
-                        padding: '8px 12px',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}
-                      onClick={() => {
-                        setSearchType('Lookup');
-                        setShowDropdown(false);
-                      }}
-                    >
-                      Lookup
-                    </div>
+            <div className="search-umap-container">
+              {/* UMAP Visualization on the left */}
+              <div className="search-umap-section">
+                <div className="graph-container search-graph">
+                  <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    {filteredGraphData.length > 0 ? (
+                      <Plot
+                        data={plotlyData}
+                        layout={{
+                          ...plotlyLayout,
+                          autosize: true,
+                          height: null,
+                          width: null,
+                        }}
+                        config={{
+                          ...plotlyConfig,
+                          responsive: true
+                        }}
+                        style={{ width: '100%', height: '100%' }}
+                        onClick={handlePointClick}
+                        useResizeHandler={true}
+                      />
+                    ) : (
+                      <div className="loading-message">
+                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                {/* The text input for searching */}
-                <input
-                  type="text"
-                  placeholder={searchType === 'Lookup' ? "Enter SMILES string..." : "Ask a question..."}
-                  style={{
-                    width: '100%',
-                    height: '40px',
-                    border: '1px solid #ccc',
-                    borderRadius: '0 4px 4px 0',
-                    padding: '0 10px',
-                    outline: 'none'
-                  }}
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && searchType === 'Lookup') {
-                      handleSearch();
-                    }
-                  }}
-                />
+                </div>
               </div>
 
-              {/* Search Results */}
-              <div className="search-results">
-                {searchLoading && (
-                  <div className="search-loading">Loading...</div>
-                )}
+              {/* Search interface on the right */}
+              <div className="search-interface-section">
+                {/* Search bar container */}
+                <div className="search-bar-container">
+                  <input 
+                    type="text" 
+                    className="search-input search-input-full"
+                    placeholder="Enter SMILES string..." 
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                      }
+                    }}
+                  />
+                  <button 
+                    className="search-button"
+                    onClick={handleSearch}
+                    disabled={searchLoading}
+                  >
+                    {searchLoading ? 'Searching...' : 'Search'}
+                  </button>
+                </div>
                 
-                {searchError && (
-                  <div className="search-error">
-                    Error: {searchError}
-                  </div>
-                )}
+                {/* Search results display */}
+                <div className="search-results">
+                  {searchLoading && (
+                    <div className="search-loading">
+                      <div className="loading-spinner"></div>
+                      <p>Searching for molecule...</p>
+                    </div>
+                  )}
                 
-                {searchResult && (
-                  <div className="search-result">
-                    
-                    {searchedMolecule ? (
-                      <div className="molecule-properties">
-                        <h3>Molecule Properties:</h3>
-                        <table className="property-table">
-                          <tbody>
-                            <tr>
-                              <td className="property-name">Molecular Weight</td>
-                              <td className="property-value">
-                                {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(4) : 'N/A'}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="property-name">HOMO (eV)</td>
-                              <td className="property-value">
-                                {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="property-name">LUMO (eV)</td>
-                              <td className="property-value">
-                                {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="property-name">ESP Min (eV)</td>
-                              <td className="property-value">
-                                {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="property-name">ESP Max (eV)</td>
-                              <td className="property-value">
-                                {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <div className="molecule-not-found">
-                        <p>This molecule was not found in our database.</p>
-                      </div>
-                    )}
-                    
-                    {searchedMolecule && (
-                      <img 
-                        src={searchResult} 
-                        alt="Molecule visualization" 
-                        style={{
-                          maxWidth: '100%',
-                          height: 'auto',
-                          marginTop: '20px',
-                          borderRadius: '8px',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
+                  {searchError && (
+                    <div className="search-error">
+                      <p>{searchError}</p>
+                    </div>
+                  )}
+                  
+                  {searchResult && (
+                    <div className="molecule-details">
+                      <h2>Molecule Visualization</h2>
+                      
+                      {searchedMolecule ? (
+                        <div className="molecule-data">
+                          <h3>Properties</h3>
+                          <table className="property-table">
+                            <tbody>
+                              <tr>
+                                <td className="property-name">SMILES</td>
+                                <td className="property-value">{searchedMolecule.smiles}</td>
+                              </tr>
+                              <tr>
+                                <td className="property-name">Molecular Weight</td>
+                                <td className="property-value">
+                                  {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(2) : 'N/A'}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="property-name">HOMO (eV)</td>
+                                <td className="property-value">
+                                  {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="property-name">LUMO (eV)</td>
+                                <td className="property-value">
+                                  {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="property-name">ESP Min (eV)</td>
+                                <td className="property-value">
+                                  {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="property-name">ESP Max (eV)</td>
+                                <td className="property-value">
+                                  {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <div className="molecule-not-found">
+                          <p>This molecule was not found in our database.</p>
+                        </div>
+                      )}
+                      
+                      {searchedMolecule && (
+                        <img 
+                          src={searchResult} 
+                          alt="Molecule visualization" 
+                          style={{
+                            maxWidth: '100%',
+                            height: 'auto',
+                            marginTop: '20px',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         )}
       </div>
-      
-      {showPopup && selectedNode && (
-        <NodePopup node={selectedNode} onClose={handleClosePopup} />
-      )}
     </div>
   );
 };
