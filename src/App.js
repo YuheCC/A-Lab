@@ -505,13 +505,30 @@ const App = () => {
           size: 12
         }
       }];
+    } else if (searchedMolecule && !highlightedMolecule) {
+      layout.annotations = [{
+        x: 0,
+        y: 0,
+        xref: 'paper',
+        yref: 'paper',
+        text: 'Molecule found in database, but not in UMAP view',
+        showarrow: false,
+        bgcolor: '#fff3cd',
+        bordercolor: '#ffeeba',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: '#856404',
+          size: 14
+        }
+      }];
     } else if (searchResult && !searchedMolecule) {
       layout.annotations = [{
         x: 0,
         y: 0,
         xref: 'paper',
         yref: 'paper',
-        text: 'Molecule not in UMAP',
+        text: 'Molecule not in database',
         showarrow: false,
         bgcolor: 'rgba(255, 87, 34, 0.8)',
         bordercolor: '#FF5722',
@@ -559,13 +576,64 @@ const App = () => {
     setHighlightedMolecule(null);
 
     try {
-      // First, find the molecule in our CSV data
+      // First, find the molecule in our loaded UMAP data
       const matchingMolecule = graphData.find(node => 
         node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
       );
       
-      setSearchedMolecule(matchingMolecule);
-      setHighlightedMolecule(matchingMolecule);
+      if (matchingMolecule) {
+        // Molecule found in UMAP data
+        setSearchedMolecule(matchingMolecule);
+        setHighlightedMolecule(matchingMolecule);
+      } else {
+        // If not found in UMAP data, check the full CSV
+        try {
+          const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+          if (response.ok) {
+            const text = await response.text();
+            
+            // Use a Promise to make Papa.parse wait until completion
+            await new Promise((resolve) => {
+              Papa.parse(text, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                  // Find the molecule in the full CSV data
+                  const csvMolecule = results.data.find(row => 
+                    row.smiles && row.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+                  );
+                  
+                  if (csvMolecule) {
+                    // Create a formatted molecule object from CSV data
+                    const formattedMolecule = {
+                      smiles: csvMolecule.smiles,
+                      properties: {
+                        molwt: csvMolecule.molwt,
+                        homo_eV: csvMolecule.homo_eV,
+                        lumo_eV: csvMolecule.lumo_eV,
+                        esp_min_eV: csvMolecule.esp_min_eV,
+                        esp_max_eV: csvMolecule.esp_max_eV
+                      },
+                      rawData: csvMolecule
+                    };
+                    
+                    setSearchedMolecule(formattedMolecule);
+                    // Don't highlight on UMAP since it's not in the visualization
+                  }
+                  resolve();
+                },
+                error: (error) => {
+                  console.error("CSV parse error:", error);
+                  resolve();
+                }
+              });
+            });
+          }
+        } catch (csvError) {
+          console.error('Error checking full CSV:', csvError);
+        }
+      }
 
       // Then fetch the molecule visualization from Python server
       const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
@@ -1199,6 +1267,11 @@ const App = () => {
                       {searchedMolecule ? (
                         <div className="molecule-data">
                           <h3>Properties</h3>
+                          {!highlightedMolecule && searchedMolecule && (
+                            <div className="molecule-found-in-csv">
+                              <p>This molecule was found in the database but is not displayed in the current UMAP view.</p>
+                            </div>
+                          )}
                           <table className="property-table">
                             <tbody>
                               <tr>

@@ -697,6 +697,20 @@ body, html {
   margin-bottom: 20px;
 }
 
+.molecule-found-in-csv {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  color: #856404;
+}
+
+.molecule-found-in-csv p {
+  margin: 0;
+  font-size: 14px;
+}
+
 /* End search page styles */
 
 /* Chatbot styles */
