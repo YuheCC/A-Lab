@@ -511,7 +511,7 @@ const App = () => {
         y: 0,
         xref: 'paper',
         yref: 'paper',
-        text: 'Molecule found in database, but not in UMAP view',
+        text: '',
         showarrow: false,
         bgcolor: '#fff3cd',
         bordercolor: '#ffeeba',
