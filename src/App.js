@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -412,6 +412,294 @@ const App = () => {
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
+  const [arrowOffset, setArrowOffset] = useState(-40);
+  
+  // Track Plotly initialization state
+  const [searchPlotInitialized, setSearchPlotInitialized] = useState(false);
+  const [mainPlotInitialized, setMainPlotInitialized] = useState(false);
+  
+  // Ref for plots to check if they're initialized
+  const plotlyRef = useRef(null);
+  const searchPlotlyRef = useRef(null);
+  
+  // Add bouncing arrow animation when molecule is highlighted
+  useEffect(() => {
+    if (!highlightedMolecule || !searchPlotInitialized) return;
+    
+    let direction = -1; // Start moving up
+    let current = -40;
+    const min = -60;
+    const max = -30;
+    
+    const interval = setInterval(() => {
+      current += direction * 2;
+      
+      if (current <= min) {
+        direction = 1; // Change to moving down
+      } else if (current >= max) {
+        direction = -1; // Change to moving up
+      }
+      
+      setArrowOffset(current);
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, [highlightedMolecule, searchPlotInitialized]);
+  
+  const plotlyLayout = {
+    autosize: true,
+    height: 600,
+    plot_bgcolor: '#ffffff',
+    paper_bgcolor: '#ffffff',
+    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+    font: {
+      family: 'Arial, sans-serif',
+      size: 12,
+      color: '#333'
+    },
+    xaxis: { showgrid: false, zeroline: false, visible: false },
+    yaxis: { showgrid: false, zeroline: false, visible: false },
+    showlegend: false,
+    hovermode: 'closest',
+    hoverlabel: {
+      bgcolor: '#000',
+      bordercolor: '#333',
+      font: {
+        family: 'Arial, sans-serif',
+        size: 12,
+        color: '#fff'
+      }
+    }
+  };
+  
+  // Create search mode layout with annotations when needed
+  const searchLayout = useMemo(() => {
+    const layout = {
+      ...plotlyLayout,
+      autosize: true,
+      height: null,
+      width: null
+    };
+    
+    // Only add annotations if highlightedMolecule is defined
+    if (highlightedMolecule) {
+      layout.annotations = [{
+        x: highlightedMolecule.x,
+        y: highlightedMolecule.y,
+        xref: 'x',
+        yref: 'y',
+        text: 'Found Match!',
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1.5,
+        arrowwidth: 2,
+        arrowcolor: '#FF5722',
+        ax: 0,
+        ay: arrowOffset,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 12
+        }
+      }];
+    } else if (searchResult && !searchedMolecule) {
+      layout.annotations = [{
+        x: 0,
+        y: 0,
+        xref: 'paper',
+        yref: 'paper',
+        text: 'Molecule not in UMAP',
+        showarrow: false,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 14
+        }
+      }];
+    }
+    
+    return layout;
+  }, [plotlyLayout, highlightedMolecule, searchResult, searchedMolecule, arrowOffset]);
+
+  const plotlyConfig = {
+    displayModeBar: true,
+    responsive: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
+  };
+
+  // Add a ref and click-outside handler for the search dropdown
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Update handleSearch function
+  const handleSearch = async () => {
+    if (!searchInput.trim()) return;
+
+    setSearchLoading(true);
+    setSearchError(null);
+    setSearchResult(null);
+    setSearchedMolecule(null);
+    setHighlightedMolecule(null);
+
+    try {
+      // First, find the molecule in our CSV data
+      const matchingMolecule = graphData.find(node => 
+        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+      );
+      
+      setSearchedMolecule(matchingMolecule);
+      setHighlightedMolecule(matchingMolecule);
+
+      // Then fetch the molecule visualization from Python server
+      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+      }
+      const data = await response.blob();
+      const imageUrl = URL.createObjectURL(data);
+      setSearchResult(imageUrl);
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchError(err.message);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('permissions');
+    setIsAuthenticated(false);
+  };
+
+  // Update useEffect for route handling
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const path = window.location.pathname;
+      
+      // If not authenticated, only allow access to About page
+      if (!isAuthenticated) {
+        if (path === '/about') {
+          setActivePage('about');
+        } else {
+          // Redirect to login for any other route
+          window.history.pushState({}, '', '/login');
+          setActivePage('login');
+        }
+        return;
+      }
+
+      // For authenticated users, handle routes based on permissions
+      if (path === '/login') {
+        // Redirect to about if already authenticated
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      } else if (path === '/about') {
+        setActivePage('about');
+      } else if (path === '/') {
+        // Redirect root to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      } else {
+        // Redirect any other route to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      }
+    };
+
+    // Initial route check
+    handleRouteChange();
+
+    // Listen for route changes
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, [isAuthenticated, userPermissions]);
+
+  // Update handleSignIn to use proper navigation
+  const handleSignIn = () => {
+    window.history.pushState({}, '', '/login');
+    setActivePage('login');
+  };
+
+  // Update handleNavigation to check permissions
+  const handleNavigation = (page) => {
+    if (!checkPageAccess(page)) {
+      setActivePage('permissions-error');
+      return;
+    }
+    setActivePage(page);
+  };
+
+  // Move checkPageAccess inside App component
+  const checkPageAccess = (page) => {
+    // Basic users can only access About page
+    if (userPermissions === 'basic') {
+      return page === 'about';
+    }
+    
+    // Premium users can access About, Filter, Simple Search, and Chat
+    if (userPermissions === 'premium') {
+      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
+    }
+    
+    // Admin users can access everything
+    if (userPermissions === 'admin') {
+      return true;
+    }
+    
+    // Default to no access
+    return false;
+  };
+
+  // Update PermissionsError component to show different messages based on user type
+  const PermissionsError = () => {
+    let message = '';
+    let buttonText = '';
+    let buttonAction = () => {};
+
+    if (userPermissions === 'basic') {
+      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
+      buttonText = 'View Pricing';
+      buttonAction = () => window.location.href = '/pricing';
+    } else if (userPermissions === 'premium') {
+      message = 'This feature is only available for admin users. Please contact your administrator for access.';
+      buttonText = 'Contact Admin';
+      buttonAction = () => window.location.href = '/contact';
+    }
+
+    return (
+      <div className="permissions-error-container">
+        <div className="permissions-error-content">
+          <h2>Access Restricted</h2>
+          <p>{message}</p>
+          <button 
+            className="upgrade-button"
+            onClick={buttonAction}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Check authentication on load
   useEffect(() => {
@@ -684,286 +972,6 @@ const App = () => {
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
-  // Create dynamic search layout with animation effect
-  const [arrowOffset, setArrowOffset] = useState(-40);
-  
-  // Add bouncing arrow animation when molecule is highlighted
-  useEffect(() => {
-    if (highlightedMolecule) {
-      let direction = -1; // Start moving up
-      let current = -40;
-      const min = -60;
-      const max = -30;
-      
-      const interval = setInterval(() => {
-        current += direction * 2;
-        
-        if (current <= min) {
-          direction = 1; // Change to moving down
-        } else if (current >= max) {
-          direction = -1; // Change to moving up
-        }
-        
-        setArrowOffset(current);
-      }, 50);
-      
-      return () => clearInterval(interval);
-    }
-  }, [highlightedMolecule]);
-  
-  const plotlyLayout = {
-    autosize: true,
-    height: 600,
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-    font: {
-      family: 'Arial, sans-serif',
-      size: 12,
-      color: '#333'
-    },
-    xaxis: { showgrid: false, zeroline: false, visible: false },
-    yaxis: { showgrid: false, zeroline: false, visible: false },
-    showlegend: false,
-    hovermode: 'closest',
-    hoverlabel: {
-      bgcolor: '#000',
-      bordercolor: '#333',
-      font: {
-        family: 'Arial, sans-serif',
-        size: 12,
-        color: '#fff'
-      }
-    },
-    annotations: highlightedMolecule ? [
-      {
-        x: highlightedMolecule.x,
-        y: highlightedMolecule.y,
-        xref: 'x',
-        yref: 'y',
-        text: 'Found Match!',
-        showarrow: true,
-        arrowhead: 2,
-        arrowsize: 1.5,
-        arrowwidth: 2,
-        arrowcolor: '#FF5722',
-        ax: 0,
-        ay: -40,
-        bgcolor: 'rgba(255, 87, 34, 0.8)',
-        bordercolor: '#FF5722',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: 'white',
-          size: 12
-        }
-      }
-    ] : []
-  };
-  
-  // Create search mode layout with bouncing arrow
-  const searchLayout = {
-    ...plotlyLayout,
-    annotations: highlightedMolecule ? [
-      {
-        x: highlightedMolecule.x,
-        y: highlightedMolecule.y,
-        xref: 'x',
-        yref: 'y',
-        text: 'Found Match!',
-        showarrow: true,
-        arrowhead: 2,
-        arrowsize: 1.5,
-        arrowwidth: 2,
-        arrowcolor: '#FF5722',
-        ax: 0,
-        ay: arrowOffset,
-        bgcolor: 'rgba(255, 87, 34, 0.8)',
-        bordercolor: '#FF5722',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: 'white',
-          size: 12
-        }
-      }
-    ] : []
-  };
-
-  const plotlyConfig = {
-    displayModeBar: true,
-    responsive: true,
-    scrollZoom: true,
-    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
-  };
-
-  // Add a ref and click-outside handler for the search dropdown
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Update handleSearch function
-  const handleSearch = async () => {
-    if (!searchInput.trim()) return;
-
-    setSearchLoading(true);
-    setSearchError(null);
-    setSearchResult(null);
-    setSearchedMolecule(null);
-    setHighlightedMolecule(null);
-
-    try {
-      // First, find the molecule in our CSV data
-      const matchingMolecule = graphData.find(node => 
-        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-      );
-      
-      setSearchedMolecule(matchingMolecule);
-      setHighlightedMolecule(matchingMolecule);
-
-      // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
-      }
-      const data = await response.blob();
-      const imageUrl = URL.createObjectURL(data);
-      setSearchResult(imageUrl);
-    } catch (err) {
-      console.error('Search error:', err);
-      setSearchError(err.message);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('permissions');
-    setIsAuthenticated(false);
-  };
-
-  // Update useEffect for route handling
-  useEffect(() => {
-    const handleRouteChange = () => {
-      const path = window.location.pathname;
-      
-      // If not authenticated, only allow access to About page
-      if (!isAuthenticated) {
-        if (path === '/about') {
-          setActivePage('about');
-        } else {
-          // Redirect to login for any other route
-          window.history.pushState({}, '', '/login');
-          setActivePage('login');
-        }
-        return;
-      }
-
-      // For authenticated users, handle routes based on permissions
-      if (path === '/login') {
-        // Redirect to about if already authenticated
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
-      } else if (path === '/about') {
-        setActivePage('about');
-      } else if (path === '/') {
-        // Redirect root to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
-      } else {
-        // Redirect any other route to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
-      }
-    };
-
-    // Initial route check
-    handleRouteChange();
-
-    // Listen for route changes
-    window.addEventListener('popstate', handleRouteChange);
-    return () => window.removeEventListener('popstate', handleRouteChange);
-  }, [isAuthenticated, userPermissions]);
-
-  // Update handleSignIn to use proper navigation
-  const handleSignIn = () => {
-    window.history.pushState({}, '', '/login');
-    setActivePage('login');
-  };
-
-  // Update handleNavigation to check permissions
-  const handleNavigation = (page) => {
-    if (!checkPageAccess(page)) {
-      setActivePage('permissions-error');
-      return;
-    }
-    setActivePage(page);
-  };
-
-  // Move checkPageAccess inside App component
-  const checkPageAccess = (page) => {
-    // Basic users can only access About page
-    if (userPermissions === 'basic') {
-      return page === 'about';
-    }
-    
-    // Premium users can access About, Filter, Simple Search, and Chat
-    if (userPermissions === 'premium') {
-      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
-    }
-    
-    // Admin users can access everything
-    if (userPermissions === 'admin') {
-      return true;
-    }
-    
-    // Default to no access
-    return false;
-  };
-
-  // Update PermissionsError component to show different messages based on user type
-  const PermissionsError = () => {
-    let message = '';
-    let buttonText = '';
-    let buttonAction = () => {};
-
-    if (userPermissions === 'basic') {
-      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
-      buttonText = 'View Pricing';
-      buttonAction = () => window.location.href = '/pricing';
-    } else if (userPermissions === 'premium') {
-      message = 'This feature is only available for admin users. Please contact your administrator for access.';
-      buttonText = 'Contact Admin';
-      buttonAction = () => window.location.href = '/contact';
-    }
-
-    return (
-      <div className="permissions-error-container">
-        <div className="permissions-error-content">
-          <h2>Access Restricted</h2>
-          <p>{message}</p>
-          <button 
-            className="upgrade-button"
-            onClick={buttonAction}
-          >
-            {buttonText}
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
     return <div className="app-loading">Loading...</div>;
@@ -1046,10 +1054,17 @@ const App = () => {
                 {filteredGraphData.length > 0 ? (
                   <Plot
                     data={plotlyData}
-                    layout={plotlyLayout}
+                    layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
                     config={plotlyConfig}
                     style={{ width: '100%', height: '100%' }}
                     onClick={handlePointClick}
+                    onInitialized={(figure) => {
+                      plotlyRef.current = figure;
+                      setMainPlotInitialized(true);
+                    }}
+                    onUpdate={(figure) => {
+                      plotlyRef.current = figure;
+                    }}
                   />
                 ) : (
                   <div className="loading-message">
@@ -1115,11 +1130,18 @@ const App = () => {
                     {filteredGraphData.length > 0 ? (
                       <Plot
                         data={searchPlotlyData}
-                        layout={searchLayout}
+                        layout={searchPlotInitialized ? searchLayout : { ...plotlyLayout, autosize: true, height: null, width: null }}
                         config={plotlyConfig}
                         style={{ width: '100%', height: '100%' }}
                         onClick={handlePointClick}
                         useResizeHandler={true}
+                        onInitialized={(figure) => {
+                          searchPlotlyRef.current = figure;
+                          setSearchPlotInitialized(true);
+                        }}
+                        onUpdate={(figure) => {
+                          searchPlotlyRef.current = figure;
+                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -1218,23 +1240,21 @@ const App = () => {
                         </div>
                       ) : (
                         <div className="molecule-not-found">
-                          <p>This molecule was not found in our database.</p>
+                          <p>This molecule was not found in our UMAP dataset.</p>
                         </div>
                       )}
                       
-                      {searchedMolecule && (
-                        <img 
-                          src={searchResult} 
-                          alt="Molecule visualization" 
-                          style={{
-                            maxWidth: '100%',
-                            height: 'auto',
-                            marginTop: '20px',
-                            borderRadius: '8px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                          }}
-                        />
-                      )}
+                      <img 
+                        src={searchResult} 
+                        alt="Molecule visualization" 
+                        style={{
+                          maxWidth: '100%',
+                          height: 'auto',
+                          marginTop: '20px',
+                          borderRadius: '8px',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}
+                      />
                     </div>
                   )}
                 </div>
