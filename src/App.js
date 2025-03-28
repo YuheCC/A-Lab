@@ -410,6 +410,9 @@ const App = () => {
 
   const MAX_NODES = 70000;
 
+  // Add new state for highlighted molecule
+  const [highlightedMolecule, setHighlightedMolecule] = useState(null);
+
   // Check authentication on load
   useEffect(() => {
     const checkAuth = async () => {
@@ -612,7 +615,45 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Prepare Plotly data using the filtered graph data
+  // Create separate plotly data for search view
+  const searchPlotlyData = [{
+    x: filteredGraphData.map(node => node.x),
+    y: filteredGraphData.map(node => node.y),
+    mode: 'markers',
+    type: 'scattergl',
+    marker: {
+      size: 5,
+      color: filteredGraphData.map(node => {
+        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+          return '#ff0000'; // Red color for highlighted molecule
+        }
+        return node.x; // Default color based on x coordinate
+      }),
+      colorscale: [
+        [0, '#3498db'],
+        [0.5, '#2ecc71'],
+        [1, '#e74c3c']
+      ],
+      opacity: filteredGraphData.map(node => {
+        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+          return 1; // Full opacity for highlighted molecule
+        }
+        return 0.7; // Default opacity
+      })
+    },
+    hoverinfo: 'text',
+    text: filteredGraphData.map(node => 
+      `<b>Molecule Information:</b><br>` +
+      `SMILES: ${node.smiles}<br>` +
+      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+    )
+  }];
+
+  // Create plotly data for explorer view
   const plotlyData = [{
     x: filteredGraphData.map(node => node.x),
     y: filteredGraphData.map(node => node.y),
@@ -690,6 +731,7 @@ const App = () => {
     };
   }, []);
 
+  // Update handleSearch function
   const handleSearch = async () => {
     if (!searchInput.trim()) return;
 
@@ -697,6 +739,7 @@ const App = () => {
     setSearchError(null);
     setSearchResult(null);
     setSearchedMolecule(null);
+    setHighlightedMolecule(null);
 
     try {
       // First, find the molecule in our CSV data
@@ -705,9 +748,10 @@ const App = () => {
       );
       
       setSearchedMolecule(matchingMolecule);
+      setHighlightedMolecule(matchingMolecule);
 
       // Then fetch the molecule visualization from Python server
-      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -990,7 +1034,7 @@ const App = () => {
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {filteredGraphData.length > 0 ? (
                       <Plot
-                        data={plotlyData}
+                        data={searchPlotlyData}
                         layout={{
                           ...plotlyLayout,
                           autosize: true,
