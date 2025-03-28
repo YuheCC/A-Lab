@@ -11,7 +11,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout }) => {
   return (
     <nav className="navbar">
       <div className="navbar-title">
@@ -29,7 +29,133 @@ const Navbar = ({ activePage }) => {
           Molecular Universe
         </a>
       </div>
+      {isAuthenticated && (
+        <div className="navbar-user">
+          <span className="username">Welcome, {username}</span>
+          <button className="logout-button" onClick={onLogout}>Logout</button>
+        </div>
+      )}
     </nav>
+  );
+};
+
+// Login component
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      
+      if (!isLogin) {
+        formData.append('email', email);
+      }
+
+      const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'register'}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Authentication failed');
+      }
+
+      const data = await response.json();
+      
+      // Store token and user info in localStorage
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('permissions', data.permissions);
+      
+      // Reload the app to update authentication state
+      window.location.reload();
+      
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          {isLogin ? (
+            <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+          ) : (
+            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Login</button></p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -244,6 +370,14 @@ const App = () => {
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
   
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
+  const [authLoading, setAuthLoading] = useState(true);
+  
+  // API URL from environment variables
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+  
   // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
     molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
@@ -269,10 +403,55 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 71000;
+  const MAX_NODES = 70000;
+
+  // Check authentication on load
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setIsAuthenticated(false);
+        setAuthLoading(false);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/verify-token`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(true);
+          setUsername(data.username);
+          if (activePage === 'login') {
+            setActivePage('explorer');
+          }
+        } else {
+          // Token is invalid, clear storage
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('permissions');
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        console.error('Auth verification error:', err);
+        setIsAuthenticated(false);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [API_URL]);
 
   useEffect(() => {
     async function loadData() {
+      if (!isAuthenticated) return;
+      
       try {
         setLoading(true);
         const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
@@ -343,9 +522,12 @@ const App = () => {
         setLoading(false);
       }
     }
-    loadData();
+    
+    if (isAuthenticated) {
+      loadData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   // Apply filters based on range slider values
   useEffect(() => {
@@ -516,7 +698,7 @@ const App = () => {
       setSearchedMolecule(matchingMolecule);
 
       // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -531,10 +713,32 @@ const App = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('permissions');
+    setIsAuthenticated(false);
+  };
+
+  // If authentication is still being checked, show loading spinner
+  if (authLoading) {
+    return <div className="app-loading">Loading...</div>;
+  }
+  
+  // If not authenticated, show login page
+  if (!isAuthenticated) {
+    return <AuthPage />;
+  }
+
   return (
     <div className="App">
-      {/* Navbar */}
-      <Navbar activePage={activePage} />
+      {/* Navbar with logout button */}
+      <Navbar 
+        activePage={activePage} 
+        isAuthenticated={isAuthenticated} 
+        username={username}
+        onLogout={handleLogout}
+      />
       
       <header className="App-header">
         <div className="header-content">
@@ -558,7 +762,7 @@ const App = () => {
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); setActivePage('search'); }}
             >
-              Search
+              Simple Search
             </a>
             <a 
               href="#"
@@ -800,6 +1004,9 @@ const App = () => {
           </div>
         )}
       </div>
+      
+      {/* Node popup */}
+      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} />}
     </div>
   );
 };
