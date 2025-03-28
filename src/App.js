@@ -11,7 +11,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) => {
   return (
     <nav className="navbar">
       <div className="navbar-title">
@@ -29,10 +29,14 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout }) => {
           Molecular Universe
         </a>
       </div>
-      {isAuthenticated && (
+      {isAuthenticated ? (
         <div className="navbar-user">
           <span className="username">Welcome, {username}</span>
           <button className="logout-button" onClick={onLogout}>Logout</button>
+        </div>
+      ) : (
+        <div className="navbar-user">
+          <button className="signin-button" onClick={onSignIn}>Sign In</button>
         </div>
       )}
     </nav>
@@ -720,24 +724,67 @@ const App = () => {
     setIsAuthenticated(false);
   };
 
+  // Add useEffect for route handling
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const path = window.location.pathname;
+      if (path === '/login' && !isAuthenticated) {
+        setActivePage('login');
+      } else if (path === '/about') {
+        setActivePage('about');
+      } else if (path === '/explorer') {
+        setActivePage('explorer');
+      } else if (path === '/search') {
+        setActivePage('search');
+      } else if (path === '/chatbot') {
+        setActivePage('chatbot');
+      } else if (path === '/enterprise') {
+        setActivePage('enterprise');
+      } else if (path === '/') {
+        setActivePage('explorer');
+      }
+    };
+
+    // Initial route check
+    handleRouteChange();
+
+    // Listen for route changes
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, [isAuthenticated]);
+
+  // Update handleSignIn to use proper navigation
+  const handleSignIn = () => {
+    window.history.pushState({}, '', '/login');
+    setActivePage('login');
+  };
+
+  // Update navigation handlers to use proper routing
+  const handleNavigation = (page) => {
+    const path = page === 'explorer' ? '/' : `/${page}`;
+    window.history.pushState({}, '', path);
+    setActivePage(page);
+  };
+
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
     return <div className="app-loading">Loading...</div>;
   }
   
-  // If not authenticated, show login page
-  if (!isAuthenticated) {
+  // If not authenticated and not on About page, show login page
+  if (!isAuthenticated && activePage !== 'about') {
     return <AuthPage />;
   }
 
   return (
     <div className="App">
-      {/* Navbar with logout button */}
+      {/* Navbar with conditional rendering */}
       <Navbar 
         activePage={activePage} 
         isAuthenticated={isAuthenticated} 
         username={username}
         onLogout={handleLogout}
+        onSignIn={handleSignIn}
       />
       
       <header className="App-header">
@@ -746,35 +793,35 @@ const App = () => {
             <a 
               href="#"
               className={`header-link ${activePage === 'about' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('about'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('about'); }}
             >
               About
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('explorer'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
               Filter
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('search'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
               Simple Search
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('chatbot'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Chat
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('enterprise'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('enterprise'); }}
             >
               Enterprise Search
             </a>

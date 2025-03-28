@@ -1029,6 +1029,21 @@ body, html {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.signin-button {
+  background-color: #0080ff;
+  border: none;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.signin-button:hover {
+  background-color: #0066cc;
+}
+
 /* Loading Spinner */
 .app-loading {
   display: flex;
