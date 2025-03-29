@@ -528,7 +528,7 @@ const App = () => {
         y: 0,
         xref: 'paper',
         yref: 'paper',
-        text: 'Molecule not in database',
+        text: '',
         showarrow: false,
         bgcolor: 'rgba(255, 87, 34, 0.8)',
         bordercolor: '#FF5722',
