@@ -52,7 +52,8 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+  // Use explicit URL for authentication endpoint
+  const API_URL = 'http://0.0.0.0:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -381,7 +382,7 @@ const App = () => {
   const [userPermissions, setUserPermissions] = useState('basic');
   
   // API URL from environment variables
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+  const API_URL = 'http://0.0.0.0:8000';
   
   // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
@@ -636,7 +637,7 @@ const App = () => {
       }
 
       // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
