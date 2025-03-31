@@ -761,6 +761,28 @@ body, html {
   color: #333;
 }
 
+/* Style for user messages: slightly darker grey and constrained to the right 2/3 of the chat window */
+.chat-messages .user-message {
+  background-color: #dcdcdc; /* slightly darker grey */
+  margin-left: 33%;           /* pushes the message to the right, constraining it to the right 2/3 */
+  max-width: 66%;             /* ensures the message doesn't span the full width */
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+/* Optionally, style chatbot messages for contrast */
+.chat-messages .llm-message {
+  background-color: #e9f5ff; /* a lighter grey for chatbot responses */
+  margin-right: 33%;          /* aligns these messages to the left 2/3 of the window */
+  max-width: 66%;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
 .system-message p {
   margin: 0;
 }

@@ -42,10 +42,12 @@ logs
 *.log
 
 # Local env files
+/env
 .env
 .env.local
 .env.development
 .env.test
 .env.production 
+
 public/umap_product_demo_1M_set.csv
 umap_product_demo_1M_set.csv

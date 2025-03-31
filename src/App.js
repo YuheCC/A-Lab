@@ -326,22 +326,80 @@ const About = () => {
 
 // Chatbot component
 const ChatbotInterface = () => {
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([
+    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
+  ]);
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    // Append the user message
+    const userMessage = { type: "user-message", text: input.trim() };
+    setMessages(prev => [...prev, userMessage]);
+    const queryText = input.trim();
+    setInput("");
+
+    try {
+      // Query the backend Pinecone index via the /rag endpoint
+      const response = await fetch("http://localhost:8000/rag", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: queryText,
+          maxOutputLength: 1024,
+          ragEnabled: true,
+          webSearchEnabled: false,
+          webSearchClient: "Tavily",
+          model: "o3-mini"
+        })
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      // Assuming the response returns an 'outputs' field with the result text
+      const llmMessage = { type: "llm-message", text: data.outputs };
+      setMessages(prev => [...prev, llmMessage]);
+    } catch (error) {
+      const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
   return (
     <div className="chatbot-container">
       <div className="chatbot-content">
         <h2>AI Molecular Assistant</h2>
         <div className="chat-messages">
-          <div className="system-message">
-            <p>Welcome to the Molecular Universe AI Assistant. How can I help you today?</p>
-          </div>
+          {messages.map((msg, index) => (
+            <div 
+              key={index} 
+              className={msg.type} 
+              style={{ whiteSpace: 'pre-wrap' }} 
+              dangerouslySetInnerHTML={{ __html: msg.text }}>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
         </div>
         <div className="chat-input-container">
-          <textarea 
-            className="chat-input" 
+          <textarea
+            className="chat-input"
             placeholder="Ask a question about molecules, properties, or chemical structures..."
             rows={3}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
           />
-          <button className="send-button">Send</button>
+          <button className="send-button" onClick={handleSend}>Send</button>
         </div>
       </div>
     </div>
