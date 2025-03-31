@@ -20,7 +20,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
       <div className="navbar-links">
         <a href="https://www.ses.ai/molecular-universe" target="_blank" rel="noopener noreferrer" className="navbar-link">Products</a>
         <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
-        <a href="#" className="navbar-link">Company</a>
+        <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="#"
