@@ -476,10 +476,99 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
 
 // Enterprise Search component
 const EnterpriseSearch = () => {
+  const [searchInput, setSearchInput] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  
+  const handleSearch = async () => {
+    if (!searchInput.trim()) return;
+    
+    setSearchLoading(true);
+    setSearchError(null);
+    setSearchResult(null);
+    
+    try {
+      // Fetch the molecule visualization from Python server
+      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+      }
+      const data = await response.blob();
+      const imageUrl = URL.createObjectURL(data);
+      setSearchResult(imageUrl);
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchError(err.message);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+  
   return (
     <div className="enterprise-container">
       <div className="enterprise-content">
-        <h1>Advanced Search</h1>
+        <h1 className="enterprise-header">Advanced Molecular Search</h1>
+        <p className="enterprise-description">
+          Search our extensive database to find specific molecules and their properties.
+        </p>
+        
+        <div className="enterprise-search-wrapper">
+          <div className="enterprise-search-container">
+            <input 
+              type="text" 
+              className="enterprise-search-input"
+              placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)" 
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+            <button 
+              className="enterprise-search-button"
+              onClick={handleSearch}
+              disabled={searchLoading}
+            >
+              {searchLoading ? 'Searching...' : 'Search'}
+            </button>
+          </div>
+        </div>
+        
+        <div className="enterprise-results">
+          {searchLoading && (
+            <div className="enterprise-loading">
+              <div className="loading-spinner"></div>
+              <p>Generating molecule visualization...</p>
+            </div>
+          )}
+          
+          {searchError && (
+            <div className="enterprise-error">
+              <p>Error: {searchError}</p>
+              <p>Please check your SMILES string and try again.</p>
+            </div>
+          )}
+          
+          {searchResult && (
+            <div className="enterprise-molecule">
+              <h2>Molecule Visualization</h2>
+              <div className="molecule-image-container">
+                <img 
+                  src={searchResult} 
+                  alt="Molecule visualization" 
+                  className="molecule-image"
+                />
+              </div>
+              <div className="molecule-smiles">
+                <h3>SMILES String:</h3>
+                <p>{searchInput}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
