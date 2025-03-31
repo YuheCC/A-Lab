@@ -724,7 +724,7 @@ const App = () => {
       
       // If not authenticated, only allow access to About page
       if (!isAuthenticated) {
-        if (path === '/about') {
+        if (path === '/about' || path === '/') {
           setActivePage('about');
         } else {
           // Redirect to login for any other route
@@ -736,19 +736,20 @@ const App = () => {
 
       // For authenticated users, handle routes based on permissions
       if (path === '/login') {
-        // Redirect to about if already authenticated
-        window.history.pushState({}, '', '/about');
+        // Redirect to root if already authenticated
+        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/about') {
+        // Redirect /about to root
+        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/') {
-        // Redirect root to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
+        // Stay on the current active page or default to about
+        // No need to change URL since we're already at root
       } else {
-        // Redirect any other route to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
+        // Redirect any other route to root
+        window.history.pushState({}, '', '/');
+        // Keep the current active page
       }
     };
 
@@ -771,6 +772,10 @@ const App = () => {
     if (!checkPageAccess(page)) {
       setActivePage('permissions-error');
       return;
+    }
+    // Always keep the URL as root when navigating between tabs
+    if (window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/');
     }
     setActivePage(page);
   };
