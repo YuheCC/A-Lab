@@ -955,6 +955,8 @@ body, html {
   height: 100%;
   padding: 40px 20px;
   background-color: #f8f9fa;
+  overflow-y: auto;
+  max-height: calc(100vh - 110px);
 }
 
 .enterprise-content {
@@ -1072,6 +1074,8 @@ body, html {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
 }
 
 .enterprise-molecule h2 {
@@ -1105,6 +1109,7 @@ body, html {
   background-color: #f8f9fa;
   padding: 15px;
   border-radius: 8px;
+  margin-bottom: 30px;
 }
 
 .molecule-smiles h3 {
