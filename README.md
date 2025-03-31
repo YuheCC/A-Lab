@@ -6,7 +6,6 @@ A molecular visualization and exploration tool with user authentication.
 
 - `src/` - React frontend application
 - `public/` - Static files for the frontend
-- `.env` files - Environment configuration for both frontend and backend
 
 ## Setup and Running
 
