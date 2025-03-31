@@ -10,13 +10,13 @@ A molecular visualization and exploration tool with user authentication.
 ## Setup and Running
 
 ### Frontend (React Application)
-
-1. Install Node.js dependencies:
+1. Node.js version v22.14.0 is recommended for frontend compatibility
+2. Install Node.js dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+3. Start the development server:
 ```bash
 npm start
 ```
