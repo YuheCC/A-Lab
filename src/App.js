@@ -31,7 +31,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
-          <span className="username">Welcome, {username}</span>
+          <span className="username">{username}</span>
           <button className="logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
@@ -101,8 +101,9 @@ const AuthPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
           <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+          <p>{isLogin ? 'Sign in to access the Molecular Universe' : 'Join the Molecular Universe community'}</p>
         </div>
         
         {error && <div className="auth-error">{error}</div>}
@@ -115,18 +116,20 @@ const AuthPage = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
               required
             />
           </div>
           
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Email Address</label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
                 required
               />
             </div>
@@ -139,6 +142,7 @@ const AuthPage = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
               required
             />
           </div>
@@ -148,7 +152,7 @@ const AuthPage = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+            {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
         
@@ -156,7 +160,7 @@ const AuthPage = () => {
           {isLogin ? (
             <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
           ) : (
-            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Login</button></p>
+            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
           )}
         </div>
       </div>
