@@ -24,7 +24,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
         <a href="#" className="navbar-link">Media</a>
         <a
           href="#"
-          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search') ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
