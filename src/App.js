@@ -220,7 +220,7 @@ const ChatbotInterface = () => {
 
     try {
       // Query the backend Pinecone index via the /rag endpoint
-      const response = await fetch("http://localhost:8010/rag", {
+      const response = await fetch("http://localhost:8000/rag", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
