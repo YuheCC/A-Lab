@@ -23,7 +23,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
         <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
-          href="#"
+          href="/"
           className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
         >
           Molecular Universe
@@ -1130,35 +1130,35 @@ const App = () => {
         <div className="header-content">
           <div className="header-links">
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'about' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('about'); }}
             >
               About
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
               Filter
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
               Simple Search
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Chat
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('enterprise'); }}
             >
