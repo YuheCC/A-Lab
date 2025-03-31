@@ -388,12 +388,12 @@ const About = () => {
 
           <div className="term-item">
             <h4 style={{ color: '#000000' }}>Predicted Melting Point:</h4>
-            <p>The temperature at which a molecule transitions from solid to liquid state, predicted using computational models based on the molecule's structure and properties.</p>
+            <p>An estimated temperature at which a compound changes from solid to liquid, based on its molecular structure and properties.</p>
           </div>
 
           <div className="term-item">
             <h4 style={{ color: '#000000' }}>Predicted Boiling Point:</h4>
-            <p>The temperature at which a molecule transitions from liquid to gas state, predicted using computational models based on the molecule's structure and properties.</p>
+            <p>An estimated temperature at which a compound changes from liquid to gas, also based on its molecular features.</p>
           </div>
         </div>
       </div>
@@ -999,6 +999,12 @@ const App = () => {
     return (
       <div className="permissions-error-container">
         <div className="permissions-error-content">
+          <div className="lock-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
           <h2>Access Restricted</h2>
           <p>{message}</p>
           <button 
