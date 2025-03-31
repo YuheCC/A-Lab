@@ -484,6 +484,7 @@ const EnterpriseSearch = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
+  const [includeRelatives, setIncludeRelatives] = useState(false);
   
   const handleSearch = async () => {
     if (!searchInput.trim()) return;
@@ -494,7 +495,7 @@ const EnterpriseSearch = () => {
     
     try {
       // Fetch the molecule visualization from Python server
-      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -539,6 +540,17 @@ const EnterpriseSearch = () => {
               {searchLoading ? 'Searching...' : 'Search'}
             </button>
           </div>
+        </div>
+        
+        <div className="search-options">
+          <label className="relatives-option">
+            <input
+              type="checkbox"
+              checked={includeRelatives}
+              onChange={(e) => setIncludeRelatives(e.target.checked)}
+            />
+            <span>Include closest 10 relatives</span>
+          </label>
         </div>
         
         <div className="enterprise-results">

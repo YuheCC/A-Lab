@@ -1027,6 +1027,31 @@ body, html {
   background-color: #1e7e34;
 }
 
+.search-options {
+  width: 80%;
+  max-width: 800px;
+  margin-bottom: 25px;
+}
+
+.relatives-option {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
+
+.relatives-option input[type="checkbox"] {
+  margin-right: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.relatives-option span {
+  font-weight: 500;
+}
+
 /* Results section styling */
 .enterprise-results {
   width: 100%;
