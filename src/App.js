@@ -1210,13 +1210,26 @@ const App = () => {
         if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
           return '#ff0000'; // Red color for highlighted molecule
         }
-        return node.x; // Default color based on x coordinate
+        return node.properties?.molwt || 0; // Color by molecular weight
       }),
       colorscale: [
-        [0, '#3498db'],
-        [0.5, '#2ecc71'],
-        [1, '#e74c3c']
+        [0, '#440154'], // darkest purple
+        [0.25, '#3b528b'], // blue-purple
+        [0.5, '#21918c'], // green-blue
+        [0.75, '#5ec962'], // green
+        [1, '#fde725'] // yellow
       ],
+      colorbar: {
+        title: 'Molecular Weight',
+        thickness: 20,
+        len: 0.6,
+        y: 0.5,
+        titleside: 'right',
+        titlefont: {
+          size: 12,
+          color: '#333'
+        }
+      },
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
           return 1; // Full opacity for highlighted molecule
@@ -1244,12 +1257,25 @@ const App = () => {
     type: 'scattergl',
     marker: {
       size: 5,
-      color: filteredGraphData.map(node => node.x),
+      color: filteredGraphData.map(node => node.properties?.molwt || 0),
       colorscale: [
-        [0, '#3498db'],
-        [0.5, '#2ecc71'],
-        [1, '#e74c3c']
+        [0, '#440154'], // darkest purple
+        [0.25, '#3b528b'], // blue-purple
+        [0.5, '#21918c'], // green-blue
+        [0.75, '#5ec962'], // green
+        [1, '#fde725'] // yellow
       ],
+      colorbar: {
+        title: 'Molecular Weight',
+        thickness: 20,
+        len: 0.6,
+        y: 0.5,
+        titleside: 'right',
+        titlefont: {
+          size: 12,
+          color: '#333'
+        }
+      },
       opacity: 0.7
     },
     hoverinfo: 'text',
