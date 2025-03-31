@@ -265,58 +265,131 @@ const About = () => {
     <div className="about-container">
       <div className="about-content-wrapper">
         <div className="about-content">
-          <p>
-            SES AI scientists have amassed a complete "molecular universe" of over 87 million molecules along with a vast database of their various properties to serve both public and private industry searches for compounds that will propel future technologies. Initially built to serve our internal search for molecules that could build better lithium metal batteries, the molecular universe now serves beyond this initial mission. SES AI has decided to provide both free and subscription tiered access to the world. Read on to learn more about the specifics of the Molecular Universe.
-          </p>
+          
+          <div className="about-intro-section" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3 style={{ color: '#0066cc', fontSize: '22px', marginTop: 0, marginBottom: '20px' }}>About Molecular Universe</h3>
+            <p>
+              The world of molecules is unimaginably vast—far bigger than most people realize. Even with modest constraints, the number of potential small organic molecules far exceeds the number of stars in the observable universe. But here's the surprising truth: out of this cosmic-scale molecular universe, scientists have only explored a tiny sliver—maybe a few hundred solvents and additives for batteries. And most of these weren't designed for batteries at all. They were borrowed from other industries, lightly modified, and recycled across generations of battery chemistries.
+            </p>
+            
+            <p>
+              These known molecules also tend to stick closely together in structure and function. You see the same familiar motifs—cyclic carbonates, linear ethers, a few well-known anions. It's like trying to write a novel using only a hundred words. The result? We're missing out on a vast number of potentially game-changing molecules hidden in the unexplored corners of the molecular universe.
+            </p>
+            
+            <p>
+              Molecular Universe Service opens up this hidden space and puts powerful discovery tools into your hands. Here's what you can do:
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Explore the Molecular Map (UMAP)</h3>
+            <p>
+              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Filter by Chemical Properties</h3>
+            <p>
+              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features:
+            </p>
+            <ul className="feature-list">
+              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+              <li><strong>Dipole Moment:</strong> Higher dipoles often suggest a better ability to solvate ions—a key factor in electrolyte performance.</li>
+              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
+            </ul>
+            <p>
+              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Intelligent Search & "Find a Friend"</h3>
+            <p>
+              Search molecules in two powerful ways:
+            </p>
+            <ol className="feature-list">
+              <li><strong>By SMILES</strong> – Input a SMILES string and instantly retrieve all key info.</li>
+              <li><strong>By natural language</strong> – Ask questions like: "Find 5 molecules with LUMO above -1 eV and high dipoles."</li>
+            </ol>
+            <p>
+              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
+            </p>
+            <ul className="feature-list">
+              <li>Discover molecules that are structurally similar with similar properties (great for refinement)</li>
+              <li>Or find structurally diverse options that still have similar properties (great for exploration)</li>
+            </ul>
+            <p>
+              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Chat with Our Expert LLM</h3>
+            <p>
+              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
+            </p>
+            <ul className="feature-list feature-examples">
+              <li>"What solvents work best with Li-metal anodes?"</li>
+              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
+              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
+            </ul>
+            <p>
+              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
+            </p>
+          </div>
         </div>
-        <h3>About the Universe Map</h3>
-        <div className="blue-line"></div>
+        
         <div className="umap-section">
           <div className="umap-description">
+            <h3 style={{ color: '#0066cc', fontSize: '22px', marginTop: 0, marginBottom: '20px' }}>About the Universe Map</h3>
             <p>
-              The Molecular Universe Map takes 512 calculated properties and does dimensionality reduction using the UMAP reductionality method to project these relationships down to a 2-dimensional representation of the molecules which can be plotted as a map (right)​
+              The Molecular Universe Map takes 512 calculated properties and does dimensionality reduction using the UMAP reductionality method to project these relationships down to a 2-dimensional representation of the molecules which can be plotted as a map. 
             </p>
+            <p>SES AI scientists have amassed a complete "molecular universe" of over 87 million molecules along with a vast database of their various properties to serve both public and private industry searches for compounds that will propel future technologies. Initially built to serve our internal search for molecules that could build better lithium metal batteries, the molecular universe now serves beyond this initial mission. SES AI has decided to provide both free and subscription tiered access to the world. Read on to learn more about the specifics of the Molecular Universe.</p>
           </div>
           <div className="umap-image">
             <img src="/high_res_umap_figure.png" alt="UMAP Visualization" />
           </div>
         </div>
-        <h3>Terms and Service</h3>
-        <div className="blue-line"></div>
+        
         <div className="terms-section">
+          <h3 style={{ color: '#0066cc', marginTop: 0, marginBottom: '20px', fontSize: '22px' }}>Terms and Metrics</h3>
           <div className="term-item">
-            <h4>UMAP (Uniform Manifold Approximation and Projection):</h4>
-            <p>A machine learning technique used to reduce high-dimensional data into 2D or 3D for easy visualization. In chemistry, it helps show patterns and clusters in molecular datasets.​</p>
+            <h4 style={{ color: '#000000' }}>UMAP (Uniform Manifold Approximation and Projection):</h4>
+            <p>A machine learning technique used to reduce high-dimensional data into 2D or 3D for easy visualization. In chemistry, it helps show patterns and clusters in molecular datasets.</p>
           </div>
 
           <div className="term-item">
-            <h4>SMILES (Simplified Molecular Input Line Entry System):</h4>
-            <p>A way to represent a molecule's structure as a line of text. It uses letters and symbols to describe atoms and bonds, making it easy for computers to process chemical structures.​</p>
+            <h4 style={{ color: '#000000' }}>SMILES (Simplified Molecular Input Line Entry System):</h4>
+            <p>A way to represent a molecule's structure as a line of text. It uses letters and symbols to describe atoms and bonds, making it easy for computers to process chemical structures.</p>
           </div>
 
           <div className="term-item">
-            <h4>HOMO (Highest Occupied Molecular Orbital):</h4>
-            <p>The highest energy level that contains electrons in a molecule. It plays a key role in determining how a molecule donates electrons during chemical reactions.​</p>
+            <h4 style={{ color: '#000000' }}>HOMO (Highest Occupied Molecular Orbital):</h4>
+            <p>The highest energy level that contains electrons in a molecule. It plays a key role in determining how a molecule donates electrons during chemical reactions.</p>
           </div>
 
           <div className="term-item">
-            <h4>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
-            <p>The lowest energy level that can accept electrons. It helps predict how a molecule will react, especially when accepting electrons from another molecule.​</p>
+            <h4 style={{ color: '#000000' }}>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
+            <p>The lowest energy level that can accept electrons. It helps predict how a molecule will react, especially when accepting electrons from another molecule.</p>
           </div>
 
           <div className="term-item">
-            <h4>Min Electrostatic Potential:</h4>
-            <p>The most negatively charged area on a molecule's surface. It usually shows where positively charged species (like protons) may be attracted.​</p>
+            <h4 style={{ color: '#000000' }}>Min Electrostatic Potential:</h4>
+            <p>The most negatively charged area on a molecule's surface. It usually shows where positively charged species (like protons) may be attracted.</p>
           </div>
 
           <div className="term-item">
-            <h4>Predicted Melting Point:</h4>
-            <p>​</p>
+            <h4 style={{ color: '#000000' }}>Predicted Melting Point:</h4>
+            <p>The temperature at which a molecule transitions from solid to liquid state, predicted using computational models based on the molecule's structure and properties.</p>
           </div>
 
           <div className="term-item">
-            <h4>Predicted Boiling Point:</h4>
-            <p>​</p>
+            <h4 style={{ color: '#000000' }}>Predicted Boiling Point:</h4>
+            <p>The temperature at which a molecule transitions from liquid to gas state, predicted using computational models based on the molecule's structure and properties.</p>
           </div>
         </div>
       </div>
@@ -406,7 +479,7 @@ const EnterpriseSearch = () => {
   return (
     <div className="enterprise-container">
       <div className="enterprise-content">
-        <h1>Enterprise Search</h1>
+        <h1>Advanced Search</h1>
       </div>
     </div>
   );
@@ -1162,7 +1235,7 @@ const App = () => {
               className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('enterprise'); }}
             >
-              Enterprise Search
+              Advanced Search
             </a>
           </div>
         </div>
