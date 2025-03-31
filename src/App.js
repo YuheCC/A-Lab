@@ -18,10 +18,10 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
         <img src={logo} alt="SES AI Logo" className="navbar-logo" />
       </div>
       <div className="navbar-links">
-        <a href="#" className="navbar-link">Products</a>
-        <a href="#" className="navbar-link">Technology</a>
+        <a href="https://www.ses.ai/molecular-universe" target="_blank" rel="noopener noreferrer" className="navbar-link">Products</a>
+        <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
         <a href="#" className="navbar-link">Company</a>
-        <a href="#" className="navbar-link">Media</a>
+        <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="#"
           className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
