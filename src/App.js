@@ -325,12 +325,7 @@ const About = () => {
 };
 
 // Chatbot component
-const ChatbotInterface = () => {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
-  ]);
-
+const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -432,6 +427,12 @@ const App = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
+  
+  // Chat state (moved from ChatbotInterface)
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([
+    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
+  ]);
   
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -1248,7 +1249,7 @@ const App = () => {
         ) : activePage === 'about' ? (
           <About />
         ) : activePage === 'chatbot' ? (
-          checkPageAccess('chatbot') ? <ChatbotInterface /> : <PermissionsError />
+          checkPageAccess('chatbot') ? <ChatbotInterface input={chatInput} setInput={setChatInput} messages={chatMessages} setMessages={setChatMessages} /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
           checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
         ) : (
