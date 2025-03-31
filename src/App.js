@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -11,7 +11,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) => {
   return (
     <nav className="navbar">
       <div className="navbar-title">
@@ -29,7 +29,138 @@ const Navbar = ({ activePage }) => {
           Molecular Universe
         </a>
       </div>
+      {isAuthenticated ? (
+        <div className="navbar-user">
+          <span className="username">Welcome, {username}</span>
+          <button className="logout-button" onClick={onLogout}>Logout</button>
+        </div>
+      ) : (
+        <div className="navbar-user">
+          <button className="signin-button" onClick={onSignIn}>Sign In</button>
+        </div>
+      )}
     </nav>
+  );
+};
+
+// Login component
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Use explicit URL for authentication endpoint
+  const API_URL = 'http://0.0.0.0:8000';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      
+      if (!isLogin) {
+        formData.append('email', email);
+      }
+
+      const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'register'}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Authentication failed');
+      }
+
+      const data = await response.json();
+      
+      // Store token and user info in localStorage
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('permissions', data.permissions);
+      
+      // Reload the app to update authentication state
+      window.location.reload();
+      
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          {isLogin ? (
+            <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+          ) : (
+            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Login</button></p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -302,6 +433,15 @@ const App = () => {
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
   
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
+  const [authLoading, setAuthLoading] = useState(true);
+  const [userPermissions, setUserPermissions] = useState('basic');
+  
+  // API URL from environment variables
+  const API_URL = 'http://0.0.0.0:8000';
+  
   // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
     molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
@@ -327,10 +467,418 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 71000;
+  const MAX_NODES = 70000;
+
+  // Add new state for highlighted molecule
+  const [highlightedMolecule, setHighlightedMolecule] = useState(null);
+  const [arrowOffset, setArrowOffset] = useState(-40);
+  
+  // Track Plotly initialization state
+  const [searchPlotInitialized, setSearchPlotInitialized] = useState(false);
+  const [mainPlotInitialized, setMainPlotInitialized] = useState(false);
+  
+  // Ref for plots to check if they're initialized
+  const plotlyRef = useRef(null);
+  const searchPlotlyRef = useRef(null);
+  
+  // Add bouncing arrow animation when molecule is highlighted
+  useEffect(() => {
+    if (!highlightedMolecule || !searchPlotInitialized) return;
+    
+    let direction = -1; // Start moving up
+    let current = -40;
+    const min = -60;
+    const max = -30;
+    
+    const interval = setInterval(() => {
+      current += direction * 2;
+      
+      if (current <= min) {
+        direction = 1; // Change to moving down
+      } else if (current >= max) {
+        direction = -1; // Change to moving up
+      }
+      
+      setArrowOffset(current);
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, [highlightedMolecule, searchPlotInitialized]);
+  
+  const plotlyLayout = {
+    autosize: true,
+    height: 600,
+    plot_bgcolor: '#ffffff',
+    paper_bgcolor: '#ffffff',
+    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+    font: {
+      family: 'Arial, sans-serif',
+      size: 12,
+      color: '#333'
+    },
+    xaxis: { showgrid: false, zeroline: false, visible: false },
+    yaxis: { showgrid: false, zeroline: false, visible: false },
+    showlegend: false,
+    hovermode: 'closest',
+    hoverlabel: {
+      bgcolor: '#000',
+      bordercolor: '#333',
+      font: {
+        family: 'Arial, sans-serif',
+        size: 12,
+        color: '#fff'
+      }
+    }
+  };
+  
+  // Create search mode layout with annotations when needed
+  const searchLayout = useMemo(() => {
+    const layout = {
+      ...plotlyLayout,
+      autosize: true,
+      height: null,
+      width: null
+    };
+    
+    // Only add annotations if highlightedMolecule is defined
+    if (highlightedMolecule) {
+      layout.annotations = [{
+        x: highlightedMolecule.x,
+        y: highlightedMolecule.y,
+        xref: 'x',
+        yref: 'y',
+        text: 'Found Match!',
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: 1.5,
+        arrowwidth: 2,
+        arrowcolor: '#FF5722',
+        ax: 0,
+        ay: arrowOffset,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 12
+        }
+      }];
+    } else if (searchedMolecule && !highlightedMolecule) {
+      layout.annotations = [{
+        x: 0,
+        y: 0,
+        xref: 'paper',
+        yref: 'paper',
+        text: '',
+        showarrow: false,
+        bgcolor: '#fff3cd',
+        bordercolor: '#ffeeba',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: '#856404',
+          size: 14
+        }
+      }];
+    } else if (searchResult && !searchedMolecule) {
+      layout.annotations = [{
+        x: 0,
+        y: 0,
+        xref: 'paper',
+        yref: 'paper',
+        text: '',
+        showarrow: false,
+        bgcolor: 'rgba(255, 87, 34, 0.8)',
+        bordercolor: '#FF5722',
+        borderwidth: 2,
+        borderpad: 4,
+        font: {
+          color: 'white',
+          size: 14
+        }
+      }];
+    }
+    
+    return layout;
+  }, [plotlyLayout, highlightedMolecule, searchResult, searchedMolecule, arrowOffset]);
+
+  const plotlyConfig = {
+    displayModeBar: true,
+    responsive: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
+  };
+
+  // Add a ref and click-outside handler for the search dropdown
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Update handleSearch function
+  const handleSearch = async () => {
+    if (!searchInput.trim()) return;
+
+    setSearchLoading(true);
+    setSearchError(null);
+    setSearchResult(null);
+    setSearchedMolecule(null);
+    setHighlightedMolecule(null);
+
+    try {
+      // First, find the molecule in our loaded UMAP data
+      const matchingMolecule = graphData.find(node => 
+        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+      );
+      
+      if (matchingMolecule) {
+        // Molecule found in UMAP data
+        setSearchedMolecule(matchingMolecule);
+        setHighlightedMolecule(matchingMolecule);
+      } else {
+        // If not found in UMAP data, check the full CSV
+        try {
+          const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+          if (response.ok) {
+            const text = await response.text();
+            
+            // Use a Promise to make Papa.parse wait until completion
+            await new Promise((resolve) => {
+              Papa.parse(text, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                  // Find the molecule in the full CSV data
+                  const csvMolecule = results.data.find(row => 
+                    row.smiles && row.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+                  );
+                  
+                  if (csvMolecule) {
+                    // Create a formatted molecule object from CSV data
+                    const formattedMolecule = {
+                      smiles: csvMolecule.smiles,
+                      properties: {
+                        molwt: csvMolecule.molwt,
+                        homo_eV: csvMolecule.homo_eV,
+                        lumo_eV: csvMolecule.lumo_eV,
+                        esp_min_eV: csvMolecule.esp_min_eV,
+                        esp_max_eV: csvMolecule.esp_max_eV
+                      },
+                      rawData: csvMolecule
+                    };
+                    
+                    setSearchedMolecule(formattedMolecule);
+                    // Don't highlight on UMAP since it's not in the visualization
+                  }
+                  resolve();
+                },
+                error: (error) => {
+                  console.error("CSV parse error:", error);
+                  resolve();
+                }
+              });
+            });
+          }
+        } catch (csvError) {
+          console.error('Error checking full CSV:', csvError);
+        }
+      }
+
+      // Then fetch the molecule visualization from Python server
+      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+      }
+      const data = await response.blob();
+      const imageUrl = URL.createObjectURL(data);
+      setSearchResult(imageUrl);
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchError(err.message);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('permissions');
+    setIsAuthenticated(false);
+  };
+
+  // Update useEffect for route handling
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const path = window.location.pathname;
+      
+      // If not authenticated, only allow access to About page
+      if (!isAuthenticated) {
+        if (path === '/about') {
+          setActivePage('about');
+        } else {
+          // Redirect to login for any other route
+          window.history.pushState({}, '', '/login');
+          setActivePage('login');
+        }
+        return;
+      }
+
+      // For authenticated users, handle routes based on permissions
+      if (path === '/login') {
+        // Redirect to about if already authenticated
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      } else if (path === '/about') {
+        setActivePage('about');
+      } else if (path === '/') {
+        // Redirect root to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      } else {
+        // Redirect any other route to about
+        window.history.pushState({}, '', '/about');
+        setActivePage('about');
+      }
+    };
+
+    // Initial route check
+    handleRouteChange();
+
+    // Listen for route changes
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, [isAuthenticated, userPermissions]);
+
+  // Update handleSignIn to use proper navigation
+  const handleSignIn = () => {
+    window.history.pushState({}, '', '/login');
+    setActivePage('login');
+  };
+
+  // Update handleNavigation to check permissions
+  const handleNavigation = (page) => {
+    if (!checkPageAccess(page)) {
+      setActivePage('permissions-error');
+      return;
+    }
+    setActivePage(page);
+  };
+
+  // Move checkPageAccess inside App component
+  const checkPageAccess = (page) => {
+    // Basic users can only access About page
+    if (userPermissions === 'basic') {
+      return page === 'about';
+    }
+    
+    // Premium users can access About, Filter, Simple Search, and Chat
+    if (userPermissions === 'premium') {
+      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
+    }
+    
+    // Admin users can access everything
+    if (userPermissions === 'admin') {
+      return true;
+    }
+    
+    // Default to no access
+    return false;
+  };
+
+  // Update PermissionsError component to show different messages based on user type
+  const PermissionsError = () => {
+    let message = '';
+    let buttonText = '';
+    let buttonAction = () => {};
+
+    if (userPermissions === 'basic') {
+      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
+      buttonText = 'View Pricing';
+      buttonAction = () => window.location.href = '/pricing';
+    } else if (userPermissions === 'premium') {
+      message = 'This feature is only available for admin users. Please contact your administrator for access.';
+      buttonText = 'Contact Admin';
+      buttonAction = () => window.location.href = '/contact';
+    }
+
+    return (
+      <div className="permissions-error-container">
+        <div className="permissions-error-content">
+          <h2>Access Restricted</h2>
+          <p>{message}</p>
+          <button 
+            className="upgrade-button"
+            onClick={buttonAction}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Check authentication on load
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      const permissions = localStorage.getItem('permissions') || 'basic';
+      setUserPermissions(permissions);
+      
+      if (!token) {
+        setIsAuthenticated(false);
+        setAuthLoading(false);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/verify-token`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(true);
+          setUsername(data.username);
+          setUserPermissions(data.permissions || 'basic');
+          if (activePage === 'login') {
+            setActivePage('explorer');
+          }
+        } else {
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('permissions');
+          setIsAuthenticated(false);
+          setUserPermissions('basic');
+        }
+      } catch (err) {
+        console.error('Auth verification error:', err);
+        setIsAuthenticated(false);
+        setUserPermissions('basic');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [API_URL]);
 
   useEffect(() => {
     async function loadData() {
+      if (!isAuthenticated) return;
+      
       try {
         setLoading(true);
         const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
@@ -401,9 +949,12 @@ const App = () => {
         setLoading(false);
       }
     }
-    loadData();
+    
+    if (isAuthenticated) {
+      loadData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   // Apply filters based on range slider values
   useEffect(() => {
@@ -479,7 +1030,45 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Prepare Plotly data using the filtered graph data
+  // Create separate plotly data for search view
+  const searchPlotlyData = [{
+    x: filteredGraphData.map(node => node.x),
+    y: filteredGraphData.map(node => node.y),
+    mode: 'markers',
+    type: 'scattergl',
+    marker: {
+      size: 5,
+      color: filteredGraphData.map(node => {
+        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+          return '#ff0000'; // Red color for highlighted molecule
+        }
+        return node.x; // Default color based on x coordinate
+      }),
+      colorscale: [
+        [0, '#3498db'],
+        [0.5, '#2ecc71'],
+        [1, '#e74c3c']
+      ],
+      opacity: filteredGraphData.map(node => {
+        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+          return 1; // Full opacity for highlighted molecule
+        }
+        return 0.7; // Default opacity
+      })
+    },
+    hoverinfo: 'text',
+    text: filteredGraphData.map(node => 
+      `<b>Molecule Information:</b><br>` +
+      `SMILES: ${node.smiles}<br>` +
+      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+    )
+  }];
+
+  // Create plotly data for explorer view
   const plotlyData = [{
     x: filteredGraphData.map(node => node.x),
     y: filteredGraphData.map(node => node.y),
@@ -507,92 +1096,29 @@ const App = () => {
     )
   }];
 
-  const plotlyLayout = {
-    autosize: true,
-    height: 600,
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-    font: {
-      family: 'Arial, sans-serif',
-      size: 12,
-      color: '#333'
-    },
-    xaxis: { showgrid: false, zeroline: false, visible: false },
-    yaxis: { showgrid: false, zeroline: false, visible: false },
-    showlegend: false,
-    hovermode: 'closest',
-    hoverlabel: {
-      bgcolor: '#000',
-      bordercolor: '#333',
-      font: {
-        family: 'Arial, sans-serif',
-        size: 12,
-        color: '#fff'
-      }
-    }
-  };
-
-  const plotlyConfig = {
-    displayModeBar: true,
-    responsive: true,
-    scrollZoom: true,
-    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
-  };
-
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
-  // Add a ref and click-outside handler for the search dropdown
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleSearch = async () => {
-    if (!searchInput.trim()) return;
-
-    setSearchLoading(true);
-    setSearchError(null);
-    setSearchResult(null);
-    setSearchedMolecule(null);
-
-    try {
-      // First, find the molecule in our CSV data
-      const matchingMolecule = graphData.find(node => 
-        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-      );
-      
-      setSearchedMolecule(matchingMolecule);
-
-      // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://localhost:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
-      }
-      const data = await response.blob();
-      const imageUrl = URL.createObjectURL(data);
-      setSearchResult(imageUrl);
-    } catch (err) {
-      console.error('Search error:', err);
-      setSearchError(err.message);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
+  // If authentication is still being checked, show loading spinner
+  if (authLoading) {
+    return <div className="app-loading">Loading...</div>;
+  }
+  
+  // If not authenticated and not on About page, show login page
+  if (!isAuthenticated && activePage !== 'about') {
+    return <AuthPage />;
+  }
 
   return (
     <div className="App">
-      {/* Navbar */}
-      <Navbar activePage={activePage} />
+      {/* Navbar with conditional rendering */}
+      <Navbar 
+        activePage={activePage} 
+        isAuthenticated={isAuthenticated} 
+        username={username}
+        onLogout={handleLogout}
+        onSignIn={handleSignIn}
+      />
       
       <header className="App-header">
         <div className="header-content">
@@ -600,35 +1126,35 @@ const App = () => {
             <a 
               href="#"
               className={`header-link ${activePage === 'about' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('about'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('about'); }}
             >
               About
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('explorer'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
               Filter
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('search'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
-              Search
+              Simple Search
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('chatbot'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Chat
             </a>
             <a 
               href="#"
               className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActivePage('enterprise'); }}
+              onClick={(e) => { e.preventDefault(); handleNavigation('enterprise'); }}
             >
               Enterprise Search
             </a>
@@ -646,17 +1172,26 @@ const App = () => {
       </header>
       
       <div className="main-container">
-        {activePage === 'explorer' ? (
+        {activePage === 'permissions-error' ? (
+          <PermissionsError />
+        ) : activePage === 'explorer' ? (
           <>
             <div className="graph-container">
               <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {filteredGraphData.length > 0 ? (
                   <Plot
                     data={plotlyData}
-                    layout={plotlyLayout}
+                    layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
                     config={plotlyConfig}
                     style={{ width: '100%', height: '100%' }}
                     onClick={handlePointClick}
+                    onInitialized={(figure) => {
+                      plotlyRef.current = figure;
+                      setMainPlotInitialized(true);
+                    }}
+                    onUpdate={(figure) => {
+                      plotlyRef.current = figure;
+                    }}
                   />
                 ) : (
                   <div className="loading-message">
@@ -708,9 +1243,9 @@ const App = () => {
         ) : activePage === 'about' ? (
           <About />
         ) : activePage === 'chatbot' ? (
-          <ChatbotInterface />
+          checkPageAccess('chatbot') ? <ChatbotInterface /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
-          <EnterpriseSearch />
+          checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
@@ -721,20 +1256,19 @@ const App = () => {
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {filteredGraphData.length > 0 ? (
                       <Plot
-                        data={plotlyData}
-                        layout={{
-                          ...plotlyLayout,
-                          autosize: true,
-                          height: null,
-                          width: null,
-                        }}
-                        config={{
-                          ...plotlyConfig,
-                          responsive: true
-                        }}
+                        data={searchPlotlyData}
+                        layout={searchPlotInitialized ? searchLayout : { ...plotlyLayout, autosize: true, height: null, width: null }}
+                        config={plotlyConfig}
                         style={{ width: '100%', height: '100%' }}
                         onClick={handlePointClick}
                         useResizeHandler={true}
+                        onInitialized={(figure) => {
+                          searchPlotlyRef.current = figure;
+                          setSearchPlotInitialized(true);
+                        }}
+                        onUpdate={(figure) => {
+                          searchPlotlyRef.current = figure;
+                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -792,6 +1326,11 @@ const App = () => {
                       {searchedMolecule ? (
                         <div className="molecule-data">
                           <h3>Properties</h3>
+                          {!highlightedMolecule && searchedMolecule && (
+                            <div className="molecule-found-in-csv">
+                              <p>This molecule was found in the database but is not displayed in the current UMAP view.</p>
+                            </div>
+                          )}
                           <table className="property-table">
                             <tbody>
                               <tr>
@@ -833,23 +1372,21 @@ const App = () => {
                         </div>
                       ) : (
                         <div className="molecule-not-found">
-                          <p>This molecule was not found in our database.</p>
+                          <p>This molecule was not found in our UMAP dataset.</p>
                         </div>
                       )}
                       
-                      {searchedMolecule && (
-                        <img 
-                          src={searchResult} 
-                          alt="Molecule visualization" 
-                          style={{
-                            maxWidth: '100%',
-                            height: 'auto',
-                            marginTop: '20px',
-                            borderRadius: '8px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                          }}
-                        />
-                      )}
+                      <img 
+                        src={searchResult} 
+                        alt="Molecule visualization" 
+                        style={{
+                          maxWidth: '100%',
+                          height: 'auto',
+                          marginTop: '20px',
+                          borderRadius: '8px',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}
+                      />
                     </div>
                   )}
                 </div>
@@ -858,6 +1395,9 @@ const App = () => {
           </div>
         )}
       </div>
+      
+      {/* Node popup */}
+      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} />}
     </div>
   );
 };

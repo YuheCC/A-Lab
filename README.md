@@ -1,38 +1,101 @@
-# UMAP Molecular Visualization
+# UMAP Application
 
-A React application that visualizes UMAP (Uniform Manifold Approximation and Projection) data of molecular compounds from a CSV file. The visualization displays 71,000 nodes representing molecules and allows for interactive exploration.
+A molecular visualization and exploration tool with user authentication.
 
-## Features
+## Project Structure
 
-- Interactive 2D visualization of UMAP coordinates
-- Color-coded nodes based on position
-- Hover and click interactions to view molecular details
-- Detailed panel showing molecular properties (SMILES, molecular weight, HOMO/LUMO values)
-- Real-time progress and logging
+- `src/` - React frontend application
+- `server/` - Python FastAPI backend for authentication and user management
+- `public/` - Static files for the frontend
+- `.env` files - Environment configuration for both frontend and backend
 
-## Getting Started
+## Setup and Running
 
-### Prerequisites
+### Backend (Authentication Server)
 
-- Node.js (v14 or higher)
+1. Navigate to the server directory:
+```bash
+cd server
+```
 
-### Installation
+2. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-1. Clone the repository
-2. Navigate to the project directory
-3. Install dependencies:
+3. Configure environment variables (optional):
+   - Modify the `.env` file in the server directory to customize settings
+   - Default values will be used if no changes are made
 
+4. Start the backend server:
+```bash
+python main.py
+```
+
+The backend server will run on http://localhost:8001 by default
+
+### Frontend (React Application)
+
+1. Configure environment variables (optional):
+   - The frontend uses `.env` file in the src directory
+   - By default, it points to the backend API at http://localhost:8001
+
+2. Install Node.js dependencies:
 ```bash
 npm install
 ```
 
-### Running the Application
-
+3. Start the development server:
 ```bash
 npm start
 ```
 
-The application will start a development server and open in your browser at [http://localhost:3000](http://localhost:3000).
+The React application will run on http://localhost:3000
+
+## Environment Configuration
+
+### Backend (server/.env)
+```
+PORT=8001                           # Port to run the server on
+FRONTEND_URL=http://localhost:3000  # Frontend URL for CORS
+DATABASE_URL=sqlite:///./users.db   # Database connection
+SECRET_KEY=your_secret_key          # JWT secret key 
+ALGORITHM=HS256                     # JWT algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES=30      # Token expiration time
+```
+
+### Frontend (src/.env)
+```
+REACT_APP_API_URL=http://localhost:8001  # Backend API URL
+```
+
+## Features
+
+- User authentication (login/signup)
+- UMAP visualization of molecular data
+- Property-based filtering
+- Molecule search and visualization
+- Chatbot interface for molecule exploration
+- Enterprise search capabilities
+
+## Authentication
+
+The application uses JWT-based authentication. Only logged-in users can access:
+
+- Filter page
+- Search functionality
+- Chat interface
+- Enterprise search
+
+## User Permissions
+
+The system supports different permission levels:
+
+- `basic`: Regular user access (default for new users)
+- `premium`: Premium features access
+- `admin`: Administrative access
+
+Permissions can be updated in the SQLite database.
 
 ## Data Source
 
