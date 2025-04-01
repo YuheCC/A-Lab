@@ -501,12 +501,35 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
 };
 
 // Enterprise Search component
-const EnterpriseSearch = () => {
+const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick }) => {
   const [searchInput, setSearchInput] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [includeRelatives, setIncludeRelatives] = useState(false);
+  const [enterprisePlotInitialized, setEnterprisePlotInitialized] = useState(false);
+  const enterprisePlotlyRef = useRef(null);
+  
+  // Use the same plotlyData, layout, and config from the parent component through props
+  const plotlyConfig = {
+    displayModeBar: true,
+    responsive: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
+  };
+  
+  // Function to populate search input from clicked node
+  const handleNodeClick = (data) => {
+    if (!data.points || data.points.length === 0) return;
+    const pointIndex = data.points[0].pointIndex;
+    const node = filteredGraphData[pointIndex];
+    if (node) {
+      // Set the node as search input
+      setSearchInput(node.smiles);
+      // Also show normal node popup
+      handlePointClick(data);
+    }
+  };
   
   const handleSearch = async () => {
     if (!searchInput.trim()) return;
@@ -524,6 +547,14 @@ const EnterpriseSearch = () => {
       const data = await response.blob();
       const imageUrl = URL.createObjectURL(data);
       setSearchResult(imageUrl);
+      
+      // Scroll to results after they're loaded
+      setTimeout(() => {
+        const resultsElement = document.querySelector('.enterprise-results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 100);
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err.message);
@@ -533,79 +564,153 @@ const EnterpriseSearch = () => {
   };
   
   return (
-    <div className="enterprise-container">
-      <div className="enterprise-content">
-        <h1 className="enterprise-header">Advanced Molecular Search</h1>
-        <p className="enterprise-description">
-          Search our extensive database to find specific molecules and their properties.
-        </p>
-        
-        <div className="enterprise-search-wrapper">
-          <div className="enterprise-search-container">
-            <input 
-              type="text" 
-              className="enterprise-search-input"
-              placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)" 
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-            />
-            <button 
-              className="enterprise-search-button"
-              onClick={handleSearch}
-              disabled={searchLoading}
-            >
-              {searchLoading ? 'Searching...' : 'Search'}
-            </button>
-          </div>
-        </div>
-        
-        <div className="search-options">
-          <label className="relatives-option">
-            <input
-              type="checkbox"
-              checked={includeRelatives}
-              onChange={(e) => setIncludeRelatives(e.target.checked)}
-            />
-            <span>Include closest 10 relatives</span>
-          </label>
-        </div>
-        
-        <div className="enterprise-results">
-          {searchLoading && (
-            <div className="enterprise-loading">
-              <div className="loading-spinner"></div>
-              <p>Generating molecule visualization...</p>
-            </div>
-          )}
+    <div className="enterprise-page">
+      <div className="enterprise-container">
+        <div className="enterprise-content">
+          <h1 className="enterprise-header">Advanced Molecular Search</h1>
           
-          {searchError && (
-            <div className="enterprise-error">
-              <p>Error: {searchError}</p>
-              <p>Please check your SMILES string and try again.</p>
-            </div>
-          )}
-          
-          {searchResult && (
-            <div className="enterprise-molecule">
-              <h2>Molecule Visualization</h2>
-              <div className="molecule-image-container">
-                <img 
-                  src={searchResult} 
-                  alt="Molecule visualization" 
-                  className="molecule-image"
+          {/* UMAP Visualization (full width) */}
+          <div className="enterprise-umap-container" style={{ width: '100%', height: '500px', marginBottom: '20px' }}>
+            <div className="graph-container" style={{ width: '100%', height: '100%' }}>
+              {filteredGraphData && filteredGraphData.length > 0 ? (
+                <Plot
+                  data={[{
+                    x: filteredGraphData.map(node => node.x),
+                    y: filteredGraphData.map(node => node.y),
+                    mode: 'markers',
+                    type: 'scattergl',
+                    marker: {
+                      size: 5,
+                      color: filteredGraphData.map(node => node.properties?.molwt || 0),
+                      colorscale: [
+                        [0, '#440154'], // darkest purple
+                        [0.25, '#3b528b'], // blue-purple
+                        [0.5, '#21918c'], // green-blue
+                        [0.75, '#5ec962'], // green
+                        [1, '#fde725'] // yellow
+                      ],
+                      colorbar: {
+                        title: 'Molecular Weight',
+                        thickness: 20,
+                        len: 0.6,
+                        y: 0.5,
+                        titleside: 'right',
+                        titlefont: {
+                          size: 12,
+                          color: '#333'
+                        }
+                      },
+                      opacity: 0.7
+                    },
+                    hoverinfo: 'text',
+                    text: filteredGraphData.map(node => 
+                      `<b>Molecule Information:</b><br>` +
+                      `SMILES: ${node.smiles}<br>` +
+                      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+                      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
+                      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
+                      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
+                      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+                    )
+                  }]}
+                  layout={{
+                    ...plotlyLayout,
+                    autosize: true,
+                    height: 500
+                  }}
+                  config={plotlyConfig}
+                  style={{ width: '100%', height: '100%' }}
+                  useResizeHandler={true}
+                  onClick={handleNodeClick}
+                  onInitialized={(figure) => {
+                    enterprisePlotlyRef.current = figure;
+                    setEnterprisePlotInitialized(true);
+                  }}
+                  onUpdate={(figure) => {
+                    enterprisePlotlyRef.current = figure;
+                  }}
                 />
-              </div>
-              <div className="molecule-smiles">
-                <h3>SMILES String:</h3>
-                <p>{searchInput}</p>
-              </div>
+              ) : (
+                <div className="loading-message">
+                  {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                </div>
+              )}
             </div>
-          )}
+          </div>
+          
+          <p className="enterprise-description">
+            Search our extensive database to find specific molecules and their properties.
+            You can also click on any point in the UMAP above to select a molecule.
+          </p>
+          
+          <div className="enterprise-search-wrapper">
+            <div className="enterprise-search-container">
+              <input 
+                type="text" 
+                className="enterprise-search-input"
+                placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)" 
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+              />
+              <button 
+                className="enterprise-search-button"
+                onClick={handleSearch}
+                disabled={searchLoading}
+              >
+                {searchLoading ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+          </div>
+          
+          <div className="search-options">
+            <label className="relatives-option">
+              <input
+                type="checkbox"
+                checked={includeRelatives}
+                onChange={(e) => setIncludeRelatives(e.target.checked)}
+              />
+              <span>Include closest 10 relatives</span>
+            </label>
+          </div>
+          
+          <div id="enterprise-results" className="enterprise-results" style={{ marginTop: '20px', paddingBottom: '60px' }}>
+            {searchLoading && (
+              <div className="enterprise-loading">
+                <div className="loading-spinner"></div>
+                <p>Generating molecule visualization...</p>
+              </div>
+            )}
+            
+            {searchError && (
+              <div className="enterprise-error">
+                <p>Error: {searchError}</p>
+                <p>Please check your SMILES string and try again.</p>
+              </div>
+            )}
+            
+            {searchResult && (
+              <div className="enterprise-molecule">
+                <h2>Molecule Visualization</h2>
+                <div className="molecule-image-container">
+                  <img 
+                    src={searchResult} 
+                    alt="Molecule visualization" 
+                    className="molecule-image"
+                    style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain' }}
+                  />
+                </div>
+                <div className="molecule-smiles">
+                  <h3>SMILES String:</h3>
+                  <p>{searchInput}</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -651,6 +756,78 @@ const App = () => {
     esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
     esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false }
   });
+  
+  // Add global CSS styles for containers
+  useEffect(() => {
+    // Add global styles for proper container sizing and scrolling
+    const style = document.createElement('style');
+    style.textContent = `
+      .App {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      .main-container {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .App-header, .navbar {
+        flex-shrink: 0;
+      }
+      
+      .enterprise-page {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      
+      .enterprise-container {
+        height: auto;
+        min-height: 100%;
+        padding: 0 20px;
+      }
+      
+      .enterprise-content {
+        padding-bottom: 80px;
+      }
+      
+      .search-container, .about-container, .chatbot-container {
+        height: 100%;
+        overflow: auto;
+      }
+      
+      .graph-container {
+        height: 100%;
+        min-height: 400px;
+      }
+      
+      .enterprise-molecule img {
+        max-width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+      }
+      
+      .enterprise-results {
+        margin-top: 20px;
+      }
+      
+      @media (max-height: 800px) {
+        .enterprise-umap-container {
+          height: 400px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
   // Use refs to avoid dependency issues in useEffect
   const filterRangesRef = useRef(filterRanges);
@@ -1492,7 +1669,7 @@ const App = () => {
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? <ChatbotInterface input={chatInput} setInput={setChatInput} messages={chatMessages} setMessages={setChatMessages} /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
-          checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
+          checkPageAccess('enterprise') ? <EnterpriseSearch filteredGraphData={filteredGraphData} loading={loading} error={error} plotlyLayout={plotlyLayout} handlePointClick={handlePointClick} /> : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
