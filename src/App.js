@@ -396,6 +396,14 @@ const About = () => {
             <p>An estimated temperature at which a compound changes from liquid to gas, also based on its molecular features.</p>
           </div>
         </div>
+        
+        <div className="pricing-section">
+          <div className="pricing-content">
+            <div className="pricing-image-container">
+              <img src="/pricing.jpeg" alt="Pricing plans" className="pricing-image" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -989,7 +997,16 @@ const App = () => {
     if (userPermissions === 'basic') {
       message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
       buttonText = 'View Pricing';
-      buttonAction = () => window.location.href = '/pricing';
+      buttonAction = () => {
+        setActivePage('about');
+        // Wait for the about page to render, then scroll to pricing section
+        setTimeout(() => {
+          const pricingSection = document.querySelector('.pricing-section');
+          if (pricingSection) {
+            pricingSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      };
     } else if (userPermissions === 'premium') {
       message = 'This feature is only available for admin users. Please contact your administrator for access.';
       buttonText = 'Contact Admin';
