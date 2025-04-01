@@ -412,6 +412,7 @@ const About = () => {
 // Chatbot component
 const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
   const messagesEndRef = useRef(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -428,6 +429,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
     setMessages(prev => [...prev, userMessage]);
     const queryText = input.trim();
     setInput("");
+    setIsThinking(true);
 
     try {
       // Query the backend Pinecone index via the /rag endpoint
@@ -453,6 +455,8 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
       setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -469,6 +473,16 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
               dangerouslySetInnerHTML={{ __html: msg.text }}>
             </div>
           ))}
+          {isThinking && (
+            <div className="thinking-message">
+                <span>thinking</span>
+              <div className="thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
         <div className="chat-input-container">
