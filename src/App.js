@@ -638,7 +638,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
-  const [userPermissions, setUserPermissions] = useState('basic');
+  const [userPermissions, setUserPermissions] = useState('research');
   
   // API URL from environment variables
   const API_URL = 'http://0.0.0.0:8000';
@@ -983,9 +983,9 @@ const App = () => {
 
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
-    // Basic users can only access About page
-    if (userPermissions === 'basic') {
-      return page === 'about';
+    // Research users can access About, Filter, and Simple Search pages
+    if (userPermissions === 'research') {
+      return ['about', 'explorer', 'search'].includes(page);
     }
     
     // Premium users can access About, Filter, Simple Search, and Chat
@@ -1008,7 +1008,7 @@ const App = () => {
     let buttonText = '';
     let buttonAction = () => {};
 
-    if (userPermissions === 'basic') {
+    if (userPermissions === 'research') {
       message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
       buttonText = 'View Pricing';
       buttonAction = () => {
@@ -1024,7 +1024,7 @@ const App = () => {
     } else if (userPermissions === 'premium') {
       message = 'This feature is only available for admin users. Please contact your administrator for access.';
       buttonText = 'Contact Admin';
-      buttonAction = () => window.location.href = '/contact';
+      buttonAction = () => window.location.href = '/about';
     }
 
     return (
@@ -1053,7 +1053,7 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
-      const permissions = localStorage.getItem('permissions') || 'basic';
+      const permissions = localStorage.getItem('permissions') || 'research';
       setUserPermissions(permissions);
       
       if (!token) {
@@ -1073,7 +1073,7 @@ const App = () => {
           const data = await response.json();
           setIsAuthenticated(true);
           setUsername(data.username);
-          setUserPermissions(data.permissions || 'basic');
+          setUserPermissions(data.permissions || 'research');
           if (activePage === 'login') {
             setActivePage('explorer');
           }
@@ -1082,12 +1082,12 @@ const App = () => {
           localStorage.removeItem('username');
           localStorage.removeItem('permissions');
           setIsAuthenticated(false);
-          setUserPermissions('basic');
+          setUserPermissions('research');
         }
       } catch (err) {
         console.error('Auth verification error:', err);
         setIsAuthenticated(false);
-        setUserPermissions('basic');
+        setUserPermissions('research');
       } finally {
         setAuthLoading(false);
       }
