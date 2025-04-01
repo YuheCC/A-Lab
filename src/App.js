@@ -845,7 +845,7 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 300000;
+  const MAX_NODES = 7000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -1600,67 +1600,69 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="graph-container">
-              <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                {filteredGraphData.length > 0 ? (
-                  <Plot
-                    data={plotlyData}
-                    layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                    config={plotlyConfig}
-                    style={{ width: '100%', height: '100%' }}
-                    onClick={handlePointClick}
-                    onInitialized={(figure) => {
-                      plotlyRef.current = figure;
-                      setMainPlotInitialized(true);
-                    }}
-                    onUpdate={(figure) => {
-                      plotlyRef.current = figure;
-                    }}
-                  />
-                ) : (
-                  <div className="loading-message">
-                    {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="info-panel">
-              <h2>
-                Filters 
-                {activeFilterCount > 0 && (
-                  <button 
-                    className="reset-button" 
-                    onClick={resetAllFilters}
-                    title="Reset all filters"
-                  >
-                    Reset All
-                  </button>
-                )}
-              </h2>
-              <div className="sliders-container">
-                {Object.entries(filterRanges).map(([property, range]) => (
-                  <div key={property} className="filter-wrapper">
-                    <Slider
-                      property={property}
-                      value={range.range}
-                      min={range.min}
-                      max={range.max}
-                      onChange={handleFilterChange}
-                      label={filterLabels[property]}
-                      active={range.active}
+            <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
+              <div className="graph-container" style={{ flex: '1', height: '100%' }}>
+                <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  {filteredGraphData.length > 0 ? (
+                    <Plot
+                      data={plotlyData}
+                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                      config={plotlyConfig}
+                      style={{ width: '100%', height: '100%' }}
+                      onClick={handlePointClick}
+                      onInitialized={(figure) => {
+                        plotlyRef.current = figure;
+                        setMainPlotInitialized(true);
+                      }}
+                      onUpdate={(figure) => {
+                        plotlyRef.current = figure;
+                      }}
                     />
-                    {range.active && (
-                      <button 
-                        className="reset-filter-button" 
-                        onClick={() => resetFilter(property)}
-                        title="Reset this filter"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                ))}
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="info-panel" style={{ width: '300px', padding: '20px', overflowY: 'auto' }}>
+                <h2>
+                  Filters 
+                  {activeFilterCount > 0 && (
+                    <button 
+                      className="reset-button" 
+                      onClick={resetAllFilters}
+                      title="Reset all filters"
+                    >
+                      Reset All
+                    </button>
+                  )}
+                </h2>
+                <div className="sliders-container">
+                  {Object.entries(filterRanges).map(([property, range]) => (
+                    <div key={property} className="filter-wrapper">
+                      <Slider
+                        property={property}
+                        value={range.range}
+                        min={range.min}
+                        max={range.max}
+                        onChange={handleFilterChange}
+                        label={filterLabels[property]}
+                        active={range.active}
+                      />
+                      {range.active && (
+                        <button 
+                          className="reset-filter-button" 
+                          onClick={() => resetFilter(property)}
+                          title="Reset this filter"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </>
