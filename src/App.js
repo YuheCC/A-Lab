@@ -501,12 +501,8 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
 };
 
 // Enterprise Search component
-const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick }) => {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState(null);
-  const [includeRelatives, setIncludeRelatives] = useState(false);
+const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick, searchInput, setSearchInput, searchResult, setSearchResult, searchLoading, setSearchLoading, searchError, setSearchError, includeRelatives, setIncludeRelatives }) => {
+  const [searchedMolecule, setSearchedMolecule] = useState(null);
   const [enterprisePlotInitialized, setEnterprisePlotInitialized] = useState(false);
   const enterprisePlotlyRef = useRef(null);
   
@@ -517,6 +513,18 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
     scrollZoom: true,
     modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
   };
+  
+  // Scroll to results section if there are existing results when returning to this tab
+  useEffect(() => {
+    if (searchResult) {
+      setTimeout(() => {
+        const resultsElement = document.querySelector('.enterprise-results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 300);
+    }
+  }, [searchResult]);
   
   // Function to populate search input from clicked node
   const handleNodeClick = (data) => {
@@ -537,6 +545,7 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
+    setSearchedMolecule(null);
     
     try {
       // Fetch the molecule visualization from Python server
@@ -732,6 +741,13 @@ const App = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
+  
+  // Enterprise search state lifted up
+  const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
+  const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
+  const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
+  const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
+  const [includeRelatives, setIncludeRelatives] = useState(false);
   
   // Chat state (moved from ChatbotInterface)
   const [chatInput, setChatInput] = useState("");
@@ -1671,7 +1687,24 @@ const App = () => {
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? <ChatbotInterface input={chatInput} setInput={setChatInput} messages={chatMessages} setMessages={setChatMessages} /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
-          checkPageAccess('enterprise') ? <EnterpriseSearch filteredGraphData={filteredGraphData} loading={loading} error={error} plotlyLayout={plotlyLayout} handlePointClick={handlePointClick} /> : <PermissionsError />
+          checkPageAccess('enterprise') ? 
+            <EnterpriseSearch 
+              filteredGraphData={filteredGraphData} 
+              loading={loading} 
+              error={error} 
+              plotlyLayout={plotlyLayout} 
+              handlePointClick={handlePointClick} 
+              searchInput={enterpriseSearchInput}
+              setSearchInput={setEnterpriseSearchInput}
+              searchResult={enterpriseSearchResult}
+              setSearchResult={setEnterpriseSearchResult}
+              searchLoading={enterpriseSearchLoading}
+              setSearchLoading={setEnterpriseSearchLoading}
+              searchError={enterpriseSearchError}
+              setSearchError={setEnterpriseSearchError}
+              includeRelatives={includeRelatives}
+              setIncludeRelatives={setIncludeRelatives}
+            /> : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
