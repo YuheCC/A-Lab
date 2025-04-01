@@ -501,19 +501,27 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
 };
 
 // Enterprise Search component
-const EnterpriseSearch = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState(null);
-  const [includeRelatives, setIncludeRelatives] = useState(false);
-  
+const EnterpriseSearch = ({ 
+  searchInput, 
+  setSearchInput, 
+  searchResult, 
+  setSearchResult, 
+  searchLoading, 
+  setSearchLoading, 
+  searchError, 
+  setSearchError, 
+  searchedMolecule, 
+  setSearchedMolecule,
+  includeRelatives,
+  setIncludeRelatives 
+}) => {
   const handleSearch = async () => {
     if (!searchInput.trim()) return;
     
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
+    setSearchedMolecule(null);
     
     try {
       // Fetch the molecule visualization from Python server
@@ -628,6 +636,14 @@ const App = () => {
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
   
+  // Add enterprise search state
+  const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
+  const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
+  const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
+  const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
+  const [enterpriseSearchedMolecule, setEnterpriseSearchedMolecule] = useState(null);
+  const [enterpriseIncludeRelatives, setEnterpriseIncludeRelatives] = useState(false);
+  
   // Chat state (moved from ChatbotInterface)
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
@@ -668,7 +684,7 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 70000;
+  const MAX_NODES = 300000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -1492,7 +1508,22 @@ const App = () => {
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? <ChatbotInterface input={chatInput} setInput={setChatInput} messages={chatMessages} setMessages={setChatMessages} /> : <PermissionsError />
         ) : activePage === 'enterprise' ? (
-          checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
+          checkPageAccess('enterprise') ? (
+            <EnterpriseSearch 
+              searchInput={enterpriseSearchInput}
+              setSearchInput={setEnterpriseSearchInput}
+              searchResult={enterpriseSearchResult}
+              setSearchResult={setEnterpriseSearchResult}
+              searchLoading={enterpriseSearchLoading}
+              setSearchLoading={setEnterpriseSearchLoading}
+              searchError={enterpriseSearchError}
+              setSearchError={setEnterpriseSearchError}
+              searchedMolecule={enterpriseSearchedMolecule}
+              setSearchedMolecule={setEnterpriseSearchedMolecule}
+              includeRelatives={enterpriseIncludeRelatives}
+              setIncludeRelatives={setEnterpriseIncludeRelatives}
+            />
+          ) : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
