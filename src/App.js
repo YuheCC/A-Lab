@@ -861,7 +861,7 @@ const App = () => {
   };
   const filterLabelsRef = useRef(filterLabels);
 
-  const MAX_NODES = 7000;
+  const MAX_NODES = 70000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
