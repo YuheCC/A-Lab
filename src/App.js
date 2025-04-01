@@ -268,10 +268,10 @@ const About = () => {
   return (
     <div className="about-container">
       <div className="about-content-wrapper">
-        <div className="about-content">
+        <div className="about-content" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
           
           <div className="about-intro-section" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px' }}>About Molecular Universe</h3>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>About Molecular Universe</h3>
             <p>
               The world of molecules is unimaginably vast—far bigger than most people realize. Even with modest constraints, the number of potential small organic molecules far exceeds the number of stars in the observable universe. But here's the surprising truth: out of this cosmic-scale molecular universe, scientists have only explored a tiny sliver—maybe a few hundred solvents and additives for batteries. And most of these weren't designed for batteries at all. They were borrowed from other industries, lightly modified, and recycled across generations of battery chemistries.
             </p>
@@ -286,14 +286,14 @@ const About = () => {
           </div>
           
           <div className="feature-section">
-            <h3 style={{ color: '#000000' }}>Explore the Molecular Map (UMAP)</h3>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Explore the Molecular Map (UMAP)</h3>
             <p>
               Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems.
             </p>
           </div>
           
           <div className="feature-section">
-            <h3 style={{ color: '#000000' }}>Filter by Chemical Properties</h3>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Filter by Chemical Properties</h3>
             <p>
               Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features:
             </p>
@@ -310,7 +310,7 @@ const About = () => {
           </div>
           
           <div className="feature-section">
-            <h3 style={{ color: '#000000' }}>Intelligent Search & "Find a Friend"</h3>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Intelligent Search & "Find a Friend"</h3>
             <p>
               Search molecules in two powerful ways:
             </p>
@@ -331,7 +331,7 @@ const About = () => {
           </div>
           
           <div className="feature-section">
-            <h3 style={{ color: '#000000' }}>Chat with Our Expert LLM</h3>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Chat with Our Expert LLM</h3>
             <p>
               Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
             </p>
@@ -347,8 +347,8 @@ const About = () => {
         </div>
         
         <div className="umap-section">
-          <div className="umap-description">
-            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px' }}>About the Universe Map</h3>
+          <div className="umap-description" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>About the Universe Map</h3>
             <p>
               The Molecular Universe Map takes 512 calculated properties and does dimensionality reduction using the UMAP reductionality method to project these relationships down to a 2-dimensional representation of the molecules which can be plotted as a map. 
             </p>
@@ -359,40 +359,40 @@ const About = () => {
           </div>
         </div>
         
-        <div className="terms-section">
-          <h3 style={{ color: '#000000', marginTop: 0, marginBottom: '20px', fontSize: '22px' }}>Terms and Metrics</h3>
+        <div className="terms-section" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
+          <h3 style={{ color: '#000000', marginTop: 0, marginBottom: '20px', fontSize: '22px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Terms and Metrics</h3>
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>UMAP (Uniform Manifold Approximation and Projection):</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>UMAP (Uniform Manifold Approximation and Projection):</h4>
             <p>A machine learning technique used to reduce high-dimensional data into 2D or 3D for easy visualization. In chemistry, it helps show patterns and clusters in molecular datasets.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>SMILES (Simplified Molecular Input Line Entry System):</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>SMILES (Simplified Molecular Input Line Entry System):</h4>
             <p>A way to represent a molecule's structure as a line of text. It uses letters and symbols to describe atoms and bonds, making it easy for computers to process chemical structures.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>HOMO (Highest Occupied Molecular Orbital):</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>HOMO (Highest Occupied Molecular Orbital):</h4>
             <p>The highest energy level that contains electrons in a molecule. It plays a key role in determining how a molecule donates electrons during chemical reactions.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
             <p>The lowest energy level that can accept electrons. It helps predict how a molecule will react, especially when accepting electrons from another molecule.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>Min Electrostatic Potential:</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Min Electrostatic Potential:</h4>
             <p>The most negatively charged area on a molecule's surface. It usually shows where positively charged species (like protons) may be attracted.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>Predicted Melting Point:</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Predicted Melting Point:</h4>
             <p>An estimated temperature at which a compound changes from solid to liquid, based on its molecular structure and properties.</p>
           </div>
 
           <div className="term-item">
-            <h4 style={{ color: '#000000' }}>Predicted Boiling Point:</h4>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Predicted Boiling Point:</h4>
             <p>An estimated temperature at which a compound changes from liquid to gas, also based on its molecular features.</p>
           </div>
         </div>
