@@ -265,6 +265,18 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
 
 // About component
 const About = () => {
+  // Add useEffect to load Stripe script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/buy-button.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="about-container">
       <div className="about-content-wrapper">
@@ -403,6 +415,26 @@ const About = () => {
               <img src="/pricing.jpeg" alt="Pricing plans" className="pricing-image" />
             </div>
           </div>
+        </div>
+
+        {/* Add Stripe buy button section */}
+        <div className="stripe-button-section" style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '20px',
+          padding: '40px 0',
+          marginTop: '20px'
+        }}>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1R9RLrP58H4MLuJO4DWkFuED"
+            publishable-key="pk_test_51R8qFqP58H4MLuJOI3J9Db6YcumpeyDsPdeFERXrrHyQAGfhnrUCzDzLMn65GKp2nN7gSF9MWhBaaz85plKJKGmK00KU3F06aC"
+          >
+          </stripe-buy-button>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1R9RJkP58H4MLuJOeQm90bvP"
+            publishable-key="pk_test_51R8qFqP58H4MLuJOI3J9Db6YcumpeyDsPdeFERXrrHyQAGfhnrUCzDzLMn65GKp2nN7gSF9MWhBaaz85plKJKGmK00KU3F06aC"
+          >
+          </stripe-buy-button>
         </div>
       </div>
     </div>
