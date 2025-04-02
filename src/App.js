@@ -199,7 +199,7 @@ const ChatbotInterface = () => {
   const [messages, setMessages] = useState([
     { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
   ]);
-
+  const [foundMolecules, setFoundMolecules] = useState([]);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -209,7 +209,22 @@ const ChatbotInterface = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+  
+  const handleFindMolecules = async (moleculeList) => {
+    try {
+      const responses = await Promise.all(
+        moleculeList.map(async (mol) => {
+          const res = await fetch(`http://localhost:8010/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+          const data = await res.json();
+          return data;
+        })
+      );
+      // Filter out molecules that weren't found
+      setFoundMolecules(responses.filter(item => item.found));
+    } catch (err) {
+      console.error("Error fetching molecule details:", err);
+    }
+  };
   const handleSend = async () => {
     if (!input.trim()) return;
     // Append the user message
@@ -227,7 +242,7 @@ const ChatbotInterface = () => {
           query: queryText,
           maxOutputLength: 1024,
           ragEnabled: true,
-          webSearchEnabled: false,
+          webSearchEnabled: true,
           webSearchClient: "Tavily",
           model: "o3-mini"
         })
@@ -237,8 +252,7 @@ const ChatbotInterface = () => {
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs };
-      setMessages(prev => [...prev, llmMessage]);
+      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };      setMessages(prev => [...prev, llmMessage]);
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
       setMessages(prev => [...prev, errorMessage]);
@@ -247,29 +261,86 @@ const ChatbotInterface = () => {
 
   return (
     <div className="chatbot-container">
-      <div className="chatbot-content">
-        <h2>AI Molecular Assistant</h2>
-        <div className="chat-messages">
-          {messages.map((msg, index) => (
-            <div 
-              key={index} 
-              className={msg.type} 
-              style={{ whiteSpace: 'pre-wrap' }} 
-              dangerouslySetInnerHTML={{ __html: msg.text }}>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
+      <h2>AI Molecular Assistant</h2>
+      <div className="chat-and-molecules">
+        <div className="chatbot-content">
+          <div className="chat-messages">
+            {messages.map((msg, index) => (
+              <div 
+                key={index} 
+                className={msg.type} 
+                style={{ whiteSpace: 'pre-wrap' }}>
+                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+                {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
+                  <div style={{ marginTop: '10px' }}>
+                    <button 
+                      className="find-molecules-button" 
+                      style={{ backgroundColor: '#ADD8E6', border: 'none', padding: '8px 12px', cursor: 'pointer' }}
+                      onClick={() => handleFindMolecules(msg.molecules)}>
+                      Find Molecules
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="chat-input-container">
+            <textarea
+              className="chat-input"
+              placeholder="Ask a question about molecules, properties, or chemical structures..."
+              rows={3}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+            />
+            <button className="send-button" onClick={handleSend}>Send</button>
+          </div>
         </div>
-        <div className="chat-input-container">
-          <textarea
-            className="chat-input"
-            placeholder="Ask a question about molecules, properties, or chemical structures..."
-            rows={3}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button className="send-button" onClick={handleSend}>Send</button>
-        </div>
+        {foundMolecules && foundMolecules.length > 0 && (
+          <div className="found-molecules-container">
+            <h3>Found Molecules</h3>
+            {foundMolecules.map((item, idx) => {
+              const details = item.molecule_details;
+              return (
+                <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
+                  <strong>{details.name}</strong>
+                  <p>SMILES: {details.SMILE}</p>
+                  <p>Energy: {details.ENERGY}</p>
+                  <p>HOMO EV: {details.HOMO}</p>
+                  <p>LUMO EV: {details.LUMO}</p>
+                  <p>ESP Max: {details.ESP_MAX}</p>
+                  <p>ESP Min: {details.ESP_MIN}</p>
+                  {details.image && (
+                    <img 
+                      src={details.image} 
+                      alt={`Structure of ${details.SMILE}`} 
+                      style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
+                    />
+                  )}
+                  <div style={{ marginTop: '10px' }}>
+                    <button 
+                      className="find-similar-molecules-button"
+                      style={{
+                        backgroundColor: '#FFA500',
+                        border: 'none',
+                        padding: '6px 10px',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => { /* Future functionality */ }}>
+                      Find Similar Molecules
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

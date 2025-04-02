@@ -14,8 +14,33 @@ from typing import Optional
 from openai import OpenAI
 import re
 from dotenv import load_dotenv
+from snowflake.snowpark import Session as SnowflakeSession
+import pubchempy as pcp
+from rdkit import Chem
+from rdkit.Chem import Draw
+import io
+import base64
+import traceback
+import unicodedata
+import requests
+import pandas as pd
 
 load_dotenv()
+
+snowflake_auth = {
+    "account": "SESAI-MAIN",
+    "user": "ADAM.ATANAS@SES.AI",
+    "authenticator": "externalbrowser",
+    "role": "PROMETHEUS",
+    "warehouse": "MATERIAL_WH",
+    "database": "UMAP_DATA",
+    "schema": "PUBLIC"
+}
+
+snowflake_session = SnowflakeSession.builder.configs(snowflake_auth).create()
+
+# df = snowflake_session.sql("SELECT * FROM UMAP_DATA.PUBLIC.UMAP_71K LIMIT 10").to_pandas()
+# print(df)
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -40,6 +65,69 @@ pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 index_name = "ses-papers-textbooks-for-rag"
 index = pc.Index(index_name)
 print(index.describe_index_stats())
+
+
+### Paper name loading code
+
+def find_full_doi(doi_suffix, excel_file_path):
+    try:
+        # Load the Excel file
+        df = pd.read_excel(excel_file_path, engine='openpyxl')
+
+        # Find the row where the DOI suffix matches the end part of 'doi' column
+        df['doi'] = df['doi'].str.lower()
+        match = df[df['doi'].str.endswith(doi_suffix, na=False)]
+
+        if not match.empty:
+            return match.iloc[0]['doi']
+        else:
+            return f"No matching full DOI found in DB for suffix: {doi_suffix}"
+
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+def get_paper_title(full_doi):
+    url = f"https://api.crossref.org/works/{full_doi}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        title = data['message'].get('title', ["Title not available"])[0]
+        doi_url = f"https://doi.org/{full_doi}"
+
+        return f'<a href="{doi_url}" target="_blank" rel="noopener noreferrer">{title}</a> (DOI: {full_doi})'
+    else:
+        return f'- {full_doi}'
+    
+def extract_title_doi_from_filename(filename):
+
+    # List of regex patterns to match different filename formats
+    patterns = [
+        r'/llm_data/papers/rag_papers/9300LIB/(.+)-0\.jsonl$',
+        r'/llm_data/papers/rag_papers/Gyuleen_update/(.+)-0\.jsonl$',
+        r'/llm_data/papers/3p6_jsonl/(.+)-0\.jsonl$',
+        r'/llm_data/papers/textbooks_jsonl/(.+)-0\.jsonl$'
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, filename)
+        if match:
+            extracted = match.group(1)
+            if "9300LIB" in pattern:
+                extracted = find_full_doi(extracted, './9300 doi_for_RAG.xlsx')
+                title_doi_link = f'- Paper from DB: {get_paper_title(extracted)}'
+            if "Gyuleen_update" in pattern:
+                extracted = find_full_doi(extracted, './Gyuleen_update.xlsx')
+                title_doi_link = f'- Paper from DB: {get_paper_title(extracted)}'
+            # If the pattern matches the 3p6_jsonl format, replace underscores with slashes
+            if "3p6_jsonl" in pattern:
+                extracted = extracted.replace("_", "/")
+                title_doi_link = f'- Paper from DB: {get_paper_title(extracted)}'
+            # If the pattern matches the textbooks_jsonl format, convert hyphens to spaces and capitalize each word
+            if "textbooks_jsonl" in pattern:
+                title_doi_link = f'- Textbook: {extracted.replace("-", " ").title()}'
+
+            return title_doi_link
+    return None
 
 def hybrid_score_norm(dense, sparse, alpha: float):
     """Hybrid score using a convex combination
@@ -77,14 +165,14 @@ def dense_sparse_vector(query):
 def retrieve_context(query, top_k_chunks, rag_enabled: bool, web_search_enabled: bool, web_search_client:str):
     context = ""
     sources = []
-    
+
     if web_search_enabled:
         if web_search_client == "Tavily":
             tavily_response = tavily_client.search(
                 query=query,
                 search_depth="advanced",
-                max_results=3,       
-                include_answer=True, 
+                max_results=3,
+                include_answer=True,
                 include_raw_content=True,
                 include_images=False
             )
@@ -93,10 +181,13 @@ def retrieve_context(query, top_k_chunks, rag_enabled: bool, web_search_enabled:
                 for result in tavily_response["results"]:
                     title = result["title"]
                     url = result["url"]
-                    sources.append(f'- <a href="{url}" target="_blank" rel="noopener noreferrer">{title}</a>')
+                    url_link = f'- Web Search: <a href="{url}" target="_blank" rel="noopener noreferrer">{title}</a>'
+
+                if url_link not in sources:
+                    sources.append(f'{url_link}')
 
         elif web_search_client == "OpenAI":
-            completion = openai_client.chat.completions.create(
+            completion = client.chat.completions.create(
                 model = "gpt-4o-mini-search-preview",
                 messages = [
                     {
@@ -113,7 +204,7 @@ def retrieve_context(query, top_k_chunks, rag_enabled: bool, web_search_enabled:
                     sources.append(f"- {text}: {url_split}")
                 # Optionally, include the full response in the context as well:
                 context += f"Web search result: {openai_response}\n\n"
-    
+
     if rag_enabled:
         query_payload = {
             "inputs": {
@@ -121,46 +212,24 @@ def retrieve_context(query, top_k_chunks, rag_enabled: bool, web_search_enabled:
             },
             "top_k": top_k_chunks
         }
-        
+
         results = index.search(
             namespace="ses_rag",
             query=query_payload
         )
-        
-        for (i, hit) in enumerate(results['result']['hits']):
-            context_text = hit['fields']['context']
-            full_source = hit['fields']['source'].split("/")[-1].split(".jsonl")[0]
-            citation = ""
 
-            print(full_source)
-            if full_source[-2:] == "-0":
-                # doi
-                doi = full_source[:-2].replace("_", "/")
-                try:
-                    headers = {"Accept": "text/x-bibliography; style=apa"}
-                    response = httpx.get(f"https://doi.org/{doi}", headers=headers, follow_redirects=True)
-                    if response.status_code == 200:
-                        citation = response.text.strip().split("https://doi.org")[0]
-                        source_text = f'{citation} <a href="https://doi.org/{doi}" target="_blank" rel="noopener noreferrer">https://doi.org/{doi}</a>'
-                    else:
-                        source_text = f"DOI: {doi}"
-                except Exception as e:
-                    source_text = f"DOI: {doi}"
-            else:
-                pattern = "(z-lib"
-                idx = full_source.lower().find(pattern)
-                if idx != -1:
-                    source_text = full_source[:idx]
-                else:
-                    source_text = full_source
-                citation = source_text
+        for (i,hit) in enumerate(results['result']['hits']):
+            context_text = hit['fields']['context']
+            source_text = hit['fields']['source']
+            citation = extract_title_doi_from_filename(source_text)
 
             if citation:
                 context += "Database result " + str(i+1) + ", from " + citation + ": " + context_text + f"\n\n"
             else:
                 context += "Database result " + str(i+1) + ": " + context_text + "\n\n"
-            sources.append("- " + source_text)
-    
+
+            sources.append(f'{citation}')
+
     sources = list(dict.fromkeys(sources))
     sources = "\n".join(sources)
     return context, sources
@@ -265,6 +334,70 @@ async def query_llm(prompt: str, model: str, max_output_len: int = 1024) -> str:
 
     return final_response
 
+# Add this helper function after your imports (e.g., after importing openai_client)
+def extract_molecule_names(text: str) -> list:
+    """
+    Use OpenAI's 4o-mini model to extract unique molecule names from the given text.
+    Returns a list of molecule names.
+    """
+    prompt = (
+        "Extract and list the unique molecule names mentioned in the following text. "
+        "Return them as a semicolon-separated list. Only include each molecule once. "
+        "Do not include abbreviations if the full molecule name was provided.\n\n"
+        f"Text: {text}"
+    )
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+        result = response.choices[0].message.content.strip()
+        molecules = [mol.strip() for mol in result.split(";") if mol.strip()]
+        # Remove duplicates while preserving order
+        seen = set()
+        unique = []
+        for mol in molecules:
+            if mol not in seen:
+                unique.append(mol)
+                seen.add(mol)
+        return unique
+    except Exception as e:
+        print("Error extracting molecule names:", e)
+        return []
+
+greek_letter_mapping = {
+    "α": "alpha",
+    "β": "beta",
+    "γ": "gamma",
+    "δ": "delta",
+    "ε": "epsilon",
+    "ζ": "zeta",
+    "η": "eta",
+    "θ": "theta",
+    "ι": "iota",
+    "κ": "kappa",
+    "λ": "lambda",
+    "μ": "mu",
+    "ν": "nu",
+    "ξ": "xi",
+    "ο": "omicron",
+    "π": "pi",
+    "ρ": "rho",
+    "σ": "sigma",
+    "τ": "tau",
+    "υ": "upsilon",
+    "φ": "phi",
+    "χ": "chi",
+    "ψ": "psi",
+    "ω": "omega"
+}
+
+def replace_greek_letters(molecule: str) -> str:
+    for greek, eng in greek_letter_mapping.items():
+        molecule = molecule.replace(greek, eng)
+    return molecule
+
 app = FastAPI()
 
 app.add_middleware(
@@ -274,6 +407,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def get_smiles(molecule: str) -> dict:
+    molecule = unicodedata.normalize('NFC', molecule).replace('\u2013', '-').replace('\u2014', '-').replace('\u2010', '-')
+    try:
+        compounds = pcp.get_compounds(molecule, 'name')
+        if compounds:
+            smiles = compounds[0].canonical_smiles
+            return {"molecule": molecule, "smiles": smiles}
+        else:
+            return {"molecule": molecule, "smiles": "Not found"}
+    except Exception as e:
+        return {"molecule": molecule, "smiles": f"Error: {str(e)}"}
+
+# Add a new endpoint to query PubChem via pubchempy for a molecule's SMILES string:
+@app.get("/api/find_smiles")
+async def find_smiles(molecule: str):
+    result = get_smiles(molecule)
+    return result
 
 class RagRequest(BaseModel):
     query: str
@@ -306,6 +457,58 @@ async def save_feedback(feedback: FeedbackRequest):
         return {"message": "Feedback saved successfully", "id": str(result.inserted_id)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save feedback: {str(e)}")
+    
+def smiles_to_image(smiles: str):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol:
+        img = Draw.MolToImage(mol, size=(300, 300))
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        return buf.getvalue()
+    return None
+    
+@app.get("/api/molecule_details")
+async def molecule_details(molecule: str):
+    """
+    Query the UMAP_DATA.PUBLIC.UMAP_1M_MOLECULAR table for the given molecule (by SMILES).
+    If found, return its properties and a base64-encoded image generated by smiles_to_image.
+    """
+    print(f"Searching for {molecule}...")
+    smiles = get_smiles(molecule)
+    if not smiles or smiles["smiles"] == "Not found" or "Error" in smiles["smiles"]:
+        return {"found": False, "message": "Molecule not found"}
+
+    query = f'''
+        SELECT SMILE, 
+               CAST(HOMO AS INT) as HOMO,
+               CAST(LUMO AS INT) as LUMO,
+               CAST(ESP_MAX AS INT) as ESP_MAX,
+               CAST(ESP_MIN AS INT) as ESP_MIN,
+               CAST(ENERGY AS INT) as ENERGY
+        FROM UMAP_DATA.PUBLIC.UMAP_1M_MOLECULAR
+        WHERE SMILE = '{smiles["smiles"]}'
+        LIMIT 1
+    '''
+    print("Constructed query: ", query)
+    try:
+        result_df = snowflake_session.sql(query).to_pandas()
+        if result_df.empty:
+            print("Molecule not found.")
+            return {"found": False, "message": "Molecule not found"}
+        row = result_df.iloc[0].to_dict()
+        # Generate molecule image
+        image_data = smiles_to_image(row['SMILE'])
+        if image_data:
+            b64_image = base64.b64encode(image_data).decode('utf-8')
+            image_uri = f"data:image/png;base64,{b64_image}"
+        else:
+            image_uri = None
+        row['image'] = image_uri
+        row['name'] = molecule
+        return {"found": True, "molecule_details": row}
+    except Exception as e:
+        print("Error querying molecule details:", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Error querying molecule details: {str(e)}")
 
 @app.post("/rag")
 async def handle_rag(query_req: RagRequest):
@@ -314,7 +517,7 @@ async def handle_rag(query_req: RagRequest):
     rag_enabled = query_req.ragEnabled
     web_search_enabled = query_req.webSearchEnabled
     web_search_client = query_req.webSearchClient
-    model = query_req.model # either OmniScience or o3-mini
+    model = query_req.model  # either OmniScience or o3-mini
     # Run retrieval based on the enabled options
     context, sources = retrieve_context(query, 3, rag_enabled, web_search_enabled, web_search_client)
     # Construct the prompt by combining the query and retrieval results
@@ -342,16 +545,27 @@ async def handle_rag(query_req: RagRequest):
                 extended_prompt += " internet"
             extended_prompt += " database search results you might find useful when answering the query:\n"
             extended_prompt += context
-            extended_prompt += "These results may or may not be relevant. Think about which parts of this information are useful to answer the query."
+            extended_prompt += "These results may or may not be relevant. "
+            extended_prompt += "Think about which parts of this information are useful to answer the query. "
+            extended_prompt += "If you name specific molecules in your response, make sure to state the full molecule name before using any abbreviations.\n"
     prompt = initial_prompt + extended_prompt
     # Query your LLM with the combined prompt
-    llm_response = await query_llm(prompt, model, max_output_length)  # Your function to query the LLM
+    llm_response = await query_llm(prompt, model, max_output_length)
     if not llm_response:
         raise HTTPException(status_code=500, detail="LLM query failed")
+    
+    # Extract molecule names from the LLM response
+    original_molecule_list = extract_molecule_names(llm_response)
+    molecule_text = ""
+    if original_molecule_list:
+        molecule_text = "; ".join(original_molecule_list)
+    
+    processed_molecule_list = [replace_greek_letters(mol) for mol in original_molecule_list]
+
     if model == "OmniScience":
-        return {"outputs": extended_prompt + llm_response + "\n**Sources:**\n" + sources}
+        return {"outputs": extended_prompt + llm_response + "\n**Sources:**\n" + sources, "molecules": processed_molecule_list}
     else:
-        return {"outputs": llm_response + "<br><br><strong>Sources:</strong><br><br>" + sources}
+        return {"outputs": llm_response + "<br><br><strong>Sources:</strong><br><br>" + sources +"<br><br><strong>Detected molecules in LLM response:</strong><br><br>" + molecule_text, "molecules": processed_molecule_list}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8010)

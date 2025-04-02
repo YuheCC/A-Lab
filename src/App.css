@@ -702,6 +702,7 @@ body, html {
 /* Chatbot styles */
 .chatbot-container {
   flex: 1;
+  flex-direction: column;
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -713,12 +714,24 @@ body, html {
   justify-content: center;
 }
 
+.chatbot-container h2 {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+
 .chatbot-content {
   width: 90%;
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 255px);
 }
 
 .chatbot-content h2 {
@@ -736,6 +749,26 @@ body, html {
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #eee;
+}
+
+.chat-and-molecules {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;            /* adjust gap between elements as needed */
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;       /* center the container */
+}
+
+.found-molecules-container {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  height: calc(100vh - 280px);
+  overflow-y: auto;
+  background-color: #fff;
+  max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
+  flex-shrink: 0;
 }
 
 .system-message {
@@ -884,6 +917,7 @@ body, html {
   color: #0080ff;
   font-size: 14px;
 }
+
 
 .loading-spinner {
   width: 40px;
