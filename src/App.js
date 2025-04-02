@@ -345,7 +345,7 @@ const ChatbotInterface = () => {
     try {
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
-          const res = await fetch(`http://localhost:8010/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+          const res = await fetch(`http://localhost:8000/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
           const data = await res.json();
           return data;
         })
@@ -442,7 +442,6 @@ const ChatbotInterface = () => {
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>{details.name}</strong>
                   <p>SMILES: {details.SMILE}</p>
-                  <p>Energy: {details.ENERGY}</p>
                   <p>HOMO EV: {details.HOMO}</p>
                   <p>LUMO EV: {details.LUMO}</p>
                   <p>ESP Max: {details.ESP_MAX}</p>
