@@ -18,20 +18,20 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
         <img src={logo} alt="SES AI Logo" className="navbar-logo" />
       </div>
       <div className="navbar-links">
-        <a href="#" className="navbar-link">Products</a>
-        <a href="#" className="navbar-link">Technology</a>
-        <a href="#" className="navbar-link">Company</a>
-        <a href="#" className="navbar-link">Media</a>
+        <a href="https://www.ses.ai/molecular-universe" target="_blank" rel="noopener noreferrer" className="navbar-link">Products</a>
+        <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
+        <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
+        <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
-          href="#"
-          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search') ? 'active' : ''}`}
+          href="/"
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
-          <span className="username">Welcome, {username}</span>
+          <span className="username">{username}</span>
           <button className="logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
@@ -101,8 +101,9 @@ const AuthPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
           <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+          <p>{isLogin ? 'Sign in to access the Molecular Universe' : 'Join the Molecular Universe community'}</p>
         </div>
         
         {error && <div className="auth-error">{error}</div>}
@@ -115,18 +116,20 @@ const AuthPage = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
               required
             />
           </div>
           
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Email Address</label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
                 required
               />
             </div>
@@ -139,6 +142,7 @@ const AuthPage = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
               required
             />
           </div>
@@ -148,7 +152,7 @@ const AuthPage = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+            {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
         
@@ -156,7 +160,7 @@ const AuthPage = () => {
           {isLogin ? (
             <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
           ) : (
-            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Login</button></p>
+            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
           )}
         </div>
       </div>
@@ -261,63 +265,176 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
 
 // About component
 const About = () => {
+  // Add useEffect to load Stripe script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/buy-button.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="about-container">
       <div className="about-content-wrapper">
-        <div className="about-content">
-          <p>
-            SES AI scientists have amassed a complete "molecular universe" of over 87 million molecules along with a vast database of their various properties to serve both public and private industry searches for compounds that will propel future technologies. Initially built to serve our internal search for molecules that could build better lithium metal batteries, the molecular universe now serves beyond this initial mission. SES AI has decided to provide both free and subscription tiered access to the world. Read on to learn more about the specifics of the Molecular Universe.
-          </p>
-        </div>
-        <h3>About the Universe Map</h3>
-        <div className="blue-line"></div>
-        <div className="umap-section">
-          <div className="umap-description">
+        <div className="about-content" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
+          
+          <div className="about-intro-section" style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>About Molecular Universe</h3>
             <p>
-              The Molecular Universe Map takes 512 calculated properties and does dimensionality reduction using the UMAP reductionality method to project these relationships down to a 2-dimensional representation of the molecules which can be plotted as a map (right)​
+              The world of molecules is unimaginably vast—far bigger than most people realize. Even with modest constraints, the number of potential small organic molecules far exceeds the number of stars in the observable universe. But here's the surprising truth: out of this cosmic-scale molecular universe, scientists have only explored a tiny sliver—maybe a few hundred solvents and additives for batteries. And most of these weren't designed for batteries at all. They were borrowed from other industries, lightly modified, and recycled across generations of battery chemistries.
             </p>
+            
+            <p>
+              These known molecules also tend to stick closely together in structure and function. You see the same familiar motifs—cyclic carbonates, linear ethers, a few well-known anions. It's like trying to write a novel using only a hundred words. The result? We're missing out on a vast number of potentially game-changing molecules hidden in the unexplored corners of the molecular universe.
+            </p>
+            
+            <p>
+              Molecular Universe Service opens up this hidden space and puts powerful discovery tools into your hands. Here's what you can do:
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Explore the Molecular Map (UMAP)</h3>
+            <p>
+              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Filter by Chemical Properties</h3>
+            <p>
+              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features:
+            </p>
+            <ul className="feature-list">
+              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+              <li><strong>Dipole Moment:</strong> Higher dipoles often suggest a better ability to solvate ions—a key factor in electrolyte performance.</li>
+              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
+            </ul>
+            <p>
+              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Intelligent Search & "Find a Friend"</h3>
+            <p>
+              Search molecules in two powerful ways:
+            </p>
+            <ol className="feature-list">
+              <li><strong>By SMILES</strong> – Input a SMILES string and instantly retrieve all key info.</li>
+              <li><strong>By natural language</strong> – Ask questions like: "Find 5 molecules with LUMO above -1 eV and high dipoles."</li>
+            </ol>
+            <p>
+              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
+            </p>
+            <ul className="feature-list">
+              <li>Discover molecules that are structurally similar with similar properties (great for refinement)</li>
+              <li>Or find structurally diverse options that still have similar properties (great for exploration)</li>
+            </ul>
+            <p>
+              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3 style={{ color: '#000000', fontSize: '22px', marginBottom: '15px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Chat with Our Expert LLM</h3>
+            <p>
+              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
+            </p>
+            <ul className="feature-list feature-examples">
+              <li>"What solvents work best with Li-metal anodes?"</li>
+              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
+              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
+            </ul>
+            <p>
+              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
+            </p>
+          </div>
+        </div>
+        
+        <div className="umap-section">
+          <div className="umap-description" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
+            <h3 style={{ color: '#000000', fontSize: '22px', marginTop: 0, marginBottom: '20px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>About the Universe Map</h3>
+            <p>
+              The Molecular Universe Map takes 512 calculated properties and does dimensionality reduction using the UMAP reductionality method to project these relationships down to a 2-dimensional representation of the molecules which can be plotted as a map. 
+            </p>
+            <p>SES AI scientists have amassed a complete "molecular universe" of over 87 million molecules along with a vast database of their various properties to serve both public and private industry searches for compounds that will propel future technologies. Initially built to serve our internal search for molecules that could build better lithium metal batteries, the molecular universe now serves beyond this initial mission. SES AI has decided to provide both free and subscription tiered access to the world. Read on to learn more about the specifics of the Molecular Universe.</p>
           </div>
           <div className="umap-image">
             <img src="/high_res_umap_figure.png" alt="UMAP Visualization" />
           </div>
         </div>
-        <h3>Terms and Service</h3>
-        <div className="blue-line"></div>
-        <div className="terms-section">
+        
+        <div className="terms-section" style={{ fontFamily: 'Arial, sans-serif', fontSize: '16px', lineHeight: '1.6' }}>
+          <h3 style={{ color: '#000000', marginTop: 0, marginBottom: '20px', fontSize: '22px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Terms and Metrics</h3>
           <div className="term-item">
-            <h4>UMAP (Uniform Manifold Approximation and Projection):</h4>
-            <p>A machine learning technique used to reduce high-dimensional data into 2D or 3D for easy visualization. In chemistry, it helps show patterns and clusters in molecular datasets.​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>UMAP (Uniform Manifold Approximation and Projection):</h4>
+            <p>A machine learning technique used to reduce high-dimensional data into 2D or 3D for easy visualization. In chemistry, it helps show patterns and clusters in molecular datasets.</p>
           </div>
 
           <div className="term-item">
-            <h4>SMILES (Simplified Molecular Input Line Entry System):</h4>
-            <p>A way to represent a molecule's structure as a line of text. It uses letters and symbols to describe atoms and bonds, making it easy for computers to process chemical structures.​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>SMILES (Simplified Molecular Input Line Entry System):</h4>
+            <p>A way to represent a molecule's structure as a line of text. It uses letters and symbols to describe atoms and bonds, making it easy for computers to process chemical structures.</p>
           </div>
 
           <div className="term-item">
-            <h4>HOMO (Highest Occupied Molecular Orbital):</h4>
-            <p>The highest energy level that contains electrons in a molecule. It plays a key role in determining how a molecule donates electrons during chemical reactions.​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>HOMO (Highest Occupied Molecular Orbital):</h4>
+            <p>The highest energy level that contains electrons in a molecule. It plays a key role in determining how a molecule donates electrons during chemical reactions.</p>
           </div>
 
           <div className="term-item">
-            <h4>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
-            <p>The lowest energy level that can accept electrons. It helps predict how a molecule will react, especially when accepting electrons from another molecule.​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>LUMO (Lowest Unoccupied Molecular Orbital):</h4>
+            <p>The lowest energy level that can accept electrons. It helps predict how a molecule will react, especially when accepting electrons from another molecule.</p>
           </div>
 
           <div className="term-item">
-            <h4>Min Electrostatic Potential:</h4>
-            <p>The most negatively charged area on a molecule's surface. It usually shows where positively charged species (like protons) may be attracted.​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Min Electrostatic Potential:</h4>
+            <p>The most negatively charged area on a molecule's surface. It usually shows where positively charged species (like protons) may be attracted.</p>
           </div>
 
           <div className="term-item">
-            <h4>Predicted Melting Point:</h4>
-            <p>​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Predicted Melting Point:</h4>
+            <p>An estimated temperature at which a compound changes from solid to liquid, based on its molecular structure and properties.</p>
           </div>
 
           <div className="term-item">
-            <h4>Predicted Boiling Point:</h4>
-            <p>​</p>
+            <h4 style={{ color: '#000000', fontSize: '18px', marginBottom: '10px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Predicted Boiling Point:</h4>
+            <p>An estimated temperature at which a compound changes from liquid to gas, also based on its molecular features.</p>
           </div>
+        </div>
+        
+        <div className="pricing-section">
+          <div className="pricing-content">
+            <div className="pricing-image-container">
+              <img src="/pricing.jpeg" alt="Pricing plans" className="pricing-image" />
+            </div>
+          </div>
+        </div>
+
+        {/* Add Stripe buy button section */}
+        <div className="stripe-button-section" style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '20px',
+          padding: '40px 0',
+          marginTop: '20px'
+        }}>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1R9RLrP58H4MLuJO4DWkFuED"
+            publishable-key="pk_test_51R8qFqP58H4MLuJOI3J9Db6YcumpeyDsPdeFERXrrHyQAGfhnrUCzDzLMn65GKp2nN7gSF9MWhBaaz85plKJKGmK00KU3F06aC"
+          >
+          </stripe-buy-button>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1R9RJkP58H4MLuJOeQm90bvP"
+            publishable-key="pk_test_51R8qFqP58H4MLuJOI3J9Db6YcumpeyDsPdeFERXrrHyQAGfhnrUCzDzLMn65GKp2nN7gSF9MWhBaaz85plKJKGmK00KU3F06aC"
+          >
+          </stripe-buy-button>
         </div>
       </div>
     </div>
@@ -325,13 +442,14 @@ const About = () => {
 };
 
 // Chatbot component
-const ChatbotInterface = () => {
+const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
     { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
   ]);
   const [foundMolecules, setFoundMolecules] = useState([]);
   const messagesEndRef = useRef(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -356,19 +474,65 @@ const ChatbotInterface = () => {
       console.error("Error fetching molecule details:", err);
     }
   };
+
+  // Fetch query limit from API
+  useEffect(() => {
+    const fetchQueryLimit = async () => {
+      if (userPermissions === 'research') {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch("http://localhost:8000/query_limit", {
+            method: "GET",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            setRemainingQueries(data.query_limit);
+          } else {
+            console.error("Failed to fetch query limit");
+          }
+        } catch (error) {
+          console.error("Error fetching query limit:", error);
+        }
+      }
+    };
+
+    fetchQueryLimit();
+  }, [userPermissions, setRemainingQueries]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    // Check query limit for research users
+    if (userPermissions === 'research' && remainingQueries <= 0) {
+      const errorMessage = { 
+        type: "llm-message", 
+        text: "You have reached your monthly query limit. Please upgrade to premium for unlimited queries." 
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      return;
+    }
+
     // Append the user message
     const userMessage = { type: "user-message", text: input.trim() };
     setMessages(prev => [...prev, userMessage]);
     const queryText = input.trim();
     setInput("");
+    setIsThinking(true);
 
     try {
+      const token = localStorage.getItem('token');
       // Query the backend Pinecone index via the /rag endpoint
       const response = await fetch("http://localhost:8000/rag", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           query: queryText,
           maxOutputLength: 1024,
@@ -383,16 +547,63 @@ const ChatbotInterface = () => {
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };      setMessages(prev => [...prev, llmMessage]);
+      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };
+      setMessages(prev => [...prev, llmMessage]);
+      
+      // Update the query limit after each query for research users
+      if (userPermissions === 'research') {
+        try {
+          const limitResponse = await fetch("http://localhost:8000/query_limit_update", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          
+          if (limitResponse.ok) {
+            const limitData = await limitResponse.json();
+            setRemainingQueries(limitData.query_limit);
+          } else {
+            // If updating fails (e.g., limit already at 0), just fetch the current limit
+            const getResponse = await fetch("http://localhost:8000/query_limit", {
+              method: "GET",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
+            });
+            
+            if (getResponse.ok) {
+              const getData = await getResponse.json();
+              setRemainingQueries(getData.query_limit);
+            }
+          }
+        } catch (error) {
+          console.error("Error updating query limit:", error);
+        }
+      }
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
       setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsThinking(false);
     }
   };
 
   return (
     <div className="chatbot-container">
-      <h2>AI Molecular Assistant</h2>
+      <div className="chatbot-header">
+        <h2>AI Molecular Assistant</h2>
+        {userPermissions === 'research' && (
+          <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
+            <span className="query-limit-icon">💬</span>
+            <span>
+              Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
+            </span>
+          </div>
+        )}
+      </div>
       <div className="chat-and-molecules">
         <div className="chatbot-content">
           <div className="chat-messages">
@@ -414,6 +625,16 @@ const ChatbotInterface = () => {
                 )}
               </div>
             ))}
+            {isThinking && (
+              <div className="thinking-message">
+                <span>thinking</span>
+                <div className="thinking-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
           <div className="chat-input-container">
@@ -429,8 +650,15 @@ const ChatbotInterface = () => {
                   handleSend();
                 }
               }}
+              disabled={userPermissions === 'research' && remainingQueries <= 0}
             />
-            <button className="send-button" onClick={handleSend}>Send</button>
+            <button 
+              className="send-button" 
+              onClick={handleSend}
+              disabled={userPermissions === 'research' && remainingQueries <= 0}
+            >
+              Send
+            </button>
           </div>
         </div>
         {foundMolecules && foundMolecules.length > 0 && (
@@ -477,11 +705,226 @@ const ChatbotInterface = () => {
 };
 
 // Enterprise Search component
-const EnterpriseSearch = () => {
+const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick, searchInput, setSearchInput, searchResult, setSearchResult, searchLoading, setSearchLoading, searchError, setSearchError, includeRelatives, setIncludeRelatives }) => {
+  const [searchedMolecule, setSearchedMolecule] = useState(null);
+  const [enterprisePlotInitialized, setEnterprisePlotInitialized] = useState(false);
+  const enterprisePlotlyRef = useRef(null);
+  
+  // Use the same plotlyData, layout, and config from the parent component through props
+  const plotlyConfig = {
+    displayModeBar: true,
+    responsive: true,
+    scrollZoom: true,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
+  };
+  
+  // Scroll to results section if there are existing results when returning to this tab
+  useEffect(() => {
+    if (searchResult) {
+      setTimeout(() => {
+        const resultsElement = document.querySelector('.enterprise-results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 300);
+    }
+  }, [searchResult]);
+  
+  // Function to populate search input from clicked node
+  const handleNodeClick = (data) => {
+    if (!data.points || data.points.length === 0) return;
+    const pointIndex = data.points[0].pointIndex;
+    const node = filteredGraphData[pointIndex];
+    if (node) {
+      // Set the node as search input
+      setSearchInput(node.smiles);
+      // Also show normal node popup
+      handlePointClick(data);
+    }
+  };
+  
+  const handleSearch = async () => {
+    if (!searchInput.trim()) return;
+    
+    setSearchLoading(true);
+    setSearchError(null);
+    setSearchResult(null);
+    setSearchedMolecule(null);
+    
+    try {
+      // Fetch the molecule visualization from Python server
+      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+      }
+      const data = await response.blob();
+      const imageUrl = URL.createObjectURL(data);
+      setSearchResult(imageUrl);
+      
+      // Scroll to results after they're loaded
+      setTimeout(() => {
+        const resultsElement = document.querySelector('.enterprise-results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 100);
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchError(err.message);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+  
   return (
-    <div className="enterprise-container">
-      <div className="enterprise-content">
-        <h1>Enterprise Search</h1>
+    <div className="enterprise-page">
+      <div className="enterprise-container">
+        <div className="enterprise-content">
+          <h1 className="enterprise-header">Advanced Molecular Search</h1>
+          
+          {/* UMAP Visualization (full width) */}
+          <div className="enterprise-umap-container" style={{ width: '100%', height: '500px', marginBottom: '20px' }}>
+            <div className="graph-container" style={{ width: '100%', height: '100%' }}>
+              {filteredGraphData && filteredGraphData.length > 0 ? (
+                <Plot
+                  data={[{
+                    x: filteredGraphData.map(node => node.x),
+                    y: filteredGraphData.map(node => node.y),
+                    mode: 'markers',
+                    type: 'scattergl',
+                    marker: {
+                      size: 5,
+                      color: filteredGraphData.map(node => node.properties?.molwt || 0),
+                      colorscale: [
+                        [0, '#440154'], // darkest purple
+                        [0.25, '#3b528b'], // blue-purple
+                        [0.5, '#21918c'], // green-blue
+                        [0.75, '#5ec962'], // green
+                        [1, '#fde725'] // yellow
+                      ],
+                      colorbar: {
+                        title: 'Molecular Weight',
+                        thickness: 20,
+                        len: 0.6,
+                        y: 0.5,
+                        titleside: 'right',
+                        titlefont: {
+                          size: 12,
+                          color: '#333'
+                        }
+                      },
+                      opacity: 0.7
+                    },
+                    hoverinfo: 'text',
+                    text: filteredGraphData.map(node => 
+                      `<b>Molecule Information:</b><br>` +
+                      `SMILES: ${node.smiles}<br>` +
+                      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+                      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
+                      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
+                      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
+                      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+                    )
+                  }]}
+                  layout={{
+                    ...plotlyLayout,
+                    autosize: true,
+                    height: 500
+                  }}
+                  config={plotlyConfig}
+                  style={{ width: '100%', height: '100%' }}
+                  useResizeHandler={true}
+                  onClick={handleNodeClick}
+                  onInitialized={(figure) => {
+                    enterprisePlotlyRef.current = figure;
+                    setEnterprisePlotInitialized(true);
+                  }}
+                  onUpdate={(figure) => {
+                    enterprisePlotlyRef.current = figure;
+                  }}
+                />
+              ) : (
+                <div className="loading-message">
+                  {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <p className="enterprise-description">
+            Search our extensive database to find specific molecules and their properties.
+            You can also click on any point in the UMAP above to select a molecule.
+          </p>
+          
+          <div className="enterprise-search-wrapper">
+            <div className="enterprise-search-container">
+              <input 
+                type="text" 
+                className="enterprise-search-input"
+                placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)" 
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+              />
+              <button 
+                className="enterprise-search-button"
+                onClick={handleSearch}
+                disabled={searchLoading}
+              >
+                {searchLoading ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+          </div>
+          
+          <div className="search-options">
+            <label className="relatives-option">
+              <input
+                type="checkbox"
+                checked={includeRelatives}
+                onChange={(e) => setIncludeRelatives(e.target.checked)}
+              />
+              <span>Include closest 10 relatives</span>
+            </label>
+          </div>
+          
+          <div id="enterprise-results" className="enterprise-results" style={{ marginTop: '20px', paddingBottom: '60px' }}>
+            {searchLoading && (
+              <div className="enterprise-loading">
+                <div className="loading-spinner"></div>
+                <p>Generating molecule visualization...</p>
+              </div>
+            )}
+            
+            {searchError && (
+              <div className="enterprise-error">
+                <p>Error: {searchError}</p>
+                <p>Please check your SMILES string and try again.</p>
+              </div>
+            )}
+            
+            {searchResult && (
+              <div className="enterprise-molecule">
+                <h2>Molecule Visualization</h2>
+                <div className="molecule-image-container">
+                  <img 
+                    src={searchResult} 
+                    alt="Molecule visualization" 
+                    className="molecule-image"
+                    style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain' }}
+                  />
+                </div>
+                <div className="molecule-smiles">
+                  <h3>SMILES String:</h3>
+                  <p>{searchInput}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -503,11 +946,24 @@ const App = () => {
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
   
+  // Enterprise search state lifted up
+  const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
+  const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
+  const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
+  const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
+  const [includeRelatives, setIncludeRelatives] = useState(false);
+  
+  // Chat state (moved from ChatbotInterface)
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([
+    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
+  ]);
+  
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
-  const [userPermissions, setUserPermissions] = useState('basic');
+  const [userPermissions, setUserPermissions] = useState('research');
   
   // API URL from environment variables
   const API_URL = 'http://0.0.0.0:8000';
@@ -520,6 +976,78 @@ const App = () => {
     esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
     esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false }
   });
+  
+  // Add global CSS styles for containers
+  useEffect(() => {
+    // Add global styles for proper container sizing and scrolling
+    const style = document.createElement('style');
+    style.textContent = `
+      .App {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      .main-container {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .App-header, .navbar {
+        flex-shrink: 0;
+      }
+      
+      .enterprise-page {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      
+      .enterprise-container {
+        height: auto;
+        min-height: 100%;
+        padding: 0 20px;
+      }
+      
+      .enterprise-content {
+        padding-bottom: 80px;
+      }
+      
+      .search-container, .about-container, .chatbot-container {
+        height: 100%;
+        overflow: auto;
+      }
+      
+      .graph-container {
+        height: 100%;
+        min-height: 400px;
+      }
+      
+      .enterprise-molecule img {
+        max-width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+      }
+      
+      .enterprise-results {
+        margin-top: 20px;
+      }
+      
+      @media (max-height: 800px) {
+        .enterprise-umap-container {
+          height: 400px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
   // Use refs to avoid dependency issues in useEffect
   const filterRangesRef = useRef(filterRanges);
@@ -794,7 +1322,7 @@ const App = () => {
       
       // If not authenticated, only allow access to About page
       if (!isAuthenticated) {
-        if (path === '/about') {
+        if (path === '/about' || path === '/') {
           setActivePage('about');
         } else {
           // Redirect to login for any other route
@@ -806,19 +1334,20 @@ const App = () => {
 
       // For authenticated users, handle routes based on permissions
       if (path === '/login') {
-        // Redirect to about if already authenticated
-        window.history.pushState({}, '', '/about');
+        // Redirect to root if already authenticated
+        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/about') {
+        // Redirect /about to root
+        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/') {
-        // Redirect root to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
+        // Stay on the current active page or default to about
+        // No need to change URL since we're already at root
       } else {
-        // Redirect any other route to about
-        window.history.pushState({}, '', '/about');
-        setActivePage('about');
+        // Redirect any other route to root
+        window.history.pushState({}, '', '/');
+        // Keep the current active page
       }
     };
 
@@ -842,14 +1371,18 @@ const App = () => {
       setActivePage('permissions-error');
       return;
     }
+    // Always keep the URL as root when navigating between tabs
+    if (window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/');
+    }
     setActivePage(page);
   };
 
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
-    // Basic users can only access About page
-    if (userPermissions === 'basic') {
-      return page === 'about';
+    // Research users can access About, Filter, Simple Search, and Chat pages
+    if (userPermissions === 'research') {
+      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
     }
     
     // Premium users can access About, Filter, Simple Search, and Chat
@@ -872,19 +1405,34 @@ const App = () => {
     let buttonText = '';
     let buttonAction = () => {};
 
-    if (userPermissions === 'basic') {
+    if (userPermissions === 'research') {
       message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
       buttonText = 'View Pricing';
-      buttonAction = () => window.location.href = '/pricing';
+      buttonAction = () => {
+        setActivePage('about');
+        // Wait for the about page to render, then scroll to pricing section
+        setTimeout(() => {
+          const pricingSection = document.querySelector('.pricing-section');
+          if (pricingSection) {
+            pricingSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      };
     } else if (userPermissions === 'premium') {
       message = 'This feature is only available for admin users. Please contact your administrator for access.';
       buttonText = 'Contact Admin';
-      buttonAction = () => window.location.href = '/contact';
+      buttonAction = () => window.location.href = '/about';
     }
 
     return (
       <div className="permissions-error-container">
         <div className="permissions-error-content">
+          <div className="lock-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
           <h2>Access Restricted</h2>
           <p>{message}</p>
           <button 
@@ -902,7 +1450,7 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
-      const permissions = localStorage.getItem('permissions') || 'basic';
+      const permissions = localStorage.getItem('permissions') || 'research';
       setUserPermissions(permissions);
       
       if (!token) {
@@ -922,7 +1470,7 @@ const App = () => {
           const data = await response.json();
           setIsAuthenticated(true);
           setUsername(data.username);
-          setUserPermissions(data.permissions || 'basic');
+          setUserPermissions(data.permissions || 'research');
           if (activePage === 'login') {
             setActivePage('explorer');
           }
@@ -931,12 +1479,12 @@ const App = () => {
           localStorage.removeItem('username');
           localStorage.removeItem('permissions');
           setIsAuthenticated(false);
-          setUserPermissions('basic');
+          setUserPermissions('research');
         }
       } catch (err) {
         console.error('Auth verification error:', err);
         setIsAuthenticated(false);
-        setUserPermissions('basic');
+        setUserPermissions('research');
       } finally {
         setAuthLoading(false);
       }
@@ -1112,13 +1660,26 @@ const App = () => {
         if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
           return '#ff0000'; // Red color for highlighted molecule
         }
-        return node.x; // Default color based on x coordinate
+        return node.properties?.molwt || 0; // Color by molecular weight
       }),
       colorscale: [
-        [0, '#3498db'],
-        [0.5, '#2ecc71'],
-        [1, '#e74c3c']
+        [0, '#440154'], // darkest purple
+        [0.25, '#3b528b'], // blue-purple
+        [0.5, '#21918c'], // green-blue
+        [0.75, '#5ec962'], // green
+        [1, '#fde725'] // yellow
       ],
+      colorbar: {
+        title: 'Molecular Weight',
+        thickness: 20,
+        len: 0.6,
+        y: 0.5,
+        titleside: 'right',
+        titlefont: {
+          size: 12,
+          color: '#333'
+        }
+      },
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
           return 1; // Full opacity for highlighted molecule
@@ -1146,12 +1707,25 @@ const App = () => {
     type: 'scattergl',
     marker: {
       size: 5,
-      color: filteredGraphData.map(node => node.x),
+      color: filteredGraphData.map(node => node.properties?.molwt || 0),
       colorscale: [
-        [0, '#3498db'],
-        [0.5, '#2ecc71'],
-        [1, '#e74c3c']
+        [0, '#440154'], // darkest purple
+        [0.25, '#3b528b'], // blue-purple
+        [0.5, '#21918c'], // green-blue
+        [0.75, '#5ec962'], // green
+        [1, '#fde725'] // yellow
       ],
+      colorbar: {
+        title: 'Molecular Weight',
+        thickness: 20,
+        len: 0.6,
+        y: 0.5,
+        titleside: 'right',
+        titlefont: {
+          size: 12,
+          color: '#333'
+        }
+      },
       opacity: 0.7
     },
     hoverinfo: 'text',
@@ -1168,6 +1742,11 @@ const App = () => {
 
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
+
+  // Add state for query limits
+  const [remainingQueries, setRemainingQueries] = useState(0);
+
+  // Query limits are now managed on the server side
 
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
@@ -1194,39 +1773,39 @@ const App = () => {
         <div className="header-content">
           <div className="header-links">
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'about' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('about'); }}
             >
               About
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
               Filter
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
               Simple Search
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Chat
             </a>
             <a 
-              href="#"
+              href="/"
               className={`header-link ${activePage === 'enterprise' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('enterprise'); }}
             >
-              Enterprise Search
+              Advanced Search
             </a>
           </div>
         </div>
@@ -1246,76 +1825,107 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="graph-container">
-              <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                {filteredGraphData.length > 0 ? (
-                  <Plot
-                    data={plotlyData}
-                    layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                    config={plotlyConfig}
-                    style={{ width: '100%', height: '100%' }}
-                    onClick={handlePointClick}
-                    onInitialized={(figure) => {
-                      plotlyRef.current = figure;
-                      setMainPlotInitialized(true);
-                    }}
-                    onUpdate={(figure) => {
-                      plotlyRef.current = figure;
-                    }}
-                  />
-                ) : (
-                  <div className="loading-message">
-                    {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="info-panel">
-              <h2>
-                Filters 
-                {activeFilterCount > 0 && (
-                  <button 
-                    className="reset-button" 
-                    onClick={resetAllFilters}
-                    title="Reset all filters"
-                  >
-                    Reset All
-                  </button>
-                )}
-              </h2>
-              <div className="sliders-container">
-                {Object.entries(filterRanges).map(([property, range]) => (
-                  <div key={property} className="filter-wrapper">
-                    <Slider
-                      property={property}
-                      value={range.range}
-                      min={range.min}
-                      max={range.max}
-                      onChange={handleFilterChange}
-                      label={filterLabels[property]}
-                      active={range.active}
+            <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
+              <div className="graph-container" style={{ flex: '1', height: '100%' }}>
+                <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  {filteredGraphData.length > 0 ? (
+                    <Plot
+                      data={plotlyData}
+                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                      config={plotlyConfig}
+                      style={{ width: '100%', height: '100%' }}
+                      onClick={handlePointClick}
+                      onInitialized={(figure) => {
+                        plotlyRef.current = figure;
+                        setMainPlotInitialized(true);
+                      }}
+                      onUpdate={(figure) => {
+                        plotlyRef.current = figure;
+                      }}
                     />
-                    {range.active && (
-                      <button 
-                        className="reset-filter-button" 
-                        onClick={() => resetFilter(property)}
-                        title="Reset this filter"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                ))}
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="info-panel" style={{ width: '300px', padding: '20px', overflowY: 'auto' }}>
+                <h2>
+                  Filters 
+                  {activeFilterCount > 0 && (
+                    <button 
+                      className="reset-button" 
+                      onClick={resetAllFilters}
+                      title="Reset all filters"
+                    >
+                      Reset All
+                    </button>
+                  )}
+                </h2>
+                <div className="sliders-container">
+                  {Object.entries(filterRanges).map(([property, range]) => (
+                    <div key={property} className="filter-wrapper">
+                      <Slider
+                        property={property}
+                        value={range.range}
+                        min={range.min}
+                        max={range.max}
+                        onChange={handleFilterChange}
+                        label={filterLabels[property]}
+                        active={range.active}
+                      />
+                      {range.active && (
+                        <button 
+                          className="reset-filter-button" 
+                          onClick={() => resetFilter(property)}
+                          title="Reset this filter"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </>
         ) : activePage === 'about' ? (
           <About />
         ) : activePage === 'chatbot' ? (
-          checkPageAccess('chatbot') ? <ChatbotInterface /> : <PermissionsError />
+          checkPageAccess('chatbot') ? (
+            <ChatbotInterface 
+              input={chatInput} 
+              setInput={setChatInput} 
+              messages={chatMessages} 
+              setMessages={setChatMessages}
+              userPermissions={userPermissions}
+              remainingQueries={remainingQueries}
+              setRemainingQueries={setRemainingQueries}
+            />
+          ) : (
+            <PermissionsError />
+          )
         ) : activePage === 'enterprise' ? (
-          checkPageAccess('enterprise') ? <EnterpriseSearch /> : <PermissionsError />
+          checkPageAccess('enterprise') ? 
+            <EnterpriseSearch 
+              filteredGraphData={filteredGraphData} 
+              loading={loading} 
+              error={error} 
+              plotlyLayout={plotlyLayout} 
+              handlePointClick={handlePointClick} 
+              searchInput={enterpriseSearchInput}
+              setSearchInput={setEnterpriseSearchInput}
+              searchResult={enterpriseSearchResult}
+              setSearchResult={setEnterpriseSearchResult}
+              searchLoading={enterpriseSearchLoading}
+              setSearchLoading={setEnterpriseSearchLoading}
+              searchError={enterpriseSearchError}
+              setSearchError={setEnterpriseSearchError}
+              includeRelatives={includeRelatives}
+              setIncludeRelatives={setIncludeRelatives}
+            /> : <PermissionsError />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
