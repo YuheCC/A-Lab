@@ -454,6 +454,35 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     scrollToBottom();
   }, [messages]);
 
+  // Fetch query limit from API
+  useEffect(() => {
+    const fetchQueryLimit = async () => {
+      if (userPermissions === 'research') {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch("http://localhost:8000/query_limit", {
+            method: "GET",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            setRemainingQueries(data.query_limit);
+          } else {
+            console.error("Failed to fetch query limit");
+          }
+        } catch (error) {
+          console.error("Error fetching query limit:", error);
+        }
+      }
+    };
+
+    fetchQueryLimit();
+  }, [userPermissions, setRemainingQueries]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -475,10 +504,14 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     setIsThinking(true);
 
     try {
+      const token = localStorage.getItem('token');
       // Query the backend Pinecone index via the /rag endpoint
       const response = await fetch("http://localhost:8000/rag", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           query: queryText,
           maxOutputLength: 1024,
@@ -496,9 +529,38 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       const llmMessage = { type: "llm-message", text: data.outputs };
       setMessages(prev => [...prev, llmMessage]);
       
-      // Decrement remaining queries for research users
+      // Update the query limit after each query for research users
       if (userPermissions === 'research') {
-        setRemainingQueries(prev => prev - 1);
+        try {
+          const limitResponse = await fetch("http://localhost:8000/query_limit_update", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          
+          if (limitResponse.ok) {
+            const limitData = await limitResponse.json();
+            setRemainingQueries(limitData.query_limit);
+          } else {
+            // If updating fails (e.g., limit already at 0), just fetch the current limit
+            const getResponse = await fetch("http://localhost:8000/query_limit", {
+              method: "GET",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
+            });
+            
+            if (getResponse.ok) {
+              const getData = await getResponse.json();
+              setRemainingQueries(getData.query_limit);
+            }
+          }
+        } catch (error) {
+          console.error("Error updating query limit:", error);
+        }
       }
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
@@ -1603,35 +1665,9 @@ const App = () => {
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
   // Add state for query limits
-  const [remainingQueries, setRemainingQueries] = useState(() => {
-    // Initialize from localStorage or default to 10
-    const stored = localStorage.getItem('remainingQueries');
-    const lastReset = localStorage.getItem('lastQueryReset');
-    const now = new Date();
-    
-    // If no stored data or last reset was in a different month, reset to 10
-    if (!stored || !lastReset) {
-      localStorage.setItem('remainingQueries', '10');
-      localStorage.setItem('lastQueryReset', now.toISOString());
-      return 10;
-    }
-    
-    const lastResetDate = new Date(lastReset);
-    if (lastResetDate.getMonth() !== now.getMonth() || lastResetDate.getFullYear() !== now.getFullYear()) {
-      localStorage.setItem('remainingQueries', '10');
-      localStorage.setItem('lastQueryReset', now.toISOString());
-      return 10;
-    }
-    
-    return parseInt(stored, 10);
-  });
+  const [remainingQueries, setRemainingQueries] = useState(0);
 
-  // Update localStorage whenever remainingQueries changes
-  useEffect(() => {
-    if (userPermissions === 'research') {
-      localStorage.setItem('remainingQueries', remainingQueries.toString());
-    }
-  }, [remainingQueries, userPermissions]);
+  // Query limits are now managed on the server side
 
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
