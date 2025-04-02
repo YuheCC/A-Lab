@@ -1571,7 +1571,35 @@ const App = () => {
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
   // Add state for query limits
-  const [remainingQueries, setRemainingQueries] = useState(10);
+  const [remainingQueries, setRemainingQueries] = useState(() => {
+    // Initialize from localStorage or default to 10
+    const stored = localStorage.getItem('remainingQueries');
+    const lastReset = localStorage.getItem('lastQueryReset');
+    const now = new Date();
+    
+    // If no stored data or last reset was in a different month, reset to 10
+    if (!stored || !lastReset) {
+      localStorage.setItem('remainingQueries', '10');
+      localStorage.setItem('lastQueryReset', now.toISOString());
+      return 10;
+    }
+    
+    const lastResetDate = new Date(lastReset);
+    if (lastResetDate.getMonth() !== now.getMonth() || lastResetDate.getFullYear() !== now.getFullYear()) {
+      localStorage.setItem('remainingQueries', '10');
+      localStorage.setItem('lastQueryReset', now.toISOString());
+      return 10;
+    }
+    
+    return parseInt(stored, 10);
+  });
+
+  // Update localStorage whenever remainingQueries changes
+  useEffect(() => {
+    if (userPermissions === 'research') {
+      localStorage.setItem('remainingQueries', remainingQueries.toString());
+    }
+  }, [remainingQueries, userPermissions]);
 
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
