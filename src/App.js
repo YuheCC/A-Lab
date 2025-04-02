@@ -410,7 +410,7 @@ const About = () => {
 };
 
 // Chatbot component
-const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
+const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
 
@@ -424,6 +424,17 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    // Check query limit for research users
+    if (userPermissions === 'research' && remainingQueries <= 0) {
+      const errorMessage = { 
+        type: "llm-message", 
+        text: "You have reached your monthly query limit. Please upgrade to premium for unlimited queries." 
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      return;
+    }
+
     // Append the user message
     const userMessage = { type: "user-message", text: input.trim() };
     setMessages(prev => [...prev, userMessage]);
@@ -452,6 +463,11 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
       // Assuming the response returns an 'outputs' field with the result text
       const llmMessage = { type: "llm-message", text: data.outputs };
       setMessages(prev => [...prev, llmMessage]);
+      
+      // Decrement remaining queries for research users
+      if (userPermissions === 'research') {
+        setRemainingQueries(prev => prev - 1);
+      }
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
       setMessages(prev => [...prev, errorMessage]);
@@ -463,7 +479,15 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
   return (
     <div className="chatbot-container">
       <div className="chatbot-content">
-        <h2>AI Molecular Assistant</h2>
+        <div className="chatbot-header">
+          <h2>AI Molecular Assistant</h2>
+          {userPermissions === 'research' && (
+            <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
+              <span className="query-limit-icon">💬</span>
+              <span>Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span></span>
+            </div>
+          )}
+        </div>
         <div className="chat-messages">
           {messages.map((msg, index) => (
             <div 
@@ -492,8 +516,15 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages }) => {
             rows={3}
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            disabled={userPermissions === 'research' && remainingQueries <= 0}
           />
-          <button className="send-button" onClick={handleSend}>Send</button>
+          <button 
+            className="send-button" 
+            onClick={handleSend}
+            disabled={userPermissions === 'research' && remainingQueries <= 0}
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>
@@ -1176,9 +1207,9 @@ const App = () => {
 
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
-    // Research users can access About, Filter, and Simple Search pages
+    // Research users can access About, Filter, Simple Search, and Chat pages
     if (userPermissions === 'research') {
-      return ['about', 'explorer', 'search'].includes(page);
+      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
     }
     
     // Premium users can access About, Filter, Simple Search, and Chat
@@ -1539,6 +1570,9 @@ const App = () => {
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
+  // Add state for query limits
+  const [remainingQueries, setRemainingQueries] = useState(10);
+
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
     return <div className="app-loading">Loading...</div>;
@@ -1685,7 +1719,19 @@ const App = () => {
         ) : activePage === 'about' ? (
           <About />
         ) : activePage === 'chatbot' ? (
-          checkPageAccess('chatbot') ? <ChatbotInterface input={chatInput} setInput={setChatInput} messages={chatMessages} setMessages={setChatMessages} /> : <PermissionsError />
+          checkPageAccess('chatbot') ? (
+            <ChatbotInterface 
+              input={chatInput} 
+              setInput={setChatInput} 
+              messages={chatMessages} 
+              setMessages={setChatMessages}
+              userPermissions={userPermissions}
+              remainingQueries={remainingQueries}
+              setRemainingQueries={setRemainingQueries}
+            />
+          ) : (
+            <PermissionsError />
+          )
         ) : activePage === 'enterprise' ? (
           checkPageAccess('enterprise') ? 
             <EnterpriseSearch 
