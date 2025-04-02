@@ -443,10 +443,6 @@ const About = () => {
 
 // Chatbot component
 const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
-  ]);
   const [foundMolecules, setFoundMolecules] = useState([]);
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
