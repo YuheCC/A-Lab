@@ -1411,6 +1411,11 @@ const App = () => {
       return true;
     }
     
+    // Professional users can also access everything
+    if (userPermissions === 'professional') {
+      return true;
+    }
+    
     // Default to no access
     return false;
   };
