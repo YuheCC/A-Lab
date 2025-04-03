@@ -1373,6 +1373,29 @@ const App = () => {
     if (window.location.pathname !== '/') {
       window.history.pushState({}, '', '/');
     }
+    
+    // Clear search results when navigating away from search page
+    if (activePage === 'search' && page !== 'search') {
+      setSearchInput('');
+      setSearchResult(null);
+      setSearchedMolecule(null);
+      setHighlightedMolecule(null);
+      setSearchError(null);
+    }
+    
+    // Special case for enterprise (advanced search) tab
+    if (page === 'enterprise' && activePage === 'search') {
+      // First clear the search tab data
+      setSearchInput('');
+      setSearchResult(null);
+      setSearchedMolecule(null);
+      setHighlightedMolecule(null);
+      setSearchError(null);
+      // Then navigate to enterprise tab
+      setActivePage(page);
+      return;
+    }
+    
     setActivePage(page);
   };
 
