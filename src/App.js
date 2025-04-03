@@ -490,7 +490,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     if (userPermissions === 'research' && remainingQueries <= 0) {
       const errorMessage = { 
         type: "llm-message", 
-        text: "You have reached your monthly query limit. Please upgrade to premium for unlimited queries." 
+        text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
       };
       setMessages(prev => [...prev, errorMessage]);
       return;
@@ -1383,11 +1383,6 @@ const App = () => {
       return ['about', 'explorer', 'search', 'chatbot'].includes(page);
     }
     
-    // Premium users can access About, Filter, Simple Search, and Chat
-    if (userPermissions === 'premium') {
-      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
-    }
-    
     // Admin users can access everything
     if (userPermissions === 'admin') {
       return true;
@@ -1404,22 +1399,11 @@ const App = () => {
     let buttonAction = () => {};
 
     if (userPermissions === 'research') {
-      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
-      buttonText = 'View Pricing';
-      buttonAction = () => {
-        setActivePage('about');
-        // Wait for the about page to render, then scroll to pricing section
-        setTimeout(() => {
-          const pricingSection = document.querySelector('.pricing-section');
-          if (pricingSection) {
-            pricingSection.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
-      };
-    } else if (userPermissions === 'premium') {
       message = 'This feature is only available for admin users. Please contact your administrator for access.';
       buttonText = 'Contact Admin';
-      buttonAction = () => window.location.href = '/about';
+      buttonAction = () => {
+        setActivePage('about');
+      };
     }
 
     return (
