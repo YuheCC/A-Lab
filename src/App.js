@@ -1423,9 +1423,16 @@ const App = () => {
 
     if (userPermissions === 'research') {
       message = 'This feature is only available for admin users. Please contact your administrator for access.';
-      buttonText = 'Contact Admin';
+      buttonText = 'View Pricing';
       buttonAction = () => {
         setActivePage('about');
+        // Use setTimeout to ensure the about page has rendered before scrolling
+        setTimeout(() => {
+          const pricingImage = document.querySelector('.pricing-image');
+          if (pricingImage) {
+            pricingImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
       };
     }
 
