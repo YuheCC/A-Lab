@@ -1667,3 +1667,32 @@ body, html {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+/* Add styles for the reset password button in the navbar */
+.reset-password-button {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.reset-password-button:hover {
+  background-color: #0d8aee;
+}
+
+/* Success message for password reset */
+.auth-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+}

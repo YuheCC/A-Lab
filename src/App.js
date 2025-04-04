@@ -11,7 +11,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset }) => {
   // Use the logo from the public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
@@ -34,6 +34,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
       {isAuthenticated ? (
         <div className="navbar-user">
           <span className="username">{username}</span>
+          <button className="reset-password-button" onClick={onPasswordReset}>Settings</button>
           <button className="logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
@@ -933,6 +934,132 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
   );
 };
 
+// Password Reset component
+const PasswordReset = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('current_password', currentPassword);
+      formData.append('new_password', newPassword);
+      
+      const response = await fetch('http://0.0.0.0:8000/reset-password', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Password reset failed');
+      }
+
+      const data = await response.json();
+      setSuccess(data.message || 'Password reset successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+    } catch (err) {
+      console.error('Password reset error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Reset Password</h2>
+          <p>Please enter your current password and a new password</p>
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="currentPassword">Current Password</label>
+            <input
+              type="password"
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Current password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="newPassword">New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm new password"
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Resetting...' : 'Reset Password'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -1338,6 +1465,9 @@ const App = () => {
         // Redirect /about to root
         window.history.pushState({}, '', '/');
         setActivePage('about');
+      } else if (path === '/reset-password') {
+        // Show password reset page
+        setShowPasswordReset(true);
       } else if (path === '/') {
         // Stay on the current active page or default to about
         // No need to change URL since we're already at root
@@ -1837,6 +1967,16 @@ const App = () => {
 
   // Query limits are now managed on the server side
 
+  // Add password reset state
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  
+  // Add handlePasswordReset function here, before it's used
+  const handlePasswordReset = () => {
+    setShowPasswordReset(true);
+    // Change URL to indicate password reset page
+    window.history.pushState({}, '', '/reset-password');
+  };
+  
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
     return <div className="app-loading">Loading...</div>;
@@ -1845,6 +1985,23 @@ const App = () => {
   // If not authenticated and not on About page, show login page
   if (!isAuthenticated && activePage !== 'about') {
     return <AuthPage />;
+  }
+
+  // Show password reset page if active
+  if (showPasswordReset && isAuthenticated) {
+    return (
+      <div className="App" style={{ overflow: 'auto', height: '100vh' }}>
+        <Navbar 
+          activePage={activePage} 
+          isAuthenticated={isAuthenticated} 
+          username={username}
+          onLogout={handleLogout}
+          onSignIn={handleSignIn}
+          onPasswordReset={handlePasswordReset}
+        />
+        <PasswordReset />
+      </div>
+    );
   }
 
   return (
@@ -1856,6 +2013,7 @@ const App = () => {
         username={username}
         onLogout={handleLogout}
         onSignIn={handleSignIn}
+        onPasswordReset={handlePasswordReset}
       />
       
       <header className="App-header">
