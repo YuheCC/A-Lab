@@ -4,7 +4,7 @@ import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
-import logo from './logo-ses-ai.svg';
+// import logo from the public folder
 import './App.css';
 
 // Create a Plotly Component using the plotly.js factory
@@ -12,6 +12,8 @@ const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
 const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) => {
+  // Use the logo from the public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
     <nav className="navbar">
       <div className="navbar-title">
@@ -51,6 +53,9 @@ const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
   // Use explicit URL for authentication endpoint
   const API_URL = 'http://0.0.0.0:8000';
