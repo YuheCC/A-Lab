@@ -169,7 +169,7 @@ const AuthPage = () => {
 };
 
 // Popup component to display node data
-const NodePopup = ({ node, onClose }) => {
+const NodePopup = ({ node, onClose, filterLabels }) => {
   if (!node) return null;
   
   return (
@@ -189,7 +189,7 @@ const NodePopup = ({ node, onClose }) => {
             <tbody>
               {Object.entries(node.properties || {}).map(([key, value]) => (
                 <tr key={key}>
-                  <td className="property-name white-text">{key}</td>
+                  <td className="property-name white-text">{filterLabels[key] || key}</td>
                   <td className="property-value white-text">
                     {value !== null && value !== undefined 
                       ? typeof value === 'number' 
@@ -972,8 +972,22 @@ const App = () => {
     homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
     lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
     esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
-    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false }
+    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false },
+    predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
+    predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
   });
+  
+  // Labels for filters
+  const filterLabels = {
+    molwt: "Molecular Weight",
+    homo_eV: "HOMO (eV)",
+    lumo_eV: "LUMO (eV)",
+    esp_max_eV: "Max ESP (eV)",
+    esp_min_eV: "Min ESP (eV)",
+    predicted_mp: "Predicted Melting Point (°C)",
+    predicted_bp: "Predicted Boiling Point (°C)"
+  };
+  const filterLabelsRef = useRef(filterLabels);
   
   // Add global CSS styles for containers
   useEffect(() => {
@@ -1053,16 +1067,6 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  // Labels for filters
-  const filterLabels = {
-    molwt: "Molecular Weight",
-    homo_eV: "HOMO (eV)",
-    lumo_eV: "LUMO (eV)",
-    esp_max_eV: "Max ESP (eV)",
-    esp_min_eV: "Min ESP (eV)"
-  };
-  const filterLabelsRef = useRef(filterLabels);
-
   const MAX_NODES = 70000;
 
   // Add new state for highlighted molecule
@@ -1241,52 +1245,42 @@ const App = () => {
         setSearchedMolecule(matchingMolecule);
         setHighlightedMolecule(matchingMolecule);
       } else {
-        // If not found in UMAP data, check the full CSV
+        // If not found in UMAP data, check the Snowflake database
         try {
-          const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+          const response = await fetch(`http://localhost:8000/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
           if (response.ok) {
-            const text = await response.text();
+            const data = await response.json();
             
-            // Use a Promise to make Papa.parse wait until completion
-            await new Promise((resolve) => {
-              Papa.parse(text, {
-                header: true,
-                dynamicTyping: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                  // Find the molecule in the full CSV data
-                  const csvMolecule = results.data.find(row => 
-                    row.smiles && row.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-                  );
-                  
-                  if (csvMolecule) {
-                    // Create a formatted molecule object from CSV data
-                    const formattedMolecule = {
-                      smiles: csvMolecule.smiles,
-                      properties: {
-                        molwt: csvMolecule.molwt,
-                        homo_eV: csvMolecule.homo_eV,
-                        lumo_eV: csvMolecule.lumo_eV,
-                        esp_min_eV: csvMolecule.esp_min_eV,
-                        esp_max_eV: csvMolecule.esp_max_eV
-                      },
-                      rawData: csvMolecule
-                    };
-                    
-                    setSearchedMolecule(formattedMolecule);
-                    // Don't highlight on UMAP since it's not in the visualization
-                  }
-                  resolve();
+            // Find the molecule in the Snowflake data
+            if (data.data && data.data.length > 0) {
+              const snowflakeMolecule = data.data[0];
+              
+              // Create a formatted molecule object from Snowflake data
+              const formattedMolecule = {
+                smiles: snowflakeMolecule.SMILES,
+                properties: {
+                  molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                  homo_eV: snowflakeMolecule.HOMO_EV,
+                  lumo_eV: snowflakeMolecule.LUMO_EV,
+                  esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                  esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                  dipole_x: snowflakeMolecule.DIPOLE_X,
+                  dipole_y: snowflakeMolecule.DIPOLE_Y,
+                  dipole_z: snowflakeMolecule.DIPOLE_Z,
+                  functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                  predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                  predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                  chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
                 },
-                error: (error) => {
-                  console.error("CSV parse error:", error);
-                  resolve();
-                }
-              });
-            });
+                rawData: snowflakeMolecule
+              };
+              
+              setSearchedMolecule(formattedMolecule);
+              // Don't highlight on UMAP since it's not in the visualization
+            }
           }
-        } catch (csvError) {
-          console.error('Error checking full CSV:', csvError);
+        } catch (apiError) {
+          console.error('Error checking Snowflake database:', apiError);
         }
       }
 
@@ -1586,68 +1580,63 @@ const App = () => {
       
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+        // Replace CSV fetching with Snowflake API endpoint
+        const response = await fetch('http://localhost:8000/snowflake-query');
         if (!response.ok) {
-          throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-        const text = await response.text();
-        Papa.parse(text, {
-          header: true,
-          dynamicTyping: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            if (results.errors.length > 0) {
-              console.error("Parse errors:", results.errors);
-            }
-            const nodes = results.data
-              .filter(row => row && row.umap_0 !== undefined && row.umap_1 !== undefined && row.smiles)
-              .slice(0, MAX_NODES)
-              .map((row, index) => ({
-                id: index.toString(),
-                x: Number(row.umap_0),
-                y: Number(row.umap_1),
-                smiles: row.smiles,
-                properties: {
-                  molwt: row.molwt,
-                  homo_eV: row.homo_eV,
-                  lumo_eV: row.lumo_eV,
-                  esp_min_eV: row.esp_min_eV,
-                  esp_max_eV: row.esp_max_eV
-                },
-                rawData: row
-              }));
-            
-            setGraphData(nodes);
-            setFilteredGraphData(nodes);
-            
-            // Initialize filter ranges based on actual data
-            const currentFilterRanges = filterRangesRef.current;
-            const currentFilterLabels = filterLabelsRef.current;
-            const newFilterRanges = { ...currentFilterRanges };
-            Object.keys(currentFilterLabels).forEach(key => {
-              const values = nodes
-                .map(node => node.properties[key])
-                .filter(v => v !== undefined && v !== null);
-              if (values.length > 0) {
-                const min = Math.min(...values);
-                const max = Math.max(...values);
-                newFilterRanges[key] = {
-                  min: min,
-                  max: max,
-                  range: [min, max], // Initialize range to full data range (filter effectively off)
-                  active: false
-                };
-              }
-            });
-            setFilterRanges(newFilterRanges);
-            setLoading(false);
-          },
-          error: (error) => {
-            console.error("Error parsing CSV:", error);
-            setError(`Parse error: ${error}`);
-            setLoading(false);
+        const data = await response.json();
+        
+        // Map the data to our node structure with updated property names
+        const nodes = data.data
+          .filter(row => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+          .slice(0, MAX_NODES)
+          .map((row, index) => ({
+            id: index.toString(),
+            x: Number(row.UMAP_0),
+            y: Number(row.UMAP_1),
+            smiles: row.SMILES,
+            properties: {
+              molwt: row.MOLECULAR_WEIGHT,
+              homo_eV: row.HOMO_EV,
+              lumo_eV: row.LUMO_EV,
+              esp_min_eV: row.ESP_MIN_EV,
+              esp_max_eV: row.ESP_MAX_EV,
+              dipole_x: row.DIPOLE_X,
+              dipole_y: row.DIPOLE_Y,
+              dipole_z: row.DIPOLE_Z,
+              functional_groups: row.FUNCTIONAL_GROUPS,
+              predicted_mp: row.PREDICTED_MP,
+              predicted_bp: row.PREDICTED_BP,
+              chemical_formula: row.CHEMICAL_FORMULA
+            },
+            rawData: row
+          }));
+        
+        setGraphData(nodes);
+        setFilteredGraphData(nodes);
+        
+        // Initialize filter ranges based on actual data
+        const currentFilterRanges = filterRangesRef.current;
+        const currentFilterLabels = filterLabelsRef.current;
+        const newFilterRanges = { ...currentFilterRanges };
+        Object.keys(currentFilterLabels).forEach(key => {
+          const values = nodes
+            .map(node => node.properties[key])
+            .filter(v => v !== undefined && v !== null);
+          if (values.length > 0) {
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            newFilterRanges[key] = {
+              min: min,
+              max: max,
+              range: [min, max], // Initialize range to full data range (filter effectively off)
+              active: false
+            };
           }
         });
+        setFilterRanges(newFilterRanges);
+        setLoading(false);
       } catch (err) {
         console.error("Error loading data:", err);
         setError(err.message);
@@ -1778,11 +1767,15 @@ const App = () => {
     text: filteredGraphData.map(node => 
       `<b>Molecule Information:</b><br>` +
       `SMILES: ${node.smiles}<br>` +
+      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
       `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
       `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
+      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
     )
   }];
 
@@ -1819,11 +1812,15 @@ const App = () => {
     text: filteredGraphData.map(node => 
       `<b>Molecule Information:</b><br>` +
       `SMILES: ${node.smiles}<br>` +
+      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
       `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
       `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
+      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
     )
   }];
 
@@ -2104,6 +2101,12 @@ const App = () => {
                                 <td className="property-name">SMILES</td>
                                 <td className="property-value">{searchedMolecule.smiles}</td>
                               </tr>
+                              {searchedMolecule.properties?.chemical_formula && (
+                                <tr>
+                                  <td className="property-name">Chemical Formula</td>
+                                  <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
+                                </tr>
+                              )}
                               <tr>
                                 <td className="property-name">Molecular Weight</td>
                                 <td className="property-value">
@@ -2134,6 +2137,30 @@ const App = () => {
                                   {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
                                 </td>
                               </tr>
+                              {searchedMolecule.properties?.predicted_mp && (
+                                <tr>
+                                  <td className="property-name">Predicted Melting Point (°C)</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.predicted_mp.toFixed(2)}
+                                  </td>
+                                </tr>
+                              )}
+                              {searchedMolecule.properties?.predicted_bp && (
+                                <tr>
+                                  <td className="property-name">Predicted Boiling Point (°C)</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.predicted_bp.toFixed(2)}
+                                  </td>
+                                </tr>
+                              )}
+                              {searchedMolecule.properties?.functional_groups && (
+                                <tr>
+                                  <td className="property-name">Functional Groups</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.functional_groups}
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         </div>
@@ -2164,7 +2191,7 @@ const App = () => {
       </div>
       
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} />}
+      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
     </div>
   );
 };
