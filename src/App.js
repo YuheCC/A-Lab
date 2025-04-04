@@ -11,7 +11,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, isPasswordReset }) => {
   // Use the logo from the public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
@@ -26,7 +26,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && !isPasswordReset ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
@@ -2001,6 +2001,7 @@ const App = () => {
           onLogout={handleLogout}
           onSignIn={handleSignIn}
           onPasswordReset={handlePasswordReset}
+          isPasswordReset={true}
         />
         <PasswordReset />
       </div>
@@ -2017,6 +2018,7 @@ const App = () => {
         onLogout={handleLogout}
         onSignIn={handleSignIn}
         onPasswordReset={handlePasswordReset}
+        isPasswordReset={false}
       />
       
       <header className="App-header">
