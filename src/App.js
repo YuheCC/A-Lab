@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
@@ -11,7 +10,7 @@ import './App.css';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, isPasswordReset }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset }) => {
   // Use the logo from the public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
@@ -26,7 +25,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && !isPasswordReset ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
@@ -710,8 +709,6 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
 
 // Enterprise Search component
 const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick, searchInput, setSearchInput, searchResult, setSearchResult, searchLoading, setSearchLoading, searchError, setSearchError, includeRelatives, setIncludeRelatives }) => {
-  const [searchedMolecule, setSearchedMolecule] = useState(null);
-  const [enterprisePlotInitialized, setEnterprisePlotInitialized] = useState(false);
   const enterprisePlotlyRef = useRef(null);
   
   // Use the same plotlyData, layout, and config from the parent component through props
@@ -753,7 +750,6 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
-    setSearchedMolecule(null);
     
     try {
       // Fetch the molecule visualization from Python server
@@ -841,7 +837,6 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
                   onClick={handleNodeClick}
                   onInitialized={(figure) => {
                     enterprisePlotlyRef.current = figure;
-                    setEnterprisePlotInitialized(true);
                   }}
                   onUpdate={(figure) => {
                     enterprisePlotlyRef.current = figure;
@@ -1068,8 +1063,6 @@ const App = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('explorer');
-  const [searchType, setSearchType] = useState('Lookup');
-  const [showDropdown, setShowDropdown] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -1296,24 +1289,7 @@ const App = () => {
           size: 12
         }
       }];
-    } else if (searchedMolecule && !highlightedMolecule) {
-      layout.annotations = [{
-        x: 0,
-        y: 0,
-        xref: 'paper',
-        yref: 'paper',
-        text: '',
-        showarrow: false,
-        bgcolor: '#fff3cd',
-        bordercolor: '#ffeeba',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: '#856404',
-          size: 14
-        }
-      }];
-    } else if (searchResult && !searchedMolecule) {
+    } else if (searchResult) {
       layout.annotations = [{
         x: 0,
         y: 0,
@@ -1333,7 +1309,7 @@ const App = () => {
     }
     
     return layout;
-  }, [plotlyLayout, highlightedMolecule, searchResult, searchedMolecule, arrowOffset]);
+  }, [plotlyLayout, highlightedMolecule, searchResult, arrowOffset]);
 
   const plotlyConfig = {
     displayModeBar: true,
@@ -1342,19 +1318,18 @@ const App = () => {
     modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
   };
 
-  // Add a ref and click-outside handler for the search dropdown
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  // We've removed the dropdown functionality, so we don't need this effect anymore
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setShowDropdown(false);
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
 
   // Update handleSearch function
   const handleSearch = async () => {
@@ -2001,7 +1976,6 @@ const App = () => {
           onLogout={handleLogout}
           onSignIn={handleSignIn}
           onPasswordReset={handlePasswordReset}
-          isPasswordReset={true}
         />
         <PasswordReset />
       </div>
@@ -2018,7 +1992,6 @@ const App = () => {
         onLogout={handleLogout}
         onSignIn={handleSignIn}
         onPasswordReset={handlePasswordReset}
-        isPasswordReset={false}
       />
       
       <header className="App-header">
