@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import axios from 'axios';
+import FeedbackBox from './FeedbackBox';
 import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -444,8 +446,11 @@ const About = () => {
 // Chatbot component
 const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
   const [foundMolecules, setFoundMolecules] = useState([]);
+  const [showFeedbackBox, setShowFeedbackBox] = useState(false);
+  const [feedbackData, setFeedbackData] = useState(null);
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [moleculesLoading, setMoleculesLoading] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -454,9 +459,22 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Define handlers for thumbs feedback
+  const handleThumbsUp = (content, collapsibleContent) => {
+    setFeedbackData({ isPositive: true, responseContent: content, collapsibleContent });
+    setShowFeedbackBox(true);
+  };
+
+  const handleThumbsDown = (content, collapsibleContent) => {
+    setFeedbackData({ isPositive: false, responseContent: content, collapsibleContent });
+    setShowFeedbackBox(true);
+  };
+
   
   const handleFindMolecules = async (moleculeList) => {
     try {
+      setMoleculesLoading(true);
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
           const res = await fetch(`http://localhost:8000/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
@@ -464,10 +482,11 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
           return data;
         })
       );
-      // Filter out molecules that weren't found
       setFoundMolecules(responses.filter(item => item.found));
     } catch (err) {
       console.error("Error fetching molecule details:", err);
+    } finally {
+      setMoleculesLoading(false);
     }
   };
 
@@ -610,12 +629,70 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div dangerouslySetInnerHTML={{ __html: msg.text }} />
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
-                  <div style={{ marginTop: '10px' }}>
+                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
                     <button 
                       className="find-molecules-button" 
                       style={{ backgroundColor: '#ADD8E6', border: 'none', padding: '8px 12px', cursor: 'pointer' }}
                       onClick={() => handleFindMolecules(msg.molecules)}>
                       Find Molecules
+                    </button>
+                    {moleculesLoading && (
+                      <span style={{ 
+                        marginLeft: '10px', 
+                        fontStyle: 'italic', 
+                        color: '#555',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}>
+                        searching our database
+                        <span className="thinking-dots" style={{ marginLeft: '5px' }}>
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                )}
+                {/* Add thumbs buttons for feedback */}
+                {msg.type === "llm-message" && (
+                  <div className="thumbs" style={{ marginTop: '10px' }}>
+                    <button onClick={() => handleThumbsUp(msg.text, msg.collapsibleContent)}>👍</button>
+                    <button onClick={() => handleThumbsDown(msg.text, msg.collapsibleContent)}>👎</button>
+                    <button 
+                      className="copy-btn" 
+                      onClick={() => {
+                        // Create a temporary element and set its innerHTML to the message's HTML content.
+                        const tempEl = document.createElement('div');
+                        tempEl.innerHTML = msg.text;
+                        
+                        // Get the raw HTML.
+                        const rawHtml = tempEl.innerHTML;
+                        // Replace newline characters with <br> tags.
+                        const htmlToCopy = rawHtml.replace(/\n/g, '<br>');
+                        
+                        // Also, get the plain text version (which already has newlines)
+                        const plainTextToCopy = tempEl.innerText;
+
+                        // Create Blob objects for each representation.
+                        const blobHTML = new Blob([htmlToCopy], { type: 'text/html' });
+                        const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
+
+                        // Create a ClipboardItem that includes both formats.
+                        const clipboardItem = new ClipboardItem({
+                          'text/html': blobHTML,
+                          'text/plain': blobText,
+                        });
+
+                        navigator.clipboard.write([clipboardItem])
+                          .then(() => {
+                            console.log('Copied to clipboard with both HTML and plain text');
+                            // Optionally update the button to indicate success.
+                          })
+                          .catch(err => console.error('Failed to copy:', err));
+                      }}
+                    >
+                      📋
                     </button>
                   </div>
                 )}
@@ -665,11 +742,14 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>{details.name}</strong>
-                  <p>SMILES: {details.SMILE}</p>
-                  <p>HOMO EV: {details.HOMO}</p>
-                  <p>LUMO EV: {details.LUMO}</p>
+                  <p>SMILES: {details.SMILES}</p>
+                  <p>HOMO eV: {details.HOMO}</p>
+                  <p>LUMO eV: {details.LUMO}</p>
                   <p>ESP Max: {details.ESP_MAX}</p>
                   <p>ESP Min: {details.ESP_MIN}</p>
+                  <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
+                  <p>Predicted MP: {details.PREDICTED_MP}</p>
+                  <p>Predicted BP: {details.PREDICTED_BP}</p>
                   {details.image && (
                     <img 
                       src={details.image} 
@@ -696,6 +776,15 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
           </div>
         )}
       </div>
+      {/* Render the FeedbackBox if needed */}
+      {showFeedbackBox && feedbackData && (
+        <FeedbackBox 
+          isPositive={feedbackData.isPositive}
+          responseContent={feedbackData.responseContent}
+          collapsibleContent={feedbackData.collapsibleContent}
+          onClose={() => setShowFeedbackBox(false)}
+        />
+      )}
     </div>
   );
 };
