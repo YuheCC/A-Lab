@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import axios from 'axios';
 import FeedbackBox from './FeedbackBox';
 import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
