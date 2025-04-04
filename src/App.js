@@ -1199,7 +1199,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 70000;
+  const MAX_NODES = 150000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -1750,6 +1750,9 @@ const App = () => {
         
         setGraphData(nodes);
         setFilteredGraphData(nodes);
+        
+        // Log the number of nodes in the UMAP visualization
+        console.log(`UMAP visualization loaded with ${nodes.length} nodes`);
         
         // Initialize filter ranges based on actual data
         const currentFilterRanges = filterRangesRef.current;
