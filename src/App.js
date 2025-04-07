@@ -399,7 +399,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs };
+      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };
       setMessages(prev => [...prev, llmMessage]);
       
       // Update the query limit after each query for research users
