@@ -6,6 +6,9 @@ import MuiSlider from '@mui/material/Slider';
 // import logo from the public folder
 import './App.css';
 
+// API URL for backend endpoints
+const API_URL = 'http://0.0.0.0:8000';
+
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
 
@@ -58,7 +61,7 @@ const AuthPage = () => {
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
   // Use explicit URL for authentication endpoint
-  const API_URL = 'http://0.0.0.0:8000';
+  var API_URL = 'http://0.0.0.0:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -465,7 +468,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       if (userPermissions === 'research') {
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch("http://localhost:8000/query_limit", {
+          const response = await fetch(`${API_URL}/query_limit`, {
             method: "GET",
             headers: { 
               "Content-Type": "application/json",
@@ -511,7 +514,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     try {
       const token = localStorage.getItem('token');
       // Query the backend Pinecone index via the /rag endpoint
-      const response = await fetch("http://localhost:8000/rag", {
+      const response = await fetch(`${API_URL}/rag`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -537,7 +540,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       // Update the query limit after each query for research users
       if (userPermissions === 'research') {
         try {
-          const limitResponse = await fetch("http://localhost:8000/query_limit_update", {
+          const limitResponse = await fetch(`${API_URL}/query_limit_update`, {
             method: "POST",
             headers: { 
               "Content-Type": "application/json",
@@ -550,7 +553,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
             setRemainingQueries(limitData.query_limit);
           } else {
             // If updating fails (e.g., limit already at 0), just fetch the current limit
-            const getResponse = await fetch("http://localhost:8000/query_limit", {
+            const getResponse = await fetch(`${API_URL}/query_limit`, {
               method: "GET",
               headers: { 
                 "Content-Type": "application/json",
@@ -753,7 +756,7 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
     
     try {
       // Fetch the molecule visualization from Python server
-      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -966,7 +969,7 @@ const PasswordReset = () => {
       formData.append('current_password', currentPassword);
       formData.append('new_password', newPassword);
       
-      const response = await fetch('http://0.0.0.0:8000/reset-password', {
+      const response = await fetch(`${API_URL}/reset-password`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -1088,8 +1091,6 @@ const App = () => {
   const [authLoading, setAuthLoading] = useState(true);
   const [userPermissions, setUserPermissions] = useState('research');
   
-  // API URL from environment variables
-  const API_URL = 'http://0.0.0.0:8000';
   
   // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
@@ -1354,7 +1355,7 @@ const App = () => {
       } else {
         // If not found in UMAP data, check the Snowflake database
         try {
-          const response = await fetch(`http://localhost:8000/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
+          const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
           if (response.ok) {
             const data = await response.json();
             
@@ -1392,7 +1393,7 @@ const App = () => {
       }
 
       // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -1691,7 +1692,7 @@ const App = () => {
       try {
         setLoading(true);
         // Replace CSV fetching with Snowflake API endpoint
-        const response = await fetch('http://localhost:8000/snowflake-query');
+        const response = await fetch(`${API_URL}/snowflake-query`);
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
