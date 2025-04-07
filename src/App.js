@@ -36,7 +36,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         </a>
         <a
           href="/pricing"
-          className={`navbar-link ${activePage === 'pricing' ? 'active' : ''}`}
+          className={`navbar-link ${activePage === 'pricing' && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
           onClick={(e) => { e.preventDefault(); onNavigation('pricing'); }}
         >
           Pricing
