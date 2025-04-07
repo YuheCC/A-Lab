@@ -5,14 +5,19 @@ import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
-import logo from './logo-ses-ai.svg';
+// import logo from the public folder
 import './App.css';
+
+// API URL for backend endpoints
+const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset }) => {
+  // Use the logo from the public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
     <nav className="navbar">
       <div className="navbar-title">
@@ -25,7 +30,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
@@ -33,6 +38,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn }) =
       {isAuthenticated ? (
         <div className="navbar-user">
           <span className="username">{username}</span>
+          <button className="reset-password-button" onClick={onPasswordReset}>Settings</button>
           <button className="logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
@@ -53,8 +59,11 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
   // Use explicit URL for authentication endpoint
-  const API_URL = 'http://0.0.0.0:8000';
+  var API_URL = 'http://0.0.0.0:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -170,7 +179,7 @@ const AuthPage = () => {
 };
 
 // Popup component to display node data
-const NodePopup = ({ node, onClose }) => {
+const NodePopup = ({ node, onClose, filterLabels }) => {
   if (!node) return null;
   
   return (
@@ -190,7 +199,7 @@ const NodePopup = ({ node, onClose }) => {
             <tbody>
               {Object.entries(node.properties || {}).map(([key, value]) => (
                 <tr key={key}>
-                  <td className="property-name white-text">{key}</td>
+                  <td className="property-name white-text">{filterLabels[key] || key}</td>
                   <td className="property-value white-text">
                     {value !== null && value !== undefined 
                       ? typeof value === 'number' 
@@ -495,7 +504,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       if (userPermissions === 'research') {
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch("http://localhost:8000/query_limit", {
+          const response = await fetch(`${API_URL}/query_limit`, {
             method: "GET",
             headers: { 
               "Content-Type": "application/json",
@@ -525,7 +534,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     if (userPermissions === 'research' && remainingQueries <= 0) {
       const errorMessage = { 
         type: "llm-message", 
-        text: "You have reached your monthly query limit. Please upgrade to premium for unlimited queries." 
+        text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
       };
       setMessages(prev => [...prev, errorMessage]);
       return;
@@ -541,7 +550,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
     try {
       const token = localStorage.getItem('token');
       // Query the backend Pinecone index via the /rag endpoint
-      const response = await fetch("http://localhost:8000/rag", {
+      const response = await fetch(`${API_URL}/rag`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -551,7 +560,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
           query: queryText,
           maxOutputLength: 1024,
           ragEnabled: true,
-          webSearchEnabled: true,
+          webSearchEnabled: false,
           webSearchClient: "Tavily",
           model: "o3-mini"
         })
@@ -561,13 +570,13 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };
+      const llmMessage = { type: "llm-message", text: data.outputs };
       setMessages(prev => [...prev, llmMessage]);
       
       // Update the query limit after each query for research users
       if (userPermissions === 'research') {
         try {
-          const limitResponse = await fetch("http://localhost:8000/query_limit_update", {
+          const limitResponse = await fetch(`${API_URL}/query_limit_update`, {
             method: "POST",
             headers: { 
               "Content-Type": "application/json",
@@ -580,7 +589,7 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
             setRemainingQueries(limitData.query_limit);
           } else {
             // If updating fails (e.g., limit already at 0), just fetch the current limit
-            const getResponse = await fetch("http://localhost:8000/query_limit", {
+            const getResponse = await fetch(`${API_URL}/query_limit`, {
               method: "GET",
               headers: { 
                 "Content-Type": "application/json",
@@ -790,8 +799,6 @@ const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissi
 
 // Enterprise Search component
 const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick, searchInput, setSearchInput, searchResult, setSearchResult, searchLoading, setSearchLoading, searchError, setSearchError, includeRelatives, setIncludeRelatives }) => {
-  const [searchedMolecule, setSearchedMolecule] = useState(null);
-  const [enterprisePlotInitialized, setEnterprisePlotInitialized] = useState(false);
   const enterprisePlotlyRef = useRef(null);
   
   // Use the same plotlyData, layout, and config from the parent component through props
@@ -833,11 +840,10 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
-    setSearchedMolecule(null);
     
     try {
       // Fetch the molecule visualization from Python server
-      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -921,7 +927,6 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
                   onClick={handleNodeClick}
                   onInitialized={(figure) => {
                     enterprisePlotlyRef.current = figure;
-                    setEnterprisePlotInitialized(true);
                   }}
                   onUpdate={(figure) => {
                     enterprisePlotlyRef.current = figure;
@@ -1014,6 +1019,132 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
   );
 };
 
+// Password Reset component
+const PasswordReset = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('current_password', currentPassword);
+      formData.append('new_password', newPassword);
+      
+      const response = await fetch(`${API_URL}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Password reset failed');
+      }
+
+      const data = await response.json();
+      setSuccess(data.message || 'Password reset successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+    } catch (err) {
+      console.error('Password reset error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Reset Password</h2>
+          <p>Please enter your current password and a new password</p>
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="currentPassword">Current Password</label>
+            <input
+              type="password"
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Current password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="newPassword">New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm new password"
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Resetting...' : 'Reset Password'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -1022,8 +1153,6 @@ const App = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('explorer');
-  const [searchType, setSearchType] = useState('Lookup');
-  const [showDropdown, setShowDropdown] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -1049,8 +1178,6 @@ const App = () => {
   const [authLoading, setAuthLoading] = useState(true);
   const [userPermissions, setUserPermissions] = useState('research');
   
-  // API URL from environment variables
-  const API_URL = 'http://0.0.0.0:8000';
   
   // New filter implementation with range values
   const [filterRanges, setFilterRanges] = useState({
@@ -1058,8 +1185,22 @@ const App = () => {
     homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
     lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
     esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
-    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false }
+    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false },
+    predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
+    predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
   });
+  
+  // Labels for filters
+  const filterLabels = {
+    molwt: "Molecular Weight",
+    homo_eV: "HOMO (eV)",
+    lumo_eV: "LUMO (eV)",
+    esp_max_eV: "Max ESP (eV)",
+    esp_min_eV: "Min ESP (eV)",
+    predicted_mp: "Predicted Melting Point (°C)",
+    predicted_bp: "Predicted Boiling Point (°C)"
+  };
+  const filterLabelsRef = useRef(filterLabels);
   
   // Add global CSS styles for containers
   useEffect(() => {
@@ -1139,17 +1280,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  // Labels for filters
-  const filterLabels = {
-    molwt: "Molecular Weight",
-    homo_eV: "HOMO (eV)",
-    lumo_eV: "LUMO (eV)",
-    esp_max_eV: "Max ESP (eV)",
-    esp_min_eV: "Min ESP (eV)"
-  };
-  const filterLabelsRef = useRef(filterLabels);
-
-  const MAX_NODES = 70000;
+  const MAX_NODES = 150000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -1246,24 +1377,7 @@ const App = () => {
           size: 12
         }
       }];
-    } else if (searchedMolecule && !highlightedMolecule) {
-      layout.annotations = [{
-        x: 0,
-        y: 0,
-        xref: 'paper',
-        yref: 'paper',
-        text: '',
-        showarrow: false,
-        bgcolor: '#fff3cd',
-        bordercolor: '#ffeeba',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: '#856404',
-          size: 14
-        }
-      }];
-    } else if (searchResult && !searchedMolecule) {
+    } else if (searchResult) {
       layout.annotations = [{
         x: 0,
         y: 0,
@@ -1283,7 +1397,7 @@ const App = () => {
     }
     
     return layout;
-  }, [plotlyLayout, highlightedMolecule, searchResult, searchedMolecule, arrowOffset]);
+  }, [plotlyLayout, highlightedMolecule, searchResult, arrowOffset]);
 
   const plotlyConfig = {
     displayModeBar: true,
@@ -1292,19 +1406,18 @@ const App = () => {
     modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
   };
 
-  // Add a ref and click-outside handler for the search dropdown
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  // We've removed the dropdown functionality, so we don't need this effect anymore
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setShowDropdown(false);
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
 
   // Update handleSearch function
   const handleSearch = async () => {
@@ -1327,57 +1440,47 @@ const App = () => {
         setSearchedMolecule(matchingMolecule);
         setHighlightedMolecule(matchingMolecule);
       } else {
-        // If not found in UMAP data, check the full CSV
+        // If not found in UMAP data, check the Snowflake database
         try {
-          const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+          const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
           if (response.ok) {
-            const text = await response.text();
+            const data = await response.json();
             
-            // Use a Promise to make Papa.parse wait until completion
-            await new Promise((resolve) => {
-              Papa.parse(text, {
-                header: true,
-                dynamicTyping: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                  // Find the molecule in the full CSV data
-                  const csvMolecule = results.data.find(row => 
-                    row.smiles && row.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-                  );
-                  
-                  if (csvMolecule) {
-                    // Create a formatted molecule object from CSV data
-                    const formattedMolecule = {
-                      smiles: csvMolecule.smiles,
-                      properties: {
-                        molwt: csvMolecule.molwt,
-                        homo_eV: csvMolecule.homo_eV,
-                        lumo_eV: csvMolecule.lumo_eV,
-                        esp_min_eV: csvMolecule.esp_min_eV,
-                        esp_max_eV: csvMolecule.esp_max_eV
-                      },
-                      rawData: csvMolecule
-                    };
-                    
-                    setSearchedMolecule(formattedMolecule);
-                    // Don't highlight on UMAP since it's not in the visualization
-                  }
-                  resolve();
+            // Find the molecule in the Snowflake data
+            if (data.data && data.data.length > 0) {
+              const snowflakeMolecule = data.data[0];
+              
+              // Create a formatted molecule object from Snowflake data
+              const formattedMolecule = {
+                smiles: snowflakeMolecule.SMILES,
+                properties: {
+                  molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                  homo_eV: snowflakeMolecule.HOMO_EV,
+                  lumo_eV: snowflakeMolecule.LUMO_EV,
+                  esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                  esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                  dipole_x: snowflakeMolecule.DIPOLE_X,
+                  dipole_y: snowflakeMolecule.DIPOLE_Y,
+                  dipole_z: snowflakeMolecule.DIPOLE_Z,
+                  functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                  predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                  predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                  chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
                 },
-                error: (error) => {
-                  console.error("CSV parse error:", error);
-                  resolve();
-                }
-              });
-            });
+                rawData: snowflakeMolecule
+              };
+              
+              setSearchedMolecule(formattedMolecule);
+              // Don't highlight on UMAP since it's not in the visualization
+            }
           }
-        } catch (csvError) {
-          console.error('Error checking full CSV:', csvError);
+        } catch (apiError) {
+          console.error('Error checking Snowflake database:', apiError);
         }
       }
 
       // Then fetch the molecule visualization from Python server
-      const response = await fetch(`http://0.0.0.0:8000/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
       }
@@ -1425,6 +1528,9 @@ const App = () => {
         // Redirect /about to root
         window.history.pushState({}, '', '/');
         setActivePage('about');
+      } else if (path === '/reset-password') {
+        // Show password reset page
+        setShowPasswordReset(true);
       } else if (path === '/') {
         // Stay on the current active page or default to about
         // No need to change URL since we're already at root
@@ -1459,6 +1565,29 @@ const App = () => {
     if (window.location.pathname !== '/') {
       window.history.pushState({}, '', '/');
     }
+    
+    // Clear search results when navigating away from search page
+    if (activePage === 'search' && page !== 'search') {
+      setSearchInput('');
+      setSearchResult(null);
+      setSearchedMolecule(null);
+      setHighlightedMolecule(null);
+      setSearchError(null);
+    }
+    
+    // Special case for enterprise (advanced search) tab
+    if (page === 'enterprise' && activePage === 'search') {
+      // First clear the search tab data
+      setSearchInput('');
+      setSearchResult(null);
+      setSearchedMolecule(null);
+      setHighlightedMolecule(null);
+      setSearchError(null);
+      // Then navigate to enterprise tab
+      setActivePage(page);
+      return;
+    }
+    
     setActivePage(page);
   };
 
@@ -1469,13 +1598,13 @@ const App = () => {
       return ['about', 'explorer', 'search', 'chatbot'].includes(page);
     }
     
-    // Premium users can access About, Filter, Simple Search, and Chat
-    if (userPermissions === 'premium') {
-      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
-    }
-    
     // Admin users can access everything
     if (userPermissions === 'admin') {
+      return true;
+    }
+    
+    // Professional users can also access everything
+    if (userPermissions === 'professional') {
       return true;
     }
     
@@ -1490,22 +1619,18 @@ const App = () => {
     let buttonAction = () => {};
 
     if (userPermissions === 'research') {
-      message = 'This feature is only available for premium users. Please upgrade your account to access this functionality.';
+      message = 'This feature is only available for admin users. Please contact your administrator for access.';
       buttonText = 'View Pricing';
       buttonAction = () => {
         setActivePage('about');
-        // Wait for the about page to render, then scroll to pricing section
+        // Use setTimeout to ensure the about page has rendered before scrolling
         setTimeout(() => {
-          const pricingSection = document.querySelector('.pricing-section');
-          if (pricingSection) {
-            pricingSection.scrollIntoView({ behavior: 'smooth' });
+          const pricingImage = document.querySelector('.pricing-image');
+          if (pricingImage) {
+            pricingImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }, 100);
       };
-    } else if (userPermissions === 'premium') {
-      message = 'This feature is only available for admin users. Please contact your administrator for access.';
-      buttonText = 'Contact Admin';
-      buttonAction = () => window.location.href = '/about';
     }
 
     return (
@@ -1555,6 +1680,76 @@ const App = () => {
           setIsAuthenticated(true);
           setUsername(data.username);
           setUserPermissions(data.permissions || 'research');
+          
+          // Fetch user creation date and set up reset timer
+          if (data.id) {
+            try {
+              const createdAtResponse = await fetch(`${API_URL}/created_at?id=${data.id}`);
+              if (createdAtResponse.ok) {
+                const createdAtData = await createdAtResponse.json();
+                const createdAt = new Date(createdAtData.created_at);
+                
+                // Set up timer to reset query limit every 30 seconds after creation time
+                const setupResetTimer = () => {
+                  const now = new Date();
+                  const createdAtTime = createdAt.getTime(); // Creation timestamp in ms
+                  const elapsedMillis = now.getTime() - createdAtTime; // Time elapsed since creation
+                  const intervalMillis = 30 * 1000; // 30 seconds in ms
+                  
+                  // Calculate time until next 30-second mark
+                  const millisSinceLastInterval = elapsedMillis % intervalMillis;
+                  const timeToNextReset = intervalMillis - millisSinceLastInterval;
+                  
+                  console.log(`Next query limit reset in ${timeToNextReset/1000} seconds`);
+                  
+                  // Set timeout to reset query limit at next 30-second mark
+                  const resetTimeout = setTimeout(async () => {
+                    try {
+                      // Call reset endpoint
+                      const resetResponse = await fetch(`${API_URL}/reset_user_limit?id=${data.id}`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        }
+                      });
+                      
+                      if (resetResponse.ok) {
+                        const resetData = await resetResponse.json();
+                        console.log('Query limit reset:', resetData);
+                        setRemainingQueries(resetData.query_limit);
+                        
+                        // Setup next timer
+                        setupResetTimer();
+                      } else {
+                        console.error('Failed to reset query limit');
+                        // Try again after 30 seconds
+                        setTimeout(setupResetTimer, intervalMillis);
+                      }
+                    } catch (error) {
+                      console.error('Error resetting query limit:', error);
+                      // Try again after 30 seconds
+                      setTimeout(setupResetTimer, intervalMillis);
+                    }
+                  }, timeToNextReset);
+                  
+                  // Store timeout ID to clear on unmount
+                  return resetTimeout;
+                };
+                
+                // Initialize the timer
+                const initialTimeoutId = setupResetTimer();
+                
+                // Clear timer on component unmount
+                return () => {
+                  if (initialTimeoutId) clearTimeout(initialTimeoutId);
+                };
+              }
+            } catch (error) {
+              console.error('Error fetching user creation date:', error);
+            }
+          }
+          
           if (activePage === 'login') {
             setActivePage('explorer');
           }
@@ -1583,68 +1778,66 @@ const App = () => {
       
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.PUBLIC_URL}/umap_product_demo_1M_set.csv`);
+        // Replace CSV fetching with Snowflake API endpoint
+        const response = await fetch(`${API_URL}/snowflake-query`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-        const text = await response.text();
-        Papa.parse(text, {
-          header: true,
-          dynamicTyping: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            if (results.errors.length > 0) {
-              console.error("Parse errors:", results.errors);
-            }
-            const nodes = results.data
-              .filter(row => row && row.umap_0 !== undefined && row.umap_1 !== undefined && row.smiles)
-              .slice(0, MAX_NODES)
-              .map((row, index) => ({
-                id: index.toString(),
-                x: Number(row.umap_0),
-                y: Number(row.umap_1),
-                smiles: row.smiles,
-                properties: {
-                  molwt: row.molwt,
-                  homo_eV: row.homo_eV,
-                  lumo_eV: row.lumo_eV,
-                  esp_min_eV: row.esp_min_eV,
-                  esp_max_eV: row.esp_max_eV
-                },
-                rawData: row
-              }));
-            
-            setGraphData(nodes);
-            setFilteredGraphData(nodes);
-            
-            // Initialize filter ranges based on actual data
-            const currentFilterRanges = filterRangesRef.current;
-            const currentFilterLabels = filterLabelsRef.current;
-            const newFilterRanges = { ...currentFilterRanges };
-            Object.keys(currentFilterLabels).forEach(key => {
-              const values = nodes
-                .map(node => node.properties[key])
-                .filter(v => v !== undefined && v !== null);
-              if (values.length > 0) {
-                const min = Math.min(...values);
-                const max = Math.max(...values);
-                newFilterRanges[key] = {
-                  min: min,
-                  max: max,
-                  range: [min, max], // Initialize range to full data range (filter effectively off)
-                  active: false
-                };
-              }
-            });
-            setFilterRanges(newFilterRanges);
-            setLoading(false);
-          },
-          error: (error) => {
-            console.error("Error parsing CSV:", error);
-            setError(`Parse error: ${error}`);
-            setLoading(false);
+        const data = await response.json();
+        
+        // Map the data to our node structure with updated property names
+        const nodes = data.data
+          .filter(row => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+          .slice(0, MAX_NODES)
+          .map((row, index) => ({
+            id: index.toString(),
+            x: Number(row.UMAP_0),
+            y: Number(row.UMAP_1),
+            smiles: row.SMILES,
+            properties: {
+              molwt: row.MOLECULAR_WEIGHT,
+              homo_eV: row.HOMO_EV,
+              lumo_eV: row.LUMO_EV,
+              esp_min_eV: row.ESP_MIN_EV,
+              esp_max_eV: row.ESP_MAX_EV,
+              dipole_x: row.DIPOLE_X,
+              dipole_y: row.DIPOLE_Y,
+              dipole_z: row.DIPOLE_Z,
+              functional_groups: row.FUNCTIONAL_GROUPS,
+              predicted_mp: row.PREDICTED_MP,
+              predicted_bp: row.PREDICTED_BP,
+              chemical_formula: row.CHEMICAL_FORMULA
+            },
+            rawData: row
+          }));
+        
+        setGraphData(nodes);
+        setFilteredGraphData(nodes);
+        
+        // Log the number of nodes in the UMAP visualization
+        console.log(`UMAP visualization loaded with ${nodes.length} nodes`);
+        
+        // Initialize filter ranges based on actual data
+        const currentFilterRanges = filterRangesRef.current;
+        const currentFilterLabels = filterLabelsRef.current;
+        const newFilterRanges = { ...currentFilterRanges };
+        Object.keys(currentFilterLabels).forEach(key => {
+          const values = nodes
+            .map(node => node.properties[key])
+            .filter(v => v !== undefined && v !== null);
+          if (values.length > 0) {
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            newFilterRanges[key] = {
+              min: min,
+              max: max,
+              range: [min, max], // Initialize range to full data range (filter effectively off)
+              active: false
+            };
           }
         });
+        setFilterRanges(newFilterRanges);
+        setLoading(false);
       } catch (err) {
         console.error("Error loading data:", err);
         setError(err.message);
@@ -1775,11 +1968,15 @@ const App = () => {
     text: filteredGraphData.map(node => 
       `<b>Molecule Information:</b><br>` +
       `SMILES: ${node.smiles}<br>` +
+      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
       `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
       `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
+      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
     )
   }];
 
@@ -1816,11 +2013,15 @@ const App = () => {
     text: filteredGraphData.map(node => 
       `<b>Molecule Information:</b><br>` +
       `SMILES: ${node.smiles}<br>` +
+      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
       `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
       `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
+      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
     )
   }];
 
@@ -1832,6 +2033,16 @@ const App = () => {
 
   // Query limits are now managed on the server side
 
+  // Add password reset state
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  
+  // Add handlePasswordReset function here, before it's used
+  const handlePasswordReset = () => {
+    setShowPasswordReset(true);
+    // Change URL to indicate password reset page
+    window.history.pushState({}, '', '/reset-password');
+  };
+  
   // If authentication is still being checked, show loading spinner
   if (authLoading) {
     return <div className="app-loading">Loading...</div>;
@@ -1840,6 +2051,23 @@ const App = () => {
   // If not authenticated and not on About page, show login page
   if (!isAuthenticated && activePage !== 'about') {
     return <AuthPage />;
+  }
+
+  // Show password reset page if active
+  if (showPasswordReset && isAuthenticated) {
+    return (
+      <div className="App" style={{ overflow: 'auto', height: '100vh' }}>
+        <Navbar 
+          activePage={activePage} 
+          isAuthenticated={isAuthenticated} 
+          username={username}
+          onLogout={handleLogout}
+          onSignIn={handleSignIn}
+          onPasswordReset={handlePasswordReset}
+        />
+        <PasswordReset />
+      </div>
+    );
   }
 
   return (
@@ -1851,6 +2079,7 @@ const App = () => {
         username={username}
         onLogout={handleLogout}
         onSignIn={handleSignIn}
+        onPasswordReset={handlePasswordReset}
       />
       
       <header className="App-header">
@@ -2101,6 +2330,12 @@ const App = () => {
                                 <td className="property-name">SMILES</td>
                                 <td className="property-value">{searchedMolecule.smiles}</td>
                               </tr>
+                              {searchedMolecule.properties?.chemical_formula && (
+                                <tr>
+                                  <td className="property-name">Chemical Formula</td>
+                                  <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
+                                </tr>
+                              )}
                               <tr>
                                 <td className="property-name">Molecular Weight</td>
                                 <td className="property-value">
@@ -2131,6 +2366,30 @@ const App = () => {
                                   {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
                                 </td>
                               </tr>
+                              {searchedMolecule.properties?.predicted_mp && (
+                                <tr>
+                                  <td className="property-name">Predicted Melting Point (°C)</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.predicted_mp.toFixed(2)}
+                                  </td>
+                                </tr>
+                              )}
+                              {searchedMolecule.properties?.predicted_bp && (
+                                <tr>
+                                  <td className="property-name">Predicted Boiling Point (°C)</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.predicted_bp.toFixed(2)}
+                                  </td>
+                                </tr>
+                              )}
+                              {searchedMolecule.properties?.functional_groups && (
+                                <tr>
+                                  <td className="property-name">Functional Groups</td>
+                                  <td className="property-value">
+                                    {searchedMolecule.properties.functional_groups}
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         </div>
@@ -2161,7 +2420,7 @@ const App = () => {
       </div>
       
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} />}
+      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
     </div>
   );
 };

@@ -23,6 +23,14 @@ npm start
 
 The React application will run on http://localhost:3000
 
+## Build and Hosting
+
+### Building for Production
+1. Create a production build:
+```bash
+npm run build
+```
+
 ## Features
 
 - User authentication (login/signup)
@@ -43,7 +51,7 @@ The application uses JWT-based authentication. Only logged-in users can access:
 
 ## Data Source
 
-The application reads data from `umap_product_demo_1M_set.csv` in the public directory, which contains UMAP coordinates and properties for molecular compounds.
+The application reads data from snowflake by making requests to the backend.
 
 ## Implementation Details
 
