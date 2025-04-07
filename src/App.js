@@ -35,7 +35,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a
           href="/pricing"
           className={`navbar-link ${activePage === 'pricing' ? 'active' : ''}`}
-          onClick={(e) => { onNavigation('pricing'); }}
+          onClick={(e) => { e.preventDefault(); onNavigation('pricing'); }}
         >
           Pricing
         </a>
