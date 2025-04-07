@@ -409,7 +409,7 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = () => {
+const PricingPage = ({ onSignIn }) => {
   return (
     <div className="pricing-container">
       
@@ -429,7 +429,12 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Limited access</p>
-          <button className="pricing-cta">Sign Up</button>
+          <button 
+            className="pricing-cta research" 
+            onClick={onSignIn}
+          >
+            Sign Up
+          </button>
           <div className="pricing-details">
             <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
@@ -438,12 +443,10 @@ const PricingPage = () => {
               <li>Limited number of monthly queries (100)</li>
               <li>Access to the molecular assistant AI</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
         
         <div className="pricing-card popular">
-          <div className="popular-tag">MOST POPULAR</div>
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
@@ -458,7 +461,12 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Includes all Research features</p>
-          <button className="pricing-cta">GET STARTED</button>
+          <button 
+            className="pricing-cta professional"
+            onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
+          >
+            GET STARTED
+          </button>
           <div className="pricing-details">
             <p>This edition includes all Research Edition features plus:</p>
             <ul>
@@ -468,11 +476,11 @@ const PricingPage = () => {
               <li>Customized molecular visualizations</li>
               <li>Priority access to new features</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
         
               <div className="pricing-card popular">
+              <div className="popular-tag">MOST POPULAR</div>
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
@@ -487,7 +495,11 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Includes all Research features</p>
-          <button className="pricing-cta">GET STARTED</button>
+          <button className="pricing-cta unlimited"
+            onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
+          >
+            GET STARTED
+          </button>
           <div className="pricing-details">
             <p>This edition includes all Research Edition features plus:</p>
             <ul>
@@ -497,7 +509,6 @@ const PricingPage = () => {
               <li>Customized molecular visualizations</li>
               <li>Priority access to new features</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
 
@@ -1941,7 +1952,7 @@ const App = () => {
             /> : <PermissionsError />
         ) : activePage === 'pricing' ? (
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-            <PricingPage />
+            <PricingPage onSignIn={handleSignIn} />
           </div>
         ) : (
           // SEARCH PAGE CONTENT:
