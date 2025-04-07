@@ -921,7 +921,7 @@ const PricingPage = () => {
             <ul>
               <li>Access to UMAP visualization</li>
               <li>Basic molecule search functionality</li>
-              <li>Limited number of monthly queries (10)</li>
+              <li>Limited number of monthly queries (100)</li>
               <li>Access to the molecular assistant AI</li>
             </ul>
             <a href="#" className="pricing-more">View All Features</a>
