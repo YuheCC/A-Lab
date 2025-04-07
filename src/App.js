@@ -13,7 +13,7 @@ const API_URL = 'http://0.0.0.0:8000';
 const Plot = createPlotlyComponent(Plotly);
 
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset }) => {
+const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, onNavigation }) => {
   // Use the logo from the public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
@@ -31,6 +31,13 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
           className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
+        </a>
+        <a
+          href="/pricing"
+          className={`navbar-link ${activePage === 'pricing' ? 'active' : ''}`}
+          onClick={(e) => { onNavigation('pricing'); }}
+        >
+          Pricing
         </a>
       </div>
       {isAuthenticated ? (
@@ -880,6 +887,110 @@ const PasswordReset = () => {
   );
 };
 
+// Pricing Page component
+const PricingPage = () => {
+  return (
+    <div className="pricing-container">
+      <div className="pricing-header">
+        <h1>PRICING OPTIONS</h1>
+        
+        <div className="pricing-tabs">
+          <button className="pricing-tab active">OVERVIEW</button>
+        </div>
+      </div>
+      
+      <div className="pricing-cards">
+        <div className="pricing-card">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm4-9H8v2h8Z"/>
+            </svg>
+          </div>
+          <h2>Research</h2>
+          <p className="pricing-description">
+            The Research Edition is the introductory offering providing access to core platform functionality.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$0</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Limited access</p>
+          <button className="pricing-cta">GET STARTED</button>
+          <div className="pricing-details">
+            <p>This edition includes limited access to the Molecular Universe with:</p>
+            <ul>
+              <li>Access to UMAP visualization</li>
+              <li>Basic molecule search functionality</li>
+              <li>Limited number of monthly queries (10)</li>
+              <li>Access to the molecular assistant AI</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+        
+        <div className="pricing-card popular">
+          <div className="popular-tag">MOST POPULAR</div>
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Professional</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$99</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button className="pricing-cta">GET STARTED</button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+        
+        <div className="pricing-card">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M12,1L3,5v6c0,5.55,3.84,10.74,9,12,5.16-1.26,9-6.45,9-12V5L12,1Zm0,6a3,3,0,1,1-3,3A3,3,0,0,1,12,7Zm0,9.3a7.39,7.39,0,0,1-6-3.1C6.08,11.57,10,10.5,12,10.5s5.92,1.07,6,3.2A7.39,7.39,0,0,1,12,16.3Z"/>
+            </svg>
+          </div>
+          <h2>Unlimited</h2>
+          <p className="pricing-description">
+            The Unlimited Edition offers specialized functionality for research teams needing comprehensive molecular data.
+          </p>
+          <div className="pricing-price">
+            <span className="talk-to-sales">TALK TO SALES</span>
+          </div>
+          <p className="pricing-region">Enterprise plan with full access</p>
+          <button className="pricing-cta talk">TALK TO SALES</button>
+          <div className="pricing-details">
+            <p>The edition includes all features in the Professional Edition plus:</p>
+            <ul>
+              <li>API access</li>
+              <li>Custom integrations</li>
+              <li>Dedicated compute resources</li>
+              <li>Advanced model training</li>
+              <li>Technical support</li>
+              <li>Custom property calculations</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -1242,11 +1353,17 @@ const App = () => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
       
-      // If not authenticated, allow access to About and Map pages
+      // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map') {
-          // Default to map page for non-authenticated users
-          setActivePage(path === '/about' ? 'about' : 'map');
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing') {
+          // Set appropriate active page
+          if (path === '/about') {
+            setActivePage('about');
+          } else if (path === '/pricing') {
+            setActivePage('pricing');
+          } else {
+            setActivePage('map');
+          }
         } else {
           // Redirect to login for any other route
           window.history.pushState({}, '', '/login');
@@ -1267,6 +1384,8 @@ const App = () => {
       } else if (path === '/reset-password') {
         // Show password reset page
         setShowPasswordReset(true);
+      } else if (path === '/pricing') {
+        setActivePage('pricing');
       } else if (path === '/') {
         // Always set to map when on the root path
         setActivePage('map');
@@ -1297,9 +1416,15 @@ const App = () => {
       setActivePage('permissions-error');
       return;
     }
-    // Always keep the URL as root when navigating between tabs
-    if (window.location.pathname !== '/') {
-      window.history.pushState({}, '', '/');
+    
+    // Set URL based on page
+    if (page === 'pricing') {
+      window.history.pushState({}, '', '/pricing');
+    } else {
+      // Always keep the URL as root when navigating between other tabs
+      if (window.location.pathname !== '/') {
+        window.history.pushState({}, '', '/');
+      }
     }
     
     // Clear search results when navigating away from search page
@@ -1329,8 +1454,8 @@ const App = () => {
 
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
-    // Allow all users (including non-authenticated) to access the map page
-    if (page === 'map') {
+    // Allow all users (including non-authenticated) to access the map page and pricing page
+    if (page === 'map' || page === 'pricing') {
       return true;
     }
     
@@ -1790,8 +1915,8 @@ const App = () => {
     return <div className="app-loading">Loading...</div>;
   }
   
-  // Modified condition to allow non-authenticated users to access the map page
-  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map') {
+  // Modified condition to allow non-authenticated users to access the map page and pricing page
+  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing') {
     return <AuthPage />;
   }
 
@@ -1806,6 +1931,7 @@ const App = () => {
           onLogout={handleLogout}
           onSignIn={handleSignIn}
           onPasswordReset={handlePasswordReset}
+          onNavigation={handleNavigation}
         />
         <PasswordReset />
       </div>
@@ -1822,6 +1948,7 @@ const App = () => {
         onLogout={handleLogout}
         onSignIn={handleSignIn}
         onPasswordReset={handlePasswordReset}
+        onNavigation={handleNavigation}
       />
       
       <header className="App-header">
@@ -2078,6 +2205,8 @@ const App = () => {
               includeRelatives={includeRelatives}
               setIncludeRelatives={setIncludeRelatives}
             /> : <PermissionsError />
+        ) : activePage === 'pricing' ? (
+          <PricingPage />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
