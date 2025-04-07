@@ -881,7 +881,7 @@ body, html {
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 280px);
+  height: calc(100vh - 325px);
 }
 
 .chatbot-content h2 {
@@ -955,7 +955,7 @@ body, html {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: calc(100vh - 305px);
+  height: calc(100vh - 344px);
   overflow-y: auto;
   background-color: #fff;
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
