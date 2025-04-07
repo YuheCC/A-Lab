@@ -23,6 +23,14 @@ npm start
 
 The React application will run on http://localhost:3000
 
+## Build and Hosting
+
+### Building for Production
+1. Create a production build:
+```bash
+npm run build
+```
+
 ## Features
 
 - User authentication (login/signup)
