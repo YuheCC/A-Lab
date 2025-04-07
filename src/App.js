@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import ChatbotInterface from './Chatbox';
+import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
@@ -278,262 +280,227 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
   );
 };
 
-// Chatbot component
-const ChatbotInterface = ({ input, setInput, messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
-  const messagesEndRef = useRef(null);
-  const [isThinking, setIsThinking] = useState(false);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+// Password Reset component
+const PasswordReset = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  // Fetch query limit from API
-  useEffect(() => {
-    const fetchQueryLimit = async () => {
-      if (userPermissions === 'research') {
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/query_limit`, {
-            method: "GET",
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            setRemainingQueries(data.query_limit);
-          } else {
-            console.error("Failed to fetch query limit");
-          }
-        } catch (error) {
-          console.error("Error fetching query limit:", error);
-        }
-      }
-    };
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
-    fetchQueryLimit();
-  }, [userPermissions, setRemainingQueries]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
-
-    // Check query limit for research users
-    if (userPermissions === 'research' && remainingQueries <= 0) {
-      const errorMessage = { 
-        type: "llm-message", 
-        text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
-      };
-      setMessages(prev => [...prev, errorMessage]);
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match');
+      setLoading(false);
       return;
     }
 
-    // Append the user message
-    const userMessage = { type: "user-message", text: input.trim() };
-    setMessages(prev => [...prev, userMessage]);
-    const queryText = input.trim();
-    setInput("");
-    setIsThinking(true);
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
 
     try {
       const token = localStorage.getItem('token');
-      // Query the backend Pinecone index via the /rag endpoint
-      const response = await fetch(`${API_URL}/rag`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          query: queryText,
-          maxOutputLength: 1024,
-          ragEnabled: true,
-          webSearchEnabled: false,
-          webSearchClient: "Tavily",
-          model: "o3-mini"
-        })
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs };
-      setMessages(prev => [...prev, llmMessage]);
+      const formData = new FormData();
+      formData.append('current_password', currentPassword);
+      formData.append('new_password', newPassword);
       
-      // Update the query limit after each query for research users
-      if (userPermissions === 'research') {
-        try {
-          const limitResponse = await fetch(`${API_URL}/query_limit_update`, {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          });
-          
-          if (limitResponse.ok) {
-            const limitData = await limitResponse.json();
-            setRemainingQueries(limitData.query_limit);
-          } else {
-            // If updating fails (e.g., limit already at 0), just fetch the current limit
-            const getResponse = await fetch(`${API_URL}/query_limit`, {
-              method: "GET",
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              }
-            });
-            
-            if (getResponse.ok) {
-              const getData = await getResponse.json();
-              setRemainingQueries(getData.query_limit);
-            }
-          }
-        } catch (error) {
-          console.error("Error updating query limit:", error);
-        }
+      const response = await fetch(`${API_URL}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Password reset failed');
       }
-    } catch (error) {
-      const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
-      setMessages(prev => [...prev, errorMessage]);
+
+      const data = await response.json();
+      setSuccess(data.message || 'Password reset successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+    } catch (err) {
+      console.error('Password reset error:', err);
+      setError(err.message);
     } finally {
-      setIsThinking(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="chatbot-container" style={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      alignItems: 'center', 
-      justifyContent: 'center',
-      padding: '40px 20px',
-      width: '100%',
-      maxWidth: '1200px',
-      margin: '0 auto'
-    }}>
-      <h2 style={{ 
-        textAlign: 'center', 
-        fontSize: '2rem',
-        margin: '0 0 30px 0',
-        width: '100%',
-        color: '#333',
-        borderBottom: '1px solid #ddd',
-        paddingBottom: '15px'
-      }}>
-        AI Molecular Assistant
-      </h2>
-      
-      <div className="chatbot-content" style={{
-        width: '100%',
-        maxWidth: '900px',
-        display: 'flex',
-        flexDirection: 'column',
-        height: 'calc(100vh - 280px)',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        borderRadius: '10px',
-        padding: '20px',
-        backgroundColor: '#fff'
-      }}>
-        <div className="chatbot-header" style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '20px'
-        }}>
-          {userPermissions === 'research' && (
-            <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`} style={{
-              width: 'auto',
-              margin: '0 auto'
-            }}>
-              <span className="query-limit-icon">💬</span>
-              <span>Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span></span>
-            </div>
-          )}
+    <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Reset Password</h2>
+          <p>Please enter your current password and a new password</p>
         </div>
         
-        <div className="chat-messages" style={{
-          flex: '1',
-          overflowY: 'auto',
-          padding: '20px',
-          backgroundColor: '#f9f9f9',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          border: '1px solid #eee',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          {messages.map((msg, index) => (
-            <div 
-              key={index} 
-              className={msg.type} 
-              style={{ 
-                whiteSpace: 'pre-wrap',
-                maxWidth: msg.type === 'system-message' ? '100%' : '66%',
-                alignSelf: msg.type === 'user-message' ? 'flex-end' : 'flex-start' 
-              }} 
-              dangerouslySetInnerHTML={{ __html: msg.text }}>
-            </div>
-          ))}
-          {isThinking && (
-            <div className="thinking-message" style={{ alignSelf: 'flex-end' }}>
-              <span>thinking</span>
-              <div className="thinking-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
         
-        <div className="chat-input-container" style={{
-          display: 'flex',
-          gap: '10px',
-          width: '100%'
-        }}>
-          <textarea
-            className="chat-input"
-            placeholder="Ask a question about molecules, properties, or chemical structures..."
-            rows={3}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={userPermissions === 'research' && remainingQueries <= 0}
-            style={{
-              flex: '1',
-              padding: '12px',
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              resize: 'none',
-              fontFamily: 'inherit',
-              fontSize: '14px'
-            }}
-          />
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="currentPassword">Current Password</label>
+            <input
+              type="password"
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Current password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="newPassword">New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm new password"
+              required
+            />
+          </div>
+          
           <button 
-            className="send-button" 
-            onClick={handleSend}
-            disabled={userPermissions === 'research' && remainingQueries <= 0}
-            style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '0 20px',
-              cursor: 'pointer',
-              fontWeight: '500',
-              transition: 'background-color 0.2s'
-            }}
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
           >
-            Send
+            {loading ? 'Resetting...' : 'Reset Password'}
           </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Pricing Page component
+const PricingPage = () => {
+  return (
+    <div className="pricing-container">
+      
+      <div className="pricing-cards">
+        <div className="pricing-card">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm4-9H8v2h8Z"/>
+            </svg>
+          </div>
+          <h2>Research</h2>
+          <p className="pricing-description">
+            The Research Edition is the introductory offering providing access to core platform functionality.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$0</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Limited access</p>
+          <button className="pricing-cta">Sign Up</button>
+          <div className="pricing-details">
+            <p>This edition includes limited access to the Molecular Universe with:</p>
+            <ul>
+              <li>Access to UMAP visualization</li>
+              <li>Basic molecule search functionality</li>
+              <li>Limited number of monthly queries (100)</li>
+              <li>Access to the molecular assistant AI</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
         </div>
+        
+        <div className="pricing-card popular">
+          <div className="popular-tag">MOST POPULAR</div>
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Professional</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$100</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button className="pricing-cta">GET STARTED</button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+        
+              <div className="pricing-card popular">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Unlimited</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$10,000</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button className="pricing-cta">GET STARTED</button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -1067,7 +1034,6 @@ const App = () => {
   const [includeRelatives, setIncludeRelatives] = useState(false);
   
   // Chat state (moved from ChatbotInterface)
-  const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
     { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
   ]);
@@ -2229,8 +2195,6 @@ const App = () => {
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
             <ChatbotInterface 
-              input={chatInput} 
-              setInput={setChatInput} 
               messages={chatMessages} 
               setMessages={setChatMessages}
               userPermissions={userPermissions}
