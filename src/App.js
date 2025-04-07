@@ -891,13 +891,6 @@ const PasswordReset = () => {
 const PricingPage = () => {
   return (
     <div className="pricing-container">
-      <div className="pricing-header">
-        <h1>PRICING OPTIONS</h1>
-        
-        <div className="pricing-tabs">
-          <button className="pricing-tab active">OVERVIEW</button>
-        </div>
-      </div>
       
       <div className="pricing-cards">
         <div className="pricing-card">
@@ -915,7 +908,7 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Limited access</p>
-          <button className="pricing-cta">GET STARTED</button>
+          <button className="pricing-cta">Sign Up</button>
           <div className="pricing-details">
             <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
@@ -940,7 +933,7 @@ const PricingPage = () => {
             The Professional Edition is for companies with research initiatives looking for more granular controls.
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$99</span>
+            <span className="price-amount">$100</span>
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Includes all Research features</p>
@@ -958,34 +951,35 @@ const PricingPage = () => {
           </div>
         </div>
         
-        <div className="pricing-card">
+              <div className="pricing-card popular">
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M12,1L3,5v6c0,5.55,3.84,10.74,9,12,5.16-1.26,9-6.45,9-12V5L12,1Zm0,6a3,3,0,1,1-3,3A3,3,0,0,1,12,7Zm0,9.3a7.39,7.39,0,0,1-6-3.1C6.08,11.57,10,10.5,12,10.5s5.92,1.07,6,3.2A7.39,7.39,0,0,1,12,16.3Z"/>
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
             </svg>
           </div>
           <h2>Unlimited</h2>
           <p className="pricing-description">
-            The Unlimited Edition offers specialized functionality for research teams needing comprehensive molecular data.
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
           </p>
           <div className="pricing-price">
-            <span className="talk-to-sales">TALK TO SALES</span>
+            <span className="price-amount">$10,000</span>
+            <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Enterprise plan with full access</p>
-          <button className="pricing-cta talk">TALK TO SALES</button>
+          <p className="pricing-region">Includes all Research features</p>
+          <button className="pricing-cta">GET STARTED</button>
           <div className="pricing-details">
-            <p>The edition includes all features in the Professional Edition plus:</p>
+            <p>This edition includes all Research Edition features plus:</p>
             <ul>
-              <li>API access</li>
-              <li>Custom integrations</li>
-              <li>Dedicated compute resources</li>
-              <li>Advanced model training</li>
-              <li>Technical support</li>
-              <li>Custom property calculations</li>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
             </ul>
             <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
+
       </div>
     </div>
   );
@@ -2206,7 +2200,9 @@ const App = () => {
               setIncludeRelatives={setIncludeRelatives}
             /> : <PermissionsError />
         ) : activePage === 'pricing' ? (
-          <PricingPage />
+          <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
+            <PricingPage />
+          </div>
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">

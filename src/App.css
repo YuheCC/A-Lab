@@ -1703,6 +1703,8 @@ body, html {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .pricing-header {
