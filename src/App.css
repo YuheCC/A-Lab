@@ -881,7 +881,7 @@ body, html {
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 255px);
+  height: calc(100vh - 325px);
 }
 
 .chatbot-content h2 {
@@ -955,7 +955,7 @@ body, html {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: calc(100vh - 280px);
+  height: calc(100vh - 344px);
   overflow-y: auto;
   background-color: #fff;
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
@@ -1667,7 +1667,64 @@ body, html {
   cursor: not-allowed;
   opacity: 0.7;
 }
+.feedback-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
 
+.feedback-box .feedback-header {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feedback-box .feedback-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.feedback-box .feedback-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.feedback-box .feedback-cancel,
+.feedback-box .feedback-submit {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.feedback-box .feedback-cancel {
+  background-color: #ccc;
+  color: #333;
+}
+
+.feedback-box .feedback-submit {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.feedback-box .feedback-status {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
 /* Add styles for the reset password button in the navbar */
 .reset-password-button {
   background-color: #2196F3;
