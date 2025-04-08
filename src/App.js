@@ -478,9 +478,8 @@ const PricingPage = ({ onSignIn }) => {
             </ul>
           </div>
         </div>
-        
-              <div className="pricing-card popular">
-              <div className="popular-tag">MOST POPULAR</div>
+
+        <div className="pricing-card popular">
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
@@ -497,7 +496,73 @@ const PricingPage = ({ onSignIn }) => {
           <p className="pricing-region">Includes all Research features</p>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
-          >$0
+          >
+            GET STARTED
+          </button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pricing-card popular">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Strategic Partner</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$100,000</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button 
+            className="pricing-cta strategic"
+            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+          >
+            GET STARTED
+          </button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pricing-card popular">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Joint Development</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$10,000,000</span>
+            <span className="price-period">/ year</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button 
+            className="pricing-cta joint"
+            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+          >
             GET STARTED
           </button>
           <div className="pricing-details">
@@ -1968,7 +2033,7 @@ const App = () => {
             width: '100%',
             backgroundColor: '#f1f1f1'
           }}>
-            By using Molecular Universe, you agree to our Terms and Privacy Policy
+            By using Molecular Universe, you agree to our Terms and Privacy Policy.
           </div>
           </>
         ) : activePage === 'chatbot' ? (
