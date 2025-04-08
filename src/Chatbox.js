@@ -60,6 +60,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
   const [moleculesLoading, setMoleculesLoading] = useState(false);
+  const [similarMolecules, setSimilarMolecules] = useState([]);
 
 
   useEffect(() => {
@@ -67,13 +68,13 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   }, [messages]);
 
   // Define handlers for thumbs feedback
-  const handleThumbsUp = (content, collapsibleContent) => {
-    setFeedbackData({ isPositive: true, responseContent: content, collapsibleContent });
+  const handleThumbsUp = (inputContent, responseContent, collapsibleContent) => {
+    setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, collapsibleContent });
     setShowFeedbackBox(true);
   };
 
-  const handleThumbsDown = (content, collapsibleContent) => {
-    setFeedbackData({ isPositive: false, responseContent: content, collapsibleContent });
+  const handleThumbsDown = (inputContent, responseContent, collapsibleContent) => {
+    setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, collapsibleContent });
     setShowFeedbackBox(true);
   };
 
@@ -93,6 +94,19 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       console.error("Error fetching molecule details:", err);
     } finally {
       setMoleculesLoading(false);
+    }
+  };
+
+  const handleFindSimilarMolecules = async (smile) => {
+    try {
+      const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(smile)}`);
+      const data = await response.json();
+      // Assuming the endpoint returns an array of molecules:
+      console.log(data)
+      console.log(data["similar_molecules"])
+      setSimilarMolecules(data["similar_molecules"]);
+    } catch (error) {
+      console.error("Error finding similar molecules:", error);
     }
   };
 
@@ -167,7 +181,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", text: data.outputs, molecules: data.molecules };
+      const llmMessage = { type: "llm-message", inputs: data.inputs, text: data.outputs, molecules: data.molecules };
       setMessages(prev => [...prev, llmMessage]);
       
       // Update the query limit after each query for research users
@@ -273,8 +287,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 {/* Add thumbs buttons for feedback */}
                 {msg.type === "llm-message" && (
                   <div className="thumbs" style={{ marginTop: '10px' }}>
-                    <button onClick={() => handleThumbsUp(msg.text, msg.collapsibleContent)}>👍</button>
-                    <button onClick={() => handleThumbsDown(msg.text, msg.collapsibleContent)}>👎</button>
+                    <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.collapsibleContent)}>👍</button>
+                    <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.collapsibleContent)}>👎</button>
                     <button 
                       className="copy-btn" 
                       onClick={() => {
@@ -333,20 +347,21 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         </div>
         {foundMolecules && foundMolecules.length > 0 && (
           <div className="found-molecules-container">
-            <h3>Found Molecules</h3>
+            <h3>LLM Found Molecules</h3>
             {foundMolecules.map((item, idx) => {
               const details = item.molecule_details;
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>{details.name}</strong>
                   <p>SMILES: {details.SMILES}</p>
-                  <p>HOMO eV: {details.HOMO}</p>
-                  <p>LUMO eV: {details.LUMO}</p>
-                  <p>ESP Max: {details.ESP_MAX}</p>
-                  <p>ESP Min: {details.ESP_MIN}</p>
+                  <p>Molecular weight: {details.MOLECULAR_WEIGHT}</p>
+                  <p>HOMO: {details.HOMO} eV</p>
+                  <p>LUMO: {details.LUMO} eV</p>
+                  <p>ESP Max: {details.ESP_MAX} eV</p>
+                  <p>ESP Min: {details.ESP_MIN} eV</p>
                   <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
-                  <p>Predicted MP: {details.PREDICTED_MP}</p>
-                  <p>Predicted BP: {details.PREDICTED_BP}</p>
+                  <p>Predicted MP: {details.PREDICTED_MP} °C</p>
+                  <p>Predicted BP: {details.PREDICTED_BP} °C</p>
                   {details.image && (
                     <img 
                       src={details.image} 
@@ -363,10 +378,40 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                         padding: '6px 10px',
                         cursor: 'pointer'
                       }}
-                      onClick={() => { /* Future functionality */ }}>
+                      onClick={() => handleFindSimilarMolecules(details.SMILES)}
+                    >
                       Find Similar Molecules
                     </button>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {similarMolecules && similarMolecules.length > 0 && (
+          <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
+            <h3>Similar Molecules</h3>
+            {similarMolecules.map((item, idx) => {
+              // Adjust based on your response structure (if using item.molecule_details or directly item)
+              const details = item.molecule_details || item;
+              return (
+                <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
+                  <strong>SMILES: {details.SMILES}</strong>
+                  <p>Molecular weight: {details.molecular_weight}</p>
+                  <p>HOMO eV: {details.HOMO_eV}</p>
+                  <p>LUMO eV: {details.LUMO_eV}</p>
+                  <p>ESP Max: {details.ESP_max_eV}</p>
+                  <p>ESP Min: {details.ESP_min_eV}</p>
+                  <p>Functional groups: {details.functional_groups}</p>
+                  <p>Predicted MP: {details.predicted_MP_celsius}</p>
+                  <p>Predicted BP: {details.predicted_BP_celsius}</p>
+                  {details.image && (
+                    <img 
+                      src={details.image} 
+                      alt={`Structure of ${details.SMILE}`} 
+                      style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
+                    />
+                  )}
                 </div>
               );
             })}
@@ -377,6 +422,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       {showFeedbackBox && feedbackData && (
         <FeedbackBox 
           isPositive={feedbackData.isPositive}
+          inputContent={feedbackData.inputContent}
           responseContent={feedbackData.responseContent}
           collapsibleContent={feedbackData.collapsibleContent}
           onClose={() => setShowFeedbackBox(false)}

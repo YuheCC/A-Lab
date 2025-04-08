@@ -947,11 +947,22 @@ body, html {
   flex-direction: row;
   gap: 20px;            /* adjust gap between elements as needed */
   width: 90%;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;       /* center the container */
 }
 
 .found-molecules-container {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  height: calc(100vh - 344px);
+  overflow-y: auto;
+  background-color: #fff;
+  max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
+  flex-shrink: 0;
+}
+
+.similar-molecules-container {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;

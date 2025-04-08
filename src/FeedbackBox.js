@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const FeedbackBox = ({ isPositive, responseContent, collapsibleContent, onClose }) => {
+const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleContent, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -15,6 +15,7 @@ const FeedbackBox = ({ isPositive, responseContent, collapsibleContent, onClose 
       const feedbackData = {
         isPositive,
         feedbackText: feedbackText.trim(),
+        inputContent,
         responseContent,
         collapsibleContent,
         timestamp: new Date().toISOString(),
