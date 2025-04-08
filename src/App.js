@@ -110,7 +110,8 @@ const AuthPage = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('permissions', data.permissions);
       
-      // Reload the app to update authentication state
+      // Navigate to the map page instead of just reloading
+      window.history.pushState({}, '', '/');
       window.location.reload();
       
     } catch (err) {
