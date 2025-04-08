@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ChatbotInterface from './Chatbox';
-import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
