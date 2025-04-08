@@ -78,6 +78,13 @@ const AuthPage = () => {
     setError('');
 
     try {
+      // Validate email format for account creation
+      if (!isLogin) {
+        if (!email.endsWith('.edu')) {
+          throw new Error('Only .edu email addresses are allowed for registration');
+        }
+      }
+
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
@@ -140,13 +147,13 @@ const AuthPage = () => {
           
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">Email Address (.edu only)</label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder="Academic email address"
                 required
               />
             </div>
