@@ -2483,35 +2483,63 @@ const App = () => {
                                     </tr>
                                     <tr>
                                       <td className="property-name">HOMO (eV)</td>
-                                      <td className="property-value">{molecule.HOMO_eV.toFixed(4)}</td>
+                                      <td className="property-value">
+                                        {molecule.HOMO_eV !== null && molecule.HOMO_eV !== undefined 
+                                          ? molecule.HOMO_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">LUMO (eV)</td>
-                                      <td className="property-value">{molecule.LUMO_eV.toFixed(4)}</td>
+                                      <td className="property-value">
+                                        {molecule.LUMO_eV !== null && molecule.LUMO_eV !== undefined 
+                                          ? molecule.LUMO_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">ESP Min (eV)</td>
-                                      <td className="property-value">{molecule.ESP_min_eV.toFixed(4)}</td>
+                                      <td className="property-value">
+                                        {molecule.ESP_min_eV !== null && molecule.ESP_min_eV !== undefined 
+                                          ? molecule.ESP_min_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">ESP Max (eV)</td>
-                                      <td className="property-value">{molecule.ESP_max_eV.toFixed(4)}</td>
+                                      <td className="property-value">
+                                        {molecule.ESP_max_eV !== null && molecule.ESP_max_eV !== undefined 
+                                          ? molecule.ESP_max_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">{molecule.predicted_MP_celsius.toFixed(2)}</td>
+                                      <td className="property-value">
+                                        {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
+                                          ? molecule.predicted_MP_celsius.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">{molecule.predicted_BP_celsius.toFixed(2)}</td>
+                                      <td className="property-value">
+                                        {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
+                                          ? molecule.predicted_BP_celsius.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">Molecular Weight</td>
-                                      <td className="property-value">{molecule.molecular_weight.toFixed(2)}</td>
+                                      <td className="property-value">
+                                        {molecule.molecular_weight !== null && molecule.molecular_weight !== undefined 
+                                          ? molecule.molecular_weight.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     <tr>
                                       <td className="property-name">Functional Groups</td>
-                                      <td className="property-value">{molecule.functional_groups}</td>
+                                      <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
                                   </tbody>
                                 </table>
