@@ -825,8 +825,9 @@ const App = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
-  const [similarMolecules, setSimilarMolecules] = useState(null); // Add state for similar molecules results
-  const [findClosestFriends, setFindClosestFriends] = useState(false); // Add state for "find closest friends" checkbox
+  const [similarMolecules, setSimilarMolecules] = useState(null);
+  const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
+  const [findClosestFriends, setFindClosestFriends] = useState(false);
   
   // Enterprise search state lifted up
   const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
@@ -1096,7 +1097,8 @@ const App = () => {
     setSearchResult(null);
     setSearchedMolecule(null);
     setHighlightedMolecule(null);
-    setSimilarMolecules(null); // Reset similar molecules
+    setSimilarMolecules(null);
+    setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
       if (findClosestFriends) {
@@ -1106,9 +1108,10 @@ const App = () => {
           throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
         }
         const data = await response.json();
-        setSimilarMolecules(data.similar_molecules);
+        const molecules = data.similar_molecules;
+        setSimilarMolecules(molecules);
         
-        // Also fetch the molecule visualization
+        // Also fetch the molecule visualization for the input molecule
         const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
         if (!visualizationResponse.ok) {
           throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
@@ -1116,6 +1119,35 @@ const App = () => {
         const imageData = await visualizationResponse.blob();
         const imageUrl = URL.createObjectURL(imageData);
         setSearchResult(imageUrl);
+        
+        // Fetch molecule visualizations for all similar molecules
+        const imageRequests = molecules.map(async (molecule, index) => {
+          try {
+            const moleculeResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(molecule.SMILES)}`);
+            if (moleculeResponse.ok) {
+              const moleculeImageData = await moleculeResponse.blob();
+              const moleculeImageUrl = URL.createObjectURL(moleculeImageData);
+              return { index, imageUrl: moleculeImageUrl };
+            }
+            return { index, imageUrl: null };
+          } catch (error) {
+            console.error(`Error fetching molecule image for ${molecule.SMILES}:`, error);
+            return { index, imageUrl: null };
+          }
+        });
+        
+        // Wait for all image requests to complete
+        const imageResults = await Promise.all(imageRequests);
+        
+        // Create a map of molecule index to image URL
+        const imageMap = {};
+        imageResults.forEach(result => {
+          if (result.imageUrl) {
+            imageMap[result.index] = result.imageUrl;
+          }
+        });
+        
+        setSimilarMoleculeImages(imageMap);
       } else {
         // Original search functionality
         // First, find the molecule in our loaded UMAP data
@@ -2443,46 +2475,57 @@ const App = () => {
                           {similarMolecules.map((molecule, index) => (
                             <div key={index} className="similar-molecule">
                               <h4>Similar Molecule #{index + 1}</h4>
-                              <table className="property-table">
-                                <tbody>
-                                  <tr>
-                                    <td className="property-name">SMILES</td>
-                                    <td className="property-value">{molecule.SMILES}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">HOMO (eV)</td>
-                                    <td className="property-value">{molecule.HOMO_eV.toFixed(4)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">LUMO (eV)</td>
-                                    <td className="property-value">{molecule.LUMO_eV.toFixed(4)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">ESP Min (eV)</td>
-                                    <td className="property-value">{molecule.ESP_min_eV.toFixed(4)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">ESP Max (eV)</td>
-                                    <td className="property-value">{molecule.ESP_max_eV.toFixed(4)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">Predicted Melting Point (°C)</td>
-                                    <td className="property-value">{molecule.predicted_MP_celsius.toFixed(2)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">Predicted Boiling Point (°C)</td>
-                                    <td className="property-value">{molecule.predicted_BP_celsius.toFixed(2)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">Molecular Weight</td>
-                                    <td className="property-value">{molecule.molecular_weight.toFixed(2)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="property-name">Functional Groups</td>
-                                    <td className="property-value">{molecule.functional_groups}</td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                              <div className="similar-molecule-content">
+                                <table className="property-table">
+                                  <tbody>
+                                    <tr>
+                                      <td className="property-name">SMILES</td>
+                                      <td className="property-value">{molecule.SMILES}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">HOMO (eV)</td>
+                                      <td className="property-value">{molecule.HOMO_eV.toFixed(4)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">LUMO (eV)</td>
+                                      <td className="property-value">{molecule.LUMO_eV.toFixed(4)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">ESP Min (eV)</td>
+                                      <td className="property-value">{molecule.ESP_min_eV.toFixed(4)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">ESP Max (eV)</td>
+                                      <td className="property-value">{molecule.ESP_max_eV.toFixed(4)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.predicted_MP_celsius.toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.predicted_BP_celsius.toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Molecular Weight</td>
+                                      <td className="property-value">{molecule.molecular_weight.toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Functional Groups</td>
+                                      <td className="property-value">{molecule.functional_groups}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                {similarMoleculeImages[index] && (
+                                  <div className="similar-molecule-image-container">
+                                    <img 
+                                      src={similarMoleculeImages[index]} 
+                                      alt={`Molecule ${index + 1} visualization`} 
+                                      className="similar-molecule-image"
+                                    />
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>

@@ -2008,6 +2008,47 @@ body, html {
   margin-bottom: 0;
 }
 
+/* New styles for similar molecule content and images */
+.similar-molecule-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.similar-molecule-image-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.similar-molecule-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  .similar-molecule-content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .property-table {
+    flex: 1;
+    margin-right: 15px;
+  }
+  
+  .similar-molecule-image-container {
+    flex: 1;
+    margin-top: 0;
+  }
+}
+
 /* Search results container */
 .molecule-card {
   background-color: #fff;
