@@ -1815,7 +1815,14 @@ const App = () => {
           </>
 
         ) : activePage === 'map' ? (
-          <div className="map-container" style={{ display: 'flex', height: 'calc(100vh - 120px)', padding: '20px' }}>
+          <>
+          <div className="map-container" style={{ 
+            display: 'flex', 
+            height: 'calc(100vh - 150px)', 
+            padding: '20px',
+            overflowY: 'auto',
+            marginBottom: '50px'
+          }}>
             {/* New left text column (20%) */}
             <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
               <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Molecular Universe Overview</h2>
@@ -1952,6 +1959,18 @@ const App = () => {
               </ul>
             </div>
           </div>
+
+          <div style={{ 
+            fontSize: '14px',
+            color: '#333',
+            textAlign: 'center',
+            padding: '10px 0',
+            width: '100%',
+            backgroundColor: '#f1f1f1'
+          }}>
+            By using Molecular Universe, you agree to our Terms and Privacy Policy
+          </div>
+          </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
             <ChatbotInterface 
