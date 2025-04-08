@@ -825,6 +825,8 @@ const App = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
+  const [similarMolecules, setSimilarMolecules] = useState(null); // Add state for similar molecules results
+  const [findClosestFriends, setFindClosestFriends] = useState(false); // Add state for "find closest friends" checkbox
   
   // Enterprise search state lifted up
   const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
@@ -1094,65 +1096,86 @@ const App = () => {
     setSearchResult(null);
     setSearchedMolecule(null);
     setHighlightedMolecule(null);
+    setSimilarMolecules(null); // Reset similar molecules
 
     try {
-      // First, find the molecule in our loaded UMAP data
-      const matchingMolecule = graphData.find(node => 
-        node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-      );
-      
-      if (matchingMolecule) {
-        // Molecule found in UMAP data
-        setSearchedMolecule(matchingMolecule);
-        setHighlightedMolecule(matchingMolecule);
-      } else {
-        // If not found in UMAP data, check the Snowflake database
-        try {
-          const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
-          if (response.ok) {
-            const data = await response.json();
-            
-            // Find the molecule in the Snowflake data
-            if (data.data && data.data.length > 0) {
-              const snowflakeMolecule = data.data[0];
-              
-              // Create a formatted molecule object from Snowflake data
-              const formattedMolecule = {
-                smiles: snowflakeMolecule.SMILES,
-                properties: {
-                  molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
-                  homo_eV: snowflakeMolecule.HOMO_EV,
-                  lumo_eV: snowflakeMolecule.LUMO_EV,
-                  esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
-                  esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
-                  dipole_x: snowflakeMolecule.DIPOLE_X,
-                  dipole_y: snowflakeMolecule.DIPOLE_Y,
-                  dipole_z: snowflakeMolecule.DIPOLE_Z,
-                  functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
-                  predicted_mp: snowflakeMolecule.PREDICTED_MP,
-                  predicted_bp: snowflakeMolecule.PREDICTED_BP,
-                  chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
-                },
-                rawData: snowflakeMolecule
-              };
-              
-              setSearchedMolecule(formattedMolecule);
-              // Don't highlight on UMAP since it's not in the visualization
-            }
-          }
-        } catch (apiError) {
-          console.error('Error checking Snowflake database:', apiError);
+      if (findClosestFriends) {
+        // Use the find-friend endpoint when the checkbox is checked
+        const response = await fetch(`${API_URL}/find-friend?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
         }
-      }
+        const data = await response.json();
+        setSimilarMolecules(data.similar_molecules);
+        
+        // Also fetch the molecule visualization
+        const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!visualizationResponse.ok) {
+          throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
+        }
+        const imageData = await visualizationResponse.blob();
+        const imageUrl = URL.createObjectURL(imageData);
+        setSearchResult(imageUrl);
+      } else {
+        // Original search functionality
+        // First, find the molecule in our loaded UMAP data
+        const matchingMolecule = graphData.find(node => 
+          node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+        );
+        
+        if (matchingMolecule) {
+          // Molecule found in UMAP data
+          setSearchedMolecule(matchingMolecule);
+          setHighlightedMolecule(matchingMolecule);
+        } else {
+          // If not found in UMAP data, check the Snowflake database
+          try {
+            const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
+            if (response.ok) {
+              const data = await response.json();
+              
+              // Find the molecule in the Snowflake data
+              if (data.data && data.data.length > 0) {
+                const snowflakeMolecule = data.data[0];
+                
+                // Create a formatted molecule object from Snowflake data
+                const formattedMolecule = {
+                  smiles: snowflakeMolecule.SMILES,
+                  properties: {
+                    molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                    homo_eV: snowflakeMolecule.HOMO_EV,
+                    lumo_eV: snowflakeMolecule.LUMO_EV,
+                    esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                    esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                    dipole_x: snowflakeMolecule.DIPOLE_X,
+                    dipole_y: snowflakeMolecule.DIPOLE_Y,
+                    dipole_z: snowflakeMolecule.DIPOLE_Z,
+                    functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                    predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                    predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                    chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
+                  },
+                  rawData: snowflakeMolecule
+                };
+                
+                setSearchedMolecule(formattedMolecule);
+                // Don't highlight on UMAP since it's not in the visualization
+              }
+            }
+          } catch (apiError) {
+            console.error('Error checking Snowflake database:', apiError);
+          }
+        }
 
-      // Then fetch the molecule visualization from Python server
-      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+        // Then fetch the molecule visualization from Python server
+        const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+        }
+        const data = await response.blob();
+        const imageUrl = URL.createObjectURL(data);
+        setSearchResult(imageUrl);
       }
-      const data = await response.blob();
-      const imageUrl = URL.createObjectURL(data);
-      setSearchResult(imageUrl);
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err.message);
@@ -2306,7 +2329,7 @@ const App = () => {
                     }}
                   />
                   <button 
-                    className="search-button"
+                    className="search-button search-button-full"
                     onClick={handleSearch}
                     disabled={searchLoading}
                   >
@@ -2314,33 +2337,37 @@ const App = () => {
                   </button>
                 </div>
                 
-                {/* Search results display */}
+                {/* Add "Find closest friends" checkbox */}
+                <div className="search-options">
+                  <label className="search-option">
+                    <input
+                      type="checkbox"
+                      checked={findClosestFriends}
+                      onChange={(e) => setFindClosestFriends(e.target.checked)}
+                    />
+                    <span>Find closest friends</span>
+                  </label>
+                </div>
+                
                 <div className="search-results">
                   {searchLoading && (
-                    <div className="search-loading">
+                    <div className="loading-container">
                       <div className="loading-spinner"></div>
-                      <p>Searching for molecule...</p>
+                      <p>Searching...</p>
                     </div>
                   )}
-                
+                  
                   {searchError && (
-                    <div className="search-error">
+                    <div className="error-message">
                       <p>{searchError}</p>
                     </div>
                   )}
                   
-                  {searchResult && (
-                    <div className="molecule-details">
-                      <h2>Molecule Visualization</h2>
-                      
-                      {searchedMolecule ? (
-                        <div className="molecule-data">
-                          <h3>Properties</h3>
-                          {!highlightedMolecule && searchedMolecule && (
-                            <div className="molecule-found-in-csv">
-                              <p>This molecule was found in the database but is not displayed in the current UMAP view.</p>
-                            </div>
-                          )}
+                  {!searchLoading && !searchError && searchResult && (
+                    <div className="molecule-card">
+                      {searchedMolecule && !findClosestFriends ? (
+                        <div className="molecule-properties">
+                          <h3>Molecule Properties</h3>
                           <table className="property-table">
                             <tbody>
                               <tr>
@@ -2410,9 +2437,58 @@ const App = () => {
                             </tbody>
                           </table>
                         </div>
+                      ) : findClosestFriends && similarMolecules && similarMolecules.length > 0 ? (
+                        <div className="similar-molecules">
+                          <h3>Similar Molecules</h3>
+                          {similarMolecules.map((molecule, index) => (
+                            <div key={index} className="similar-molecule">
+                              <h4>Similar Molecule #{index + 1}</h4>
+                              <table className="property-table">
+                                <tbody>
+                                  <tr>
+                                    <td className="property-name">SMILES</td>
+                                    <td className="property-value">{molecule.SMILES}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">HOMO (eV)</td>
+                                    <td className="property-value">{molecule.HOMO_eV.toFixed(4)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">LUMO (eV)</td>
+                                    <td className="property-value">{molecule.LUMO_eV.toFixed(4)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">ESP Min (eV)</td>
+                                    <td className="property-value">{molecule.ESP_min_eV.toFixed(4)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">ESP Max (eV)</td>
+                                    <td className="property-value">{molecule.ESP_max_eV.toFixed(4)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">Predicted Melting Point (°C)</td>
+                                    <td className="property-value">{molecule.predicted_MP_celsius.toFixed(2)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">Predicted Boiling Point (°C)</td>
+                                    <td className="property-value">{molecule.predicted_BP_celsius.toFixed(2)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">Molecular Weight</td>
+                                    <td className="property-value">{molecule.molecular_weight.toFixed(2)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">Functional Groups</td>
+                                    <td className="property-value">{molecule.functional_groups}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <div className="molecule-not-found">
-                          <p>This molecule was not found in our UMAP dataset.</p>
+                          <p>This molecule was not found in our dataset.</p>
                         </div>
                       )}
                       
