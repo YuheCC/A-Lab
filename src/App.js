@@ -438,8 +438,8 @@ const PricingPage = ({ onSignIn }) => {
           <div className="pricing-details">
             <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
-              <li>Access to UMAP visualization</li>
-              <li>Basic molecule search functionality</li>
+              <li>Access to Map</li>
+              <li>Basic molecule search functionality of 1 million database</li>
               <li>Limited number of monthly queries (100)</li>
               <li>Access to the molecular assistant AI</li>
             </ul>
@@ -497,7 +497,7 @@ const PricingPage = ({ onSignIn }) => {
           <p className="pricing-region">Includes all Research features</p>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
-          >
+          >$0
             GET STARTED
           </button>
           <div className="pricing-details">
@@ -1816,8 +1816,41 @@ const App = () => {
 
         ) : activePage === 'map' ? (
           <div className="map-container" style={{ display: 'flex', height: 'calc(100vh - 120px)', padding: '20px' }}>
-            {/* UMAP Visualization on the left (60%) */}
-            <div className="graph-container" style={{ width: '60%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
+            {/* New left text column (20%) */}
+            <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Molecular Universe Overview</h2>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                The Molecular Universe is a powerful tool for exploring the vast landscape of molecules suitable for battery applications. This visualization represents one of the largest databases of small molecule properties available today.
+              </p>
+              
+              <h3 style={{ color: '#333', marginTop: '20px' }}>How to Use This Map</h3>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                Each point on the map represents a molecule with unique properties. Similar molecules appear closer together, while dissimilar ones are farther apart.
+              </p>
+              
+              <ul style={{ lineHeight: '1.6' }}>
+                <li><strong>Click on any point</strong> to view detailed information about that molecule</li>
+                <li><strong>Zoom in/out</strong> to explore clusters of related molecules</li>
+                <li><strong>Pan around</strong> to navigate different regions of chemical space</li>
+              </ul>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                The colors represent molecular weight, with darker purples indicating lower weights and yellows indicating higher weights.
+              </p>
+              
+              <h3 style={{ color: '#333', marginTop: '20px' }}>Key Benefits</h3>
+              
+              <ul style={{ lineHeight: '1.6' }}>
+                <li><strong>Discover</strong> similar molecules with potentially improved properties</li>
+                <li><strong>Explore</strong> unexplored regions of chemical space</li>
+                <li><strong>Identify</strong> patterns and relationships between molecular structures</li>
+              </ul>
+            </div>
+            
+            {/* UMAP Visualization in the middle (50%) */}
+            <div className="graph-container" style={{ width: '50%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
               {filteredGraphData.length > 0 ? (
                 <Plot
                   data={plotlyData}
@@ -1840,8 +1873,8 @@ const App = () => {
               )}
             </div>
             
-            {/* Text content on the right (30%) */}
-            <div className="map-text-section" style={{ width: '30%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+            {/* Right text content (25%) */}
+            <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
               <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Why we are building Molecular Universe</h2>
               
               <p style={{ lineHeight: '1.6', fontStyle: 'italic', marginBottom: '20px', textAlign: 'center' }}>
