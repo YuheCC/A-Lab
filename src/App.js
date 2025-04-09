@@ -1013,6 +1013,9 @@ const App = () => {
     predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
   });
   
+  // Add state for functional group filter
+  const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
+  
   // Labels for filters
   const filterLabels = {
     molwt: "Molecular Weight",
@@ -1775,25 +1778,34 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Change the dependency array to only run once on component mount
 
-  // Apply filters based on range slider values
+  // Apply filters based on range slider values and functional group
   useEffect(() => {
     if (graphData.length === 0) return;
     const filtered = graphData.filter(node => {
+      // Check range filters
       for (const [property, range] of Object.entries(filterRanges)) {
         if (!range.active) continue;
         const nodeValue = node.properties[property];
-        // If property is outside the range, filter it out
         if (nodeValue !== undefined && nodeValue !== null && 
             (nodeValue < range.range[0] || nodeValue > range.range[1])) {
           return false;
         }
       }
+      
+      // Check functional group filter
+      if (selectedFunctionalGroup) {
+        if (!node.properties?.functional_groups || 
+            !node.properties.functional_groups.includes(selectedFunctionalGroup)) {
+          return false;
+        }
+      }
+      
       return true;
     });
     if (JSON.stringify(filtered) !== JSON.stringify(filteredGraphData)) {
       setFilteredGraphData(filtered);
     }
-  }, [graphData, filterRanges, filteredGraphData]);
+  }, [graphData, filterRanges, selectedFunctionalGroup, filteredGraphData]);
 
   // Handle filter slider change
   const handleFilterChange = (property, newValue) => {
@@ -2174,36 +2186,14 @@ const App = () => {
                       )}
                     </div>
                   ))}
-                </div>
-                
-                {/* Functional Group Filter */}
-                <div className="functional-group-filter">
+                                  <div className="functional-group-filter">
                   <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Functional Group Filter</h3>
                   <div className="functional-group-input-container">
                     <select 
                       className="functional-group-select"
+                      value={selectedFunctionalGroup}
                       onChange={(e) => {
-                        const selectedSmarts = e.target.value;
-                        if (selectedSmarts) {
-                          setFilteredGraphData(graphData.filter(node => 
-                            node.properties?.functional_groups && 
-                            node.properties.functional_groups.includes(e.target.options[e.target.selectedIndex].text)
-                          ));
-                        } else {
-                          // Reset to show all data (respecting other active filters)
-                          const filtered = graphData.filter(node => {
-                            for (const [property, range] of Object.entries(filterRanges)) {
-                              if (!range.active) continue;
-                              const nodeValue = node.properties[property];
-                              if (nodeValue !== undefined && nodeValue !== null && 
-                                  (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                                return false;
-                              }
-                            }
-                            return true;
-                          });
-                          setFilteredGraphData(filtered);
-                        }
+                        setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
                       }}
                     >
                       <option value="">Select a functional group</option>
@@ -2283,23 +2273,108 @@ const App = () => {
                     <button 
                       className="reset-filter-button functional-group-reset"
                       onClick={() => {
-                        // Reset dropdown
+                        setSelectedFunctionalGroup('');
                         const dropdown = document.querySelector('.functional-group-select');
                         if (dropdown) dropdown.selectedIndex = 0;
-                        
-                        // Reset to show all data (respecting other active filters)
-                        const filtered = graphData.filter(node => {
-                          for (const [property, range] of Object.entries(filterRanges)) {
-                            if (!range.active) continue;
-                            const nodeValue = node.properties[property];
-                            if (nodeValue !== undefined && nodeValue !== null && 
-                                (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                              return false;
-                            }
-                          }
-                          return true;
-                        });
-                        setFilteredGraphData(filtered);
+                      }}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+                </div>
+                
+                {/* Functional Group Filter */}
+                <div className="functional-group-filter">
+                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Functional Group Filter</h3>
+                  <div className="functional-group-input-container">
+                    <select 
+                      className="functional-group-select"
+                      value={selectedFunctionalGroup}
+                      onChange={(e) => {
+                        setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
+                      }}
+                    >
+                      <option value="">Select a functional group</option>
+                      <option value="C(=O)Cl">AcidChloride</option>
+                      <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
+                      <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
+                      <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
+                      <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
+                      <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
+                      <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
+                      <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
+                      <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
+                      <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
+                      <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
+                      <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
+                      <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
+                      <option value="[CX3H](=[OX1])">Aldehyde</option>
+                      <option value="[CX3]=[CX3]">Alkene</option>
+                      <option value="[CX2]#[CX2]">Alkyne</option>
+                      <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
+                      <option value="[NX3][CX3](=O)[#6]">Amide</option>
+                      <option value="[#6][NX2]=[#6][N]">Amidine</option>
+                      <option value="[NX4]">Ammonium</option>
+                      <option value="c1ccccc1">Arene</option>
+                      <option value="[#6][N]=[N][#6]">Azo</option>
+                      <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
+                      <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
+                      <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
+                      <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
+                      <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
+                      <option value="[#6][SX2][SX2][#6]">Disulfide</option>
+                      <option value="[CX3][NX3]=[CX3]">Enamine</option>
+                      <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
+                      <option value="[OD2]([#6])[#6]">Ether</option>
+                      <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
+                      <option value="[F][CX4]">FluoroAlkyl_SP3</option>
+                      <option value="[F][CX3]">FluoroAlkyl_SP2</option>
+                      <option value="[F][CX2]">FluoroAlkyl_SP</option>
+                      <option value="[F][CX4][OX2]">FluoroEther</option>
+                      <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
+                      <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
+                      <option value="[NX3][NX3]">Hydrazine</option>
+                      <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
+                      <option value="[C][Cl,Br,I,F]">Halide</option>
+                      <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
+                      <option value="[CX2]=[NX3]">Imine</option>
+                      <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
+                      <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
+                      <option value="[#6]([O][#6])([O][#6])">Ketal</option>
+                      <option value="[CX2]#[NX1]">Nitrile</option>
+                      <option value="[OX2][OX2]">Peroxide</option>
+                      <option value="c1ccccc1[OH]">Phenol</option>
+                      <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
+                      <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
+                      <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
+                      <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
+                      <option value="[Se][#6]">Selenide</option>
+                      <option value="[SeH]">Selenol</option>
+                      <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
+                      <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
+                      <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
+                      <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
+                      <option value="[SX2H]">Thiol</option>
+                      <option value="[#6](=[SX])[H]">Thial</option>
+                      <option value="[#6](=[SX])[NX3]">Thioamide</option>
+                      <option value="[#6](=[SX])[#6]">Thioketone</option>
+                      <option value="[CX2]=[SX1]">Thione</option>
+                      <option value="[SX2]([#6])[#6]">Thioether</option>
+                      <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
+                      <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
+                      <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
+                      <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
+                      <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
+                      <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
+                      <option value="c1ccccc1">Arene (aromatic)</option>
+                    </select>
+                    <button 
+                      className="reset-filter-button functional-group-reset"
+                      onClick={() => {
+                        setSelectedFunctionalGroup('');
+                        const dropdown = document.querySelector('.functional-group-select');
+                        if (dropdown) dropdown.selectedIndex = 0;
                       }}
                     >
                       Reset
