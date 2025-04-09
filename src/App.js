@@ -806,10 +806,64 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
 };
 
 // About Page component
-const AboutPage = () => {
+const AboutPage = ({ handleNavigation }) => {
   return (
-    <div className="about-container">
-      <div className="about-content-wrapper">
+    <div className="about-container" style={{ display: 'flex', width: '100%' }}>
+      {/* Left navigation column */}
+      <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <a 
+            href="#features" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '16px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+          >
+            Features of MU
+          </a>
+          <a 
+            href="#pricing" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '16px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('pricing');
+            }}
+          >
+            Pricing Structure
+          </a>
+          <a 
+            href="#news" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '16px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+          >
+            News Feed
+          </a>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">
           <h2>Motivation for Molecular Universe</h2>
           <p>
@@ -2401,7 +2455,7 @@ const App = () => {
             <PricingPage onSignIn={handleSignIn} />
           </div>
         ) : activePage === 'about' ? (
-          <AboutPage />
+          <AboutPage handleNavigation={handleNavigation} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
