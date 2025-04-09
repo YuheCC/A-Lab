@@ -2058,6 +2058,61 @@ const App = () => {
         ) : activePage === 'explorer' ? (
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
+              <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '16px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '16px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '16px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
               <div className="graph-container" style={{ flex: '1', height: '100%' }}>
                 <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   {filteredGraphData.length > 0 ? (
