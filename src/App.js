@@ -808,7 +808,7 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
 // About Page component
 const AboutPage = ({ handleNavigation }) => {
   return (
-    <div className="about-container" style={{ display: 'flex', width: '100%' }}>
+    <div className="about-container" style={{ display: 'flex', width: '93%' }}>
       {/* Left navigation column */}
       <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
