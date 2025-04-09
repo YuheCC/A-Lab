@@ -1882,7 +1882,7 @@ const App = () => {
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
-              Chat
+              Ask
             </a>
           </div>
         </div>
