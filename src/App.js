@@ -602,6 +602,7 @@ const App = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('map');
   const [searchResult, setSearchResult] = useState(null);
+  const [lastSearch, setLastSearch] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
@@ -870,6 +871,8 @@ const App = () => {
   // Update handleSearch function
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
+
+    setLastSearch(searchInput);
 
     setSearchLoading(true);
     setSearchError(null);
@@ -2248,7 +2251,7 @@ const App = () => {
                                 <tbody>
                                   <tr>
                                     <td className="property-name">SMILES</td>
-                                    <td className="property-value">{searchInput}</td>
+                                    <td className="property-value">{lastSearch}</td>
                                   </tr>
                                   {searchedMolecule && (
                                     <>
