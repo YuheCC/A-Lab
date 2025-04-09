@@ -824,6 +824,10 @@ const AboutPage = ({ handleNavigation }) => {
             }}
             onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
             onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             Features of MU
           </a>
@@ -892,7 +896,7 @@ const AboutPage = ({ handleNavigation }) => {
             These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
           </p>
           
-          <h2>Features of Molecular Universe</h2>
+          <h2 id="features-section">Features of Molecular Universe</h2>
           
           <div className="feature-section">
             <h3>Map the Molecular Universe</h3>
@@ -2310,7 +2314,7 @@ const App = () => {
               <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <a 
-                  href="#features" 
+                  href="/about#features" 
                   style={{ 
                     textDecoration: 'none', 
                     color: '#333',
@@ -2320,6 +2324,10 @@ const App = () => {
                   }}
                   onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   Features of MU
                 </a>
