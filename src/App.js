@@ -2377,7 +2377,7 @@ const App = () => {
                   <input 
                     type="text" 
                     className="search-input search-input-full"
-                    placeholder="Enter SMILES string..." 
+                    placeholder="Please input SMILES string..." 
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={(e) => {
