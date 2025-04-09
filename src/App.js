@@ -1377,8 +1377,6 @@ const App = () => {
         window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/about') {
-        // Redirect /about to root
-        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/reset-password') {
         // Show password reset page
@@ -1419,8 +1417,10 @@ const App = () => {
     // Set URL based on page
     if (page === 'pricing') {
       window.history.pushState({}, '', '/pricing');
+    } else if (page === 'about') {
+      window.history.pushState({}, '', '/about');
     } else {
-      // Always keep the URL as root when navigating between other tabs
+      // Keep the URL as root when navigating between other tabs
       if (window.location.pathname !== '/') {
         window.history.pushState({}, '', '/');
       }
