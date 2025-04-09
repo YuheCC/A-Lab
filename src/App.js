@@ -33,13 +33,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         >
           Molecular Universe
         </a>
-        <a
-          href="/pricing"
-          className={`navbar-link ${activePage === 'pricing' && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); onNavigation('pricing'); }}
-        >
-          Pricing
-        </a>
+
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
@@ -2156,35 +2150,55 @@ const App = () => {
           }}>
             {/* New left text column (20%) */}
             <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
-              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Molecular Universe Overview</h2>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Molecular Universe is a powerful tool for exploring the vast landscape of molecules suitable for battery applications. This visualization represents one of the largest databases of small molecule properties available today.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>How to Use This Map</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                Each point on the map represents a molecule with unique properties. Similar molecules appear closer together, while dissimilar ones are farther apart.
-              </p>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Click on any point</strong> to view detailed information about that molecule</li>
-                <li><strong>Zoom in/out</strong> to explore clusters of related molecules</li>
-                <li><strong>Pan around</strong> to navigate different regions of chemical space</li>
-              </ul>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The colors represent molecular weight, with darker purples indicating lower weights and yellows indicating higher weights.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Key Benefits</h3>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Discover</strong> similar molecules with potentially improved properties</li>
-                <li><strong>Explore</strong> unexplored regions of chemical space</li>
-                <li><strong>Identify</strong> patterns and relationships between molecular structures</li>
-              </ul>
+              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <a 
+                  href="#features" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '16px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                >
+                  Features of MU
+                </a>
+                <a 
+                  href="#pricing" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '16px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('pricing');
+                  }}
+                >
+                  Pricing Structure
+                </a>
+                <a 
+                  href="#news" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '16px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                >
+                  News Feed
+                </a>
+              </div>
             </div>
             
             {/* UMAP Visualization in the middle (50%) */}
