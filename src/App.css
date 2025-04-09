@@ -710,10 +710,15 @@ body, html {
   flex-direction: column;
   padding: 20px;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 .search-umap-container {
   display: flex;
+  flex-direction: row;
   height: calc(100vh - 180px);
   width: 100%;
   gap: 20px;
