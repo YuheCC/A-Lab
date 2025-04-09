@@ -2227,81 +2227,27 @@ const App = () => {
             
             {/* Right text content (25%) */}
             <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Why we are building Molecular Universe</h2>
-              
-              <p style={{ lineHeight: '1.6', fontStyle: 'italic', marginBottom: '20px', textAlign: 'center' }}>
-                "If it's just us, it seems like an awful waste of space."
-              </p>
-              <p style={{ lineHeight: '1.6', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>
-                Contact, 1997
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>What is Molecular Universe</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
+              <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
                 Molecular Universe is like a telescope that looks for extraterrestrial life in outer space, it maps the universe of molecules suitable for batteries and uses AI and physics to navigate the map. It is intended to help battery researchers discover new materials for their next big idea.
               </p>
               
-              <h3 style={{ color: '#333', marginTop: '20px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
-              
-              <ol style={{ lineHeight: '1.6' }}>
-                <li><strong>The Map:</strong> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).</li>
-                <li><strong>The Navigation System:</strong> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).</li>
-                <li><strong>The Interface:</strong> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).</li>
+              <h3 style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '15px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
+              <ol style={{ paddingLeft: '20px', marginBottom: '20px' }}>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Map:</span> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).
+                </li>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Navigation System:</span> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).
+                </li>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Interface:</span> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).
+                </li>
               </ol>
               
-              <p style={{ lineHeight: '1.6' }}>
+              <p style={{ marginTop: '20px', lineHeight: '1.6' }}>
                 Molecular Universe is still a baby, but growing rapidly. The Map will expand to cover more molecules and properties, and the Navigation System will become more accurate at finding the perfect molecules for you. With your help, we can improve Molecular Universe together.
               </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Why we are building Molecular Universe</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                At SES AI, we know there's not a one-size-fits-all battery, so we have always wanted to develop the perfect electrolyte for different battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion and across various applications from drones to robotics, from electric cars to urban air mobility, and from grid storage to consumer electronics.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                It comes down to small molecules. While the universe of molecules is infinite, there are 10<sup>60</sup> small molecules in the universe, of them 10<sup>11</sup> could be used for batteries, and of them, only less than 1,000 have been studied for batteries in the past 30 years.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules. Do we not want to know what's out there that could double LFP Li-ion cycle life, or triple high silicon Li-ion cycle life, or quadruple Li-Metal cycle life, or even more?
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The answer is of course a resounding "Hell Yeah". So we set out to map the physical and chemical properties of our database of 10<sup>11</sup>. This was a computationally intensive project, originally we thought of establishing a non-profit organization (add mu.org link) to crowdsource public computing resources and eventually open source the database. Then it turned out it was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerate computation chemistry software. While we will not open source our proprietary database, we will make Molecular Universe free to academic researchers and open source certain aspects of our models wherever appropriate.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>In this current version of Molecular Universe, MU-0:</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Map consists of 10<sup>8</sup> molecular properties, including both actual experimental data and computation prediction based on Density Function Theory and machine learning models. This is the world's largest database of small molecule properties that we know of today. This database will continue to grow to include more organic and inorganic molecules, and more bulk and interphasial properties, suitable for additives, or salts, or solvents.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Navigation System consists of an LLM that was based on the LLaMa 3 70B (largest open source LLM at the time) but trained using our proprietary database of literature and domain expert knowledge. While LLaMa 3 70B may not be the highest ranked model for scientific questions, once trained, our battery specific LLM ranks just as high and even higher in certain categories compared to much larger models. This improvement delta is very exciting, and we expect to release newer battery-specific LLM trained on more advanced and larger open source models in future MU versions.
-              </p>
-              
-              <p style={{ lineHeight: '1.6', fontStyle: 'italic', color: '#666' }}>
-                [add llm model scoring table, not plot, updated to include deepseek and grok scores]
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Labeling of MU0 property bars</h3>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Molecular Weight</strong></li>
-                <li><strong>HOMO</strong> (Highest-occupied-molecular-orbital. High HOMO indicates sensitivity toward oxidation; Low HOMO indicates stability against oxidation)</li>
-                <li><strong>LUMO</strong> (Lowest-unoccupied-molecular-orbital. Low LUMO indicates sensitivity toward reduction; High LUMO indicates stability against reduction)</li>
-                <li><strong>ESP min</strong> (Electrostatic potential, minimum. ESP min indicates rich electronic density on molecular surface, may indicate strong coordination/solvation power toward cations)</li>
-                <li><strong>ESP max</strong> (Electrostatic potential, maximum. ESP max indicates electron deficiency on molecular surface, may indicate strong coordination/solvation power toward anions)</li>
-                <li><strong>MP</strong> (predicted value; helps to define liquid range)</li>
-                <li><strong>BP</strong> (predicted value; helps to define liquid range)</li>
-                <li><strong>Functional Group</strong></li>
-              </ul>
             </div>
           </div>
 
