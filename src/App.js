@@ -1101,7 +1101,35 @@ const App = () => {
 
     try {
       if (findClosestFriends) {
-        // Use the find-friend endpoint when the checkbox is checked
+        // First fetch the searched molecule's properties from Snowflake
+        const moleculeResponse = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (moleculeResponse.ok) {
+          const moleculeData = await moleculeResponse.json();
+          if (moleculeData.data && moleculeData.data.length > 0) {
+            const snowflakeMolecule = moleculeData.data[0];
+            const formattedMolecule = {
+              smiles: snowflakeMolecule.SMILES,
+              properties: {
+                molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                homo_eV: snowflakeMolecule.HOMO_EV,
+                lumo_eV: snowflakeMolecule.LUMO_EV,
+                esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                dipole_x: snowflakeMolecule.DIPOLE_X,
+                dipole_y: snowflakeMolecule.DIPOLE_Y,
+                dipole_z: snowflakeMolecule.DIPOLE_Z,
+                functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
+              },
+              rawData: snowflakeMolecule
+            };
+            setSearchedMolecule(formattedMolecule);
+          }
+        }
+
+        // Then fetch similar molecules
         const response = await fetch(`${API_URL}/find-friend?smiles=${encodeURIComponent(searchInput.trim())}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
@@ -1110,7 +1138,7 @@ const App = () => {
         const molecules = data.similar_molecules;
         setSimilarMolecules(molecules);
         
-        // Also fetch the molecule visualization for the input molecule
+        // Fetch the molecule visualization for the input molecule
         const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
         if (!visualizationResponse.ok) {
           throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
@@ -2394,7 +2422,7 @@ const App = () => {
                   )}
                   
                   {!searchLoading && !searchError && searchResult && (
-                    <div className="molecule-card">
+                    <div>
                       {searchedMolecule && !findClosestFriends ? (
                         <div className="molecule-properties">
                           <h3>Molecule Properties</h3>
@@ -2469,6 +2497,94 @@ const App = () => {
                         </div>
                       ) : findClosestFriends && similarMolecules && similarMolecules.length > 0 ? (
                         <div className="similar-molecules">
+                          {/* Add searched molecule section */}
+                          <div className="searched-molecule">
+                            <h3>Searched Molecule</h3>
+                            <div className="searched-molecule-content">
+                              <table className="property-table">
+                                <tbody>
+                                  <tr>
+                                    <td className="property-name">SMILES</td>
+                                    <td className="property-value">{searchInput}</td>
+                                  </tr>
+                                  {searchedMolecule && (
+                                    <>
+                                      {searchedMolecule.properties?.chemical_formula && (
+                                        <tr>
+                                          <td className="property-name">Chemical Formula</td>
+                                          <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
+                                        </tr>
+                                      )}
+                                      <tr>
+                                        <td className="property-name">Molecular Weight</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(2) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">HOMO (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">LUMO (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">ESP Min (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">ESP Max (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      {searchedMolecule.properties?.predicted_mp && (
+                                        <tr>
+                                          <td className="property-name">Predicted Melting Point (°C)</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.predicted_mp.toFixed(2)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {searchedMolecule.properties?.predicted_bp && (
+                                        <tr>
+                                          <td className="property-name">Predicted Boiling Point (°C)</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.predicted_bp.toFixed(2)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {searchedMolecule.properties?.functional_groups && (
+                                        <tr>
+                                          <td className="property-name">Functional Groups</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.functional_groups}
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </>
+                                  )}
+                                </tbody>
+                              </table>
+                              {searchResult && (
+                                <div className="searched-molecule-image-container">
+                                  <img 
+                                    src={searchResult} 
+                                    alt="Searched molecule visualization" 
+                                    className="searched-molecule-image"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
                           <h3>Similar Molecules</h3>
                           {similarMolecules.map((molecule, index) => (
                             <div key={index} className="similar-molecule">
@@ -2560,18 +2676,6 @@ const App = () => {
                           <p>This molecule was not found in our dataset.</p>
                         </div>
                       )}
-                      
-                      <img 
-                        src={searchResult} 
-                        alt="Molecule visualization" 
-                        style={{
-                          maxWidth: '100%',
-                          height: 'auto',
-                          marginTop: '20px',
-                          borderRadius: '8px',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                      />
                     </div>
                   )}
                 </div>
