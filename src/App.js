@@ -2041,7 +2041,6 @@ const App = () => {
                       <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
                       <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
                       <option value="c1ccccc1">Arene (aromatic)</option>
-                      <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S]);!+]">Amine</option>
                     </select>
                     <button 
                       className="reset-filter-button functional-group-reset"
