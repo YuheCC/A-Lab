@@ -805,6 +805,109 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
   );
 };
 
+// About Page component
+const AboutPage = () => {
+  return (
+    <div className="about-container">
+      <div className="about-content-wrapper">
+        <div className="about-content">
+          <h2>Motivation for Molecular Universe</h2>
+          <p>
+            At SES AI, we know there's not a one-size-fits-all battery, so we have always wanted to develop the perfect electrolyte for different battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion and across various applications from drones to robotics, from electric cars to urban air mobility, and from grid storage to consumer electronics.
+          </p>
+          
+          <p>
+            It comes down to small molecules. While the universe of molecules is infinite, there are 10<sup>60</sup> small molecules in the universe, of them 10<sup>11</sup> could be used for batteries, and of them, only less than 1,000 have been studied for batteries in the past 30 years.
+          </p>
+          
+          <p>
+            So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules. Do we not want to know what's out there that could double LFP Li-ion cycle life, or triple high silicon Li-ion cycle life, or quadruple Li-Metal cycle life, or even more?
+          </p>
+          
+          <p>
+            The answer is of course a resounding "Hell Yeah". So we set out to map the physical and chemical properties of our database of 10<sup>11</sup>. This was a computationally intensive project, originally we thought of establishing a non-profit organization to crowdsource public computing resources and eventually open source the database. Then it turned out it was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerate computation chemistry software. While we will not open source our proprietary database, we will make Molecular Universe free to academic researchers and open source certain aspects of our models wherever appropriate.
+          </p>
+          
+          <h3>In this current version of Molecular Universe, MU-0:</h3>
+          
+          <p>
+            The Map consists of 10<sup>8</sup> molecular properties, including both actual experimental data and computation prediction based on Density Function Theory and machine learning models. This is the world's largest database of small molecule properties that we know of today. This database will continue to grow to include more organic and inorganic molecules, and more bulk and interphasial properties, suitable for additives, or salts, or solvents.
+          </p>
+          
+          <p>
+            These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
+          </p>
+          
+          <h2>Features of Molecular Universe</h2>
+          
+          <div className="feature-section">
+            <h3>Map the Molecular Universe</h3>
+            <p>
+              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features 49 molecular continents, 1 million molecules (in-browser display), and 100 million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Filter by Chemical Properties</h3>
+            <p>
+              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
+            </p>
+            <ul className="feature-list">
+              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
+            </ul>
+            <p>
+              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Search & "Find a Friend"</h3>
+            <p>
+              You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
+            </p>
+            <ol className="feature-list">
+              <li>By SMILES – Input a SMILES string and instantly retrieve all key info.</li>
+              <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
+            </ol>
+            <p>
+              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
+            </p>
+            <ul className="feature-list">
+              <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
+              <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
+            </ul>
+            <p>
+              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Ask Our Expert Powered by LLM</h3>
+            <p>
+              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
+            </p>
+            <ul className="feature-examples">
+              <li>"What solvents work best with Li-metal anodes?"</li>
+              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
+              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
+            </ul>
+            <p>
+              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Molecular Universe MU-0 is released to public</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -2297,6 +2400,8 @@ const App = () => {
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             <PricingPage onSignIn={handleSignIn} />
           </div>
+        ) : activePage === 'about' ? (
+          <AboutPage />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
