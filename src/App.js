@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ChatbotInterface from './Chatbox';
+import SearchInput from './Search';
+import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
@@ -589,227 +591,7 @@ const PricingPage = ({ onSignIn }) => {
   );
 };
 
-// Enterprise Search component
-const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, handlePointClick, searchInput, setSearchInput, searchResult, setSearchResult, searchLoading, setSearchLoading, searchError, setSearchError, includeRelatives, setIncludeRelatives }) => {
-  const enterprisePlotlyRef = useRef(null);
-  
-  // Use the same plotlyData, layout, and config from the parent component through props
-  const plotlyConfig = {
-    displayModeBar: true,
-    responsive: true,
-    scrollZoom: true,
-    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
-  };
-  
-  // Scroll to results section if there are existing results when returning to this tab
-  useEffect(() => {
-    if (searchResult) {
-      setTimeout(() => {
-        const resultsElement = document.querySelector('.enterprise-results');
-        if (resultsElement) {
-          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 300);
-    }
-  }, [searchResult]);
-  
-  // Function to populate search input from clicked node
-  const handleNodeClick = (data) => {
-    if (!data.points || data.points.length === 0) return;
-    const pointIndex = data.points[0].pointIndex;
-    const node = filteredGraphData[pointIndex];
-    if (node) {
-      // Set the node as search input
-      setSearchInput(node.smiles);
-      // Also show normal node popup
-      handlePointClick(data);
-    }
-  };
-  
-  const handleSearch = async () => {
-    if (!searchInput.trim()) return;
-    
-    setSearchLoading(true);
-    setSearchError(null);
-    setSearchResult(null);
-    
-    try {
-      // Fetch the molecule visualization from Python server
-      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}&include_relatives=${includeRelatives}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
-      }
-      const data = await response.blob();
-      const imageUrl = URL.createObjectURL(data);
-      setSearchResult(imageUrl);
-      
-      // Scroll to results after they're loaded
-      setTimeout(() => {
-        const resultsElement = document.querySelector('.enterprise-results');
-        if (resultsElement) {
-          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 100);
-    } catch (err) {
-      console.error('Search error:', err);
-      setSearchError(err.message);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-  
-  return (
-    <div className="enterprise-page">
-      <div className="enterprise-container">
-        <div className="enterprise-content">
-          <h1 className="enterprise-header">Advanced Molecular Search</h1>
-          
-          {/* UMAP Visualization (full width) */}
-          <div className="enterprise-umap-container" style={{ width: '100%', height: '500px', marginBottom: '20px' }}>
-            <div className="graph-container" style={{ width: '100%', height: '100%' }}>
-              {filteredGraphData && filteredGraphData.length > 0 ? (
-                <Plot
-                  data={[{
-                    x: filteredGraphData.map(node => node.x),
-                    y: filteredGraphData.map(node => node.y),
-                    mode: 'markers',
-                    type: 'scattergl',
-                    marker: {
-                      size: 5,
-                      color: filteredGraphData.map(node => node.properties?.molwt || 0),
-                      colorscale: [
-                        [0, '#440154'], // darkest purple
-                        [0.25, '#3b528b'], // blue-purple
-                        [0.5, '#21918c'], // green-blue
-                        [0.75, '#5ec962'], // green
-                        [1, '#fde725'] // yellow
-                      ],
-                      colorbar: {
-                        title: 'Molecular Weight',
-                        thickness: 20,
-                        len: 0.6,
-                        y: 0.5,
-                        titleside: 'right',
-                        titlefont: {
-                          size: 12,
-                          color: '#333'
-                        }
-                      },
-                      opacity: 0.7
-                    },
-                    hoverinfo: 'text',
-                    text: filteredGraphData.map(node => 
-                      `<b>Molecule Information:</b><br>` +
-                      `SMILES: ${node.smiles}<br>` +
-                      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-                      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
-                      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
-                      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-                      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}`
-                    )
-                  }]}
-                  layout={{
-                    ...plotlyLayout,
-                    autosize: true,
-                    height: 500
-                  }}
-                  config={plotlyConfig}
-                  style={{ width: '100%', height: '100%' }}
-                  useResizeHandler={true}
-                  onClick={handleNodeClick}
-                  onInitialized={(figure) => {
-                    enterprisePlotlyRef.current = figure;
-                  }}
-                  onUpdate={(figure) => {
-                    enterprisePlotlyRef.current = figure;
-                  }}
-                />
-              ) : (
-                <div className="loading-message">
-                  {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <p className="enterprise-description">
-            Search our extensive database to find specific molecules and their properties.
-            You can also click on any point in the UMAP above to select a molecule.
-          </p>
-          
-          <div className="enterprise-search-wrapper">
-            <div className="enterprise-search-container">
-              <input 
-                type="text" 
-                className="enterprise-search-input"
-                placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)" 
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch();
-                  }
-                }}
-              />
-              <button 
-                className="enterprise-search-button"
-                onClick={handleSearch}
-                disabled={searchLoading}
-              >
-                {searchLoading ? 'Searching...' : 'Search'}
-              </button>
-            </div>
-          </div>
-          
-          <div className="search-options">
-            <label className="relatives-option">
-              <input
-                type="checkbox"
-                checked={includeRelatives}
-                onChange={(e) => setIncludeRelatives(e.target.checked)}
-              />
-              <span>Include closest 10 relatives</span>
-            </label>
-          </div>
-          
-          <div id="enterprise-results" className="enterprise-results" style={{ marginTop: '20px', paddingBottom: '60px' }}>
-            {searchLoading && (
-              <div className="enterprise-loading">
-                <div className="loading-spinner"></div>
-                <p>Generating molecule visualization...</p>
-              </div>
-            )}
-            
-            {searchError && (
-              <div className="enterprise-error">
-                <p>Error: {searchError}</p>
-                <p>Please check your SMILES string and try again.</p>
-              </div>
-            )}
-            
-            {searchResult && (
-              <div className="enterprise-molecule">
-                <h2>Molecule Visualization</h2>
-                <div className="molecule-image-container">
-                  <img 
-                    src={searchResult} 
-                    alt="Molecule visualization" 
-                    className="molecule-image"
-                    style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain' }}
-                  />
-                </div>
-                <div className="molecule-smiles">
-                  <h3>SMILES String:</h3>
-                  <p>{searchInput}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
@@ -819,7 +601,6 @@ const App = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('map');
-  const [searchInput, setSearchInput] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
@@ -829,7 +610,6 @@ const App = () => {
   const [findClosestFriends, setFindClosestFriends] = useState(false);
   
   // Enterprise search state lifted up
-  const [enterpriseSearchInput, setEnterpriseSearchInput] = useState('');
   const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
   const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
   const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
@@ -1088,7 +868,7 @@ const App = () => {
   // }, []);
 
   // Update handleSearch function
-  const handleSearch = async () => {
+  const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
     setSearchLoading(true);
@@ -1192,6 +972,7 @@ const App = () => {
             const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
             if (response.ok) {
               const data = await response.json();
+
               
               // Find the molecule in the Snowflake data
               if (data.data && data.data.length > 0) {
@@ -1225,7 +1006,6 @@ const App = () => {
             console.error('Error checking Snowflake database:', apiError);
           }
         }
-
         // Then fetch the molecule visualization from Python server
         const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
         if (!response.ok) {
@@ -1331,7 +1111,6 @@ const App = () => {
     
     // Clear search results when navigating away from search page
     if (activePage === 'search' && page !== 'search') {
-      setSearchInput('');
       setSearchResult(null);
       setSearchedMolecule(null);
       setHighlightedMolecule(null);
@@ -1341,7 +1120,6 @@ const App = () => {
     // Special case for enterprise (advanced search) tab
     if (page === 'enterprise' && activePage === 'search') {
       // First clear the search tab data
-      setSearchInput('');
       setSearchResult(null);
       setSearchedMolecule(null);
       setHighlightedMolecule(null);
@@ -2314,25 +2092,6 @@ const App = () => {
           ) : (
             <PermissionsError />
           )
-        ) : activePage === 'enterprise' ? (
-          checkPageAccess('enterprise') ? 
-            <EnterpriseSearch 
-              filteredGraphData={filteredGraphData} 
-              loading={loading} 
-              error={error} 
-              plotlyLayout={plotlyLayout} 
-              handlePointClick={handlePointClick} 
-              searchInput={enterpriseSearchInput}
-              setSearchInput={setEnterpriseSearchInput}
-              searchResult={enterpriseSearchResult}
-              setSearchResult={setEnterpriseSearchResult}
-              searchLoading={enterpriseSearchLoading}
-              setSearchLoading={setEnterpriseSearchLoading}
-              searchError={enterpriseSearchError}
-              setSearchError={setEnterpriseSearchError}
-              includeRelatives={includeRelatives}
-              setIncludeRelatives={setIncludeRelatives}
-            /> : <PermissionsError />
         ) : activePage === 'pricing' ? (
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             <PricingPage onSignIn={handleSignIn} />
@@ -2373,27 +2132,11 @@ const App = () => {
               {/* Search interface on the right */}
               <div className="search-interface-section">
                 {/* Search bar container */}
-                <div className="search-bar-container">
-                  <input 
-                    type="text" 
-                    className="search-input search-input-full"
-                    placeholder="Please input SMILES string..." 
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch();
-                      }
-                    }}
-                  />
-                  <button 
-                    className="search-button search-button-full"
-                    onClick={handleSearch}
-                    disabled={searchLoading}
-                  >
-                    {searchLoading ? 'Searching...' : 'Search'}
-                  </button>
-                </div>
+                
+                <SearchInput 
+                  onSearch={handleSearch}
+                  disabled={searchLoading}
+                ></SearchInput>
                 
                 {/* Add "Find closest friends" checkbox */}
                 <div className="search-options">
