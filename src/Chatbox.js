@@ -239,7 +239,6 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   return (
     <div className="chatbot-container">
       <div className="chatbot-header">
-        <h2>AI Molecular Assistant</h2>
         {userPermissions === 'research' && (
           <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
             <span className="query-limit-icon">💬</span>

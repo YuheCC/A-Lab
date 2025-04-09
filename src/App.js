@@ -37,8 +37,8 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         </a>
         <a
           href="/pricing"
-          className={`navbar-link ${activePage === 'pricing' ? 'active' : ''}`}
-          onClick={(e) => { onNavigation('pricing'); }}
+          className={`navbar-link ${activePage === 'pricing' && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
+          onClick={(e) => { e.preventDefault(); onNavigation('pricing'); }}
         >
           Pricing
         </a>
@@ -79,6 +79,13 @@ const AuthPage = () => {
     setError('');
 
     try {
+      // Validate email format for account creation
+      if (!isLogin) {
+        if (!email.endsWith('.edu')) {
+          throw new Error('Only .edu email addresses are allowed for registration');
+        }
+      }
+
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
@@ -104,7 +111,8 @@ const AuthPage = () => {
       localStorage.setItem('username', data.username);
       localStorage.setItem('permissions', data.permissions);
       
-      // Reload the app to update authentication state
+      // Navigate to the map page instead of just reloading
+      window.history.pushState({}, '', '/');
       window.location.reload();
       
     } catch (err) {
@@ -141,13 +149,13 @@ const AuthPage = () => {
           
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">Email Address (.edu only)</label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder="Academic email address"
                 required
               />
             </div>
@@ -410,7 +418,7 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = () => {
+const PricingPage = ({ onSignIn }) => {
   return (
     <div className="pricing-container">
       
@@ -430,21 +438,24 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Limited access</p>
-          <button className="pricing-cta">Sign Up</button>
+          <button 
+            className="pricing-cta research" 
+            onClick={onSignIn}
+          >
+            Sign Up
+          </button>
           <div className="pricing-details">
             <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
-              <li>Access to UMAP visualization</li>
-              <li>Basic molecule search functionality</li>
+              <li>Access to Map</li>
+              <li>Basic molecule search functionality of 1 million database</li>
               <li>Limited number of monthly queries (100)</li>
               <li>Access to the molecular assistant AI</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
         
         <div className="pricing-card popular">
-          <div className="popular-tag">MOST POPULAR</div>
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
@@ -459,7 +470,12 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Includes all Research features</p>
-          <button className="pricing-cta">GET STARTED</button>
+          <button 
+            className="pricing-cta professional"
+            onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
+          >
+            GET STARTED
+          </button>
           <div className="pricing-details">
             <p>This edition includes all Research Edition features plus:</p>
             <ul>
@@ -469,11 +485,10 @@ const PricingPage = () => {
               <li>Customized molecular visualizations</li>
               <li>Priority access to new features</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
           </div>
         </div>
-        
-              <div className="pricing-card popular">
+
+        <div className="pricing-card popular">
           <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
@@ -488,7 +503,11 @@ const PricingPage = () => {
             <span className="price-period">/ month</span>
           </div>
           <p className="pricing-region">Includes all Research features</p>
-          <button className="pricing-cta">GET STARTED</button>
+          <button className="pricing-cta unlimited"
+            onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
+          >
+            GET STARTED
+          </button>
           <div className="pricing-details">
             <p>This edition includes all Research Edition features plus:</p>
             <ul>
@@ -498,7 +517,72 @@ const PricingPage = () => {
               <li>Customized molecular visualizations</li>
               <li>Priority access to new features</li>
             </ul>
-            <a href="#" className="pricing-more">View All Features</a>
+          </div>
+        </div>
+
+        <div className="pricing-card popular">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Strategic Partner</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$100,000</span>
+            <span className="price-period">/ month</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button 
+            className="pricing-cta strategic"
+            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+          >
+            GET STARTED
+          </button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pricing-card popular">
+          <div className="pricing-icon">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
+              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
+            </svg>
+          </div>
+          <h2>Joint Development</h2>
+          <p className="pricing-description">
+            The Professional Edition is for companies with research initiatives looking for more granular controls.
+          </p>
+          <div className="pricing-price">
+            <span className="price-amount">$10,000,000</span>
+            <span className="price-period">/ year</span>
+          </div>
+          <p className="pricing-region">Includes all Research features</p>
+          <button 
+            className="pricing-cta joint"
+            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+          >
+            GET STARTED
+          </button>
+          <div className="pricing-details">
+            <p>This edition includes all Research Edition features plus:</p>
+            <ul>
+              <li>Unlimited searches</li>
+              <li>Advanced filter controls</li>
+              <li>Download molecule data</li>
+              <li>Customized molecular visualizations</li>
+              <li>Priority access to new features</li>
+            </ul>
           </div>
         </div>
 
@@ -521,6 +605,9 @@ const App = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [searchedMolecule, setSearchedMolecule] = useState(null);
+  const [similarMolecules, setSimilarMolecules] = useState(null);
+  const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
+  const [findClosestFriends, setFindClosestFriends] = useState(false);
   
   // Enterprise search state lifted up
   const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
@@ -781,73 +868,153 @@ const App = () => {
   // }, []);
 
   // Update handleSearch function
-  const handleSearch = async (inputValue) => {
-    if (!inputValue.trim()) return;
+  const handleSearch = async (searchInput) => {
+    if (!searchInput.trim()) return;
 
     setSearchLoading(true);
     setSearchError(null);
     setSearchResult(null);
     setSearchedMolecule(null);
     setHighlightedMolecule(null);
+    setSimilarMolecules(null);
+    setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
-      // First, find the molecule in our loaded UMAP data
-      const matchingMolecule = graphData.find(node => 
-        node.smiles.toLowerCase() === inputValue.trim().toLowerCase()
-      );
-      
-      if (matchingMolecule) {
-        // Molecule found in UMAP data
-        setSearchedMolecule(matchingMolecule);
-        setHighlightedMolecule(matchingMolecule);
-      } else {
-        // If not found in UMAP data, check the Snowflake database
-        try {
-          const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(inputValue.trim())}`);
-          if (response.ok) {
-            const data = await response.json();
-            
-            // Find the molecule in the Snowflake data
-            if (data.data && data.data.length > 0) {
-              const snowflakeMolecule = data.data[0];
-              
-              // Create a formatted molecule object from Snowflake data
-              const formattedMolecule = {
-                smiles: snowflakeMolecule.SMILES,
-                properties: {
-                  molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
-                  homo_eV: snowflakeMolecule.HOMO_EV,
-                  lumo_eV: snowflakeMolecule.LUMO_EV,
-                  esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
-                  esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
-                  dipole_x: snowflakeMolecule.DIPOLE_X,
-                  dipole_y: snowflakeMolecule.DIPOLE_Y,
-                  dipole_z: snowflakeMolecule.DIPOLE_Z,
-                  functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
-                  predicted_mp: snowflakeMolecule.PREDICTED_MP,
-                  predicted_bp: snowflakeMolecule.PREDICTED_BP,
-                  chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
-                },
-                rawData: snowflakeMolecule
-              };
-              
-              setSearchedMolecule(formattedMolecule);
-              // Don't highlight on UMAP since it's not in the visualization
-            }
+      if (findClosestFriends) {
+        // First fetch the searched molecule's properties from Snowflake
+        const moleculeResponse = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (moleculeResponse.ok) {
+          const moleculeData = await moleculeResponse.json();
+          if (moleculeData.data && moleculeData.data.length > 0) {
+            const snowflakeMolecule = moleculeData.data[0];
+            const formattedMolecule = {
+              smiles: snowflakeMolecule.SMILES,
+              properties: {
+                molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                homo_eV: snowflakeMolecule.HOMO_EV,
+                lumo_eV: snowflakeMolecule.LUMO_EV,
+                esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                dipole_x: snowflakeMolecule.DIPOLE_X,
+                dipole_y: snowflakeMolecule.DIPOLE_Y,
+                dipole_z: snowflakeMolecule.DIPOLE_Z,
+                functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
+              },
+              rawData: snowflakeMolecule
+            };
+            setSearchedMolecule(formattedMolecule);
           }
-        } catch (apiError) {
-          console.error('Error checking Snowflake database:', apiError);
         }
-      }
 
-      // Then fetch the molecule visualization from Python server
-      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(inputValue.trim())}&include_relatives=${includeRelatives}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+        // Then fetch similar molecules
+        const response = await fetch(`${API_URL}/find-friend?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
+        }
+        const data = await response.json();
+        const molecules = data.similar_molecules;
+        setSimilarMolecules(molecules);
+        
+        // Fetch the molecule visualization for the input molecule
+        const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!visualizationResponse.ok) {
+          throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
+        }
+        const imageData = await visualizationResponse.blob();
+        const imageUrl = URL.createObjectURL(imageData);
+        setSearchResult(imageUrl);
+        
+        // Fetch molecule visualizations for all similar molecules
+        const imageRequests = molecules.map(async (molecule, index) => {
+          try {
+            const moleculeResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(molecule.SMILES)}`);
+            if (moleculeResponse.ok) {
+              const moleculeImageData = await moleculeResponse.blob();
+              const moleculeImageUrl = URL.createObjectURL(moleculeImageData);
+              return { index, imageUrl: moleculeImageUrl };
+            }
+            return { index, imageUrl: null };
+          } catch (error) {
+            console.error(`Error fetching molecule image for ${molecule.SMILES}:`, error);
+            return { index, imageUrl: null };
+          }
+        });
+        
+        // Wait for all image requests to complete
+        const imageResults = await Promise.all(imageRequests);
+        
+        // Create a map of molecule index to image URL
+        const imageMap = {};
+        imageResults.forEach(result => {
+          if (result.imageUrl) {
+            imageMap[result.index] = result.imageUrl;
+          }
+        });
+        
+        setSimilarMoleculeImages(imageMap);
+      } else {
+        // Original search functionality
+        // First, find the molecule in our loaded UMAP data
+        const matchingMolecule = graphData.find(node => 
+          node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+        );
+        
+        if (matchingMolecule) {
+          // Molecule found in UMAP data
+          setSearchedMolecule(matchingMolecule);
+          setHighlightedMolecule(matchingMolecule);
+        } else {
+          // If not found in UMAP data, check the Snowflake database
+          try {
+            const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
+            if (response.ok) {
+              const data = await response.json();
+
+              
+              // Find the molecule in the Snowflake data
+              if (data.data && data.data.length > 0) {
+                const snowflakeMolecule = data.data[0];
+                
+                // Create a formatted molecule object from Snowflake data
+                const formattedMolecule = {
+                  smiles: snowflakeMolecule.SMILES,
+                  properties: {
+                    molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                    homo_eV: snowflakeMolecule.HOMO_EV,
+                    lumo_eV: snowflakeMolecule.LUMO_EV,
+                    esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                    esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                    dipole_x: snowflakeMolecule.DIPOLE_X,
+                    dipole_y: snowflakeMolecule.DIPOLE_Y,
+                    dipole_z: snowflakeMolecule.DIPOLE_Z,
+                    functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                    predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                    predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                    chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
+                  },
+                  rawData: snowflakeMolecule
+                };
+                
+                setSearchedMolecule(formattedMolecule);
+                // Don't highlight on UMAP since it's not in the visualization
+              }
+            }
+          } catch (apiError) {
+            console.error('Error checking Snowflake database:', apiError);
+          }
+        }
+        // Then fetch the molecule visualization from Python server
+        const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+        }
+        const data = await response.blob();
+        const imageUrl = URL.createObjectURL(data);
+        setSearchResult(imageUrl);
       }
-      const data = await response.blob();
-      const imageUrl = URL.createObjectURL(data);
-      setSearchResult(imageUrl);
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err.message);
@@ -1493,7 +1660,7 @@ const App = () => {
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
-              Chat
+              Ask
             </a>
           </div>
         </div>
@@ -1576,14 +1743,230 @@ const App = () => {
                     </div>
                   ))}
                 </div>
+                
+                {/* Functional Group Filter */}
+                <div className="functional-group-filter">
+                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Functional Group Filter</h3>
+                  <div className="functional-group-input-container">
+                    <select 
+                      className="functional-group-select"
+                      onChange={(e) => {
+                        const selectedSmarts = e.target.value;
+                        if (selectedSmarts) {
+                          setFilteredGraphData(graphData.filter(node => 
+                            node.properties?.functional_groups && 
+                            node.properties.functional_groups.includes(e.target.options[e.target.selectedIndex].text)
+                          ));
+                        } else {
+                          // Reset to show all data (respecting other active filters)
+                          const filtered = graphData.filter(node => {
+                            for (const [property, range] of Object.entries(filterRanges)) {
+                              if (!range.active) continue;
+                              const nodeValue = node.properties[property];
+                              if (nodeValue !== undefined && nodeValue !== null && 
+                                  (nodeValue < range.range[0] || nodeValue > range.range[1])) {
+                                return false;
+                              }
+                            }
+                            return true;
+                          });
+                          setFilteredGraphData(filtered);
+                        }
+                      }}
+                    >
+                      <option value="">Select a functional group</option>
+                      <option value="C(=O)Cl">AcidChloride</option>
+                      <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
+                      <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
+                      <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
+                      <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
+                      <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
+                      <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
+                      <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
+                      <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
+                      <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
+                      <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
+                      <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
+                      <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
+                      <option value="[CX3H](=[OX1])">Aldehyde</option>
+                      <option value="[CX3]=[CX3]">Alkene</option>
+                      <option value="[CX2]#[CX2]">Alkyne</option>
+                      <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
+                      <option value="[NX3][CX3](=O)[#6]">Amide</option>
+                      <option value="[#6][NX2]=[#6][N]">Amidine</option>
+                      <option value="[NX4]">Ammonium</option>
+                      <option value="c1ccccc1">Arene</option>
+                      <option value="[#6][N]=[N][#6]">Azo</option>
+                      <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
+                      <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
+                      <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
+                      <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
+                      <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
+                      <option value="[#6][SX2][SX2][#6]">Disulfide</option>
+                      <option value="[CX3][NX3]=[CX3]">Enamine</option>
+                      <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
+                      <option value="[OD2]([#6])[#6]">Ether</option>
+                      <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
+                      <option value="[F][CX4]">FluoroAlkyl_SP3</option>
+                      <option value="[F][CX3]">FluoroAlkyl_SP2</option>
+                      <option value="[F][CX2]">FluoroAlkyl_SP</option>
+                      <option value="[F][CX4][OX2]">FluoroEther</option>
+                      <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
+                      <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
+                      <option value="[NX3][NX3]">Hydrazine</option>
+                      <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
+                      <option value="[C][Cl,Br,I,F]">Halide</option>
+                      <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
+                      <option value="[CX2]=[NX3]">Imine</option>
+                      <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
+                      <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
+                      <option value="[#6]([O][#6])([O][#6])">Ketal</option>
+                      <option value="[CX2]#[NX1]">Nitrile</option>
+                      <option value="[OX2][OX2]">Peroxide</option>
+                      <option value="c1ccccc1[OH]">Phenol</option>
+                      <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
+                      <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
+                      <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
+                      <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
+                      <option value="[Se][#6]">Selenide</option>
+                      <option value="[SeH]">Selenol</option>
+                      <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
+                      <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
+                      <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
+                      <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
+                      <option value="[SX2H]">Thiol</option>
+                      <option value="[#6](=[SX])[H]">Thial</option>
+                      <option value="[#6](=[SX])[NX3]">Thioamide</option>
+                      <option value="[#6](=[SX])[#6]">Thioketone</option>
+                      <option value="[CX2]=[SX1]">Thione</option>
+                      <option value="[SX2]([#6])[#6]">Thioether</option>
+                      <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
+                      <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
+                      <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
+                      <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
+                      <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
+                      <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
+                      <option value="c1ccccc1">Arene (aromatic)</option>
+                    </select>
+                    <button 
+                      className="reset-filter-button functional-group-reset"
+                      onClick={() => {
+                        // Reset dropdown
+                        const dropdown = document.querySelector('.functional-group-select');
+                        if (dropdown) dropdown.selectedIndex = 0;
+                        
+                        // Reset to show all data (respecting other active filters)
+                        const filtered = graphData.filter(node => {
+                          for (const [property, range] of Object.entries(filterRanges)) {
+                            if (!range.active) continue;
+                            const nodeValue = node.properties[property];
+                            if (nodeValue !== undefined && nodeValue !== null && 
+                                (nodeValue < range.range[0] || nodeValue > range.range[1])) {
+                              return false;
+                            }
+                          }
+                          return true;
+                        });
+                        setFilteredGraphData(filtered);
+                      }}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+                
+                <style jsx>{`
+                  .functional-group-filter {
+                    margin-top: 20px;
+                    padding-top: 10px;
+                    border-top: 1px solid #e0e0e0;
+                  }
+                  
+                  .functional-group-select {
+                    width: 100%;
+                    padding: 8px 12px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    background-color: white;
+                    font-size: 14px;
+                    color: #333;
+                  }
+                  
+                  .functional-group-select:focus {
+                    outline: none;
+                    border-color: #0080ff;
+                    box-shadow: 0 0 0 2px rgba(0, 128, 255, 0.2);
+                  }
+                  
+                  .functional-group-input-container {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                  }
+                  
+                  .functional-group-reset {
+                    margin-left: 8px;
+                    padding: 4px 8px;
+                    background-color: #f5f5f5;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    cursor: pointer;
+                  }
+                  
+                  .functional-group-reset:hover {
+                    background-color: #e0e0e0;
+                  }
+                `}</style>
               </div>
             </div>
           </>
 
         ) : activePage === 'map' ? (
-          <div className="map-container" style={{ display: 'flex', height: 'calc(100vh - 120px)', padding: '20px' }}>
-            {/* UMAP Visualization on the left (60%) */}
-            <div className="graph-container" style={{ width: '60%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
+          <>
+          <div className="map-container" style={{ 
+            display: 'flex', 
+            height: 'calc(100vh - 150px)', 
+            padding: '20px',
+            overflowY: 'auto',
+            marginBottom: '50px'
+          }}>
+            {/* New left text column (20%) */}
+            <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Molecular Universe Overview</h2>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                The Molecular Universe is a powerful tool for exploring the vast landscape of molecules suitable for battery applications. This visualization represents one of the largest databases of small molecule properties available today.
+              </p>
+              
+              <h3 style={{ color: '#333', marginTop: '20px' }}>How to Use This Map</h3>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                Each point on the map represents a molecule with unique properties. Similar molecules appear closer together, while dissimilar ones are farther apart.
+              </p>
+              
+              <ul style={{ lineHeight: '1.6' }}>
+                <li><strong>Click on any point</strong> to view detailed information about that molecule</li>
+                <li><strong>Zoom in/out</strong> to explore clusters of related molecules</li>
+                <li><strong>Pan around</strong> to navigate different regions of chemical space</li>
+              </ul>
+              
+              <p style={{ lineHeight: '1.6' }}>
+                The colors represent molecular weight, with darker purples indicating lower weights and yellows indicating higher weights.
+              </p>
+              
+              <h3 style={{ color: '#333', marginTop: '20px' }}>Key Benefits</h3>
+              
+              <ul style={{ lineHeight: '1.6' }}>
+                <li><strong>Discover</strong> similar molecules with potentially improved properties</li>
+                <li><strong>Explore</strong> unexplored regions of chemical space</li>
+                <li><strong>Identify</strong> patterns and relationships between molecular structures</li>
+              </ul>
+            </div>
+            
+            {/* UMAP Visualization in the middle (50%) */}
+            <div className="graph-container" style={{ width: '50%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
               {filteredGraphData.length > 0 ? (
                 <Plot
                   data={plotlyData}
@@ -1606,8 +1989,8 @@ const App = () => {
               )}
             </div>
             
-            {/* Text content on the right (30%) */}
-            <div className="map-text-section" style={{ width: '30%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+            {/* Right text content (25%) */}
+            <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
               <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Why we are building Molecular Universe</h2>
               
               <p style={{ lineHeight: '1.6', fontStyle: 'italic', marginBottom: '20px', textAlign: 'center' }}>
@@ -1685,6 +2068,18 @@ const App = () => {
               </ul>
             </div>
           </div>
+
+          <div style={{ 
+            fontSize: '14px',
+            color: '#333',
+            textAlign: 'center',
+            padding: '10px 0',
+            width: '100%',
+            backgroundColor: '#f1f1f1'
+          }}>
+            By using Molecular Universe, you agree to our Terms and Privacy Policy.
+          </div>
+          </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
             <ChatbotInterface 
@@ -1699,7 +2094,7 @@ const App = () => {
           )
         ) : activePage === 'pricing' ? (
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-            <PricingPage />
+            <PricingPage onSignIn={handleSignIn} />
           </div>
         ) : (
           // SEARCH PAGE CONTENT:
@@ -1743,33 +2138,37 @@ const App = () => {
                   disabled={searchLoading}
                 ></SearchInput>
                 
-                {/* Search results display */}
+                {/* Add "Find closest friends" checkbox */}
+                <div className="search-options">
+                  <label className="search-option">
+                    <input
+                      type="checkbox"
+                      checked={findClosestFriends}
+                      onChange={(e) => setFindClosestFriends(e.target.checked)}
+                    />
+                    <span>Find closest friends</span>
+                  </label>
+                </div>
+                
                 <div className="search-results">
                   {searchLoading && (
-                    <div className="search-loading">
+                    <div className="loading-container">
                       <div className="loading-spinner"></div>
-                      <p>Searching for molecule...</p>
+                      <p>Searching...</p>
                     </div>
                   )}
-                
+                  
                   {searchError && (
-                    <div className="search-error">
+                    <div className="error-message">
                       <p>{searchError}</p>
                     </div>
                   )}
                   
-                  {searchResult && (
-                    <div className="molecule-details">
-                      <h2>Molecule Visualization</h2>
-                      
-                      {searchedMolecule ? (
-                        <div className="molecule-data">
-                          <h3>Properties</h3>
-                          {!highlightedMolecule && searchedMolecule && (
-                            <div className="molecule-found-in-csv">
-                              <p>This molecule was found in the database but is not displayed in the current UMAP view.</p>
-                            </div>
-                          )}
+                  {!searchLoading && !searchError && searchResult && (
+                    <div>
+                      {searchedMolecule && !findClosestFriends ? (
+                        <div className="molecule-properties">
+                          <h3>Molecule Properties</h3>
                           <table className="property-table">
                             <tbody>
                               <tr>
@@ -1839,23 +2238,187 @@ const App = () => {
                             </tbody>
                           </table>
                         </div>
+                      ) : findClosestFriends && similarMolecules && similarMolecules.length > 0 ? (
+                        <div className="similar-molecules">
+                          {/* Add searched molecule section */}
+                          <div className="searched-molecule">
+                            <h3>Searched Molecule</h3>
+                            <div className="searched-molecule-content">
+                              <table className="property-table">
+                                <tbody>
+                                  <tr>
+                                    <td className="property-name">SMILES</td>
+                                    <td className="property-value">{searchInput}</td>
+                                  </tr>
+                                  {searchedMolecule && (
+                                    <>
+                                      {searchedMolecule.properties?.chemical_formula && (
+                                        <tr>
+                                          <td className="property-name">Chemical Formula</td>
+                                          <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
+                                        </tr>
+                                      )}
+                                      <tr>
+                                        <td className="property-name">Molecular Weight</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(2) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">HOMO (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">LUMO (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">ESP Min (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="property-name">ESP Max (eV)</td>
+                                        <td className="property-value">
+                                          {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
+                                        </td>
+                                      </tr>
+                                      {searchedMolecule.properties?.predicted_mp && (
+                                        <tr>
+                                          <td className="property-name">Predicted Melting Point (°C)</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.predicted_mp.toFixed(2)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {searchedMolecule.properties?.predicted_bp && (
+                                        <tr>
+                                          <td className="property-name">Predicted Boiling Point (°C)</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.predicted_bp.toFixed(2)}
+                                          </td>
+                                        </tr>
+                                      )}
+                                      {searchedMolecule.properties?.functional_groups && (
+                                        <tr>
+                                          <td className="property-name">Functional Groups</td>
+                                          <td className="property-value">
+                                            {searchedMolecule.properties.functional_groups}
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </>
+                                  )}
+                                </tbody>
+                              </table>
+                              {searchResult && (
+                                <div className="searched-molecule-image-container">
+                                  <img 
+                                    src={searchResult} 
+                                    alt="Searched molecule visualization" 
+                                    className="searched-molecule-image"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <h3>Similar Molecules</h3>
+                          {similarMolecules.map((molecule, index) => (
+                            <div key={index} className="similar-molecule">
+                              <h4>Similar Molecule #{index + 1}</h4>
+                              <div className="similar-molecule-content">
+                                <table className="property-table">
+                                  <tbody>
+                                    <tr>
+                                      <td className="property-name">SMILES</td>
+                                      <td className="property-value">{molecule.SMILES}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">HOMO (eV)</td>
+                                      <td className="property-value">
+                                        {molecule.HOMO_eV !== null && molecule.HOMO_eV !== undefined 
+                                          ? molecule.HOMO_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">LUMO (eV)</td>
+                                      <td className="property-value">
+                                        {molecule.LUMO_eV !== null && molecule.LUMO_eV !== undefined 
+                                          ? molecule.LUMO_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">ESP Min (eV)</td>
+                                      <td className="property-value">
+                                        {molecule.ESP_min_eV !== null && molecule.ESP_min_eV !== undefined 
+                                          ? molecule.ESP_min_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">ESP Max (eV)</td>
+                                      <td className="property-value">
+                                        {molecule.ESP_max_eV !== null && molecule.ESP_max_eV !== undefined 
+                                          ? molecule.ESP_max_eV.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">
+                                        {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
+                                          ? molecule.predicted_MP_celsius.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">
+                                        {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
+                                          ? molecule.predicted_BP_celsius.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Molecular Weight</td>
+                                      <td className="property-value">
+                                        {molecule.molecular_weight !== null && molecule.molecular_weight !== undefined 
+                                          ? molecule.molecular_weight.toFixed(2) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">Functional Groups</td>
+                                      <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                {similarMoleculeImages[index] && (
+                                  <div className="similar-molecule-image-container">
+                                    <img 
+                                      src={similarMoleculeImages[index]} 
+                                      alt={`Molecule ${index + 1} visualization`} 
+                                      className="similar-molecule-image"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <div className="molecule-not-found">
-                          <p>This molecule was not found in our UMAP dataset.</p>
+                          <p>This molecule was not found in our dataset.</p>
                         </div>
                       )}
-                      
-                      <img 
-                        src={searchResult} 
-                        alt="Molecule visualization" 
-                        style={{
-                          maxWidth: '100%',
-                          height: 'auto',
-                          marginTop: '20px',
-                          borderRadius: '8px',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                      />
                     </div>
                   )}
                 </div>
