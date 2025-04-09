@@ -120,8 +120,9 @@ body, html {
 
 .main-container {
   display: flex;
-  height: calc(100vh - 110px);
-  overflow: hidden;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f1f1f1;
 }
 
 .graph-container {
@@ -503,7 +504,7 @@ body, html {
   display: flex;
   justify-content: center;
   padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: #f1f1f1;
   min-height: calc(100vh - 60px);
 }
 

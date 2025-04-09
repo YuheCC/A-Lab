@@ -2310,7 +2310,7 @@ const App = () => {
             marginBottom: '50px'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+            <div className="map-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
               <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <a 
