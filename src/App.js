@@ -802,20 +802,20 @@ const AboutPage = ({ handleNavigation }) => {
   return (
     <div className="about-container" style={{ display: 'flex', width: '93%' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+        <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
             href="#features" 
             style={{ 
               textDecoration: 'none', 
               color: '#333',
-              fontSize: '16px',
+              fontSize: '9.5px',
               transition: 'font-size 0.3s ease',
               cursor: 'pointer'
             }}
-            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
             onClick={(e) => {
               e.preventDefault();
               document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
@@ -828,12 +828,12 @@ const AboutPage = ({ handleNavigation }) => {
             style={{ 
               textDecoration: 'none', 
               color: '#333',
-              fontSize: '16px',
+              fontSize: '9.5px',
               transition: 'font-size 0.3s ease',
               cursor: 'pointer'
             }}
-            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
             onClick={(e) => {
               e.preventDefault();
               handleNavigation('pricing');
@@ -846,12 +846,12 @@ const AboutPage = ({ handleNavigation }) => {
             style={{ 
               textDecoration: 'none', 
               color: '#333',
-              fontSize: '16px',
+              fontSize: '9.5px',
               transition: 'font-size 0.3s ease',
               cursor: 'pointer'
             }}
-            onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
           >
             News Feed
           </a>
@@ -2068,20 +2068,20 @@ const App = () => {
         ) : activePage === 'explorer' ? (
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
                       document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
@@ -2094,12 +2094,12 @@ const App = () => {
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
                       handleNavigation('pricing');
@@ -2112,12 +2112,12 @@ const App = () => {
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                   >
                     News Feed
                   </a>
@@ -2340,20 +2340,20 @@ const App = () => {
             marginBottom: '50px'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
-              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
                   href="/about#features" 
                   style={{ 
                     textDecoration: 'none', 
                     color: '#333',
-                    fontSize: '16px',
+                    fontSize: '9.5px',
                     transition: 'font-size 0.3s ease',
                     cursor: 'pointer'
                   }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
@@ -2366,12 +2366,12 @@ const App = () => {
                   style={{ 
                     textDecoration: 'none', 
                     color: '#333',
-                    fontSize: '16px',
+                    fontSize: '9.5px',
                     transition: 'font-size 0.3s ease',
                     cursor: 'pointer'
                   }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavigation('pricing');
@@ -2384,12 +2384,12 @@ const App = () => {
                   style={{ 
                     textDecoration: 'none', 
                     color: '#333',
-                    fontSize: '16px',
+                    fontSize: '9.5px',
                     transition: 'font-size 0.3s ease',
                     cursor: 'pointer'
                   }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
                   News Feed
                 </a>
@@ -2499,20 +2499,20 @@ const App = () => {
           <div className="search-container">
             <div className="search-umap-container">
               {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
                       document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
@@ -2525,12 +2525,12 @@ const App = () => {
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
                       handleNavigation('pricing');
@@ -2543,12 +2543,12 @@ const App = () => {
                     style={{ 
                       textDecoration: 'none', 
                       color: '#333',
-                      fontSize: '16px',
+                      fontSize: '9.5px',
                       transition: 'font-size 0.3s ease',
                       cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '20.8px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '16px'}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                   >
                     News Feed
                   </a>
