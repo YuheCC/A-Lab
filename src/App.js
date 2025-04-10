@@ -2886,8 +2886,7 @@ const App = () => {
                           ))}
                         </div>
                       ) : (
-                        <div className="molecule-not-found">
-                          <p>This molecule was not found in our dataset.</p>
+                        <div>
                         </div>
                       )}
                     </div>
