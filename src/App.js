@@ -187,48 +187,48 @@ const AuthPage = () => {
 };
 
 // Popup component to display node data
-const NodePopup = ({ node, onClose, filterLabels }) => {
-  if (!node) return null;
+// const NodePopup = ({ node, onClose, filterLabels }) => {
+//   if (!node) return null;
   
-  return (
-    <div className="popup-overlay" onClick={onClose}>
-      <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
-        <button className="close-button white-text" onClick={onClose}>×</button>
-        <h2 className="white-text">Node Details</h2>
-        <div className="popup-data">
-          <h3 className="white-text">SMILES</h3>
-          <p className="dark-field">{node.smiles}</p>
+//   return (
+//     <div className="popup-overlay" onClick={onClose}>
+//       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
+//         <button className="close-button white-text" onClick={onClose}>×</button>
+//         <h2 className="white-text">Node Details</h2>
+//         <div className="popup-data">
+//           <h3 className="white-text">SMILES</h3>
+//           <p className="dark-field">{node.smiles}</p>
           
-          <h3 className="white-text">UMAP Coordinates</h3>
-          <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
+//           <h3 className="white-text">UMAP Coordinates</h3>
+//           <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
           
-          <h3 className="white-text">Properties</h3>
-          <table className="property-table dark-table">
-            <tbody>
-              {Object.entries(node.properties || {}).map(([key, value]) => (
-                <tr key={key}>
-                  <td className="property-name white-text">{filterLabels[key] || key}</td>
-                  <td className="property-value white-text">
-                    {value !== null && value !== undefined 
-                      ? typeof value === 'number' 
-                        ? value.toFixed(6) 
-                        : value.toString()
-                      : 'N/A'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+//           <h3 className="white-text">Properties</h3>
+//           <table className="property-table dark-table">
+//             <tbody>
+//               {Object.entries(node.properties || {}).map(([key, value]) => (
+//                 <tr key={key}>
+//                   <td className="property-name white-text">{filterLabels[key] || key}</td>
+//                   <td className="property-value white-text">
+//                     {value !== null && value !== undefined 
+//                       ? typeof value === 'number' 
+//                         ? value.toFixed(6) 
+//                         : value.toString()
+//                       : 'N/A'}
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
           
-          <h3 className="white-text">All Data</h3>
-          <pre className="raw-data dark-field">
-            {JSON.stringify(node.rawData, null, 2)}
-          </pre>
-        </div>
-      </div>
-    </div>
-  );
-};
+//           <h3 className="white-text">All Data</h3>
+//           <pre className="raw-data dark-field">
+//             {JSON.stringify(node.rawData, null, 2)}
+//           </pre>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 // Material UI Slider component
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
@@ -2912,7 +2912,7 @@ const App = () => {
       </div>
       
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
+      {/* {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />} */}
     </div>
   );
 };
