@@ -2706,6 +2706,19 @@ const App = () => {
                                   </td>
                                 </tr>
                               )}
+                              {searchResult && (
+                                <tr>
+                                  <td className="property-value">
+                                    <div className="molecule-image-container">
+                                      <img 
+                                        src={searchResult} 
+                                        alt="Molecule Structure"
+                                        style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
+                                      />
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         </div>
