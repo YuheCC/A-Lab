@@ -810,7 +810,7 @@ const AboutPage = ({ handleNavigation }) => {
   return (
     <div className="about-container" style={{ display: 'flex', width: '93%' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <a 
@@ -1106,7 +1106,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 150000;
+  const MAX_NODES = 71000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -2070,7 +2070,7 @@ const App = () => {
         ) : activePage === 'explorer' ? (
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+              <div className="about-text-section left-text" style={{ width: '15%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <a 
@@ -2342,7 +2342,7 @@ const App = () => {
             marginBottom: '50px'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+            <div className="map-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
               <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <a 
@@ -2501,7 +2501,7 @@ const App = () => {
           <div className="search-container">
             <div className="search-umap-container">
               {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+              <div className="about-text-section left-text" style={{ width: '17%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#000', marginBottom: '20px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <a 
