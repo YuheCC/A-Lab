@@ -992,7 +992,7 @@ const App = () => {
   
   // Chat state (moved from ChatbotInterface)
   const [chatMessages, setChatMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
+    { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
   ]);
   
   // Authentication state
@@ -2619,7 +2619,7 @@ const App = () => {
                       checked={findClosestFriends}
                       onChange={(e) => setFindClosestFriends(e.target.checked)}
                     />
-                    <span>Find closest friends</span>
+                    <span>Find "friends" (Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.)</span>
                   </label>
                 </div>
                 
