@@ -1106,7 +1106,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 71000;
+  const MAX_NODES = 35000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecule, setHighlightedMolecule] = useState(null);
@@ -1369,6 +1369,34 @@ const App = () => {
       const data = await response.blob();
       const imageUrl = URL.createObjectURL(data);
       setSearchResult(imageUrl);
+
+      // If findClosestFriends is false, append the molecule image to the search interface section
+      if (!findClosestFriends) {
+        // Create a new div for the molecule image
+        const moleculeImageDiv = document.createElement('div');
+        moleculeImageDiv.className = 'molecule-image-container';
+        moleculeImageDiv.style.marginTop = '20px';
+        moleculeImageDiv.style.textAlign = 'center';
+        
+        // Create and append the image
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = 'Molecule Structure';
+        img.style.maxWidth = '100%';
+        img.style.maxHeight = '300px';
+        moleculeImageDiv.appendChild(img);
+        
+        // Find the search interface section and append the image
+        const searchInterfaceSection = document.querySelector('.search-interface-section');
+        if (searchInterfaceSection) {
+          // Remove any existing molecule image
+          const existingImage = searchInterfaceSection.querySelector('.molecule-image-container');
+          if (existingImage) {
+            existingImage.remove();
+          }
+          searchInterfaceSection.appendChild(moleculeImageDiv);
+        }
+      }
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err.message);
