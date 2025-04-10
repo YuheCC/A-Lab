@@ -601,17 +601,18 @@ const App = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('map');
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResults, setsearchResults] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [searchedMolecule, setSearchedMolecule] = useState(null);
+  const [searchWarning, setSearchWarning] = useState(null);
+  const [searchedMolecules, setsearchedMolecules] = useState(null);
   const [similarMolecules, setSimilarMolecules] = useState(null);
   const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
   const [findClosestFriends, setFindClosestFriends] = useState(false);
   
   // Enterprise search state lifted up
-  const [enterpriseSearchResult, setEnterpriseSearchResult] = useState(null);
+  const [enterprisesearchResults, setEnterprisesearchResults] = useState(null);
   const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
   const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
   const [includeRelatives, setIncludeRelatives] = useState(false);
@@ -826,7 +827,7 @@ const App = () => {
           size: 12
         }
       }];
-    } else if (searchResult) {
+    } else if (searchResults) {
       layout.annotations = [{
         x: 0,
         y: 0,
@@ -846,7 +847,7 @@ const App = () => {
     }
     
     return layout;
-  }, [plotlyLayout, highlightedMolecule, searchResult, arrowOffset]);
+  }, [plotlyLayout, highlightedMolecule, searchResults, arrowOffset]);
 
   const plotlyConfig = {
     displayModeBar: true,
@@ -869,158 +870,114 @@ const App = () => {
   // }, []);
 
   // Update handleSearch function
+  const handleSearchedMolecules = async (response, select_first = false) => {
+    let formattedMolecules = null;
+    try {
+      const data = await response.json();
+      if (data.found) {
+        if (data.molecule_details && data.molecule_details.length > 0) {
+          formattedMolecules = data.molecule_details.map((mol) => {
+            return {
+              smiles: mol.SMILES,
+              properties: {
+                molwt: mol.MOLECULAR_WEIGHT,
+                homo_eV: mol.HOMO,
+                lumo_eV: mol.LUMO,
+                esp_min_eV: mol.ESP_MIN,
+                esp_max_eV: mol.ESP_MAX,
+                functional_groups: mol.FUNCTIONAL_GROUPS,
+                predicted_mp: mol.PREDICTED_MP,
+                predicted_bp: mol.PREDICTED_BP,
+                chemical_formula: mol.CHEMICAL_FORMULA
+              },
+              image: mol.image,
+              rawData: mol
+            };
+          });
+          if (select_first) {
+            // Only store the first molecule (as a list of one) and its image
+            setsearchedMolecules([formattedMolecules[0]]);
+            setsearchResults([formattedMolecules[0].image]);
+          } else {
+            // Store all molecules and their images
+            setsearchedMolecules(formattedMolecules);
+            setsearchResults(formattedMolecules.map((mol) => mol.image));
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error processing searched molecules:', error);
+    }
+    return formattedMolecules;
+  };
+
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
     setLastSearch(searchInput);
 
     setSearchLoading(true);
+    setSearchWarning(null);
     setSearchError(null);
-    setSearchResult(null);
-    setSearchedMolecule(null);
+    setsearchResults(null);
+    setsearchedMolecules(null);
     setHighlightedMolecule(null);
     setSimilarMolecules(null);
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
+
+    // TODO: Update UMAP with ALL found molecules
+    const matchingMolecule = graphData.find(node => 
+      node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
+    );
+    
+    if (matchingMolecule) {
+      // Molecule found in UMAP data
+      setHighlightedMolecule(matchingMolecule);
+    }
+
     try {
+      // First fetch the searched molecule's properties from Snowflake
+      const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
+      console.log(moleculeResponse)
+      const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
+      console.log(formattedMolecules)
       if (findClosestFriends) {
-        // First fetch the searched molecule's properties from Snowflake
-        const moleculeResponse = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (moleculeResponse.ok) {
-          const moleculeData = await moleculeResponse.json();
-          if (moleculeData.data && moleculeData.data.length > 0) {
-            const snowflakeMolecule = moleculeData.data[0];
-            const formattedMolecule = {
-              smiles: snowflakeMolecule.SMILES,
-              properties: {
-                molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
-                homo_eV: snowflakeMolecule.HOMO_EV,
-                lumo_eV: snowflakeMolecule.LUMO_EV,
-                esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
-                esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
-                dipole_x: snowflakeMolecule.DIPOLE_X,
-                dipole_y: snowflakeMolecule.DIPOLE_Y,
-                dipole_z: snowflakeMolecule.DIPOLE_Z,
-                functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
-                predicted_mp: snowflakeMolecule.PREDICTED_MP,
-                predicted_bp: snowflakeMolecule.PREDICTED_BP,
-                chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
-              },
-              rawData: snowflakeMolecule
-            };
-            setSearchedMolecule(formattedMolecule);
-          }
-        }
-
-        // Then fetch similar molecules
-        const response = await fetch(`${API_URL}/find-friend?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-        }
-        const data = await response.json();
-        const molecules = data.similar_molecules;
-        setSimilarMolecules(molecules);
-        
-        // Fetch the molecule visualization for the input molecule
-        const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (!visualizationResponse.ok) {
-          throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
-        }
-        const imageData = await visualizationResponse.blob();
-        const imageUrl = URL.createObjectURL(imageData);
-        setSearchResult(imageUrl);
-        
-        // Fetch molecule visualizations for all similar molecules
-        const imageRequests = molecules.map(async (molecule, index) => {
-          try {
-            const moleculeResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(molecule.SMILES)}`);
-            if (moleculeResponse.ok) {
-              const moleculeImageData = await moleculeResponse.blob();
-              const moleculeImageUrl = URL.createObjectURL(moleculeImageData);
-              return { index, imageUrl: moleculeImageUrl };
-            }
-            return { index, imageUrl: null };
-          } catch (error) {
-            console.error(`Error fetching molecule image for ${molecule.SMILES}:`, error);
-            return { index, imageUrl: null };
-          }
-        });
-        
-        // Wait for all image requests to complete
-        const imageResults = await Promise.all(imageRequests);
-        
-        // Create a map of molecule index to image URL
-        const imageMap = {};
-        imageResults.forEach(result => {
-          if (result.imageUrl) {
-            imageMap[result.index] = result.imageUrl;
-          }
-        });
-        
-        setSimilarMoleculeImages(imageMap);
-      } else {
-        // Original search functionality
-        // First, find the molecule in our loaded UMAP data
-        const matchingMolecule = graphData.find(node => 
-          node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-        );
-        
-        if (matchingMolecule) {
-          // Molecule found in UMAP data
-          setSearchedMolecule(matchingMolecule);
-          setHighlightedMolecule(matchingMolecule);
+        // check if formattedMolecules has length > 1 - if so display warning
+        if (formattedMolecules.length > 1) {
+          setSearchWarning('Multiple molecules found matching your search criterion. Find a friend disabled.');
         } else {
-          // If not found in UMAP data, check the Snowflake database
-          try {
-            const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
-            if (response.ok) {
-              const data = await response.json();
+          const formattedMolecule = formattedMolecules[0];
 
-              
-              // Find the molecule in the Snowflake data
-              if (data.data && data.data.length > 0) {
-                const snowflakeMolecule = data.data[0];
-                
-                // Create a formatted molecule object from Snowflake data
-                const formattedMolecule = {
-                  smiles: snowflakeMolecule.SMILES,
-                  properties: {
-                    molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
-                    homo_eV: snowflakeMolecule.HOMO_EV,
-                    lumo_eV: snowflakeMolecule.LUMO_EV,
-                    esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
-                    esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
-                    dipole_x: snowflakeMolecule.DIPOLE_X,
-                    dipole_y: snowflakeMolecule.DIPOLE_Y,
-                    dipole_z: snowflakeMolecule.DIPOLE_Z,
-                    functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
-                    predicted_mp: snowflakeMolecule.PREDICTED_MP,
-                    predicted_bp: snowflakeMolecule.PREDICTED_BP,
-                    chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
-                  },
-                  rawData: snowflakeMolecule
-                };
-                
-                setSearchedMolecule(formattedMolecule);
-                // Don't highlight on UMAP since it's not in the visualization
-              }
-            }
-          } catch (apiError) {
-            console.error('Error checking Snowflake database:', apiError);
+          // Then fetch similar molecules
+          const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
           }
-        }
-        // Then fetch the molecule visualization from Python server
-        const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
-        }
-        const data = await response.blob();
-        const imageUrl = URL.createObjectURL(data);
-        setSearchResult(imageUrl);
+          const data = await response.json();
+          const molecules = data.similar_molecules;
+          setSimilarMolecules(molecules);
+          
+          // Fetch molecule visualizations for all similar molecules
+          const imageResults = molecules.map((molecule, index) => {
+            const moleculeImageUrl = molecule.image;
+            return { index, imageUrl: moleculeImageUrl };
+          });
+          
+          // Create a map of molecule index to image URL
+          const imageMap = {};
+          imageResults.forEach(result => {
+            if (result.imageUrl) {
+              imageMap[result.index] = result.imageUrl;
+            }
+          });
+          
+          setSimilarMoleculeImages(imageMap);
+          // TODO: Update UMAP with friends
+        } 
       }
-    } catch (err) {
-      console.error('Search error:', err);
-      setSearchError(err.message);
+    } catch (apiError) {
+      console.error('Error checking Snowflake database:', apiError);
     } finally {
       setSearchLoading(false);
     }
@@ -1114,8 +1071,8 @@ const App = () => {
     
     // Clear search results when navigating away from search page
     if (activePage === 'search' && page !== 'search') {
-      setSearchResult(null);
-      setSearchedMolecule(null);
+      setsearchResults(null);
+      setsearchedMolecules(null);
       setHighlightedMolecule(null);
       setSearchError(null);
     }
@@ -1123,8 +1080,8 @@ const App = () => {
     // Special case for enterprise (advanced search) tab
     if (page === 'enterprise' && activePage === 'search') {
       // First clear the search tab data
-      setSearchResult(null);
-      setSearchedMolecule(null);
+      setsearchResults(null);
+      setsearchedMolecules(null);
       setHighlightedMolecule(null);
       setSearchError(null);
       // Then navigate to enterprise tab
@@ -2166,171 +2123,87 @@ const App = () => {
                       <p>{searchError}</p>
                     </div>
                   )}
+
+                  {searchWarning && (
+                    <div className="warning-message">
+                      <p>{searchWarning}</p>
+                    </div>
+                  )}
                   
-                  {!searchLoading && !searchError && searchResult && (
+                  
+                  
+                  {!searchLoading && !searchError && searchResults && (
                     <div>
-                      {searchedMolecule && !findClosestFriends ? (
+                      {searchedMolecules && searchedMolecules.length > 0 && (
                         <div className="molecule-properties">
-                          <h3>Molecule Properties</h3>
-                          <table className="property-table">
-                            <tbody>
-                              <tr>
-                                <td className="property-name">SMILES</td>
-                                <td className="property-value">{searchedMolecule.smiles}</td>
-                              </tr>
-                              {searchedMolecule.properties?.chemical_formula && (
-                                <tr>
-                                  <td className="property-name">Chemical Formula</td>
-                                  <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
-                                </tr>
-                              )}
-                              <tr>
-                                <td className="property-name">Molecular Weight</td>
-                                <td className="property-value">
-                                  {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(2) : 'N/A'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="property-name">HOMO (eV)</td>
-                                <td className="property-value">
-                                  {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="property-name">LUMO (eV)</td>
-                                <td className="property-value">
-                                  {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="property-name">ESP Min (eV)</td>
-                                <td className="property-value">
-                                  {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="property-name">ESP Max (eV)</td>
-                                <td className="property-value">
-                                  {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
-                                </td>
-                              </tr>
-                              {searchedMolecule.properties?.predicted_mp && (
-                                <tr>
-                                  <td className="property-name">Predicted Melting Point (°C)</td>
-                                  <td className="property-value">
-                                    {searchedMolecule.properties.predicted_mp.toFixed(2)}
-                                  </td>
-                                </tr>
-                              )}
-                              {searchedMolecule.properties?.predicted_bp && (
-                                <tr>
-                                  <td className="property-name">Predicted Boiling Point (°C)</td>
-                                  <td className="property-value">
-                                    {searchedMolecule.properties.predicted_bp.toFixed(2)}
-                                  </td>
-                                </tr>
-                              )}
-                              {searchedMolecule.properties?.functional_groups && (
-                                <tr>
-                                  <td className="property-name">Functional Groups</td>
-                                  <td className="property-value">
-                                    {searchedMolecule.properties.functional_groups}
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      ) : findClosestFriends && similarMolecules && similarMolecules.length > 0 ? (
-                        <div className="similar-molecules">
-                          {/* Add searched molecule section */}
-                          <div className="searched-molecule">
-                            <h3>Searched Molecule</h3>
-                            <div className="searched-molecule-content">
+                          <h3>Searched Molecules</h3>
+                          {searchedMolecules.map((molecule, index) => (
+                            <div key={index} className="molecule-entry">
                               <table className="property-table">
                                 <tbody>
                                   <tr>
                                     <td className="property-name">SMILES</td>
-                                    <td className="property-value">{lastSearch}</td>
+                                    <td className="property-value">{molecule.smiles}</td>
                                   </tr>
-                                  {searchedMolecule && (
-                                    <>
-                                      {searchedMolecule.properties?.chemical_formula && (
-                                        <tr>
-                                          <td className="property-name">Chemical Formula</td>
-                                          <td className="property-value">{searchedMolecule.properties.chemical_formula}</td>
-                                        </tr>
-                                      )}
-                                      <tr>
-                                        <td className="property-name">Molecular Weight</td>
-                                        <td className="property-value">
-                                          {searchedMolecule.properties?.molwt ? searchedMolecule.properties.molwt.toFixed(2) : 'N/A'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="property-name">HOMO (eV)</td>
-                                        <td className="property-value">
-                                          {searchedMolecule.properties?.homo_eV ? searchedMolecule.properties.homo_eV.toFixed(4) : 'N/A'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="property-name">LUMO (eV)</td>
-                                        <td className="property-value">
-                                          {searchedMolecule.properties?.lumo_eV ? searchedMolecule.properties.lumo_eV.toFixed(4) : 'N/A'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="property-name">ESP Min (eV)</td>
-                                        <td className="property-value">
-                                          {searchedMolecule.properties?.esp_min_eV ? searchedMolecule.properties.esp_min_eV.toFixed(4) : 'N/A'}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="property-name">ESP Max (eV)</td>
-                                        <td className="property-value">
-                                          {searchedMolecule.properties?.esp_max_eV ? searchedMolecule.properties.esp_max_eV.toFixed(4) : 'N/A'}
-                                        </td>
-                                      </tr>
-                                      {searchedMolecule.properties?.predicted_mp && (
-                                        <tr>
-                                          <td className="property-name">Predicted Melting Point (°C)</td>
-                                          <td className="property-value">
-                                            {searchedMolecule.properties.predicted_mp.toFixed(2)}
-                                          </td>
-                                        </tr>
-                                      )}
-                                      {searchedMolecule.properties?.predicted_bp && (
-                                        <tr>
-                                          <td className="property-name">Predicted Boiling Point (°C)</td>
-                                          <td className="property-value">
-                                            {searchedMolecule.properties.predicted_bp.toFixed(2)}
-                                          </td>
-                                        </tr>
-                                      )}
-                                      {searchedMolecule.properties?.functional_groups && (
-                                        <tr>
-                                          <td className="property-name">Functional Groups</td>
-                                          <td className="property-value">
-                                            {searchedMolecule.properties.functional_groups}
-                                          </td>
-                                        </tr>
-                                      )}
-                                    </>
+                                  {molecule.properties?.chemical_formula && (
+                                    <tr>
+                                      <td className="property-name">Chemical Formula</td>
+                                      <td className="property-value">{molecule.properties.chemical_formula}</td>
+                                    </tr>
+                                  )}
+                                  <tr>
+                                    <td className="property-name">Molecular Weight</td>
+                                    <td className="property-value">{molecule.properties?.molwt ? molecule.properties.molwt.toFixed(2) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">HOMO (eV)</td>
+                                    <td className="property-value">{molecule.properties?.homo_eV ? molecule.properties.homo_eV.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">LUMO (eV)</td>
+                                    <td className="property-value">{molecule.properties?.lumo_eV ? molecule.properties.lumo_eV.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">ESP Min (eV)</td>
+                                    <td className="property-value">{molecule.properties?.esp_min_eV ? molecule.properties.esp_min_eV.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">ESP Max (eV)</td>
+                                    <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  {molecule.properties?.predicted_mp && (
+                                    <tr>
+                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {molecule.properties?.predicted_bp && (
+                                    <tr>
+                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {molecule.properties?.functional_groups && (
+                                    <tr>
+                                      <td className="property-name">Functional Groups</td>
+                                      <td className="property-value">{molecule.properties.functional_groups}</td>
+                                    </tr>
                                   )}
                                 </tbody>
                               </table>
-                              {searchResult && (
-                                <div className="searched-molecule-image-container">
-                                  <img 
-                                    src={searchResult} 
-                                    alt="Searched molecule visualization" 
-                                    className="searched-molecule-image"
-                                  />
-                                </div>
-                              )}
+                              <div className="molecule-image-container">
+                                <img 
+                                  src={molecule.image} 
+                                  alt={`Molecule ${index + 1} visualization`} 
+                                  className="similar-molecule-image"
+                                />
+                              </div>
                             </div>
-                          </div>
-                          
+                          ))}
+                        </div>
+                      )}
+                      { findClosestFriends && similarMolecules && similarMolecules.length > 0 && (
+                        <div className="similar-molecules">
                           <h3>Similar Molecules</h3>
                           {similarMolecules.map((molecule, index) => (
                             <div key={index} className="similar-molecule">
@@ -2417,7 +2290,8 @@ const App = () => {
                             </div>
                           ))}
                         </div>
-                      ) : (
+                      ) }
+                      { (!searchedMolecules || searchedMolecules.length == 0) && (
                         <div className="molecule-not-found">
                           <p>This molecule was not found in our dataset.</p>
                         </div>

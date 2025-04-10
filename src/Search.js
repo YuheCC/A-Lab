@@ -25,23 +25,33 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
     }
   
     return (
-        <div className="search-bar-container">
-            <input
-                type="text"
-                className="search-input search-input-full"
-                placeholder="Enter SMILES string..."
-                value={inputValue}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                disabled={disabled}
-            />
-            <button 
-                className="search-button"
-                onClick={handleClickSend}
-                disabled={disabled}
-            >
-                Search
-            </button>
+      <div className="search-bar-container" style={{ display: 'flex', alignItems: 'center' }}>
+        <input
+          type="text"
+          className="search-input search-input-full"
+          placeholder="Enter SMILES string, molecule name, or query"
+          value={inputValue}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+        />
+        <button 
+          className="search-button"
+          onClick={handleClickSend}
+          disabled={disabled}
+        >
+          Search
+        </button>
+        <span
+          className="search-tooltip-marker"
+          title={`Valid queries can search over any numerical properties of molecules. For example:
+ - "Find all molecules with HOMO at most -8"
+ - "Find all molecules with LUMO at least -2 and molecular weight at most 200"
+For more open-ended queries, use Ask.`}
+          style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+        >
+          ?
+        </span>
       </div>
     );
 });

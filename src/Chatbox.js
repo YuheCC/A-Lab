@@ -89,7 +89,19 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           return data;
         })
       );
-      setFoundMolecules(responses.filter(item => item.found));
+
+      // Filter out responses that indicate a successful molecule lookup.
+      const validResponses = responses.filter(item => item.found);
+      // Flatten the molecule_details lists from each response into a single array.
+      const flattenedMolecules = validResponses.reduce((acc, cur) => {
+        if (Array.isArray(cur.molecule_details)) {
+          return acc.concat(cur.molecule_details);
+        }
+        return acc;
+      }, []);
+
+      setFoundMolecules(flattenedMolecules);
+      console.log(flattenedMolecules);
     } catch (err) {
       console.error("Error fetching molecule details:", err);
     } finally {
@@ -347,8 +359,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         {foundMolecules && foundMolecules.length > 0 && (
           <div className="found-molecules-container">
             <h3>LLM Found Molecules</h3>
-            {foundMolecules.map((item, idx) => {
-              const details = item.molecule_details;
+            {foundMolecules.map((details, idx) => {
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>{details.name}</strong>
@@ -384,7 +395,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   </div>
                 </div>
               );
-            })}
+              })
+            }
           </div>
         )}
         {similarMolecules && similarMolecules.length > 0 && (
@@ -397,13 +409,13 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>SMILES: {details.SMILES}</strong>
                   <p>Molecular weight: {details.molecular_weight}</p>
-                  <p>HOMO eV: {details.HOMO_eV}</p>
-                  <p>LUMO eV: {details.LUMO_eV}</p>
-                  <p>ESP Max: {details.ESP_max_eV}</p>
-                  <p>ESP Min: {details.ESP_min_eV}</p>
+                  <p>HOMO eV: {details.HOMO_eV} eV</p>
+                  <p>LUMO eV: {details.LUMO_eV} eV</p>
+                  <p>ESP Max: {details.ESP_max_eV} eV</p>
+                  <p>ESP Min: {details.ESP_min_eV} eV</p>
                   <p>Functional groups: {details.functional_groups}</p>
-                  <p>Predicted MP: {details.predicted_MP_celsius}</p>
-                  <p>Predicted BP: {details.predicted_BP_celsius}</p>
+                  <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
+                  <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
                   {details.image && (
                     <img 
                       src={details.image} 

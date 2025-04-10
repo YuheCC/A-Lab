@@ -2090,6 +2090,15 @@ body, html {
   margin: 15px 0;
 }
 
+.warning-message {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin: 15px 0;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
