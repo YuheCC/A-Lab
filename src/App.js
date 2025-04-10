@@ -1267,6 +1267,8 @@ const App = () => {
             const snowflakeMolecule = moleculeData.data[0];
             const formattedMolecule = {
               smiles: snowflakeMolecule.SMILES,
+              x: snowflakeMolecule.UMAP_0,
+              y: snowflakeMolecule.UMAP_1,
               properties: {
                 molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
                 homo_eV: snowflakeMolecule.HOMO_EV,
@@ -1295,104 +1297,78 @@ const App = () => {
         const data = await response.json();
         const molecules = data.similar_molecules;
         setSimilarMolecules(molecules);
-        
-        // Fetch the molecule visualization for the input molecule
-        const visualizationResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (!visualizationResponse.ok) {
-          throw new Error(`Failed to fetch molecule visualization: ${visualizationResponse.statusText}`);
-        }
-        const imageData = await visualizationResponse.blob();
-        const imageUrl = URL.createObjectURL(imageData);
-        setSearchResult(imageUrl);
-        
-        // Fetch molecule visualizations for all similar molecules
-        const imageRequests = molecules.map(async (molecule, index) => {
-          try {
-            const moleculeResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(molecule.SMILES)}`);
-            if (moleculeResponse.ok) {
-              const moleculeImageData = await moleculeResponse.blob();
-              const moleculeImageUrl = URL.createObjectURL(moleculeImageData);
-              return { index, imageUrl: moleculeImageUrl };
-            }
-            return { index, imageUrl: null };
-          } catch (error) {
-            console.error(`Error fetching molecule image for ${molecule.SMILES}:`, error);
-            return { index, imageUrl: null };
-          }
-        });
-        
-        // Wait for all image requests to complete
-        const imageResults = await Promise.all(imageRequests);
-        
-        // Create a map of molecule index to image URL
-        const imageMap = {};
-        imageResults.forEach(result => {
-          if (result.imageUrl) {
-            imageMap[result.index] = result.imageUrl;
-          }
-        });
-        
-        setSimilarMoleculeImages(imageMap);
       } else {
-        // Original search functionality
-        // First, find the molecule in our loaded UMAP data
-        const matchingMolecule = graphData.find(node => 
-          node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-        );
-        
-        if (matchingMolecule) {
-          // Molecule found in UMAP data
-          setSearchedMolecule(matchingMolecule);
-          setHighlightedMolecule(matchingMolecule);
-        } else {
-          // If not found in UMAP data, check the Snowflake database
-          try {
-            const response = await fetch(`${API_URL}/snowflake-query?smiles=${encodeURIComponent(searchInput.trim())}`);
-            if (response.ok) {
-              const data = await response.json();
-              
-              // Find the molecule in the Snowflake data
-              if (data.data && data.data.length > 0) {
-                const snowflakeMolecule = data.data[0];
-                
-                // Create a formatted molecule object from Snowflake data
-                const formattedMolecule = {
-                  smiles: snowflakeMolecule.SMILES,
-                  properties: {
-                    molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
-                    homo_eV: snowflakeMolecule.HOMO_EV,
-                    lumo_eV: snowflakeMolecule.LUMO_EV,
-                    esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
-                    esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
-                    dipole_x: snowflakeMolecule.DIPOLE_X,
-                    dipole_y: snowflakeMolecule.DIPOLE_Y,
-                    dipole_z: snowflakeMolecule.DIPOLE_Z,
-                    functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
-                    predicted_mp: snowflakeMolecule.PREDICTED_MP,
-                    predicted_bp: snowflakeMolecule.PREDICTED_BP,
-                    chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
-                  },
-                  rawData: snowflakeMolecule
-                };
-                
-                setSearchedMolecule(formattedMolecule);
-                // Don't highlight on UMAP since it's not in the visualization
-              }
+        // Use snowflake-query-limit endpoint when findClosestFriends is false
+        console.log('Searching with snowflake-query-limit:', searchInput.trim());
+        const response = await fetch(`${API_URL}/snowflake-query-limit?smiles=${encodeURIComponent(searchInput.trim())}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.data && data.data.length > 0) {
+            const snowflakeMolecule = data.data[0];
+            console.log('Found molecule in Snowflake:', {
+              smiles: snowflakeMolecule.SMILES,
+              data: snowflakeMolecule
+            });
+            
+            // Create a formatted molecule object from Snowflake data
+            const formattedMolecule = {
+              smiles: snowflakeMolecule.SMILES,
+              x: snowflakeMolecule.UMAP_0,
+              y: snowflakeMolecule.UMAP_1,
+              properties: {
+                molwt: snowflakeMolecule.MOLECULAR_WEIGHT,
+                homo_eV: snowflakeMolecule.HOMO_EV,
+                lumo_eV: snowflakeMolecule.LUMO_EV,
+                esp_min_eV: snowflakeMolecule.ESP_MIN_EV,
+                esp_max_eV: snowflakeMolecule.ESP_MAX_EV,
+                dipole_x: snowflakeMolecule.DIPOLE_X,
+                dipole_y: snowflakeMolecule.DIPOLE_Y,
+                dipole_z: snowflakeMolecule.DIPOLE_Z,
+                functional_groups: snowflakeMolecule.FUNCTIONAL_GROUPS,
+                predicted_mp: snowflakeMolecule.PREDICTED_MP,
+                predicted_bp: snowflakeMolecule.PREDICTED_BP,
+                chemical_formula: snowflakeMolecule.CHEMICAL_FORMULA
+              },
+              rawData: snowflakeMolecule
+            };
+            
+            console.log('Setting searched molecule from Snowflake:', {
+              smiles: formattedMolecule.smiles,
+              x: formattedMolecule.x,
+              y: formattedMolecule.y,
+              properties: formattedMolecule.properties
+            });
+            
+            setSearchedMolecule(formattedMolecule);
+            
+            // Set as highlighted molecule if we have UMAP coordinates
+            if (formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
+              setHighlightedMolecule(formattedMolecule);
+              console.log('Setting highlighted molecule with UMAP coordinates:', {
+                smiles: formattedMolecule.smiles,
+                x: formattedMolecule.x,
+                y: formattedMolecule.y
+              });
+            } else {
+              console.log('No UMAP coordinates available for molecule');
             }
-          } catch (apiError) {
-            console.error('Error checking Snowflake database:', apiError);
+          } else {
+            console.log('Molecule not found in Snowflake');
           }
+        } else {
+          console.error('Error fetching from snowflake-query-limit:', response.statusText);
         }
-
-        // Then fetch the molecule visualization from Python server
-        const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
-        }
-        const data = await response.blob();
-        const imageUrl = URL.createObjectURL(data);
-        setSearchResult(imageUrl);
       }
+
+      // Fetch the molecule visualization from Python server
+      const response = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(searchInput.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch molecule data: ${response.statusText}`);
+      }
+      const data = await response.blob();
+      const imageUrl = URL.createObjectURL(data);
+      setSearchResult(imageUrl);
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err.message);
