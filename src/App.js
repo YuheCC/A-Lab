@@ -784,14 +784,6 @@ const EnterpriseSearch = ({ filteredGraphData, loading, error, plotlyLayout, han
             {searchResult && (
               <div className="enterprise-molecule">
                 <h2>Molecule Visualization</h2>
-                <div className="molecule-image-container">
-                  <img 
-                    src={searchResult} 
-                    alt="Molecule visualization" 
-                    className="molecule-image"
-                    style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain' }}
-                  />
-                </div>
                 <div className="molecule-smiles">
                   <h3>SMILES String:</h3>
                   <p>{searchInput}</p>
@@ -1297,6 +1289,31 @@ const App = () => {
         const data = await response.json();
         const molecules = data.similar_molecules;
         setSimilarMolecules(molecules);
+
+        // Fetch images for each similar molecule
+        const imagePromises = molecules.map(async (molecule) => {
+          try {
+            const imageResponse = await fetch(`${API_URL}/molecule?smiles=${encodeURIComponent(molecule.SMILES)}`);
+            if (imageResponse.ok) {
+              const imageBlob = await imageResponse.blob();
+              return {
+                smiles: molecule.SMILES,
+                imageUrl: URL.createObjectURL(imageBlob)
+              };
+            }
+          } catch (err) {
+            console.error(`Failed to fetch image for ${molecule.SMILES}:`, err);
+          }
+          return null;
+        });
+
+        const imageResults = await Promise.all(imagePromises);
+        const validImages = imageResults.filter(result => result !== null);
+        const imagesMap = validImages.reduce((acc, { smiles, imageUrl }) => {
+          acc[smiles] = imageUrl;
+          return acc;
+        }, {});
+        setSimilarMoleculeImages(imagesMap);
       } else {
         // Use snowflake-query-limit endpoint when findClosestFriends is false
         console.log('Searching with snowflake-query-limit:', searchInput.trim());
@@ -1370,32 +1387,9 @@ const App = () => {
       const imageUrl = URL.createObjectURL(data);
       setSearchResult(imageUrl);
 
-      // If findClosestFriends is false, append the molecule image to the search interface section
+      // Remove the code that creates and appends the molecule image container
       if (!findClosestFriends) {
-        // Create a new div for the molecule image
-        const moleculeImageDiv = document.createElement('div');
-        moleculeImageDiv.className = 'molecule-image-container';
-        moleculeImageDiv.style.marginTop = '20px';
-        moleculeImageDiv.style.textAlign = 'center';
-        
-        // Create and append the image
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        img.alt = 'Molecule Structure';
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '300px';
-        moleculeImageDiv.appendChild(img);
-        
-        // Find the search interface section and append the image
-        const searchInterfaceSection = document.querySelector('.search-interface-section');
-        if (searchInterfaceSection) {
-          // Remove any existing molecule image
-          const existingImage = searchInterfaceSection.querySelector('.molecule-image-container');
-          if (existingImage) {
-            existingImage.remove();
-          }
-          searchInterfaceSection.appendChild(moleculeImageDiv);
-        }
+        // Remove this entire block that creates and appends the molecule image div
       }
     } catch (err) {
       console.error('Search error:', err);
@@ -2877,16 +2871,16 @@ const App = () => {
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
                                   </tbody>
-                                </table>
-                                {similarMoleculeImages[index] && (
+                                  {similarMoleculeImages[molecule.SMILES] && (
                                   <div className="similar-molecule-image-container">
                                     <img 
-                                      src={similarMoleculeImages[index]} 
-                                      alt={`Molecule ${index + 1} visualization`} 
-                                      className="similar-molecule-image"
+                                      src={similarMoleculeImages[molecule.SMILES]} 
+                                      alt={`Structure of ${molecule.SMILES}`}
+                                      style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
                                     />
                                   </div>
                                 )}
+                                </table>
                               </div>
                             </div>
                           ))}

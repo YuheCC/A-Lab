@@ -2103,8 +2103,34 @@ body, html {
 /* New styles for similar molecule content and images */
 .similar-molecule-content {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.property-table {
+  flex: 2;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.property-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.property-name {
+  font-weight: 600;
+  color: #555;
+  width: 40%;
+  white-space: nowrap;
+}
+
+.property-value {
+  color: #333;
+  font-family: monospace;
+  word-break: break-all;
 }
 
 .similar-molecule-image-container {
