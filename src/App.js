@@ -789,7 +789,13 @@ const AboutPage = ({ handleNavigation }) => {
             onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+              handleNavigation('about');
+              setTimeout(() => {
+                const featuresSection = document.getElementById('features-section');
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
             }}
           >
             Features of MU
@@ -2055,7 +2061,13 @@ const App = () => {
                     onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
-                      document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
                     }}
                   >
                     Features of MU
@@ -2327,7 +2339,13 @@ const App = () => {
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                   onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const featuresSection = document.getElementById('features-section');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
                   }}
                 >
                   Features of MU
@@ -2486,7 +2504,13 @@ const App = () => {
                     onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                     onClick={(e) => {
                       e.preventDefault();
-                      document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
                     }}
                   >
                     Features of MU
