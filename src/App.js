@@ -683,7 +683,6 @@ const AboutPage = ({ handleNavigation }) => {
               <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
               <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
               <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
             </ul>
             <p>
               You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
