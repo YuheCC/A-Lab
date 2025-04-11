@@ -416,52 +416,44 @@ const PricingPage = ({ onSignIn }) => {
       
       <div className="pricing-cards">
         <div className="pricing-card">
-          <div className="pricing-icon">
+          {/* <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm4-9H8v2h8Z"/>
             </svg>
-          </div>
-          <h2>Research</h2>
+          </div> */}
+          <h2>Research (academia only)</h2>
           <p className="pricing-description">
-            The Research Edition is the introductory offering providing access to core platform functionality.
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Limited access</p>
           <button 
             className="pricing-cta research" 
             onClick={onSignIn}
           >
-            Sign Up
+            Get Started
           </button>
           <div className="pricing-details">
-            <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
-              <li>Access to Map</li>
-              <li>Basic molecule search functionality of 1 million database</li>
-              <li>Limited number of monthly queries (100)</li>
-              <li>Access to the molecular assistant AI</li>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (≤ 100 queries/month)</li>
             </ul>
           </div>
         </div>
         
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Professional</h2>
+        <div className="pricing-card">
+          <h2>Explorer</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 1M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$100</span>
+            <span className="price-amount">$150</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta professional"
             onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
@@ -469,111 +461,91 @@ const PricingPage = ({ onSignIn }) => {
             GET STARTED
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
-            <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+          <ul>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap)</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Unlimited</h2>
+        <div className="pricing-card">
+          <h2>Professional</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 100M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$10,000</span>
+            <span className="price-amount">$1,000</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
           >
             GET STARTED
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
             <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap)</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Strategic Partner</h2>
+        <div className="pricing-card">
+          <h2>Enterprise</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 100M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$100,000</span>
-            <span className="price-period">/ month</span>
+            <span className="price-amount"></span>
+            <span className="price-period"></span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta strategic"
-            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+            onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
           >
-            GET STARTED
+            Contact Sales
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
-            <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+          <ul>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap, battery-specific LLM)</li>
+              <li>Available melting and boiling point predictions</li>
+              <li>Expert consulting</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
+        <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Full Enterprise Access
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$10,000,000</span>
-            <span className="price-period">/ year</span>
+            <span className="price-amount"></span>
+            <span className="price-period"></span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta joint"
             onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
           >
-            GET STARTED
+            Contact Sales
           </button>
           <div className="pricing-details">
             <p>This edition includes all Research Edition features plus:</p>
             <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+            <li>Expert consulting</li>
+              <li>Molecular synthesis</li>
+              <li>Electrolyte formulation design</li>
+              <li>Cell testing</li>
+              <li>Larger, exclusive/private database</li>
+              <li>More advanced LLM</li>
+              <li>Customized statement-of-work</li>
             </ul>
           </div>
         </div>
