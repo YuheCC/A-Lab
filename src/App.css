@@ -564,7 +564,7 @@ body, html {
 }
 
 .feature-section h3 {
-  color: #0080ff;
+  color: #000000;
   margin-top: 0;
   margin-bottom: 1.2rem;
   font-size: 1.6rem;
@@ -592,13 +592,13 @@ body, html {
   font-size: 1.05rem;
 }
 
-.feature-list li:before {
+.feature-list li::before {
   content: "•";
-  color: #0080ff;
-  font-size: 1.5rem;
-  position: absolute;
-  left: 0;
-  top: -0.2rem;
+  color: #000000;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
 }
 
 .feature-list li strong {
@@ -623,12 +623,13 @@ body, html {
   padding-left: 1.5rem;
 }
 
-.feature-examples li:before {
+.feature-examples li::before {
   content: "→";
-  color: #0080ff;
-  position: absolute;
-  left: 0;
-  top: 0;
+  color: #000000;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
 }
 
 @media (max-width: 768px) {

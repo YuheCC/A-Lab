@@ -927,7 +927,8 @@ const AboutPage = ({ handleNavigation }) => {
           </div>
           
           <div className="feature-section">
-            <h3>Molecular Universe MU-0 is released to public</h3>
+            <h3>Newsfeed</h3>
+            <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
           </div>
         </div>
       </div>
