@@ -2186,24 +2186,15 @@ const App = () => {
             <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
               <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
               <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                Molecular Universe is like a telescope that looks for extraterrestrial life in outer space, it maps the universe of molecules suitable for batteries and uses AI and physics to navigate the map. It is intended to help battery researchers discover new materials for their next big idea.
+                Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
               </p>
               
-              <h3 style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '15px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
-              <ol style={{ paddingLeft: '20px', marginBottom: '20px' }}>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Map:</span> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).
-                </li>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Navigation System:</span> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).
-                </li>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Interface:</span> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).
-                </li>
-              </ol>
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+              </p>
               
-              <p style={{ marginTop: '20px', lineHeight: '1.6' }}>
-                Molecular Universe is still a baby, but growing rapidly. The Map will expand to cover more molecules and properties, and the Navigation System will become more accurate at finding the perfect molecules for you. With your help, we can improve Molecular Universe together.
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
               </p>
             </div>
           </div>
