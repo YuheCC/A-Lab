@@ -829,6 +829,16 @@ const AboutPage = ({ handleNavigation }) => {
             }}
             onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
             onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const newsfeedSection = document.getElementById('newsfeed');
+                if (newsfeedSection) {
+                  newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
           >
             News Feed
           </a>
@@ -926,7 +936,7 @@ const AboutPage = ({ handleNavigation }) => {
             </p>
           </div>
           
-          <div className="feature-section">
+          <div id="newsfeed" className="feature-section">
             <h3>Newsfeed</h3>
             <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
           </div>
@@ -2102,6 +2112,16 @@ const App = () => {
                     }}
                     onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                     onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
                   >
                     News Feed
                   </a>
@@ -2380,6 +2400,16 @@ const App = () => {
                   }}
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const newsfeedSection = document.getElementById('newsfeed');
+                      if (newsfeedSection) {
+                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
                 >
                   News Feed
                 </a>
@@ -2545,6 +2575,16 @@ const App = () => {
                     }}
                     onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                     onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
                   >
                     News Feed
                   </a>
