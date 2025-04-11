@@ -10,7 +10,8 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 
 // API URL for backend endpoints
-const API_URL = 'http://0.0.0.0:8000';
+const API_URL = 'http://ec2-54-159-40-36.compute-1.amazonaws.com';
+// const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
