@@ -6,7 +6,7 @@ const API_URL = 'http://0.0.0.0:8000'; // Define your API URL as needed
 
 
 // New ChatInput component added for memoized chat input rendering
-const ChatInput = React.memo(({ onSend, disabled }) => {
+const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (e) => {
@@ -31,23 +31,36 @@ const ChatInput = React.memo(({ onSend, disabled }) => {
   };
 
   return (
-    <div className="chat-input-container">
-      <textarea
-        className="chat-input"
-        placeholder="Ask a question about molecules, properties, or chemical structures..."
-        rows={3}
-        value={inputValue}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-      />
-      <button 
-        className="send-button" 
-        onClick={handleClickSend}
-        disabled={disabled}
-      >
-        Send
-      </button>
+    <div className="chat-input-group">
+      <div className="chat-input-container">
+        <textarea
+          className="chat-input"
+          placeholder="Ask a question about molecules, properties, or chemical structures..."
+          rows={2}
+          value={inputValue}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+        />
+        <button 
+          className="send-button" 
+          onClick={handleClickSend}
+          disabled={disabled}
+        >
+          Send
+        </button>
+      </div>
+      <div className="checkbox-group">
+          <input 
+            type="checkbox" 
+            id="ignoreChatHistory" 
+            checked={ignoreChatHistory}
+            onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
+          />
+          <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px' }}>
+            Ignore chat history
+          </label>
+        </div>
     </div>
   );
 });
@@ -61,6 +74,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [isThinking, setIsThinking] = useState(false);
   const [moleculesLoading, setMoleculesLoading] = useState(false);
   const [similarMolecules, setSimilarMolecules] = useState([]);
+  const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
 
 
   useEffect(() => {
@@ -154,7 +168,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const handleSend = async (input) => {
     if (!input.trim()) return;
 
-    // Check query limit for research users
+    // For research users, check query limit
     if (userPermissions === 'research' && remainingQueries <= 0) {
       const errorMessage = { 
         type: "llm-message", 
@@ -164,15 +178,33 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       return;
     }
 
-    // Append the user message
-    const userMessage = { type: "user-message", text: input.trim() };
-    setMessages(prev => [...prev, userMessage]);
-    const queryText = input.trim();
+    // Create new user message
+    const newUserMessage = { type: "user-message", text: input.trim() };
+    // Update the messages state
+    const updatedMessages = [...messages, newUserMessage];
+    setMessages(updatedMessages);
+
+    // Build the messages array to send to the backend
+    let messagesToSend;
+    if (ignoreChatHistory) {
+      messagesToSend = [{ role: "user", content: input.trim() }];
+    } else {
+      messagesToSend = updatedMessages
+        .filter(msg => msg.type === "user-message" || msg.type === "llm-message")
+        .map(msg => {
+          if (msg.type === "user-message") {
+            return { role: "user", content: msg.text };
+          } else if (msg.type === "llm-message") {
+            return { role: "assistant", content: msg.text };
+          }
+        });
+    }
+
     setIsThinking(true);
 
     try {
       const token = localStorage.getItem('token');
-      // Query the backend Pinecone index via the /rag endpoint
+      // Query the backend via the /rag endpoint using the messages array
       const response = await fetch(`${API_URL}/rag`, {
         method: "POST",
         headers: { 
@@ -180,7 +212,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          query: queryText,
+          messages: messagesToSend,
           maxOutputLength: 1024,
           ragEnabled: true,
           webSearchEnabled: false,
@@ -193,7 +225,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
-      const llmMessage = { type: "llm-message", inputs: data.inputs, text: data.outputs, molecules: data.molecules };
+      // Use llmOutput for chat history (only the raw LLM response) and fullOutput for display
+      const llmMessage = { 
+        type: "llm-message", 
+        inputs: data.inputs, 
+        text: data.llmOutput, 
+        sources: data.source_html, 
+        molText: data.molecule_text,
+        molecules: data.molecules 
+      };
       setMessages(prev => [...prev, llmMessage]);
       
       // Update the query limit after each query for research users
@@ -206,12 +246,10 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
               "Authorization": `Bearer ${token}`
             }
           });
-          
           if (limitResponse.ok) {
             const limitData = await limitResponse.json();
             setRemainingQueries(limitData.query_limit);
           } else {
-            // If updating fails (e.g., limit already at 0), just fetch the current limit
             const getResponse = await fetch(`${API_URL}/query_limit`, {
               method: "GET",
               headers: { 
@@ -219,7 +257,6 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 "Authorization": `Bearer ${token}`
               }
             });
-            
             if (getResponse.ok) {
               const getData = await getResponse.json();
               setRemainingQueries(getData.query_limit);
@@ -268,7 +305,9 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 key={index} 
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+                <div>{msg.text}</div>
+                {msg.sources && <div dangerouslySetInnerHTML={{ __html: msg.sources }} />}
+                {msg.molText && <div>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
                     <button 
@@ -354,6 +393,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           <ChatInput 
             onSend={handleSend}
             disabled={userPermissions === 'research' && remainingQueries <= 0}
+            ignoreChatHistory={ignoreChatHistory}
+            onIgnoreChatHistoryChange={setIgnoreChatHistory}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && (

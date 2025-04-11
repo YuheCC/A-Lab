@@ -1089,6 +1089,10 @@ body, html {
   gap: 10px;
 }
 
+.checkbox-group {
+  margin-top: 0px;
+}
+
 .chat-input {
   flex: 1;
   padding: 12px;
