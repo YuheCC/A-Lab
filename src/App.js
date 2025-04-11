@@ -35,13 +35,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         >
           Molecular Universe
         </a>
-        <a
-          href="/pricing"
-          className={`navbar-link ${activePage === 'pricing' && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); onNavigation('pricing'); }}
-        >
-          Pricing
-        </a>
+
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
@@ -195,48 +189,48 @@ const AuthPage = () => {
 };
 
 // Popup component to display node data
-const NodePopup = ({ node, onClose, filterLabels }) => {
-  if (!node) return null;
+// const NodePopup = ({ node, onClose, filterLabels }) => {
+//   if (!node) return null;
   
-  return (
-    <div className="popup-overlay" onClick={onClose}>
-      <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
-        <button className="close-button white-text" onClick={onClose}>×</button>
-        <h2 className="white-text">Node Details</h2>
-        <div className="popup-data">
-          <h3 className="white-text">SMILES</h3>
-          <p className="dark-field">{node.smiles}</p>
+//   return (
+//     <div className="popup-overlay" onClick={onClose}>
+//       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
+//         <button className="close-button white-text" onClick={onClose}>×</button>
+//         <h2 className="white-text">Node Details</h2>
+//         <div className="popup-data">
+//           <h3 className="white-text">SMILES</h3>
+//           <p className="dark-field">{node.smiles}</p>
           
-          <h3 className="white-text">UMAP Coordinates</h3>
-          <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
+//           <h3 className="white-text">UMAP Coordinates</h3>
+//           <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
           
-          <h3 className="white-text">Properties</h3>
-          <table className="property-table dark-table">
-            <tbody>
-              {Object.entries(node.properties || {}).map(([key, value]) => (
-                <tr key={key}>
-                  <td className="property-name white-text">{filterLabels[key] || key}</td>
-                  <td className="property-value white-text">
-                    {value !== null && value !== undefined 
-                      ? typeof value === 'number' 
-                        ? value.toFixed(6) 
-                        : value.toString()
-                      : 'N/A'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+//           <h3 className="white-text">Properties</h3>
+//           <table className="property-table dark-table">
+//             <tbody>
+//               {Object.entries(node.properties || {}).map(([key, value]) => (
+//                 <tr key={key}>
+//                   <td className="property-name white-text">{filterLabels[key] || key}</td>
+//                   <td className="property-value white-text">
+//                     {value !== null && value !== undefined 
+//                       ? typeof value === 'number' 
+//                         ? value.toFixed(6) 
+//                         : value.toString()
+//                       : 'N/A'}
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
           
-          <h3 className="white-text">All Data</h3>
-          <pre className="raw-data dark-field">
-            {JSON.stringify(node.rawData, null, 2)}
-          </pre>
-        </div>
-      </div>
-    </div>
-  );
-};
+//           <h3 className="white-text">All Data</h3>
+//           <pre className="raw-data dark-field">
+//             {JSON.stringify(node.rawData, null, 2)}
+//           </pre>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 // Material UI Slider component
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
@@ -424,164 +418,135 @@ const PricingPage = ({ onSignIn }) => {
       
       <div className="pricing-cards">
         <div className="pricing-card">
-          <div className="pricing-icon">
+          {/* <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
               <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm4-9H8v2h8Z"/>
             </svg>
-          </div>
-          <h2>Research</h2>
+          </div> */}
+          <h2>Research (academia only)</h2>
           <p className="pricing-description">
-            The Research Edition is the introductory offering providing access to core platform functionality.
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Limited access</p>
           <button 
             className="pricing-cta research" 
             onClick={onSignIn}
           >
-            Sign Up
+            Get Started
           </button>
           <div className="pricing-details">
-            <p>This edition includes limited access to the Molecular Universe with:</p>
             <ul>
-              <li>Access to Map</li>
-              <li>Basic molecule search functionality of 1 million database</li>
-              <li>Limited number of monthly queries (100)</li>
-              <li>Access to the molecular assistant AI</li>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (≤ 100 queries/month)</li>
             </ul>
           </div>
         </div>
         
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Professional</h2>
+        <div className="pricing-card">
+          <h2>Explorer</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 1M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$100</span>
+            <span className="price-amount">$150</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta professional"
             onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
           >
-            GET STARTED
+            Get Started
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
-            <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+          <ul>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap)</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Unlimited</h2>
+        <div className="pricing-card">
+          <h2>Professional</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 100M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$10,000</span>
+            <span className="price-amount">$1,000</span>
             <span className="price-period">/ month</span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
           >
-            GET STARTED
+            Get Started
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
             <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap)</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
-          <h2>Strategic Partner</h2>
+        <div className="pricing-card">
+          <h2>Enterprise</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Accessing 100M database
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$100,000</span>
-            <span className="price-period">/ month</span>
+            <span className="price-amount"></span>
+            <span className="price-period"></span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta strategic"
-            onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
+            onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
           >
-            GET STARTED
+            Contact Sales
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
-            <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+          <ul>
+              <li>About the Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap, battery-specific LLM)</li>
+              <li>Available melting and boiling point predictions</li>
+              <li>Expert consulting</li>
             </ul>
           </div>
         </div>
 
-        <div className="pricing-card popular">
-          <div className="pricing-icon">
-            <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
-              <path d="M19,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5A2,2,0,0,0,19,3ZM10,17,5,12l1.41-1.41L10,14.17l7.59-7.59L19,8Z"/>
-            </svg>
-          </div>
+        <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            The Professional Edition is for companies with research initiatives looking for more granular controls.
+            Full Enterprise Access
           </p>
           <div className="pricing-price">
-            <span className="price-amount">$10,000,000</span>
-            <span className="price-period">/ year</span>
+            <span className="price-amount"></span>
+            <span className="price-period"></span>
           </div>
-          <p className="pricing-region">Includes all Research features</p>
           <button 
             className="pricing-cta joint"
             onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
           >
-            GET STARTED
+            Contact Sales
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
             <ul>
-              <li>Unlimited searches</li>
-              <li>Advanced filter controls</li>
-              <li>Download molecule data</li>
-              <li>Customized molecular visualizations</li>
-              <li>Priority access to new features</li>
+            <li>Expert consulting</li>
+              <li>Molecular synthesis</li>
+              <li>Electrolyte formulation design</li>
+              <li>Cell testing</li>
+              <li>Larger, exclusive/private database</li>
+              <li>More advanced LLM</li>
+              <li>Customized statement-of-work</li>
             </ul>
           </div>
         </div>
@@ -592,6 +557,184 @@ const PricingPage = ({ onSignIn }) => {
 };
 
 
+
+// About Page component
+const AboutPage = ({ handleNavigation }) => {
+  return (
+    <div className="about-container" style={{ display: 'flex', width: '93%' }}>
+      {/* Left navigation column */}
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+        <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+          <a 
+            href="#features" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const featuresSection = document.getElementById('features-section');
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            Features of MU
+          </a>
+          <a 
+            href="#pricing" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('pricing');
+            }}
+          >
+            Pricing Structure
+          </a>
+          <a 
+            href="#news" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const newsfeedSection = document.getElementById('newsfeed');
+                if (newsfeedSection) {
+                  newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            News Feed
+          </a>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="about-content-wrapper" style={{ width: '85%' }}>
+        <div className="about-content">
+          <h2>Motivation for Molecular Universe</h2>
+          <p>
+            At SES AI, we know there's not a one-size-fits-all battery, so we have always wanted to develop the perfect electrolyte for different battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion and across various applications from drones to robotics, from electric cars to urban air mobility, and from grid storage to consumer electronics.
+          </p>
+          
+          <p>
+            It comes down to small molecules. While the universe of molecules is infinite, there are 10<sup>60</sup> small molecules in the universe, of them 10<sup>11</sup> could be used for batteries, and of them, only less than 1,000 have been studied for batteries in the past 30 years.
+          </p>
+          
+          <p>
+            So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules. Do we not want to know what's out there that could double LFP Li-ion cycle life, or triple high silicon Li-ion cycle life, or quadruple Li-Metal cycle life, or even more?
+          </p>
+          
+          <p>
+            The answer is of course a resounding "Hell Yeah". So we set out to map the physical and chemical properties of our database of 10<sup>11</sup>. This was a computationally intensive project, originally we thought of establishing a non-profit organization to crowdsource public computing resources and eventually open source the database. Then it turned out it was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerate computation chemistry software. While we will not open source our proprietary database, we will make Molecular Universe free to academic researchers and open source certain aspects of our models wherever appropriate.
+          </p>
+          
+          <h3>In this current version of Molecular Universe, MU-0:</h3>
+          
+          <p>
+            The Map consists of 10<sup>8</sup> molecular properties, including both actual experimental data and computation prediction based on Density Function Theory and machine learning models. This is the world's largest database of small molecule properties that we know of today. This database will continue to grow to include more organic and inorganic molecules, and more bulk and interphasial properties, suitable for additives, or salts, or solvents.
+          </p>
+          
+          <p>
+            These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
+          </p>
+          
+          <h2 id="features-section">Features of Molecular Universe</h2>
+          
+          <div className="feature-section">
+            <h3>Map the Molecular Universe</h3>
+            <p>
+              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features 49 molecular continents, 1 million molecules (in-browser display), and 100 million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Filter by Chemical Properties</h3>
+            <p>
+              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
+            </p>
+            <ul className="feature-list">
+              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
+            </ul>
+            <p>
+              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Search & "Find a Friend"</h3>
+            <p>
+              You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
+            </p>
+            <ol className="feature-list">
+              <li>By SMILES – Input a SMILES string and instantly retrieve all key info.</li>
+              <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
+            </ol>
+            <p>
+              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
+            </p>
+            <ul className="feature-list">
+              <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
+              <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
+            </ul>
+            <p>
+              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            </p>
+          </div>
+          
+          <div className="feature-section">
+            <h3>Ask Our Expert Powered by LLM</h3>
+            <p>
+              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
+            </p>
+            <ul className="feature-examples">
+              <li>"What solvents work best with Li-metal anodes?"</li>
+              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
+              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
+            </ul>
+            <p>
+              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
+            </p>
+          </div>
+          
+          <div id="newsfeed" className="feature-section">
+            <h3>Newsfeed</h3>
+            <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
@@ -619,7 +762,7 @@ const App = () => {
   
   // Chat state (moved from ChatbotInterface)
   const [chatMessages, setChatMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe AI Assistant. How can I help you today?" }
+    { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
   ]);
   
   // Authentication state
@@ -639,6 +782,9 @@ const App = () => {
     predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
     predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
   });
+  
+  // Add state for functional group filter
+  const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
   
   // Labels for filters
   const filterLabels = {
@@ -730,10 +876,10 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 150000;
+  const MAX_NODES = 35000;
 
   // Add new state for highlighted molecule
-  const [highlightedMolecule, setHighlightedMolecule] = useState(null);
+  const [highlightedMolecules, setHighlightedMolecules] = useState(null);
   const [arrowOffset, setArrowOffset] = useState(-40);
   
   // Track Plotly initialization state
@@ -746,7 +892,7 @@ const App = () => {
   
   // Add bouncing arrow animation when molecule is highlighted
   useEffect(() => {
-    if (!highlightedMolecule || !searchPlotInitialized) return;
+    if (!highlightedMolecules || !searchPlotInitialized) return;
     
     let direction = -1; // Start moving up
     let current = -40;
@@ -766,7 +912,7 @@ const App = () => {
     }, 50);
     
     return () => clearInterval(interval);
-  }, [highlightedMolecule, searchPlotInitialized]);
+  }, [highlightedMolecules, searchPlotInitialized]);
   
   const plotlyLayout = {
     autosize: true,
@@ -803,11 +949,11 @@ const App = () => {
       width: null
     };
     
-    // Only add annotations if highlightedMolecule is defined
-    if (highlightedMolecule) {
-      layout.annotations = [{
-        x: highlightedMolecule.x,
-        y: highlightedMolecule.y,
+    // Only add annotations if highlightedMolecules is defined
+    if (highlightedMolecules && highlightedMolecules.length > 0) {
+      layout.annotations = highlightedMolecules.map(molecule => ({
+        x: molecule.x,
+        y: molecule.y,
         xref: 'x',
         yref: 'y',
         text: 'Found Match!',
@@ -826,7 +972,7 @@ const App = () => {
           color: 'white',
           size: 12
         }
-      }];
+      }));
     } else if (searchResults) {
       layout.annotations = [{
         x: 0,
@@ -847,7 +993,7 @@ const App = () => {
     }
     
     return layout;
-  }, [plotlyLayout, highlightedMolecule, searchResults, arrowOffset]);
+  }, [plotlyLayout, highlightedMolecules, searchResults, arrowOffset]);
 
   const plotlyConfig = {
     displayModeBar: true,
@@ -879,6 +1025,8 @@ const App = () => {
           formattedMolecules = data.molecule_details.map((mol) => {
             return {
               smiles: mol.SMILES,
+              x: mol.UMAP_0,
+              y: mol.UMAP_1,
               properties: {
                 molwt: mol.MOLECULAR_WEIGHT,
                 homo_eV: mol.HOMO,
@@ -896,12 +1044,23 @@ const App = () => {
           });
           if (select_first) {
             // Only store the first molecule (as a list of one) and its image
-            setsearchedMolecules([formattedMolecules[0]]);
-            setsearchResults([formattedMolecules[0].image]);
+            const formattedMolecule = formattedMolecules[0];
+            setsearchedMolecules([formattedMolecule]);
+            setsearchResults([formattedMolecule.image]);
+            if (formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
+              setHighlightedMolecules([formattedMolecule]);
+            }
           } else {
             // Store all molecules and their images
             setsearchedMolecules(formattedMolecules);
             setsearchResults(formattedMolecules.map((mol) => mol.image));
+            // Filter molecules to only include those with x and y values defined
+            const highlighted = formattedMolecules.filter(
+              (mol) => mol.x !== undefined && mol.y !== undefined
+            );
+            if (highlighted.length > 0) {
+              setHighlightedMolecules(highlighted);
+            }
           }
         }
       }
@@ -921,20 +1080,9 @@ const App = () => {
     setSearchError(null);
     setsearchResults(null);
     setsearchedMolecules(null);
-    setHighlightedMolecule(null);
+    setHighlightedMolecules(null);
     setSimilarMolecules(null);
     setSimilarMoleculeImages({}); // Reset similar molecule images
-
-
-    // TODO: Update UMAP with ALL found molecules
-    const matchingMolecule = graphData.find(node => 
-      node.smiles.toLowerCase() === searchInput.trim().toLowerCase()
-    );
-    
-    if (matchingMolecule) {
-      // Molecule found in UMAP data
-      setHighlightedMolecule(matchingMolecule);
-    }
 
     try {
       // First fetch the searched molecule's properties from Snowflake
@@ -1020,8 +1168,6 @@ const App = () => {
         window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/about') {
-        // Redirect /about to root
-        window.history.pushState({}, '', '/');
         setActivePage('about');
       } else if (path === '/reset-password') {
         // Show password reset page
@@ -1062,8 +1208,10 @@ const App = () => {
     // Set URL based on page
     if (page === 'pricing') {
       window.history.pushState({}, '', '/pricing');
+    } else if (page === 'about') {
+      window.history.pushState({}, '', '/about');
     } else {
-      // Always keep the URL as root when navigating between other tabs
+      // Keep the URL as root when navigating between other tabs
       if (window.location.pathname !== '/') {
         window.history.pushState({}, '', '/');
       }
@@ -1073,7 +1221,7 @@ const App = () => {
     if (activePage === 'search' && page !== 'search') {
       setsearchResults(null);
       setsearchedMolecules(null);
-      setHighlightedMolecule(null);
+      setHighlightedMolecules(null);
       setSearchError(null);
     }
     
@@ -1082,7 +1230,7 @@ const App = () => {
       // First clear the search tab data
       setsearchResults(null);
       setsearchedMolecules(null);
-      setHighlightedMolecule(null);
+      setHighlightedMolecules(null);
       setSearchError(null);
       // Then navigate to enterprise tab
       setActivePage(page);
@@ -1358,25 +1506,34 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Change the dependency array to only run once on component mount
 
-  // Apply filters based on range slider values
+  // Apply filters based on range slider values and functional group
   useEffect(() => {
     if (graphData.length === 0) return;
     const filtered = graphData.filter(node => {
+      // Check range filters
       for (const [property, range] of Object.entries(filterRanges)) {
         if (!range.active) continue;
         const nodeValue = node.properties[property];
-        // If property is outside the range, filter it out
         if (nodeValue !== undefined && nodeValue !== null && 
             (nodeValue < range.range[0] || nodeValue > range.range[1])) {
           return false;
         }
       }
+      
+      // Check functional group filter
+      if (selectedFunctionalGroup) {
+        if (!node.properties?.functional_groups || 
+            !node.properties.functional_groups.includes(selectedFunctionalGroup)) {
+          return false;
+        }
+      }
+      
       return true;
     });
     if (JSON.stringify(filtered) !== JSON.stringify(filteredGraphData)) {
       setFilteredGraphData(filtered);
     }
-  }, [graphData, filterRanges, filteredGraphData]);
+  }, [graphData, filterRanges, selectedFunctionalGroup, filteredGraphData]);
 
   // Handle filter slider change
   const handleFilterChange = (property, newValue) => {
@@ -1441,7 +1598,7 @@ const App = () => {
     marker: {
       size: 5,
       color: filteredGraphData.map(node => {
-        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return '#ff0000'; // Red color for highlighted molecule
         }
         return node.properties?.molwt || 0; // Color by molecular weight
@@ -1465,7 +1622,7 @@ const App = () => {
         }
       },
       opacity: filteredGraphData.map(node => {
-        if (highlightedMolecule && node.smiles === highlightedMolecule.smiles) {
+        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return 1; // Full opacity for highlighted molecule
         }
         return 0.7; // Default opacity
@@ -1641,6 +1798,77 @@ const App = () => {
         ) : activePage === 'explorer' ? (
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
               <div className="graph-container" style={{ flex: '1', height: '100%' }}>
                 <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   {filteredGraphData.length > 0 ? (
@@ -1702,36 +1930,14 @@ const App = () => {
                       )}
                     </div>
                   ))}
-                </div>
-                
-                {/* Functional Group Filter */}
-                <div className="functional-group-filter">
+                                  <div className="functional-group-filter">
                   <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Functional Group Filter</h3>
                   <div className="functional-group-input-container">
                     <select 
                       className="functional-group-select"
+                      value={selectedFunctionalGroup}
                       onChange={(e) => {
-                        const selectedSmarts = e.target.value;
-                        if (selectedSmarts) {
-                          setFilteredGraphData(graphData.filter(node => 
-                            node.properties?.functional_groups && 
-                            node.properties.functional_groups.includes(e.target.options[e.target.selectedIndex].text)
-                          ));
-                        } else {
-                          // Reset to show all data (respecting other active filters)
-                          const filtered = graphData.filter(node => {
-                            for (const [property, range] of Object.entries(filterRanges)) {
-                              if (!range.active) continue;
-                              const nodeValue = node.properties[property];
-                              if (nodeValue !== undefined && nodeValue !== null && 
-                                  (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                                return false;
-                              }
-                            }
-                            return true;
-                          });
-                          setFilteredGraphData(filtered);
-                        }
+                        setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
                       }}
                     >
                       <option value="">Select a functional group</option>
@@ -1811,28 +2017,15 @@ const App = () => {
                     <button 
                       className="reset-filter-button functional-group-reset"
                       onClick={() => {
-                        // Reset dropdown
+                        setSelectedFunctionalGroup('');
                         const dropdown = document.querySelector('.functional-group-select');
                         if (dropdown) dropdown.selectedIndex = 0;
-                        
-                        // Reset to show all data (respecting other active filters)
-                        const filtered = graphData.filter(node => {
-                          for (const [property, range] of Object.entries(filterRanges)) {
-                            if (!range.active) continue;
-                            const nodeValue = node.properties[property];
-                            if (nodeValue !== undefined && nodeValue !== null && 
-                                (nodeValue < range.range[0] || nodeValue > range.range[1])) {
-                              return false;
-                            }
-                          }
-                          return true;
-                        });
-                        setFilteredGraphData(filtered);
                       }}
                     >
                       Reset
                     </button>
                   </div>
+                </div>
                 </div>
                 
                 <style jsx>{`
@@ -1893,36 +2086,76 @@ const App = () => {
             marginBottom: '50px'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '20%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
-              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Molecular Universe Overview</h2>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Molecular Universe is a powerful tool for exploring the vast landscape of molecules suitable for battery applications. This visualization represents one of the largest databases of small molecule properties available today.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>How to Use This Map</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                Each point on the map represents a molecule with unique properties. Similar molecules appear closer together, while dissimilar ones are farther apart.
-              </p>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Click on any point</strong> to view detailed information about that molecule</li>
-                <li><strong>Zoom in/out</strong> to explore clusters of related molecules</li>
-                <li><strong>Pan around</strong> to navigate different regions of chemical space</li>
-              </ul>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The colors represent molecular weight, with darker purples indicating lower weights and yellows indicating higher weights.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Key Benefits</h3>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Discover</strong> similar molecules with potentially improved properties</li>
-                <li><strong>Explore</strong> unexplored regions of chemical space</li>
-                <li><strong>Identify</strong> patterns and relationships between molecular structures</li>
-              </ul>
+            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                <a 
+                  href="/about#features" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const featuresSection = document.getElementById('features-section');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  Features of MU
+                </a>
+                <a 
+                  href="#pricing" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('pricing');
+                  }}
+                >
+                  Pricing Structure
+                </a>
+                <a 
+                  href="#news" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const newsfeedSection = document.getElementById('newsfeed');
+                      if (newsfeedSection) {
+                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  News Feed
+                </a>
+              </div>
             </div>
             
             {/* UMAP Visualization in the middle (50%) */}
@@ -1951,81 +2184,27 @@ const App = () => {
             
             {/* Right text content (25%) */}
             <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-              <h2 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Why we are building Molecular Universe</h2>
-              
-              <p style={{ lineHeight: '1.6', fontStyle: 'italic', marginBottom: '20px', textAlign: 'center' }}>
-                "If it's just us, it seems like an awful waste of space."
-              </p>
-              <p style={{ lineHeight: '1.6', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>
-                Contact, 1997
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>What is Molecular Universe</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
+              <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
                 Molecular Universe is like a telescope that looks for extraterrestrial life in outer space, it maps the universe of molecules suitable for batteries and uses AI and physics to navigate the map. It is intended to help battery researchers discover new materials for their next big idea.
               </p>
               
-              <h3 style={{ color: '#333', marginTop: '20px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
-              
-              <ol style={{ lineHeight: '1.6' }}>
-                <li><strong>The Map:</strong> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).</li>
-                <li><strong>The Navigation System:</strong> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).</li>
-                <li><strong>The Interface:</strong> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).</li>
+              <h3 style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '15px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
+              <ol style={{ paddingLeft: '20px', marginBottom: '20px' }}>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Map:</span> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).
+                </li>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Navigation System:</span> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).
+                </li>
+                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
+                  <span style={{ fontWeight: 'bold' }}>The Interface:</span> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).
+                </li>
               </ol>
               
-              <p style={{ lineHeight: '1.6' }}>
+              <p style={{ marginTop: '20px', lineHeight: '1.6' }}>
                 Molecular Universe is still a baby, but growing rapidly. The Map will expand to cover more molecules and properties, and the Navigation System will become more accurate at finding the perfect molecules for you. With your help, we can improve Molecular Universe together.
               </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Why we are building Molecular Universe</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                At SES AI, we know there's not a one-size-fits-all battery, so we have always wanted to develop the perfect electrolyte for different battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion and across various applications from drones to robotics, from electric cars to urban air mobility, and from grid storage to consumer electronics.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                It comes down to small molecules. While the universe of molecules is infinite, there are 10<sup>60</sup> small molecules in the universe, of them 10<sup>11</sup> could be used for batteries, and of them, only less than 1,000 have been studied for batteries in the past 30 years.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules. Do we not want to know what's out there that could double LFP Li-ion cycle life, or triple high silicon Li-ion cycle life, or quadruple Li-Metal cycle life, or even more?
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The answer is of course a resounding "Hell Yeah". So we set out to map the physical and chemical properties of our database of 10<sup>11</sup>. This was a computationally intensive project, originally we thought of establishing a non-profit organization (add mu.org link) to crowdsource public computing resources and eventually open source the database. Then it turned out it was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerate computation chemistry software. While we will not open source our proprietary database, we will make Molecular Universe free to academic researchers and open source certain aspects of our models wherever appropriate.
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>In this current version of Molecular Universe, MU-0:</h3>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Map consists of 10<sup>8</sup> molecular properties, including both actual experimental data and computation prediction based on Density Function Theory and machine learning models. This is the world's largest database of small molecule properties that we know of today. This database will continue to grow to include more organic and inorganic molecules, and more bulk and interphasial properties, suitable for additives, or salts, or solvents.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
-              </p>
-              
-              <p style={{ lineHeight: '1.6' }}>
-                The Navigation System consists of an LLM that was based on the LLaMa 3 70B (largest open source LLM at the time) but trained using our proprietary database of literature and domain expert knowledge. While LLaMa 3 70B may not be the highest ranked model for scientific questions, once trained, our battery specific LLM ranks just as high and even higher in certain categories compared to much larger models. This improvement delta is very exciting, and we expect to release newer battery-specific LLM trained on more advanced and larger open source models in future MU versions.
-              </p>
-              
-              <p style={{ lineHeight: '1.6', fontStyle: 'italic', color: '#666' }}>
-                [add llm model scoring table, not plot, updated to include deepseek and grok scores]
-              </p>
-              
-              <h3 style={{ color: '#333', marginTop: '20px' }}>Labeling of MU0 property bars</h3>
-              
-              <ul style={{ lineHeight: '1.6' }}>
-                <li><strong>Molecular Weight</strong></li>
-                <li><strong>HOMO</strong> (Highest-occupied-molecular-orbital. High HOMO indicates sensitivity toward oxidation; Low HOMO indicates stability against oxidation)</li>
-                <li><strong>LUMO</strong> (Lowest-unoccupied-molecular-orbital. Low LUMO indicates sensitivity toward reduction; High LUMO indicates stability against reduction)</li>
-                <li><strong>ESP min</strong> (Electrostatic potential, minimum. ESP min indicates rich electronic density on molecular surface, may indicate strong coordination/solvation power toward cations)</li>
-                <li><strong>ESP max</strong> (Electrostatic potential, maximum. ESP max indicates electron deficiency on molecular surface, may indicate strong coordination/solvation power toward anions)</li>
-                <li><strong>MP</strong> (predicted value; helps to define liquid range)</li>
-                <li><strong>BP</strong> (predicted value; helps to define liquid range)</li>
-                <li><strong>Functional Group</strong></li>
-              </ul>
             </div>
           </div>
 
@@ -2056,10 +2235,85 @@ const App = () => {
           <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             <PricingPage onSignIn={handleSignIn} />
           </div>
+        ) : activePage === 'about' ? (
+          <AboutPage handleNavigation={handleNavigation} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
             <div className="search-umap-container">
+              {/* Left navigation column */}
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+
               {/* UMAP Visualization on the left */}
               <div className="search-umap-section">
                 <div className="graph-container search-graph">
@@ -2106,7 +2360,7 @@ const App = () => {
                       checked={findClosestFriends}
                       onChange={(e) => setFindClosestFriends(e.target.checked)}
                     />
-                    <span>Find closest friends</span>
+                    <span>Find "friends" (Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.)</span>
                   </label>
                 </div>
                 
@@ -2195,7 +2449,7 @@ const App = () => {
                                 <img 
                                   src={molecule.image} 
                                   alt={`Molecule ${index + 1} visualization`} 
-                                  className="similar-molecule-image"
+                                  className="molecule-image"
                                 />
                               </div>
                             </div>
@@ -2276,16 +2530,16 @@ const App = () => {
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
                                   </tbody>
+                                  {similarMoleculeImages[index] && (
+                                    <div className="similar-molecule-image-container">
+                                      <img 
+                                        src={similarMoleculeImages[index]} 
+                                        alt={`Molecule ${index + 1} visualization`} 
+                                        className="similar-molecule-image"
+                                      />
+                                    </div>
+                                  )}
                                 </table>
-                                {similarMoleculeImages[index] && (
-                                  <div className="similar-molecule-image-container">
-                                    <img 
-                                      src={similarMoleculeImages[index]} 
-                                      alt={`Molecule ${index + 1} visualization`} 
-                                      className="similar-molecule-image"
-                                    />
-                                  </div>
-                                )}
                               </div>
                             </div>
                           ))}
@@ -2306,7 +2560,7 @@ const App = () => {
       </div>
       
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
+      {/* {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />} */}
     </div>
   );
 };
