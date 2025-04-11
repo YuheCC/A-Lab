@@ -458,7 +458,7 @@ const PricingPage = ({ onSignIn }) => {
             className="pricing-cta professional"
             onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
           >
-            GET STARTED
+            Get Started
           </button>
           <div className="pricing-details">
           <ul>
@@ -482,7 +482,7 @@ const PricingPage = ({ onSignIn }) => {
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
           >
-            GET STARTED
+            Get Started
           </button>
           <div className="pricing-details">
             <ul>
@@ -537,7 +537,6 @@ const PricingPage = ({ onSignIn }) => {
             Contact Sales
           </button>
           <div className="pricing-details">
-            <p>This edition includes all Research Edition features plus:</p>
             <ul>
             <li>Expert consulting</li>
               <li>Molecular synthesis</li>
