@@ -1610,17 +1610,6 @@ const App = () => {
         [0.75, '#5ec962'], // green
         [1, '#fde725'] // yellow
       ],
-      colorbar: {
-        title: 'Molecular Weight',
-        thickness: 20,
-        len: 0.6,
-        y: 0.5,
-        titleside: 'right',
-        titlefont: {
-          size: 12,
-          color: '#333'
-        }
-      },
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return 1; // Full opacity for highlighted molecule
@@ -1660,17 +1649,6 @@ const App = () => {
         [0.75, '#5ec962'], // green
         [1, '#fde725'] // yellow
       ],
-      colorbar: {
-        title: 'Molecular Weight',
-        thickness: 20,
-        len: 0.6,
-        y: 0.5,
-        titleside: 'right',
-        titlefont: {
-          size: 12,
-          color: '#333'
-        }
-      },
       opacity: 0.7
     },
     hoverinfo: 'text',
