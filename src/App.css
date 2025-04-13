@@ -1025,6 +1025,9 @@ body, html {
   width: 90%;
   max-width: 1500px;
   margin: 0 auto;       /* center the container */
+  margin-top: -15vh;    /* move up 20% of viewport height */
+  position: relative;   /* ensure proper positioning */
+  z-index: 1;           /* prevent elements from overlapping */
 }
 
 .found-molecules-container {
