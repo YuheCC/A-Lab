@@ -562,9 +562,9 @@ const PricingPage = ({ onSignIn }) => {
 // About Page component
 const AboutPage = ({ handleNavigation }) => {
   return (
-    <div className="about-container" style={{ display: 'flex', width: '93%' }}>
+    <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
         <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
@@ -1775,8 +1775,8 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -2059,12 +2059,12 @@ const App = () => {
           <div className="map-container" style={{ 
             display: 'flex', 
             height: 'calc(100vh - 150px)', 
-            padding: '20px',
+            padding: '20px 20px 20px 0',
             overflowY: 'auto',
             marginBottom: '50px'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
               <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
@@ -2209,9 +2209,19 @@ const App = () => {
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
-            <div className="search-umap-container">
+            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
               {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+              <div className="about-text-section left-text" style={{ 
+                width: '7%', 
+                overflowY: 'auto', 
+                padding: '20px', 
+                backgroundColor: '#f1f1f1', 
+                borderRadius: '0 8px 8px 0', 
+                marginLeft: '0', 
+                marginRight: '20px',
+                position: 'sticky',
+                left: 0
+              }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 

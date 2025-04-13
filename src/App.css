@@ -716,7 +716,7 @@ body, html {
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
-  padding-left: 40px;
+  padding-left: 0;
   padding-right: 40px;
 }
 
