@@ -401,7 +401,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         )}
         {similarMolecules && similarMolecules.length > 0 && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
-            <h3>Similar Molecules</h3>
+            <h3>Friends Ranked By Propery Similarities</h3>
             {similarMolecules.map((item, idx) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
