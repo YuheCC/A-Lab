@@ -2058,10 +2058,10 @@ const App = () => {
           <>
           <div className="map-container" style={{ 
             display: 'flex', 
-            height: 'calc(100vh - 150px)', 
+            height: 'calc(100vh - 170px)', 
             padding: '20px 20px 20px 0',
             overflowY: 'auto',
-            marginBottom: '50px'
+            marginBottom: '0'
           }}>
             {/* New left text column (20%) */}
             <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
