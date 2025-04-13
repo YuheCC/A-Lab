@@ -928,11 +928,9 @@ body, html {
   flex: 1;
   flex-direction: column;
   padding: 20px;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: rgb(241, 241, 241);
   border-radius: 4px;
   margin: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   overflow-y: auto;
   display: flex;
   justify-content: center;
@@ -1012,7 +1010,7 @@ body, html {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: white;
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #eee;
@@ -1025,7 +1023,7 @@ body, html {
   width: 90%;
   max-width: 1500px;
   margin: 0 auto;       /* center the container */
-  margin-top: -15vh;    /* move up 20% of viewport height */
+  margin-top: -20vh;    /* move up 20% of viewport height */
   position: relative;   /* ensure proper positioning */
   z-index: 1;           /* prevent elements from overlapping */
 }

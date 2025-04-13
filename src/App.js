@@ -2190,13 +2190,86 @@ const App = () => {
           </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
-            <ChatbotInterface 
-              messages={chatMessages} 
-              setMessages={setChatMessages}
-              userPermissions={userPermissions}
-              remainingQueries={remainingQueries}
-              setRemainingQueries={setRemainingQueries}
-            />
+            <div style={{ display: 'flex', height: '100%' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+              <ChatbotInterface 
+                messages={chatMessages} 
+                setMessages={setChatMessages}
+                userPermissions={userPermissions}
+                remainingQueries={remainingQueries}
+                setRemainingQueries={setRemainingQueries}
+              />
+            </div>
           ) : (
             <PermissionsError />
           )
