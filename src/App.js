@@ -10,8 +10,8 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 
 // API URL for backend endpoints
-const API_URL = 'https://ec2-54-159-40-36.compute-1.amazonaws.com';
-// const API_URL = 'http://0.0.0.0:8000';
+// const API_URL = 'https://ec2-54-159-40-36.compute-1.amazonaws.com';
+const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -413,11 +413,10 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = ({ onSignIn }) => {
+const PricingPage = ({ onSignIn, handleNavigation }) => {
   return (
-    <div className="pricing-container">
-      
-      <div className="pricing-cards">
+    <div className="pricing-container" style={{ display: 'flex', width: '100%', padding: '0' }}>
+      <div className="pricing-cards" style={{ width: '100%' }}>
         <div className="pricing-card">
           {/* <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
@@ -562,9 +561,9 @@ const PricingPage = ({ onSignIn }) => {
 // About Page component
 const AboutPage = ({ handleNavigation }) => {
   return (
-    <div className="about-container" style={{ display: 'flex', width: '93%' }}>
+    <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
         <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
@@ -1775,8 +1774,8 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -1847,7 +1846,7 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="graph-container" style={{ flex: '1', height: '100%' }}>
+              <div className="graph-container" style={{ flex: '1', height: '85%' }}>
                 <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   {filteredGraphData.length > 0 ? (
                     <Plot
@@ -2058,13 +2057,13 @@ const App = () => {
           <>
           <div className="map-container" style={{ 
             display: 'flex', 
-            height: 'calc(100vh - 150px)', 
-            padding: '20px',
+            height: 'calc(100vh - 170px)', 
+            padding: '20px 20px 20px 0',
             overflowY: 'auto',
-            marginBottom: '50px'
+            marginBottom: '0'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
               <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
@@ -2190,28 +2189,184 @@ const App = () => {
           </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
-            <ChatbotInterface 
-              messages={chatMessages} 
-              setMessages={setChatMessages}
-              userPermissions={userPermissions}
-              remainingQueries={remainingQueries}
-              setRemainingQueries={setRemainingQueries}
-            />
+            <div style={{ display: 'flex', height: '100%' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+              <ChatbotInterface 
+                messages={chatMessages} 
+                setMessages={setChatMessages}
+                userPermissions={userPermissions}
+                remainingQueries={remainingQueries}
+                setRemainingQueries={setRemainingQueries}
+              />
+            </div>
           ) : (
             <PermissionsError />
           )
         ) : activePage === 'pricing' ? (
-          <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-            <PricingPage onSignIn={handleSignIn} />
+          <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
+            <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                <a 
+                  href="#features" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const featuresSection = document.getElementById('features-section');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  Features of MU
+                </a>
+                <a 
+                  href="#pricing" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('pricing');
+                  }}
+                >
+                  Pricing Structure
+                </a>
+                <a 
+                  href="#news" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const newsfeedSection = document.getElementById('newsfeed');
+                      if (newsfeedSection) {
+                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  News Feed
+                </a>
+              </div>
+            </div>
+            <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', width: '93%' }}>
+              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} />
+            </div>
           </div>
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
-            <div className="search-umap-container">
+            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
               {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+              <div className="about-text-section left-text" style={{ 
+                width: '7%', 
+                overflowY: 'auto', 
+                padding: '20px', 
+                backgroundColor: '#f1f1f1', 
+                borderRadius: '0 8px 8px 0', 
+                marginLeft: '0', 
+                marginRight: '20px',
+                position: 'sticky',
+                left: 0
+              }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
