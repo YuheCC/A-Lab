@@ -1847,7 +1847,7 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="graph-container" style={{ flex: '1', height: '100%' }}>
+              <div className="graph-container" style={{ flex: '1', height: '85%' }}>
                 <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   {filteredGraphData.length > 0 ? (
                     <Plot
