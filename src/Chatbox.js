@@ -98,7 +98,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       setMoleculesLoading(true);
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
-          const res = await fetch(`http://localhost:8000/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+          const res = await fetch(`${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
           const data = await res.json();
           return data;
         })
