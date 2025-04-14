@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './FeedbackBox';
 
-const API_URL = 'http://0.0.0.0:8000'; // Define your API URL as needed
-
-
+const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
+// const API_URL = 'http://0.0.0.0:8000';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
@@ -101,23 +100,22 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setActiveMolecule(null);
     try {
       setMoleculesLoading(true);
-        const responses = await Promise.all(
-          moleculeList.map(async (mol) => {
-            const res = await fetch(`${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
-            const data = await res.json();
-            return data;
-          })
-        );
-
-        // Filter out responses that indicate a successful molecule lookup.
-        const validResponses = responses.filter(item => item.found);
-        // Flatten the molecule_details lists from each response into a single array.
-        const flattenedMolecules = validResponses.reduce((acc, cur) => {
-          if (Array.isArray(cur.molecule_details)) {
-            return acc.concat(cur.molecule_details);
-          }
-          return acc;
-        }, []);
+      const responses = await Promise.all(
+        moleculeList.map(async (mol) => {
+          const res = await fetch(`https://api.ses.ai/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+          const data = await res.json();
+          return data;
+        })
+      );
+      // Filter out responses that indicate a successful molecule lookup.
+      const validResponses = responses.filter(item => item.found);
+      // Flatten the molecule_details lists from each response into a single array.
+      const flattenedMolecules = validResponses.reduce((acc, cur) => {
+        if (Array.isArray(cur.molecule_details)) {
+          return acc.concat(cur.molecule_details);
+        }
+        return acc;
+      }, []);
 
         setFoundMolecules(flattenedMolecules);
         console.log(flattenedMolecules);
