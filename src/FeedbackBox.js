@@ -20,7 +20,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleCon
         collapsibleContent,
         timestamp: new Date().toISOString(),
       };
-      const response = await axios.post('http://localhost:8000/api/feedback', feedbackData, {
+      const response = await axios.post(`${process.env.API_URL}/api/feedback`, feedbackData, {
         headers: { 'Content-Type': 'application/json' },
         timeout: 10000,
       });
