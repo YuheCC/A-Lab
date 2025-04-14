@@ -2236,8 +2236,19 @@ const App = () => {
           </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
-            <div style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+            <div className="chat-main-container">
+              <div className="about-text-section left-text" style={{ 
+                width: '7%', 
+                overflowY: 'auto', 
+                padding: '20px', 
+                backgroundColor: '#f1f1f1', 
+                borderRadius: '0 8px 8px 0', 
+                marginLeft: '0', 
+                marginRight: '20px',
+                position: 'sticky',
+                left: 0,
+                top: 20
+              }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 

@@ -126,6 +126,7 @@ body, html {
   min-height: 0; /* Prevent flex item from growing beyond parent */
   background-color: #f1f1f1;
   overflow: hidden; /* Prevent scrolling issues */
+  position: relative;
 }
 
 .graph-container {
@@ -924,21 +925,34 @@ body, html {
 /* End search page styles */
 
 /* Chatbot styles */
-.chatbot-container {
-  flex: 1;
-  flex-direction: column;
-  padding: 20px;
-  background-color: rgb(241, 241, 241);
-  border-radius: 4px;
-  margin: 10px;
-  overflow-y: auto;
+.chat-main-container {
   display: flex;
-  justify-content: center;
-  height: calc(100vh - 120px);
-  min-height: 0;
+  flex-direction: row;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0; /* Prevent flex item from growing beyond parent */
+  background-color: #f1f1f1;
+  /* Allow vertical overflow so the sticky sidebar can calculate its
+     offset correctly, but keep horizontal clipping */
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
 }
 
-.chatbot-container h2 {
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
+  background-color: #f1f1f1;
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  padding: 0px;
+}
+
+/* .chatbot-container h2 {
   width: 90%;
   max-width: 1000px;
   margin: 20px auto;
@@ -947,15 +961,16 @@ body, html {
   color: #333;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
-}
+} */
 
 
 .chatbot-content {
   width: 90%;
   max-width: 800px;
+  min-height: 500px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 325px);
+  /* height: calc(100vh - 260px); */
 }
 
 .chatbot-content h2 {
@@ -1019,20 +1034,21 @@ body, html {
 .chat-and-molecules {
   display: flex;
   flex-direction: row;
-  gap: 20px;            /* adjust gap between elements as needed */
+  gap: 20px;
   width: 90%;
   max-width: 1500px;
-  margin: 0 auto;       /* center the container */
-  margin-top: -20vh;    /* move up 20% of viewport height */
-  position: relative;   /* ensure proper positioning */
-  z-index: 1;           /* prevent elements from overlapping */
+  overflow: hidden;
+  margin: 20px auto 0 auto;  /* Use a normal top margin to keep it inside the main container */
+  position: relative;
+  z-index: 1;
+  padding: 10px;
 }
 
 .found-molecules-container {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: calc(100vh - 344px);
+  /* height: calc(100vh - 279px); */
   overflow-y: auto;
   background-color: #fff;
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
@@ -1054,7 +1070,7 @@ body, html {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: calc(100vh - 344px);
+  /* height: calc(100vh - 279px); */
   overflow-y: auto;
   background-color: #fff;
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */

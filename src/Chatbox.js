@@ -73,7 +73,9 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
   const [moleculesLoading, setMoleculesLoading] = useState(false);
+  const [similarMoleculesLoading, setSimilarMoleculesLoading] = useState(false);
   const [similarMolecules, setSimilarMolecules] = useState([]);
+  const [activeMolecule, setActiveMolecule] = useState(null);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
 
 
@@ -94,28 +96,31 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
 
   
   const handleFindMolecules = async (moleculeList) => {
+    setSimilarMolecules([]);
+    setFoundMolecules(null);
+    setActiveMolecule(null);
     try {
       setMoleculesLoading(true);
-      const responses = await Promise.all(
-        moleculeList.map(async (mol) => {
-          const res = await fetch(`${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
-          const data = await res.json();
-          return data;
-        })
-      );
+        const responses = await Promise.all(
+          moleculeList.map(async (mol) => {
+            const res = await fetch(`${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+            const data = await res.json();
+            return data;
+          })
+        );
 
-      // Filter out responses that indicate a successful molecule lookup.
-      const validResponses = responses.filter(item => item.found);
-      // Flatten the molecule_details lists from each response into a single array.
-      const flattenedMolecules = validResponses.reduce((acc, cur) => {
-        if (Array.isArray(cur.molecule_details)) {
-          return acc.concat(cur.molecule_details);
-        }
-        return acc;
-      }, []);
+        // Filter out responses that indicate a successful molecule lookup.
+        const validResponses = responses.filter(item => item.found);
+        // Flatten the molecule_details lists from each response into a single array.
+        const flattenedMolecules = validResponses.reduce((acc, cur) => {
+          if (Array.isArray(cur.molecule_details)) {
+            return acc.concat(cur.molecule_details);
+          }
+          return acc;
+        }, []);
 
-      setFoundMolecules(flattenedMolecules);
-      console.log(flattenedMolecules);
+        setFoundMolecules(flattenedMolecules);
+        console.log(flattenedMolecules);
     } catch (err) {
       console.error("Error fetching molecule details:", err);
     } finally {
@@ -123,16 +128,19 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     }
   };
 
-  const handleFindSimilarMolecules = async (smile) => {
+  const handleFindSimilarMolecules = async (details) => {
+    setActiveMolecule(details);
+    setSimilarMoleculesLoading(true);
     try {
-      const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(smile)}`);
+      const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`);
       const data = await response.json();
-      // Assuming the endpoint returns an array of molecules:
-      console.log(data)
-      console.log(data["similar_molecules"])
+      console.log(data);
+      console.log(data["similar_molecules"]);
       setSimilarMolecules(data["similar_molecules"]);
     } catch (error) {
       console.error("Error finding similar molecules:", error);
+    } finally {
+      setSimilarMoleculesLoading(false);
     }
   };
 
@@ -287,16 +295,16 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
 
   return (
     <div className="chatbot-container">
-      <div className="chatbot-header">
-        {userPermissions === 'research' && (
+      {userPermissions === 'research' && (
+        <div className="chatbot-header">
           <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
             <span className="query-limit-icon">💬</span>
             <span>
               Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
             </span>
           </div>
+        </div>
         )}
-      </div>
       <div className="chat-and-molecules">
         <div className="chatbot-content">
           <div className="chat-messages">
@@ -420,19 +428,35 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                       style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
                     />
                   )}
-                  <div style={{ marginTop: '10px' }}>
-                    <button 
-                      className="find-similar-molecules-button"
-                      style={{
-                        backgroundColor: '#FFA500',
-                        border: 'none',
-                        padding: '6px 10px',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleFindSimilarMolecules(details.SMILES)}
-                    >
-                      Find Similar Molecules
-                    </button>
+                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                  <button 
+                    className="find-similar-molecules-button"
+                    style={{
+                      backgroundColor: '#FFA500',
+                      border: 'none',
+                      padding: '6px 10px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => handleFindSimilarMolecules(details)}
+                  >
+                    Find Similar Molecules
+                  </button>
+                  {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
+                    <span style={{ 
+                      marginLeft: '10px', 
+                      fontStyle: 'italic', 
+                      color: '#555',
+                      display: 'inline-flex',
+                      alignItems: 'center'
+                    }}>
+                      searching
+                      <span className="thinking-dots" style={{ marginLeft: '5px' }}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </span>
+                    </span>
+                  )}
                   </div>
                 </div>
               );
@@ -442,7 +466,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         )}
         {similarMolecules && similarMolecules.length > 0 && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
-            <h3>Friends Ranked By Propery Similarities</h3>
+            <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by structure similarity</h3>
             {similarMolecules.map((item, idx) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
