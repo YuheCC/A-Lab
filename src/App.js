@@ -750,6 +750,7 @@ const App = () => {
   const [searchWarning, setSearchWarning] = useState(null);
   const [searchedMolecules, setsearchedMolecules] = useState(null);
   const [similarMolecules, setSimilarMolecules] = useState(null);
+  const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState(null);
   const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
   const [findClosestFriends, setFindClosestFriends] = useState(false);
   
@@ -947,31 +948,69 @@ const App = () => {
       height: null,
       width: null
     };
-    
-    // Only add annotations if highlightedMolecules is defined
+  
+    let annotations = [];
+  
+
+    // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
+    if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
+      annotations = annotations.concat(
+        highlightedSimilarMolecules.map(molecule => ({
+          x: molecule.UMAP_0,
+          y: molecule.UMAP_1,
+          xref: 'x',
+          yref: 'y',
+          text: 'Similar Molecule',
+          showarrow: true,
+          arrowhead: 2,
+          arrowsize: 1.5,
+          arrowwidth: 2,
+          arrowcolor: '#FFD700',
+          ax: 0,
+          ay: arrowOffset,
+          bgcolor: 'rgba(255, 255, 0, 0.8)',
+          bordercolor: '#FFD700',
+          borderwidth: 2,
+          borderpad: 4,
+          font: {
+            color: 'black',
+            size: 12
+          }
+        }))
+      );
+    }
+
+    // Add annotations for standard highlighted molecules (using x & y)
     if (highlightedMolecules && highlightedMolecules.length > 0) {
-      layout.annotations = highlightedMolecules.map(molecule => ({
-        x: molecule.x,
-        y: molecule.y,
-        xref: 'x',
-        yref: 'y',
-        text: 'Found Match!',
-        showarrow: true,
-        arrowhead: 2,
-        arrowsize: 1.5,
-        arrowwidth: 2,
-        arrowcolor: '#FF5722',
-        ax: 0,
-        ay: arrowOffset,
-        bgcolor: 'rgba(255, 87, 34, 0.8)',
-        bordercolor: '#FF5722',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: 'white',
-          size: 12
-        }
-      }));
+      annotations = annotations.concat(
+        highlightedMolecules.map(molecule => ({
+          x: molecule.x,
+          y: molecule.y,
+          xref: 'x',
+          yref: 'y',
+          text: 'Searched Molecule',
+          showarrow: true,
+          arrowhead: 2,
+          arrowsize: 1.5,
+          arrowwidth: 2,
+          arrowcolor: '#FF5722',
+          ax: 0,
+          ay: arrowOffset,
+          bgcolor: 'rgba(255, 87, 34, 0.8)',
+          bordercolor: '#FF5722',
+          borderwidth: 2,
+          borderpad: 4,
+          font: {
+            color: 'white',
+            size: 12
+          }
+        }))
+      );
+    }
+      
+  
+    if (annotations.length > 0) {
+      layout.annotations = annotations;
     } else if (searchResults) {
       layout.annotations = [{
         x: 0,
@@ -990,9 +1029,8 @@ const App = () => {
         }
       }];
     }
-    
     return layout;
-  }, [plotlyLayout, highlightedMolecules, searchResults, arrowOffset]);
+  }, [plotlyLayout, highlightedMolecules, highlightedSimilarMolecules, searchResults, arrowOffset]);
 
   const plotlyConfig = {
     displayModeBar: true,
@@ -1081,6 +1119,7 @@ const App = () => {
     setsearchedMolecules(null);
     setHighlightedMolecules(null);
     setSimilarMolecules(null);
+    setHighlightedSimilarMolecules(null);
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
@@ -1104,6 +1143,14 @@ const App = () => {
           const data = await response.json();
           const molecules = data.similar_molecules;
           setSimilarMolecules(molecules);
+
+          const highlighted = molecules.filter(
+            (mol) => mol.UMAP_0 !== undefined && mol.UMAP_1 !== undefined
+          );
+          if (highlighted.length > 0) {
+            setHighlightedSimilarMolecules(highlighted);
+          }
+          
           
           // Fetch molecule visualizations for all similar molecules
           const imageResults = molecules.map((molecule, index) => {
