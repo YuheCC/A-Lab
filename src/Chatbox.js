@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './FeedbackBox';
 
-const API_URL = 'http://0.0.0.0:8000'; // Define your API URL as needed
-
-
+const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
+// const API_URL = 'http://0.0.0.0:8000';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
