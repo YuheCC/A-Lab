@@ -10,6 +10,7 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 
 // API URL for backend endpoints
+// const API_URL = 'https://ec2-54-159-40-36.compute-1.amazonaws.com';
 const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
@@ -412,11 +413,10 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = ({ onSignIn }) => {
+const PricingPage = ({ onSignIn, handleNavigation }) => {
   return (
-    <div className="pricing-container">
-      
-      <div className="pricing-cards">
+    <div className="pricing-container" style={{ display: 'flex', width: '100%', padding: '0' }}>
+      <div className="pricing-cards" style={{ width: '100%' }}>
         <div className="pricing-card">
           {/* <div className="pricing-icon">
             <svg viewBox="0 0 24 24" width="64" height="64" fill="#0080ff">
@@ -561,9 +561,9 @@ const PricingPage = ({ onSignIn }) => {
 // About Page component
 const AboutPage = ({ handleNavigation }) => {
   return (
-    <div className="about-container" style={{ display: 'flex', width: '93%' }}>
+    <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
         <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
@@ -683,7 +683,6 @@ const AboutPage = ({ handleNavigation }) => {
               <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
               <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
               <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-              <li><strong>LLM Grade/Reasoning:</strong> Provide a 1 to 10 grade to the molecule and tell you why it's good or bad.</li>
             </ul>
             <p>
               You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
@@ -1610,17 +1609,6 @@ const App = () => {
         [0.75, '#5ec962'], // green
         [1, '#fde725'] // yellow
       ],
-      colorbar: {
-        title: 'Molecular Weight',
-        thickness: 20,
-        len: 0.6,
-        y: 0.5,
-        titleside: 'right',
-        titlefont: {
-          size: 12,
-          color: '#333'
-        }
-      },
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return 1; // Full opacity for highlighted molecule
@@ -1660,17 +1648,6 @@ const App = () => {
         [0.75, '#5ec962'], // green
         [1, '#fde725'] // yellow
       ],
-      colorbar: {
-        title: 'Molecular Weight',
-        thickness: 20,
-        len: 0.6,
-        y: 0.5,
-        titleside: 'right',
-        titlefont: {
-          size: 12,
-          color: '#333'
-        }
-      },
       opacity: 0.7
     },
     hoverinfo: 'text',
@@ -1797,8 +1774,8 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="explorer-container" style={{ display: 'flex', height: '100%' }}>
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px', marginLeft: '20px' }}>
+            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -1869,7 +1846,7 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="graph-container" style={{ flex: '1', height: '100%' }}>
+              <div className="graph-container" style={{ flex: '1', height: '85%' }}>
                 <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   {filteredGraphData.length > 0 ? (
                     <Plot
@@ -2080,13 +2057,13 @@ const App = () => {
           <>
           <div className="map-container" style={{ 
             display: 'flex', 
-            height: 'calc(100vh - 150px)', 
-            padding: '20px',
+            height: 'calc(100vh - 170px)', 
+            padding: '20px 20px 20px 0',
             overflowY: 'auto',
-            marginBottom: '50px'
+            marginBottom: '0'
           }}>
             {/* New left text column (20%) */}
-            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+            <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
               <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
@@ -2186,24 +2163,15 @@ const App = () => {
             <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
               <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
               <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                Molecular Universe is like a telescope that looks for extraterrestrial life in outer space, it maps the universe of molecules suitable for batteries and uses AI and physics to navigate the map. It is intended to help battery researchers discover new materials for their next big idea.
+                Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
               </p>
               
-              <h3 style={{ fontWeight: 'bold', marginTop: '25px', marginBottom: '15px' }}>The unique and fundamental advantages of Molecular Universe include:</h3>
-              <ol style={{ paddingLeft: '20px', marginBottom: '20px' }}>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Map:</span> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted (no joke, but this would have taken thousands of years, but with the right computing hardware and software we can accomplish this in a few months).
-                </li>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Navigation System:</span> A battery-specific LLM that is trained on thoroughly curated battery literature and by worldclass battery experts (we literally leave no stones unturned in scouting LLM training data).
-                </li>
-                <li style={{ marginBottom: '15px', lineHeight: '1.6' }}>
-                  <span style={{ fontWeight: 'bold' }}>The Interface:</span> The Map and the Navigation System are linked in an intuitive user interface, making battery material discovery as straightforward as dating (okay that may not be so straightforward, but you get the idea).
-                </li>
-              </ol>
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+              </p>
               
-              <p style={{ marginTop: '20px', lineHeight: '1.6' }}>
-                Molecular Universe is still a baby, but growing rapidly. The Map will expand to cover more molecules and properties, and the Navigation System will become more accurate at finding the perfect molecules for you. With your help, we can improve Molecular Universe together.
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
               </p>
             </div>
           </div>
@@ -2221,28 +2189,184 @@ const App = () => {
           </>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
-            <ChatbotInterface 
-              messages={chatMessages} 
-              setMessages={setChatMessages}
-              userPermissions={userPermissions}
-              remainingQueries={remainingQueries}
-              setRemainingQueries={setRemainingQueries}
-            />
+            <div style={{ display: 'flex', height: '100%' }}>
+              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a 
+                    href="#features" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features of MU
+                  </a>
+                  <a 
+                    href="#pricing" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing Structure
+                  </a>
+                  <a 
+                    href="#news" 
+                    style={{ 
+                      textDecoration: 'none', 
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+              <ChatbotInterface 
+                messages={chatMessages} 
+                setMessages={setChatMessages}
+                userPermissions={userPermissions}
+                remainingQueries={remainingQueries}
+                setRemainingQueries={setRemainingQueries}
+              />
+            </div>
           ) : (
             <PermissionsError />
           )
         ) : activePage === 'pricing' ? (
-          <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-            <PricingPage onSignIn={handleSignIn} />
+          <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
+            <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                <a 
+                  href="#features" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const featuresSection = document.getElementById('features-section');
+                      if (featuresSection) {
+                        featuresSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  Features of MU
+                </a>
+                <a 
+                  href="#pricing" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('pricing');
+                  }}
+                >
+                  Pricing Structure
+                </a>
+                <a 
+                  href="#news" 
+                  style={{ 
+                    textDecoration: 'none', 
+                    color: '#333',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      const newsfeedSection = document.getElementById('newsfeed');
+                      if (newsfeedSection) {
+                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }}
+                >
+                  News Feed
+                </a>
+              </div>
+            </div>
+            <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', width: '93%' }}>
+              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} />
+            </div>
           </div>
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
-            <div className="search-umap-container">
+            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
               {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '8px', marginRight: '20px' }}>
+              <div className="about-text-section left-text" style={{ 
+                width: '7%', 
+                overflowY: 'auto', 
+                padding: '20px', 
+                backgroundColor: '#f1f1f1', 
+                borderRadius: '0 8px 8px 0', 
+                marginLeft: '0', 
+                marginRight: '20px',
+                position: 'sticky',
+                left: 0
+              }}>
                 <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
