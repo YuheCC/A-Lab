@@ -1317,6 +1317,17 @@ const App = () => {
       }
     }
     
+    // Reset filters when navigating away from explorer (filter) page
+    if (activePage === 'explorer' && page !== 'explorer') {
+      resetAllFilters();
+      // Also reset functional group filter if it exists
+      if (typeof setSelectedFunctionalGroup === 'function') {
+        setSelectedFunctionalGroup('');
+        const dropdown = document.querySelector('.functional-group-select');
+        if (dropdown) dropdown.selectedIndex = 0;
+      }
+    }
+    
     // Clear search results when navigating away from search page
     if (activePage === 'search' && page !== 'search') {
       setsearchResults(null);
