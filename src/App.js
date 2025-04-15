@@ -2338,6 +2338,33 @@ const App = () => {
               <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
                 In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
               </p>
+              
+              <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
+              <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely by populated polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+              </div>
             </div>
           </div>
 
