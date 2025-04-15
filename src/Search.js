@@ -16,14 +16,12 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
       if (e.key === 'Enter') {
         onSearch(inputValue);
         // Optionally clear the input after sending
-        setInputValue("");
       }
     };
 
     const handleClickSend = () => {
         onSearch(inputValue);
         // Optionally clear the input after sending
-        setInputValue("");
     }
   
     return (
