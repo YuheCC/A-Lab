@@ -15,13 +15,11 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
         onSearch(inputValue);
-        // Don't clear the input after sending
       }
     };
 
     const handleClickSend = () => {
         onSearch(inputValue);
-        // Don't clear the input after sending
     }
   
     return (
