@@ -1148,8 +1148,6 @@ const App = () => {
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
-    setLastSearch(searchInput);
-
     setSearchLoading(true);
     setSearchWarning(null);
     setSearchError(null);
@@ -1213,6 +1211,7 @@ const App = () => {
       console.error('Error checking Snowflake database:', apiError);
     } finally {
       setSearchLoading(false);
+      setLastSearch(searchInput);
     }
   };
 
@@ -1307,7 +1306,11 @@ const App = () => {
       setsearchResults(null);
       setsearchedMolecules(null);
       setHighlightedMolecules(null);
+      setHighlightedSimilarMolecules(null);
+      setSimilarMolecules(null);
+      setSimilarMoleculeImages({});
       setSearchError(null);
+      setLastSearch(null);
     }
     
     // Special case for enterprise (advanced search) tab
@@ -2777,7 +2780,7 @@ const App = () => {
                       ) }
                     </div>
                   )}
-                  { (searchedMolecules === null || searchedMolecules.length == 0) && (
+                  { (lastSearch && (searchedMolecules === null || searchedMolecules.length == 0)) && (
                     <div className="molecule-not-found">
                       <p>This molecule was not found in our dataset.</p>
                     </div>
