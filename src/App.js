@@ -1987,218 +1987,175 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="graph-container" style={{ flex: '1', height: '85%' }}>
-                <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  {filteredGraphData.length > 0 ? (
-                    <Plot
-                      data={plotlyData}
-                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                      config={plotlyConfig}
-                      style={{ width: '100%', height: '100%' }}
-                      onClick={handlePointClick}
-                      onInitialized={(figure) => {
-                        plotlyRef.current = figure;
-                        setMainPlotInitialized(true);
-                      }}
-                      onUpdate={(figure) => {
-                        plotlyRef.current = figure;
-                      }}
-                    />
-                  ) : (
-                    <div className="loading-message">
-                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="info-panel" style={{ width: '300px', padding: '20px', overflowY: 'auto' }}>
-                <h2>
-                  Filters 
-                  {activeFilterCount > 0 && (
-                    <button 
-                      className="reset-button" 
-                      onClick={resetAllFilters}
-                      title="Reset all filters"
-                    >
-                      Reset All
-                    </button>
-                  )}
-                </h2>
-                <div className="sliders-container">
-                  {Object.entries(filterRanges).map(([property, range]) => (
-                    <div key={property} className="filter-wrapper">
-                      <Slider
-                        property={property}
-                        value={range.range}
-                        min={range.min}
-                        max={range.max}
-                        onChange={handleFilterChange}
-                        label={filterLabels[property]}
-                        active={range.active}
+              <div className="search-umap-container">
+                <div className="search-umap-section">
+                  <div className="graph-container search-graph">
+                    {filteredGraphData.length > 0 ? (
+                      <Plot
+                        data={plotlyData}
+                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                        config={plotlyConfig}
+                        style={{ width: '100%', height: '100%' }}
+                        onClick={handlePointClick}
+                        onInitialized={(figure) => {
+                          plotlyRef.current = figure;
+                          setMainPlotInitialized(true);
+                        }}
+                        onUpdate={(figure) => {
+                          plotlyRef.current = figure;
+                        }}
                       />
-                      {range.active && (
-                        <button 
-                          className="reset-filter-button" 
-                          onClick={() => resetFilter(property)}
-                          title="Reset this filter"
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                                  <div className="functional-group-filter">
-                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
-                    Functional Group Filter
-                    <span
-                      className="search-tooltip-marker"
-                      title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
-                      style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
-                    >
-                      ?
-                    </span>
-                  </h3>
-                  <div className="functional-group-input-container">
-                    <select 
-                      className="functional-group-select"
-                      value={selectedFunctionalGroup}
-                      onChange={(e) => {
-                        setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
-                      }}
-                    >
-                      <option value="">Select a functional group</option>
-                      <option value="C(=O)Cl">AcidChloride</option>
-                      <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
-                      <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
-                      <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
-                      <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
-                      <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
-                      <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
-                      <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
-                      <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
-                      <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
-                      <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
-                      <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
-                      <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
-                      <option value="[CX3H](=[OX1])">Aldehyde</option>
-                      <option value="[CX3]=[CX3]">Alkene</option>
-                      <option value="[CX2]#[CX2]">Alkyne</option>
-                      <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
-                      <option value="[NX3][CX3](=O)[#6]">Amide</option>
-                      <option value="[#6][NX2]=[#6][N]">Amidine</option>
-                      <option value="[NX4]">Ammonium</option>
-                      <option value="c1ccccc1">Arene</option>
-                      <option value="[#6][N]=[N][#6]">Azo</option>
-                      <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
-                      <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
-                      <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
-                      <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
-                      <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
-                      <option value="[#6][SX2][SX2][#6]">Disulfide</option>
-                      <option value="[CX3][NX3]=[CX3]">Enamine</option>
-                      <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
-                      <option value="[OD2]([#6])[#6]">Ether</option>
-                      <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
-                      <option value="[F][CX4]">FluoroAlkyl_SP3</option>
-                      <option value="[F][CX3]">FluoroAlkyl_SP2</option>
-                      <option value="[F][CX2]">FluoroAlkyl_SP</option>
-                      <option value="[F][CX4][OX2]">FluoroEther</option>
-                      <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
-                      <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
-                      <option value="[NX3][NX3]">Hydrazine</option>
-                      <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
-                      <option value="[C][Cl,Br,I,F]">Halide</option>
-                      <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
-                      <option value="[CX2]=[NX3]">Imine</option>
-                      <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
-                      <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
-                      <option value="[#6]([O][#6])([O][#6])">Ketal</option>
-                      <option value="[CX2]#[NX1]">Nitrile</option>
-                      <option value="[OX2][OX2]">Peroxide</option>
-                      <option value="c1ccccc1[OH]">Phenol</option>
-                      <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
-                      <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
-                      <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
-                      <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
-                      <option value="[Se][#6]">Selenide</option>
-                      <option value="[SeH]">Selenol</option>
-                      <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
-                      <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
-                      <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
-                      <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
-                      <option value="[SX2H]">Thiol</option>
-                      <option value="[#6](=[SX])[H]">Thial</option>
-                      <option value="[#6](=[SX])[NX3]">Thioamide</option>
-                      <option value="[#6](=[SX])[#6]">Thioketone</option>
-                      <option value="[CX2]=[SX1]">Thione</option>
-                      <option value="[SX2]([#6])[#6]">Thioether</option>
-                      <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
-                      <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
-                      <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
-                      <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
-                      <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
-                      <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
-                      <option value="c1ccccc1">Arene (aromatic)</option>
-                    </select>
-                    <button 
-                      className="reset-filter-button functional-group-reset"
-                      onClick={() => {
-                        setSelectedFunctionalGroup('');
-                        const dropdown = document.querySelector('.functional-group-select');
-                        if (dropdown) dropdown.selectedIndex = 0;
-                      }}
-                    >
-                      Reset
-                    </button>
+                    ) : (
+                      <div className="loading-message">
+                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                      </div>
+                    )}
                   </div>
                 </div>
-                </div>
                 
-                <style jsx>{`
-                  .functional-group-filter {
-                    margin-top: 20px;
-                    padding-top: 10px;
-                    border-top: 1px solid #e0e0e0;
-                  }
-                  
-                  .functional-group-select {
-                    width: 100%;
-                    padding: 8px 12px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    background-color: white;
-                    font-size: 14px;
-                    color: #333;
-                  }
-                  
-                  .functional-group-select:focus {
-                    outline: none;
-                    border-color: #0080ff;
-                    box-shadow: 0 0 0 2px rgba(0, 128, 255, 0.2);
-                  }
-                  
-                  .functional-group-input-container {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                  }
-                  
-                  .functional-group-reset {
-                    margin-left: 8px;
-                    padding: 4px 8px;
-                    background-color: #f5f5f5;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    cursor: pointer;
-                  }
-                  
-                  .functional-group-reset:hover {
-                    background-color: #e0e0e0;
-                  }
-                `}</style>
+                <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+                  <h2>
+                    Filters 
+                    {activeFilterCount > 0 && (
+                      <button 
+                        className="reset-button" 
+                        onClick={resetAllFilters}
+                        title="Reset all filters"
+                      >
+                        Reset All
+                      </button>
+                    )}
+                  </h2>
+                  <div className="sliders-container">
+                    {Object.entries(filterRanges).map(([property, range]) => (
+                      <div key={property} className="filter-wrapper">
+                        <Slider
+                          property={property}
+                          value={range.range}
+                          min={range.min}
+                          max={range.max}
+                          onChange={handleFilterChange}
+                          label={filterLabels[property]}
+                          active={range.active}
+                        />
+                        {range.active && (
+                          <button 
+                            className="reset-filter-button" 
+                            onClick={() => resetFilter(property)}
+                            title="Reset this filter"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <div className="functional-group-filter">
+                      <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
+                        Functional Group Filter
+                        <span
+                          className="search-tooltip-marker"
+                          title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
+                          style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+                        >
+                          ?
+                        </span>
+                      </h3>
+                      <div className="functional-group-input-container">
+                        <select 
+                          className="functional-group-select"
+                          value={selectedFunctionalGroup}
+                          onChange={(e) => {
+                            setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
+                          }}
+                        >
+                          <option value="">Select a functional group</option>
+                          <option value="C(=O)Cl">AcidChloride</option>
+                          <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
+                          <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
+                          <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
+                          <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
+                          <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
+                          <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
+                          <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
+                          <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
+                          <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
+                          <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
+                          <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
+                          <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
+                          <option value="[CX3H](=[OX1])">Aldehyde</option>
+                          <option value="[CX3]=[CX3]">Alkene</option>
+                          <option value="[CX2]#[CX2]">Alkyne</option>
+                          <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
+                          <option value="[NX3][CX3](=O)[#6]">Amide</option>
+                          <option value="[#6][NX2]=[#6][N]">Amidine</option>
+                          <option value="[NX4]">Ammonium</option>
+                          <option value="c1ccccc1">Arene</option>
+                          <option value="[#6][N]=[N][#6]">Azo</option>
+                          <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
+                          <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
+                          <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
+                          <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
+                          <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
+                          <option value="[#6][SX2][SX2][#6]">Disulfide</option>
+                          <option value="[CX3][NX3]=[CX3]">Enamine</option>
+                          <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
+                          <option value="[OD2]([#6])[#6]">Ether</option>
+                          <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
+                          <option value="[F][CX4]">FluoroAlkyl_SP3</option>
+                          <option value="[F][CX3]">FluoroAlkyl_SP2</option>
+                          <option value="[F][CX2]">FluoroAlkyl_SP</option>
+                          <option value="[F][CX4][OX2]">FluoroEther</option>
+                          <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
+                          <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
+                          <option value="[NX3][NX3]">Hydrazine</option>
+                          <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
+                          <option value="[C][Cl,Br,I,F]">Halide</option>
+                          <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
+                          <option value="[CX2]=[NX3]">Imine</option>
+                          <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
+                          <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
+                          <option value="[#6]([O][#6])([O][#6])">Ketal</option>
+                          <option value="[CX2]#[NX1]">Nitrile</option>
+                          <option value="[OX2][OX2]">Peroxide</option>
+                          <option value="c1ccccc1[OH]">Phenol</option>
+                          <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
+                          <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
+                          <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
+                          <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
+                          <option value="[Se][#6]">Selenide</option>
+                          <option value="[SeH]">Selenol</option>
+                          <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
+                          <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
+                          <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
+                          <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
+                          <option value="[SX2H]">Thiol</option>
+                          <option value="[#6](=[SX])[H]">Thial</option>
+                          <option value="[#6](=[SX])[NX3]">Thioamide</option>
+                          <option value="[#6](=[SX])[#6]">Thioketone</option>
+                          <option value="[CX2]=[SX1]">Thione</option>
+                          <option value="[SX2]([#6])[#6]">Thioether</option>
+                          <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
+                          <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
+                          <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
+                          <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
+                          <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
+                          <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
+                          <option value="c1ccccc1">Arene (aromatic)</option>
+                        </select>
+                        <button 
+                          className="reset-filter-button functional-group-reset"
+                          onClick={() => {
+                            setSelectedFunctionalGroup('');
+                            const dropdown = document.querySelector('.functional-group-select');
+                            if (dropdown) dropdown.selectedIndex = 0;
+                          }}
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </>
@@ -2301,82 +2258,87 @@ const App = () => {
             </div>
             
             {/* UMAP Visualization in the middle (50%) */}
-            <div className="graph-container" style={{ width: '50%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
-              {filteredGraphData.length > 0 ? (
-                <Plot
-                  data={plotlyData}
-                  layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                  config={plotlyConfig}
-                  style={{ width: '100%', height: '100%' }}
-                  onClick={handlePointClick}
-                  onInitialized={(figure) => {
-                    plotlyRef.current = figure;
-                    setMainPlotInitialized(true);
-                  }}
-                  onUpdate={(figure) => {
-                    plotlyRef.current = figure;
-                  }}
-                />
-              ) : (
-                <div className="loading-message">
-                  {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+            <div className="search-umap-container">
+              {/* UMAP Visualization in the middle (50%) */}
+              <div className="search-umap-section">
+                <div className="graph-container search-graph">
+                  {filteredGraphData.length > 0 ? (
+                    <Plot
+                      data={plotlyData}
+                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                      config={plotlyConfig}
+                      style={{ width: '100%', height: '100%' }}
+                      onClick={handlePointClick}
+                      onInitialized={(figure) => {
+                        plotlyRef.current = figure;
+                        setMainPlotInitialized(true);
+                      }}
+                      onUpdate={(figure) => {
+                        plotlyRef.current = figure;
+                      }}
+                    />
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            
-            {/* Right text content (25%) */}
-            <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-              <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
-              </p>
-              
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
-              </p>
-              
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
-              </p>
-              
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
-                <img 
-                  src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`} 
-                  alt="Molecular Universe Clusters Map" 
-                  style={{ 
-                    maxWidth: '100%', 
-                    height: 'auto', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                  }} 
-                />
               </div>
               
-              <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
-              <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely by populated polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
-                <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+              {/* Right text content */}
+              <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
+                </p>
+                
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+                </p>
+                
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+                </p>
+                
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
+                  <img 
+                    src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`} 
+                    alt="Molecular Universe Clusters Map" 
+                    style={{ 
+                      maxWidth: '100%', 
+                      height: 'auto', 
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                    }} 
+                  />
+                </div>
+                
+                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
+                <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely by populated polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                </div>
               </div>
             </div>
           </div>
@@ -2729,7 +2691,7 @@ const App = () => {
               </div>
 
               {/* Search interface on the right */}
-              <div className="search-interface-section">
+              <div className="search-interface-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                 {/* Search bar container */}
                 
                 <SearchInput 
