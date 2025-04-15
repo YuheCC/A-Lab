@@ -602,7 +602,22 @@ const AboutPage = ({ handleNavigation }) => {
     <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
       <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-        <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+        <h1 
+          style={{ 
+            textDecoration: 'none',
+            color: 'rgb(51, 51, 51)',
+            fontSize: '9.5px',
+            transition: 'font-size 0.3s',
+            cursor: 'pointer',
+            marginBottom: '12px',
+            fontWeight: 'normal'
+          }}
+          onClick={() => handleNavigation('about')}
+          onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+          onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+        >
+          Motivation for MU
+        </h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
             href="#features" 
@@ -1861,7 +1876,22 @@ const App = () => {
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
               <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => handleNavigation('about')}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation for MU
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
@@ -2158,7 +2188,22 @@ const App = () => {
           }}>
             {/* New left text column (20%) */}
             <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <h1 
+                style={{ 
+                  textDecoration: 'none',
+                  color: 'rgb(51, 51, 51)',
+                  fontSize: '9.5px',
+                  transition: 'font-size 0.3s',
+                  cursor: 'pointer',
+                  marginBottom: '12px',
+                  fontWeight: 'normal'
+                }}
+                onClick={() => handleNavigation('about')}
+                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+              >
+                Motivation for MU
+              </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
                   href="/about#features" 
@@ -2296,7 +2341,22 @@ const App = () => {
                 left: 0,
                 top: 20
               }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => handleNavigation('about')}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation for MU
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
@@ -2380,7 +2440,22 @@ const App = () => {
         ) : activePage === 'pricing' ? (
           <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
             <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <h1 
+                style={{ 
+                  textDecoration: 'none',
+                  color: 'rgb(51, 51, 51)',
+                  fontSize: '9.5px',
+                  transition: 'font-size 0.3s',
+                  cursor: 'pointer',
+                  marginBottom: '12px',
+                  fontWeight: 'normal'
+                }}
+                onClick={() => handleNavigation('about')}
+                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+              >
+                Motivation for MU
+              </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
                   href="#features" 
@@ -2472,7 +2547,22 @@ const App = () => {
                 position: 'sticky',
                 left: 0
               }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => handleNavigation('about')}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation for MU
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
