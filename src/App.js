@@ -10,8 +10,8 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 
 // API URL for backend endpoints
-const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
-// const API_URL = 'http://0.0.0.0:8000';
+// const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
+const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -1133,7 +1133,7 @@ const App = () => {
             const highlighted = formattedMolecules.filter(
               (mol) => mol.x !== undefined && mol.y !== undefined
             );
-            if (highlighted.length > 0) {
+            if (highlighted && highlighted.length > 0) {
               setHighlightedMolecules(highlighted);
             }
           }
@@ -1163,13 +1163,14 @@ const App = () => {
     try {
       // First fetch the searched molecule's properties from Snowflake
       const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
-      console.log(moleculeResponse)
+      console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
-      console.log(formattedMolecules)
-      if (findClosestFriends) {
+      console.log(formattedMolecules);
+      console.log(searchedMolecules);
+      if (formattedMolecules && findClosestFriends) {
         // check if formattedMolecules has length > 1 - if so display warning
         if (formattedMolecules.length > 1) {
-          setSearchWarning('Multiple molecules found matching your search criterion. Find a friend disabled.');
+          setSearchWarning('Multiple molecules found matching your search criterion. Find friends disabled.');
         } else {
           const formattedMolecule = formattedMolecules[0];
 
@@ -2774,11 +2775,11 @@ const App = () => {
                           ))}
                         </div>
                       ) }
-                      { (!searchedMolecules || searchedMolecules.length == 0) && (
-                        <div className="molecule-not-found">
-                          <p>This molecule was not found in our dataset.</p>
-                        </div>
-                      )}
+                    </div>
+                  )}
+                  { (searchedMolecules === null || searchedMolecules.length == 0) && (
+                    <div className="molecule-not-found">
+                      <p>This molecule was not found in our dataset.</p>
                     </div>
                   )}
                 </div>
