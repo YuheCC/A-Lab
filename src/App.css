@@ -732,7 +732,6 @@ body, html {
 .search-umap-section {
   flex: 1.2;
   min-width: 0;
-  border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
