@@ -2339,6 +2339,19 @@ const App = () => {
                 In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
               </p>
               
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
+                <img 
+                  src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`} 
+                  alt="Molecular Universe Clusters Map" 
+                  style={{ 
+                    maxWidth: '100%', 
+                    height: 'auto', 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+              </div>
+              
               <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
               <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
                 <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
