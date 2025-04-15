@@ -929,28 +929,28 @@ const App = () => {
   const searchPlotlyRef = useRef(null);
   
   // Add bouncing arrow animation when molecule is highlighted
-  useEffect(() => {
-    if (!highlightedMolecules || !searchPlotInitialized) return;
+  // useEffect(() => {
+  //   if (!highlightedMolecules || !searchPlotInitialized) return;
     
-    let direction = -1; // Start moving up
-    let current = -40;
-    const min = -60;
-    const max = -30;
+  //   let direction = -1; // Start moving up
+  //   let current = -40;
+  //   const min = -60;
+  //   const max = -30;
     
-    const interval = setInterval(() => {
-      current += direction * 2;
+  //   const interval = setInterval(() => {
+  //     current += direction * 2;
       
-      if (current <= min) {
-        direction = 1; // Change to moving down
-      } else if (current >= max) {
-        direction = -1; // Change to moving up
-      }
+  //     if (current <= min) {
+  //       direction = 1; // Change to moving down
+  //     } else if (current >= max) {
+  //       direction = -1; // Change to moving up
+  //     }
       
-      setArrowOffset(current);
-    }, 50);
+  //     setArrowOffset(current);
+  //   }, 50);
     
-    return () => clearInterval(interval);
-  }, [highlightedMolecules, searchPlotInitialized]);
+  //   return () => clearInterval(interval);
+  // }, [highlightedMolecules, searchPlotInitialized]);
   
   const plotlyLayout = {
     autosize: true,
