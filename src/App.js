@@ -2782,7 +2782,14 @@ const App = () => {
                   )}
                   { (lastSearch && (searchedMolecules === null || searchedMolecules.length == 0)) && (
                     <div className="molecule-not-found">
-                      <p>This molecule was not found in our dataset.</p>
+                      <p>Your molecule was not found. Here are several possibilities:
+                        <br />
+                        <br />
+                        1.      It may not be battery relevant, or you misspelled the name or smiles string. Please check.
+                        <br />
+                        2.      It’s included in premium levels Enterprise and Joint Development. Please upgrade.
+                        <br />
+                        3.      You hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
                     </div>
                   )}
                 </div>
