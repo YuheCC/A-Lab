@@ -249,7 +249,45 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
   return (
     <div className={`slider-container ${active ? 'active-filter' : 'inactive-filter'}`}>
       <div className="slider-header">
-        <span className="slider-label">{label}</span>
+        <span className="slider-label">
+          {label}
+          {label === "HOMO (eV)" && (
+            <span
+              className="search-tooltip-marker"
+              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
+              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+            >
+              ?
+            </span>
+          )}
+          {label === "LUMO (eV)" && (
+            <span
+              className="search-tooltip-marker"
+              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
+              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+            >
+              ?
+            </span>
+          )}
+          {label === "Max ESP (eV)" && (
+            <span
+              className="search-tooltip-marker"
+              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
+              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+            >
+              ?
+            </span>
+          )}
+          {label === "Min ESP (eV)" && (
+            <span
+              className="search-tooltip-marker"
+              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
+              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+            >
+              ?
+            </span>
+          )}
+        </span>
         <span className="slider-value">
           {active 
             ? `${formatValue(value[0])} - ${formatValue(value[1])}` 
@@ -1908,7 +1946,16 @@ const App = () => {
                     </div>
                   ))}
                                   <div className="functional-group-filter">
-                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Functional Group Filter</h3>
+                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
+                    Functional Group Filter
+                    <span
+                      className="search-tooltip-marker"
+                      title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
+                      style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+                    >
+                      ?
+                    </span>
+                  </h3>
                   <div className="functional-group-input-container">
                     <select 
                       className="functional-group-select"
