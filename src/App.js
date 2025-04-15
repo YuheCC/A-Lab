@@ -993,12 +993,12 @@ const App = () => {
     // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
     if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedSimilarMolecules.map(molecule => ({
+        highlightedSimilarMolecules.map((molecule, idx) => ({
           x: molecule.UMAP_0,
           y: molecule.UMAP_1,
           xref: 'x',
           yref: 'y',
-          text: 'Similar Molecule',
+          text: `Similar Molecule ${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
