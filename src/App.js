@@ -10,8 +10,8 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 
 // API URL for backend endpoints
-const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
-// const API_URL = 'http://0.0.0.0:8000';
+// const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
+const API_URL = 'http://0.0.0.0:8000';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -1126,7 +1126,8 @@ const App = () => {
                 functional_groups: mol.FUNCTIONAL_GROUPS,
                 predicted_mp: mol.PREDICTED_MP,
                 predicted_bp: mol.PREDICTED_BP,
-                chemical_formula: mol.CHEMICAL_FORMULA
+                chemical_formula: mol.CHEMICAL_FORMULA,
+                CLUSTER: mol.CLUSTER
               },
               image: mol.image,
               rawData: mol
@@ -1561,7 +1562,8 @@ const App = () => {
               functional_groups: row.FUNCTIONAL_GROUPS,
               predicted_mp: row.PREDICTED_MP,
               predicted_bp: row.PREDICTED_BP,
-              chemical_formula: row.CHEMICAL_FORMULA
+              chemical_formula: row.CHEMICAL_FORMULA,
+              CLUSTER: row.CLUSTER
             },
             rawData: row
           }));
@@ -1688,7 +1690,37 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Create separate plotly data for search view
+  // Define a color mapping for clusters (23 distinct colors)
+  const clusterColorMap = {
+    1: '#1f77b4', // blue
+    2: '#ff7f0e', // orange
+    3: '#2ca02c', // green
+    4: '#d62728', // red
+    5: '#9467bd', // purple
+    6: '#8c564b', // brown
+    7: '#e377c2', // pink
+    8: '#7f7f7f', // gray
+    9: '#bcbd22', // olive
+    10: '#17becf', // cyan
+    11: '#aec7e8', // light blue
+    12: '#ffbb78', // light orange
+    13: '#98df8a', // light green
+    14: '#ff9896', // light red
+    15: '#c5b0d5', // light purple
+    16: '#c49c94', // light brown
+    17: '#f7b6d2', // light pink
+    18: '#c7c7c7', // light gray
+    19: '#dbdb8d', // light olive
+    20: '#9edae5', // light cyan
+    21: '#393b79', // dark blue
+    22: '#637939', // dark green
+    23: '#8c6d31'  // dark orange
+  };
+  
+  // Default color for clusters not in the map
+  const defaultColor = '#000000'; // black
+
+  // Create search mode plotly data
   const searchPlotlyData = [{
     x: filteredGraphData.map(node => node.x),
     y: filteredGraphData.map(node => node.y),
@@ -1700,15 +1732,10 @@ const App = () => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return '#ff0000'; // Red color for highlighted molecule
         }
-        return node.properties?.molwt || 0; // Color by molecular weight
+        // Color by cluster
+        const clusterValue = node.properties?.CLUSTER;
+        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
       }),
-      colorscale: [
-        [0, '#440154'], // darkest purple
-        [0.25, '#3b528b'], // blue-purple
-        [0.5, '#21918c'], // green-blue
-        [0.75, '#5ec962'], // green
-        [1, '#fde725'] // yellow
-      ],
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return 1; // Full opacity for highlighted molecule
@@ -1728,7 +1755,8 @@ const App = () => {
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
       `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
 
@@ -1740,14 +1768,11 @@ const App = () => {
     type: 'scattergl',
     marker: {
       size: 5,
-      color: filteredGraphData.map(node => node.properties?.molwt || 0),
-      colorscale: [
-        [0, '#440154'], // darkest purple
-        [0.25, '#3b528b'], // blue-purple
-        [0.5, '#21918c'], // green-blue
-        [0.75, '#5ec962'], // green
-        [1, '#fde725'] // yellow
-      ],
+      color: filteredGraphData.map(node => {
+        // Color by cluster
+        const clusterValue = node.properties?.CLUSTER;
+        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
+      }),
       opacity: 0.7
     },
     hoverinfo: 'text',
@@ -1762,7 +1787,8 @@ const App = () => {
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
       `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
+      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
 
