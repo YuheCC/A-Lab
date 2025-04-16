@@ -595,10 +595,21 @@ const PricingPage = ({ onSignIn, handleNavigation }) => {
 
 // About Page component
 const AboutPage = ({ handleNavigation }) => {
+  
+  // Add useEffect to set up smooth scrolling
+  useEffect(() => {
+    // Get the content wrapper element
+    const contentWrapper = document.querySelector('.about-content-wrapper');
+    if (contentWrapper) {
+      // Set initial scroll position to top
+      contentWrapper.scrollTop = 0;
+    }
+  }, []);
+
   return (
     <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
         <h1 
           style={{ 
             textDecoration: 'none',
@@ -717,63 +728,46 @@ const AboutPage = ({ handleNavigation }) => {
           
           <h2 id="features-section">Features of Molecular Universe</h2>
           
-          <div className="feature-section">
-            <h3>Map the Molecular Universe</h3>
-            <p>
-              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features 49 molecular continents, 1 million molecules (in-browser display), and 100 million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
-            </p>
-          </div>
+          <h3>Map the Molecular Universe</h3>
           
-          <div className="feature-section">
-            <h3>Filter by Chemical Properties</h3>
-            <p>
-              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
-            </p>
-            <ul className="feature-list">
-              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
-              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
-              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-            </ul>
-            <p>
-              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
-            </p>
-          </div>
+          <p>
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <strong style={{color: 'red'}}>23</strong> molecular continents, 1 million molecules (in-browser display), and <strong style={{color: 'red'}}>over 100</strong> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+          </p>
           
-          <div className="feature-section">
-            <h3>Search & "Find a Friend"</h3>
-            <p>
-              You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
-            </p>
-            <ol className="feature-list">
-              <li>By SMILES – Input a SMILES string and instantly retrieve all key info.</li>
-              <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
-            </ol>
-            <p>
-              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
-            </p>
-            <ul className="feature-list">
-              <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
-              <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
-            </ul>
-            <p>
-              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
-            </p>
-          </div>
+          <h3>Filter by Chemical Properties</h3>
           
-          <div className="feature-section">
-            <h3>Ask Our Expert Powered by LLM</h3>
-            <p>
-              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
-            </p>
-            <ul className="feature-examples">
-              <li>"What solvents work best with Li-metal anodes?"</li>
-              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
-              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
-            </ul>
-            <p>
-              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
-            </p>
-          </div>
+          <p>
+            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
+          </p>
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+          </ul>
+          <p>
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+          </p>
+          
+          <h3>Search & "Find a Friend"</h3>
+          
+          <p>
+            You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
+          </p>
+          <ol style={{paddingLeft: '20px'}}>
+            <li>By SMILES – Input a canonical SMILES string and instantly retrieve all key info.</li>
+            <li style={{color: 'red'}}><strong>By molecule's name – input a molecule name such as "ethylene carbonate".</strong></li>
+            <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
+          </ol>
+          <p style={{color: 'red'}}>
+            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the <strong>"Find Friends"</strong> <a>box</a> :
+          </p>
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
+            <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
+          </ul>
+          <p>
+            <span style={{color: 'red'}}><strong>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</strong></span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+          </p>
           
           <div id="newsfeed" className="feature-section">
             <h3>Newsfeed</h3>
@@ -1766,8 +1760,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -1798,8 +1792,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -2786,14 +2780,14 @@ const App = () => {
                                   </tr>
                                   {molecule.properties?.predicted_mp && (
                                     <tr>
-                                      <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
+                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td> */}
                                     </tr>
                                   )}
                                   {molecule.properties?.predicted_bp && (
                                     <tr>
-                                      <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
+                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td> */}
                                     </tr>
                                   )}
                                   {molecule.properties?.functional_groups && (
@@ -2861,20 +2855,20 @@ const App = () => {
                                       </td>
                                     </tr>
                                     <tr>
-                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
                                       <td className="property-value">
                                         {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
                                           ? molecule.predicted_MP_celsius.toFixed(2) 
                                           : 'N/A'}
-                                      </td>
+                                      </td> */}
                                     </tr>
                                     <tr>
-                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
                                       <td className="property-value">
                                         {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
                                           ? molecule.predicted_BP_celsius.toFixed(2) 
                                           : 'N/A'}
-                                      </td>
+                                      </td> */}
                                     </tr>
                                     <tr>
                                       <td className="property-name">Molecular Weight</td>
