@@ -613,7 +613,7 @@ const AboutPage = ({ handleNavigation }) => {
           onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
           onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
         >
-          Motivation for MU
+          Motivation
         </h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
@@ -638,7 +638,7 @@ const AboutPage = ({ handleNavigation }) => {
               }, 100);
             }}
           >
-            Features of MU
+            Features
           </a>
           <a 
             href="#pricing" 
@@ -656,7 +656,7 @@ const AboutPage = ({ handleNavigation }) => {
               handleNavigation('pricing');
             }}
           >
-            Pricing Structure
+            Pricing
           </a>
           <a 
             href="#news" 
@@ -1928,7 +1928,7 @@ const App = () => {
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
-                  Motivation for MU
+                  Motivation
                 </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -1953,7 +1953,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -1971,7 +1971,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
@@ -2197,7 +2197,7 @@ const App = () => {
                 onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                 onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
               >
-                Motivation for MU
+                Motivation
               </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
@@ -2222,7 +2222,7 @@ const App = () => {
                     }, 100);
                   }}
                 >
-                  Features of MU
+                  Features
                 </a>
                 <a 
                   href="#pricing" 
@@ -2240,7 +2240,7 @@ const App = () => {
                     handleNavigation('pricing');
                   }}
                 >
-                  Pricing Structure
+                  Pricing
                 </a>
                 <a 
                   href="#news" 
@@ -2395,7 +2395,7 @@ const App = () => {
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
-                  Motivation for MU
+                  Motivation
                 </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -2420,7 +2420,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -2438,7 +2438,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
@@ -2494,7 +2494,7 @@ const App = () => {
                 onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                 onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
               >
-                Motivation for MU
+                Motivation
               </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
@@ -2519,7 +2519,7 @@ const App = () => {
                     }, 100);
                   }}
                 >
-                  Features of MU
+                  Features
                 </a>
                 <a 
                   href="#pricing" 
@@ -2537,7 +2537,7 @@ const App = () => {
                     handleNavigation('pricing');
                   }}
                 >
-                  Pricing Structure
+                  Pricing
                 </a>
                 <a 
                   href="#news" 
@@ -2601,7 +2601,7 @@ const App = () => {
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
-                  Motivation for MU
+                  Motivation
                 </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
@@ -2626,7 +2626,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -2644,7 +2644,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
