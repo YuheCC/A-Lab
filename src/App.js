@@ -8,10 +8,7 @@ import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
 // import logo from the public folder
 import './App.css';
-
-// API URL for backend endpoints
-// const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
-const API_URL = 'http://0.0.0.0:8000';
+import API_URL from './Constants.js'; // Contains API URL and any other constants
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -2780,7 +2777,7 @@ const App = () => {
                       ) }
                     </div>
                   )}
-                  { (lastSearch && (searchedMolecules === null || searchedMolecules.length == 0)) && (
+                  { (lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length == 0)) && (
                     <div className="molecule-not-found">
                       <p>Your molecule was not found. Here are several possibilities:
                         <br />

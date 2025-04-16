@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
-// const API_URL = 'http://0.0.0.0:8000'; // Define your API URL as needed
-const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
-
 
 // SearchInput now maintains its own internal input state.
 const SearchInput = React.memo(({ onSearch, disabled }) => {
