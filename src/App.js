@@ -8,10 +8,7 @@ import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
 // import logo from the public folder
 import './App.css';
-
-// API URL for backend endpoints
-const API_URL = 'https://api.ses.ai'; // Define your API URL as needed
-// const API_URL = 'http://0.0.0.0:8000';
+import API_URL from './Constants.js'; // Contains API URL and any other constants
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -944,28 +941,28 @@ const App = () => {
   const searchPlotlyRef = useRef(null);
   
   // Add bouncing arrow animation when molecule is highlighted
-  useEffect(() => {
-    if (!highlightedMolecules || !searchPlotInitialized) return;
+  // useEffect(() => {
+  //   if (!highlightedMolecules || !searchPlotInitialized) return;
     
-    let direction = -1; // Start moving up
-    let current = -40;
-    const min = -60;
-    const max = -30;
+  //   let direction = -1; // Start moving up
+  //   let current = -40;
+  //   const min = -60;
+  //   const max = -30;
     
-    const interval = setInterval(() => {
-      current += direction * 2;
+  //   const interval = setInterval(() => {
+  //     current += direction * 2;
       
-      if (current <= min) {
-        direction = 1; // Change to moving down
-      } else if (current >= max) {
-        direction = -1; // Change to moving up
-      }
+  //     if (current <= min) {
+  //       direction = 1; // Change to moving down
+  //     } else if (current >= max) {
+  //       direction = -1; // Change to moving up
+  //     }
       
-      setArrowOffset(current);
-    }, 50);
+  //     setArrowOffset(current);
+  //   }, 50);
     
-    return () => clearInterval(interval);
-  }, [highlightedMolecules, searchPlotInitialized]);
+  //   return () => clearInterval(interval);
+  // }, [highlightedMolecules, searchPlotInitialized]);
   
   const plotlyLayout = {
     autosize: true,
@@ -1008,12 +1005,12 @@ const App = () => {
     // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
     if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedSimilarMolecules.map(molecule => ({
+        highlightedSimilarMolecules.map((molecule, idx) => ({
           x: molecule.UMAP_0,
           y: molecule.UMAP_1,
           xref: 'x',
           yref: 'y',
-          text: 'Similar Molecule',
+          text: `Similar Molecule ${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
@@ -1149,7 +1146,7 @@ const App = () => {
             const highlighted = formattedMolecules.filter(
               (mol) => mol.x !== undefined && mol.y !== undefined
             );
-            if (highlighted.length > 0) {
+            if (highlighted && highlighted.length > 0) {
               setHighlightedMolecules(highlighted);
             }
           }
@@ -1164,8 +1161,6 @@ const App = () => {
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
-    setLastSearch(searchInput);
-
     setSearchLoading(true);
     setSearchWarning(null);
     setSearchError(null);
@@ -1179,13 +1174,14 @@ const App = () => {
     try {
       // First fetch the searched molecule's properties from Snowflake
       const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
-      console.log(moleculeResponse)
+      console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
-      console.log(formattedMolecules)
-      if (findClosestFriends) {
+      console.log(formattedMolecules);
+      console.log(searchedMolecules);
+      if (formattedMolecules && findClosestFriends) {
         // check if formattedMolecules has length > 1 - if so display warning
         if (formattedMolecules.length > 1) {
-          setSearchWarning('Multiple molecules found matching your search criterion. Find a friend disabled.');
+          setSearchWarning('Multiple molecules found matching your search criterion. Find friends disabled.');
         } else {
           const formattedMolecule = formattedMolecules[0];
 
@@ -1228,6 +1224,7 @@ const App = () => {
       console.error('Error checking Snowflake database:', apiError);
     } finally {
       setSearchLoading(false);
+      setLastSearch(searchInput);
     }
   };
 
@@ -1333,7 +1330,11 @@ const App = () => {
       setsearchResults(null);
       setsearchedMolecules(null);
       setHighlightedMolecules(null);
+      setHighlightedSimilarMolecules(null);
+      setSimilarMolecules(null);
+      setSimilarMoleculeImages({});
       setSearchError(null);
+      setLastSearch(null);
     }
     
     // Special case for enterprise (advanced search) tab
@@ -2903,11 +2904,18 @@ const App = () => {
                           ))}
                         </div>
                       ) }
-                      { (!searchedMolecules || searchedMolecules.length == 0) && (
-                        <div className="molecule-not-found">
-                          <p>This molecule was not found in our dataset.</p>
-                        </div>
-                      )}
+                    </div>
+                  )}
+                  { (lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length == 0)) && (
+                    <div className="molecule-not-found">
+                      <p>Your molecule was not found. Here are several possibilities:
+                        <br />
+                        <br />
+                        1.      It may not be battery relevant, or you misspelled the name or smiles string. Please check.
+                        <br />
+                        2.      It’s included in premium levels Enterprise and Joint Development. Please upgrade.
+                        <br />
+                        3.      You hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
                     </div>
                   )}
                 </div>
