@@ -957,7 +957,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <h3>Map the Molecular Universe</h3>
           
           <p>
-            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <strong style={{color: 'red'}}>23</strong> molecular continents, 1 million molecules (in-browser display), and <strong style={{color: 'red'}}>over 100</strong> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular continents, 1 million molecules (in-browser display), and <span style={{color: 'black'}}>over 100</span> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
           
           <h3>Filter by Chemical Properties</h3>
@@ -981,18 +981,18 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           </p>
           <ol style={{paddingLeft: '20px'}}>
             <li>By SMILES – Input a canonical SMILES string and instantly retrieve all key info.</li>
-            <li style={{color: 'red'}}><strong>By molecule's name – input a molecule name such as "ethylene carbonate".</strong></li>
+            <li style={{color: 'black'}}>By molecule's name – input a molecule name such as "ethylene carbonate".</li>
             <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
           </ol>
-          <p style={{color: 'red'}}>
-            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the <strong>"Find Friends"</strong> <a>box</a> :
+          <p style={{color: 'black'}}>
+            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the "Find Friends" <a>box</a> :
           </p>
           <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
             <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
             <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
           </ul>
           <p>
-            <span style={{color: 'red'}}><strong>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</strong></span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            <span style={{color: 'black'}}>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
           </p>
           
           <div id="newsfeed" className="feature-section">
