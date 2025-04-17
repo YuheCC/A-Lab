@@ -33,7 +33,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
       <div className="chat-input-container">
         <textarea
           className="chat-input"
-          placeholder="Ask a question about molecules, properties, or chemical structures..."
+          placeholder="Ask me anything, as long as it’s about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
           rows={2}
           value={inputValue}
           onChange={handleChange}
