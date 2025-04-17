@@ -90,10 +90,22 @@ const AuthPage = () => {
         method: 'POST',
         body: formData,
       });
-
+ 
+      // --- richer error handling ---
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Authentication failed');
+        let errorMsg = 'Authentication failed';
+        try {
+          // Most FastAPI errors are JSON { detail: "…" }
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            // Fallback: plain‑text body
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -367,8 +379,17 @@ const PasswordReset = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Password reset failed');
+        let errorMsg = 'Password reset failed';
+        try {
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
