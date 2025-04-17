@@ -133,11 +133,11 @@ body, html {
   flex: 4;
   position: relative;
   background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
+  border-radius: 0;
   margin: 10px;
   padding: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: none;
 }
 
 .info-panel {
@@ -661,12 +661,12 @@ body, html {
 }
 
 .umap-section {
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background-color: white;
+  border-radius: 0;
   padding: 25px;
   margin-top: 30px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
   display: flex;
   flex-direction: row;
   gap: 30px;
@@ -732,11 +732,12 @@ body, html {
 .search-umap-section {
   flex: 1.2;
   min-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   background-color: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: none;
+  border: none;
   margin-right: 20px;
 }
 
@@ -763,6 +764,8 @@ body, html {
   justify-content: center;
   align-items: center;
   min-height: 500px;
+  background-color: white;
+  border: none;
 }
 
 .search-interface-section {
@@ -2330,9 +2333,4 @@ body, html {
 .nav-section strong {
   font-size: 9px; /* Reduced from 14px */
   color: #333;
-}
-
-/* Specific styling for the newsfeed section */
-#newsfeed.feature-section {
-  background-color: white !important;
 }
