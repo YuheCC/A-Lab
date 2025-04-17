@@ -2331,3 +2331,8 @@ body, html {
   font-size: 9px; /* Reduced from 14px */
   color: #333;
 }
+
+/* Specific styling for the newsfeed section */
+#newsfeed.feature-section {
+  background-color: white !important;
+}
