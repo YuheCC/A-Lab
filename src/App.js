@@ -2627,7 +2627,7 @@ const App = () => {
             width: '100%',
             backgroundColor: '#f1f1f1'
           }}>
-            By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms</a> and Privacy Policy.
+            By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
           </div>
           </>
         ) : activePage === 'chatbot' ? (
