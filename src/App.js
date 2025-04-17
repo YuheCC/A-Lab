@@ -2781,15 +2781,19 @@ const App = () => {
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
                                   </tbody>
-                                  {similarMoleculeImages[index] && (
-                                    <div className="similar-molecule-image-container">
-                                      <img 
-                                        src={similarMoleculeImages[index]} 
-                                        alt={`Molecule ${index + 1} visualization`}  
-                                        className="similar-molecule-image"
-                                      />
-                                    </div>
-                                  )}
+                                    {similarMoleculeImages[index] && (
+                                      <tr>
+                                        <td colSpan="2">
+                                          <div className="similar-molecule-image-container">
+                                            <img
+                                              src={similarMoleculeImages[index]}
+                                              alt={`Molecule ${index + 1} visualization`}
+                                              className="similar-molecule-image"
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )}
                                 </table>
                               </div>
                             </div>

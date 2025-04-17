@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './FeedbackBox';
 
 import API_URL from './Constants.js';
+import DOMPurify from 'dompurify';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
@@ -311,7 +312,16 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div>{msg.text}</div>
-                {msg.sources && <div dangerouslySetInnerHTML={{ __html: msg.sources }} />}
+                {msg.sources && (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(msg.sources, {
+                        ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
+                        ALLOWED_ATTR: ['href', 'target', 'rel']
+                      })
+                    }}
+                  />
+                )}
                 {msg.molText && <div>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
