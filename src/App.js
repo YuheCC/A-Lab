@@ -448,7 +448,7 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = ({ onSignIn, handleNavigation }) => {
+const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
   return (
     <div className="pricing-container" style={{ display: 'flex', width: '100%', padding: '0' }}>
       <div className="pricing-cards" style={{ width: '100%' }}>
@@ -594,7 +594,7 @@ const PricingPage = ({ onSignIn, handleNavigation }) => {
 
 
 // About Page component
-const AboutPage = ({ handleNavigation }) => {
+const AboutPage = ({ handleNavigation, activePage }) => {
   
   // Add useEffect to set up smooth scrolling
   useEffect(() => {
@@ -620,7 +620,26 @@ const AboutPage = ({ handleNavigation }) => {
             marginBottom: '12px',
             fontWeight: 'normal'
           }}
-          onClick={() => handleNavigation('about')}
+          onClick={() => {
+            if (activePage === 'about') {
+              // Already on the about page, just scroll to the top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const motivationSection = document.querySelector('.about-content h2');
+              if (motivationSection) {
+                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              // Navigate to about page first, then scroll
+              handleNavigation('about');
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const motivationSection = document.querySelector('.about-content h2');
+                if (motivationSection) {
+                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }
+          }}
           onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
           onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
         >
@@ -1918,7 +1937,26 @@ const App = () => {
                     marginBottom: '12px',
                     fontWeight: 'normal'
                   }}
-                  onClick={() => handleNavigation('about')}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
@@ -2187,7 +2225,26 @@ const App = () => {
                   marginBottom: '12px',
                   fontWeight: 'normal'
                 }}
-                onClick={() => handleNavigation('about')}
+                onClick={() => {
+                  if (activePage === 'about') {
+                    // Already on the about page, just scroll to the top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const motivationSection = document.querySelector('.about-content h2');
+                    if (motivationSection) {
+                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } else {
+                    // Navigate to about page first, then scroll
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }
+                }}
                 onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                 onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
               >
@@ -2385,7 +2442,26 @@ const App = () => {
                     marginBottom: '12px',
                     fontWeight: 'normal'
                   }}
-                  onClick={() => handleNavigation('about')}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
@@ -2484,7 +2560,26 @@ const App = () => {
                   marginBottom: '12px',
                   fontWeight: 'normal'
                 }}
-                onClick={() => handleNavigation('about')}
+                onClick={() => {
+                  if (activePage === 'about') {
+                    // Already on the about page, just scroll to the top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const motivationSection = document.querySelector('.about-content h2');
+                    if (motivationSection) {
+                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } else {
+                    // Navigate to about page first, then scroll
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }
+                }}
                 onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                 onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
               >
@@ -2560,11 +2655,11 @@ const App = () => {
               </div>
             </div>
             <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', width: '93%' }}>
-              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} />
+              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
             </div>
           </div>
         ) : activePage === 'about' ? (
-          <AboutPage handleNavigation={handleNavigation} />
+          <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
@@ -2591,7 +2686,26 @@ const App = () => {
                     marginBottom: '12px',
                     fontWeight: 'normal'
                   }}
-                  onClick={() => handleNavigation('about')}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
                   onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                   onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
