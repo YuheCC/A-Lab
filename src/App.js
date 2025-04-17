@@ -2764,7 +2764,7 @@ const App = () => {
                                     <div className="similar-molecule-image-container">
                                       <img 
                                         src={similarMoleculeImages[index]} 
-                                        alt={`Molecule ${index + 1} visualization`} 
+                                        alt={`Molecule ${index + 1} visualization`}  
                                         className="similar-molecule-image"
                                       />
                                     </div>
@@ -2779,14 +2779,20 @@ const App = () => {
                   )}
                   { (lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length == 0)) && (
                     <div className="molecule-not-found">
-                      <p>Your molecule was not found. Here are several possibilities:
+                      <p>Your query did not return any molecules. Here are several possibilities:
                         <br />
                         <br />
-                        1.      It may not be battery relevant, or you misspelled the name or smiles string. Please check.
+                        1.      Your query may not be battery relevant or have errors. Please check.
                         <br />
-                        2.      It’s included in premium levels Enterprise and Joint Development. Please upgrade.
+                        2.      Your result molecules are included in premium levels Enterprise and Joint Development. Please upgrade.
                         <br />
-                        3.      You hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
+                        3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
+                        <button 
+                          className="pricing-cta strategic"
+                          onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
+                        >
+                          Contact Sales
+                        </button>
                     </div>
                   )}
                 </div>

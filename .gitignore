@@ -52,3 +52,4 @@ logs
 public/umap_product_demo_1M_set.csv
 umap_product_demo_1M_set.csv
 connections.toml
+src/Constants.js
