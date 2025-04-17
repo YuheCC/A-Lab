@@ -3216,7 +3216,7 @@ const App = () => {
                                     <div className="similar-molecule-image-container">
                                       <img 
                                         src={similarMoleculeImages[index]} 
-                                        alt={`Molecule ${index + 1} visualization`} 
+                                        alt={`Molecule ${index + 1} visualization`}  
                                         className="similar-molecule-image"
                                       />
                                     </div>
@@ -3231,7 +3231,7 @@ const App = () => {
                   )}
                   { (lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length == 0)) && (
                     <div className="molecule-not-found">
-                      <p>Your query did not return any molecules. Here are several possibilities::
+                      <p>Your query did not return any molecules. Here are several possibilities:
                         <br />
                         <br />
                         1.      Your query may not be battery relevant or have errors. Please check.
