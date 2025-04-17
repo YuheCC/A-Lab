@@ -178,9 +178,15 @@ const AuthPage = () => {
           {isLogin ? (
             <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
           ) : (
-            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
+            <>
+              <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
+              <p className="terms-text">
+                By using Molecular Universe, you agree to SES AI's <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/terms'); window.location.reload(); }} className="terms-link">Terms and Conditions</a>.
+              </p>
+            </>
           )}
         </div>
+        
       </div>
     </div>
   );
@@ -448,7 +454,7 @@ const PasswordReset = () => {
 };
 
 // Pricing Page component
-const PricingPage = ({ onSignIn, handleNavigation }) => {
+const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
   return (
     <div className="pricing-container" style={{ display: 'flex', width: '100%', padding: '0' }}>
       <div className="pricing-cards" style={{ width: '100%' }}>
@@ -591,15 +597,261 @@ const PricingPage = ({ onSignIn, handleNavigation }) => {
   );
 };
 
+// Terms Page component
+const TermsPage = () => {
+  const [currentDate, setCurrentDate] = useState('');
+  
+  useEffect(() => {
+    // Set the current date in MM/DD/YYYY format
+    const now = new Date();
+    const month = now.getMonth() + 1; // getMonth() is zero-indexed
+    const day = now.getDate();
+    const year = now.getFullYear();
+    setCurrentDate(`${month}/${day}/${year}`);
+  }, []);
 
+  return (
+    <div className="terms-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
+      <div className="terms-content" style={{ 
+        width: '100%', 
+        padding: '40px',
+        maxWidth: '900px',
+        margin: '0 auto',
+        lineHeight: '1.6',
+        color: '#333',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <h1 style={{ fontSize: '28px', marginBottom: '20px', textAlign: 'center' }}>Terms of Use</h1>
+        <p style={{ fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>Last Modified: {currentDate}</p>
+        
+        <p style={{ marginBottom: '15px' }}>
+          These Terms of Use (this "Agreement") are a binding contract between you or the entity you represent ("Customer," "you," or "your") and SES AI Corporation ("Provider," "we," or "us"). This Agreement governs your access to and use of the Services. Services provided under this Agreement are for business, academic or commercial, and not personal or consumer, use. YOU HEREBY REPRESENT AND WARRANT THAT YOU ARE AN AUTHORIZED REPRESENTATIVE OF A LEGAL ENTITY, INCLUDING CORPORATIONS, LIMITED LIABILITY COMPANIES, ACADEMIC INSTITUTIONS, AND OTHER ORGANIZATIONS. INDIVIDUALS MAY NOT USE THE SERVICES.
+        </p>
+        
+        <p style={{ marginBottom: '15px' }}>
+          THIS AGREEMENT TAKES EFFECT AT THE EARLIEST OF WHEN YOU EXECUTE AN ORDER THAT INCORPORATES THIS AGREEMENT BY REFERENCE, OR ACCESS OR USE THE SERVICES (the "Effective Date"). BYEXECUTING AN ORDER THAT INCORPORATES THIS AGREEMENT BY REFERENCE, OR ACCESSING OR USING THE SERVICES YOU (A) ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTAND THIS AGREEMENT; (B) REPRESENT AND WARRANT THAT YOU HAVE THE RIGHT, POWER, AND AUTHORITY TO ENTER INTO THIS AGREEMENT AND IF ENTERING INTO THIS AGREEMENT FOR AN ENTITY, THAT YOU HAVE THE LEGAL AUTHORITY TO BIND THAT ENTITY; AND (C) ACCEPT THIS AGREEMENT ON YOUR BEHALF OR ON BEHALF OF THE ENTITY YOU REPRESENT IF YOU ARE ENTERING INTO THIS AGREEMENT FOR AN ENTITY AND AGREE THAT YOU OR SUCH ENTITY, AS APPLICABLE, ARE LEGALLY BOUND BY ITS TERMS.
+        </p>
+        
+        <p style={{ marginBottom: '15px' }}>
+          IF YOU DO NOT ACCEPT THESE TERMS, YOU MAY NOT ACCESS OR USE THE SERVICES.
+        </p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>1. Definitions.</h2>
+        
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Aggregated Statistics"</span> has the meaning set out in Section 2(d).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"AI Technology"</span> means any and all machine learning, deep learning, and other artificial intelligence technologies, including statistical learning algorithms, models (including large language models), neural networks, and other artificial intelligence tools or methodologies, all software implementations of any of the foregoing, and related hardware or equipment capable of generating various types of content (including text, images, video, audio, or computer code) based on user-supplied prompts.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"AUP"</span> has the meaning set out in Section 3(a).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Authorized User"</span> means Customer and Customer's employees, consultants, contractors, and agents (i) who are authorized by Customer to access and use the Services under the rights granted to Customer under this Agreement and (ii) for whom access to the Services has been purchased hereunder.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"BIS"</span> has the meaning set out in Section 14.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Confidential Information"</span> has the meaning set out in Section 6.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Customer Data"</span> means information, data, materials, text, prompts, images, works, code, or other content, in any form or medium, that is input, uploaded, transferred, submitted, entered, posted, or otherwise transmitted by or on behalf of Customer or any other Authorized User through the Services. Customer Data does not include Aggregated Statistics.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"EAR"</span> has the meaning set out in Section 14.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Export Controls"</span> has the meaning set out in Section 14.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Feedback"</span> has the meaning set out in Section 8(d).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Fees"</span> means the fees described in an Order or the payment page of [MU's URL] that are required to be paid by the Customer for the Services.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Losses"</span> has the meaning set out in Section 10(a)(i).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Order"</span> means an ordering document or online order entered into between you and us that references this Agreement and describes the Services you are subscribing to.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Output"</span> means information, data, materials, text, images, code, works, or other content generated by or otherwise output from the Services in response to a Customer Data.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Personal Information"</span> means information that: (a) identifies or can be used to identify an individual (including, without limitation, names, signatures, addresses, telephone numbers, email addresses, and other unique identifiers); or (b) can be used to authenticate an individual (including, without limitation, employee identification numbers, government-issued identification numbers, passwords or PINs, financial account numbers, credit report information, student information, biometric, health, genetic, medical, or medical insurance data, answers to security questions, an individual's internet activity or similar interaction history, inferences drawn from other personal information to create consumer profiles, geolocation data, an individual's commercial, employment, or education history, and other personal characteristics and identifiers. Customer's business contact information is not by itself deemed to be Personal Information.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Privacy Policy"</span> has the meaning set out in Section 7.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Process"</span> means to take any action or perform any operation or set of operations that the Services are capable of taking or performing on any data, information, or other content, including to collect, receive, input, upload, download, record, reproduce, store, organize, combine, log, catalog, cross-reference, manage, maintain, copy, adapt, alter, translate, or make other improvements or derivative works, process, weigh, perform statistical analysis, retrieve, output, consult, use, perform, display, disseminate, transmit, submit, post, transfer, disclose, or otherwise provide or make available, or block, erase, or destroy. "Processing" and "Processed" have correlative meanings.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Provider IP"</span> means the Services, Output, and all intellectual property provided to Customer or any other Authorized User in connection with the foregoing. For the avoidance of doubt, Provider IP includes Aggregated Statistics and any information, data, or other content derived from Provider's monitoring of Customer's access to or use of the Services, but does not include Customer Data. Provider IP includes all modifications, enhancements, refinements, adaptations, customizations, improvements, and derivative works of the Services.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Sanctions"</span> has the meaning set out in Section 14.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Services"</span> means the services provided by Provider under this Agreement that are detailed on Provider's website available at [MU URL] or reflected in the applicable Order.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Service Suspension"</span> has the meaning set out in Section 2(f).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Term"</span> has the meaning set out in Section 12(a).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Third-Party Claim"</span> has the meaning set out in Section 10(a)(i).</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Third-Party Products"</span> means any products, technology, content, data, services, information, websites, or other materials that are owned by third parties and are included in, incorporated into, or accessible through the Services, including any third-party AI Technology.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Training Data"</span> means any and all information, data, materials, text, prompts, images, code, and other content that is used by or on behalf of Provider to train, validate, test, retrain, or improve any AI Technology incorporated into or used with, in connection with, or in support of, the Services.</p>
+
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>2. Access and Use.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provision of Services. Subject to and conditioned on your payment of Fees and compliance with all the terms and conditions of this Agreement, Provider will provide you with the online software-as-a-service products and services on a subscription basis for the Term, and such other products and services, as set forth on an applicable Order. Each Order will be incorporated into, and is fully governed by, this Agreement upon execution of the Order by both parties. In the event of any conflict or inconsistency between this Agreement and an Order, this Agreement shall control, unless expressly stated in the Order.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provision of Access. Provider hereby grants you a non-exclusive, non-transferable, non-sublicensable limited right to access and use the Services during the Term, solely for your internal business operations by Authorized Users under these terms and conditions. Provider shall provide you the necessary passwords and access credentials to allow you access to the Services.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(c)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use Restrictions. You shall not use the Services for any purposes beyond the scope of the access granted in this Agreement. You shall not at any time, directly or indirectly, and shall not permit any Authorized Users to: (i) copy, modify, prepare or create derivative works of the Services, in whole or in part; (ii) rent, lease, lend, sell, license, sublicense, assign, distribute, publish, transfer, or otherwise make available the Services; (iii) reverse engineer, disassemble, decompile, decode, or duplicate the Services, reproduce Training Data other than Customer Data, engage in model extraction, or otherwise attempt to derive or gain access to any source code, algorithm, model, model weights and parameters, or other underlying AI Technology or component of the Services, in whole or in part; (iv) access or use the Services or any Output to develop, train, or improve a competing or similar product or service; (v) use web scraping, web harvesting, web data extraction or any other method to extract data from the Services or any Output; (vi) alter or remove any proprietary notices from the Services; (vii) use the Services to create or generate Output, or use Output in a manner, that you know or should know infringes, misappropriates, or otherwise violates any intellectual property right or other right of any person, or that violates any applicable law, regulation, or rule; or (viii) submit, enter, post, or otherwise transmit or Process any Personal Information through the Services.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(d)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aggregated Statistics. Notwithstanding anything to the contrary in this Agreement, Provider may monitor Customer's use of the Services and collect and compile data and information related to Customer's use of the Services to be used by Provider in an aggregated and anonymized manner, including to compile statistical and performance information related to the provision and operation of the Services ("Aggregated Statistics"). As between Provider and Customer, all right, title, and interest in Aggregated Statistics, and all intellectual property rights therein, belong to and are retained solely by Provider. You agree that Provider may use and make publicly available Aggregated Statistics to the extent and in the manner permitted under applicable law; provided that such Aggregated Statistics do not identify Customer or Customer's Confidential Information.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(e)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reservation of Rights. Provider reserves all rights not expressly granted to Customer in this Agreement. Except for the limited rights and licenses expressly granted under this Agreement, nothing in this Agreement grants, by implication, waiver, estoppel, or otherwise, to Customer or any third party, any intellectual property rights or other right, title, or interest in or to the Provider IP or Third-Party Products.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(f)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suspension. Notwithstanding anything to the contrary in this Agreement, Provider may temporarily suspend Customer's and any other Authorized User's access to any portion or all of the Services if: (i) Provider reasonably determines that (A) there is a threat or attack on any of the Provider IP; (B) Customer's or any other Authorized User's use of the Provider IP disrupts or poses a security risk to the Provider IP, to Provider, or to any other customer or vendor of Provider; (C) Customer or any other Authorized User is using the Provider IP for fraudulent or illegal activities; (D) subject to applicable law, Customer has ceased to continue its business in the ordinary course, made an assignment for the benefit of creditors or similar disposition of its assets, or become the subject of any bankruptcy, reorganization, liquidation, dissolution, or similar proceeding; (E) Provider's provision of the Services to Customer or any other Authorized User is prohibited by applicable law; or (F) Customer is using the Services in material violation of Section Error! Reference source not found.(c) or the AUP; (ii) any vendor of Provider has suspended or terminated Provider's access to or use of any third-party services or products required to enable Customer to access and use the Services; or (iii) in accordance with Section Error! Reference source not found. (any such suspension described in subclause (i), (ii), or (iii), a "Service Suspension"). Provider shall use commercially reasonable efforts to provide written notice of any Service Suspension to Customer and to provide updates regarding resumption of access to the Services following any Service Suspension. Provider shall use commercially reasonable efforts to resume providing access to the Services as soon as reasonably possible after the event giving rise to the Services Suspension is cured. Provider will have no liability for any damage, liabilities, losses (including any loss of data or profits), or any other consequences that Customer or any other Authorized User may incur as a result of a Service Suspension.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>3. Customer Responsibilities.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acceptable Use Policy; Provider Policies. The Services may not be used for unlawful, fraudulent, offensive, or obscene activity, as further described and set out in Provider's acceptable use policy (<span style={{ fontWeight: 'bold' }}>"AUP"</span>) located at <a href='https://molecular-universe.ses.ai/terms'>https://molecular-universe.ses.ai/terms</a>, as may be amended from time to time, which is hereby incorporated herein by reference. You shall comply with all terms and conditions of this Agreement, all applicable laws, rules, and regulations, and all guidelines, standards, requirements, and policies that may be posted on [URL that consists of access to MU Terms, AUP & Privacy Policy] from time to time, which are hereby incorporated herein by reference, including the AUP.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Account Use. You are responsible and liable for all uses of the Services resulting from access provided by you, directly or indirectly, whether that access or use is permitted by or in violation of this Agreement. Without limiting the generality of the foregoing, you are responsible for all acts and omissions of Authorized Users, and any act or omission by an Authorized User that would constitute a breach of this Agreement if taken by you will be deemed a breach of this Agreement by you. You shall use reasonable efforts to make all Authorized Users aware of this Agreement's provisions as applicable to such Authorized User's use of the Services and shall cause Authorized Users to comply with such provisions.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(c)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use of Output. Provider hereby grants you a non-exclusive, non-transferable, non-sublicensable right to use the Output during the Term, solely for your internal business operations by Authorized Users under these terms and conditions. You are solely responsible for (i) evaluating (including by human review) Output for accuracy, completeness, and other factors relevant to your use before using or relying on the Output and (ii) your decisions, actions, and omissions in reliance or based on the Output.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(d)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Passwords and Access Credentials. You are responsible for keeping your passwords and access credentials associated with the Services confidential. You shall not sell or transfer them to any other person or entity. You shall promptly notify us about any unauthorized access to your passwords or access credentials.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(e)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Third-Party Products. The Services may permit access to Third-Party Products. For purposes of this Agreement, these Third-Party Products are subject to their own terms and conditions which may be presented to you for acceptance by website link or otherwise. You must comply with the applicable terms of use when using the Third-Party Products and the Services. Provider does not endorse, and hereby disclaims all liability or responsibility to you or any other person for, any Third-Party Products. We may add or remove Third-Party Products from time to time. If you do not agree to abide by the applicable terms for any Third-Party Products, then you should not install, access, or use these Third-Party Products or any Services that include or incorporate these Third-Party Products. NOTWITHSTANDING ANYTHING IN THIS AGREEMENT TO THE CONTRARY, ALL THIRD-PARTY PRODUCTS ARE MADE AVAILABLE ON AN "AS IS" BASIS WITHOUT WARRANTY OF ANY KIND. IF CUSTOMER USES ANY THIRD-PARTY PRODUCTS, PROVIDER WILL NOT BE RESPONSIBLE FOR ANY ACT OR OMISSION OF ANY PROVIDER OF SUCH THIRD-PARTY PRODUCTS. PROVIDER DOES NOT WARRANT OR PROVIDE DIRECT SUPPORT FOR ANY THIRD-PARTY SERVICES. CUSTOMER ACKNOWLEDGES AND AGREES THAT PROVIDER WILL HAVE NO RESPONSIBILITY OR LIABILITY FOR THE ACTS OR OMISSIONS OF ANY PERMITTED USERS IN CONNECTION WITH ANY THIRD-PARTY PRODUCTS.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>4. De-identified Data and Data Retention.</h2>
+        <p style={{ marginBottom: '15px' }}>Provider may create and use de-identified or desensitized data related to Customer's use of the Services to improve Provider's products and services, to develop new products and services, and for its other business purposes (and such de-identified or desensitized data will be owned by Provider). All Customer Data is automatically deleted within [X days], unless (a) otherwise agreed in an Order; (b) Provider is legally required to retain them; or (c) they are flagged as potentially violating this Agreement or the AUP.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>5. Fees and Payment.</h2>
+        <p style={{ marginBottom: '15px' }}>If you purchase any aspect of the Service from our website [MU URL], you must provide complete and accurate billing information, including a valid payment method. For paid subscriptions, we will automatically charge your payment method on each periodic renewal until you terminate our Services in accordance with Section 12(b)(i). If you received an invoice from Provider, you shall pay Provider the <span style={{ fontWeight: 'bold' }}>Fees</span> within thirty (30) days from the invoice date without offset or deduction. Customer shall make all payments hereunder in US dollars on or before the due date. Except as otherwise set forth in the applicable Order Form, all fees are due and payable in advance at the start of the applicable Term. If Customer fails to make any payment when due, without limiting Provider's other rights and remedies: (i) Provider may charge interest on the past due amount at the rate of [1.5% per month/[OTHER INTEREST RATE]] calculated daily and compounded monthly or, if lower, the highest rate permitted under applicable law; (ii) Customer shall reimburse Provider for all reasonable costs incurred by Provider in collecting any late payments or interest, including attorneys' fees, court costs, and collection agency fees; and (iii) if the failure continues for thirty (30) days or more, Provider may suspend, under Section 2(f), Customer's and all other Authorized Users' access to any portion or all of the Services until such amounts are paid in full. All Fees and other amounts payable by Customer under this Agreement are non-refundable and exclusive of taxes and similar assessments. Customer is responsible for all sales, use, and excise taxes, and any other similar taxes, duties, and charges of any kind imposed by any federal, state, or local governmental or regulatory authority on any amounts payable by Customer hereunder, other than any taxes imposed on Provider's income.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>6. Confidential Information.</h2>
+        <p style={{ marginBottom: '15px' }}>From time to time during the Term, Provider and Customer may disclose or make available to the other party information about its business affairs, products, confidential intellectual property, trade secrets, third-party confidential information, and other sensitive or proprietary information, whether orally or in written, electronic, or other form or media/in written or electronic form or media, that is marked, designated, or otherwise identified as "confidential" at the time of disclosure, or that ought reasonably to be understood as confidential or proprietary (collectively, <span style={{ fontWeight: 'bold' }}>"Confidential Information"</span>). Without limiting the foregoing, Provider IP is Provider's Confidential Information and Customer Data is Customer's Confidential Information. Confidential Information does not include information that, at the time of disclosure is: (a) in the public domain; (b) known to the receiving party; (c) rightfully obtained by the receiving party on a non-confidential basis from a third party; or (d) independently developed without any reference to or use of the disclosing party's Confidential Information by the receiving party. The receiving party shall not disclose the disclosing party's Confidential Information to any person or entity, except to the receiving party's employees, agents, or subcontractors who have a need to know the Confidential Information for the receiving party to exercise its rights or perform its obligations hereunder and who are required to protect the Confidential Information in a manner no less stringent than required under this Agreement. Notwithstanding the foregoing, each party may disclose Confidential Information to the limited extent required (i) to comply with the order of a court or other governmental body, or as otherwise necessary to comply with applicable law, provided that the party making the disclosure pursuant to the order shall first have given written notice to the other party and made a reasonable effort to obtain a protective order; or (ii) to establish a party's rights under this Agreement, including to make required court filings. Each party's obligations of non-disclosure regarding Confidential Information are effective as of the date the Confidential Information is first disclosed to the receiving party and will continue as long as permitted by applicable law; provided, however, for any Confidential Information that constitutes a trade secret (as determined under applicable law), those obligations of non-disclosure will survive the termination or expiration of this Agreement for as long as the Confidential Information remains subject to trade secret protection under applicable law. Unauthorized disclosure of Confidential Information may cause harm not compensable by damages, and the disclosing party may seek injunctive or equitable relief in a court of competent jurisdiction, without posting a bond, to protect its Confidential Information.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>7. Privacy Policy.</h2>
+        <p style={{ marginBottom: '15px' }}>Provider complies with its <span style={{ fontWeight: 'bold' }}>Privacy Policy</span>, available at https://www.ses.ai/privacy ("Privacy Policy"), in providing the Services. The Privacy Policy is subject to change as described therein. By accessing, using, and providing information to or through the Services, you acknowledge that you have reviewed and accepted our Privacy Policy, and you consent to all actions taken by us with respect to your information in compliance with the then-current version of our Privacy Policy.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>8. Intellectual Property Ownership; Feedback.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provider IP. Customer acknowledges that, as between Customer and Provider, Provider owns all right, title, and interest, including all intellectual property rights, in and to the <span style={{ fontWeight: 'bold' }}>Provider IP</span> and, for <span style={{ fontWeight: 'bold' }}>Third-Party Products</span>, the applicable third-party providers own all right, title, and interest, including all intellectual property rights, in and to the Third-Party Products.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Customer Data. Provider acknowledges that, as between Provider and Customer, Customer owns all right, title, and interest, including all intellectual property rights, in and to the <span style={{ fontWeight: 'bold' }}>Customer Data</span>. Customer hereby grants to Provider a non-exclusive, royalty-free, worldwide license to (i) reproduce, distribute, and otherwise use and display the Customer Data and Process the Customer Data as may be necessary for Provider to provide the Services to Customer and (ii) use, modify, and adapt only aggregated and anonymized Customer Data to train, develop, adapt, modify, enhance, or improve the Services and other products or services. Notwithstanding anything in this Agreement to the contrary, unless prohibited by applicable law, we may delete Customer Data at any time if we determine that Customer Data violates the terms of this Agreement or that deletion is necessary to comply with applicable law.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(c)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Feedback. If you or any other <span style={{ fontWeight: 'bold' }}>Authorized User</span> sends or transmits any communications or materials to us by mail, email, telephone, or otherwise, suggesting or recommending changes to the Services, including without limitation, new features or functionality relating thereto, or any comments, questions, suggestions, or the like (<span style={{ fontWeight: 'bold' }}>"Feedback"</span>), we are free to use that Feedback. All Feedback is and will be treated as non-confidential. You hereby assign to us on your behalf, and shall cause your Authorized Users to assign to us, all right, title, and interest in, and we are free to use, without any attribution or compensation to you or any third party, any ideas, know-how, concepts, techniques, or other intellectual property rights contained in the Feedback, for any purpose whatsoever, although we are have no obligation to acknowledge receipt of or use any Feedback.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>9. Limited Warranty and Warranty Disclaimer.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Customer Warranty. You represent, warrant, and covenant that (i) you own or otherwise have and will have all necessary rights, permissions, and consents in and relating to the Customer Data so that, as received by Provider and Processed in accordance with this Agreement, it does not and will not infringe, misappropriate, or otherwise violate any intellectual property rights, or any privacy or other rights of any third party or violate any applicable law (including but not limited to government laws and regulations relating to the export or re-export of Customer Data from the jurisdiction you operate or use the Services in), and (ii) no Customer Data contains or will contain any <span style={{ fontWeight: 'bold' }}>Personal Information</span>.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;THE SERVICES AND OUTPUT ARE PROVIDED "AS IS" AND PROVIDER SPECIFICALLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. PROVIDER SPECIFICALLY DISCLAIMS ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, AND ALL WARRANTIES ARISING FROM COURSE OF DEALING, USAGE, OR TRADE PRACTICE. PROVIDER MAKES NO WARRANTY OF ANY KIND THAT THE SERVICES, OR ANY PRODUCTS OR RESULTS OF THE USE THEREOF, INCLUDING ANY AI OUTPUTS, WILL MEET YOUR OR ANY OTHER PERSON'S OR ENTITY'S REQUIREMENTS, OPERATE WITHOUT INTERRUPTION, ACHIEVE ANY INTENDED RESULT, BE COMPATIBLE OR WORK WITH ANY OF YOUR OR ANY THIRD PARTY'S SOFTWARE, SYSTEM, OR OTHER SERVICES, OR BE SECURE, ACCURATE, COMPLETE, FREE OF HARMFUL CODE, OR ERROR-FREE, OR THAT ANY ERRORS OR DEFECTS CAN OR WILL BE CORRECTED. YOU ACKNOWLEDGE THAT, GIVEN THE NATURE OF THE SERVICES AND AI TECHNOLOGY, <span style={{ fontWeight: 'bold' }}>Output</span> (I) MAY BE INACCURATE, MISLEADING, OR BIASED, (II) MAY BE THE SAME AS OR SIMILAR TO OUTPUT THE SERVICES GENERATE FOR OTHER CUSTOMERS, (III) MAY NOT QUALIFY FOR INTELLECTUAL PROPERTY PROTECTION, AND (IV) MAY BE SUBJECT TO THIRD PARTY TERMS, INCLUDING, AS APPLICABLE, OPEN SOURCE LICENSES, AND (V) DO NOT NECESSARILY REFLECT, AND MAY BE INCONSISTENT WITH, PROVIDER'S AND THIRD-PARTY PROVIDERS' VIEWS.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>10. Indemnification.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provider Indemnification.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(i)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provider shall indemnify, defend, and hold Customer harmless from and against any and all losses, damages, liabilities, deficiencies, claims, actions, judgments, settlements, interest, awards, penalties, fines, costs, or expenses of whatever kind, including reasonable attorneys' fees (<span style={{ fontWeight: 'bold' }}>"Losses"</span>), incurred by Customer resulting from any third-party claim, suit, action, or proceeding (<span style={{ fontWeight: 'bold' }}>"Third-Party Claim"</span>) that the Services, or Customer's or any Authorized User's use thereof in accordance with this Agreement, infringes or misappropriates such third party's intellectual property rights, provided that Customer promptly notifies Provider in writing of the Third-Party Claim, cooperates with Provider, provides Provider with all related documentation in Customer's possession or control relating to such Third-Party Claim and allows Provider sole authority to control the defense and settlement of such Third-Party Claim.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(ii)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If such a Third-Party Claim is made or either party reasonably anticipates such a Third-Party Claim will be made, Customer agrees to permit Provider, at Provider's sole discretion, to (A) modify or replace the Services, or component or part thereof, to make it non-infringing, or (B) obtain the right for Customer to continue use. If Provider determines that neither alternative is reasonably available, Provider may terminate this Agreement, in its entirety or with respect to the affected component or part, effective immediately on written notice to Customer.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(iii)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This Section 10(a) will not apply to the extent that any such Third-Party Claim arises from (A) Customer's or any other Authorized User's use of the Services or Output in combination with any products, services, or software not provided by or on behalf of Provider; (B) modifications to the Services or Output other than by or on behalf of Provider; (C) Customer Data; (D) Third-Party Products; (E) Customer's disablement or circumvention of any applicable source citation, filtering, or safety tools or functions of the Services; (F) Customer's violation of this Agreement or the AUP or applicable laws; or (G) <span style={{ fontWeight: 'bold' }}>Training Data</span> or Output.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Customer Indemnification. Customer shall indemnify, hold harmless, and, at Provider's option, defend Provider and its officers, directors, employees, agents, affiliates, successors, and assigns from and against any and all Losses arising from or relating to any Third-Party Claim (i) that the other Customer Data, or Processing or any other use thereof in accordance with this Agreement, infringes or misappropriates such third party's intellectual property rights; (ii) based on Customer's or any Authorized User's negligence or willful misconduct or use of the Services or applicable laws; provided that Customer may not settle any Third-Party Claim against Provider unless Provider consents to such settlement, and further provided that Provider will have the right, at its option, to defend itself against any such Third-Party Claim or to participate in the defense thereof by counsel of its own choice.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(c)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sole Remedy. THIS SECTION 10 SETS OUT CUSTOMER'S SOLE REMEDIES AND PROVIDER'S SOLE LIABILITY AND OBLIGATION FOR ANY ACTUAL, THREATENED, OR ALLEGED CLAIMS THAT THE SERVICES OR OUTPUT INFRINGE, MISAPPROPRIATE, OR OTHERWISE VIOLATE ANY INTELLECTUAL PROPERTY RIGHTS OF ANY THIRD PARTY. IN NO EVENT WILL PROVIDER'S LIABILITY UNDER THIS SECTION 10 EXCEED US$100.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>11. Limitations of Liability.</h2>
+        <p style={{ marginBottom: '15px' }}>EXCEPT AS PROHIBITED BY LAW, IN NO EVENT WILL PROVIDER BE LIABLE UNDER OR IN CONNECTION WITH THIS AGREEMENT UNDER ANY LEGAL OR EQUITABLE THEORY, INCLUDING BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR OTHERWISE, FOR ANY: (a) CONSEQUENTIAL, INCIDENTAL, INDIRECT, EXEMPLARY, SPECIAL, ENHANCED, OR PUNITIVE DAMAGES; (b) INCREASED COSTS, DIMINUTION IN VALUE OR LOST BUSINESS, PRODUCTION, REVENUES, OR PROFITS; (c) LOSS OF GOODWILL OR REPUTATION; (d) USE, INABILITY TO USE, LOSS, INTERRUPTION, DELAY OR RECOVERY OF ANY DATA, OR BREACH OF DATA OR SYSTEM SECURITY; OR (e) COST OF REPLACEMENT GOODS OR SERVICES, IN EACH CASE REGARDLESS OF WHETHER PROVIDER WAS ADVISED OF THE POSSIBILITY OF SUCH LOSSES OR DAMAGES OR SUCH LOSSES OR DAMAGES WERE OTHERWISE FORESEEABLE. EXCEPT AS PROHIBITED BY LAW, IN NO EVENT WILL PROVIDER'S AGGREGATE LIABILITY ARISING OUT OF OR RELATED TO THIS AGREEMENT UNDER ANY LEGAL OR EQUITABLE THEORY, INCLUDING BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR OTHERWISE EXCEED THE TOTAL AMOUNTS PAID TO PROVIDER UNDER THIS AGREEMENT IN THE TWELVE (12) MONTH PERIOD PRECEDING THE EVENT GIVING RISE TO THE CLAIM OR US$100, WHICHEVER IS LESS.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>12. Term and Termination.</h2>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Term. The term of this Agreement begins on the Effective Date and will continue for effect until terminated as set forth below (the <span style={{ fontWeight: 'bold' }}>"Term"</span>).</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Termination. In addition to any other express termination right set out in this Agreement:</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(i)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unless the Term is for a specific period as set out in the <span style={{ fontWeight: 'bold' }}>Order</span>, each party may terminate this Agreement for any reason upon thirty (30) days' advance written notice.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(ii)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Either party may terminate this Agreement, effective on written notice to the other party, if the other party materially breaches this Agreement, and such breach: (A) is incapable of cure; or (B) being capable of cure, remains uncured thirty (30) days after the non-breaching party provides the breaching party with written notice of such breach.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(iii)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Either party may terminate this Agreement, effective immediately upon written notice to the other party, if the other party: (A) becomes insolvent or is generally unable to pay, or fails to pay, its debts as they become due; (B) files, or has filed against it, a petition for voluntary or involuntary bankruptcy or otherwise becomes subject, voluntarily or involuntarily, to any proceeding under any domestic or foreign bankruptcy or insolvency law; (C) makes or seeks to make a general assignment for the benefit of its creditors; or (D) applies for or has appointed a receiver, trustee, custodian, or similar agent appointed by order of any court of competent jurisdiction to take charge of or sell any material portion of its property or business.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(iv)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For clarity, termination of this Agreement will automatically terminate all Orders.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(c)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Effect of Expiration or Termination. Upon expiration or termination of this Agreement, Customer shall immediately discontinue use of the Provider IP and cease all use of the Services. No expiration or termination of this Agreement will affect Customer's obligation to pay all Fees that may have become due before that expiration or termination, or entitle Customer to any refund. Following expiration or termination of this Agreement, Provider may permanently delete Customer Data and from the Services and all systems Provider controls, unless otherwise required by applicable law. Notwithstanding the foregoing and for the avoidance of doubt, Provider shall not be obligated to delete, destroy, or disable any modifications, developments, or improvements to the Services or any other products or services resulting from Provider's use of Customer Data pursuant to Section 4 and Section 8(b)(ii). Except as otherwise set forth herein, termination of this Agreement is not an exclusive remedy and the exercise by either party of any remedy under this Agreement will be without prejudice to any other remedies it may have under this Agreement, by law, or otherwise.</p>
+        
+        <p style={{ marginBottom: '15px' }}><strong>(d)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Survival. Sections 4, 5, 6, 8, 10, 11, 12, 14, 15, 16, and 17, and any right, obligation, or required performance of the parties in this Agreement which, by its express terms or nature and context is intended to survive termination or expiration of this Agreement, will survive termination or expiration.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>13. Modifications.</h2>
+        <p style={{ marginBottom: '15px' }}>You acknowledge and agree that we have the right, in our sole discretion, to modify this Agreement from time to time, and that modified terms become effective on posting. You will be notified of modifications through notifications or posts on <a href='molecular-universe.ses.ai/terms'>molecular-universe.ses.ai/terms</a>. You are responsible for reviewing and becoming familiar with any modifications. Your continued use of the Services after the effective date of the modifications will be deemed acceptance of the modified terms.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>14. Export Regulation.</h2>
+        <p style={{ marginBottom: '15px' }}>In connection with this Agreement, you warrant that you have complied and will comply with (i) all applicable export control laws including, without limitation, the US Export Administration Act and its associated regulations (<span style={{ fontWeight: 'bold' }}>"EAR"</span>) administered by the US Department of Commerce, Bureau of Industry and Security (<span style={{ fontWeight: 'bold' }}>"BIS"</span>) the Foreign Trade Act of Korea, and export control laws and regulations of other countries (collectively, <span style={{ fontWeight: 'bold' }}>"Export Controls"</span>); (ii) economic, financial or trade sanctions administered or enforced by the US (including, without limitation, the US Department of the Treasury's Office of Foreign Assets Control, the US Department of State and US Department of Commerce), which includes, without limitation, the International Traffic in Arms Regulations, the European Union or any member state thereof, the United Kingdom, the UN Security Council, or Singapore (<span style={{ fontWeight: 'bold' }}>"Sanctions"</span>); and (iii) applicable anti-corruption and anti-bribery laws including, without limitation, the US Foreign Corrupt Practices Act, as amended. You warrant that neither you nor any party owning 50% or more of your securities or other equivalent voting interests; nor any director, officer, employee or any person acting on behalf of you, is (a) the target of Sanctions; (b) designated under any list maintained under Export Controls, including, without limitation, to BIS's Entity List, Unverified List, or Denied Persons List; (c) owned or controlled by any person or entity that are described in (a) and/or (b); or (d) is a national resident of, or a segment of the government of, any country or territory for which the US has embargoed goods or imposed trade sanctions. Notwithstanding anything in this Agreement to the contrary, for the purpose of this Section 14 and Section 15, references to "you" and "yours" include your affiliates.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>15. Compliance.</h2>
+        <p style={{ marginBottom: '15px' }}>Without limiting the requirements set forth in Section 14, you shall comply with all applicable federal laws, regulations, and rules, and complete all required undertakings (including obtaining any necessary export license or other governmental approval), prior to exporting, re-exporting, releasing, or otherwise making the <span style={{ fontWeight: 'bold' }}>Services</span> or the software or technology included in the Services available outside the US. You shall not, directly or indirectly, export, re-export, or release the Services or the software or technology included in the Services to, or make the Services or the software or technology included in the Services accessible from (i) any jurisdiction or country to which export, re-export, or release is prohibited by law, regulation, or rule, including but not limited to the countries that have been designated by the US Government as a terrorist-supporting country; or (ii) any other person or entity for use in activities directly or indirectly related to the proliferation of nuclear, biological or chemical weapons, or missiles, rocket systems or unmanned aerial vehicles, as provided in Part 744 of the EAR. You further certify that you are not a military end-user, nor are you engaged in any actions or functions that are intended to support any military end-use or any military intelligence end-use, and will not use, or permit any other person or entity to use, any of the Services provided by us in any such military end-use or military intelligence end-use. For purpose of this certificate, the term "military end-user" as defined in Section 744.21(g) of the EAR, means and includes the national armed services, the national guard and national police, government intelligence and reconnaissance organizations, and any person or entity whose actions or functions are intended to support military end-uses. A "military end-use", as defined in Section 744.21(f) of the EAR, means the incorporation of any product into a military item or defense article or any item that supports or contributes to the military item or a defense article. A "military intelligence end-use" means the design, development, production, use, operation, installation (including on-site installation), maintenance (checking), repair, overhaul, or refurbishing of, or incorporation into, military items or defense articles which are intended to support the actions or functions of an intelligence or reconnaissance organization of the armed forces or the national guard. You further acknowledge that Section 736.2(b)(3)(vi) of the EAR prohibits the use of our commodities and technologies in the development or production of any products that are intended for, or to be supplied to Huawei Technologies Co. Ltd. or any of its affiliates unless an export license for that transaction has been obtained from the BIS.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>16. Governing Law and Jurisdiction.</h2>
+        <p style={{ marginBottom: '15px' }}>This Agreement is governed by and construed in accordance with the internal laws of the State of Delaware without giving effect to any choice or conflict of law provision. Any dispute, controversy or claim arising out of or relating to this contract, or the breach, termination or invalidity thereof, shall be settled by arbitration administered by the American Arbitration Association in accordance with its Commercial Arbitration Rules, and judgment on the award rendered by the arbitrator(s) may be entered in any court having jurisdiction thereof. The place of arbitration shall be New York, New York. The number of arbitrators shall be one. The language to be used in the arbitral proceedings shall be English.</p>
+        
+        <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>17. Miscellaneous.</h2>
+        <p style={{ marginBottom: '15px' }}>This Agreement, including the Order and all documents referenced herein, constitutes the entire agreement and understanding between the parties hereto with respect to the subject matter hereof and supersedes all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, with respect to such subject matter. In the event of any inconsistency between the body of this Agreement and the Order, the body of this Agreement controls unless the parties expressly indicate in the Order an intent to deviate from the terms of this Agreement. Any notices to us must be sent to legaldept@ses.ai or our US corporate headquarters address available at https://www.ses.ai/contact-us and must be delivered either in person, by email, certified or registered mail, return receipt requested and postage prepaid, or by recognized overnight courier service, and are deemed given upon receipt by us. Notwithstanding the foregoing, you hereby consent to receiving electronic communications from us. These electronic communications may include notices about applicable fees and charges, transactional information, and other information concerning or related to the Services. You agree that any notices, agreements, disclosures, or other communications that we send to you electronically will satisfy any legal communication requirements, including that such communications be in writing. The invalidity, illegality, or unenforceability of any provision herein does not affect any other provision herein or the validity, legality, or enforceability of such provision in any other jurisdiction. Any failure to act by us with respect to a breach of this Agreement by you or others does not constitute a waiver and will not limit our rights with respect to such breach or any subsequent breaches. This Agreement is personal to you and may not be assigned or transferred for any reason whatsoever without our prior written consent and any action or conduct in violation of the foregoing will be void and without effect. We expressly reserve the right to assign this Agreement and to delegate any of its obligations hereunder.</p>
+
+        <div style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '30px' }}>
+          <h1 style={{ fontSize: '28px', marginBottom: '20px', textAlign: 'center' }}>Acceptable Use Policy</h1>
+          <p style={{ fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>Effective: {currentDate}</p>
+          
+          <p style={{ marginBottom: '15px' }}>
+            SES AI's Acceptable Use Policy ("AUP") applies to anyone using our Service, including academic institutions, organizations and businesses. We aim to maximize your control over how you use our Service while also ensuring that you do so in a way that is compliant with the law, responsible and safe for humanity. Our policies will evolve over time as our Service and user base change, as well as based on what we learn over time.
+          </p>
+          
+          <p style={{ marginBottom: '15px' }}>
+            By using our Service, you agree to comply with our policies. Violating our policies could result in action against your account, up to suspension or termination. Capitalized terms used and not defined herein are defined in the <a href="https://molecular-universe.ses.ai/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms of Use</a>.
+          </p>
+          
+          <p style={{ marginBottom: '15px' }}>
+            You are free to use our Service as you see fit so long as you use it to be a good human, act safely and responsibly, comply with the law, do not harm people, and respect our guardrails:
+          </p>
+          
+          <p style={{ marginBottom: '10px' }}><strong>1. Comply with the law.</strong> For example, don't use our Service or Outputs to promote or engage in illegal activities, including:</p>
+          <div style={{ marginLeft: '25px', marginBottom: '15px' }}>
+            <p style={{ marginBottom: '5px' }}><strong>1.1.</strong> Violating patent, trademark, or other intellectual property law</p>
+            <p style={{ marginBottom: '5px' }}><strong>1.2.</strong> Violating a person's privacy or their right to publicity</p>
+            <p style={{ marginBottom: '5px' }}><strong>1.3.</strong> Operating in a regulated industry or region without complying with those regulations</p>
+            <p style={{ marginBottom: '5px' }}><strong>1.4.</strong> Defrauding, defaming, scamming, or spamming</p>
+            <p style={{ marginBottom: '5px' }}><strong>1.5.</strong> Espionage, spying, stalking, hacking, doxing, or phishing</p>
+          </div>
+          
+          <p style={{ marginBottom: '10px' }}><strong>2. Do not harm people or property.</strong> This prohibition includes things like using our Service or Outputs to:</p>
+          <div style={{ marginLeft: '25px', marginBottom: '15px' }}>
+            <p style={{ marginBottom: '5px' }}><strong>2.1.</strong> Critically harm or promoting critically harming human life (yours or anyone else's)</p>
+            <p style={{ marginBottom: '5px' }}><strong>2.2.</strong> Take unauthorized actions on behalf of others</p>
+            <p style={{ marginBottom: '5px' }}><strong>2.3.</strong> Develop bioweapons, chemical weapons, or weapons of mass destruction</p>
+            <p style={{ marginBottom: '5px' }}><strong>2.4.</strong> Destroy property</p>
+          </div>
+          
+          <p style={{ marginBottom: '15px' }}><strong>3. Respect guardrails and don't mislead.</strong> Don't circumvent safeguards. Don't mislead people as to the nature and source of Outputs. You should be transparent and disclose your use of AI assistance and potential limitations, as applicable.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // About Page component
-const AboutPage = ({ handleNavigation }) => {
+const AboutPage = ({ handleNavigation, activePage }) => {
+  
+  // Add useEffect to set up smooth scrolling
+  useEffect(() => {
+    // Get the content wrapper element
+    const contentWrapper = document.querySelector('.about-content-wrapper');
+    if (contentWrapper) {
+      // Set initial scroll position to top
+      contentWrapper.scrollTop = 0;
+    }
+  }, []);
+
   return (
     <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-        <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
+        <h1 
+          style={{ 
+            textDecoration: 'none',
+            color: 'rgb(51, 51, 51)',
+            fontSize: '9.5px',
+            transition: 'font-size 0.3s',
+            cursor: 'pointer',
+            marginBottom: '12px',
+            fontWeight: 'normal'
+          }}
+          onClick={() => {
+            if (activePage === 'about') {
+              // Already on the about page, just scroll to the top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const motivationSection = document.querySelector('.about-content h2');
+              if (motivationSection) {
+                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              // Navigate to about page first, then scroll
+              handleNavigation('about');
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const motivationSection = document.querySelector('.about-content h2');
+                if (motivationSection) {
+                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }
+          }}
+          onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+          onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+        >
+          Motivation
+        </h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
           <a 
             href="#features" 
@@ -623,7 +875,7 @@ const AboutPage = ({ handleNavigation }) => {
               }, 100);
             }}
           >
-            Features of MU
+            Features
           </a>
           <a 
             href="#pricing" 
@@ -641,7 +893,7 @@ const AboutPage = ({ handleNavigation }) => {
               handleNavigation('pricing');
             }}
           >
-            Pricing Structure
+            Pricing
           </a>
           <a 
             href="#news" 
@@ -702,63 +954,46 @@ const AboutPage = ({ handleNavigation }) => {
           
           <h2 id="features-section">Features of Molecular Universe</h2>
           
-          <div className="feature-section">
-            <h3>Map the Molecular Universe</h3>
-            <p>
-              Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features 49 molecular continents, 1 million molecules (in-browser display), and 100 million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
-            </p>
-          </div>
+          <h3>Map the Molecular Universe</h3>
           
-          <div className="feature-section">
-            <h3>Filter by Chemical Properties</h3>
-            <p>
-              Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
-            </p>
-            <ul className="feature-list">
-              <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
-              <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
-              <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-            </ul>
-            <p>
-              You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
-            </p>
-          </div>
+          <p>
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <strong style={{color: 'red'}}>23</strong> molecular continents, 1 million molecules (in-browser display), and <strong style={{color: 'red'}}>over 100</strong> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+          </p>
           
-          <div className="feature-section">
-            <h3>Search & "Find a Friend"</h3>
-            <p>
-              You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
-            </p>
-            <ol className="feature-list">
-              <li>By SMILES – Input a SMILES string and instantly retrieve all key info.</li>
-              <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
-            </ol>
-            <p>
-              Each result comes with a Molecule Info Card that includes a "Find a Friend" tool:
-            </p>
-            <ul className="feature-list">
-              <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
-              <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
-            </ul>
-            <p>
-              This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
-            </p>
-          </div>
+          <h3>Filter by Chemical Properties</h3>
           
-          <div className="feature-section">
-            <h3>Ask Our Expert Powered by LLM</h3>
-            <p>
-              Ask our advanced chemistry-focused language model anything—from high-level strategy to molecule-level details. Trained on millions of scientific papers, patents, and SES's internal molecular data, this chatbot acts as your research co-pilot:
-            </p>
-            <ul className="feature-examples">
-              <li>"What solvents work best with Li-metal anodes?"</li>
-              <li>"Recommend additives with HOMO &lt; -8 eV."</li>
-              <li>"Which solvents can help reduce volume expansion of silicon anodes?"</li>
-            </ul>
-            <p>
-              Our LLM not only surfaces known insights from the literature, but also mines our proprietary molecular database, using the same "Find a Friend" logic, to suggest new candidates no one's talked about—yet.
-            </p>
-          </div>
+          <p>
+            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
+          </p>
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+          </ul>
+          <p>
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+          </p>
+          
+          <h3>Search & "Find a Friend"</h3>
+          
+          <p>
+            You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
+          </p>
+          <ol style={{paddingLeft: '20px'}}>
+            <li>By SMILES – Input a canonical SMILES string and instantly retrieve all key info.</li>
+            <li style={{color: 'red'}}><strong>By molecule's name – input a molecule name such as "ethylene carbonate".</strong></li>
+            <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
+          </ol>
+          <p style={{color: 'red'}}>
+            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the <strong>"Find Friends"</strong> <a>box</a> :
+          </p>
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
+            <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
+          </ul>
+          <p>
+            <span style={{color: 'red'}}><strong>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</strong></span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+          </p>
           
           <div id="newsfeed" className="feature-section">
             <h3>Newsfeed</h3>
@@ -1108,7 +1343,8 @@ const App = () => {
                 functional_groups: mol.FUNCTIONAL_GROUPS,
                 predicted_mp: mol.PREDICTED_MP,
                 predicted_bp: mol.PREDICTED_BP,
-                chemical_formula: mol.CHEMICAL_FORMULA
+                chemical_formula: mol.CHEMICAL_FORMULA,
+                CLUSTER: mol.CLUSTER
               },
               image: mol.image,
               rawData: mol
@@ -1226,12 +1462,14 @@ const App = () => {
       
       // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing') {
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms') {
           // Set appropriate active page
           if (path === '/about') {
             setActivePage('about');
           } else if (path === '/pricing') {
             setActivePage('pricing');
+          } else if (path === '/terms') {
+            setActivePage('terms');
           } else {
             setActivePage('map');
           }
@@ -1255,6 +1493,8 @@ const App = () => {
         setShowPasswordReset(true);
       } else if (path === '/pricing') {
         setActivePage('pricing');
+      } else if (path === '/terms') {
+        setActivePage('terms');
       } else if (path === '/') {
         // Always set to map when on the root path
         setActivePage('map');
@@ -1291,10 +1531,23 @@ const App = () => {
       window.history.pushState({}, '', '/pricing');
     } else if (page === 'about') {
       window.history.pushState({}, '', '/about');
+    } else if (page === 'terms') {
+      window.history.pushState({}, '', '/terms');
     } else {
       // Keep the URL as root when navigating between other tabs
       if (window.location.pathname !== '/') {
         window.history.pushState({}, '', '/');
+      }
+    }
+    
+    // Reset filters when navigating away from explorer (filter) page
+    if (activePage === 'explorer' && page !== 'explorer') {
+      resetAllFilters();
+      // Also reset functional group filter if it exists
+      if (typeof setSelectedFunctionalGroup === 'function') {
+        setSelectedFunctionalGroup('');
+        const dropdown = document.querySelector('.functional-group-select');
+        if (dropdown) dropdown.selectedIndex = 0;
       }
     }
     
@@ -1328,7 +1581,7 @@ const App = () => {
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
     // Allow all users (including non-authenticated) to access the map page and pricing page
-    if (page === 'map' || page === 'pricing') {
+    if (page === 'map' || page === 'pricing' || page === 'terms') {
       return true;
     }
     
@@ -1547,7 +1800,8 @@ const App = () => {
               functional_groups: row.FUNCTIONAL_GROUPS,
               predicted_mp: row.PREDICTED_MP,
               predicted_bp: row.PREDICTED_BP,
-              chemical_formula: row.CHEMICAL_FORMULA
+              chemical_formula: row.CHEMICAL_FORMULA,
+              CLUSTER: row.CLUSTER
             },
             rawData: row
           }));
@@ -1674,7 +1928,37 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Create separate plotly data for search view
+  // Define a color mapping for clusters (23 distinct colors)
+  const clusterColorMap = {
+    1: '#1f77b4', // blue
+    2: '#ff7f0e', // orange
+    3: '#2ca02c', // green
+    4: '#d62728', // red
+    5: '#9467bd', // purple
+    6: '#8c564b', // brown
+    7: '#e377c2', // pink
+    8: '#7f7f7f', // gray
+    9: '#bcbd22', // olive
+    10: '#17becf', // cyan
+    11: '#aec7e8', // light blue
+    12: '#ffbb78', // light orange
+    13: '#98df8a', // light green
+    14: '#ff9896', // light red
+    15: '#c5b0d5', // light purple
+    16: '#c49c94', // light brown
+    17: '#f7b6d2', // light pink
+    18: '#c7c7c7', // light gray
+    19: '#dbdb8d', // light olive
+    20: '#9edae5', // light cyan
+    21: '#393b79', // dark blue
+    22: '#637939', // dark green
+    23: '#8c6d31'  // dark orange
+  };
+  
+  // Default color for clusters not in the map
+  const defaultColor = '#000000'; // black
+
+  // Create search mode plotly data
   const searchPlotlyData = [{
     x: filteredGraphData.map(node => node.x),
     y: filteredGraphData.map(node => node.y),
@@ -1686,15 +1970,10 @@ const App = () => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return '#ff0000'; // Red color for highlighted molecule
         }
-        return node.properties?.molwt || 0; // Color by molecular weight
+        // Color by cluster
+        const clusterValue = node.properties?.CLUSTER;
+        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
       }),
-      colorscale: [
-        [0, '#440154'], // darkest purple
-        [0.25, '#3b528b'], // blue-purple
-        [0.5, '#21918c'], // green-blue
-        [0.75, '#5ec962'], // green
-        [1, '#fde725'] // yellow
-      ],
       opacity: filteredGraphData.map(node => {
         if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
           return 1; // Full opacity for highlighted molecule
@@ -1713,8 +1992,9 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
+      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
 
@@ -1726,14 +2006,11 @@ const App = () => {
     type: 'scattergl',
     marker: {
       size: 5,
-      color: filteredGraphData.map(node => node.properties?.molwt || 0),
-      colorscale: [
-        [0, '#440154'], // darkest purple
-        [0.25, '#3b528b'], // blue-purple
-        [0.5, '#21918c'], // green-blue
-        [0.75, '#5ec962'], // green
-        [1, '#fde725'] // yellow
-      ],
+      color: filteredGraphData.map(node => {
+        // Color by cluster
+        const clusterValue = node.properties?.CLUSTER;
+        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
+      }),
       opacity: 0.7
     },
     hoverinfo: 'text',
@@ -1747,8 +2024,9 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C` : ''}`
+      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
 
@@ -1776,7 +2054,7 @@ const App = () => {
   }
   
   // Modified condition to allow non-authenticated users to access the map page and pricing page
-  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing') {
+  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms') {
     return <AuthPage />;
   }
 
@@ -1862,7 +2140,41 @@ const App = () => {
           <>
             <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
               <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
@@ -1886,7 +2198,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -1904,7 +2216,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
@@ -1932,218 +2244,175 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="graph-container" style={{ flex: '1', height: '85%' }}>
-                <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  {filteredGraphData.length > 0 ? (
-                    <Plot
-                      data={plotlyData}
-                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                      config={plotlyConfig}
-                      style={{ width: '100%', height: '100%' }}
-                      onClick={handlePointClick}
-                      onInitialized={(figure) => {
-                        plotlyRef.current = figure;
-                        setMainPlotInitialized(true);
-                      }}
-                      onUpdate={(figure) => {
-                        plotlyRef.current = figure;
-                      }}
-                    />
-                  ) : (
-                    <div className="loading-message">
-                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="info-panel" style={{ width: '300px', padding: '20px', overflowY: 'auto' }}>
-                <h2>
-                  Filters 
-                  {activeFilterCount > 0 && (
-                    <button 
-                      className="reset-button" 
-                      onClick={resetAllFilters}
-                      title="Reset all filters"
-                    >
-                      Reset All
-                    </button>
-                  )}
-                </h2>
-                <div className="sliders-container">
-                  {Object.entries(filterRanges).map(([property, range]) => (
-                    <div key={property} className="filter-wrapper">
-                      <Slider
-                        property={property}
-                        value={range.range}
-                        min={range.min}
-                        max={range.max}
-                        onChange={handleFilterChange}
-                        label={filterLabels[property]}
-                        active={range.active}
+              <div className="search-umap-container">
+                <div className="search-umap-section">
+                  <div className="graph-container search-graph">
+                    {filteredGraphData.length > 0 ? (
+                      <Plot
+                        data={plotlyData}
+                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                        config={plotlyConfig}
+                        style={{ width: '100%', height: '100%' }}
+                        onClick={handlePointClick}
+                        onInitialized={(figure) => {
+                          plotlyRef.current = figure;
+                          setMainPlotInitialized(true);
+                        }}
+                        onUpdate={(figure) => {
+                          plotlyRef.current = figure;
+                        }}
                       />
-                      {range.active && (
-                        <button 
-                          className="reset-filter-button" 
-                          onClick={() => resetFilter(property)}
-                          title="Reset this filter"
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                                  <div className="functional-group-filter">
-                  <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
-                    Functional Group Filter
-                    <span
-                      className="search-tooltip-marker"
-                      title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
-                      style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
-                    >
-                      ?
-                    </span>
-                  </h3>
-                  <div className="functional-group-input-container">
-                    <select 
-                      className="functional-group-select"
-                      value={selectedFunctionalGroup}
-                      onChange={(e) => {
-                        setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
-                      }}
-                    >
-                      <option value="">Select a functional group</option>
-                      <option value="C(=O)Cl">AcidChloride</option>
-                      <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
-                      <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
-                      <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
-                      <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
-                      <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
-                      <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
-                      <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
-                      <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
-                      <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
-                      <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
-                      <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
-                      <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
-                      <option value="[CX3H](=[OX1])">Aldehyde</option>
-                      <option value="[CX3]=[CX3]">Alkene</option>
-                      <option value="[CX2]#[CX2]">Alkyne</option>
-                      <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
-                      <option value="[NX3][CX3](=O)[#6]">Amide</option>
-                      <option value="[#6][NX2]=[#6][N]">Amidine</option>
-                      <option value="[NX4]">Ammonium</option>
-                      <option value="c1ccccc1">Arene</option>
-                      <option value="[#6][N]=[N][#6]">Azo</option>
-                      <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
-                      <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
-                      <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
-                      <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
-                      <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
-                      <option value="[#6][SX2][SX2][#6]">Disulfide</option>
-                      <option value="[CX3][NX3]=[CX3]">Enamine</option>
-                      <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
-                      <option value="[OD2]([#6])[#6]">Ether</option>
-                      <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
-                      <option value="[F][CX4]">FluoroAlkyl_SP3</option>
-                      <option value="[F][CX3]">FluoroAlkyl_SP2</option>
-                      <option value="[F][CX2]">FluoroAlkyl_SP</option>
-                      <option value="[F][CX4][OX2]">FluoroEther</option>
-                      <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
-                      <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
-                      <option value="[NX3][NX3]">Hydrazine</option>
-                      <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
-                      <option value="[C][Cl,Br,I,F]">Halide</option>
-                      <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
-                      <option value="[CX2]=[NX3]">Imine</option>
-                      <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
-                      <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
-                      <option value="[#6]([O][#6])([O][#6])">Ketal</option>
-                      <option value="[CX2]#[NX1]">Nitrile</option>
-                      <option value="[OX2][OX2]">Peroxide</option>
-                      <option value="c1ccccc1[OH]">Phenol</option>
-                      <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
-                      <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
-                      <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
-                      <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
-                      <option value="[Se][#6]">Selenide</option>
-                      <option value="[SeH]">Selenol</option>
-                      <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
-                      <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
-                      <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
-                      <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
-                      <option value="[SX2H]">Thiol</option>
-                      <option value="[#6](=[SX])[H]">Thial</option>
-                      <option value="[#6](=[SX])[NX3]">Thioamide</option>
-                      <option value="[#6](=[SX])[#6]">Thioketone</option>
-                      <option value="[CX2]=[SX1]">Thione</option>
-                      <option value="[SX2]([#6])[#6]">Thioether</option>
-                      <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
-                      <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
-                      <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
-                      <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
-                      <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
-                      <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
-                      <option value="c1ccccc1">Arene (aromatic)</option>
-                    </select>
-                    <button 
-                      className="reset-filter-button functional-group-reset"
-                      onClick={() => {
-                        setSelectedFunctionalGroup('');
-                        const dropdown = document.querySelector('.functional-group-select');
-                        if (dropdown) dropdown.selectedIndex = 0;
-                      }}
-                    >
-                      Reset
-                    </button>
+                    ) : (
+                      <div className="loading-message">
+                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                      </div>
+                    )}
                   </div>
                 </div>
-                </div>
                 
-                <style jsx>{`
-                  .functional-group-filter {
-                    margin-top: 20px;
-                    padding-top: 10px;
-                    border-top: 1px solid #e0e0e0;
-                  }
-                  
-                  .functional-group-select {
-                    width: 100%;
-                    padding: 8px 12px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    background-color: white;
-                    font-size: 14px;
-                    color: #333;
-                  }
-                  
-                  .functional-group-select:focus {
-                    outline: none;
-                    border-color: #0080ff;
-                    box-shadow: 0 0 0 2px rgba(0, 128, 255, 0.2);
-                  }
-                  
-                  .functional-group-input-container {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                  }
-                  
-                  .functional-group-reset {
-                    margin-left: 8px;
-                    padding: 4px 8px;
-                    background-color: #f5f5f5;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    cursor: pointer;
-                  }
-                  
-                  .functional-group-reset:hover {
-                    background-color: #e0e0e0;
-                  }
-                `}</style>
+                <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
+                  <h2>
+                    Filters 
+                    {activeFilterCount > 0 && (
+                      <button 
+                        className="reset-button" 
+                        onClick={resetAllFilters}
+                        title="Reset all filters"
+                      >
+                        Reset All
+                      </button>
+                    )}
+                  </h2>
+                  <div className="sliders-container">
+                    {Object.entries(filterRanges).map(([property, range]) => (
+                      <div key={property} className="filter-wrapper">
+                        <Slider
+                          property={property}
+                          value={range.range}
+                          min={range.min}
+                          max={range.max}
+                          onChange={handleFilterChange}
+                          label={filterLabels[property]}
+                          active={range.active}
+                        />
+                        {range.active && (
+                          <button 
+                            className="reset-filter-button" 
+                            onClick={() => resetFilter(property)}
+                            title="Reset this filter"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <div className="functional-group-filter">
+                      <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
+                        Functional Group Filter
+                        <span
+                          className="search-tooltip-marker"
+                          title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
+                          style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+                        >
+                          ?
+                        </span>
+                      </h3>
+                      <div className="functional-group-input-container">
+                        <select 
+                          className="functional-group-select"
+                          value={selectedFunctionalGroup}
+                          onChange={(e) => {
+                            setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
+                          }}
+                        >
+                          <option value="">Select a functional group</option>
+                          <option value="C(=O)Cl">AcidChloride</option>
+                          <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
+                          <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
+                          <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
+                          <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
+                          <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
+                          <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
+                          <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
+                          <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
+                          <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
+                          <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
+                          <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
+                          <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
+                          <option value="[CX3H](=[OX1])">Aldehyde</option>
+                          <option value="[CX3]=[CX3]">Alkene</option>
+                          <option value="[CX2]#[CX2]">Alkyne</option>
+                          <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
+                          <option value="[NX3][CX3](=O)[#6]">Amide</option>
+                          <option value="[#6][NX2]=[#6][N]">Amidine</option>
+                          <option value="[NX4]">Ammonium</option>
+                          <option value="c1ccccc1">Arene</option>
+                          <option value="[#6][N]=[N][#6]">Azo</option>
+                          <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
+                          <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
+                          <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
+                          <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
+                          <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
+                          <option value="[#6][SX2][SX2][#6]">Disulfide</option>
+                          <option value="[CX3][NX3]=[CX3]">Enamine</option>
+                          <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
+                          <option value="[OD2]([#6])[#6]">Ether</option>
+                          <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
+                          <option value="[F][CX4]">FluoroAlkyl_SP3</option>
+                          <option value="[F][CX3]">FluoroAlkyl_SP2</option>
+                          <option value="[F][CX2]">FluoroAlkyl_SP</option>
+                          <option value="[F][CX4][OX2]">FluoroEther</option>
+                          <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
+                          <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
+                          <option value="[NX3][NX3]">Hydrazine</option>
+                          <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
+                          <option value="[C][Cl,Br,I,F]">Halide</option>
+                          <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
+                          <option value="[CX2]=[NX3]">Imine</option>
+                          <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
+                          <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
+                          <option value="[#6]([O][#6])([O][#6])">Ketal</option>
+                          <option value="[CX2]#[NX1]">Nitrile</option>
+                          <option value="[OX2][OX2]">Peroxide</option>
+                          <option value="c1ccccc1[OH]">Phenol</option>
+                          <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
+                          <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
+                          <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
+                          <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
+                          <option value="[Se][#6]">Selenide</option>
+                          <option value="[SeH]">Selenol</option>
+                          <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
+                          <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
+                          <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
+                          <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
+                          <option value="[SX2H]">Thiol</option>
+                          <option value="[#6](=[SX])[H]">Thial</option>
+                          <option value="[#6](=[SX])[NX3]">Thioamide</option>
+                          <option value="[#6](=[SX])[#6]">Thioketone</option>
+                          <option value="[CX2]=[SX1]">Thione</option>
+                          <option value="[SX2]([#6])[#6]">Thioether</option>
+                          <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
+                          <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
+                          <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
+                          <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
+                          <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
+                          <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
+                          <option value="c1ccccc1">Arene (aromatic)</option>
+                        </select>
+                        <button 
+                          className="reset-filter-button functional-group-reset"
+                          onClick={() => {
+                            setSelectedFunctionalGroup('');
+                            const dropdown = document.querySelector('.functional-group-select');
+                            if (dropdown) dropdown.selectedIndex = 0;
+                          }}
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </>
@@ -2159,7 +2428,41 @@ const App = () => {
           }}>
             {/* New left text column (20%) */}
             <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <h1 
+                style={{ 
+                  textDecoration: 'none',
+                  color: 'rgb(51, 51, 51)',
+                  fontSize: '9.5px',
+                  transition: 'font-size 0.3s',
+                  cursor: 'pointer',
+                  marginBottom: '12px',
+                  fontWeight: 'normal'
+                }}
+                onClick={() => {
+                  if (activePage === 'about') {
+                    // Already on the about page, just scroll to the top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const motivationSection = document.querySelector('.about-content h2');
+                    if (motivationSection) {
+                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } else {
+                    // Navigate to about page first, then scroll
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }
+                }}
+                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+              >
+                Motivation
+              </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
                   href="/about#features" 
@@ -2183,7 +2486,7 @@ const App = () => {
                     }, 100);
                   }}
                 >
-                  Features of MU
+                  Features
                 </a>
                 <a 
                   href="#pricing" 
@@ -2201,7 +2504,7 @@ const App = () => {
                     handleNavigation('pricing');
                   }}
                 >
-                  Pricing Structure
+                  Pricing
                 </a>
                 <a 
                   href="#news" 
@@ -2231,43 +2534,88 @@ const App = () => {
             </div>
             
             {/* UMAP Visualization in the middle (50%) */}
-            <div className="graph-container" style={{ width: '50%', height: '100%', backgroundColor: 'white', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px', marginRight: '20px' }}>
-              {filteredGraphData.length > 0 ? (
-                <Plot
-                  data={plotlyData}
-                  layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                  config={plotlyConfig}
-                  style={{ width: '100%', height: '100%' }}
-                  onClick={handlePointClick}
-                  onInitialized={(figure) => {
-                    plotlyRef.current = figure;
-                    setMainPlotInitialized(true);
-                  }}
-                  onUpdate={(figure) => {
-                    plotlyRef.current = figure;
-                  }}
-                />
-              ) : (
-                <div className="loading-message">
-                  {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+            <div className="search-umap-container">
+              {/* UMAP Visualization in the middle (50%) */}
+              <div className="search-umap-section">
+                <div className="graph-container search-graph">
+                  {filteredGraphData.length > 0 ? (
+                    <Plot
+                      data={plotlyData}
+                      layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
+                      config={plotlyConfig}
+                      style={{ width: '100%', height: '100%' }}
+                      onClick={handlePointClick}
+                      onInitialized={(figure) => {
+                        plotlyRef.current = figure;
+                        setMainPlotInitialized(true);
+                      }}
+                      onUpdate={(figure) => {
+                        plotlyRef.current = figure;
+                      }}
+                    />
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            
-            {/* Right text content (25%) */}
-            <div className="map-text-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-              <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
-              </p>
+              </div>
               
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
-              </p>
-              
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
-              </p>
+              {/* Right text content */}
+              <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
+                </p>
+                
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+                </p>
+                
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+                </p>
+                
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
+                  <img 
+                    src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`} 
+                    alt="Molecular Universe Clusters Map" 
+                    style={{ 
+                      maxWidth: '100%', 
+                      height: 'auto', 
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                    }} 
+                  />
+                </div>
+                
+                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
+                <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely by populated polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2279,7 +2627,7 @@ const App = () => {
             width: '100%',
             backgroundColor: '#f1f1f1'
           }}>
-            By using Molecular Universe, you agree to our Terms and Privacy Policy.
+            By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
           </div>
           </>
         ) : activePage === 'chatbot' ? (
@@ -2297,7 +2645,41 @@ const App = () => {
                 left: 0,
                 top: 20
               }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
@@ -2321,7 +2703,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -2339,7 +2721,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
@@ -2381,7 +2763,41 @@ const App = () => {
         ) : activePage === 'pricing' ? (
           <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
             <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-              <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+              <h1 
+                style={{ 
+                  textDecoration: 'none',
+                  color: 'rgb(51, 51, 51)',
+                  fontSize: '9.5px',
+                  transition: 'font-size 0.3s',
+                  cursor: 'pointer',
+                  marginBottom: '12px',
+                  fontWeight: 'normal'
+                }}
+                onClick={() => {
+                  if (activePage === 'about') {
+                    // Already on the about page, just scroll to the top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const motivationSection = document.querySelector('.about-content h2');
+                    if (motivationSection) {
+                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } else {
+                    // Navigate to about page first, then scroll
+                    handleNavigation('about');
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }
+                }}
+                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+              >
+                Motivation
+              </h1>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 <a 
                   href="#features" 
@@ -2405,7 +2821,7 @@ const App = () => {
                     }, 100);
                   }}
                 >
-                  Features of MU
+                  Features
                 </a>
                 <a 
                   href="#pricing" 
@@ -2423,7 +2839,7 @@ const App = () => {
                     handleNavigation('pricing');
                   }}
                 >
-                  Pricing Structure
+                  Pricing
                 </a>
                 <a 
                   href="#news" 
@@ -2452,11 +2868,13 @@ const App = () => {
               </div>
             </div>
             <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', width: '93%' }}>
-              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} />
+              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
             </div>
           </div>
+        ) : activePage === 'terms' ? (
+          <TermsPage />
         ) : activePage === 'about' ? (
-          <AboutPage handleNavigation={handleNavigation} />
+          <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
@@ -2473,7 +2891,41 @@ const App = () => {
                 position: 'sticky',
                 left: 0
               }}>
-                <h1 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '12px' }}>Motivation for MU</h1>
+                <h1 
+                  style={{ 
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      const motivationSection = document.querySelector('.about-content h2');
+                      if (motivationSection) {
+                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const motivationSection = document.querySelector('.about-content h2');
+                        if (motivationSection) {
+                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation
+                </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   <a 
                     href="#features" 
@@ -2497,7 +2949,7 @@ const App = () => {
                       }, 100);
                     }}
                   >
-                    Features of MU
+                    Features
                   </a>
                   <a 
                     href="#pricing" 
@@ -2515,7 +2967,7 @@ const App = () => {
                       handleNavigation('pricing');
                     }}
                   >
-                    Pricing Structure
+                    Pricing
                   </a>
                   <a 
                     href="#news" 
@@ -2574,7 +3026,7 @@ const App = () => {
               </div>
 
               {/* Search interface on the right */}
-              <div className="search-interface-section">
+              <div className="search-interface-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                 {/* Search bar container */}
                 
                 <SearchInput 
@@ -2657,14 +3109,14 @@ const App = () => {
                                   </tr>
                                   {molecule.properties?.predicted_mp && (
                                     <tr>
-                                      <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
+                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td> */}
                                     </tr>
                                   )}
                                   {molecule.properties?.predicted_bp && (
                                     <tr>
-                                      <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
+                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td> */}
                                     </tr>
                                   )}
                                   {molecule.properties?.functional_groups && (
@@ -2732,20 +3184,20 @@ const App = () => {
                                       </td>
                                     </tr>
                                     <tr>
-                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
                                       <td className="property-value">
                                         {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
                                           ? molecule.predicted_MP_celsius.toFixed(2) 
                                           : 'N/A'}
-                                      </td>
+                                      </td> */}
                                     </tr>
                                     <tr>
-                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
                                       <td className="property-value">
                                         {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
                                           ? molecule.predicted_BP_celsius.toFixed(2) 
                                           : 'N/A'}
-                                      </td>
+                                      </td> */}
                                     </tr>
                                     <tr>
                                       <td className="property-name">Molecular Weight</td>
@@ -2787,6 +3239,7 @@ const App = () => {
                         2.      Your result molecules are included in premium levels Enterprise and Joint Development. Please upgrade.
                         <br />
                         3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
+                        <br />
                         <button 
                           className="pricing-cta strategic"
                           onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
