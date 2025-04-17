@@ -1588,6 +1588,19 @@ body, html {
   background-color: #45a049;
 }
 
+.terms-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.terms-link {
+  color: #0066cc;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
 /* Permissions Error Page Styles */
 .permissions-error-container {
   display: flex;

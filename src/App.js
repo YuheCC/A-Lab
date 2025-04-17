@@ -178,9 +178,15 @@ const AuthPage = () => {
           {isLogin ? (
             <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
           ) : (
-            <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
+            <>
+              <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
+              <p className="terms-text">
+                By using Molecular Universe, you agree to SES AI's <a href="/terms" className="terms-link">Terms and Conditions</a>.
+              </p>
+            </>
           )}
         </div>
+        
       </div>
     </div>
   );
