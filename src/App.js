@@ -598,7 +598,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
 };
 
 // Terms Page component
-const TermsPage = () => {
+const TermsPage = ({handleNavigation, activePage}) => {
   const [currentDate, setCurrentDate] = useState('');
   
   useEffect(() => {
@@ -612,6 +612,111 @@ const TermsPage = () => {
 
   return (
     <div className="terms-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
+        <h1 
+          style={{ 
+            textDecoration: 'none',
+            color: 'rgb(51, 51, 51)',
+            fontSize: '9.5px',
+            transition: 'font-size 0.3s',
+            cursor: 'pointer',
+            marginBottom: '12px',
+            fontWeight: 'normal'
+          }}
+          onClick={() => {
+            if (activePage === 'about') {
+              // Already on the about page, just scroll to the top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const motivationSection = document.querySelector('.about-content h2');
+              if (motivationSection) {
+                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              // Navigate to about page first, then scroll
+              handleNavigation('about');
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const motivationSection = document.querySelector('.about-content h2');
+                if (motivationSection) {
+                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }
+          }}
+          onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+          onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+        >
+          Motivation
+        </h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+          <a 
+            href="#features" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const featuresSection = document.getElementById('features-section');
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            Features
+          </a>
+          <a 
+            href="#pricing" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('pricing');
+            }}
+          >
+            Pricing
+          </a>
+          <a 
+            href="#news" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const newsfeedSection = document.getElementById('newsfeed');
+                if (newsfeedSection) {
+                  newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            News Feed
+          </a>
+        </div>
+      </div>
       <div className="terms-content" style={{ 
         width: '100%', 
         padding: '40px',
@@ -759,7 +864,7 @@ const TermsPage = () => {
         
         <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>17. Miscellaneous.</h2>
         <p style={{ marginBottom: '15px' }}>This Agreement, including the Order and all documents referenced herein, constitutes the entire agreement and understanding between the parties hereto with respect to the subject matter hereof and supersedes all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, with respect to such subject matter. In the event of any inconsistency between the body of this Agreement and the Order, the body of this Agreement controls unless the parties expressly indicate in the Order an intent to deviate from the terms of this Agreement. Any notices to us must be sent to legaldept@ses.ai or our US corporate headquarters address available at https://www.ses.ai/contact-us and must be delivered either in person, by email, certified or registered mail, return receipt requested and postage prepaid, or by recognized overnight courier service, and are deemed given upon receipt by us. Notwithstanding the foregoing, you hereby consent to receiving electronic communications from us. These electronic communications may include notices about applicable fees and charges, transactional information, and other information concerning or related to the Services. You agree that any notices, agreements, disclosures, or other communications that we send to you electronically will satisfy any legal communication requirements, including that such communications be in writing. The invalidity, illegality, or unenforceability of any provision herein does not affect any other provision herein or the validity, legality, or enforceability of such provision in any other jurisdiction. Any failure to act by us with respect to a breach of this Agreement by you or others does not constitute a waiver and will not limit our rights with respect to such breach or any subsequent breaches. This Agreement is personal to you and may not be assigned or transferred for any reason whatsoever without our prior written consent and any action or conduct in violation of the foregoing will be void and without effect. We expressly reserve the right to assign this Agreement and to delegate any of its obligations hereunder.</p>
-
+        
         <div style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '30px' }}>
           <h1 style={{ fontSize: '28px', marginBottom: '20px', textAlign: 'center' }}>Acceptable Use Policy</h1>
           <p style={{ fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>Effective: {currentDate}</p>
@@ -2872,7 +2977,7 @@ const App = () => {
             </div>
           </div>
         ) : activePage === 'terms' ? (
-          <TermsPage />
+          <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : (
