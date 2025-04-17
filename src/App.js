@@ -516,11 +516,11 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Professional</h2>
           <p className="pricing-description">
-            Accessing 100M database
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
-            <span className="price-period">/ month</span>
+            <span className="price-period">/ month /10 users</span>
           </div>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
