@@ -42,7 +42,9 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           title={`Valid queries can search over any numerical properties of molecules. For example:
  - "Find all molecules with HOMO at most -8"
  - "Find all molecules with LUMO at least -2 and molecular weight at most 200"
-For more open-ended queries, use Ask.`}
+For more open-ended queries, use Ask.
+
+To draw and look up SMILES strings, please use https://pubchem.ncbi.nlm.nih.gov//edit3/index.html`}
           style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
         >
           ?
