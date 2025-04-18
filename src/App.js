@@ -560,13 +560,13 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         </div>
 
         <div className="pricing-card">
-          <h2>Professional</h2>
+          <h2>Team</h2>
           <p className="pricing-description">
             Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
-            <span className="price-period">/ month /10 users</span>
+            <span className="price-period">/ month (Up to 10 users)</span>
           </div>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
@@ -627,13 +627,13 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-            <li>Expert consulting</li>
-              <li>Molecular synthesis</li>
-              <li>Electrolyte formulation design</li>
-              <li>Cell testing</li>
-              <li>Larger, exclusive/private database</li>
-              <li>More advanced LLM</li>
-              <li>Customized statement-of-work</li>
+            <li>Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap, battery-specific LLM)</li>
+              <li>More molecule properties (inc. melting and boiling point predictions)</li>
+              <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
+              <li>Potential new IP development and Hidden Galaxy access</li>
             </ul>
           </div>
         </div>
