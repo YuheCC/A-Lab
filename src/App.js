@@ -1543,8 +1543,14 @@ const App = () => {
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
-      // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
+      // Determine which endpoint to use based on user permissions
+      let searchEndpoint = `${API_URL}/search`;
+      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+        searchEndpoint = `${API_URL}/search-35`;
+      }
+
+      // Fetch the searched molecule's properties 
+      const moleculeResponse = await fetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
