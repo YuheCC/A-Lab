@@ -1381,7 +1381,7 @@ const App = () => {
           y: molecule.UMAP_1,
           xref: 'x',
           yref: 'y',
-          text: `Similar Molecule ${idx + 1}`,
+          text: `#${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
