@@ -1543,8 +1543,18 @@ const App = () => {
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
+      // Determine which endpoint to use based on user permission level
+      let searchEndpoint = "/search?query=";
+      
+      // For admin, enterprise, or joint permission levels, use the enhanced search endpoint
+      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+        searchEndpoint = "/search-35?query=";
+      }
+      // For research, explorer, or team permission levels, use the regular search endpoint
+      // (this is already the default)
+      
       // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
+      const moleculeResponse = await fetch(`${API_URL}${searchEndpoint}${encodeURIComponent(searchInput.trim())}`);
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
