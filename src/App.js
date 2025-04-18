@@ -3273,7 +3273,6 @@ const App = () => {
                                       <td className="property-name">Functional Groups</td>
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
-                                  </tbody>
                                     {similarMoleculeImages[index] && (
                                       <tr>
                                         <td colSpan="2">
@@ -3287,6 +3286,7 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
+                                  </tbody>
                                 </table>
                               </div>
                             </div>
