@@ -512,7 +512,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </div> */}
           <h2>Research (academia only)</h2>
           <p className="pricing-description">
-            Accessing 1M database
+          Access Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
@@ -537,7 +537,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Explorer</h2>
           <p className="pricing-description">
-            Accessing 1M database
+          Access Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$150</span>
@@ -562,7 +562,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Team</h2>
           <p className="pricing-description">
-            Accessing 1M database
+          Access Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
@@ -586,7 +586,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Enterprise</h2>
           <p className="pricing-description">
-            Accessing 100M database
+          Access Whole Molecular Universe (100M)
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -613,7 +613,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            Full Enterprise Access
+          Access Whole Molecular Universe (100M) inc. Hidden Galaxies
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
