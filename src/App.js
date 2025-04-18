@@ -512,7 +512,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </div> */}
           <h2>Research (academia only)</h2>
           <p className="pricing-description">
-          Access Partial Molecular Universe (1M)
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
@@ -537,7 +537,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Explorer</h2>
           <p className="pricing-description">
-          Access Partial Molecular Universe (1M)
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$150</span>
@@ -562,7 +562,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Team</h2>
           <p className="pricing-description">
-          Access Partial Molecular Universe (1M)
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
@@ -586,7 +586,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Enterprise</h2>
           <p className="pricing-description">
-          Access Whole Molecular Universe (100M)
+            Accessing 100M database
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -613,7 +613,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-          Access Whole Molecular Universe (100M) inc. Hidden Galaxies
+            Full Enterprise Access
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -632,8 +632,8 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
               <li>More molecule properties (inc. melting and boiling point predictions)</li>
-              <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
-              <li>Potential new IP development and Hidden Galaxy access</li>
+              <li>More advanced LLM</li>
+              <li>Customized statement-of-work</li>
             </ul>
           </div>
         </div>
@@ -1543,18 +1543,8 @@ const App = () => {
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
-      // Determine which endpoint to use based on user permission level
-      let searchEndpoint = "/search?query=";
-      
-      // For admin, enterprise, or joint permission levels, use the enhanced search endpoint
-      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-        searchEndpoint = "/search-35?query=";
-      }
-      // For research, explorer, or team permission levels, use the regular search endpoint
-      // (this is already the default)
-      
       // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await fetch(`${API_URL}${searchEndpoint}${encodeURIComponent(searchInput.trim())}`);
+      const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
@@ -2153,8 +2143,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -2185,8 +2175,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -3268,16 +3258,16 @@ const App = () => {
                                     <td className="property-name">ESP Max (eV)</td>
                                     <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(4) : 'N/A'}</td>
                                   </tr>
-                                  {molecule.properties?.predicted_mp && (
+                                  {molecule.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                                     <tr>
-                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td> */}
+                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
                                     </tr>
                                   )}
-                                  {molecule.properties?.predicted_bp && (
+                                  {molecule.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                                     <tr>
-                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td> */}
+                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
                                     </tr>
                                   )}
                                   {molecule.properties?.functional_groups && (
