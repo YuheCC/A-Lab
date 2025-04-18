@@ -10,6 +10,43 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
 
+// ---------------------------------------------------------------------------
+// Global fetch wrapper that logs the user out on 401 Unauthorized responses
+const redirectToLogin = () => {
+  // Clear any persisted auth info
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('permissions');
+  // Send user to the sign‑in page
+  window.history.pushState({}, '', '/signin');
+  window.location.reload();
+};
+
+const _origFetch = window.fetch.bind(window);
+window.fetch = (...args) =>
+  _origFetch(...args).then((response) => {
+    if (response.status === 401) {
+      redirectToLogin();
+    }
+    return response;
+  });
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Auth‑aware fetch: automatically sends the JWT if we have one
+export const authFetch = (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...authHeaders,
+      ...(options.headers || {}),
+    },
+  });
+};
+// ---------------------------------------------------------------------------
+
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
 
@@ -376,11 +413,8 @@ const PasswordReset = () => {
       formData.append('current_password', currentPassword);
       formData.append('new_password', newPassword);
       
-      const response = await fetch(`${API_URL}/reset-password`, {
+      const response = await authFetch(`${API_URL}/reset-password`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
         body: formData,
       });
 
@@ -1417,9 +1451,8 @@ const App = () => {
 
     try {
       // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await fetch(
-        `${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const moleculeResponse = await authFetch(
+        `${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`
       );
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
@@ -1433,9 +1466,8 @@ const App = () => {
           const formattedMolecule = formattedMolecules[0];
 
           // Then fetch similar molecules
-          const response = await fetch(
-            `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`,
-            { headers: { Authorization: `Bearer ${token}` } }
+          const response = await authFetch(
+            `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`
           );
           if (!response.ok) {
             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
