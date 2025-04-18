@@ -2415,7 +2415,7 @@ const App = () => {
                       />
                     ) : (
                       <div className="loading-message">
-                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                       </div>
                     )}
                   </div>
@@ -2706,7 +2706,7 @@ const App = () => {
                     />
                   ) : (
                     <div className="loading-message">
-                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                      {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                     </div>
                   )}
                 </div>
@@ -3169,7 +3169,7 @@ const App = () => {
                       />
                     ) : (
                       <div className="loading-message">
-                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                       </div>
                     )}
                   </div>
