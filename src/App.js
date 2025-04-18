@@ -54,8 +54,11 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -84,6 +87,9 @@ const AuthPage = () => {
       
       if (!isLogin) {
         formData.append('email', email);
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('organization_name', organizationName);
       }
 
       const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'register'}`, {
@@ -127,6 +133,46 @@ const AuthPage = () => {
         {error && <div className="auth-error">{error}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">
+          {!isLogin && (
+            <>
+              <div className="form-group">
+                <label htmlFor="firstName">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First Name"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="organizationName">Organization Name</label>
+                <input
+                  type="text"
+                  id="organizationName"
+                  value={organizationName}
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  placeholder="Organization Name"
+                  required
+                />
+              </div>
+            </>
+          )}
+          
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
