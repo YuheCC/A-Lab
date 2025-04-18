@@ -102,7 +102,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       setMoleculesLoading(true);
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
-          const res = await fetch(`https://api.ses.ai/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+      const token = localStorage.getItem('token');
+      const res = await fetch(
+        `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
           const data = await res.json();
           return data;
         })
@@ -130,7 +138,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
     try {
-      const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
       const data = await response.json();
       console.log(data);
       console.log(data["similar_molecules"]);

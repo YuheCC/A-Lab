@@ -1166,6 +1166,9 @@ const App = () => {
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
+    // Attach JWT so /search and /find‑friend‑with‑image stay protected
+    const token = localStorage.getItem('token');
+
     setSearchLoading(true);
     setSearchWarning(null);
     setSearchError(null);
@@ -1178,7 +1181,10 @@ const App = () => {
 
     try {
       // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await fetch(`${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`);
+      const moleculeResponse = await fetch(
+        `${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
@@ -1191,7 +1197,10 @@ const App = () => {
           const formattedMolecule = formattedMolecules[0];
 
           // Then fetch similar molecules
-          const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`);
+          const response = await fetch(
+            `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
           if (!response.ok) {
             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
           }
