@@ -2334,7 +2334,7 @@ const App = () => {
       <header className="App-header">
         <div className="header-content">
           <div className="header-links">
-            <a 
+          <a 
               href="/"
               className={`header-link ${activePage === 'map' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('map'); }}
@@ -2343,10 +2343,10 @@ const App = () => {
             </a>
             <a 
               href="/"
-              className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
+              className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
-              Filter
+              Ask
             </a>
             <a 
               href="/"
@@ -2357,10 +2357,10 @@ const App = () => {
             </a>
             <a 
               href="/"
-              className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
+              className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
-              Ask
+              Filter
             </a>
           </div>
         </div>
