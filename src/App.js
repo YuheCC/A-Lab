@@ -1622,9 +1622,14 @@ const App = () => {
           const formattedMolecule = formattedMolecules[0];
 
           // Then fetch similar molecules
-          const response = await authFetch(
-            `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`
-          );
+          let friendUrl = `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`;
+          
+          // Add use_35m parameter for users with admin, enterprise, or joint permissions
+          if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+            friendUrl += '&use_35m=true';
+          }
+          
+          const response = await authFetch(friendUrl);
           if (!response.ok) {
             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
           }
