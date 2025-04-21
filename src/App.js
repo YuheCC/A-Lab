@@ -1130,7 +1130,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <img src="/MakeContact.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />
           
           <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>"If it's just us, it seems like an awful waste of space."</p>
-          <p style={{ fontStyle: 'italic', marginBottom: '20px' }}>Contact, 1997</p>
+          <p style={{ fontStyle: 'italic', marginBottom: '50px' }}>Contact, 1997</p>
           
           <div style={{ marginBottom: '30px' }}>
             <p style={{ fontWeight: 'bold' }}>What is Molecular Universe?</p>
