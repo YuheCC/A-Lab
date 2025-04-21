@@ -10,6 +10,43 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
 
+// ---------------------------------------------------------------------------
+// Global fetch wrapper that logs the user out on 401 Unauthorized responses
+const redirectToLogin = () => {
+  // Clear any persisted auth info
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('permissions');
+  // Send user to the sign‑in page
+  window.history.pushState({}, '', '/signin');
+  window.location.reload();
+};
+
+const _origFetch = window.fetch.bind(window);
+window.fetch = (...args) =>
+  _origFetch(...args).then((response) => {
+    if (response.status === 401) {
+      redirectToLogin();
+    }
+    return response;
+  });
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Auth‑aware fetch: automatically sends the JWT if we have one
+export const authFetch = (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...authHeaders,
+      ...(options.headers || {}),
+    },
+  });
+};
+// ---------------------------------------------------------------------------
+
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
 
@@ -96,10 +133,22 @@ const AuthPage = () => {
         method: 'POST',
         body: formData,
       });
-
+ 
+      // --- richer error handling ---
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Authentication failed');
+        let errorMsg = 'Authentication failed';
+        try {
+          // Most FastAPI errors are JSON { detail: "…" }
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            // Fallback: plain‑text body
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -410,17 +459,23 @@ const PasswordReset = () => {
       formData.append('current_password', currentPassword);
       formData.append('new_password', newPassword);
       
-      const response = await fetch(`${API_URL}/reset-password`, {
+      const response = await authFetch(`${API_URL}/reset-password`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Password reset failed');
+        let errorMsg = 'Password reset failed';
+        try {
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -1532,6 +1587,9 @@ const App = () => {
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
+    // Attach JWT so /search and /find‑friend‑with‑image stay protected
+    const token = localStorage.getItem('token');
+
     setSearchLoading(true);
     setSearchWarning(null);
     setSearchError(null);
@@ -1550,7 +1608,8 @@ const App = () => {
       }
 
       // Fetch the searched molecule's properties 
-      const moleculeResponse = await fetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+      const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
@@ -1563,7 +1622,9 @@ const App = () => {
           const formattedMolecule = formattedMolecules[0];
 
           // Then fetch similar molecules
-          const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`);
+          const response = await authFetch(
+            `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`
+          );
           if (!response.ok) {
             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
           }
@@ -3368,16 +3429,20 @@ const App = () => {
                                       <td className="property-name">Functional Groups</td>
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
+                                    {similarMoleculeImages[index] && (
+                                      <tr>
+                                        <td colSpan="2">
+                                          <div className="similar-molecule-image-container">
+                                            <img
+                                              src={similarMoleculeImages[index]}
+                                              alt={`Molecule ${index + 1} visualization`}
+                                              className="similar-molecule-image"
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )}
                                   </tbody>
-                                  {similarMoleculeImages[index] && (
-                                    <div className="similar-molecule-image-container">
-                                      <img 
-                                        src={similarMoleculeImages[index]} 
-                                        alt={`Molecule ${index + 1} visualization`}  
-                                        className="similar-molecule-image"
-                                      />
-                                    </div>
-                                  )}
                                 </table>
                               </div>
                             </div>
