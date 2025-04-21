@@ -672,19 +672,17 @@ const TermsPage = ({handleNavigation, activePage}) => {
           onClick={() => {
             if (activePage === 'about') {
               // Already on the about page, just scroll to the top
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              const motivationSection = document.querySelector('.about-content h2');
-              if (motivationSection) {
-                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              const contentWrapper = document.querySelector('.about-content-wrapper');
+              if (contentWrapper) {
+                contentWrapper.scrollTop = 0;
               }
             } else {
               // Navigate to about page first, then scroll
               handleNavigation('about');
               setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                const motivationSection = document.querySelector('.about-content h2');
-                if (motivationSection) {
-                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                const contentWrapper = document.querySelector('.about-content-wrapper');
+                if (contentWrapper) {
+                  contentWrapper.scrollTop = 0;
                 }
               }, 100);
             }
@@ -981,19 +979,17 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           onClick={() => {
             if (activePage === 'about') {
               // Already on the about page, just scroll to the top
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              const motivationSection = document.querySelector('.about-content h2');
-              if (motivationSection) {
-                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              const contentWrapper = document.querySelector('.about-content-wrapper');
+              if (contentWrapper) {
+                contentWrapper.scrollTop = 0;
               }
             } else {
               // Navigate to about page first, then scroll
               handleNavigation('about');
               setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                const motivationSection = document.querySelector('.about-content h2');
-                if (motivationSection) {
-                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                const contentWrapper = document.querySelector('.about-content-wrapper');
+                if (contentWrapper) {
+                  contentWrapper.scrollTop = 0;
                 }
               }, 100);
             }
@@ -1076,33 +1072,56 @@ const AboutPage = ({ handleNavigation, activePage }) => {
       {/* Main content */}
       <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">
-          <h2>Motivation for Molecular Universe</h2>
-          <p>
-            At SES AI, we know there's not a one-size-fits-all battery, so we have always wanted to develop the perfect electrolyte for different battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion and across various applications from drones to robotics, from electric cars to urban air mobility, and from grid storage to consumer electronics.
-          </p>
+          <img src="/MakeContact.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />
           
-          <p>
-            It comes down to small molecules. While the universe of molecules is infinite, there are 10<sup>60</sup> small molecules in the universe, of them 10<sup>11</sup> could be used for batteries, and of them, only less than 1,000 have been studied for batteries in the past 30 years.
-          </p>
+          <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>"If it's just us, it seems like an awful waste of space."</p>
+          <p style={{ fontStyle: 'italic', marginBottom: '20px' }}>Contact, 1997</p>
           
-          <p>
-            So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules. Do we not want to know what's out there that could double LFP Li-ion cycle life, or triple high silicon Li-ion cycle life, or quadruple Li-Metal cycle life, or even more?
-          </p>
+          <div style={{ marginBottom: '30px' }}>
+            <p style={{ fontWeight: 'bold' }}>What is Molecular Universe?</p>
+            <p>Much like Magellan first made contact with the stars as navigation tools;</p>
+            <p>Or how the Hubble Telescope made contact with galaxies far, far away;</p>
+            <p>Or the Human Genome Project looked deep inside our DNA and made contact with every microscopic amino acid that defines our genetic code;</p>
+            <p>SES AI has made contact with a never-before-seen 512-dimensional universe of small molecules - mapped into a 2-dimensional searchable tool - the Molecular Universe. The intent of this new map is to help battery researchers and accelerate the discovery of new materials for their next big ideas.</p>
+            
+            <p>The unique and fundamental advantages of Molecular Universe include:</p>
+            <ol style={{ paddingLeft: '20px' }}>
+              <li><strong>The Map:</strong> A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted.</li>
+              <li><strong>The Navigation System:</strong> A proprietary, battery-specific LLM, carefully trained on thoroughly curated battery literature and teachings from world-class battery experts.</li>
+              <li><strong>The Interface:</strong> An intuitive user interface linking the Map and Navigation System, making battery material discovery straightforward and simple.</li>
+            </ol>
+            
+            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size. (In terms of actual numbers, that's 100 billion versus 100 million.) The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
+            <p>And like all AI-based technologies, with your help, we can improve Molecular Universe together, faster.</p>
+          </div>
           
-          <p>
-            The answer is of course a resounding "Hell Yeah". So we set out to map the physical and chemical properties of our database of 10<sup>11</sup>. This was a computationally intensive project, originally we thought of establishing a non-profit organization to crowdsource public computing resources and eventually open source the database. Then it turned out it was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerate computation chemistry software. While we will not open source our proprietary database, we will make Molecular Universe free to academic researchers and open source certain aspects of our models wherever appropriate.
-          </p>
-          
-          <h3>In this current version of Molecular Universe, MU-0:</h3>
-          
-          <p>
-            The Map consists of 10<sup>8</sup> molecular properties, including both actual experimental data and computation prediction based on Density Function Theory and machine learning models. This is the world's largest database of small molecule properties that we know of today. This database will continue to grow to include more organic and inorganic molecules, and more bulk and interphasial properties, suitable for additives, or salts, or solvents.
-          </p>
-          
-          <p>
-            These molecules are represented on a map through a dimension reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, for us mere mortals, UMAP reduces them to just 2 dimensions.
-          </p>
-          
+          <div style={{ marginBottom: '30px' }}>
+            <p style={{ fontWeight: 'bold' }}>Why we are building Molecular Universe?</p>
+            <p>There's one simple, undeniable truth: There is no such thing as the perfect, one-size-fits-all battery. Especially not with the advent of an all-electric future.</p>
+            <p>That's why at SES AI, we've always sought to develop electrolytes for various practical battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion - for use across everything from drones to robotics, electric cars to urban air mobility, and grid storage to consumer electronics.</p>
+
+            <p style={{ fontWeight: 'bold' }}>Battery Technology Starts with Small Molecules</p>
+            <img src="/funnel.png" alt="Molecule Funnel" style={{ width: '100%', marginBottom: '20px' }} />
+            <p>In the battery world, it all comes down to small molecules.</p>
+            <p>While the universe of molecules is infinite, the universe of small molecules is not. It's measurable. In fact, we know that there are 10<sup>60</sup> possible small molecules in the universe. Of these, 10<sup>11</sup> could be used for batteries. And of those, less than 1,000 have been studied for batteries in the past 30 years.</p>
+            <p>So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules.</p>
+            <p>Do we not want to know what's out there that could double, triple, or even quadruple the cycle life of LFP Li-ion, high silicon Li-ion, Li-Metal, and more?</p>
+            
+            <p style={{ fontWeight: 'bold' }}>The Target is Set: 10<sup>11</sup> Small Molecules</p>
+            <p>The mission is clear: Map the physical and chemical properties of our database of 10<sup>11</sup>.</p>
+            <p>Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization (add mu.org link) to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.</p>
+            <p>It was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerated computation chemistry software. While we will not open-source our proprietary database, we will make Molecular Universe free to academic researchers and open-source certain aspects of our models wherever appropriate.</p>
+            
+            <p style={{ fontWeight: 'bold' }}>More About Molecular Universe, MU-0</p>
+            <p>In our launch version of Molecular Universe, the Map consists of 10<sup>8</sup> molecules and their molecular properties, including both actual experimental data and computational prediction based on Density Function Theory and Molecular Dynamics simulations.</p>
+            <p>This is the world's largest database of small molecule properties. And it will continue to grow to include more organic and inorganic molecules and more bulk and interphasial properties, suitable for additives, or salts, or solvents.</p>
+            <p>The molecules are represented on a map through a dimension-reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, but for us mere mortals, UMAP reduces them to a more navigable 2 Dimensions.</p>
+            <p>The Navigation System consists of an LLM that was based on the LLaMa 3 70B (largest open source LLM at the time) but trained using our proprietary database of literature and domain expert knowledge. While LLaMa 3 70B may not be the highest ranked model for scientific questions, once trained, our battery specific LLM ranks just as high and even higher in certain categories compared to much larger models. This improvement delta is very exciting, and in future MU versions, we expect to release newer battery-specific LLM trained on more advanced and larger open-source models.</p>
+            
+            <p>We invite you to join us on this journey and be part of the mission.</p>
+            <p><strong>Make contact with the Molecular Universe.</strong></p>
+          </div>
+                    
           <h2 id="features-section">Features of Molecular Universe</h2>
           
           <h3>Map the Molecular Universe</h3>
@@ -2317,19 +2336,17 @@ const App = () => {
                   onClick={() => {
                     if (activePage === 'about') {
                       // Already on the about page, just scroll to the top
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      const motivationSection = document.querySelector('.about-content h2');
-                      if (motivationSection) {
-                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
                       }
                     } else {
                       // Navigate to about page first, then scroll
                       handleNavigation('about');
                       setTimeout(() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        const motivationSection = document.querySelector('.about-content h2');
-                        if (motivationSection) {
-                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        const contentWrapper = document.querySelector('.about-content-wrapper');
+                        if (contentWrapper) {
+                          contentWrapper.scrollTop = 0;
                         }
                       }, 100);
                     }
@@ -2605,19 +2622,17 @@ const App = () => {
                 onClick={() => {
                   if (activePage === 'about') {
                     // Already on the about page, just scroll to the top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    const motivationSection = document.querySelector('.about-content h2');
-                    if (motivationSection) {
-                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    const contentWrapper = document.querySelector('.about-content-wrapper');
+                    if (contentWrapper) {
+                      contentWrapper.scrollTop = 0;
                     }
                   } else {
                     // Navigate to about page first, then scroll
                     handleNavigation('about');
                     setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      const motivationSection = document.querySelector('.about-content h2');
-                      if (motivationSection) {
-                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
                       }
                     }, 100);
                   }
@@ -2822,19 +2837,17 @@ const App = () => {
                   onClick={() => {
                     if (activePage === 'about') {
                       // Already on the about page, just scroll to the top
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      const motivationSection = document.querySelector('.about-content h2');
-                      if (motivationSection) {
-                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
                       }
                     } else {
                       // Navigate to about page first, then scroll
                       handleNavigation('about');
                       setTimeout(() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        const motivationSection = document.querySelector('.about-content h2');
-                        if (motivationSection) {
-                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        const contentWrapper = document.querySelector('.about-content-wrapper');
+                        if (contentWrapper) {
+                          contentWrapper.scrollTop = 0;
                         }
                       }, 100);
                     }
@@ -2940,19 +2953,17 @@ const App = () => {
                 onClick={() => {
                   if (activePage === 'about') {
                     // Already on the about page, just scroll to the top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    const motivationSection = document.querySelector('.about-content h2');
-                    if (motivationSection) {
-                      motivationSection.scrollIntoView({ behavior: 'smooth' });
+                    const contentWrapper = document.querySelector('.about-content-wrapper');
+                    if (contentWrapper) {
+                      contentWrapper.scrollTop = 0;
                     }
                   } else {
                     // Navigate to about page first, then scroll
                     handleNavigation('about');
                     setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      const motivationSection = document.querySelector('.about-content h2');
-                      if (motivationSection) {
-                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
                       }
                     }, 100);
                   }
@@ -3068,19 +3079,17 @@ const App = () => {
                   onClick={() => {
                     if (activePage === 'about') {
                       // Already on the about page, just scroll to the top
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      const motivationSection = document.querySelector('.about-content h2');
-                      if (motivationSection) {
-                        motivationSection.scrollIntoView({ behavior: 'smooth' });
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
                       }
                     } else {
                       // Navigate to about page first, then scroll
                       handleNavigation('about');
                       setTimeout(() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        const motivationSection = document.querySelector('.about-content h2');
-                        if (motivationSection) {
-                          motivationSection.scrollIntoView({ behavior: 'smooth' });
+                        const contentWrapper = document.querySelector('.about-content-wrapper');
+                        if (contentWrapper) {
+                          contentWrapper.scrollTop = 0;
                         }
                       }, 100);
                     }
