@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './FeedbackBox';
 
 import API_URL from './Constants.js';
+import DOMPurify from 'dompurify';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
@@ -101,7 +102,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       setMoleculesLoading(true);
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
-          const res = await fetch(`${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`);
+          const token = localStorage.getItem('token');
+          const res = await fetch(
+            `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            }
+          );
           const data = await res.json();
           return data;
         })
@@ -129,7 +138,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
     try {
-      const response = await fetch(`${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
       const data = await response.json();
       console.log(data);
       console.log(data["similar_molecules"]);
@@ -311,7 +328,16 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div>{msg.text}</div>
-                {msg.sources && <div dangerouslySetInnerHTML={{ __html: msg.sources }} />}
+                {msg.sources && (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(msg.sources, {
+                        ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
+                        ALLOWED_ATTR: ['href', 'target', 'rel']
+                      })
+                    }}
+                  />
+                )}
                 {msg.molText && <div>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
