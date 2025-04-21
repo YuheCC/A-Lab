@@ -34,7 +34,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
       <div className="chat-input-container">
         <textarea
           className="chat-input"
-          placeholder="Ask me anything, as long as it’s about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
+          placeholder="Ask me anything, as long as it's about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
           rows={2}
           value={inputValue}
           onChange={handleChange}
@@ -102,15 +102,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       setMoleculesLoading(true);
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
-        `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
+          const token = localStorage.getItem('token');
+          const res = await fetch(
+            `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            }
+          );
           const data = await res.json();
           return data;
         })
@@ -442,8 +442,12 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   <p>ESP Max: {details.ESP_MAX} eV</p>
                   <p>ESP Min: {details.ESP_MIN} eV</p>
                   <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
-                  <p>Predicted MP: {details.PREDICTED_MP} °C</p>
-                  <p>Predicted BP: {details.PREDICTED_BP} °C</p>
+                  {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
+                    <>
+                      <p>Predicted MP: {details.PREDICTED_MP} °C</p>
+                      <p>Predicted BP: {details.PREDICTED_BP} °C</p>
+                    </>
+                  )}
                   {details.image && (
                     <img 
                       src={details.image} 
@@ -502,8 +506,12 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   <p>ESP Max: {details.ESP_max_eV} eV</p>
                   <p>ESP Min: {details.ESP_min_eV} eV</p>
                   <p>Functional groups: {details.functional_groups}</p>
-                  <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
-                  <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
+                  {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
+                    <>
+                      <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
+                      <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
+                    </>
+                  )}
                   {details.image && (
                     <img 
                       src={details.image} 

@@ -1,6 +1,7 @@
 // FeedbackBox.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_URL from './Constants.js';
 
 const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleContent, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
@@ -20,7 +21,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleCon
         collapsibleContent,
         timestamp: new Date().toISOString(),
       };
-      const response = await axios.post(`https://api.ses.ai/api/feedback`, feedbackData, {
+      const response = await axios.post(`${API_URL}/api/feedback`, feedbackData, {
         headers: { 'Content-Type': 'application/json' },
         timeout: 10000,
       });

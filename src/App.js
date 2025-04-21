@@ -91,8 +91,11 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -121,6 +124,9 @@ const AuthPage = () => {
       
       if (!isLogin) {
         formData.append('email', email);
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('organization_name', organizationName);
       }
 
       const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'register'}`, {
@@ -176,6 +182,46 @@ const AuthPage = () => {
         {error && <div className="auth-error">{error}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">
+          {!isLogin && (
+            <>
+              <div className="form-group">
+                <label htmlFor="firstName">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First Name"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="organizationName">Organization Name</label>
+                <input
+                  type="text"
+                  id="organizationName"
+                  value={organizationName}
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  placeholder="Organization Name"
+                  required
+                />
+              </div>
+            </>
+          )}
+          
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
@@ -569,13 +615,13 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         </div>
 
         <div className="pricing-card">
-          <h2>Professional</h2>
+          <h2>Team</h2>
           <p className="pricing-description">
-            Accessing 100M database
+            Accessing 1M database
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
-            <span className="price-period">/ month</span>
+            <span className="price-period">/ month (Up to 10 users)</span>
           </div>
           <button className="pricing-cta unlimited"
             onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
@@ -636,11 +682,11 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-            <li>Expert consulting</li>
-              <li>Molecular synthesis</li>
-              <li>Electrolyte formulation design</li>
-              <li>Cell testing</li>
-              <li>Larger, exclusive/private database</li>
+            <li>Map</li>
+              <li>Filter</li>
+              <li>Search</li>
+              <li>Ask (no cap, battery-specific LLM)</li>
+              <li>More molecule properties (inc. melting and boiling point predictions)</li>
               <li>More advanced LLM</li>
               <li>Customized statement-of-work</li>
             </ul>
@@ -653,7 +699,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
 };
 
 // Terms Page component
-const TermsPage = () => {
+const TermsPage = ({handleNavigation, activePage}) => {
   const [currentDate, setCurrentDate] = useState('');
   
   useEffect(() => {
@@ -667,6 +713,111 @@ const TermsPage = () => {
 
   return (
     <div className="terms-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
+        <h1 
+          style={{ 
+            textDecoration: 'none',
+            color: 'rgb(51, 51, 51)',
+            fontSize: '9.5px',
+            transition: 'font-size 0.3s',
+            cursor: 'pointer',
+            marginBottom: '12px',
+            fontWeight: 'normal'
+          }}
+          onClick={() => {
+            if (activePage === 'about') {
+              // Already on the about page, just scroll to the top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const motivationSection = document.querySelector('.about-content h2');
+              if (motivationSection) {
+                motivationSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              // Navigate to about page first, then scroll
+              handleNavigation('about');
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const motivationSection = document.querySelector('.about-content h2');
+                if (motivationSection) {
+                  motivationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }
+          }}
+          onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+          onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+        >
+          Motivation
+        </h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+          <a 
+            href="#features" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const featuresSection = document.getElementById('features-section');
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            Features
+          </a>
+          <a 
+            href="#pricing" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('pricing');
+            }}
+          >
+            Pricing
+          </a>
+          <a 
+            href="#news" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#333',
+              fontSize: '9.5px',
+              transition: 'font-size 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigation('about');
+              setTimeout(() => {
+                const newsfeedSection = document.getElementById('newsfeed');
+                if (newsfeedSection) {
+                  newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 100);
+            }}
+          >
+            News Feed
+          </a>
+        </div>
+      </div>
       <div className="terms-content" style={{ 
         width: '100%', 
         padding: '40px',
@@ -814,7 +965,7 @@ const TermsPage = () => {
         
         <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>17. Miscellaneous.</h2>
         <p style={{ marginBottom: '15px' }}>This Agreement, including the Order and all documents referenced herein, constitutes the entire agreement and understanding between the parties hereto with respect to the subject matter hereof and supersedes all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, with respect to such subject matter. In the event of any inconsistency between the body of this Agreement and the Order, the body of this Agreement controls unless the parties expressly indicate in the Order an intent to deviate from the terms of this Agreement. Any notices to us must be sent to legaldept@ses.ai or our US corporate headquarters address available at https://www.ses.ai/contact-us and must be delivered either in person, by email, certified or registered mail, return receipt requested and postage prepaid, or by recognized overnight courier service, and are deemed given upon receipt by us. Notwithstanding the foregoing, you hereby consent to receiving electronic communications from us. These electronic communications may include notices about applicable fees and charges, transactional information, and other information concerning or related to the Services. You agree that any notices, agreements, disclosures, or other communications that we send to you electronically will satisfy any legal communication requirements, including that such communications be in writing. The invalidity, illegality, or unenforceability of any provision herein does not affect any other provision herein or the validity, legality, or enforceability of such provision in any other jurisdiction. Any failure to act by us with respect to a breach of this Agreement by you or others does not constitute a waiver and will not limit our rights with respect to such breach or any subsequent breaches. This Agreement is personal to you and may not be assigned or transferred for any reason whatsoever without our prior written consent and any action or conduct in violation of the foregoing will be void and without effect. We expressly reserve the right to assign this Agreement and to delegate any of its obligations hereunder.</p>
-
+        
         <div style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '30px' }}>
           <h1 style={{ fontSize: '28px', marginBottom: '20px', textAlign: 'center' }}>Acceptable Use Policy</h1>
           <p style={{ fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>Effective: {currentDate}</p>
@@ -1012,7 +1163,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <h3>Map the Molecular Universe</h3>
           
           <p>
-            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <strong style={{color: 'red'}}>23</strong> molecular continents, 1 million molecules (in-browser display), and <strong style={{color: 'red'}}>over 100</strong> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters, 1 million molecules (in-browser display), and <span style={{color: 'black'}}>over 100</span> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
           
           <h3>Filter by Chemical Properties</h3>
@@ -1026,7 +1177,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
           </ul>
           <p>
-            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular continents) that meet your criteria.
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
           </p>
           
           <h3>Search & "Find a Friend"</h3>
@@ -1036,18 +1187,18 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           </p>
           <ol style={{paddingLeft: '20px'}}>
             <li>By SMILES – Input a canonical SMILES string and instantly retrieve all key info.</li>
-            <li style={{color: 'red'}}><strong>By molecule's name – input a molecule name such as "ethylene carbonate".</strong></li>
+            <li style={{color: 'black'}}>By molecule's name – input a molecule name such as "ethylene carbonate".</li>
             <li>By natural language – Ask questions like: "Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV."</li>
           </ol>
-          <p style={{color: 'red'}}>
-            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the <strong>"Find Friends"</strong> <a>box</a> :
+          <p style={{color: 'black'}}>
+            Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the "Find Friends" <a>box</a> :
           </p>
           <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
             <li>Discover molecules that are structurally similar with similar properties (great for refinement),</li>
             <li>Or find structurally diverse options that still have similar properties (great for exploration).</li>
           </ul>
           <p>
-            <span style={{color: 'red'}}><strong>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</strong></span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
+            <span style={{color: 'black'}}>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
           </p>
           
           <div id="newsfeed" className="feature-section">
@@ -1285,7 +1436,7 @@ const App = () => {
           y: molecule.UMAP_1,
           xref: 'x',
           yref: 'y',
-          text: `Similar Molecule ${idx + 1}`,
+          text: `#${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
@@ -1450,10 +1601,15 @@ const App = () => {
     setSimilarMoleculeImages({}); // Reset similar molecule images
 
     try {
-      // First fetch the searched molecule's properties from Snowflake
-      const moleculeResponse = await authFetch(
-        `${API_URL}/search?query=${encodeURIComponent(searchInput.trim())}`
-      );
+      // Determine which endpoint to use based on user permissions
+      let searchEndpoint = `${API_URL}/search`;
+      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+        searchEndpoint = `${API_URL}/search-35`;
+      }
+
+      // Fetch the searched molecule's properties 
+      const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+
       console.log(moleculeResponse);
       const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
       console.log(formattedMolecules);
@@ -2054,8 +2210,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -2086,8 +2242,8 @@ const App = () => {
       `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
       `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      // `${node.properties?.predicted_mp ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      // `${node.properties?.predicted_bp ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
@@ -2326,7 +2482,7 @@ const App = () => {
                       />
                     ) : (
                       <div className="loading-message">
-                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                       </div>
                     )}
                   </div>
@@ -2617,7 +2773,7 @@ const App = () => {
                     />
                   ) : (
                     <div className="loading-message">
-                      {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                      {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                     </div>
                   )}
                 </div>
@@ -2635,7 +2791,7 @@ const App = () => {
                 </p>
                 
                 <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                  In MU-0, the map consists of 23 molecular continents, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+                  In MU-0, the map consists of 23 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
                 </p>
                 
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
@@ -2934,7 +3090,7 @@ const App = () => {
             </div>
           </div>
         ) : activePage === 'terms' ? (
-          <TermsPage />
+          <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : (
@@ -3080,7 +3236,7 @@ const App = () => {
                       />
                     ) : (
                       <div className="loading-message">
-                        {loading ? 'Loading UMAP data...' : error ? 'Error loading data' : 'No data available'}
+                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
                       </div>
                     )}
                   </div>
@@ -3169,16 +3325,16 @@ const App = () => {
                                     <td className="property-name">ESP Max (eV)</td>
                                     <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(4) : 'N/A'}</td>
                                   </tr>
-                                  {molecule.properties?.predicted_mp && (
+                                  {molecule.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                                     <tr>
-                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td> */}
+                                      <td className="property-name">Predicted Melting Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
                                     </tr>
                                   )}
-                                  {molecule.properties?.predicted_bp && (
+                                  {molecule.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                                     <tr>
-                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td> */}
+                                      <td className="property-name">Predicted Boiling Point (°C)</td>
+                                      <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
                                     </tr>
                                   )}
                                   {molecule.properties?.functional_groups && (
