@@ -437,10 +437,10 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   <strong>{details.name}</strong>
                   <p>SMILES: {details.SMILES}</p>
                   <p>Molecular weight: {details.MOLECULAR_WEIGHT}</p>
-                  <p>HOMO: {details.HOMO} eV</p>
-                  <p>LUMO: {details.LUMO} eV</p>
-                  <p>ESP Max: {details.ESP_MAX} eV</p>
-                  <p>ESP Min: {details.ESP_MIN} eV</p>
+                  <p>HOMO: {Number(details.HOMO).toFixed(2)} eV</p>
+                  <p>LUMO: {Number(details.LUMO).toFixed(2)} eV</p>
+                  <p>ESP Max: {Number(details.ESP_MAX).toFixed(2)} eV</p>
+                  <p>ESP Min: {Number(details.ESP_MIN).toFixed(2)} eV</p>
                   <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
                   {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                     <>
@@ -501,15 +501,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <strong>SMILES: {details.SMILES}</strong>
                   <p>Molecular weight: {details.molecular_weight}</p>
-                  <p>HOMO eV: {details.HOMO_eV} eV</p>
-                  <p>LUMO eV: {details.LUMO_eV} eV</p>
-                  <p>ESP Max: {details.ESP_max_eV} eV</p>
-                  <p>ESP Min: {details.ESP_min_eV} eV</p>
+                  <p>HOMO eV: {Number(details.HOMO_eV).toFixed(2)} eV</p>
+                  <p>LUMO eV: {Number(details.LUMO_eV).toFixed(2)} eV</p>
+                  <p>ESP Max: {Number(details.ESP_max_eV).toFixed(2)} eV</p>
+                  <p>ESP Min: {Number(details.ESP_min_eV).toFixed(2)} eV</p>
                   <p>Functional groups: {details.functional_groups}</p>
                   {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                     <>
-                      <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
-                      <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
+                      <p>Predicted MP: {Number(details.predicted_MP_celsius).toFixed(2)} °C</p>
+                      <p>Predicted BP: {Number(details.predicted_BP_celsius).toFixed(2)} °C</p>
                     </>
                   )}
                   {details.image && (
