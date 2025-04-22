@@ -2229,10 +2229,10 @@ const App = () => {
       `SMILES: ${node.smiles}<br>` +
       `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
       `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
@@ -2261,10 +2261,10 @@ const App = () => {
       `SMILES: ${node.smiles}<br>` +
       `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
       `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(4) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(4) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(4) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
       `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
       `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
       `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
@@ -3325,19 +3325,19 @@ const App = () => {
                                   </tr>
                                   <tr>
                                     <td className="property-name">HOMO (eV)</td>
-                                    <td className="property-value">{molecule.properties?.homo_eV ? molecule.properties.homo_eV.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.properties?.homo_eV ? molecule.properties.homo_eV.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
                                     <td className="property-name">LUMO (eV)</td>
-                                    <td className="property-value">{molecule.properties?.lumo_eV ? molecule.properties.lumo_eV.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.properties?.lumo_eV ? molecule.properties.lumo_eV.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
                                     <td className="property-name">ESP Min (eV)</td>
-                                    <td className="property-value">{molecule.properties?.esp_min_eV ? molecule.properties.esp_min_eV.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.properties?.esp_min_eV ? molecule.properties.esp_min_eV.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
                                     <td className="property-name">ESP Max (eV)</td>
-                                    <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   {molecule.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                                     <tr>
@@ -3387,7 +3387,7 @@ const App = () => {
                                       <td className="property-name">HOMO (eV)</td>
                                       <td className="property-value">
                                         {molecule.HOMO_eV !== null && molecule.HOMO_eV !== undefined 
-                                          ? molecule.HOMO_eV.toFixed(4) 
+                                          ? molecule.HOMO_eV.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
@@ -3395,7 +3395,7 @@ const App = () => {
                                       <td className="property-name">LUMO (eV)</td>
                                       <td className="property-value">
                                         {molecule.LUMO_eV !== null && molecule.LUMO_eV !== undefined 
-                                          ? molecule.LUMO_eV.toFixed(4) 
+                                          ? molecule.LUMO_eV.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
@@ -3403,7 +3403,7 @@ const App = () => {
                                       <td className="property-name">ESP Min (eV)</td>
                                       <td className="property-value">
                                         {molecule.ESP_min_eV !== null && molecule.ESP_min_eV !== undefined 
-                                          ? molecule.ESP_min_eV.toFixed(4) 
+                                          ? molecule.ESP_min_eV.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
@@ -3411,26 +3411,30 @@ const App = () => {
                                       <td className="property-name">ESP Max (eV)</td>
                                       <td className="property-value">
                                         {molecule.ESP_max_eV !== null && molecule.ESP_max_eV !== undefined 
-                                          ? molecule.ESP_max_eV.toFixed(4) 
+                                          ? molecule.ESP_max_eV.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
-                                    <tr>
-                                      {/* <td className="property-name">Predicted Melting Point (°C)</td>
-                                      <td className="property-value">
-                                        {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
-                                          ? molecule.predicted_MP_celsius.toFixed(2) 
-                                          : 'N/A'}
-                                      </td> */}
-                                    </tr>
-                                    <tr>
-                                      {/* <td className="property-name">Predicted Boiling Point (°C)</td>
-                                      <td className="property-value">
-                                        {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
-                                          ? molecule.predicted_BP_celsius.toFixed(2) 
-                                          : 'N/A'}
-                                      </td> */}
-                                    </tr>
+                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && (
+                                      <tr>
+                                        <td className="property-name">Predicted Melting Point (°C)</td>
+                                        <td className="property-value">
+                                          {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
+                                            ? molecule.predicted_MP_celsius.toFixed(2) 
+                                            : 'N/A'}
+                                        </td>
+                                      </tr>
+                                    )}
+                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && (
+                                      <tr>
+                                        <td className="property-name">Predicted Boiling Point (°C)</td>
+                                        <td className="property-value">
+                                          {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
+                                            ? molecule.predicted_BP_celsius.toFixed(2) 
+                                            : 'N/A'}
+                                        </td>
+                                      </tr>
+                                    )}
                                     <tr>
                                       <td className="property-name">Molecular Weight</td>
                                       <td className="property-value">
