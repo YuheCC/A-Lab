@@ -3415,23 +3415,21 @@ const App = () => {
                                           : 'N/A'}
                                       </td>
                                     </tr>
-                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && (
+                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && 
+                                     molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined && (
                                       <tr>
                                         <td className="property-name">Predicted Melting Point (°C)</td>
                                         <td className="property-value">
-                                          {molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined 
-                                            ? molecule.predicted_MP_celsius.toFixed(2) 
-                                            : 'N/A'}
+                                          {molecule.predicted_MP_celsius.toFixed(2)}
                                         </td>
                                       </tr>
                                     )}
-                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && (
+                                    {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') && 
+                                     molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined && (
                                       <tr>
                                         <td className="property-name">Predicted Boiling Point (°C)</td>
                                         <td className="property-value">
-                                          {molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined 
-                                            ? molecule.predicted_BP_celsius.toFixed(2) 
-                                            : 'N/A'}
+                                          {molecule.predicted_BP_celsius.toFixed(2)}
                                         </td>
                                       </tr>
                                     )}
