@@ -2380,7 +2380,7 @@ const App = () => {
           <PermissionsError />
         ) : activePage === 'explorer' ? (
           <>
-            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0' }}>
+            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0', paddingTop: '20px' }}>
               <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
                 <h1 
                   style={{ 
