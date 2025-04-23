@@ -1182,7 +1182,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <h3>Map the Molecular Universe</h3>
           
           <p>
-            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters, 1 million molecules (in-browser display), and <span style={{color: 'black'}}>over 100</span> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
           
           <h3>Filter by Chemical Properties</h3>
