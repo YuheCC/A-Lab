@@ -3486,7 +3486,9 @@ const App = () => {
                         <br />
                         2.      Your result molecules are included in premium levels Enterprise and Joint Development. Please upgrade.
                         <br />
-                        3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
+                        3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.
+                        <br />
+                        4.      Your query might involve salt or anion molecules, which our current database doesn't yet support. We'll be adding anions in an upcoming update.</p>
                         <br />
                         <button 
                           className="pricing-cta strategic"
