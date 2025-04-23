@@ -2837,7 +2837,7 @@ const App = () => {
                   />
                 </div>
                 
-                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
+                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
                 <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
