@@ -1517,22 +1517,8 @@ const App = () => {
     if (annotations.length > 0) {
       layout.annotations = annotations;
     } else if (searchResults) {
-      layout.annotations = [{
-        x: 0,
-        y: 0,
-        xref: 'paper',
-        yref: 'paper',
-        text: '',
-        showarrow: false,
-        bgcolor: 'rgba(255, 87, 34, 0.8)',
-        bordercolor: '#FF5722',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: 'white',
-          size: 14
-        }
-      }];
+      // Remove default annotation since we don't want to show anything for molecules with null coordinates
+      layout.annotations = [];
     }
     return layout;
   }, [plotlyLayout, highlightedMolecules, highlightedSimilarMolecules, searchResults, arrowOffset]);
@@ -1590,16 +1576,18 @@ const App = () => {
             const formattedMolecule = formattedMolecules[0];
             setsearchedMolecules([formattedMolecule]);
             setsearchResults([formattedMolecule.image]);
-            if (formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
+            if (formattedMolecule.x !== null && formattedMolecule.y !== null && 
+                formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
               setHighlightedMolecules([formattedMolecule]);
             }
           } else {
             // Store all molecules and their images
             setsearchedMolecules(formattedMolecules);
             setsearchResults(formattedMolecules.map((mol) => mol.image));
-            // Filter molecules to only include those with x and y values defined
+            // Filter molecules to only include those with x and y values defined and not null
             const highlighted = formattedMolecules.filter(
-              (mol) => mol.x !== undefined && mol.y !== undefined
+              (mol) => mol.x !== null && mol.y !== null && 
+                       mol.x !== undefined && mol.y !== undefined
             );
             if (highlighted && highlighted.length > 0) {
               setHighlightedMolecules(highlighted);
