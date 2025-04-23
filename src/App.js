@@ -567,7 +567,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </div> */}
           <h2>Research (academia only)</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
@@ -592,7 +592,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Explorer</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$150</span>
@@ -617,7 +617,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Team</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
@@ -641,7 +641,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Enterprise</h2>
           <p className="pricing-description">
-            Accessing 100M database
+            Access to Whole Molecular Universe (100M)
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -659,7 +659,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
-              <li>Available melting and boiling point predictions</li>
+              <li>More molecule properties (inc. melting and boiling point predictions)</li>
               <li>Expert consulting</li>
             </ul>
           </div>
@@ -668,7 +668,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            Full Enterprise Access
+            Access to Whole Molecular Universe (100M) inc. Hidden Galaxies
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -687,8 +687,8 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
               <li>More molecule properties (inc. melting and boiling point predictions)</li>
-              <li>More advanced LLM</li>
-              <li>Customized statement-of-work</li>
+              <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
+              <li>Potential new IP development and Hidden Galaxy access</li>
             </ul>
           </div>
         </div>
