@@ -235,7 +235,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         },
         body: JSON.stringify({
           messages: messagesToSend,
-          maxOutputLength: 1024,
+          maxOutputLength: 8192, // deprecated
           ragEnabled: true,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
