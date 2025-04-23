@@ -1220,6 +1220,16 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <span style={{color: 'black'}}>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
           </p>
           
+          <h3>Ask a question in natural language</h3>
+          
+          <p>
+            Now that you have the map, you need a navigation system. Ask is the navigation system that allows you to ask your questions in natural language. You can be general such as "recommend an electrolyte for LiFePO4 and graphite cell" or be specific such as "recommend an electrolyte that is nonflammable and stable at high voltage 4.55V and can do 6C fast charge in a Li-ion cell with NCM811 cathode and silicon anode".
+          </p>
+          
+          <p>
+            It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence.
+          </p>
+          
           <div id="newsfeed" className="feature-section">
             <h3>Newsfeed</h3>
             <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
