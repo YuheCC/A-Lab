@@ -1164,7 +1164,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             
             <p style={{ fontWeight: 'bold' }}>The Target is Set: 10<sup>11</sup> Small Molecules</p>
             <p>The mission is clear: Map the physical and chemical properties of our database of 10<sup>11</sup>.</p>
-            <p>Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization (add mu.org link) to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.</p>
+            <p>Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization <a href="https://www.molecularuniverse.org/" target="_blank" rel="noopener noreferrer">Molecular Universe</a> to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.</p>
             <p>It was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerated computation chemistry software. While we will not open-source our proprietary database, we will make Molecular Universe free to academic researchers and open-source certain aspects of our models wherever appropriate.</p>
             
             <p style={{ fontWeight: 'bold' }}>More About Molecular Universe, MU-0</p>
