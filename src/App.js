@@ -1460,28 +1460,35 @@ const App = () => {
     // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
     if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedSimilarMolecules.map((molecule, idx) => ({
-          x: molecule.UMAP_0,
-          y: molecule.UMAP_1,
-          xref: 'x',
-          yref: 'y',
-          text: `#${idx + 1}`,
-          showarrow: true,
-          arrowhead: 2,
-          arrowsize: 1.5,
-          arrowwidth: 2,
-          arrowcolor: '#FFD700',
-          ax: 0,
-          ay: arrowOffset,
-          bgcolor: 'rgba(255, 255, 0, 0.8)',
-          bordercolor: '#FFD700',
-          borderwidth: 2,
-          borderpad: 4,
-          font: {
-            color: 'black',
-            size: 12
-          }
-        }))
+        highlightedSimilarMolecules
+          .filter(molecule => 
+            molecule.UMAP_0 !== null && 
+            molecule.UMAP_0 !== undefined && 
+            molecule.UMAP_1 !== null && 
+            molecule.UMAP_1 !== undefined
+          )
+          .map((molecule, idx) => ({
+            x: molecule.UMAP_0,
+            y: molecule.UMAP_1,
+            xref: 'x',
+            yref: 'y',
+            text: `#${idx + 1}`,
+            showarrow: true,
+            arrowhead: 2,
+            arrowsize: 1.5,
+            arrowwidth: 2,
+            arrowcolor: '#FFD700',
+            ax: 0,
+            ay: arrowOffset,
+            bgcolor: 'rgba(255, 255, 0, 0.8)',
+            bordercolor: '#FFD700',
+            borderwidth: 2,
+            borderpad: 4,
+            font: {
+              color: 'black',
+              size: 12
+            }
+          }))
       );
     }
 
@@ -2238,6 +2245,50 @@ const App = () => {
     )
   }];
 
+  // Add red dots at coordinates where arrows point to for highlighted molecules
+  if (highlightedMolecules && highlightedMolecules.length > 0) {
+    searchPlotlyData.push({
+      x: highlightedMolecules.map(molecule => molecule.x),
+      y: highlightedMolecules.map(molecule => molecule.y),
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: 8,
+        color: '#FF0000',
+        symbol: 'circle'
+      },
+      hoverinfo: 'none',
+      showlegend: false
+    });
+  }
+
+  // Add red dots for similar molecules (find friends)
+  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
+    const validMolecules = highlightedSimilarMolecules.filter(
+      molecule => 
+        molecule.UMAP_0 !== null && 
+        molecule.UMAP_0 !== undefined && 
+        molecule.UMAP_1 !== null && 
+        molecule.UMAP_1 !== undefined
+    );
+    
+    if (validMolecules.length > 0) {
+      searchPlotlyData.push({
+        x: validMolecules.map(molecule => molecule.UMAP_0),
+        y: validMolecules.map(molecule => molecule.UMAP_1),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: 8,
+          color: '#FF0000',
+          symbol: 'circle'
+        },
+        hoverinfo: 'none',
+        showlegend: false
+      });
+    }
+  }
+
   // Create plotly data for explorer view
   const plotlyData = [{
     x: filteredGraphData.map(node => node.x),
@@ -2269,6 +2320,50 @@ const App = () => {
       `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
     )
   }];
+
+  // Add red dots at coordinates where arrows point to for highlighted molecules in explorer view
+  if (highlightedMolecules && highlightedMolecules.length > 0) {
+    plotlyData.push({
+      x: highlightedMolecules.map(molecule => molecule.x),
+      y: highlightedMolecules.map(molecule => molecule.y),
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: 8,
+        color: '#FF0000',
+        symbol: 'circle'
+      },
+      hoverinfo: 'none',
+      showlegend: false
+    });
+  }
+
+  // Add red dots for similar molecules (find friends) in explorer view
+  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
+    const validMolecules = highlightedSimilarMolecules.filter(
+      molecule => 
+        molecule.UMAP_0 !== null && 
+        molecule.UMAP_0 !== undefined && 
+        molecule.UMAP_1 !== null && 
+        molecule.UMAP_1 !== undefined
+    );
+    
+    if (validMolecules.length > 0) {
+      plotlyData.push({
+        x: validMolecules.map(molecule => molecule.UMAP_0),
+        y: validMolecules.map(molecule => molecule.UMAP_1),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: 8,
+          color: '#FF0000',
+          symbol: 'circle'
+        },
+        hoverinfo: 'none',
+        showlegend: false
+      });
+    }
+  }
 
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
