@@ -1843,7 +1843,11 @@ const App = () => {
     }
     
     // Professional users can also access everything
-    if (userPermissions === 'professional') {
+    if (userPermissions === 'team') {
+      return true;
+    }
+
+    if (userPermissions === 'explorer') {
       return true;
     }
     
