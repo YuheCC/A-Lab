@@ -257,36 +257,10 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         molecules: data.molecules 
       };
       setMessages(prev => [...prev, llmMessage]);
-      
-      // Update the query limit after each query for research users
-      if (userPermissions === 'research') {
-        try {
-          const limitResponse = await fetch(`${API_URL}/query_limit_update`, {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          });
-          if (limitResponse.ok) {
-            const limitData = await limitResponse.json();
-            setRemainingQueries(limitData.query_limit);
-          } else {
-            const getResponse = await fetch(`${API_URL}/query_limit`, {
-              method: "GET",
-              headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              }
-            });
-            if (getResponse.ok) {
-              const getData = await getResponse.json();
-              setRemainingQueries(getData.query_limit);
-            }
-          }
-        } catch (error) {
-          console.error("Error updating query limit:", error);
-        }
+
+      // Update remaining queries based on server payload
+      if (userPermissions === 'research' && data.remaining_queries !== undefined) {
+        setRemainingQueries(data.remaining_queries);
       }
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
