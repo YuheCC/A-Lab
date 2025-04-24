@@ -1202,7 +1202,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
               <li><strong>The Interface:</strong> An intuitive user interface linking the Map and Navigation System, making battery material discovery straightforward and simple.</li>
             </ol>
             
-            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size. (In terms of actual numbers, that's 100 billion versus 100 million.) The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
+            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size. (In terms of actual numbers, that's 100 billion versus 100 million) The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
             <p>And like all AI-based technologies, with your help, we can improve Molecular Universe together, faster.</p>
           </div>
           
