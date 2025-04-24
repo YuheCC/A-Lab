@@ -103,8 +103,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
           const token = localStorage.getItem('token');
+          
+          // Add the use_35m parameter when user has appropriate permissions
+          let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`;
+          if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+            queryUrl += '&query_type=molecule&use_35m=true';
+          }
+          
           const res = await fetch(
-            `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
+            queryUrl,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
