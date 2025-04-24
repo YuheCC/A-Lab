@@ -146,8 +146,14 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setSimilarMoleculesLoading(true);
     try {
       const token = localStorage.getItem('token');
+      // Add the use_35m parameter when user has appropriate permissions
+      let queryUrl = `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`;
+      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+        queryUrl += '&use_35m=true';
+      }
+      
       const response = await fetch(
-        `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`,
+        queryUrl,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
