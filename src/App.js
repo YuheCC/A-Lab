@@ -3355,6 +3355,14 @@ const App = () => {
                                       <td className="property-value">{molecule.properties.functional_groups}</td>
                                     </tr>
                                   )}
+                                  <tr>
+                                    <td className="property-name">UMAP_X</td>
+                                    <td className="property-value">{molecule.x !== undefined && molecule.x !== null ? molecule.x.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">UMAP_Y</td>
+                                    <td className="property-value">{molecule.y !== undefined && molecule.y !== null ? molecule.y.toFixed(4) : 'N/A'}</td>
+                                  </tr>
                                 </tbody>
                               </table>
                               <div className="molecule-image-container">
@@ -3442,6 +3450,22 @@ const App = () => {
                                     <tr>
                                       <td className="property-name">Functional Groups</td>
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">UMAP_X</td>
+                                      <td className="property-value">
+                                        {molecule.UMAP_0 !== null && molecule.UMAP_0 !== undefined 
+                                          ? molecule.UMAP_0.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">UMAP_Y</td>
+                                      <td className="property-value">
+                                        {molecule.UMAP_1 !== null && molecule.UMAP_1 !== undefined 
+                                          ? molecule.UMAP_1.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
                                     </tr>
                                     {similarMoleculeImages[index] && (
                                       <tr>
