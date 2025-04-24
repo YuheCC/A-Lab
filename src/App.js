@@ -11,25 +11,63 @@ import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
 
 // ---------------------------------------------------------------------------
-// Global fetch wrapper that logs the user out on 401 Unauthorized responses
+// Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
 const redirectToLogin = () => {
-  // Clear any persisted auth info
+  console.log("Redirecting to login page...");
+  // Already on an auth route?   → do **nothing** to avoid redirect loops.
+  if (/^\/(login)/.test(window.location.pathname)) return;
+
+  const current = window.location.pathname + window.location.search;
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   localStorage.removeItem('permissions');
-  // Send user to the sign‑in page
-  window.history.pushState({}, '', '/signin');
+
+  // Send them to the sign‑in screen **once**, carrying the original target.
+  window.history.pushState(
+    {},
+    '',
+    `/login?redirect=${encodeURIComponent(current)}`,
+  );
   window.location.reload();
 };
 
 const _origFetch = window.fetch.bind(window);
-window.fetch = (...args) =>
-  _origFetch(...args).then((response) => {
-    if (response.status === 401) {
+window.fetch = (input, init = {}) => {
+  // -------------------------------------------------------------------
+  // 1) Transparently attach JWT to **any** request going to our backend
+  //    so that all parts of the app stay authenticated even when they
+  //    use plain `fetch()` instead of `authFetch()`.
+  // -------------------------------------------------------------------
+  const token = localStorage.getItem('token');
+  let url = typeof input === 'string' ? input : input?.url || '';
+
+  // Treat bare “/api”‑style paths as same‑origin
+  const sameOrigin = url.startsWith('/') && !url.startsWith('//');
+  const isBackend   = url.startsWith(API_URL) || sameOrigin;
+
+  if (token && isBackend) {
+    // Normalise existing headers then merge
+    const hdrs = new Headers(init.headers || {});
+    if (!hdrs.has('Authorization')) {
+      hdrs.set('Authorization', `Bearer ${token}`);
+    }
+    init = { ...init, headers: hdrs };
+  }
+
+  // -------------------------------------------------------------------
+  // 2) Perform the request
+  // -------------------------------------------------------------------
+  return _origFetch(input, init).then((response) => {
+    // 401? → log the user out **unless** we’re on an auth page already
+    if (
+      response.status === 401 &&
+      !/^\/(login|signin)/.test(window.location.pathname)
+    ) {
       redirectToLogin();
     }
     return response;
   });
+};
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
@@ -99,6 +137,14 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // signin redirect logic
+  const [redirectPath, setRedirectPath] = useState('/');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const dest = params.get('redirect');
+    if (dest) setRedirectPath(dest);
+  }, []);
+
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
@@ -111,18 +157,18 @@ const AuthPage = () => {
     setError('');
 
     try {
-      // Validate email format for account creation
-      if (!isLogin) {
-        if (!email.endsWith('.edu')) {
-          throw new Error('Only .edu email addresses are allowed for registration');
-        }
-      }
+      // sign‑up validation: no password, still only .edu
+      // if (!isLogin && !email.endsWith('.edu')) {
+      //   throw new Error('Only .edu e‑mail addresses are allowed for registration');
+      // }
 
       const formData = new FormData();
       formData.append('username', username);
-      formData.append('password', password);
-      
-      if (!isLogin) {
+
+      if (isLogin) {
+        formData.append('password', password);          // login path unchanged
+      } else {
+        // sign‑up: DO NOT send a password
         formData.append('email', email);
         formData.append('first_name', firstName);
         formData.append('last_name', lastName);
@@ -152,22 +198,30 @@ const AuthPage = () => {
       }
 
       const data = await response.json();
-      
-      // Store token and user info in localStorage
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('permissions', data.permissions);
-      
-      // Navigate to the map page instead of just reloading
-      window.history.pushState({}, '', '/');
-      window.location.reload();
-      
-    } catch (err) {
+
+      if (isLogin) {
+        // Store token and user info in localStorage
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('permissions', data.permissions);
+
+        console.log("Stored local credentials.")
+        
+        // Navigate to the map page instead of just reloading
+        window.location.replace(redirectPath); 
+      }
+      else {
+        alert(data.message || 'Verification e‑mail sent.');
+        setIsLogin(true);             // return to Sign‑In view
+        return;    
+      }
+    }
+    catch (err) {
       console.error('Authentication error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
-    }
+    }               // nothing else to do
   };
 
   return (
@@ -248,17 +302,19 @@ const AuthPage = () => {
             </div>
           )}
           
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              required
-            />
-          </div>
+          {isLogin && (
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                required
+              />
+            </div>
+          )}
           
           <button 
             type="submit" 
@@ -1705,6 +1761,7 @@ const App = () => {
   // Update useEffect for route handling
   useEffect(() => {
     const handleRouteChange = () => {
+      if (authLoading) return;
       const path = window.location.pathname;
       
       // If not authenticated, allow access to About, Map, and Pricing pages
@@ -1722,7 +1779,7 @@ const App = () => {
           }
         } else {
           // Redirect to login for any other route
-          window.history.pushState({}, '', '/login');
+          redirectToLogin();
           setActivePage('login');
         }
         return;
@@ -1758,11 +1815,11 @@ const App = () => {
     // Listen for route changes
     window.addEventListener('popstate', handleRouteChange);
     return () => window.removeEventListener('popstate', handleRouteChange);
-  }, [isAuthenticated, userPermissions]);
+  }, [isAuthenticated, userPermissions, authLoading]);
 
   // Update handleSignIn to use proper navigation
   const handleSignIn = () => {
-    window.history.pushState({}, '', '/login');
+    redirectToLogin();
     setActivePage('login');
   };
 
@@ -1900,6 +1957,15 @@ const App = () => {
 
   // Check authentication on load
   useEffect(() => {
+    // Skip auth check on public auth/password routes
+    const path = window.location.pathname;
+    if (
+      path.startsWith('/login') ||
+      path.startsWith('/register')
+    ) {
+      setAuthLoading(false);
+      return;
+    }
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
       const permissions = localStorage.getItem('permissions') || 'research';
