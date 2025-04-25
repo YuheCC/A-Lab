@@ -637,7 +637,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (≤ 100 queries/month)</li>
@@ -662,7 +662,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
           <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap)</li>
@@ -686,7 +686,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap)</li>
@@ -711,7 +711,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
           <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
@@ -1235,27 +1235,23 @@ const AboutPage = ({ handleNavigation, activePage }) => {
                     
           <h2 id="features-section">Features of Molecular Universe</h2>
           
-          <h3>Map the Molecular Universe</h3>
+          <h3>Map</h3>
           
           <p>
             Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
-          
-          <h3>Filter by Chemical Properties</h3>
+
+          <h3>Ask</h3>
           
           <p>
-            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
-          </p>
-          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
-            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
-            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
-            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-          </ul>
-          <p>
-            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
+            Now that you have the map, you need a navigation system. Ask is the navigation system that allows you to ask your questions in natural language. You can be general such as "recommend an electrolyte for LiFePO4 and graphite cell" or be specific such as "recommend an electrolyte that is nonflammable and stable at high voltage 4.55V and can do 6C fast charge in a Li-ion cell with NCM811 cathode and silicon anode".
           </p>
           
-          <h3>Search & "Find a Friend"</h3>
+          <p>
+            It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence.
+          </p>
+
+          <h3>Search</h3>
           
           <p>
             You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
@@ -1276,14 +1272,18 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <span style={{color: 'black'}}>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
           </p>
           
-          <h3>Ask a question in natural language</h3>
+          <h3>Filter</h3>
           
           <p>
-            Now that you have the map, you need a navigation system. Ask is the navigation system that allows you to ask your questions in natural language. You can be general such as "recommend an electrolyte for LiFePO4 and graphite cell" or be specific such as "recommend an electrolyte that is nonflammable and stable at high voltage 4.55V and can do 6C fast charge in a Li-ion cell with NCM811 cathode and silicon anode".
+            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
           </p>
-          
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+          </ul>
           <p>
-            It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence.
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
           </p>
           
           <div id="newsfeed" className="feature-section">
