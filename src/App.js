@@ -728,7 +728,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            Access to Whole Molecular Universe (100M) inc. Hidden Galaxies
+            Access to Whole Molecular Universe (100M)
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -748,7 +748,6 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
               <li>Ask (no cap, battery-specific LLM)</li>
               <li>More molecule properties (inc. melting and boiling point predictions)</li>
               <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
-              <li>Potential new IP development and Hidden Galaxy access</li>
             </ul>
           </div>
         </div>
@@ -1407,12 +1406,12 @@ const AboutPage = ({ handleNavigation, activePage }) => {
               <li><strong>The Interface:</strong> An intuitive user interface linking the Map and Navigation System, making battery material discovery straightforward and simple.</li>
             </ol>
             
-            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size (In terms of actual numbers, that's 100 billion versus 100 million). The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
+            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size (in terms of actual numbers, that's 100 billion versus 100 million). The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
             <p>And like all AI-based technologies, with your help, we can improve Molecular Universe together, faster.</p>
           </div>
           
           <div style={{ marginBottom: '30px' }}>
-            <p style={{ fontWeight: 'bold' }}>Why we are building Molecular Universe?</p>
+            <p style={{ fontWeight: 'bold' }}>Why are we building Molecular Universe?</p>
             <p>There's one simple, undeniable truth: There is no such thing as the perfect, one-size-fits-all battery. Especially not with the advent of an all-electric future.</p>
             <p>That's why at SES AI, we've always sought to develop electrolytes for various practical battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion - for use across everything from drones to robotics, electric cars to urban air mobility, and grid storage to consumer electronics.</p>
 
@@ -1443,7 +1442,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <h3>Map</h3>
           
           <p>
-            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties.
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features 23 molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
 
           <h3>Ask</h3>
