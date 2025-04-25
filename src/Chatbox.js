@@ -103,8 +103,15 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
       const responses = await Promise.all(
         moleculeList.map(async (mol) => {
           const token = localStorage.getItem('token');
+          
+          // Add the use_35m parameter when user has appropriate permissions
+          let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`;
+          if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+            queryUrl += '&query_type=molecule&use_35m=true';
+          }
+          
           const res = await fetch(
-            `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`,
+            queryUrl,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -139,8 +146,14 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setSimilarMoleculesLoading(true);
     try {
       const token = localStorage.getItem('token');
+      // Add the use_35m parameter when user has appropriate permissions
+      let queryUrl = `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`;
+      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+        queryUrl += '&use_35m=true';
+      }
+      
       const response = await fetch(
-        `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`,
+        queryUrl,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -416,6 +429,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   <p>ESP Max: {Number(details.ESP_MAX).toFixed(2)} eV</p>
                   <p>ESP Min: {Number(details.ESP_MIN).toFixed(2)} eV</p>
                   <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
+                  {/* <p>UMAP_X: {details.UMAP_0 !== undefined && details.UMAP_0 !== null ? details.UMAP_0.toFixed(2) : 'N/A'}</p>
+                  <p>UMAP_Y: {details.UMAP_1 !== undefined && details.UMAP_1 !== null ? details.UMAP_1.toFixed(2) : 'N/A'}</p> */}
                   {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                     <>
                       <p>Predicted MP: {details.PREDICTED_MP} °C</p>
@@ -480,6 +495,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                   <p>ESP Max: {Number(details.ESP_max_eV).toFixed(2)} eV</p>
                   <p>ESP Min: {Number(details.ESP_min_eV).toFixed(2)} eV</p>
                   <p>Functional groups: {details.functional_groups}</p>
+                  {/* <p>UMAP_X: {details.UMAP_0 !== undefined && details.UMAP_0 !== null ? details.UMAP_0.toFixed(2) : 'N/A'}</p>
+                  <p>UMAP_Y: {details.UMAP_1 !== undefined && details.UMAP_1 !== null ? details.UMAP_1.toFixed(2) : 'N/A'}</p> */}
                   {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                     <>
                       <p>Predicted MP: {Number(details.predicted_MP_celsius).toFixed(2)} °C</p>

@@ -14,8 +14,8 @@ import API_URL from './Constants.js'; // Contains API URL and any other constant
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
 const redirectToLogin = () => {
   console.log("Redirecting to login page...");
-  // Already on an auth route?   → do **nothing** to avoid redirect loops.
-  if (/^\/(login)/.test(window.location.pathname)) return;
+  // Already on an auth route?   → do **nothing** to avoid redirect loops.
+  if (/^\/(login|password-reset)/.test(window.location.pathname)) return;
 
   const current = window.location.pathname + window.location.search;
   localStorage.removeItem('token');
@@ -41,7 +41,7 @@ window.fetch = (input, init = {}) => {
   const token = localStorage.getItem('token');
   let url = typeof input === 'string' ? input : input?.url || '';
 
-  // Treat bare “/api”‑style paths as same‑origin
+  // Treat bare " /api"‑style paths as same‑origin
   const sameOrigin = url.startsWith('/') && !url.startsWith('//');
   const isBackend   = url.startsWith(API_URL) || sameOrigin;
 
@@ -58,7 +58,7 @@ window.fetch = (input, init = {}) => {
   // 2) Perform the request
   // -------------------------------------------------------------------
   return _origFetch(input, init).then((response) => {
-    // 401? → log the user out **unless** we’re on an auth page already
+    // 401? → log the user out **unless** we're on an auth page already
     if (
       response.status === 401 &&
       !/^\/(login|signin)/.test(window.location.pathname)
@@ -327,7 +327,11 @@ const AuthPage = () => {
         
         <div className="auth-switch">
           {isLogin ? (
-            <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+            <>
+              <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+              <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>Redeem code for team members</a></p>
+              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/password-reset'; }}><strong>Reset</strong></a></p>
+            </>
           ) : (
             <>
               <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
@@ -623,7 +627,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </div> */}
           <h2>Research (academia only)</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$0</span>
@@ -637,7 +641,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (≤ 100 queries/month)</li>
@@ -648,7 +652,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Explorer</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$150</span>
@@ -662,7 +666,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
           <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap)</li>
@@ -673,7 +677,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Team</h2>
           <p className="pricing-description">
-            Accessing 1M database
+            Access to Partial Molecular Universe (1M)
           </p>
           <div className="pricing-price">
             <span className="price-amount">$1,000</span>
@@ -686,7 +690,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
             <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap)</li>
@@ -697,7 +701,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Enterprise</h2>
           <p className="pricing-description">
-            Accessing 100M database
+            Access to Whole Molecular Universe (100M)
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -711,11 +715,11 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </button>
           <div className="pricing-details">
           <ul>
-              <li>About the Map</li>
+              <li>Map</li>
               <li>Filter</li>
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
-              <li>Available melting and boiling point predictions</li>
+              <li>More molecule properties (inc. melting and boiling point predictions)</li>
               <li>Expert consulting</li>
             </ul>
           </div>
@@ -724,7 +728,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
         <div className="pricing-card">
           <h2>Joint Development</h2>
           <p className="pricing-description">
-            Full Enterprise Access
+            Access to Whole Molecular Universe (100M) inc. Hidden Galaxies
           </p>
           <div className="pricing-price">
             <span className="price-amount"></span>
@@ -743,8 +747,8 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
               <li>Search</li>
               <li>Ask (no cap, battery-specific LLM)</li>
               <li>More molecule properties (inc. melting and boiling point predictions)</li>
-              <li>More advanced LLM</li>
-              <li>Customized statement-of-work</li>
+              <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
+              <li>Potential new IP development and Hidden Galaxy access</li>
             </ul>
           </div>
         </div>
@@ -818,12 +822,6 @@ const TermsPage = ({handleNavigation, activePage}) => {
             onClick={(e) => {
               e.preventDefault();
               handleNavigation('about');
-              setTimeout(() => {
-                const featuresSection = document.getElementById('features-section');
-                if (featuresSection) {
-                  featuresSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
             }}
           >
             Features
@@ -908,7 +906,7 @@ const TermsPage = ({handleNavigation, activePage}) => {
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"EAR"</span> has the meaning set out in Section 14.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Export Controls"</span> has the meaning set out in Section 14.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Feedback"</span> has the meaning set out in Section 8(d).</p>
-        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Fees"</span> means the fees described in an Order or the payment page of [MU's URL] that are required to be paid by the Customer for the Services.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Fees"</span> means the fees described in an Order or the payment page of <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a> that are required to be paid by the Customer for the Services.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Losses"</span> has the meaning set out in Section 10(a)(i).</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Order"</span> means an ordering document or online order entered into between you and us that references this Agreement and describes the Services you are subscribing to.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Output"</span> means information, data, materials, text, images, code, works, or other content generated by or otherwise output from the Services in response to a Customer Data.</p>
@@ -917,7 +915,7 @@ const TermsPage = ({handleNavigation, activePage}) => {
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Process"</span> means to take any action or perform any operation or set of operations that the Services are capable of taking or performing on any data, information, or other content, including to collect, receive, input, upload, download, record, reproduce, store, organize, combine, log, catalog, cross-reference, manage, maintain, copy, adapt, alter, translate, or make other improvements or derivative works, process, weigh, perform statistical analysis, retrieve, output, consult, use, perform, display, disseminate, transmit, submit, post, transfer, disclose, or otherwise provide or make available, or block, erase, or destroy. "Processing" and "Processed" have correlative meanings.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Provider IP"</span> means the Services, Output, and all intellectual property provided to Customer or any other Authorized User in connection with the foregoing. For the avoidance of doubt, Provider IP includes Aggregated Statistics and any information, data, or other content derived from Provider's monitoring of Customer's access to or use of the Services, but does not include Customer Data. Provider IP includes all modifications, enhancements, refinements, adaptations, customizations, improvements, and derivative works of the Services.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Sanctions"</span> has the meaning set out in Section 14.</p>
-        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Services"</span> means the services provided by Provider under this Agreement that are detailed on Provider's website available at [MU URL] or reflected in the applicable Order.</p>
+        <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Services"</span> means the services provided by Provider under this Agreement that are detailed on Provider's website available at <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a> or reflected in the applicable Order.</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Service Suspension"</span> has the meaning set out in Section 2(f).</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Term"</span> has the meaning set out in Section 12(a).</p>
         <p style={{ marginBottom: '10px' }}><span style={{ fontWeight: 'bold' }}>"Third-Party Claim"</span> has the meaning set out in Section 10(a)(i).</p>
@@ -938,7 +936,7 @@ const TermsPage = ({handleNavigation, activePage}) => {
         <p style={{ marginBottom: '15px' }}><strong>(f)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suspension. Notwithstanding anything to the contrary in this Agreement, Provider may temporarily suspend Customer's and any other Authorized User's access to any portion or all of the Services if: (i) Provider reasonably determines that (A) there is a threat or attack on any of the Provider IP; (B) Customer's or any other Authorized User's use of the Provider IP disrupts or poses a security risk to the Provider IP, to Provider, or to any other customer or vendor of Provider; (C) Customer or any other Authorized User is using the Provider IP for fraudulent or illegal activities; (D) subject to applicable law, Customer has ceased to continue its business in the ordinary course, made an assignment for the benefit of creditors or similar disposition of its assets, or become the subject of any bankruptcy, reorganization, liquidation, dissolution, or similar proceeding; (E) Provider's provision of the Services to Customer or any other Authorized User is prohibited by applicable law; or (F) Customer is using the Services in material violation of Section Error! Reference source not found.(c) or the AUP; (ii) any vendor of Provider has suspended or terminated Provider's access to or use of any third-party services or products required to enable Customer to access and use the Services; or (iii) in accordance with Section Error! Reference source not found. (any such suspension described in subclause (i), (ii), or (iii), a "Service Suspension"). Provider shall use commercially reasonable efforts to provide written notice of any Service Suspension to Customer and to provide updates regarding resumption of access to the Services following any Service Suspension. Provider shall use commercially reasonable efforts to resume providing access to the Services as soon as reasonably possible after the event giving rise to the Services Suspension is cured. Provider will have no liability for any damage, liabilities, losses (including any loss of data or profits), or any other consequences that Customer or any other Authorized User may incur as a result of a Service Suspension.</p>
         
         <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>3. Customer Responsibilities.</h2>
-        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acceptable Use Policy; Provider Policies. The Services may not be used for unlawful, fraudulent, offensive, or obscene activity, as further described and set out in Provider's acceptable use policy (<span style={{ fontWeight: 'bold' }}>"AUP"</span>) located at <a href='https://molecular-universe.ses.ai/terms'>https://molecular-universe.ses.ai/terms</a>, as may be amended from time to time, which is hereby incorporated herein by reference. You shall comply with all terms and conditions of this Agreement, all applicable laws, rules, and regulations, and all guidelines, standards, requirements, and policies that may be posted on [URL that consists of access to MU Terms, AUP & Privacy Policy] from time to time, which are hereby incorporated herein by reference, including the AUP.</p>
+        <p style={{ marginBottom: '15px' }}><strong>(a)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acceptable Use Policy; Provider Policies. The Services may not be used for unlawful, fraudulent, offensive, or obscene activity, as further described and set out in Provider's acceptable use policy (<span style={{ fontWeight: 'bold' }}>"AUP"</span>) located at <a href='https://molecular-universe.ses.ai/terms'>https://molecular-universe.ses.ai/terms</a>, as may be amended from time to time, which is hereby incorporated herein by reference. You shall comply with all terms and conditions of this Agreement, all applicable laws, rules, and regulations, and all guidelines, standards, requirements, and policies that may be posted on <a href="https://molecular-universe.ses.ai/terms">https://molecular-universe.ses.ai/terms</a> from time to time, which are hereby incorporated herein by reference, including the AUP.</p>
         
         <p style={{ marginBottom: '15px' }}><strong>(b)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Account Use. You are responsible and liable for all uses of the Services resulting from access provided by you, directly or indirectly, whether that access or use is permitted by or in violation of this Agreement. Without limiting the generality of the foregoing, you are responsible for all acts and omissions of Authorized Users, and any act or omission by an Authorized User that would constitute a breach of this Agreement if taken by you will be deemed a breach of this Agreement by you. You shall use reasonable efforts to make all Authorized Users aware of this Agreement's provisions as applicable to such Authorized User's use of the Services and shall cause Authorized Users to comply with such provisions.</p>
         
@@ -952,7 +950,7 @@ const TermsPage = ({handleNavigation, activePage}) => {
         <p style={{ marginBottom: '15px' }}>Provider may create and use de-identified or desensitized data related to Customer's use of the Services to improve Provider's products and services, to develop new products and services, and for its other business purposes (and such de-identified or desensitized data will be owned by Provider). All Customer Data is automatically deleted within [X days], unless (a) otherwise agreed in an Order; (b) Provider is legally required to retain them; or (c) they are flagged as potentially violating this Agreement or the AUP.</p>
         
         <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>5. Fees and Payment.</h2>
-        <p style={{ marginBottom: '15px' }}>If you purchase any aspect of the Service from our website [MU URL], you must provide complete and accurate billing information, including a valid payment method. For paid subscriptions, we will automatically charge your payment method on each periodic renewal until you terminate our Services in accordance with Section 12(b)(i). If you received an invoice from Provider, you shall pay Provider the <span style={{ fontWeight: 'bold' }}>Fees</span> within thirty (30) days from the invoice date without offset or deduction. Customer shall make all payments hereunder in US dollars on or before the due date. Except as otherwise set forth in the applicable Order Form, all fees are due and payable in advance at the start of the applicable Term. If Customer fails to make any payment when due, without limiting Provider's other rights and remedies: (i) Provider may charge interest on the past due amount at the rate of [1.5% per month/[OTHER INTEREST RATE]] calculated daily and compounded monthly or, if lower, the highest rate permitted under applicable law; (ii) Customer shall reimburse Provider for all reasonable costs incurred by Provider in collecting any late payments or interest, including attorneys' fees, court costs, and collection agency fees; and (iii) if the failure continues for thirty (30) days or more, Provider may suspend, under Section 2(f), Customer's and all other Authorized Users' access to any portion or all of the Services until such amounts are paid in full. All Fees and other amounts payable by Customer under this Agreement are non-refundable and exclusive of taxes and similar assessments. Customer is responsible for all sales, use, and excise taxes, and any other similar taxes, duties, and charges of any kind imposed by any federal, state, or local governmental or regulatory authority on any amounts payable by Customer hereunder, other than any taxes imposed on Provider's income.</p>
+        <p style={{ marginBottom: '15px' }}>If you purchase any aspect of the Service from our website <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a>, you must provide complete and accurate billing information, including a valid payment method. For paid subscriptions, we will automatically charge your payment method on each periodic renewal until you terminate our Services in accordance with Section 12(b)(i). If you received an invoice from Provider, you shall pay Provider the <span style={{ fontWeight: 'bold' }}>Fees</span> within thirty (30) days from the invoice date without offset or deduction. Customer shall make all payments hereunder in US dollars on or before the due date. Except as otherwise set forth in the applicable Order Form, all fees are due and payable in advance at the start of the applicable Term. If Customer fails to make any payment when due, without limiting Provider's other rights and remedies: (i) Provider may charge interest on the past due amount at the rate of [1.5% per month/[OTHER INTEREST RATE]] calculated daily and compounded monthly or, if lower, the highest rate permitted under applicable law; (ii) Customer shall reimburse Provider for all reasonable costs incurred by Provider in collecting any late payments or interest, including attorneys' fees, court costs, and collection agency fees; and (iii) if the failure continues for thirty (30) days or more, Provider may suspend, under Section 2(f), Customer's and all other Authorized Users' access to any portion or all of the Services until such amounts are paid in full. All Fees and other amounts payable by Customer under this Agreement are non-refundable and exclusive of taxes and similar assessments. Customer is responsible for all sales, use, and excise taxes, and any other similar taxes, duties, and charges of any kind imposed by any federal, state, or local governmental or regulatory authority on any amounts payable by Customer hereunder, other than any taxes imposed on Provider's income.</p>
         
         <h2 style={{ fontSize: '20px', marginTop: '30px', marginBottom: '15px' }}>6. Confidential Information.</h2>
         <p style={{ marginBottom: '15px' }}>From time to time during the Term, Provider and Customer may disclose or make available to the other party information about its business affairs, products, confidential intellectual property, trade secrets, third-party confidential information, and other sensitive or proprietary information, whether orally or in written, electronic, or other form or media/in written or electronic form or media, that is marked, designated, or otherwise identified as "confidential" at the time of disclosure, or that ought reasonably to be understood as confidential or proprietary (collectively, <span style={{ fontWeight: 'bold' }}>"Confidential Information"</span>). Without limiting the foregoing, Provider IP is Provider's Confidential Information and Customer Data is Customer's Confidential Information. Confidential Information does not include information that, at the time of disclosure is: (a) in the public domain; (b) known to the receiving party; (c) rightfully obtained by the receiving party on a non-confidential basis from a third party; or (d) independently developed without any reference to or use of the disclosing party's Confidential Information by the receiving party. The receiving party shall not disclose the disclosing party's Confidential Information to any person or entity, except to the receiving party's employees, agents, or subcontractors who have a need to know the Confidential Information for the receiving party to exercise its rights or perform its obligations hereunder and who are required to protect the Confidential Information in a manner no less stringent than required under this Agreement. Notwithstanding the foregoing, each party may disclose Confidential Information to the limited extent required (i) to comply with the order of a court or other governmental body, or as otherwise necessary to comply with applicable law, provided that the party making the disclosure pursuant to the order shall first have given written notice to the other party and made a reasonable effort to obtain a protective order; or (ii) to establish a party's rights under this Agreement, including to make required court filings. Each party's obligations of non-disclosure regarding Confidential Information are effective as of the date the Confidential Information is first disclosed to the receiving party and will continue as long as permitted by applicable law; provided, however, for any Confidential Information that constitutes a trade secret (as determined under applicable law), those obligations of non-disclosure will survive the termination or expiration of this Agreement for as long as the Confidential Information remains subject to trade secret protection under applicable law. Unauthorized disclosure of Confidential Information may cause harm not compensable by damages, and the disclosing party may seek injunctive or equitable relief in a court of competent jurisdiction, without posting a bond, to protect its Confidential Information.</p>
@@ -1054,6 +1052,213 @@ const TermsPage = ({handleNavigation, activePage}) => {
           </div>
           
           <p style={{ marginBottom: '15px' }}><strong>3. Respect guardrails and don't mislead.</strong> Don't circumvent safeguards. Don't mislead people as to the nature and source of Outputs. You should be transparent and disclose your use of AI assistance and potential limitations, as applicable.</p>
+          
+          <h1 style={{ fontSize: '28px', marginTop: '40px', marginBottom: '20px', textAlign: 'center' }}>Privacy Notice</h1>
+          <p style={{ fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>Last Modified: {currentDate}</p>
+          
+          <p style={{ marginBottom: '15px' }}>This Privacy Notice discloses the privacy practices for SES AI Corporation and its affiliates ("SES," "we," "us," "our"). It describes how we collect, use, and disclose information in connection with your access and use of all websites and other online products and services provided by us that link to this Privacy Notice, including https://ses.ai (and all related subdomains) (the "Sites") and related online and offline services thereto (collectively the "Services"). SES is the data controller of your information. This notice will inform you of the following:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>What information we collect;</li>
+            <li>How we use it;</li>
+            <li>With whom it is shared;</li>
+            <li>How it can be corrected;</li>
+            <li>How it is secured;</li>
+            <li>How long it will be stored;</li>
+            <li>How notice changes will be communicated;</li>
+            <li>How to address concerns over misuse of your information.</li>
+          </ul>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Information We Collect</h3>
+          <p style={{ marginBottom: '15px' }}>We ask that you do NOT include personal information in your prompts and inputs into our services on <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a>; however, we cannot control what you provide to us.</p>
+          <p style={{ marginBottom: '15px' }}>We collect information in three main ways: (1) information collected directly from you; (2) information collected through automated means; and (3) information collected directly from others. We may combine the information you give us with other information sources (both online and offline), including third-party sources, and use it for the purposes identified in this Privacy Notice.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Information Collected Directly from You</h3>
+          <p style={{ marginBottom: '15px' }}>The general categories of your information that we collect directly from you (for example, if you fill out the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form on our Sites, subscribe for our services on <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a> or seek customer service) may include, but are not limited to:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Commercial information, including your interest in SES products and Services and transaction information;</li>
+            <li>Personal identifiers, including your contact information (name, address, telephone number, email address, business information, and candidate information (for job applicants);</li>
+            <li>Payment data such as your credit/debit card information, billing information and bank account information that you may provide to us for the purposes of subscribing to our services on <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a>. We use Stripe, Inc. ("Stripe") to process payments securely. Stripe acts as a data processor on our behalf for the purposes of handling and storing your payment details, including your credit/debit card number, expiration data, and billing address. In certain cases, Stripe may act as an independent data controller (e.g., for anti-fraud checks or regulatory compliance). In such cases, your data is processed according to Stripe's Privacy Policy (https://stripe.com/en-sg/privacy). When you make a payment for our services on <a href="https://molecular-universe.ses.ai">https://molecular-universe.ses.ai</a>, Stripe receives your name, email address, billing address, organization, payment card information and transaction details. These data are shared solely for the purpose of payment processing and fraud prevention. The legal basis for processing these data are: 
+              <ul style={{ marginLeft: '20px', marginBottom: '5px' }}>
+                <li>GDPR: Article 6(1)(b) (contract performance) and Article 6(1)(f) (legitimate interests)</li>
+                <li>CCPA/CPRA: Stripe is a service provider acting on our behalf and is contractually restricted from using your personal information for purposes other than those stated in <a href="https://stripe.com/en-sg/legal/dpa" target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc', textDecoration: 'underline' }}>Stripe's Data Processing Agreement</a>.</li>
+              </ul>
+            </li>
+            <li>Stripe may transfer and process your personal data outside your country of residence, including to the United States. These transfers are protected by Standard Contractual Clauses and other safeguards included in <a href="https://stripe.com/en-sg/legal/dpa" target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc', textDecoration: 'underline' }}>Stripe's Data Processing Agreement</a>.</li>
+            <li>Demographic information, including your gender, age, and interests;</li>
+            <li>Other data collected that could directly or indirectly identify you.</li>
+          </ul>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Information Collected Through Automated Means</h3>
+          <p style={{ marginBottom: '15px' }}>As discussed further below in the "Analytics/Cookies/Tracking Technologies" section, we, and our service providers, may use a variety of technologies, including cookies, to assist in this information collection. The general categories of your information that we collect through automated means may include, but are not limited to:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Information about your access to and use of the Sites and emails, such as your IP address, browser language, the state or country from which you accessed the Services, software and hardware attributes (including device IDs, operating system, and browser type), referring and exit URLs, the links you click and files you download, pages viewed and the order of those pages, the amount of time spent on particular pages, the terms you use in searches on our websites, the date and time you accessed our websites or opened our emails, and other similar information;</li>
+            <li>Internet or other electronic network activity information;</li>
+            <li>Information when you use our Services;</li>
+            <li>Information about your location, including general location information (such as your IP address and ZIP code).</li>
+          </ul>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Information Collected Directly from Other Sources</h3>
+          <p style={{ marginBottom: '15px' }}>The general categories of your information that we collect directly from others may include, but are not limited to:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Information you make public: We collect or obtain your information that you manifestly choose to make public, including via social media (e.g., hashtags, contents, communications, comments, photos, video);</li>
+            <li>Interaction information: If you interact with any third-party content on a Site (including third party plugins and cookies), we may receive your information from the relevant third-party provider of that content;</li>
+            <li>Third party information: We collect or obtain your information from third parties who provide it to us (e.g., credit reference agencies; law enforcement authorities; etc.);</li>
+            <li>Other sources: we may receive information about you from other sources, such as business partners, marketers, researchers, analysts, social network services, and other parties to help us supplement our records.</li>
+          </ul>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Analytics/Cookies/Tracking Technologies</h3>
+          <p style={{ marginBottom: '15px' }}>We may use third-party web analytics services on the Services, such as those of Google Analytics. These service providers use the sort of technology described in this section to help us analyze how individuals use the Services, including by noting the third-party website from which you arrive. The information collected by the technology will be disclosed to or collected directly by these service providers, who use the information to evaluate your use of the Service.</p>
+          
+          <p style={{ marginBottom: '15px' }}>We may use cookies, web beacons, IP addresses, browser/canvas fingerprinting and other tracking technologies on our Sites and in our emails. Using tracking technologies allows us to provide benefits to you such as using cookies to identify you so we can suggest content that is likely more relevant to you, thereby saving you time while on our Sites. Tracking technologies can also enable us to track and target the interests of our users to enhance their experience on our Sites. Usage of tracking technologies is in no way linked to any personally identifiable information on our Sites. We also automatically collect data to measure website performance including metadata, log files, page load time, page linger time, click throughs and abandonments, network routing and server configurations. Much of the data collected is aggregated or statistical data about how visitors use our Sites and is not linked to your information.</p>
+          
+          <p style={{ marginBottom: '15px' }}>Do Not Track ("DNT") is a privacy preference that users can set in certain web browsers. We are committed to providing you with meaningful choices about the information collected on our websites for third-party purposes, and that is why we provide the variety of opt-out mechanisms listed below. Some web browsers offer users a "Do Not Track" privacy preference setting in the web browser. We do not currently recognize or respond to browser-initiated Do Not Track signals. <a href="https://fpf.org/thank-you-for-visiting-allaboutdnt-com/" target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc', textDecoration: 'underline' }}>Learn more about Do Not Track.</a></p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>How We Use the Information We Collect</h3>
+          <p style={{ marginBottom: '15px' }}>We may use the categories of your information described above for the following business or commercial purposes:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Maintain or service customer accounts;</li>
+            <li>Provide customer service;</li>
+            <li>Audit customer activity;</li>
+            <li>Process or fulfill orders and transactions;</li>
+            <li>Verify customer information;</li>
+            <li>Provide advertising or marketing Services;</li>
+            <li>Contact you about new products or Services and offers, promotional information, and other information we believe will be of interest to you (in accordance with any privacy preferences you have expressed to us);</li>
+            <li>Provide products or Services updates;</li>
+            <li>Improve the Services, including customization and personalization;</li>
+            <li>Invite you to participate in promotions, sweepstakes, surveys, and provide feedback to us;</li>
+            <li>Communicate with investors;</li>
+            <li>Communicate with you about changes to legal policies;</li>
+            <li>Secure the Services and investigate and help prevent fraud, security issues, and abuse;</li>
+            <li>Understand, detect, and resolve problems with the Services and other issues being reported;</li>
+            <li>Comply with contractual obligations;</li>
+            <li>Comply with any procedures, laws, and regulations where necessary for our legitimate interests or legitimate interests of others;</li>
+            <li>Establish, exercise, or defend our legal rights where necessary for our legitimate interests or the legitimate interests of others, including the enforcement of our legal and contractual rights, other usage policies and agreements, and other legal terms or controls, or to engage in other legal matters;</li>
+            <li>Fulfill other requests with your consent and for any other purposes disclosed at the time you provide personal information.</li>
+          </ul>
+          <p style={{ marginBottom: '15px' }}>We may aggregate and/or de-identify any information collected through the Services so that such information can no longer be linked to you or your device ("Aggregated/De-Identified Information"). We may use Aggregated/De-Identified Information for any purpose, including without limitation for research and marketing purposes, and may also share such data with any third parties, including advertisers, promotional partners, and sponsors, in our sole discretion.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>With Whom We Share Information</h3>
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Affiliated entities</h4>
+          <p style={{ marginBottom: '15px' }}>Your information may be shared with affiliated entities to deliver the Services, provide customer service, and operate our business.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Service providers</h4>
+          <p style={{ marginBottom: '15px' }}>We use select third-party vendors to help us provide our Services and operate our business, and we may provide access to, or share your information with, these vendors. They provide a variety of services to us, including customer service, payment processing, shipping, sales and marketing, product design and development, data storage, security, fraud prevention, research, and legal services. These service providers are permitted to access and use your information for purposes of performing services for SES or to comply with applicable legal requirements.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Partners</h4>
+          <p style={{ marginBottom: '15px' }}>We may share information about your interaction with our Services with our partners in relation to past or potential transactions and integrations.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Protection of SES and others</h4>
+          <p style={{ marginBottom: '15px' }}>We may disclose the information we collect about you if required to do so by law or in a good faith belief that such disclosure is reasonably necessary to: (a) comply with legal process (for example, a subpoena or court order); (b) enforce our terms of service or sale, this Privacy Notice, or other contracts with you, including investigation of potential violations; (c) respond to claims that any content violates the rights of third parties; or (d) protect the rights, property, or personal safety of SES or others.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Business transfers</h4>
+          <p style={{ marginBottom: '15px' }}>As we continue to develop our business, we may buy, merge, or partner with other companies. In such transactions, including in contemplation of such transactions, your information may be among the transferred assets. If a portion or all of SES's assets are sold or transferred to a third party, we may share or transfer your information as part of the transaction.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>With Your Consent or At Your Direction</h4>
+          <p style={{ marginBottom: '15px' }}>We may share information with third parties when you direct us to do so or if you have consented to additional sharing of your information (including as set out in this Privacy Notice).</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>International Transfers</h4>
+          <p style={{ marginBottom: '15px' }}>Your information may be transferred to, stored in, accessed from, or processed in the United States or other jurisdictions in which we or our service providers maintain facilities. You understand that these jurisdictions may have different data protection regimes than in the country in which you are located.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Legal Bases for Use of Your Information</h3>
+          <p style={{ marginBottom: '15px' }}>The laws of some jurisdictions, including the European Economic Area and the United Kingdom, require that companies only process your "Personal Data" (as that term is defined in the applicable law, like the EU General Data Protection Regulation) if they have a legal basis (or justifiable need) for processing your Personal Data. To the extent those laws apply, our legal bases for processing Personal Data are as follows:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>To perform our obligations pursuant to a contract (or pending contract) with you. For example, we will process your Personal Data to enter into a contract with you, and to honor our commitments in any contracts that we have with you;</li>
+            <li>For our legitimate interests or the legitimate interests of others. For example, we will process your Personal Data to: operate our business and our Services; identify and fix any issues with our Services; secure the Services; learn more about how our customers use the Services; perform internal analytics; improve the Services and users' experiences; conduct marketing; provide you with certain information about new products, special offers or other information that we think you may find interesting using the email address which you have provided in accordance with applicable law; make and receive payments; comply with legal requirements and defend our legal rights; prevent fraud; engage in a business change (e.g., sale, merger); and know the customer to whom we are providing Services;</li>
+            <li>To comply with our legal obligations, such as our obligation to share data with tax authorities;</li>
+            <li>With your consent. Where we rely on this basis, you have the right to withdraw your consent at any time as described in the "Your Access to, Choices and Rights with Respect to Your Information" section below.</li>
+          </ul>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Your Access to, Choices and Rights with Respect to Your Information</h3>
+          <p style={{ marginBottom: '15px' }}>You may instruct us not to use your information to contact you by email, postal mail, or phone regarding products, services, promotions, and special events that might appeal to your interests by contacting us by submitting your request via the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form. In commercial email messages, you can opt out by following the instructions located at the bottom of such emails. Removing your name from the email list may take a reasonable amount of time. Please note that, regardless of your request, we may still use and share certain information as permitted by this Privacy Notice or as required by applicable law. For example, you may not opt out of certain operational emails, such as those reflecting our relationship or transactions with you.</p>
+          
+          <p style={{ marginBottom: '15px' }}>Depending on where you live, you may have certain rights with respect to your information. For example, under local laws, including in the European Economic Area and the United Kingdom, and Canada, you may have some or all of the following rights:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>The right to access personal information we hold about you;</li>
+            <li>The right to have any inaccurate personal information we hold about you corrected or updated;</li>
+            <li>The right to object to our processing of your personal information or prevent the processing of your personal information for direct-marketing purposes;</li>
+            <li>The right to withdraw your consent at any time if and to the extent we are relying on consent as the basis for processing your personal information;</li>
+            <li>The right to restrict the use of your personal information;</li>
+            <li>The right to have the personal information we hold about you deleted in certain circumstances; and</li>
+            <li>The right to receive a copy of the personal information we hold about you and to request that we transfer it to a third party, with certain exceptions.</li>
+          </ul>
+          
+          <p style={{ marginBottom: '15px' }}>To exercise your data protection rights or to receive more details in connection with them, you can submit requests via the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form. You may be required to provide additional information necessary to confirm your identity before we can respond to your request.</p>
+          
+          <p style={{ marginBottom: '15px' }}>We will consider all such requests and provide our response within the time period required by applicable law. Please note, however, that certain information may be exempt from such requests, for example if we need to keep the information to comply with our own legal obligations or to establish, exercise, or defend legal claims. Your rights and our responses will vary based on your state or country of residency. Please note that you may be in a jurisdiction where we are not obligated, or are unable, to fulfill a request. In such a case, your request may not be fulfilled. If you are a California resident (i.e., a "Consumer"), please see the "Privacy Information for California Residents" section below for information about your specific rights under California law.</p>
+          
+          <p style={{ marginBottom: '15px' }}>If applicable, you may make a complaint to your local data protection supervisory authority in the country where you are based. Alternatively, you may seek a remedy through local courts if you believe your rights have been breached.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Security</h3>
+          <p style={{ marginBottom: '15px' }}>We take a variety of physical, technical, administrative, and organizational security measures to protect your information against accidental or unlawful destruction or accidental loss, alteration, unauthorized disclosure or access. However, no method of transmission over the Internet, and no means of electronic or physical storage, is absolutely secure. As such, you acknowledge and accept that we cannot guarantee the security of your information transmitted to, through, or on our Services or via the Internet and that any such transmission is at your own risk.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>How Long We Retain Your Information</h3>
+          <p style={{ marginBottom: '15px' }}>We may retain your information we collect for as long as necessary to provide products or Services to you, to operate our business, to enable us to communicate with you, or to satisfy our legal or contractual obligations. The length of time for which we retain information depends on the purposes for which we collected and used it and/or as required to comply with applicable laws. Where required, we may anonymize or dispose of the information we collect.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Third Party Links and Features</h3>
+          <p style={{ marginBottom: '15px' }}>Please be aware that third-party websites accessible or recommended through our Services may have their own privacy and data collection policies and practices. These links and features are provided for your reference and convenience only and do not imply any endorsement of information provided through these third-party links and features, nor any association with their operators. We are not responsible for any actions, content of websites, or privacy policies of such third parties. We urge you to read the privacy and security policies of these third parties.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Notification of Changes</h3>
+          <p style={{ marginBottom: '15px' }}>Whenever material changes are made to our Privacy Notice, this page will be updated.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Contact Us</h3>
+          <p style={{ marginBottom: '15px' }}>If you have any questions about this Privacy Notice, you should submit your request through the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Privacy Information for California Residents</h3>
+          <p style={{ marginBottom: '15px' }}>Terms used in this section and not otherwise defined have the meaning given to them under the California Consumer Privacy Act ("CCPA"). Consistent with the requirements of the CCPA, this section provides additional information about our collection and use of your "personal information" and your choices with respect to such information. The information collected, the sources of that information, the purposes of use and the categories which we disclose for business purposes are set forth in the "Information We Collect", "How We Use the Information We Collect", and "With Whom We Share Information" sections above. We do not sell (as that term is defined under the CCPA) California residents' personal information. We do not sell the personal information of minors under 16 years of age. In the preceding 12 months, we may have disclosed the following categories of personal information to the following categories of recipients: Vendors (including data storage and hosting providers, email providers, payment processors, shipping vendors, marketing vendors, IT support providers, CRM providers) may receive:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Personal Identifiers;</li>
+            <li>Demographic Information;</li>
+            <li>Commercial Information;</li>
+            <li>Internet or other electronic network activity information;</li>
+            <li>Inferences for use in creating a consumer profile.</li>
+          </ul>
+          
+          <p style={{ marginBottom: '15px' }}>Partners (including sales and integration partners) may receive:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Personal Identifiers;</li>
+            <li>Demographic Information;</li>
+            <li>Commercial Information;</li>
+            <li>Internet or other electronic network activity information;</li>
+            <li>Inferences for use in creating a consumer profile.</li>
+          </ul>
+          
+          <p style={{ marginBottom: '15px' }}>Consistent with the CCPA, we allow individuals to make requests about their personal information. Specifically, unless certain exceptions apply, you may request that we:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>Inform you about the categories of personal information we collect or disclose about you; the categories of sources of such information; the business or commercial purpose for collecting your personal information; and the categories of third parties with whom we share/disclose personal information;</li>
+            <li>Provide access to and/or a copy of certain personal information we hold about you;</li>
+            <li>Delete certain personal information we have about you;</li>
+            <li>Provide you with information about certain financial incentives that we offer to you, if any;</li>
+            <li>We also do not discriminate or take adverse action against individuals who make requests about their personal information.</li>
+          </ul>
+          
+          <p style={{ marginBottom: '15px' }}>We reserve the right to verify your identity before responding to a request, which may include, at a minimum, depending on the sensitivity of the information you are requesting and the type of request you are making, verifying your name, email address, phone number, or other information. You are also permitted to designate an authorized agent to submit certain requests on your behalf. In order for an authorized agent to be verified, you must provide the authorized agent with signed, written permission to make such requests or a power of attorney. We may also follow up with you to verify your identity before processing the authorized agent's request. Please note that certain information may be exempt from such requests, consistent with California law. For example, we must retain certain information in order to provide the Services to you or to comply with legal obligations. If you would like further information regarding requests for personal information or would like to make such a request, please submit your request through the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form.</p>
+          
+          <p style={{ marginBottom: '15px' }}>California "Shine the Light" Disclosure.
+The California "Shine the Light" law gives residents of California the right under certain circumstances to opt out of the sharing of certain categories of personal information (as defined in the Shine the Light law) with third parties for their direct marketing purposes. We do not share your personal information with third parties for their own direct marketing purposes within the meaning of that law.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Privacy Information for Nevada Residents</h3>
+          <p style={{ marginBottom: '15px' }}>Under Nevada law, certain Nevada consumers may opt out of the sale of "Personally Identifiable Information" for "Monetary Consideration" (as such terms are defined under Nevada law) to a person for that person to license or sell such information to others. We do not engage in such activity; however, if you are a Nevada resident who has purchased goods or services from us, you may submit a request to opt out of any future sales under Nevada law by submitting your request through the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form. Please note we may take reasonable steps to verify your identity and the authenticity of the request.</p>
+          
+          <h3 style={{ fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Supplemental Privacy Notice for South Korea Residents</h3>
+          <p style={{ marginBottom: '15px' }}>Pursuant to the Personal Information Protection Act of Korea ("PIPA"), this Supplemental Privacy Notice for South Korea Residents sets forth the matters on (i) third-party provision of personal information, (ii) outsourcing of personal information processing, (iii) personal information destruction procedure and methods, and (iv) privacy officers. This Supplemental Privacy Notice only applies to our processing of personal information of users in South Korea.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Provision of Personal Information to Third Parties</h4>
+          <p style={{ marginBottom: '15px' }}>We process your personal information only within the scope of the disclosed purpose of personal information processing. In the event that we use a third party to process your personal information, we will obtain your consent or where permitted or required under law, statute, or regulation, including Articles 17 or 18 of the PIPA. Your personal information will not otherwise disclosed to a third party.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Outsourcing of Personal Information Processing</h4>
+          <p style={{ marginBottom: '15px' }}>Unless otherwise stated in this Privacy Policy, we do not outsource the processing of your personal information to third-party service providers.</p>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Personal Information Destruction Process and Methods</h4>
+          <p style={{ marginBottom: '15px' }}>We destroy your personal information without delay when your personal information becomes no longer necessary either because the retention period has expired or the disclosed purpose for personal information processing has been achieved. If the retention period expired or the disclosed purpose for processing has been achieved but we must continue to retain your personal information due to applicable laws, statutes, or regulations, we store and manage your personal information as a separate database.</p>
+          
+          <p style={{ marginBottom: '15px' }}>The destruction process and method is as follows:</p>
+          <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
+            <li>We select personal information for which the grounds of destruction have been met and destroy such selected information pursuant to the approval of our privacy officer.</li>
+            <li>We destroy personal information recorded and stored in the form of electronic files so that records cannot be reproduced, and the personal information printed on paper is either shredded or incinerated.</li>
+          </ul>
+          
+          <h4 style={{ fontSize: '16px', marginTop: '15px', marginBottom: '10px' }}>Privacy Officer</h4>
+          <p style={{ marginBottom: '15px' }}>We have a designated privacy officer to oversee data privacy-related issues and to handle complaints and requests related to the processing of the personal information of users. If you have any questions, requests or complaints arising out of our services, you can contact our privacy officer through the <a href="https://www.ses.ai/contact-us" target="_blank" rel="noopener noreferrer">Contact Us</a> form.</p>
         </div>
       </div>
     </div>
@@ -1202,7 +1407,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
               <li><strong>The Interface:</strong> An intuitive user interface linking the Map and Navigation System, making battery material discovery straightforward and simple.</li>
             </ol>
             
-            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size. (In terms of actual numbers, that's 100 billion versus 100 million.) The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
+            <p>Currently at 10<sup>8</sup> small molecules, Molecular Universe is still in its infancy but expanding rapidly towards its target of 10<sup>11</sup> in size (In terms of actual numbers, that's 100 billion versus 100 million). The Navigation System is also undergoing consistent QA and upgrades, so it can perform as an almost living, breathing partner focused on accurately helping you find the perfect molecules for your vision.</p>
             <p>And like all AI-based technologies, with your help, we can improve Molecular Universe together, faster.</p>
           </div>
           
@@ -1220,7 +1425,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             
             <p style={{ fontWeight: 'bold' }}>The Target is Set: 10<sup>11</sup> Small Molecules</p>
             <p>The mission is clear: Map the physical and chemical properties of our database of 10<sup>11</sup>.</p>
-            <p>Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization (add mu.org link) to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.</p>
+            <p>Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization <a href="https://www.molecularuniverse.org/" target="_blank" rel="noopener noreferrer">Molecular Universe</a> to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.</p>
             <p>It was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerated computation chemistry software. While we will not open-source our proprietary database, we will make Molecular Universe free to academic researchers and open-source certain aspects of our models wherever appropriate.</p>
             
             <p style={{ fontWeight: 'bold' }}>More About Molecular Universe, MU-0</p>
@@ -1235,27 +1440,23 @@ const AboutPage = ({ handleNavigation, activePage }) => {
                     
           <h2 id="features-section">Features of Molecular Universe</h2>
           
-          <h3>Map the Molecular Universe</h3>
+          <h3>Map</h3>
           
           <p>
-            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters, 1 million molecules (in-browser display), and <span style={{color: 'black'}}>over 100</span> million molecules (searchable database), and counting, and is the world's largest database of small molecules and battery-related properties.
+            Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into "neighborhoods" of similar molecules and uncover hidden gems. The MU-0 map features <span style={{color: 'black'}}>23</span> molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties.
           </p>
-          
-          <h3>Filter by Chemical Properties</h3>
+
+          <h3>Ask</h3>
           
           <p>
-            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
-          </p>
-          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
-            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
-            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
-            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
-          </ul>
-          <p>
-            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
+            Now that you have the map, you need a navigation system. Ask is the navigation system that allows you to ask your questions in natural language. You can be general such as "recommend an electrolyte for LiFePO4 and graphite cell" or be specific such as "recommend an electrolyte that is nonflammable and stable at high voltage 4.55V and can do 6C fast charge in a Li-ion cell with NCM811 cathode and silicon anode".
           </p>
           
-          <h3>Search & "Find a Friend"</h3>
+          <p>
+            It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence.
+          </p>
+
+          <h3>Search</h3>
           
           <p>
             You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
@@ -1276,10 +1477,310 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <span style={{color: 'black'}}>The "friend" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar.</span> This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works.
           </p>
           
+          <h3>Filter</h3>
+          
+          <p>
+            Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.
+          </p>
+          <ul style={{listStyleType: 'disc', paddingLeft: '20px'}}>
+            <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
+            <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
+            <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+          </ul>
+          <p>
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
+          </p>
+          
           <div id="newsfeed" className="feature-section">
             <h3>Newsfeed</h3>
             <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Redeem Code component for team members
+const RedeemPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [voucher, setVoucher] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('voucher', voucher);
+
+      const response = await fetch(`${API_URL}/redeem`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Rich error handling
+      if (!response.ok) {
+        let errorMsg = 'Voucher redemption failed';
+        try {
+          // Most FastAPI errors are JSON { detail: "…" }
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            // Fallback: plain‑text body
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      setSuccess(data.message || 'Account created successfully. Check your inbox for a temporary password.');
+      
+      // Clear form after successful submission
+      setFirstName('');
+      setLastName('');
+      setUsername('');
+      setEmail('');
+      setVoucher('');
+    }
+    catch (err) {
+      console.error('Redemption error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Redeem Team Code</h2>
+          <p>Join your team on the Molecular Universe platform</p>
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="voucher">Team Code</label>
+            <input
+              type="text"
+              id="voucher"
+              value={voucher}
+              onChange={(e) => setVoucher(e.target.value)}
+              placeholder="Enter your team code"
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : 'Redeem Code'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          <p>Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>Sign In</a></p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Forgot Password component for password reset
+const ForgotPasswordPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('email', email);
+
+      const response = await fetch(`${API_URL}/forgot-password`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Rich error handling
+      if (!response.ok) {
+        let errorMsg = 'Password reset request failed';
+        try {
+          // Most FastAPI errors are JSON { detail: "…" }
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            // Fallback: plain‑text body
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      setSuccess(data.message || 'If your information matches our records, a password reset email will be sent.');
+      
+      // Clear form after successful submission
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+    }
+    catch (err) {
+      console.error('Password reset request error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Forgot Password</h2>
+          <p>Enter your details to reset your password</p>
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : 'Reset Password'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          <p>Remembered your password? <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>Sign In</a></p>
         </div>
       </div>
     </div>
@@ -1506,28 +2007,35 @@ const App = () => {
     // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
     if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedSimilarMolecules.map((molecule, idx) => ({
-          x: molecule.UMAP_0,
-          y: molecule.UMAP_1,
-          xref: 'x',
-          yref: 'y',
-          text: `#${idx + 1}`,
-          showarrow: true,
-          arrowhead: 2,
-          arrowsize: 1.5,
-          arrowwidth: 2,
-          arrowcolor: '#FFD700',
-          ax: 0,
-          ay: arrowOffset,
-          bgcolor: 'rgba(255, 255, 0, 0.8)',
-          bordercolor: '#FFD700',
-          borderwidth: 2,
-          borderpad: 4,
-          font: {
-            color: 'black',
-            size: 12
-          }
-        }))
+        highlightedSimilarMolecules
+          .filter(molecule => 
+            molecule.UMAP_0 !== null && 
+            molecule.UMAP_0 !== undefined && 
+            molecule.UMAP_1 !== null && 
+            molecule.UMAP_1 !== undefined
+          )
+          .map((molecule, idx) => ({
+            x: molecule.UMAP_0,
+            y: molecule.UMAP_1,
+            xref: 'x',
+            yref: 'y',
+            text: `#${idx + 1}`,
+            showarrow: true,
+            arrowhead: 2,
+            arrowsize: 1.5,
+            arrowwidth: 2,
+            arrowcolor: '#FFD700',
+            ax: 0,
+            ay: arrowOffset,
+            bgcolor: 'rgba(255, 255, 0, 0.8)',
+            bordercolor: '#FFD700',
+            borderwidth: 2,
+            borderpad: 4,
+            font: {
+              color: 'black',
+              size: 12
+            }
+          }))
       );
     }
 
@@ -1563,22 +2071,8 @@ const App = () => {
     if (annotations.length > 0) {
       layout.annotations = annotations;
     } else if (searchResults) {
-      layout.annotations = [{
-        x: 0,
-        y: 0,
-        xref: 'paper',
-        yref: 'paper',
-        text: '',
-        showarrow: false,
-        bgcolor: 'rgba(255, 87, 34, 0.8)',
-        bordercolor: '#FF5722',
-        borderwidth: 2,
-        borderpad: 4,
-        font: {
-          color: 'white',
-          size: 14
-        }
-      }];
+      // Remove default annotation since we don't want to show anything for molecules with null coordinates
+      layout.annotations = [];
     }
     return layout;
   }, [plotlyLayout, highlightedMolecules, highlightedSimilarMolecules, searchResults, arrowOffset]);
@@ -1636,16 +2130,18 @@ const App = () => {
             const formattedMolecule = formattedMolecules[0];
             setsearchedMolecules([formattedMolecule]);
             setsearchResults([formattedMolecule.image]);
-            if (formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
+            if (formattedMolecule.x !== null && formattedMolecule.y !== null && 
+                formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
               setHighlightedMolecules([formattedMolecule]);
             }
           } else {
             // Store all molecules and their images
             setsearchedMolecules(formattedMolecules);
             setsearchResults(formattedMolecules.map((mol) => mol.image));
-            // Filter molecules to only include those with x and y values defined
+            // Filter molecules to only include those with x and y values defined and not null
             const highlighted = formattedMolecules.filter(
-              (mol) => mol.x !== undefined && mol.y !== undefined
+              (mol) => mol.x !== null && mol.y !== null && 
+                       mol.x !== undefined && mol.y !== undefined
             );
             if (highlighted && highlighted.length > 0) {
               setHighlightedMolecules(highlighted);
@@ -1761,7 +2257,7 @@ const App = () => {
       
       // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms') {
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset') {
           // Set appropriate active page
           if (path === '/about') {
             setActivePage('about');
@@ -1769,6 +2265,10 @@ const App = () => {
             setActivePage('pricing');
           } else if (path === '/terms') {
             setActivePage('terms');
+          } else if (path === '/redeem') {
+            setActivePage('redeem');
+          } else if (path === '/password-reset') {
+            setActivePage('password-reset');
           } else {
             setActivePage('map');
           }
@@ -1781,7 +2281,7 @@ const App = () => {
       }
 
       // For authenticated users, handle routes based on permissions
-      if (path === '/login') {
+      if (path === '/login' || path === '/redeem') {
         // Redirect to root if already authenticated
         window.history.pushState({}, '', '/');
         setActivePage('about');
@@ -1790,6 +2290,9 @@ const App = () => {
       } else if (path === '/reset-password') {
         // Show password reset page
         setShowPasswordReset(true);
+      } else if (path === '/password-reset') {
+        // Show forgot password page
+        setActivePage('password-reset');
       } else if (path === '/pricing') {
         setActivePage('pricing');
       } else if (path === '/terms') {
@@ -1895,7 +2398,11 @@ const App = () => {
     }
     
     // Professional users can also access everything
-    if (userPermissions === 'professional') {
+    if (userPermissions === 'team') {
+      return true;
+    }
+
+    if (userPermissions === 'explorer') {
       return true;
     }
     
@@ -1952,7 +2459,8 @@ const App = () => {
     const path = window.location.pathname;
     if (
       path.startsWith('/login') ||
-      path.startsWith('/register')
+      path.startsWith('/register') ||
+      path.startsWith('/redeem')
     ) {
       setAuthLoading(false);
       return;
@@ -2306,6 +2814,50 @@ const App = () => {
     )
   }];
 
+  // Add red dots at coordinates where arrows point to for highlighted molecules
+  if (highlightedMolecules && highlightedMolecules.length > 0) {
+    searchPlotlyData.push({
+      x: highlightedMolecules.map(molecule => molecule.x),
+      y: highlightedMolecules.map(molecule => molecule.y),
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: 8,
+        color: '#FF0000',
+        symbol: 'circle'
+      },
+      hoverinfo: 'none',
+      showlegend: false
+    });
+  }
+
+  // Add red dots for similar molecules (find friends)
+  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
+    const validMolecules = highlightedSimilarMolecules.filter(
+      molecule => 
+        molecule.UMAP_0 !== null && 
+        molecule.UMAP_0 !== undefined && 
+        molecule.UMAP_1 !== null && 
+        molecule.UMAP_1 !== undefined
+    );
+    
+    if (validMolecules.length > 0) {
+      searchPlotlyData.push({
+        x: validMolecules.map(molecule => molecule.UMAP_0),
+        y: validMolecules.map(molecule => molecule.UMAP_1),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: 8,
+          color: '#FF0000',
+          symbol: 'circle'
+        },
+        hoverinfo: 'none',
+        showlegend: false
+      });
+    }
+  }
+
   // Create plotly data for explorer view
   const plotlyData = [{
     x: filteredGraphData.map(node => node.x),
@@ -2338,6 +2890,50 @@ const App = () => {
     )
   }];
 
+  // Add red dots at coordinates where arrows point to for highlighted molecules in explorer view
+  if (highlightedMolecules && highlightedMolecules.length > 0) {
+    plotlyData.push({
+      x: highlightedMolecules.map(molecule => molecule.x),
+      y: highlightedMolecules.map(molecule => molecule.y),
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: 8,
+        color: '#FF0000',
+        symbol: 'circle'
+      },
+      hoverinfo: 'none',
+      showlegend: false
+    });
+  }
+
+  // Add red dots for similar molecules (find friends) in explorer view
+  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
+    const validMolecules = highlightedSimilarMolecules.filter(
+      molecule => 
+        molecule.UMAP_0 !== null && 
+        molecule.UMAP_0 !== undefined && 
+        molecule.UMAP_1 !== null && 
+        molecule.UMAP_1 !== undefined
+    );
+    
+    if (validMolecules.length > 0) {
+      plotlyData.push({
+        x: validMolecules.map(molecule => molecule.UMAP_0),
+        y: validMolecules.map(molecule => molecule.UMAP_1),
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: 8,
+          color: '#FF0000',
+          symbol: 'circle'
+        },
+        hoverinfo: 'none',
+        showlegend: false
+      });
+    }
+  }
+
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
 
@@ -2362,8 +2958,18 @@ const App = () => {
   }
   
   // Modified condition to allow non-authenticated users to access the map page and pricing page
-  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms') {
+  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms' && activePage !== 'redeem' && activePage !== 'password-reset') {
     return <AuthPage />;
+  }
+
+  // Show redeem page if active
+  if (activePage === 'redeem' && !isAuthenticated) {
+    return <RedeemPage />;
+  }
+
+  // Show forgot password page if active
+  if (activePage === 'password-reset' && !isAuthenticated) {
+    return <ForgotPasswordPage />;
   }
 
   // Show password reset page if active
@@ -2893,7 +3499,7 @@ const App = () => {
                   />
                 </div>
                 
-                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Continent Descriptions</h3>
+                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
                 <div style={{ marginBottom: '20px', lineHeight: '1.5', fontSize: '14px' }}>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
@@ -2913,7 +3519,7 @@ const App = () => {
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                  <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely by populated polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
                   <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
@@ -3423,6 +4029,14 @@ const App = () => {
                                       <td className="property-value">{molecule.properties.functional_groups}</td>
                                     </tr>
                                   )}
+                                  <tr>
+                                    <td className="property-name">UMAP_X</td>
+                                    <td className="property-value">{molecule.x !== undefined && molecule.x !== null ? molecule.x.toFixed(4) : 'N/A'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="property-name">UMAP_Y</td>
+                                    <td className="property-value">{molecule.y !== undefined && molecule.y !== null ? molecule.y.toFixed(4) : 'N/A'}</td>
+                                  </tr>
                                 </tbody>
                               </table>
                               <div className="molecule-image-container">
@@ -3511,6 +4125,22 @@ const App = () => {
                                       <td className="property-name">Functional Groups</td>
                                       <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
                                     </tr>
+                                    <tr>
+                                      <td className="property-name">UMAP_X</td>
+                                      <td className="property-value">
+                                        {molecule.UMAP_0 !== null && molecule.UMAP_0 !== undefined 
+                                          ? molecule.UMAP_0.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="property-name">UMAP_Y</td>
+                                      <td className="property-value">
+                                        {molecule.UMAP_1 !== null && molecule.UMAP_1 !== undefined 
+                                          ? molecule.UMAP_1.toFixed(4) 
+                                          : 'N/A'}
+                                      </td>
+                                    </tr>
                                     {similarMoleculeImages[index] && (
                                       <tr>
                                         <td colSpan="2">
@@ -3542,7 +4172,9 @@ const App = () => {
                         <br />
                         2.      Your result molecules are included in premium levels Enterprise and Joint Development. Please upgrade.
                         <br />
-                        3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.</p>
+                        3.      Your query hit one of our hidden galaxies of treasure molecules. Please contact us.
+                        <br />
+                        4.      Your query might involve salt or anion molecules, which our current database doesn't yet support. We'll be adding anions in an upcoming update.</p>
                         <br />
                         <button 
                           className="pricing-cta strategic"

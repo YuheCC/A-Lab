@@ -1480,6 +1480,16 @@ body, html {
   text-align: center;
 }
 
+.auth-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
 .auth-form {
   margin-bottom: 15px;
 }
@@ -1890,18 +1900,6 @@ body, html {
 
 .reset-password-button:hover {
   background-color: #0d8aee;
-}
-
-/* Success message for password reset */
-.auth-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  padding: 12px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 14px;
 }
 
 /* Pricing Page Styles */
