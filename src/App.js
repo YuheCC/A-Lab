@@ -660,7 +660,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
           </div>
           <button 
             className="pricing-cta professional"
-            onClick={() => window.open('https://buy.stripe.com/test_8wMbKFgsJ7hU04o5km', '_blank')}
+            onClick={() => window.open('https://buy.stripe.com/6oE165fCb3Tf0qA5kl', '_blank')}
           >
             Get Started
           </button>
@@ -684,7 +684,7 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
             <span className="price-period">/ month (Up to 10 users)</span>
           </div>
           <button className="pricing-cta unlimited"
-            onClick={() => window.open('https://buy.stripe.com/test_cN25mha4l9q218seUV', '_blank')}
+            onClick={() => window.open('https://buy.stripe.com/dR67utfCb3TffludQS', '_blank')}
           >
             Get Started
           </button>
