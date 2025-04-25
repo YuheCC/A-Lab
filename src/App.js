@@ -327,7 +327,10 @@ const AuthPage = () => {
         
         <div className="auth-switch">
           {isLogin ? (
-            <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+            <>
+              <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
+              <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>Redeem code for team members</a></p>
+            </>
           ) : (
             <>
               <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
@@ -1497,6 +1500,164 @@ const AboutPage = ({ handleNavigation, activePage }) => {
   );
 };
 
+// Redeem Code component for team members
+const RedeemPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [voucher, setVoucher] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Use logo from public folder
+  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('voucher', voucher);
+
+      const response = await fetch(`${API_URL}/redeem`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Rich error handling
+      if (!response.ok) {
+        let errorMsg = 'Voucher redemption failed';
+        try {
+          // Most FastAPI errors are JSON { detail: "…" }
+          const dataErr = await response.clone().json();
+          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
+        } catch {
+          try {
+            // Fallback: plain‑text body
+            const textErr = await response.text();
+            if (textErr) errorMsg = textErr;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      setSuccess(data.message || 'Account created successfully. Check your inbox for a temporary password.');
+      
+      // Clear form after successful submission
+      setFirstName('');
+      setLastName('');
+      setUsername('');
+      setEmail('');
+      setVoucher('');
+    }
+    catch (err) {
+      console.error('Redemption error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <img src={logo} alt="SES AI Logo" className="auth-logo" />
+          <h2>Redeem Team Code</h2>
+          <p>Join your team on the Molecular Universe platform</p>
+        </div>
+        
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="voucher">Team Code</label>
+            <input
+              type="text"
+              id="voucher"
+              value={voucher}
+              onChange={(e) => setVoucher(e.target.value)}
+              placeholder="Enter your team code"
+              required
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Processing...' : 'Redeem Code'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          <p>Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>Sign In</a></p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [graphData, setGraphData] = useState([]);
   const [filteredGraphData, setFilteredGraphData] = useState([]);
@@ -1967,7 +2128,7 @@ const App = () => {
       
       // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms') {
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem') {
           // Set appropriate active page
           if (path === '/about') {
             setActivePage('about');
@@ -1975,6 +2136,8 @@ const App = () => {
             setActivePage('pricing');
           } else if (path === '/terms') {
             setActivePage('terms');
+          } else if (path === '/redeem') {
+            setActivePage('redeem');
           } else {
             setActivePage('map');
           }
@@ -1987,7 +2150,7 @@ const App = () => {
       }
 
       // For authenticated users, handle routes based on permissions
-      if (path === '/login') {
+      if (path === '/login' || path === '/redeem') {
         // Redirect to root if already authenticated
         window.history.pushState({}, '', '/');
         setActivePage('about');
@@ -2162,7 +2325,8 @@ const App = () => {
     const path = window.location.pathname;
     if (
       path.startsWith('/login') ||
-      path.startsWith('/register')
+      path.startsWith('/register') ||
+      path.startsWith('/redeem')
     ) {
       setAuthLoading(false);
       return;
@@ -2660,8 +2824,13 @@ const App = () => {
   }
   
   // Modified condition to allow non-authenticated users to access the map page and pricing page
-  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms') {
+  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms' && activePage !== 'redeem') {
     return <AuthPage />;
+  }
+
+  // Show redeem page if active
+  if (activePage === 'redeem' && !isAuthenticated) {
+    return <RedeemPage />;
   }
 
   // Show password reset page if active
