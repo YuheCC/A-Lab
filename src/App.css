@@ -525,20 +525,20 @@ body, html {
 
 .about-content {
   line-height: 1.6;
-  color: #333;
+  color: #000000;
 }
 
 .about-content h2 {
-  color: #2c3e50;
+  color: #000000;
   margin-top: 2rem;
   margin-bottom: 1.5rem;
-  font-size: 2.2rem;
+  font-size: 2rem;
   border-bottom: 2px solid #eaeaea;
   padding-bottom: 0.75rem;
 }
 
 .about-content h3 {
-  color: #2c3e50;
+  color: #000000;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-size: 1.5rem;
@@ -546,8 +546,21 @@ body, html {
 
 .about-content p {
   margin-bottom: 1.2rem;
-  font-size: 1.1rem;
-  color: #4a5568;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.about-content ul,
+.about-content ol {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.about-content li {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: #000000;
 }
 
 .feature-section {
@@ -568,13 +581,13 @@ body, html {
   color: #000000;
   margin-top: 0;
   margin-bottom: 1.2rem;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .feature-section p {
-  color: #4a5568;
-  font-size: 1.1rem;
+  color: #000000;
+  font-size: 1rem;
   line-height: 1.7;
   margin-bottom: 1.5rem;
 }
@@ -589,8 +602,8 @@ body, html {
   margin-bottom: 1rem;
   position: relative;
   padding-left: 1.8rem;
-  color: #4a5568;
-  font-size: 1.05rem;
+  color: #000000;
+  font-size: 1rem;
 }
 
 .feature-list li::before {
@@ -603,7 +616,7 @@ body, html {
 }
 
 .feature-list li strong {
-  color: #2d3748;
+  color: #000000;
   font-weight: 600;
 }
 
@@ -618,10 +631,11 @@ body, html {
 
 .feature-examples li {
   margin-bottom: 0.8rem;
-  color: #718096;
+  color: #000000;
   font-style: italic;
   position: relative;
   padding-left: 1.5rem;
+  font-size: 1rem;
 }
 
 .feature-examples li::before {
