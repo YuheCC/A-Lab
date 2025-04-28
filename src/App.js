@@ -1251,7 +1251,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           <h3>Search</h3>
           
           <p>
-            You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in two powerful ways:
+            You can enter a "molecules-of-interest", it finds its location on the map, and recommends its "friends", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in three powerful ways:
           </p>
           <ol style={{paddingLeft: '20px'}}>
             <li>By SMILES – Input a canonical SMILES string and instantly retrieve all key info.</li>
