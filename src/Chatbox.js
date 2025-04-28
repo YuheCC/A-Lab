@@ -252,7 +252,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           ragEnabled: true,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
-          model: "o3-mini"
+          model: "o4-mini"
         })
       });
       if (!response.ok) {
