@@ -1278,6 +1278,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <li><strong>HOMO / LUMO:</strong> These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.</li>
             <li><strong>ESP Min / Max:</strong> Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.</li>
             <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
+            <li><strong>Predicted melting/boiling points </strong>(only available for Enterprise and Joint Development): These are predicted values from ML model trained on millions of data points.</li>
           </ul>
           <p>
             You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
