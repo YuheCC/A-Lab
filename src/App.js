@@ -2988,28 +2988,36 @@ const App = () => {
                     )}
                   </h2>
                   <div className="sliders-container">
-                    {Object.entries(filterRanges).map(([property, range]) => (
-                      <div key={property} className="filter-wrapper">
-                        <Slider
-                          property={property}
-                          value={range.range}
-                          min={range.min}
-                          max={range.max}
-                          onChange={handleFilterChange}
-                          label={filterLabels[property]}
-                          active={range.active}
-                        />
-                        {range.active && (
-                          <button 
-                            className="reset-filter-button" 
-                            onClick={() => resetFilter(property)}
-                            title="Reset this filter"
-                          >
-                            ×
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                    {Object.entries(filterRanges).map(([property, range]) => {
+                      // Hide predicted_mp and predicted_bp sliders for users without proper permissions
+                      if ((property === 'predicted_mp' || property === 'predicted_bp') && 
+                          !(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise')) {
+                        return null;
+                      }
+                      
+                      return (
+                        <div key={property} className="filter-wrapper">
+                          <Slider
+                            property={property}
+                            value={range.range}
+                            min={range.min}
+                            max={range.max}
+                            onChange={handleFilterChange}
+                            label={filterLabels[property]}
+                            active={range.active}
+                          />
+                          {range.active && (
+                            <button 
+                              className="reset-filter-button" 
+                              onClick={() => resetFilter(property)}
+                              title="Reset this filter"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                     <div className="functional-group-filter">
                       <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
                         Functional Group Filter
