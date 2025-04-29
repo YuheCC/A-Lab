@@ -98,7 +98,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <img src={logo} alt="SES AI Logo" className="navbar-logo" />
       </div>
       <div className="navbar-links">
-        <a href="https://www.ses.ai/molecular-universe" target="_blank" rel="noopener noreferrer" className="navbar-link">Products</a>
+        <a href="https://www.ses.ai/" className="navbar-link">Products</a>
         <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
         <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
@@ -1280,7 +1280,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <li><strong>Functional Groups:</strong> Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.</li>
           </ul>
           <p>
-            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular ) that meet your criteria.
+            You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular) that meet your criteria.
           </p>
           
           <div id="newsfeed" className="feature-section">
