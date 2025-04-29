@@ -290,7 +290,7 @@ const AuthPage = () => {
           
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email Address (.edu only)</label>
+              <label htmlFor="email">Email Address (academia only)</label>
               <input
                 type="email"
                 id="email"
