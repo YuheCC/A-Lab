@@ -256,7 +256,19 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         })
       });
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorText = await response.text();
+        let message = "Network response was not ok";
+        if (response.status === 400 && errorText.includes("Query is not relevant to batteries or battery chemistry")) {
+          message = "Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.";
+        } else {
+          try {
+            const errData = JSON.parse(errorText);
+            if (errData.detail) message = errData.detail;
+          } catch {
+            // leave default message
+          }
+        }
+        throw new Error(message);
       }
       const data = await response.json();
       // Assuming the response returns an 'outputs' field with the result text
@@ -276,7 +288,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         setRemainingQueries(data.remaining_queries);
       }
     } catch (error) {
-      const errorMessage = { type: "llm-message", text: "Error querying the index: " + error.message };
+      const errorMessage = { type: "llm-message", text: "Error: " + error.message };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsThinking(false);
