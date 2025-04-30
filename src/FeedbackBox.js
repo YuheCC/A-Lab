@@ -21,10 +21,18 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleCon
         collapsibleContent,
         timestamp: new Date().toISOString(),
       };
-      const response = await axios.post(`${API_URL}/api/feedback`, feedbackData, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 10000,
-      });
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${API_URL}/api/feedback`,
+        feedbackData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          timeout: 10000,
+        }
+      );
       setStatusMessage("Feedback saved successfully!");
       setTimeout(() => onClose(), 1000);
     } catch (err) {
