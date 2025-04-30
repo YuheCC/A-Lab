@@ -3831,11 +3831,11 @@ const App = () => {
                                   )}
                                   <tr>
                                     <td className="property-name">UMAP_X</td>
-                                    <td className="property-value">{molecule.x !== undefined && molecule.x !== null ? molecule.x.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.x !== undefined && molecule.x !== null ? molecule.x.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
                                     <td className="property-name">UMAP_Y</td>
-                                    <td className="property-value">{molecule.y !== undefined && molecule.y !== null ? molecule.y.toFixed(4) : 'N/A'}</td>
+                                    <td className="property-value">{molecule.y !== undefined && molecule.y !== null ? molecule.y.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                 </tbody>
                               </table>
@@ -3929,7 +3929,7 @@ const App = () => {
                                       <td className="property-name">UMAP_X</td>
                                       <td className="property-value">
                                         {molecule.UMAP_0 !== null && molecule.UMAP_0 !== undefined 
-                                          ? molecule.UMAP_0.toFixed(4) 
+                                          ? molecule.UMAP_0.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
@@ -3937,7 +3937,7 @@ const App = () => {
                                       <td className="property-name">UMAP_Y</td>
                                       <td className="property-value">
                                         {molecule.UMAP_1 !== null && molecule.UMAP_1 !== undefined 
-                                          ? molecule.UMAP_1.toFixed(4) 
+                                          ? molecule.UMAP_1.toFixed(2) 
                                           : 'N/A'}
                                       </td>
                                     </tr>
