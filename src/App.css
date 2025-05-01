@@ -991,6 +991,7 @@ body, html {
   display: flex;
   flex-direction: column;
   /* height: calc(100vh - 260px); */
+  transition: width 0.3s ease;
 }
 
 .chatbot-content h2 {
@@ -1074,6 +1075,33 @@ body, html {
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
   flex-shrink: 0;
   position: relative;
+}
+
+.molecules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 10px 0;
+  margin-top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #eee;
+}
+
+.close-molecules-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+  padding: 0 5px;
+  line-height: 24px;
+}
+
+.close-molecules-button:hover {
+  color: #333;
 }
 
 .found-molecules-container h3 {

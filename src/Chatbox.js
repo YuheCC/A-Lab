@@ -76,7 +76,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [similarMolecules, setSimilarMolecules] = useState([]);
   const [activeMolecule, setActiveMolecule] = useState(null);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
-
+  const [showFoundMolecules, setShowFoundMolecules] = useState(true);
+  const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
 
   useEffect(() => {
     scrollToBottom();
@@ -98,6 +99,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setSimilarMolecules([]);
     setFoundMolecules(null);
     setActiveMolecule(null);
+    setShowFoundMolecules(true);
     try {
       setMoleculesLoading(true);
       const responses = await Promise.all(
@@ -144,6 +146,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const handleFindSimilarMolecules = async (details) => {
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
+    setShowSimilarMolecules(true);
     try {
       const token = localStorage.getItem('token');
       // Add the use_35m parameter when user has appropriate permissions
@@ -319,7 +322,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         </div>
         )}
       <div className="chat-and-molecules">
-        <div className="chatbot-content">
+        <div className="chatbot-content" style={{ width: !showFoundMolecules && !showSimilarMolecules ? '100%' : '90%' }}>
           <div className="chat-messages">
             {messages.map((msg, index) => (
               <div 
@@ -427,9 +430,17 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
           />
         </div>
-        {foundMolecules && foundMolecules.length > 0 && (
+        {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
           <div className="found-molecules-container">
-            <h3>LLM Found Molecules</h3>
+            <div className="molecules-header">
+              <h3>LLM Found Molecules</h3>
+              <button 
+                className="close-molecules-button"
+                onClick={() => setShowFoundMolecules(false)}
+              >
+                ×
+              </button>
+            </div>
             {foundMolecules.map((details, idx) => {
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
@@ -492,9 +503,17 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
             }
           </div>
         )}
-        {similarMolecules && similarMolecules.length > 0 && (
+        {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
-            <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by structure similarity</h3>
+            <div className="molecules-header">
+              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by structure similarity</h3>
+              <button 
+                className="close-molecules-button"
+                onClick={() => setShowSimilarMolecules(false)}
+              >
+                ×
+              </button>
+            </div>
             {similarMolecules.map((item, idx) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
