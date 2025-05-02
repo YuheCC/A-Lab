@@ -738,7 +738,7 @@ body, html {
 .search-umap-container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 180px);
+  height: calc((100vh - 180px));
   width: 100%;
   gap: 20px;
 }
@@ -753,6 +753,8 @@ body, html {
   box-shadow: none;
   border: none;
   margin-right: 20px;
+  height: calc((100vh - 180px)* 0.82);
+  width: calc((100vh - 180px)* 0.82);
 }
 
 .search-umap-section > div {
