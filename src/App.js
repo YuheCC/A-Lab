@@ -1720,7 +1720,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 35000;
+  const MAX_NODES = 20000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecules, setHighlightedMolecules] = useState(null);
@@ -3730,7 +3730,7 @@ const App = () => {
               </div>
 
               {/* Search interface on the right */}
-              <div className="search-interface-section" style={{ width: '25%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+              <div className="search-interface-section" style={{ width: '23%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                 {/* Search bar container */}
                 
                 <SearchInput 

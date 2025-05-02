@@ -744,7 +744,7 @@ body, html {
 }
 
 .search-umap-section {
-  flex: 1.2;
+  flex: 1.25;
   min-width: 0;
   border-radius: 0;
   overflow: hidden;
@@ -754,7 +754,7 @@ body, html {
   border: none;
   margin-right: 20px;
   height: calc((100vh - 180px)* 0.82);
-  width: calc((100vh - 180px)* 0.82);
+  width: calc((100vh - 180px)* 0.86);
 }
 
 .search-umap-section > div {
@@ -785,7 +785,7 @@ body, html {
 }
 
 .search-interface-section {
-  flex: 0.8;
+  flex: 0.75;
   display: flex;
   flex-direction: column;
   padding: 20px;
