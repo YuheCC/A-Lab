@@ -753,7 +753,7 @@ body, html {
   box-shadow: none;
   border: none;
   margin-right: 20px;
-  height: calc((100vh - 180px)* 0.82);
+  height: calc((100vh - 180px)* 0.95);
   width: calc((100vh - 180px)* 0.86);
 }
 
