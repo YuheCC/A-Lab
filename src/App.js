@@ -4022,102 +4022,102 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
-                                                                   <div className="molecule-feedback-buttons" style={{
-                                  margin: '10px 0',
-                                  textAlign: 'center',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  width: '100%'
-                                }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
-                                    <button
-                                      onClick={() => handleThumbsUp(index)}
-                                      style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        fontSize: '18px',
-                                        cursor: 'pointer',
-                                        margin: '0 5px'
-                                      }}
-                                    >
-                                      👍
-                                    </button>
-                                    <button
-                                      onClick={() => handleThumbsDown(index)}
-                                      style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        fontSize: '18px',
-                                        cursor: 'pointer',
-                                        margin: '0 5px'
-                                      }}
-                                    >
-                                      👎
-                                    </button>
-                                  </div>
-
-                                  {feedbackOpen && feedbackMoleculeIndex === index && (
-                                    <div className="feedback-form" style={{
-                                      marginTop: '10px',
-                                      padding: '10px',
-                                      border: '1px solid #ccc',
-                                      borderRadius: '4px',
-                                      backgroundColor: '#f9f9f9',
-                                      textAlign: 'left',
-                                      width: '100%',
-                                      maxWidth: '400px'
+                                    <div className="molecule-feedback-buttons" style={{
+                                      margin: '10px 0',
+                                      textAlign: 'center',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      alignItems: 'flex-start',
+                                      width: '100%'
                                     }}>
-                                      <p style={{ margin: '0 0 10px' }}>
-                                        {feedbackType === 'up'
-                                          ? 'What makes this a good match?'
-                                          : 'Why is this not a good match?'}
-                                      </p>
-                                      <textarea
-                                        value={feedbackText}
-                                        onChange={(e) => setFeedbackText(e.target.value)}
-                                        rows={4}
-                                        style={{
-                                          width: '100%',
-                                          padding: '8px',
-                                          marginBottom: '10px',
-                                          borderRadius: '4px',
-                                          border: '1px solid #ccc'
-                                        }}
-                                        placeholder="Your feedback helps us improve molecule matching"
-                                      />
-                                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
+                                        <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
                                         <button
-                                          onClick={handleFeedbackCancel}
+                                          onClick={() => handleThumbsUp(index)}
                                           style={{
-                                            marginRight: '10px',
-                                            padding: '5px 10px',
-                                            backgroundColor: '#f1f1f1',
-                                            border: '1px solid #ccc',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer'
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '18px',
+                                            cursor: 'pointer',
+                                            margin: '0 5px'
                                           }}
                                         >
-                                          Cancel
+                                          👍
                                         </button>
                                         <button
-                                          onClick={handleFeedbackSubmit}
+                                          onClick={() => handleThumbsDown(index)}
                                           style={{
-                                            padding: '5px 10px',
-                                            backgroundColor: '#0080ff',
-                                            color: 'white',
+                                            background: 'none',
                                             border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer'
+                                            fontSize: '18px',
+                                            cursor: 'pointer',
+                                            margin: '0 5px'
                                           }}
                                         >
-                                          Submit
+                                          👎
                                         </button>
                                       </div>
+
+                                      {feedbackOpen && feedbackMoleculeIndex === index && (
+                                        <div className="feedback-form" style={{
+                                          marginTop: '10px',
+                                          padding: '10px',
+                                          border: '1px solid #ccc',
+                                          borderRadius: '4px',
+                                          backgroundColor: '#f9f9f9',
+                                          textAlign: 'left',
+                                          width: '100%',
+                                          maxWidth: '400px'
+                                        }}>
+                                          <p style={{ margin: '0 0 10px' }}>
+                                            {feedbackType === 'up'
+                                              ? 'What makes this a good match?'
+                                              : 'Why is this not a good match?'}
+                                          </p>
+                                          <textarea
+                                            value={feedbackText}
+                                            onChange={(e) => setFeedbackText(e.target.value)}
+                                            rows={4}
+                                            style={{
+                                              width: '100%',
+                                              padding: '8px',
+                                              marginBottom: '10px',
+                                              borderRadius: '4px',
+                                              border: '1px solid #ccc'
+                                            }}
+                                            placeholder="Your feedback helps us improve molecule matching"
+                                          />
+                                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button
+                                              onClick={handleFeedbackCancel}
+                                              style={{
+                                                marginRight: '10px',
+                                                padding: '5px 10px',
+                                                backgroundColor: '#f1f1f1',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer'
+                                              }}
+                                            >
+                                              Cancel
+                                            </button>
+                                            <button
+                                              onClick={handleFeedbackSubmit}
+                                              style={{
+                                                padding: '5px 10px',
+                                                backgroundColor: '#0080ff',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer'
+                                              }}
+                                            >
+                                              Submit
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
                                   </tbody>
                                 </table>
                                 {/* Add thumbs up/down buttons here */}
