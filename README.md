@@ -56,3 +56,7 @@ The application reads data from snowflake by making requests to the backend.
 - Built with React (without TypeScript)
 - Uses react-force-graph for visualization
 - Implements D3 scales for color mapping
+
+## AWS Amplify
+
+This front end react application is hosted on AWS amplify. Currently, it is setup so that the `main` branch automatically built and deploys to molecular-universe.ses.ai automatically. You can access and configure settings for the front end build through our AWS portal, and by going to the amplify home page.
