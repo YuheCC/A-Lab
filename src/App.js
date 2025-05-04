@@ -3593,7 +3593,7 @@ const App = () => {
                 backgroundColor: '#f1f1f1', 
                 borderRadius: '0 8px 8px 0', 
                 marginLeft: '0', 
-                marginRight: '20px',
+                marginRight: '0px',
                 position: 'sticky',
                 left: 0
               }}>
