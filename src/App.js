@@ -1720,7 +1720,7 @@ const App = () => {
     filterRangesRef.current = filterRanges;
   }, [filterRanges]);
   
-  const MAX_NODES = 20000;
+  const MAX_NODES = 23000;
 
   // Add new state for highlighted molecule
   const [highlightedMolecules, setHighlightedMolecules] = useState(null);
