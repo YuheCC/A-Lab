@@ -2405,6 +2405,14 @@ const App = () => {
     if (userPermissions === 'explorer') {
       return true;
     }
+
+    if (userPermissions === 'enterprise') {
+      return true;
+    }
+    
+    if (userPermissions === 'joint') {
+      return true;
+    }
     
     // Default to no access
     return false;
