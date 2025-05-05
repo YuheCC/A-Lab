@@ -443,8 +443,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                 {/* Add thumbs buttons for feedback */}
                 {msg.type === "llm-message" && (
                   <div className="thumbs" style={{ marginTop: '10px' }}>
-                    <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.collapsibleContent)}>👍</button>
-                    <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.collapsibleContent)}>👎</button>
+                    <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}>👍</button>
+                    <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}>👎</button>
                     <button 
                       className="copy-btn" 
                       onClick={() => {
