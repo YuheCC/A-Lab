@@ -239,6 +239,10 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
 
     try {
       const token = localStorage.getItem('token');
+      // Determine RAG model and result count based on user tier
+      const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(userPermissions);
+      const ragModel = isAdvancedTier ? 'o3' : 'o4-mini';
+      const ragResultsCount = isAdvancedTier ? 10 : 3;
       // Query the backend via the /rag endpoint using the messages array
       const response = await fetch(`${API_URL}/rag`, {
         method: "POST",
@@ -252,7 +256,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           ragEnabled: true,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
-          model: "o4-mini"
+          numRagResults: ragResultsCount,
+          model: ragModel
         })
       });
       if (!response.ok) {
