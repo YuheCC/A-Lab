@@ -525,20 +525,20 @@ body, html {
 
 .about-content {
   line-height: 1.6;
-  color: #333;
+  color: #000000;
 }
 
 .about-content h2 {
-  color: #2c3e50;
+  color: #000000;
   margin-top: 2rem;
   margin-bottom: 1.5rem;
-  font-size: 2.2rem;
+  font-size: 2rem;
   border-bottom: 2px solid #eaeaea;
   padding-bottom: 0.75rem;
 }
 
 .about-content h3 {
-  color: #2c3e50;
+  color: #000000;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-size: 1.5rem;
@@ -546,8 +546,21 @@ body, html {
 
 .about-content p {
   margin-bottom: 1.2rem;
-  font-size: 1.1rem;
-  color: #4a5568;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.about-content ul,
+.about-content ol {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.about-content li {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: #000000;
 }
 
 .feature-section {
@@ -568,13 +581,13 @@ body, html {
   color: #000000;
   margin-top: 0;
   margin-bottom: 1.2rem;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .feature-section p {
-  color: #4a5568;
-  font-size: 1.1rem;
+  color: #000000;
+  font-size: 1rem;
   line-height: 1.7;
   margin-bottom: 1.5rem;
 }
@@ -589,8 +602,8 @@ body, html {
   margin-bottom: 1rem;
   position: relative;
   padding-left: 1.8rem;
-  color: #4a5568;
-  font-size: 1.05rem;
+  color: #000000;
+  font-size: 1rem;
 }
 
 .feature-list li::before {
@@ -603,7 +616,7 @@ body, html {
 }
 
 .feature-list li strong {
-  color: #2d3748;
+  color: #000000;
   font-weight: 600;
 }
 
@@ -618,10 +631,11 @@ body, html {
 
 .feature-examples li {
   margin-bottom: 0.8rem;
-  color: #718096;
+  color: #000000;
   font-style: italic;
   position: relative;
   padding-left: 1.5rem;
+  font-size: 1rem;
 }
 
 .feature-examples li::before {
@@ -724,13 +738,13 @@ body, html {
 .search-umap-container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 180px);
+  height: calc((100vh - 180px));
   width: 100%;
   gap: 20px;
 }
 
 .search-umap-section {
-  flex: 1.2;
+  flex: 1.25;
   min-width: 0;
   border-radius: 0;
   overflow: hidden;
@@ -739,6 +753,8 @@ body, html {
   box-shadow: none;
   border: none;
   margin-right: 20px;
+  height: calc((100vh - 180px)* 0.95);
+  width: calc((100vh - 180px)* 0.86);
 }
 
 .search-umap-section > div {
@@ -769,7 +785,7 @@ body, html {
 }
 
 .search-interface-section {
-  flex: 0.8;
+  flex: 0.75;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -977,6 +993,7 @@ body, html {
   display: flex;
   flex-direction: column;
   /* height: calc(100vh - 260px); */
+  transition: width 0.3s ease;
 }
 
 .chatbot-content h2 {
@@ -1060,6 +1077,33 @@ body, html {
   max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
   flex-shrink: 0;
   position: relative;
+}
+
+.molecules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 10px 0;
+  margin-top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #eee;
+}
+
+.close-molecules-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+  padding: 0 5px;
+  line-height: 24px;
+}
+
+.close-molecules-button:hover {
+  color: #333;
 }
 
 .found-molecules-container h3 {

@@ -76,7 +76,14 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [similarMolecules, setSimilarMolecules] = useState([]);
   const [activeMolecule, setActiveMolecule] = useState(null);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
-
+  const [showFoundMolecules, setShowFoundMolecules] = useState(true);
+  const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
+  
+  // Add new state for molecule feedback functionality
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
 
   useEffect(() => {
     scrollToBottom();
@@ -98,6 +105,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setSimilarMolecules([]);
     setFoundMolecules(null);
     setActiveMolecule(null);
+    setShowFoundMolecules(true);
     try {
       setMoleculesLoading(true);
       const responses = await Promise.all(
@@ -144,6 +152,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const handleFindSimilarMolecules = async (details) => {
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
+    setShowSimilarMolecules(true);
     try {
       const token = localStorage.getItem('token');
       // Add the use_35m parameter when user has appropriate permissions
@@ -311,6 +320,68 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Add feedback handlers for thumbs up/down
+  const handleMoleculeThumbsUp = (moleculeIndex) => {
+    setFeedbackMoleculeIndex(moleculeIndex);
+    setFeedbackType('up');
+    setFeedbackOpen(true);
+    setFeedbackText('');
+  };
+
+  const handleMoleculeThumbsDown = (moleculeIndex) => {
+    setFeedbackMoleculeIndex(moleculeIndex);
+    setFeedbackType('down');
+    setFeedbackOpen(true);
+    setFeedbackText('');
+  };
+
+  const handleMoleculeFeedbackSubmit = async () => {
+    if (feedbackMoleculeIndex !== null && similarMolecules && similarMolecules.length > feedbackMoleculeIndex) {
+      try {
+        const molecule = similarMolecules[feedbackMoleculeIndex];
+        const token = localStorage.getItem('token');
+
+        // Here you would actually submit the feedback to your backend
+        console.log(`Submitting ${feedbackType === 'up' ? 'positive' : 'negative'} feedback for molecule:`, molecule.SMILES);
+        console.log('Feedback text:', feedbackText);
+
+        // Example of how you might send this to your backend
+        /*
+        await fetch(`${API_URL}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            moleculeSmiles: molecule.SMILES,
+            searchQuery: activeMolecule ? activeMolecule.SMILES : '',
+            feedbackType: feedbackType,
+            feedbackText: feedbackText
+          })
+        });
+        */
+
+        // Close the feedback form
+        setFeedbackOpen(false);
+        setFeedbackMoleculeIndex(null);
+        setFeedbackText('');
+
+        // You might want to show a success message
+        alert('Thank you for your feedback!');
+      } catch (error) {
+        console.error('Error submitting feedback:', error);
+        alert('Failed to submit feedback. Please try again.');
+      }
+    }
+  };
+
+  const handleMoleculeFeedbackCancel = () => {
+    setFeedbackOpen(false);
+    setFeedbackMoleculeIndex(null);
+    setFeedbackText('');
+  };
+
   return (
     <div className="chatbot-container">
       {userPermissions === 'research' && (
@@ -324,7 +395,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         </div>
         )}
       <div className="chat-and-molecules">
-        <div className="chatbot-content">
+        <div className="chatbot-content" style={{ width: !showFoundMolecules && !showSimilarMolecules ? '100%' : '90%' }}>
           <div className="chat-messages">
             {messages.map((msg, index) => (
               <div 
@@ -432,9 +503,17 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
           />
         </div>
-        {foundMolecules && foundMolecules.length > 0 && (
+        {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
           <div className="found-molecules-container">
-            <h3>LLM Found Molecules</h3>
+            <div className="molecules-header">
+              <h3>LLM Found Molecules</h3>
+              <button 
+                className="close-molecules-button"
+                onClick={() => setShowFoundMolecules(false)}
+              >
+                ×
+              </button>
+            </div>
             {foundMolecules.map((details, idx) => {
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
@@ -497,9 +576,17 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
             }
           </div>
         )}
-        {similarMolecules && similarMolecules.length > 0 && (
+        {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
-            <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by structure similarity</h3>
+            <div className="molecules-header">
+              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by property similarity</h3>
+              <button 
+                className="close-molecules-button"
+                onClick={() => setShowSimilarMolecules(false)}
+              >
+                ×
+              </button>
+            </div>
             {similarMolecules.map((item, idx) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
@@ -527,6 +614,104 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                       style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
                     />
                   )}
+                  
+                  {/* Add molecule feedback buttons */}
+                  <div className="molecule-feedback-buttons" style={{
+                    margin: '10px 0',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                      <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
+                      <button
+                        onClick={() => handleMoleculeThumbsUp(idx)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          fontSize: '18px',
+                          cursor: 'pointer',
+                          margin: '0 5px'
+                        }}
+                      >
+                        👍
+                      </button>
+                      <button
+                        onClick={() => handleMoleculeThumbsDown(idx)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          fontSize: '18px',
+                          cursor: 'pointer',
+                          margin: '0 5px'
+                        }}
+                      >
+                        👎
+                      </button>
+                    </div>
+
+                    {feedbackOpen && feedbackMoleculeIndex === idx && (
+                      <div className="feedback-form" style={{
+                        marginTop: '10px',
+                        padding: '10px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        backgroundColor: '#f9f9f9',
+                        textAlign: 'left',
+                        width: '100%',
+                        maxWidth: '400px'
+                      }}>
+                        <p style={{ margin: '0 0 10px' }}>
+                          {feedbackType === 'up'
+                            ? 'What makes this a good match?'
+                            : 'Why is this not a good match?'}
+                        </p>
+                        <textarea
+                          value={feedbackText}
+                          onChange={(e) => setFeedbackText(e.target.value)}
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            marginBottom: '10px',
+                            borderRadius: '4px',
+                            border: '1px solid #ccc'
+                          }}
+                          placeholder="Your feedback helps us improve molecule matching"
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <button
+                            onClick={handleMoleculeFeedbackCancel}
+                            style={{
+                              marginRight: '10px',
+                              padding: '5px 10px',
+                              backgroundColor: '#f1f1f1',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleMoleculeFeedbackSubmit}
+                            style={{
+                              padding: '5px 10px',
+                              backgroundColor: '#0080ff',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}
