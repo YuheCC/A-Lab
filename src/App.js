@@ -2055,7 +2055,7 @@ const App = () => {
 
       // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset') {
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset' || path === '/ask' || path === '/search' || path === '/filter') {
           // Set appropriate active page
           if (path === '/about') {
             setActivePage('about');
@@ -2067,7 +2067,17 @@ const App = () => {
             setActivePage('redeem');
           } else if (path === '/password-reset') {
             setActivePage('password-reset');
-          } else {
+          } else if (path === '/map') {
+            setActivePage('map');
+          } else if (path === '/ask') {
+            setActivePage('chatbot');
+          } else if (path === '/search') {
+            setActivePage('search');
+          } else if (path === '/filter') {
+            setActivePage('explorer');
+          } else if (path === '/') {
+            // Redirect root to map
+            window.history.pushState({}, '', '/map');
             setActivePage('map');
           }
         } else {
@@ -2095,13 +2105,22 @@ const App = () => {
         setActivePage('pricing');
       } else if (path === '/terms') {
         setActivePage('terms');
+      } else if (path === '/map') {
+        setActivePage('map');
+      } else if (path === '/ask') {
+        setActivePage('chatbot');
+      } else if (path === '/search') {
+        setActivePage('search');
+      } else if (path === '/filter') {
+        setActivePage('explorer');
       } else if (path === '/') {
-        // Always set to map when on the root path
+        // Redirect root to map
+        window.history.pushState({}, '', '/map');
         setActivePage('map');
       } else {
-        // Redirect any other route to root
-        window.history.pushState({}, '', '/');
-        // Keep the current active page
+        // Redirect any other route to map
+        window.history.pushState({}, '', '/map');
+        setActivePage('map');
       }
     };
 
@@ -2133,8 +2152,16 @@ const App = () => {
       window.history.pushState({}, '', '/about');
     } else if (page === 'terms') {
       window.history.pushState({}, '', '/terms');
+    } else if (page === 'map') {
+      window.history.pushState({}, '', '/map');
+    } else if (page === 'chatbot') {
+      window.history.pushState({}, '', '/ask');
+    } else if (page === 'search') {
+      window.history.pushState({}, '', '/search');
+    } else if (page === 'explorer') {
+      window.history.pushState({}, '', '/filter');
     } else {
-      // Keep the URL as root when navigating between other tabs
+      // Keep the URL as root for any other pages
       if (window.location.pathname !== '/') {
         window.history.pushState({}, '', '/');
       }
@@ -2876,28 +2903,28 @@ const App = () => {
         <div className="header-content">
           <div className="header-links">
             <a
-              href="/"
+              href="/map"
               className={`header-link ${activePage === 'map' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('map'); }}
             >
               Map
             </a>
             <a
-              href="/"
+              href="/ask"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Ask
             </a>
             <a
-              href="/"
+              href="/search"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
               Search
             </a>
             <a
-              href="/"
+              href="/filter"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
