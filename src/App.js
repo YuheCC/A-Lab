@@ -510,6 +510,18 @@ const PasswordReset = () => {
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
+  // Add useEffect to redirect after successful password reset
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        window.history.pushState({}, '', '/map');
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
