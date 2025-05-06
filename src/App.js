@@ -22,6 +22,9 @@ const redirectToLogin = () => {
   localStorage.removeItem('username');
   localStorage.removeItem('permissions');
 
+  // Store the current URL to redirect back after login
+  localStorage.setItem('redirectAfterLogin', current);
+
   // Send them to the sign‑in screen **once**, carrying the original target.
   window.history.pushState(
     {},
@@ -142,7 +145,17 @@ const AuthPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const dest = params.get('redirect');
-    if (dest) setRedirectPath(dest);
+    
+    // Check URL parameter first, then fall back to localStorage
+    if (dest) {
+      setRedirectPath(dest);
+    } else {
+      // Check if we have a stored redirect path
+      const storedRedirect = localStorage.getItem('redirectAfterLogin');
+      if (storedRedirect) {
+        setRedirectPath(storedRedirect);
+      }
+    }
   }, []);
 
   // Use logo from public folder
@@ -206,6 +219,9 @@ const AuthPage = () => {
         localStorage.setItem('permissions', data.permissions);
 
         console.log("Stored local credentials.")
+
+        // Clear the stored redirect path since we're about to use it
+        localStorage.removeItem('redirectAfterLogin');
 
         // Navigate to the map page instead of just reloading
         window.location.replace(redirectPath);
