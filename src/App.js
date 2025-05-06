@@ -1491,6 +1491,18 @@ const ForgotPasswordPage = () => {
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
+  // Add useEffect to redirect after successful password reset request
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        window.history.pushState({}, '', '/login');
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
