@@ -2175,6 +2175,8 @@ const App = () => {
         setActivePage('search');
       } else if (path === '/filter') {
         setActivePage('explorer');
+      } else if (path === '/favorites') {
+        setActivePage('favorites');
       } else if (path === '/') {
         // Redirect root to map
         window.history.pushState({}, '', '/map');
@@ -2222,6 +2224,8 @@ const App = () => {
       window.history.pushState({}, '', '/search');
     } else if (page === 'explorer') {
       window.history.pushState({}, '', '/filter');
+    } else if (page === 'favorites') {
+      window.history.pushState({}, '', '/favorites');
     } else {
       // Keep the URL as root for any other pages
       if (window.location.pathname !== '/') {
@@ -2270,13 +2274,13 @@ const App = () => {
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
     // Allow all users (including non-authenticated) to access the map page and pricing page
-    if (page === 'map' || page === 'pricing' || page === 'terms') {
+    if (page === 'map' || page === 'pricing' || page === 'terms' || page === 'favorites') {
       return true;
     }
 
     // Research users can access About, Filter, Simple Search, and Chat pages
     if (userPermissions === 'research') {
-      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
+      return ['about', 'explorer', 'search', 'chatbot', 'favorites'].includes(page);
     }
 
     // Admin users can access everything
@@ -3053,6 +3057,13 @@ const App = () => {
             >
               Filter
             </a>
+            <a
+              href="/favorites"
+              className={`header-link ${activePage === 'favorites' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); handleNavigation('favorites'); }}
+            >
+              Favorites
+            </a>
           </div>
         </div>
         <div className="stats-container">
@@ -3811,6 +3822,117 @@ const App = () => {
           <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
+        ) : activePage === 'favorites' ? (
+          <>
+            <div className="favorites-container" style={{ display: 'flex', height: '100%', paddingLeft: '0', paddingTop: '20px' }}>
+              <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+                <h1
+                  style={{
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const contentWrapper = document.querySelector('.about-content-wrapper');
+                        if (contentWrapper) {
+                          contentWrapper.scrollTop = 0;
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation
+                </h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a
+                    href="#features"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#pricing"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing
+                  </a>
+                  <a
+                    href="#news"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+              <div className="favorites-content" style={{ flex: '1', padding: '20px' }}>
+                {/* Favorites content will be implemented in the future */}
+              </div>
+            </div>
+          </>
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
