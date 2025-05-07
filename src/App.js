@@ -1661,6 +1661,11 @@ const App = () => {
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
 
+  // Add state for favorites functionality
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoriteSuccess, setFavoriteSuccess] = useState(null);
+  const [favoriteError, setFavoriteError] = useState(null);
+
   // Enterprise search state lifted up
   const [enterprisesearchResults, setEnterprisesearchResults] = useState(null);
   const [enterpriseSearchLoading, setEnterpriseSearchLoading] = useState(false);
@@ -2942,6 +2947,67 @@ const App = () => {
     setFeedbackMoleculeIndex(null);
     setFeedbackText('');
   };
+  
+  // Function to handle adding molecule to favorites
+  const handleAddToFavorites = async (molecule) => {
+    setFavoritesLoading(true);
+    setFavoriteSuccess(null);
+    setFavoriteError(null);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required to add favorites');
+      }
+
+      // Prepare favorite data from molecule properties
+      const favoriteData = {
+        smiles: molecule.smiles,
+        molecular_weight: molecule.properties?.molwt || null,
+        homo_ev: molecule.properties?.homo_eV || null,
+        lumo_ev: molecule.properties?.lumo_eV || null,
+        esp_min_ev: molecule.properties?.esp_min_eV || null,
+        esp_max_ev: molecule.properties?.esp_max_eV || null,
+        predicted_melting_point: molecule.properties?.predicted_mp || null,
+        predicted_boiling_point: molecule.properties?.predicted_bp || null,
+        functional_groups: molecule.properties?.functional_groups || null,
+        umap_x: molecule.x || null,
+        umap_y: molecule.y || null
+      };
+
+      const response = await authFetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(favoriteData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to add to favorites');
+      }
+
+      const data = await response.json();
+      setFavoriteSuccess('Molecule added to favorites successfully!');
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setFavoriteSuccess(null);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      setFavoriteError(error.message || 'Failed to add to favorites');
+      
+      // Hide error message after 3 seconds
+      setTimeout(() => {
+        setFavoriteError(null);
+      }, 3000);
+    } finally {
+      setFavoritesLoading(false);
+    }
+  };
 
   return (
     <div className="App">
@@ -4010,6 +4076,54 @@ const App = () => {
                                   className="molecule-image"
                                 />
                               </div>
+                              
+                              {/* Add Favorites button */}
+                              <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                <button
+                                  className="favorites-button"
+                                  onClick={() => handleAddToFavorites(molecule)}
+                                  disabled={favoritesLoading}
+                                  style={{
+                                    backgroundColor: '#0080ff',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    padding: '8px 15px',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    transition: 'background-color 0.3s',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                >
+                                  {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                </button>
+                                
+                                {favoriteSuccess && (
+                                  <div className="success-message" style={{ 
+                                    marginTop: '8px', 
+                                    color: 'green', 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {favoriteSuccess}
+                                  </div>
+                                )}
+                                
+                                {favoriteError && (
+                                  <div className="error-message" style={{ 
+                                    marginTop: '8px', 
+                                    color: 'red', 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {favoriteError}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -4114,6 +4228,68 @@ const App = () => {
                                               alt={`Molecule ${index + 1} visualization`}
                                               className="similar-molecule-image"
                                             />
+                                          </div>
+                                          
+                                          {/* Add Favorites button for similar molecules */}
+                                          <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                            <button
+                                              className="favorites-button"
+                                              onClick={() => handleAddToFavorites({
+                                                smiles: molecule.SMILES,
+                                                properties: {
+                                                  molwt: molecule.molecular_weight,
+                                                  homo_eV: molecule.HOMO_eV,
+                                                  lumo_eV: molecule.LUMO_eV,
+                                                  esp_min_eV: molecule.ESP_min_eV,
+                                                  esp_max_eV: molecule.ESP_max_eV,
+                                                  predicted_mp: molecule.predicted_MP_celsius,
+                                                  predicted_bp: molecule.predicted_BP_celsius,
+                                                  functional_groups: molecule.functional_groups
+                                                },
+                                                x: molecule.UMAP_0,
+                                                y: molecule.UMAP_1
+                                              })}
+                                              disabled={favoritesLoading}
+                                              style={{
+                                                backgroundColor: '#0080ff',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                padding: '8px 15px',
+                                                cursor: 'pointer',
+                                                fontWeight: 'bold',
+                                                transition: 'background-color 0.3s',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                              }}
+                                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                            >
+                                              {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                            </button>
+                                            
+                                            {favoriteSuccess && (
+                                              <div className="success-message" style={{ 
+                                                marginTop: '8px', 
+                                                color: 'green', 
+                                                fontSize: '14px',
+                                                fontWeight: 'bold'
+                                              }}>
+                                                {favoriteSuccess}
+                                              </div>
+                                            )}
+                                            
+                                            {favoriteError && (
+                                              <div className="error-message" style={{ 
+                                                marginTop: '8px', 
+                                                color: 'red', 
+                                                fontSize: '14px',
+                                                fontWeight: 'bold'
+                                              }}>
+                                                {favoriteError}
+                                              </div>
+                                            )}
                                           </div>
                                         </td>
                                       </tr>
