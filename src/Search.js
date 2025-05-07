@@ -19,6 +19,12 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
         onSearch(inputValue);
     }
   
+    const pubChemUrl = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html";
+    
+    const handleTooltipClick = () => {
+      window.open(pubChemUrl, '_blank', 'noopener,noreferrer');
+    };
+  
     return (
       <div className="search-bar-container" style={{ display: 'flex', alignItems: 'center' }}>
         <input
@@ -44,8 +50,9 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
  - "Find all molecules with LUMO at least -2 and molecular weight at most 200"
 For more open-ended queries, use Ask.
 
-To draw and look up SMILES strings, please use https://pubchem.ncbi.nlm.nih.gov//edit3/index.html`}
-          style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
+To draw and look up SMILES strings, please click this icon or visit ${pubChemUrl}`}
+          style={{ marginLeft: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2em' }}
+          onClick={handleTooltipClick}
         >
           ?
         </span>

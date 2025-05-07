@@ -22,6 +22,9 @@ const redirectToLogin = () => {
   localStorage.removeItem('username');
   localStorage.removeItem('permissions');
 
+  // Store the current URL to redirect back after login
+  localStorage.setItem('redirectAfterLogin', current);
+
   // Send them to the sign‑in screen **once**, carrying the original target.
   window.history.pushState(
     {},
@@ -108,12 +111,17 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         >
           Molecular Universe
         </a>
-
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
           <span className="username">{username}</span>
-          <button className="reset-password-button" onClick={onPasswordReset}>Settings</button>
+          <div className="settings-dropdown">
+            <button className="reset-password-button">Settings</button>
+            <div className="settings-dropdown-content">
+              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Change Password</a>
+              <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
+            </div>
+          </div>
           <button className="logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
@@ -142,7 +150,17 @@ const AuthPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const dest = params.get('redirect');
-    if (dest) setRedirectPath(dest);
+    
+    // Check URL parameter first, then fall back to localStorage
+    if (dest) {
+      setRedirectPath(dest);
+    } else {
+      // Check if we have a stored redirect path
+      const storedRedirect = localStorage.getItem('redirectAfterLogin');
+      if (storedRedirect) {
+        setRedirectPath(storedRedirect);
+      }
+    }
   }, []);
 
   // Use logo from public folder
@@ -206,6 +224,9 @@ const AuthPage = () => {
         localStorage.setItem('permissions', data.permissions);
 
         console.log("Stored local credentials.")
+
+        // Clear the stored redirect path since we're about to use it
+        localStorage.removeItem('redirectAfterLogin');
 
         // Navigate to the map page instead of just reloading
         window.location.replace(redirectPath);
@@ -493,6 +514,18 @@ const PasswordReset = () => {
 
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+
+  // Add useEffect to redirect after successful password reset
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        window.history.pushState({}, '', '/map');
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1307,6 +1340,18 @@ const RedeemPage = () => {
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
+  // Add useEffect to handle redirect after successful redemption
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        window.history.pushState({}, '', '/map');
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1463,6 +1508,18 @@ const ForgotPasswordPage = () => {
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
 
+  // Add useEffect to redirect after successful password reset request
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        window.history.pushState({}, '', '/login');
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1603,6 +1660,11 @@ const App = () => {
   const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
+
+  // Add state for favorites functionality
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoriteSuccess, setFavoriteSuccess] = useState(null);
+  const [favoriteError, setFavoriteError] = useState(null);
 
   // Enterprise search state lifted up
   const [enterprisesearchResults, setEnterprisesearchResults] = useState(null);
@@ -2055,7 +2117,7 @@ const App = () => {
 
       // If not authenticated, allow access to About, Map, and Pricing pages
       if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset') {
+        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset' || path === '/ask' || path === '/search' || path === '/filter') {
           // Set appropriate active page
           if (path === '/about') {
             setActivePage('about');
@@ -2067,7 +2129,17 @@ const App = () => {
             setActivePage('redeem');
           } else if (path === '/password-reset') {
             setActivePage('password-reset');
-          } else {
+          } else if (path === '/map') {
+            setActivePage('map');
+          } else if (path === '/ask') {
+            setActivePage('chatbot');
+          } else if (path === '/search') {
+            setActivePage('search');
+          } else if (path === '/filter') {
+            setActivePage('explorer');
+          } else if (path === '/') {
+            // Redirect root to map
+            window.history.pushState({}, '', '/map');
             setActivePage('map');
           }
         } else {
@@ -2095,13 +2167,22 @@ const App = () => {
         setActivePage('pricing');
       } else if (path === '/terms') {
         setActivePage('terms');
+      } else if (path === '/map') {
+        setActivePage('map');
+      } else if (path === '/ask') {
+        setActivePage('chatbot');
+      } else if (path === '/search') {
+        setActivePage('search');
+      } else if (path === '/filter') {
+        setActivePage('explorer');
       } else if (path === '/') {
-        // Always set to map when on the root path
+        // Redirect root to map
+        window.history.pushState({}, '', '/map');
         setActivePage('map');
       } else {
-        // Redirect any other route to root
-        window.history.pushState({}, '', '/');
-        // Keep the current active page
+        // Redirect any other route to map
+        window.history.pushState({}, '', '/map');
+        setActivePage('map');
       }
     };
 
@@ -2133,8 +2214,16 @@ const App = () => {
       window.history.pushState({}, '', '/about');
     } else if (page === 'terms') {
       window.history.pushState({}, '', '/terms');
+    } else if (page === 'map') {
+      window.history.pushState({}, '', '/map');
+    } else if (page === 'chatbot') {
+      window.history.pushState({}, '', '/ask');
+    } else if (page === 'search') {
+      window.history.pushState({}, '', '/search');
+    } else if (page === 'explorer') {
+      window.history.pushState({}, '', '/filter');
     } else {
-      // Keep the URL as root when navigating between other tabs
+      // Keep the URL as root for any other pages
       if (window.location.pathname !== '/') {
         window.history.pushState({}, '', '/');
       }
@@ -2858,6 +2947,67 @@ const App = () => {
     setFeedbackMoleculeIndex(null);
     setFeedbackText('');
   };
+  
+  // Function to handle adding molecule to favorites
+  const handleAddToFavorites = async (molecule) => {
+    setFavoritesLoading(true);
+    setFavoriteSuccess(null);
+    setFavoriteError(null);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required to add favorites');
+      }
+
+      // Prepare favorite data from molecule properties
+      const favoriteData = {
+        smiles: molecule.smiles,
+        molecular_weight: molecule.properties?.molwt || null,
+        homo_ev: molecule.properties?.homo_eV || null,
+        lumo_ev: molecule.properties?.lumo_eV || null,
+        esp_min_ev: molecule.properties?.esp_min_eV || null,
+        esp_max_ev: molecule.properties?.esp_max_eV || null,
+        predicted_melting_point: molecule.properties?.predicted_mp || null,
+        predicted_boiling_point: molecule.properties?.predicted_bp || null,
+        functional_groups: molecule.properties?.functional_groups || null,
+        umap_x: molecule.x || null,
+        umap_y: molecule.y || null
+      };
+
+      const response = await authFetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(favoriteData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to add to favorites');
+      }
+
+      const data = await response.json();
+      setFavoriteSuccess('Molecule added to favorites successfully!');
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setFavoriteSuccess(null);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      setFavoriteError(error.message || 'Failed to add to favorites');
+      
+      // Hide error message after 3 seconds
+      setTimeout(() => {
+        setFavoriteError(null);
+      }, 3000);
+    } finally {
+      setFavoritesLoading(false);
+    }
+  };
 
   return (
     <div className="App">
@@ -2876,28 +3026,28 @@ const App = () => {
         <div className="header-content">
           <div className="header-links">
             <a
-              href="/"
+              href="/map"
               className={`header-link ${activePage === 'map' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('map'); }}
             >
               Map
             </a>
             <a
-              href="/"
+              href="/ask"
               className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
             >
               Ask
             </a>
             <a
-              href="/"
+              href="/search"
               className={`header-link ${activePage === 'search' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
             >
               Search
             </a>
             <a
-              href="/"
+              href="/filter"
               className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
@@ -3415,6 +3565,9 @@ const App = () => {
               backgroundColor: '#f1f1f1'
             }}>
               By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
+              <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
+                This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
+              </p>
             </div>
           </>
         ) : activePage === 'chatbot' ? (
@@ -3923,6 +4076,54 @@ const App = () => {
                                   className="molecule-image"
                                 />
                               </div>
+                              
+                              {/* Add Favorites button */}
+                              <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                <button
+                                  className="favorites-button"
+                                  onClick={() => handleAddToFavorites(molecule)}
+                                  disabled={favoritesLoading}
+                                  style={{
+                                    backgroundColor: '#0080ff',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    padding: '8px 15px',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    transition: 'background-color 0.3s',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                >
+                                  {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                </button>
+                                
+                                {favoriteSuccess && (
+                                  <div className="success-message" style={{ 
+                                    marginTop: '8px', 
+                                    color: 'green', 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {favoriteSuccess}
+                                  </div>
+                                )}
+                                
+                                {favoriteError && (
+                                  <div className="error-message" style={{ 
+                                    marginTop: '8px', 
+                                    color: 'red', 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {favoriteError}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -4027,6 +4228,68 @@ const App = () => {
                                               alt={`Molecule ${index + 1} visualization`}
                                               className="similar-molecule-image"
                                             />
+                                          </div>
+                                          
+                                          {/* Add Favorites button for similar molecules */}
+                                          <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                            <button
+                                              className="favorites-button"
+                                              onClick={() => handleAddToFavorites({
+                                                smiles: molecule.SMILES,
+                                                properties: {
+                                                  molwt: molecule.molecular_weight,
+                                                  homo_eV: molecule.HOMO_eV,
+                                                  lumo_eV: molecule.LUMO_eV,
+                                                  esp_min_eV: molecule.ESP_min_eV,
+                                                  esp_max_eV: molecule.ESP_max_eV,
+                                                  predicted_mp: molecule.predicted_MP_celsius,
+                                                  predicted_bp: molecule.predicted_BP_celsius,
+                                                  functional_groups: molecule.functional_groups
+                                                },
+                                                x: molecule.UMAP_0,
+                                                y: molecule.UMAP_1
+                                              })}
+                                              disabled={favoritesLoading}
+                                              style={{
+                                                backgroundColor: '#0080ff',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                padding: '8px 15px',
+                                                cursor: 'pointer',
+                                                fontWeight: 'bold',
+                                                transition: 'background-color 0.3s',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                              }}
+                                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                            >
+                                              {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                            </button>
+                                            
+                                            {favoriteSuccess && (
+                                              <div className="success-message" style={{ 
+                                                marginTop: '8px', 
+                                                color: 'green', 
+                                                fontSize: '14px',
+                                                fontWeight: 'bold'
+                                              }}>
+                                                {favoriteSuccess}
+                                              </div>
+                                            )}
+                                            
+                                            {favoriteError && (
+                                              <div className="error-message" style={{ 
+                                                marginTop: '8px', 
+                                                color: 'red', 
+                                                fontSize: '14px',
+                                                fontWeight: 'bold'
+                                              }}>
+                                                {favoriteError}
+                                              </div>
+                                            )}
                                           </div>
                                         </td>
                                       </tr>
