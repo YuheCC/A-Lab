@@ -2431,6 +2431,8 @@ body, html {
 .favorites-grid-container {
   padding: 20px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .favorites-grid-container h2 {
@@ -2441,7 +2443,7 @@ body, html {
 
 .favorites-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
 }
@@ -2457,6 +2459,9 @@ body, html {
   height: 100%;
   position: relative;
   border: 1px solid #e0e0e0;
+  max-width: 350px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .favorite-card:hover {
@@ -2619,20 +2624,46 @@ body, html {
 }
 
 /* Mobile responsiveness for favorites */
+@media (max-width: 1200px) {
+  .favorites-grid-container {
+    max-width: 950px;
+  }
+}
+
+@media (max-width: 992px) {
+  .favorites-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .favorites-grid-container {
+    max-width: 750px;
+  }
+}
+
 @media (max-width: 768px) {
   .favorites-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
   
   .favorite-card {
     margin-bottom: 15px;
+    max-width: 300px;
+  }
+  
+  .favorites-grid-container {
+    max-width: 650px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 620px) {
   .favorites-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .favorite-card {
+    max-width: 350px;
   }
 }
 
