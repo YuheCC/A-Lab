@@ -2429,10 +2429,11 @@ body, html {
 
 /* Favorites Grid Styles */
 .favorites-grid-container {
-  padding: 20px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
 }
 
 .favorites-grid-container h2 {

@@ -3828,7 +3828,7 @@ const App = () => {
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'favorites' ? (
           <>
-            <div className="favorites-container" style={{ display: 'flex', height: '100%', paddingLeft: '0', paddingTop: '20px' }}>
+            <div className="favorites-container" style={{ display: 'flex', height: 'calc(100vh - 170px)', paddingLeft: '0', paddingTop: '20px' }}>
               <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
                 <h1
                   style={{
@@ -3932,7 +3932,7 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <div className="favorites-content" style={{ flex: '1', padding: '20px' }}>
+              <div className="favorites-content" style={{ flex: '1', padding: '0px', height: '100%', overflowY: 'auto' }}>
                 <FavoritesGrid />
               </div>
             </div>
