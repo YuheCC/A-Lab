@@ -2911,22 +2911,25 @@ const App = () => {
         console.log(`Submitting ${feedbackType === 'up' ? 'positive' : 'negative'} feedback for molecule:`, molecule.SMILES);
         console.log('Feedback text:', feedbackText);
 
-        // Example of how you might send this to your backend
-        /*
-        await fetch(`${API_URL}/feedback`, {
+        // Submit feedback to backend
+        await fetch(`${API_URL}/api/feedback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            moleculeSmiles: molecule.SMILES,
-            searchQuery: lastSearch,
-            feedbackType: feedbackType,
-            feedbackText: feedbackText
-          })
+            isPositive: feedbackType === 'up',
+            feedbackText: feedbackText.trim(),
+            inputContent: lastSearch || '',
+            responseContent: molecule.SMILES,
+            contextContent1: '',
+            contextContent2: '',
+            contextContent3: '',
+            timestamp: new Date().toISOString(),
+            collection: 'friends-feedback',
+          }),
         });
-        */
 
         // Close the feedback form
         setFeedbackOpen(false);
