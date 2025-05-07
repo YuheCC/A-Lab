@@ -44,17 +44,16 @@ const FavoritesGrid = () => {
     for (const favorite of favoritesData) {
       try {
         if (favorite.smiles) {
-          const response = await fetch(`${API_URL}/get-image?smiles=${encodeURIComponent(favorite.smiles)}`, {
+          const response = await fetch(`${API_URL}/api/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
           });
           
           if (response.ok) {
-            const imageData = await response.json();
-            if (imageData && imageData.image) {
-              images[favorite.id] = imageData.image;
-            }
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            images[favorite.id] = imageUrl;
           }
         }
       } catch (error) {
@@ -177,16 +176,6 @@ const FavoritesGrid = () => {
               </button>
             </div>
             
-            {moleculeImages[favorite.id] && (
-              <div className="favorite-image-container">
-                <img 
-                  src={moleculeImages[favorite.id]} 
-                  alt={`Molecule visualization`} 
-                  className="favorite-molecule-image"
-                />
-              </div>
-            )}
-            
             <div className="favorite-card-properties">
               <table className="favorite-property-table">
                 <tbody>
@@ -237,6 +226,20 @@ const FavoritesGrid = () => {
                     <td className="property-value">
                       {favorite.umap_x ? favorite.umap_x.toFixed(2) : 'N/A'} / 
                       {favorite.umap_y ? favorite.umap_y.toFixed(2) : 'N/A'}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="property-value" style={{ textAlign: 'center' }}>
+                      {moleculeImages[favorite.id] ? (
+                        <img 
+                          src={moleculeImages[favorite.id]} 
+                          alt="Molecule structure" 
+                          className="molecule-image"
+                          style={{ maxWidth: '100%', maxHeight: '150px' }}
+                        />
+                      ) : (
+                        'Loading image...'
+                      )}
                     </td>
                   </tr>
                 </tbody>
