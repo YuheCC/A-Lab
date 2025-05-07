@@ -118,7 +118,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
           <div className="settings-dropdown">
             <button className="reset-password-button">Settings</button>
             <div className="settings-dropdown-content">
-              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Password Reset</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Change Password</a>
               <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
             </div>
           </div>
