@@ -2426,3 +2426,286 @@ body, html {
 .settings-dropdown:hover .reset-password-button {
   background-color: #ddd;
 }
+
+/* Favorites Grid Styles */
+.favorites-grid-container {
+  padding: 20px;
+  width: 100%;
+}
+
+.favorites-grid-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.favorite-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  border: 1px solid #e0e0e0;
+}
+
+.favorite-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  border-color: #0080ff;
+}
+
+.favorite-card-header {
+  padding: 12px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite-card-smiles {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 250px;
+}
+
+.remove-favorite-button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.remove-favorite-button:hover {
+  color: #ff3333;
+  background-color: rgba(255, 51, 51, 0.1);
+}
+
+.favorite-image-container {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.favorite-molecule-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.favorite-card:hover .favorite-molecule-image {
+  transform: scale(1.05);
+}
+
+.favorite-card-properties {
+  padding: 15px;
+  flex-grow: 1;
+}
+
+.favorite-property-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.favorite-property-table td {
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.favorite-property-table tr:last-child td {
+  border-bottom: none;
+}
+
+.favorite-property-table .property-name {
+  color: #666;
+  font-weight: 500;
+  width: 55%;
+}
+
+.favorite-property-table .property-value {
+  color: #333;
+  font-weight: 600;
+  text-align: right;
+}
+
+.favorite-card-footer {
+  padding: 10px 15px;
+  background-color: #f8f8f8;
+  border-top: 1px solid #eaeaea;
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+}
+
+.favorites-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.favorites-loading .loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #0080ff;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.favorites-error, .no-favorites {
+  text-align: center;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+.favorites-error h3, .no-favorites h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.favorites-error p, .no-favorites p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.favorites-error button, .no-favorites a {
+  display: inline-block;
+  background-color: #0080ff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.favorites-error button:hover, .no-favorites a:hover {
+  background-color: #0066cc;
+}
+
+/* Mobile responsiveness for favorites */
+@media (max-width: 768px) {
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .favorite-card {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Toast Message Styles */
+.toast-message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+}
+
+.toast-message.success {
+  background-color: #4caf50;
+}
+
+.toast-message.error {
+  background-color: #f44336;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.favorite-card-actions {
+  padding: 0 15px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.view-in-umap-button {
+  background-color: #0080ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-in-umap-button:hover {
+  background-color: #0066cc;
+}
+
+.view-in-umap-button:before {
+  content: "🔍";
+  margin-right: 8px;
+  font-size: 14px;
+}

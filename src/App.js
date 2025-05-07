@@ -9,6 +9,7 @@ import MuiSlider from '@mui/material/Slider';
 // import logo from the public folder
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
+import FavoritesGrid from './FavoritesGrid';
 
 // ---------------------------------------------------------------------------
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
@@ -3929,7 +3930,7 @@ const App = () => {
                 </div>
               </div>
               <div className="favorites-content" style={{ flex: '1', padding: '20px' }}>
-                {/* Favorites content will be implemented in the future */}
+                <FavoritesGrid />
               </div>
             </div>
           </>
