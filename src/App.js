@@ -3482,6 +3482,9 @@ const App = () => {
               backgroundColor: '#f1f1f1'
             }}>
               By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
+              <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
+                This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
+              </p>
             </div>
           </>
         ) : activePage === 'chatbot' ? (
