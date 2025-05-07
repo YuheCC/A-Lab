@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import API_URL from './Constants.js';
 
-const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleContent, onClose }) => {
+const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -14,11 +14,13 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, collapsibleCon
     }
     try {
       const feedbackData = {
-        isPositive,
+        isPositive: isPositive,
         feedbackText: feedbackText.trim(),
-        inputContent,
-        responseContent,
-        collapsibleContent,
+        inputContent: inputContent,
+        responseContent: responseContent,
+        contextContent1: contextContent1,
+        contextContent2: "",
+        contextContent3: "",
         timestamp: new Date().toISOString(),
       };
       const token = localStorage.getItem('token');

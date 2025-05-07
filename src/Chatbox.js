@@ -84,24 +84,28 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
+  const [activeFindMessage, setActiveFindMessage] = useState(null);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   // Define handlers for thumbs feedback
-  const handleThumbsUp = (inputContent, responseContent, collapsibleContent) => {
-    setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, collapsibleContent });
+  const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
+    setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
   };
 
-  const handleThumbsDown = (inputContent, responseContent, collapsibleContent) => {
-    setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, collapsibleContent });
+  const handleThumbsDown = (inputContent, responseContent, contextContent1) => {
+    setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
   };
 
   
-  const handleFindMolecules = async (moleculeList) => {
+  const handleFindMolecules = async (message) => {
+    setActiveFindMessage(message);
+    console.log(message);
+    const moleculeList = message.molecules || [];
     setSimilarMolecules([]);
     setFoundMolecules(null);
     setActiveMolecule(null);
@@ -140,8 +144,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         return acc;
       }, []);
 
-        setFoundMolecules(flattenedMolecules);
-        console.log(flattenedMolecules);
+      setFoundMolecules(flattenedMolecules);
+      console.log(flattenedMolecules);
     } catch (err) {
       console.error("Error fetching molecule details:", err);
     } finally {
@@ -322,6 +326,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
 
   // Add feedback handlers for thumbs up/down
   const handleMoleculeThumbsUp = (moleculeIndex) => {
+    const message = activeFindMessage;
     setFeedbackMoleculeIndex(moleculeIndex);
     setFeedbackType('up');
     setFeedbackOpen(true);
@@ -329,6 +334,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   };
 
   const handleMoleculeThumbsDown = (moleculeIndex) => {
+    const message = activeFindMessage;
     setFeedbackMoleculeIndex(moleculeIndex);
     setFeedbackType('down');
     setFeedbackOpen(true);
@@ -341,26 +347,37 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         const molecule = similarMolecules[feedbackMoleculeIndex];
         const token = localStorage.getItem('token');
 
-        // Here you would actually submit the feedback to your backend
-        console.log(`Submitting ${feedbackType === 'up' ? 'positive' : 'negative'} feedback for molecule:`, molecule.SMILES);
-        console.log('Feedback text:', feedbackText);
+        // Gather LLM context for this feedback from the originating message
+        const rawInputs = activeFindMessage?.inputs;
+        let contextContent1 = "";
+        if (Array.isArray(rawInputs)) {
+          const lastUserMsg = rawInputs.filter(m => m.role === "user").pop() || {};
+          contextContent1 = lastUserMsg.content || "";
+        } else if (typeof rawInputs === "string") {
+          contextContent1 = rawInputs;
+        }
+        const contextContent2 = activeFindMessage?.text || "";
+        const contextContent3 = activeFindMessage?.sources || "";
 
-        // Example of how you might send this to your backend
-        /*
-        await fetch(`${API_URL}/feedback`, {
+        // Submit feedback to backend
+        await fetch(`${API_URL}/api/feedback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            moleculeSmiles: molecule.SMILES,
-            searchQuery: activeMolecule ? activeMolecule.SMILES : '',
-            feedbackType: feedbackType,
-            feedbackText: feedbackText
-          })
+            isPositive: feedbackType === 'up',
+            feedbackText: feedbackText.trim(),
+            inputContent: activeMolecule ? activeMolecule.SMILES : '',
+            responseContent: molecule.SMILES,
+            contextContent1,
+            contextContent2,
+            contextContent3,
+            timestamp: new Date().toISOString(),
+            collection: 'friends-feedback',
+          }),
         });
-        */
 
         // Close the feedback form
         setFeedbackOpen(false);
@@ -419,7 +436,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                     <button 
                       className="find-molecules-button" 
                       style={{ backgroundColor: '#ADD8E6', border: 'none', padding: '8px 12px', cursor: 'pointer' }}
-                      onClick={() => handleFindMolecules(msg.molecules)}>
+                      onClick={() => handleFindMolecules(msg)}>
                       Find Molecules
                     </button>
                     {moleculesLoading && (
@@ -724,7 +741,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
           isPositive={feedbackData.isPositive}
           inputContent={feedbackData.inputContent}
           responseContent={feedbackData.responseContent}
-          collapsibleContent={feedbackData.collapsibleContent}
+          contextContent1={feedbackData.contextContent1}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}
