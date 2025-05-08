@@ -1,11 +1,29 @@
 // FeedbackBox.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from './Constants.js';
 
 const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
+  const feedbackBoxRef = useRef(null);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (feedbackBoxRef.current && !feedbackBoxRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Cleanup the event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
 
   const handleSubmit = async () => {
     if (!feedbackText.trim()) {
@@ -44,7 +62,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
   };
 
   return (
-    <div className="feedback-box">
+    <div className="feedback-box" ref={feedbackBoxRef}>
       <div className="feedback-header">
         {isPositive ? "What was good?" : "What was wrong?"}
       </div>
