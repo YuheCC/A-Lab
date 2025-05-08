@@ -85,6 +85,11 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [activeFindMessage, setActiveFindMessage] = useState(null);
+  
+  // Add favorites state
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoriteSuccess, setFavoriteSuccess] = useState(null);
+  const [favoriteError, setFavoriteError] = useState(null);
 
   useEffect(() => {
     scrollToBottom();
@@ -399,6 +404,68 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setFeedbackText('');
   };
 
+  // Function to handle adding molecule to favorites
+  const handleAddToFavorites = async (molecule) => {
+    setFavoritesLoading(true);
+    setFavoriteSuccess(null);
+    setFavoriteError(null);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required to add favorites');
+      }
+
+      // Prepare favorite data from molecule properties
+      const favoriteData = {
+        smiles: molecule.SMILES || molecule.smiles,
+        molecular_weight: molecule.MOLECULAR_WEIGHT || molecule.molecular_weight || null,
+        homo_ev: molecule.HOMO || molecule.HOMO_eV || null,
+        lumo_ev: molecule.LUMO || molecule.LUMO_eV || null,
+        esp_min_ev: molecule.ESP_MIN || molecule.ESP_min_eV || null,
+        esp_max_ev: molecule.ESP_MAX || molecule.ESP_max_eV || null,
+        predicted_melting_point: molecule.PREDICTED_MP || molecule.predicted_MP_celsius || null,
+        predicted_boiling_point: molecule.PREDICTED_BP || molecule.predicted_BP_celsius || null,
+        functional_groups: molecule.FUNCTIONAL_GROUPS || molecule.functional_groups || null,
+        umap_x: molecule.UMAP_0 || null,
+        umap_y: molecule.UMAP_1 || null
+      };
+
+      const response = await fetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(favoriteData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to add to favorites');
+      }
+
+      const data = await response.json();
+      setFavoriteSuccess('Molecule added to favorites successfully!');
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setFavoriteSuccess(null);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      setFavoriteError(error.message || 'Failed to add to favorites');
+      
+      // Hide error message after 3 seconds
+      setTimeout(() => {
+        setFavoriteError(null);
+      }, 3000);
+    } finally {
+      setFavoritesLoading(false);
+    }
+  };
+
   return (
     <div className="chatbot-container">
       {userPermissions === 'research' && (
@@ -557,36 +624,84 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                       style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
                     />
                   )}
-                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
-                  <button 
-                    className="find-similar-molecules-button"
-                    style={{
-                      backgroundColor: '#FFA500',
-                      border: 'none',
-                      padding: '6px 10px',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => handleFindSimilarMolecules(details)}
-                  >
-                    Find Similar Molecules
-                  </button>
-                  {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
-                    <span style={{ 
-                      marginLeft: '10px', 
-                      fontStyle: 'italic', 
-                      color: '#555',
-                      display: 'inline-flex',
-                      alignItems: 'center'
-                    }}>
-                      searching
-                      <span className="thinking-dots" style={{ marginLeft: '5px' }}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                    <button 
+                      className="find-similar-molecules-button"
+                      style={{
+                        backgroundColor: '#FFA500',
+                        border: 'none',
+                        padding: '6px 10px',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleFindSimilarMolecules(details)}
+                    >
+                      Find Similar Molecules
+                    </button>
+                    
+                    {/* Add to Favorites button */}
+                    <button
+                      className="favorites-button"
+                      onClick={() => handleAddToFavorites(details)}
+                      disabled={favoritesLoading}
+                      style={{
+                        backgroundColor: '#0080ff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '6px 10px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        transition: 'background-color 0.3s',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                    >
+                      {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                    </button>
+                    
+                    {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
+                      <span style={{ 
+                        marginLeft: '10px', 
+                        fontStyle: 'italic', 
+                        color: '#555',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}>
+                        searching
+                        <span className="thinking-dots" style={{ marginLeft: '5px' }}>
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </span>
                       </span>
-                    </span>
-                  )}
+                    )}
                   </div>
+                  
+                  {/* Add success/error messages */}
+                  {favoriteSuccess && (
+                    <div className="success-message" style={{ 
+                      marginTop: '8px', 
+                      color: 'green', 
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}>
+                      {favoriteSuccess}
+                    </div>
+                  )}
+                  
+                  {favoriteError && (
+                    <div className="error-message" style={{ 
+                      marginTop: '8px', 
+                      color: 'red', 
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}>
+                      {favoriteError}
+                    </div>
+                  )}
                 </div>
               );
               })
@@ -726,6 +841,54 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
                             Submit
                           </button>
                         </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Add Favorites button at the bottom of the molecule box */}
+                  <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <button
+                      className="favorites-button"
+                      onClick={() => handleAddToFavorites(details)}
+                      disabled={favoritesLoading}
+                      style={{
+                        backgroundColor: '#0080ff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '8px 15px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        transition: 'background-color 0.3s',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                    >
+                      {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                    </button>
+                    
+                    {favoriteSuccess && (
+                      <div className="success-message" style={{ 
+                        marginTop: '8px', 
+                        color: 'green', 
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                      }}>
+                        {favoriteSuccess}
+                      </div>
+                    )}
+                    
+                    {favoriteError && (
+                      <div className="error-message" style={{ 
+                        marginTop: '8px', 
+                        color: 'red', 
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                      }}>
+                        {favoriteError}
                       </div>
                     )}
                   </div>
