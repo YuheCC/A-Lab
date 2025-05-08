@@ -71,7 +71,7 @@ const FavoritesGrid = () => {
     }
     
     try {
-      const response = await fetch(`${API_URL}/favorites/${id}`, {
+      const response = await fetch(`${API_URL}/favorites-delete/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
