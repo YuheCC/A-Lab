@@ -108,7 +108,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise' || activePage === 'favorites') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
