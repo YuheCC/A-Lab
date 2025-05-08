@@ -10,6 +10,7 @@ import MuiSlider from '@mui/material/Slider';
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
 import FavoritesGrid from './FavoritesGrid';
+import MoleculeFeedbackBox from './MoleculeFeedbackBox';
 
 // ---------------------------------------------------------------------------
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
@@ -1657,11 +1658,11 @@ const App = () => {
   const [findClosestFriends, setFindClosestFriends] = useState(false);
 
   // New state for feedback functionality
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
-
+  // const [feedbackOpen, setFeedbackOpen] = useState(false);
+  // const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
+  // const [feedbackText, setFeedbackText] = useState('');
+  // const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
+  
   // Add state for favorites functionality
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoriteSuccess, setFavoriteSuccess] = useState(null);
@@ -2891,71 +2892,6 @@ const App = () => {
     );
   }
 
-  // Add feedback handlers for thumbs up/down
-  const handleThumbsUp = (moleculeIndex) => {
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('up');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleThumbsDown = (moleculeIndex) => {
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('down');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleFeedbackSubmit = async () => {
-    if (feedbackMoleculeIndex !== null && similarMolecules && similarMolecules.length > feedbackMoleculeIndex) {
-      try {
-        const molecule = similarMolecules[feedbackMoleculeIndex];
-        const token = localStorage.getItem('token');
-
-        // Here you would actually submit the feedback to your backend
-        console.log(`Submitting ${feedbackType === 'up' ? 'positive' : 'negative'} feedback for molecule:`, molecule.SMILES);
-        console.log('Feedback text:', feedbackText);
-
-        // Submit feedback to backend
-        await fetch(`${API_URL}/api/feedback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({
-            isPositive: feedbackType === 'up',
-            feedbackText: feedbackText.trim(),
-            inputContent: lastSearch || '',
-            responseContent: molecule.SMILES,
-            contextContent1: '',
-            contextContent2: '',
-            contextContent3: '',
-            timestamp: new Date().toISOString(),
-            collection: 'friends-feedback',
-          }),
-        });
-
-        // Close the feedback form
-        setFeedbackOpen(false);
-        setFeedbackMoleculeIndex(null);
-        setFeedbackText('');
-
-        // You might want to show a success message
-        alert('Thank you for your feedback!');
-      } catch (error) {
-        console.error('Error submitting feedback:', error);
-        alert('Failed to submit feedback. Please try again.');
-      }
-    }
-  };
-
-  const handleFeedbackCancel = () => {
-    setFeedbackOpen(false);
-    setFeedbackMoleculeIndex(null);
-    setFeedbackText('');
-  };
-  
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
     setFavoritesLoading(true);
@@ -4420,102 +4356,11 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
-                                    <div className="molecule-feedback-buttons" style={{
-                                      margin: '10px 0',
-                                      textAlign: 'center',
-                                      display: 'flex',
-                                      flexDirection: 'column',
-                                      alignItems: 'flex-start',
-                                      width: '100%'
-                                    }}>
-                                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
-                                        <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
-                                        <button
-                                          onClick={() => handleThumbsUp(index)}
-                                          style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '18px',
-                                            cursor: 'pointer',
-                                            margin: '0 5px'
-                                          }}
-                                        >
-                                          👍
-                                        </button>
-                                        <button
-                                          onClick={() => handleThumbsDown(index)}
-                                          style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '18px',
-                                            cursor: 'pointer',
-                                            margin: '0 5px'
-                                          }}
-                                        >
-                                          👎
-                                        </button>
-                                      </div>
-
-                                      {feedbackOpen && feedbackMoleculeIndex === index && (
-                                        <div className="feedback-form" style={{
-                                          marginTop: '10px',
-                                          padding: '10px',
-                                          border: '1px solid #ccc',
-                                          borderRadius: '4px',
-                                          backgroundColor: '#f9f9f9',
-                                          textAlign: 'left',
-                                          width: '100%',
-                                          maxWidth: '400px'
-                                        }}>
-                                          <p style={{ margin: '0 0 10px' }}>
-                                            {feedbackType === 'up'
-                                              ? 'What makes this a good match?'
-                                              : 'Why is this not a good match?'}
-                                          </p>
-                                          <textarea
-                                            value={feedbackText}
-                                            onChange={(e) => setFeedbackText(e.target.value)}
-                                            rows={4}
-                                            style={{
-                                              width: '100%',
-                                              padding: '8px',
-                                              marginBottom: '10px',
-                                              borderRadius: '4px',
-                                              border: '1px solid #ccc'
-                                            }}
-                                            placeholder="Your feedback helps us improve molecule matching"
-                                          />
-                                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                            <button
-                                              onClick={handleFeedbackCancel}
-                                              style={{
-                                                marginRight: '10px',
-                                                padding: '5px 10px',
-                                                backgroundColor: '#f1f1f1',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                              }}
-                                            >
-                                              Cancel
-                                            </button>
-                                            <button
-                                              onClick={handleFeedbackSubmit}
-                                              style={{
-                                                padding: '5px 10px',
-                                                backgroundColor: '#0080ff',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                              }}
-                                            >
-                                              Submit
-                                            </button>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
+                                    <MoleculeFeedbackBox 
+                                      molecule={molecule} 
+                                      lastSearch={lastSearch} 
+                                      onClose={() => {}} 
+                                    />
                                   </tbody>
                                 </table>
                                 {/* Add thumbs up/down buttons here */}
