@@ -9,6 +9,8 @@ import MuiSlider from '@mui/material/Slider';
 // import logo from the public folder
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
+import FavoritesGrid from './FavoritesGrid';
+import MoleculeFeedbackBox from './MoleculeFeedbackBox';
 
 // ---------------------------------------------------------------------------
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
@@ -107,7 +109,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
+          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise' || activePage === 'favorites') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
@@ -1656,11 +1658,11 @@ const App = () => {
   const [findClosestFriends, setFindClosestFriends] = useState(false);
 
   // New state for feedback functionality
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
-
+  // const [feedbackOpen, setFeedbackOpen] = useState(false);
+  // const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
+  // const [feedbackText, setFeedbackText] = useState('');
+  // const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
+  
   // Add state for favorites functionality
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoriteSuccess, setFavoriteSuccess] = useState(null);
@@ -1902,12 +1904,12 @@ const App = () => {
     // Add annotations for standard highlighted molecules (using x & y)
     if (highlightedMolecules && highlightedMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedMolecules.map(molecule => ({
+        highlightedMolecules.map((molecule, idx) => ({
           x: molecule.x,
           y: molecule.y,
           xref: 'x',
           yref: 'y',
-          text: 'Searched Molecule',
+          text: `#${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
@@ -2175,6 +2177,8 @@ const App = () => {
         setActivePage('search');
       } else if (path === '/filter') {
         setActivePage('explorer');
+      } else if (path === '/favorites') {
+        setActivePage('favorites');
       } else if (path === '/') {
         // Redirect root to map
         window.history.pushState({}, '', '/map');
@@ -2222,6 +2226,8 @@ const App = () => {
       window.history.pushState({}, '', '/search');
     } else if (page === 'explorer') {
       window.history.pushState({}, '', '/filter');
+    } else if (page === 'favorites') {
+      window.history.pushState({}, '', '/favorites');
     } else {
       // Keep the URL as root for any other pages
       if (window.location.pathname !== '/') {
@@ -2270,13 +2276,13 @@ const App = () => {
   // Move checkPageAccess inside App component
   const checkPageAccess = (page) => {
     // Allow all users (including non-authenticated) to access the map page and pricing page
-    if (page === 'map' || page === 'pricing' || page === 'terms') {
+    if (page === 'map' || page === 'pricing' || page === 'terms' || page === 'favorites') {
       return true;
     }
 
     // Research users can access About, Filter, Simple Search, and Chat pages
     if (userPermissions === 'research') {
-      return ['about', 'explorer', 'search', 'chatbot'].includes(page);
+      return ['about', 'explorer', 'search', 'chatbot', 'favorites'].includes(page);
     }
 
     // Admin users can access everything
@@ -2886,71 +2892,6 @@ const App = () => {
     );
   }
 
-  // Add feedback handlers for thumbs up/down
-  const handleThumbsUp = (moleculeIndex) => {
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('up');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleThumbsDown = (moleculeIndex) => {
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('down');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleFeedbackSubmit = async () => {
-    if (feedbackMoleculeIndex !== null && similarMolecules && similarMolecules.length > feedbackMoleculeIndex) {
-      try {
-        const molecule = similarMolecules[feedbackMoleculeIndex];
-        const token = localStorage.getItem('token');
-
-        // Here you would actually submit the feedback to your backend
-        console.log(`Submitting ${feedbackType === 'up' ? 'positive' : 'negative'} feedback for molecule:`, molecule.SMILES);
-        console.log('Feedback text:', feedbackText);
-
-        // Submit feedback to backend
-        await fetch(`${API_URL}/api/feedback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({
-            isPositive: feedbackType === 'up',
-            feedbackText: feedbackText.trim(),
-            inputContent: lastSearch || '',
-            responseContent: molecule.SMILES,
-            contextContent1: '',
-            contextContent2: '',
-            contextContent3: '',
-            timestamp: new Date().toISOString(),
-            collection: 'friends-feedback',
-          }),
-        });
-
-        // Close the feedback form
-        setFeedbackOpen(false);
-        setFeedbackMoleculeIndex(null);
-        setFeedbackText('');
-
-        // You might want to show a success message
-        alert('Thank you for your feedback!');
-      } catch (error) {
-        console.error('Error submitting feedback:', error);
-        alert('Failed to submit feedback. Please try again.');
-      }
-    }
-  };
-
-  const handleFeedbackCancel = () => {
-    setFeedbackOpen(false);
-    setFeedbackMoleculeIndex(null);
-    setFeedbackText('');
-  };
-  
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
     setFavoritesLoading(true);
@@ -3055,6 +2996,13 @@ const App = () => {
               onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
             >
               Filter
+            </a>
+            <a
+              href="/favorites"
+              className={`header-link ${activePage === 'favorites' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); handleNavigation('favorites'); }}
+            >
+              Favorites
             </a>
           </div>
         </div>
@@ -3814,6 +3762,117 @@ const App = () => {
           <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
+        ) : activePage === 'favorites' ? (
+          <>
+            <div className="favorites-container" style={{ display: 'flex', height: 'calc(100vh - 170px)', paddingLeft: '0', paddingTop: '20px' }}>
+              <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+                <h1
+                  style={{
+                    textDecoration: 'none',
+                    color: 'rgb(51, 51, 51)',
+                    fontSize: '9.5px',
+                    transition: 'font-size 0.3s',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    fontWeight: 'normal'
+                  }}
+                  onClick={() => {
+                    if (activePage === 'about') {
+                      // Already on the about page, just scroll to the top
+                      const contentWrapper = document.querySelector('.about-content-wrapper');
+                      if (contentWrapper) {
+                        contentWrapper.scrollTop = 0;
+                      }
+                    } else {
+                      // Navigate to about page first, then scroll
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const contentWrapper = document.querySelector('.about-content-wrapper');
+                        if (contentWrapper) {
+                          contentWrapper.scrollTop = 0;
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                >
+                  Motivation
+                </h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <a
+                    href="#features"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const featuresSection = document.getElementById('features-section');
+                        if (featuresSection) {
+                          featuresSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#pricing"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('pricing');
+                    }}
+                  >
+                    Pricing
+                  </a>
+                  <a
+                    href="#news"
+                    style={{
+                      textDecoration: 'none',
+                      color: '#333',
+                      fontSize: '9.5px',
+                      transition: 'font-size 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
+                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavigation('about');
+                      setTimeout(() => {
+                        const newsfeedSection = document.getElementById('newsfeed');
+                        if (newsfeedSection) {
+                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
+                    }}
+                  >
+                    News Feed
+                  </a>
+                </div>
+              </div>
+              <div className="favorites-content" style={{ flex: '1', padding: '0px', height: '100%', overflowY: 'auto' }}>
+                <FavoritesGrid />
+              </div>
+            </div>
+          </>
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
@@ -4012,6 +4071,7 @@ const App = () => {
                           <h3>Searched Molecules</h3>
                           {searchedMolecules.map((molecule, index) => (
                             <div key={index} className="molecule-entry">
+                              <h4>Molecule #{index + 1}</h4>
                               <table className="property-table">
                                 <tbody>
                                   <tr>
@@ -4081,7 +4141,7 @@ const App = () => {
                               </div>
                               
                               {/* Add Favorites button */}
-                              <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                              <div className="favorites-container" style={{ textAlign: 'center' }}>
                                 <button
                                   className="favorites-button"
                                   onClick={() => handleAddToFavorites(molecule)}
@@ -4234,7 +4294,7 @@ const App = () => {
                                           </div>
                                           
                                           {/* Add Favorites button for similar molecules */}
-                                          <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                          <div className="favorites-container" style={{ textAlign: 'center' }}>
                                             <button
                                               className="favorites-button"
                                               onClick={() => handleAddToFavorites({
@@ -4297,102 +4357,11 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
-                                    <div className="molecule-feedback-buttons" style={{
-                                      margin: '10px 0',
-                                      textAlign: 'center',
-                                      display: 'flex',
-                                      flexDirection: 'column',
-                                      alignItems: 'flex-start',
-                                      width: '100%'
-                                    }}>
-                                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
-                                        <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
-                                        <button
-                                          onClick={() => handleThumbsUp(index)}
-                                          style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '18px',
-                                            cursor: 'pointer',
-                                            margin: '0 5px'
-                                          }}
-                                        >
-                                          👍
-                                        </button>
-                                        <button
-                                          onClick={() => handleThumbsDown(index)}
-                                          style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '18px',
-                                            cursor: 'pointer',
-                                            margin: '0 5px'
-                                          }}
-                                        >
-                                          👎
-                                        </button>
-                                      </div>
-
-                                      {feedbackOpen && feedbackMoleculeIndex === index && (
-                                        <div className="feedback-form" style={{
-                                          marginTop: '10px',
-                                          padding: '10px',
-                                          border: '1px solid #ccc',
-                                          borderRadius: '4px',
-                                          backgroundColor: '#f9f9f9',
-                                          textAlign: 'left',
-                                          width: '100%',
-                                          maxWidth: '400px'
-                                        }}>
-                                          <p style={{ margin: '0 0 10px' }}>
-                                            {feedbackType === 'up'
-                                              ? 'What makes this a good match?'
-                                              : 'Why is this not a good match?'}
-                                          </p>
-                                          <textarea
-                                            value={feedbackText}
-                                            onChange={(e) => setFeedbackText(e.target.value)}
-                                            rows={4}
-                                            style={{
-                                              width: '100%',
-                                              padding: '8px',
-                                              marginBottom: '10px',
-                                              borderRadius: '4px',
-                                              border: '1px solid #ccc'
-                                            }}
-                                            placeholder="Your feedback helps us improve molecule matching"
-                                          />
-                                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                            <button
-                                              onClick={handleFeedbackCancel}
-                                              style={{
-                                                marginRight: '10px',
-                                                padding: '5px 10px',
-                                                backgroundColor: '#f1f1f1',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                              }}
-                                            >
-                                              Cancel
-                                            </button>
-                                            <button
-                                              onClick={handleFeedbackSubmit}
-                                              style={{
-                                                padding: '5px 10px',
-                                                backgroundColor: '#0080ff',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                              }}
-                                            >
-                                              Submit
-                                            </button>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
+                                    <MoleculeFeedbackBox 
+                                      molecule={molecule} 
+                                      lastSearch={lastSearch} 
+                                      onClose={() => {}} 
+                                    />
                                   </tbody>
                                 </table>
                                 {/* Add thumbs up/down buttons here */}
