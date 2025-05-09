@@ -4140,7 +4140,7 @@ const App = () => {
                               </div>
                               
                               {/* Add Favorites button */}
-                              <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                              <div className="favorites-container" style={{ textAlign: 'center' }}>
                                 <button
                                   className="favorites-button"
                                   onClick={() => handleAddToFavorites(molecule)}
@@ -4293,7 +4293,7 @@ const App = () => {
                                           </div>
                                           
                                           {/* Add Favorites button for similar molecules */}
-                                          <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                                          <div className="favorites-container" style={{ textAlign: 'center' }}>
                                             <button
                                               className="favorites-button"
                                               onClick={() => handleAddToFavorites({
