@@ -782,7 +782,7 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
             <div className="molecules-header">
-              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by usefulness</h3>
+              <h3>Friends ranked by likelihood to replace {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowSimilarMolecules(false)}
