@@ -1663,10 +1663,8 @@ const App = () => {
   // const [feedbackText, setFeedbackText] = useState('');
   // const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   
-  // Add state for favorites functionality
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
-  const [favoriteSuccess, setFavoriteSuccess] = useState(null);
-  const [favoriteError, setFavoriteError] = useState(null);
+  // Add state for favorites functionality - using molecule-specific tracking
+  const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
 
   // Enterprise search state lifted up
   const [enterprisesearchResults, setEnterprisesearchResults] = useState(null);
@@ -2894,9 +2892,14 @@ const App = () => {
 
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
-    setFavoritesLoading(true);
-    setFavoriteSuccess(null);
-    setFavoriteError(null);
+    // Use SMILES as unique identifier for the molecule
+    const smiles = molecule.smiles;
+    
+    // Update state for just this specific molecule
+    setMoleculeFavoriteStatus(prev => ({
+      ...prev,
+      [smiles]: { loading: true, success: null, error: null }
+    }));
     
     try {
       const token = localStorage.getItem('token');
@@ -2933,23 +2936,37 @@ const App = () => {
       }
 
       const data = await response.json();
-      setFavoriteSuccess('Molecule added to favorites successfully!');
+      
+      // Set success for this specific molecule
+      setMoleculeFavoriteStatus(prev => ({
+        ...prev,
+        [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
+      }));
       
       // Hide success message after 3 seconds
       setTimeout(() => {
-        setFavoriteSuccess(null);
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { ...prev[smiles], success: null }
+        }));
       }, 3000);
       
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      setFavoriteError(error.message || 'Failed to add to favorites');
+      
+      // Set error for this specific molecule
+      setMoleculeFavoriteStatus(prev => ({
+        ...prev,
+        [smiles]: { loading: false, success: null, error: error.message || 'Failed to add to favorites' }
+      }));
       
       // Hide error message after 3 seconds
       setTimeout(() => {
-        setFavoriteError(null);
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { ...prev[smiles], error: null }
+        }));
       }, 3000);
-    } finally {
-      setFavoritesLoading(false);
     }
   };
 
@@ -4164,7 +4181,7 @@ const App = () => {
                                 <button
                                   className="favorites-button"
                                   onClick={() => handleAddToFavorites(molecule)}
-                                  disabled={favoritesLoading}
+                                  disabled={moleculeFavoriteStatus[molecule.smiles]?.loading}
                                   style={{
                                     backgroundColor: '#0080ff',
                                     color: 'white',
@@ -4181,28 +4198,28 @@ const App = () => {
                                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                                   onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                                 >
-                                  {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                  {moleculeFavoriteStatus[molecule.smiles]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                 </button>
                                 
-                                {favoriteSuccess && (
+                                {moleculeFavoriteStatus[molecule.smiles]?.success && (
                                   <div className="success-message" style={{ 
                                     marginTop: '8px', 
                                     color: 'green', 
                                     fontSize: '14px',
                                     fontWeight: 'bold'
                                   }}>
-                                    {favoriteSuccess}
+                                    {moleculeFavoriteStatus[molecule.smiles].success}
                                   </div>
                                 )}
                                 
-                                {favoriteError && (
+                                {moleculeFavoriteStatus[molecule.smiles]?.error && (
                                   <div className="error-message" style={{ 
                                     marginTop: '8px', 
                                     color: 'red', 
                                     fontSize: '14px',
                                     fontWeight: 'bold'
                                   }}>
-                                    {favoriteError}
+                                    {moleculeFavoriteStatus[molecule.smiles].error}
                                   </div>
                                 )}
                               </div>
@@ -4331,7 +4348,7 @@ const App = () => {
                                                 x: molecule.UMAP_0,
                                                 y: molecule.UMAP_1
                                               })}
-                                              disabled={favoritesLoading}
+                                              disabled={moleculeFavoriteStatus[molecule.SMILES]?.loading}
                                               style={{
                                                 backgroundColor: '#0080ff',
                                                 color: 'white',
@@ -4348,28 +4365,28 @@ const App = () => {
                                               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                                               onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                                             >
-                                              {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                                              {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                             </button>
                                             
-                                            {favoriteSuccess && (
+                                            {moleculeFavoriteStatus[molecule.SMILES]?.success && (
                                               <div className="success-message" style={{ 
                                                 marginTop: '8px', 
                                                 color: 'green', 
                                                 fontSize: '14px',
                                                 fontWeight: 'bold'
                                               }}>
-                                                {favoriteSuccess}
+                                                {moleculeFavoriteStatus[molecule.SMILES].success}
                                               </div>
                                             )}
                                             
-                                            {favoriteError && (
+                                            {moleculeFavoriteStatus[molecule.SMILES]?.error && (
                                               <div className="error-message" style={{ 
                                                 marginTop: '8px', 
                                                 color: 'red', 
                                                 fontSize: '14px',
                                                 fontWeight: 'bold'
                                               }}>
-                                                {favoriteError}
+                                                {moleculeFavoriteStatus[molecule.SMILES].error}
                                               </div>
                                             )}
                                           </div>

@@ -87,10 +87,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [activeFindMessage, setActiveFindMessage] = useState(null);
   const [reasoningText, setReasoningText] = useState(null);
   
-  // Add favorites state
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
-  const [favoriteSuccess, setFavoriteSuccess] = useState(null);
-  const [favoriteError, setFavoriteError] = useState(null);
+  // Add favorites state - remove unused states
+  const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
 
   useEffect(() => {
     scrollToBottom();
@@ -434,9 +432,15 @@ const handleFindSimilarMolecules = async (details) => {
 
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
-    setFavoritesLoading(true);
-    setFavoriteSuccess(null);
-    setFavoriteError(null);
+    // Remove global loading state
+    // Use SMILES as unique identifier for the molecule
+    const smiles = molecule.SMILES || molecule.smiles;
+    
+    // Update state for just this specific molecule
+    setMoleculeFavoriteStatus(prev => ({
+      ...prev,
+      [smiles]: { loading: true, success: null, error: null }
+    }));
     
     try {
       const token = localStorage.getItem('token');
@@ -446,7 +450,7 @@ const handleFindSimilarMolecules = async (details) => {
 
       // Prepare favorite data from molecule properties
       const favoriteData = {
-        smiles: molecule.SMILES || molecule.smiles,
+        smiles: smiles,
         molecular_weight: molecule.MOLECULAR_WEIGHT || molecule.molecular_weight || null,
         homo_ev: molecule.HOMO || molecule.HOMO_eV || null,
         lumo_ev: molecule.LUMO || molecule.LUMO_eV || null,
@@ -474,23 +478,37 @@ const handleFindSimilarMolecules = async (details) => {
       }
 
       const data = await response.json();
-      setFavoriteSuccess('Molecule added to favorites successfully!');
+      
+      // Set success for this specific molecule
+      setMoleculeFavoriteStatus(prev => ({
+        ...prev,
+        [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
+      }));
       
       // Hide success message after 3 seconds
       setTimeout(() => {
-        setFavoriteSuccess(null);
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { ...prev[smiles], success: null }
+        }));
       }, 3000);
       
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      setFavoriteError(error.message || 'Failed to add to favorites');
+      
+      // Set error for this specific molecule
+      setMoleculeFavoriteStatus(prev => ({
+        ...prev,
+        [smiles]: { loading: false, success: null, error: error.message || 'Failed to add to favorites' }
+      }));
       
       // Hide error message after 3 seconds
       setTimeout(() => {
-        setFavoriteError(null);
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { ...prev[smiles], error: null }
+        }));
       }, 3000);
-    } finally {
-      setFavoritesLoading(false);
     }
   };
 
@@ -713,7 +731,7 @@ const handleFindSimilarMolecules = async (details) => {
                     <button
                       className="favorites-button"
                       onClick={() => handleAddToFavorites(details)}
-                      disabled={favoritesLoading}
+                      disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
                       style={{
                         backgroundColor: '#0080ff',
                         color: 'white',
@@ -730,7 +748,7 @@ const handleFindSimilarMolecules = async (details) => {
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                     >
-                      {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                     </button>
                     
                     {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
@@ -751,26 +769,26 @@ const handleFindSimilarMolecules = async (details) => {
                     )}
                   </div>
                   
-                  {/* Add success/error messages */}
-                  {favoriteSuccess && (
+                  {/* Replace global favorite status messages with molecule-specific ones */}
+                  {moleculeFavoriteStatus[details.SMILES]?.success && (
                     <div className="success-message" style={{ 
                       marginTop: '8px', 
                       color: 'green', 
                       fontSize: '14px',
                       fontWeight: 'bold'
                     }}>
-                      {favoriteSuccess}
+                      {moleculeFavoriteStatus[details.SMILES].success}
                     </div>
                   )}
                   
-                  {favoriteError && (
+                  {moleculeFavoriteStatus[details.SMILES]?.error && (
                     <div className="error-message" style={{ 
                       marginTop: '8px', 
                       color: 'red', 
                       fontSize: '14px',
                       fontWeight: 'bold'
                     }}>
-                      {favoriteError}
+                      {moleculeFavoriteStatus[details.SMILES].error}
                     </div>
                   )}
                 </div>
@@ -929,12 +947,35 @@ const handleFindSimilarMolecules = async (details) => {
                     )}
                   </div>
                   
+                  {/* Replace global favorite status messages with molecule-specific ones in similar molecules section */}
+                  {moleculeFavoriteStatus[details.SMILES]?.success && (
+                    <div className="success-message" style={{ 
+                      marginTop: '8px', 
+                      color: 'green', 
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}>
+                      {moleculeFavoriteStatus[details.SMILES].success}
+                    </div>
+                  )}
+                  
+                  {moleculeFavoriteStatus[details.SMILES]?.error && (
+                    <div className="error-message" style={{ 
+                      marginTop: '8px', 
+                      color: 'red', 
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}>
+                      {moleculeFavoriteStatus[details.SMILES].error}
+                    </div>
+                  )}
+                  
                   {/* Add Favorites button at the bottom of the molecule box */}
                   <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
                     <button
                       className="favorites-button"
                       onClick={() => handleAddToFavorites(details)}
-                      disabled={favoritesLoading}
+                      disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
                       style={{
                         backgroundColor: '#0080ff',
                         color: 'white',
@@ -951,30 +992,8 @@ const handleFindSimilarMolecules = async (details) => {
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                     >
-                      {favoritesLoading ? 'Saving...' : 'Add to Favorites ★'}
+                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                     </button>
-                    
-                    {favoriteSuccess && (
-                      <div className="success-message" style={{ 
-                        marginTop: '8px', 
-                        color: 'green', 
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                      }}>
-                        {favoriteSuccess}
-                      </div>
-                    )}
-                    
-                    {favoriteError && (
-                      <div className="error-message" style={{ 
-                        marginTop: '8px', 
-                        color: 'red', 
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                      }}>
-                        {favoriteError}
-                      </div>
-                    )}
                   </div>
                 </div>
               );
