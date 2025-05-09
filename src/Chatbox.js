@@ -85,6 +85,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [activeFindMessage, setActiveFindMessage] = useState(null);
+  const [reasoningText, setReasoningText] = useState(null);
   
   // Add favorites state
   const [favoritesLoading, setFavoritesLoading] = useState(false);
@@ -109,7 +110,6 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   
   const handleFindMolecules = async (message) => {
     setActiveFindMessage(message);
-    console.log(message);
     const moleculeList = message.molecules || [];
     setSimilarMolecules([]);
     setFoundMolecules(null);
@@ -158,24 +158,52 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     }
   };
 
-  const handleFindSimilarMolecules = async (details) => {
+const handleFindSimilarMolecules = async (details) => {
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
     setShowSimilarMolecules(true);
     try {
       const token = localStorage.getItem('token');
-      // Add the use_35m parameter when user has appropriate permissions
-      let queryUrl = `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(details.SMILES)}`;
-      if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-        queryUrl += '&use_35m=true';
-      }
-      
+      // Determine if user is high-tier
+      const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
+      // Extract original user query and LLM response
+      const originalQuery = isHighTier
+        ? (Array.isArray(activeFindMessage?.inputs)
+            ? (activeFindMessage.inputs.filter(m => m.role === "user").pop() || {}).content
+            : activeFindMessage?.inputs)
+        : undefined;
+      const llmResponse = isHighTier ? activeFindMessage?.text : undefined;
+      // Build selected molecule string if high-tier
+      const selectedMoleculeStr = isHighTier
+        ? [
+            `Name: ${details.name}`,
+            `SMILES: ${details.SMILES}`,
+            `Molecular weight: ${details.MOLECULAR_WEIGHT}`,
+            `HOMO eV: ${details.HOMO}`,
+            `LUMO eV: ${details.LUMO}`,
+            `ESP Max: ${details.ESP_MAX}`,
+            `ESP Min: ${details.ESP_MIN}`,
+            `Functional groups: ${JSON.stringify(details.FUNCTIONAL_GROUPS)}`,
+            `Predicted MP: ${details.PREDICTED_MP} °C`,
+            `Predicted BP: ${details.PREDICTED_BP} °C`
+          ].join("\n")
+        : undefined;
+      // Construct request payload
+      const payload = {
+        smiles: details.SMILES,
+        use_35m: isHighTier,
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
+      };
+      // Perform POST request
       const response = await fetch(
-        queryUrl,
+        `${API_URL}/find-friend-with-image`,
         {
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          body: JSON.stringify(payload),
         }
       );
       const data = await response.json();
@@ -468,6 +496,49 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
 
   return (
     <div className="chatbot-container">
+      {reasoningText && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0, left: 0,
+            width: '100%', height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#fff',
+              padding: 20,
+              maxWidth: '80%',
+              maxHeight: '80%',
+              overflowY: 'auto',
+              borderRadius: 8,
+              position: 'relative'
+            }}
+          >
+            <button
+              onClick={() => setReasoningText(null)}
+              style={{
+                position: 'absolute',
+                top: 8, right: 8,
+                border: 'none',
+                background: 'transparent',
+                fontSize: 18,
+                cursor: 'pointer'
+              }}
+            >
+              ×
+            </button>
+            <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+              {reasoningText}
+            </pre>
+          </div>
+        </div>
+      )}
       {userPermissions === 'research' && (
         <div className="chatbot-header">
           <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
@@ -711,7 +782,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
             <div className="molecules-header">
-              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by property similarity</h3>
+              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by usefulness</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowSimilarMolecules(false)}
@@ -724,7 +795,20 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
               const details = item.molecule_details || item;
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
-                  <strong>SMILES: {details.SMILES}</strong>
+                  <p><strong>SMILES: {details.SMILES}</strong></p>
+                  {details.grade != null && (
+                    <p style={{ display: 'inline' }}>
+                      LLM Grade: {details.grade}/10
+                      {details.reasoning != null && (
+                        <button
+                          style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          onClick={() => setReasoningText(details.reasoning)}
+                        >
+                          ?
+                        </button>
+                      )}
+                    </p>
+                  )}
                   <p>Molecular weight: {details.molecular_weight}</p>
                   <p>HOMO eV: {Number(details.HOMO_eV).toFixed(2)} eV</p>
                   <p>LUMO eV: {Number(details.LUMO_eV).toFixed(2)} eV</p>
