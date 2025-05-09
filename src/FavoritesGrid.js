@@ -229,7 +229,7 @@ const FavoritesGrid = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="property-value" style={{ textAlign: 'center' }}>
+                    <td className="property-value" colSpan="2" style={{ textAlign: 'center' }}>
                       {moleculeImages[favorite.id] ? (
                         <img 
                           src={moleculeImages[favorite.id]} 
