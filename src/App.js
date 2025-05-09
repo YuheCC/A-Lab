@@ -2054,12 +2054,16 @@ const App = () => {
 
           // Then fetch similar molecules
           // Prepare JSON payload for finding friends (default version, no extra params)
-          const payload = { smiles: formattedMolecule.smiles.trim() };
+          const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
+
+          const payload = {
+            smiles: formattedMolecule.smiles.trim(),
+            use_35m: isHighTier
+          };
+
           const response = await authFetch(`${API_URL}/find-friend-with-image`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
           if (!response.ok) {
