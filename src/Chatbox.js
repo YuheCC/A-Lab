@@ -667,7 +667,7 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
             <div className="molecules-header">
-              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by LLM grade</h3>
+              <h3>Friends of {activeMolecule ? activeMolecule.name.toLowerCase() : ''} ranked by usefulness</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowSimilarMolecules(false)}
@@ -681,15 +681,19 @@ const handleFindSimilarMolecules = async (details) => {
               return (
                 <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
                   <p><strong>SMILES: {details.SMILES}</strong></p>
+                  {details.grade != null && (
                     <p style={{ display: 'inline' }}>
                       LLM Grade: {details.grade}/10
-                      <button
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                        onClick={() => setReasoningText(details.reasoning || 'No reasoning available')}
-                      >
-                        ?
-                      </button>
+                      {details.reasoning != null && (
+                        <button
+                          style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          onClick={() => setReasoningText(details.reasoning)}
+                        >
+                          ?
+                        </button>
+                      )}
                     </p>
+                  )}
                   <p>Molecular weight: {details.molecular_weight}</p>
                   <p>HOMO eV: {Number(details.HOMO_eV).toFixed(2)} eV</p>
                   <p>LUMO eV: {Number(details.LUMO_eV).toFixed(2)} eV</p>
