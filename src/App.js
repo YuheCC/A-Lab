@@ -1904,12 +1904,12 @@ const App = () => {
     // Add annotations for standard highlighted molecules (using x & y)
     if (highlightedMolecules && highlightedMolecules.length > 0) {
       annotations = annotations.concat(
-        highlightedMolecules.map(molecule => ({
+        highlightedMolecules.map((molecule, idx) => ({
           x: molecule.x,
           y: molecule.y,
           xref: 'x',
           yref: 'y',
-          text: 'Searched Molecule',
+          text: `#${idx + 1}`,
           showarrow: true,
           arrowhead: 2,
           arrowsize: 1.5,
@@ -4071,6 +4071,7 @@ const App = () => {
                           <h3>Searched Molecules</h3>
                           {searchedMolecules.map((molecule, index) => (
                             <div key={index} className="molecule-entry">
+                              <h4>Molecule #{index + 1}</h4>
                               <table className="property-table">
                                 <tbody>
                                   <tr>
