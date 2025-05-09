@@ -2678,6 +2678,7 @@ body, html {
 }
 
 /* Add divider after favorites button */
+/* 
 .favorites-button::after {
   content: "";
   display: block;
@@ -2686,6 +2687,7 @@ body, html {
   background-color: #dddddd;
   width: 100%;
 }
+*/
 
 .toast-message.success {
   background-color: #4caf50;
@@ -2753,6 +2755,7 @@ body, html {
   position: relative;
 }
 
+/* 
 .favorites-container::after {
   content: '';
   position: absolute;
@@ -2763,6 +2766,7 @@ body, html {
   background-color: #ddd;
   margin-top: 15px;
 }
+*/
 
 .molecule-entry, .similar-molecule {
   margin-bottom: 25px;
