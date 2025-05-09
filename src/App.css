@@ -2677,6 +2677,16 @@ body, html {
   animation: fadeInUp 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
 }
 
+/* Add divider after favorites button */
+.favorites-button::after {
+  content: "";
+  display: block;
+  margin-top: 15px;
+  height: 1px;
+  background-color: #dddddd;
+  width: 100%;
+}
+
 .toast-message.success {
   background-color: #4caf50;
 }
@@ -2757,7 +2767,6 @@ body, html {
 .molecule-entry, .similar-molecule {
   margin-bottom: 25px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #ddd;
 }
 
 .molecule-entry:last-child, .similar-molecule:last-child {
