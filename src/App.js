@@ -2053,14 +2053,15 @@ const App = () => {
           const formattedMolecule = formattedMolecules[0];
 
           // Then fetch similar molecules
-          let friendUrl = `${API_URL}/find-friend-with-image?smiles=${encodeURIComponent(formattedMolecule.smiles.trim())}`;
-
-          // Add use_35m parameter for users with admin, enterprise, or joint permissions
-          if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-            friendUrl += '&use_35m=true';
-          }
-
-          const response = await authFetch(friendUrl);
+          // Prepare JSON payload for finding friends (default version, no extra params)
+          const payload = { smiles: formattedMolecule.smiles.trim() };
+          const response = await authFetch(`${API_URL}/find-friend-with-image`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
           if (!response.ok) {
             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
           }
@@ -2074,7 +2075,6 @@ const App = () => {
           if (highlighted.length > 0) {
             setHighlightedSimilarMolecules(highlighted);
           }
-
 
           // Fetch molecule visualizations for all similar molecules
           const imageResults = molecules.map((molecule, index) => {
