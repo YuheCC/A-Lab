@@ -38,14 +38,11 @@ npm run build
 - Property-based filtering
 - Molecule search and visualization
 - Chatbot interface for molecule exploration
+- Favorites tab to store molecules
 
 ## Authentication
 
-The application uses JWT-based authentication. Only logged-in users can access:
-
-- Filter page
-- Search functionality
-- Chat interface
+The application uses JWT-based authentication. Only logged-in users can access the features aside from /map and /about.
 
 ## Data Source
 
