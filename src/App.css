@@ -1,12 +1,13 @@
 body, html {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: Arial, sans-serif;
   overflow: hidden;
   width: 100%;
   height: 100%;
   background-color: #f1f1f1;
   color: #333;
+  line-height: 1.6;
 }
 
 #root {
@@ -172,7 +173,7 @@ body, html {
 
 .node-details div {
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.6;
   overflow-wrap: break-word;
   word-break: break-all;
 }
@@ -309,8 +310,8 @@ body, html {
 .popup-data p {
   word-break: break-word;
   overflow-wrap: break-word;
-  line-height: 1.4;
-  font-family: monospace;
+  line-height: 1.6;
+  font-family: 'Arial, sans-serif';
   background-color: #f8f8f8;
   padding: 10px;
   border-radius: 4px;
@@ -338,7 +339,7 @@ body, html {
 
 .property-value {
   color: #333;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
 
@@ -349,7 +350,7 @@ body, html {
   border-radius: 4px;
   overflow-x: auto;
   white-space: pre-wrap;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   font-size: 0.9rem;
   color: #666;
   max-height: 200px;
@@ -389,7 +390,7 @@ body, html {
 }
 
 .slider-value {
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -588,7 +589,7 @@ body, html {
 .feature-section p {
   color: #000000;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
 }
 
@@ -1099,7 +1100,7 @@ body, html {
   cursor: pointer;
   color: #888;
   padding: 0 5px;
-  line-height: 24px;
+  line-height: 1.6;
 }
 
 .close-molecules-button:hover {
@@ -1187,7 +1188,7 @@ body, html {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-family: inherit;
+  font-family: 'Arial, sans-serif';
   font-size: 14px;
   resize: none;
 }
@@ -1410,7 +1411,7 @@ body, html {
 }
 
 .molecule-smiles p {
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
   background-color: white;
   padding: 10px;
@@ -2228,7 +2229,7 @@ body, html {
 
 .property-value {
   color: #333;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
 
@@ -2505,7 +2506,7 @@ body, html {
 }
 
 .favorite-card-smiles {
-  font-family: 'Courier New', monospace;
+  font-family: 'Arial, sans-serif';
   font-size: 13px;
   color: #333;
   overflow: hidden;
@@ -2521,7 +2522,7 @@ body, html {
   font-size: 20px;
   cursor: pointer;
   padding: 5px 10px;
-  line-height: 1;
+  line-height: 1.6;
   border-radius: 50%;
   transition: all 0.2s ease;
   display: flex;
@@ -2645,7 +2646,7 @@ body, html {
   color: #666;
   margin-bottom: 20px;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .favorites-error button, .no-favorites a {
@@ -2837,4 +2838,10 @@ body, html {
 .molecule-box:last-child {
   margin-bottom: 0;
   border-bottom: none;
+}
+
+/* Ensure all text elements have consistent font and line height */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
 }

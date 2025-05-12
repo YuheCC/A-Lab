@@ -70,7 +70,7 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
       width: '100%'
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
-        <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
+        <span style={{ fontSize: '14px', marginRight: '5px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Rate this match:</span>
         <button
           onClick={handleThumbsUp}
           style={{
@@ -79,7 +79,9 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
             fontSize: '18px',
             cursor: 'pointer',
             margin: '0 5px',
-            opacity: feedbackType === 'up' ? 1 : 0.6
+            opacity: feedbackType === 'up' ? 1 : 0.6,
+            fontFamily: 'Arial, sans-serif',
+            lineHeight: '1.6'
           }}
         >
           👍
@@ -92,7 +94,9 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
             fontSize: '18px',
             cursor: 'pointer',
             margin: '0 5px',
-            opacity: feedbackType === 'down' ? 1 : 0.6
+            opacity: feedbackType === 'down' ? 1 : 0.6,
+            fontFamily: 'Arial, sans-serif',
+            lineHeight: '1.6'
           }}
         >
           👎
@@ -163,7 +167,9 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
               marginTop: '8px', 
               color: statusMessage.includes('Failed') ? 'red' : 'green', 
               fontSize: '14px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              fontFamily: 'Arial, sans-serif',
+              lineHeight: '1.6'
             }}>
               {statusMessage}
             </div>

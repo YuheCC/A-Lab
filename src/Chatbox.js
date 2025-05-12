@@ -56,7 +56,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             checked={ignoreChatHistory}
             onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
           />
-          <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px' }}>
+          <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>
             Ignore chat history
           </label>
         </div>
@@ -739,7 +739,7 @@ const handleFindSimilarMolecules = async (details) => {
                         borderRadius: '4px',
                         padding: '6px 10px',
                         cursor: 'pointer',
-                        fontWeight: 'bold',
+                        fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
                         transition: 'background-color 0.3s',
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -774,8 +774,10 @@ const handleFindSimilarMolecules = async (details) => {
                     <div className="success-message" style={{ 
                       marginTop: '8px', 
                       color: 'green', 
-                      fontSize: '14px',
-                      fontWeight: 'bold'
+                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontFamily: 'Arial, sans-serif',
+                      lineHeight: '1.6'
                     }}>
                       {moleculeFavoriteStatus[details.SMILES].success}
                     </div>
@@ -785,8 +787,10 @@ const handleFindSimilarMolecules = async (details) => {
                     <div className="error-message" style={{ 
                       marginTop: '8px', 
                       color: 'red', 
-                      fontSize: '14px',
-                      fontWeight: 'bold'
+                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontFamily: 'Arial, sans-serif',
+                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
                     }}>
                       {moleculeFavoriteStatus[details.SMILES].error}
                     </div>
@@ -859,13 +863,13 @@ const handleFindSimilarMolecules = async (details) => {
                     width: '100%'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                      <span style={{ fontSize: '14px', marginRight: '5px' }}>Rate this match:</span>
+                      <span style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', marginRight: '5px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Rate this match:</span>
                       <button
                         onClick={() => handleMoleculeThumbsUp(idx)}
                         style={{
                           background: 'none',
                           border: 'none',
-                          fontSize: '18px',
+                          fontSize: '18px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
                           cursor: 'pointer',
                           margin: '0 5px'
                         }}
@@ -877,7 +881,7 @@ const handleFindSimilarMolecules = async (details) => {
                         style={{
                           background: 'none',
                           border: 'none',
-                          fontSize: '18px',
+                          fontSize: '18px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
                           cursor: 'pointer',
                           margin: '0 5px'
                         }}
@@ -952,8 +956,8 @@ const handleFindSimilarMolecules = async (details) => {
                     <div className="success-message" style={{ 
                       marginTop: '8px', 
                       color: 'green', 
-                      fontSize: '14px',
-                      fontWeight: 'bold'
+                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
                     }}>
                       {moleculeFavoriteStatus[details.SMILES].success}
                     </div>
@@ -963,8 +967,8 @@ const handleFindSimilarMolecules = async (details) => {
                     <div className="error-message" style={{ 
                       marginTop: '8px', 
                       color: 'red', 
-                      fontSize: '14px',
-                      fontWeight: 'bold'
+                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
+                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
                     }}>
                       {moleculeFavoriteStatus[details.SMILES].error}
                     </div>
@@ -983,7 +987,7 @@ const handleFindSimilarMolecules = async (details) => {
                         borderRadius: '4px',
                         padding: '8px 15px',
                         cursor: 'pointer',
-                        fontWeight: 'bold',
+                        fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
                         transition: 'background-color 0.3s',
                         display: 'inline-flex',
                         alignItems: 'center',
