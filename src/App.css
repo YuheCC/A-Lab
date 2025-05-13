@@ -2897,7 +2897,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   padding: 15px;
   display: flex;
   flex-direction: column;
-  max-height: calc((100vh - 200px) * 0.96); /* Reduced height by 4% instead of 10% */
+  max-height: calc((100vh - 200px) * 0.95); /* Reduced by 1% (from 0.96) */
   overflow-y: auto;
   position: sticky;
   top: 20px;

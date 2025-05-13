@@ -294,7 +294,6 @@ const FavoritesGrid = () => {
   return (
     <div className="favorites-layout">
       <div className="favorites-grid-container">
-        <h2>My Favorites</h2>
         <div className="favorites-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
           {favorites.map(favorite => (
             <div 
