@@ -2434,7 +2434,7 @@ body, html {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background-color: #fcfcfc;
+  background-color: rgb(241, 241, 241) !important;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
