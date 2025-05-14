@@ -3338,7 +3338,17 @@ const App = () => {
               marginBottom: '0'
             }}>
               {/* New left text column (20%) */}
-              <div className="map-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+              <div className="map-text-section left-text" style={{ 
+              width: '7%', 
+              overflowY: 'auto', 
+              padding: '20px', 
+              backgroundColor: '#f1f1f1', 
+              borderRadius: '0 8px 8px 0', 
+              marginLeft: '0', 
+              marginRight: '0',
+              position: 'sticky',
+              left: 0
+            }}>
                 <h1
                   style={{
                     textDecoration: 'none',
@@ -3793,7 +3803,7 @@ const App = () => {
               backgroundColor: '#f1f1f1', 
               borderRadius: '0 8px 8px 0', 
               marginLeft: '0', 
-              marginRight: '20px',
+              marginRight: '0',
               position: 'sticky',
               left: 0
             }}>
