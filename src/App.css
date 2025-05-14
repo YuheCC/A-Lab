@@ -2435,8 +2435,8 @@ body, html {
   padding: 20px;
   overflow-y: auto;
   background-color: rgb(241, 241, 241) !important;
-  border-radius: 8px;
-  box-shadow: none;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .favorites-grid-container {
