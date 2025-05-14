@@ -1,12 +1,13 @@
 body, html {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: Arial, sans-serif;
   overflow: hidden;
   width: 100%;
   height: 100%;
   background-color: #f1f1f1;
   color: #333;
+  line-height: 1.6;
 }
 
 #root {
@@ -172,7 +173,7 @@ body, html {
 
 .node-details div {
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.6;
   overflow-wrap: break-word;
   word-break: break-all;
 }
@@ -309,8 +310,8 @@ body, html {
 .popup-data p {
   word-break: break-word;
   overflow-wrap: break-word;
-  line-height: 1.4;
-  font-family: monospace;
+  line-height: 1.6;
+  font-family: 'Arial, sans-serif';
   background-color: #f8f8f8;
   padding: 10px;
   border-radius: 4px;
@@ -338,7 +339,7 @@ body, html {
 
 .property-value {
   color: #333;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
 
@@ -349,7 +350,7 @@ body, html {
   border-radius: 4px;
   overflow-x: auto;
   white-space: pre-wrap;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   font-size: 0.9rem;
   color: #666;
   max-height: 200px;
@@ -389,7 +390,7 @@ body, html {
 }
 
 .slider-value {
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -588,7 +589,7 @@ body, html {
 .feature-section p {
   color: #000000;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
 }
 
@@ -1099,7 +1100,7 @@ body, html {
   cursor: pointer;
   color: #888;
   padding: 0 5px;
-  line-height: 24px;
+  line-height: 1.6;
 }
 
 .close-molecules-button:hover {
@@ -1187,7 +1188,7 @@ body, html {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-family: inherit;
+  font-family: 'Arial, sans-serif';
   font-size: 14px;
   resize: none;
 }
@@ -1410,7 +1411,7 @@ body, html {
 }
 
 .molecule-smiles p {
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
   background-color: white;
   padding: 10px;
@@ -2228,7 +2229,7 @@ body, html {
 
 .property-value {
   color: #333;
-  font-family: monospace;
+  font-family: 'Arial, sans-serif';
   word-break: break-all;
 }
 
@@ -2422,38 +2423,68 @@ body, html {
 }
 
 /* Favorites Grid Styles */
+.favorites-page-container {
+  width: 100%;
+  display: flex;
+  height: calc(100vh - 170px);
+  overflow: hidden;
+}
+
+.favorites-content-wrapper {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: rgb(241, 241, 241) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
 .favorites-grid-container {
   width: 100%;
   max-width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 20px 0;
   overflow: auto;
 }
 
 .favorites-grid-container h2 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #333;
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.favorites-grid-container h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #0080ff;
+  border-radius: 2px;
 }
 
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 25px;
   width: 100%;
 }
 
 .favorite-card {
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   height: 100%;
   position: relative;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #f0f0f0;
   max-width: 403px;
   margin: 0 auto;
   width: 100%;
@@ -2466,17 +2497,17 @@ body, html {
 }
 
 .favorite-card-header {
-  padding: 12px;
-  background-color: #f8f8f8;
+  padding: 15px;
+  background-color: #f8f9fa;
   border-bottom: 1px solid #eaeaea;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
 .favorite-card-smiles {
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-family: 'Arial, sans-serif';
+  font-size: 13px;
   color: #333;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2485,20 +2516,26 @@ body, html {
 }
 
 .remove-favorite-button {
-  background: none;
+  background-color: rgba(255, 70, 70, 0.1);
   border: none;
-  color: #888;
+  color: #ff4646;
   font-size: 20px;
   cursor: pointer;
-  padding: 0 5px;
-  line-height: 1;
+  padding: 5px 10px;
+  line-height: 1.6;
   border-radius: 50%;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 .remove-favorite-button:hover {
-  color: #ff3333;
-  background-color: rgba(255, 51, 51, 0.1);
+  color: #ffffff;
+  background-color: #ff4646;
+  transform: scale(1.1);
 }
 
 .favorite-image-container {
@@ -2524,7 +2561,7 @@ body, html {
 }
 
 .favorite-card-properties {
-  padding: 15px;
+  padding: 18px;
   flex-grow: 1;
 }
 
@@ -2535,7 +2572,7 @@ body, html {
 }
 
 .favorite-property-table td {
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -2556,8 +2593,8 @@ body, html {
 }
 
 .favorite-card-footer {
-  padding: 10px 15px;
-  background-color: #f8f8f8;
+  padding: 12px 18px;
+  background-color: #f8f9fa;
   border-top: 1px solid #eaeaea;
   font-size: 12px;
   color: #666;
@@ -2569,53 +2606,65 @@ body, html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
+  min-height: 400px;
+  text-align: center;
 }
 
 .favorites-loading .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top: 4px solid #0080ff;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
 }
 
+.favorites-loading p {
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+}
+
 .favorites-error, .no-favorites {
   text-align: center;
-  padding: 30px;
+  padding: 40px;
   background-color: #f9f9f9;
-  border-radius: 8px;
-  margin: 20px auto;
+  border-radius: 12px;
+  margin: 30px auto;
   max-width: 600px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .favorites-error h3, .no-favorites h3 {
   color: #333;
   margin-bottom: 15px;
+  font-size: 22px;
 }
 
 .favorites-error p, .no-favorites p {
   color: #666;
   margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 .favorites-error button, .no-favorites a {
   display: inline-block;
   background-color: #0080ff;
   color: white;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .favorites-error button:hover, .no-favorites a:hover {
   background-color: #0066cc;
+  transform: translateY(-2px);
 }
 
 /* Mobile responsiveness for favorites */
@@ -2789,4 +2838,201 @@ body, html {
 .molecule-box:last-child {
   margin-bottom: 0;
   border-bottom: none;
+}
+
+/* Ensure all text elements have consistent font and line height */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* New Favorites Layout Styles */
+.favorites-layout {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.favorites-grid-container {
+  flex: 2;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  overflow: auto;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  width: 100%;
+}
+
+.favorites-grid-container h2, .analysis-section h2 {
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 26px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.favorites-grid-container h2:after, .analysis-section h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #0080ff;
+  border-radius: 2px;
+}
+
+.analysis-section {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc((100vh - 200px) * 0.95); /* Reduced by 1% (from 0.96) */
+  overflow-y: auto;
+  position: sticky;
+  top: 20px;
+  border: 1.5px solid #000000;
+  max-width: 352px; /* Increased from 320px (10% wider) */
+}
+
+.analysis-tabs {
+  display: flex;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 15px;
+}
+
+.analysis-tab {
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 14px;
+}
+
+.analysis-tab.active {
+  color: #0080ff;
+  font-weight: 600;
+}
+
+.analysis-tab.active:after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #0080ff;
+  border-radius: 2px 2px 0 0;
+}
+
+.molecule-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.molecule-checkbox input {
+  margin-right: 8px;
+}
+
+.molecule-checkbox label {
+  font-size: 12px;
+  color: #666;
+}
+
+.selected-molecule {
+  border-color: #0080ff !important;
+  box-shadow: 0 4px 12px rgba(0, 128, 255, 0.15) !important;
+}
+
+.selected-info {
+  margin-bottom: 15px;
+}
+
+.selected-info p {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+.selected-molecules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 80px;
+  overflow-y: auto;
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.selected-molecule-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.selected-molecule-item input {
+  margin-right: 8px;
+}
+
+.no-molecules-selected {
+  color: #999;
+  font-style: italic;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.spider-chart-container {
+  height: 300px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.spider-chart {
+  width: 100%;
+  height: 100%;
+}
+
+/* Make favorite cards more compact with the new layout */
+.favorite-card-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive layout for the favorites page */
+@media (max-width: 1200px) {
+  .favorites-layout {
+    flex-direction: column;
+  }
+  
+  .analysis-section {
+    position: static;
+    margin-top: 20px;
+  }
+  
+  .spider-chart-container {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -51,7 +51,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
 For more open-ended queries, use Ask.
 
 To draw and look up SMILES strings, please click this icon or visit ${pubChemUrl}`}
-          style={{ marginLeft: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2em' }}
+          style={{ marginLeft: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
           onClick={handleTooltipClick}
         >
           ?
