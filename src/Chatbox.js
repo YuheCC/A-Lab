@@ -5,7 +5,8 @@ import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';
 
 // New ChatInput component added for memoized chat input rendering
-const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange }) => {
+const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
+ disableLiteratureSearch, onDisableLiteratureSearchChange }) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (e) => {
@@ -50,16 +51,26 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         </button>
       </div>
       <div className="checkbox-group">
-          <input 
-            type="checkbox" 
-            id="ignoreChatHistory" 
-            checked={ignoreChatHistory}
-            onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
-          />
-          <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>
-            Ignore chat history
-          </label>
-        </div>
+        <input 
+          type="checkbox" 
+          id="ignoreChatHistory" 
+          checked={ignoreChatHistory}
+          onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
+        />
+        <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>
+          Ignore chat history
+        </label>
+        <input 
+          type="checkbox" 
+          id="disableLiteratureSearch" 
+          checked={disableLiteratureSearch}
+          onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
+          style={{ marginLeft: '20px' }}
+        />
+        <label htmlFor="disableLiteratureSearch" style={{ fontSize: '14px', marginLeft: '4px' }}>
+          Disable literature search
+        </label>
+      </div>
     </div>
   );
 });
@@ -76,6 +87,7 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
   const [similarMolecules, setSimilarMolecules] = useState([]);
   const [activeMolecule, setActiveMolecule] = useState(null);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
+  const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
   
@@ -297,7 +309,7 @@ const handleFindSimilarMolecules = async (details) => {
         body: JSON.stringify({
           messages: messagesToSend,
           maxOutputLength: 8192, // deprecated
-          ragEnabled: true,
+          ragEnabled: !disableLiteratureSearch,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
           numRagResults: ragResultsCount,
@@ -674,6 +686,8 @@ const handleFindSimilarMolecules = async (details) => {
             disabled={userPermissions === 'research' && remainingQueries <= 0}
             ignoreChatHistory={ignoreChatHistory}
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
+            disableLiteratureSearch={disableLiteratureSearch}
+            onDisableLiteratureSearchChange={setDisableLiteratureSearch}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
