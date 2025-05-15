@@ -727,13 +727,11 @@ body, html {
 .search-container {
   flex: 1;
   display: flex;
-  flex-direction: column;
   padding: 20px;
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
   padding-left: 0;
-  padding-right: 40px;
 }
 
 .search-umap-container {
@@ -745,7 +743,7 @@ body, html {
 }
 
 .search-umap-section {
-  flex: 1.25;
+  flex: 1 1 0;
   min-width: 0;
   border-radius: 0;
   overflow: hidden;
