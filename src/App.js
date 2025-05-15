@@ -1828,7 +1828,6 @@ const App = () => {
 
   const plotlyLayout = {
     autosize: true,
-    height: 600,
     plot_bgcolor: '#ffffff',
     paper_bgcolor: '#ffffff',
     margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
@@ -3916,7 +3915,6 @@ const App = () => {
         ) : (
           // SEARCH PAGE CONTENT:
           <div className="search-container">
-            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
               {/* Left navigation column */}
               <div className="about-text-section left-text" style={{
                 width: '7%',
@@ -3925,7 +3923,7 @@ const App = () => {
                 backgroundColor: '#f1f1f1',
                 borderRadius: '0 8px 8px 0',
                 marginLeft: '0',
-                marginRight: '0px',
+                marginRight: '20px',
                 position: 'sticky',
                 left: 0
               }}>
@@ -4031,6 +4029,7 @@ const App = () => {
                   </a>
                 </div>
               </div>
+            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
 
               {/* UMAP Visualization on the left */}
               <div className="search-umap-section">
@@ -4062,7 +4061,13 @@ const App = () => {
               </div>
 
               {/* Search interface on the right */}
-              <div className="search-interface-section" style={{ width: '23%', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+              <div className="search-interface-section" style={{ 
+                  overflowY: 'auto', 
+                  padding: '20px', 
+                  backgroundColor: '#f9f9f9', 
+                  borderRadius: '8px',
+                  flex: '0.8'
+                  }}>
                 {/* Search bar container */}
 
                 <SearchInput
