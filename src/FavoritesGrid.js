@@ -286,7 +286,8 @@ const FavoritesGrid = () => {
       <div className="no-favorites">
         <h3>No Favorite Molecules</h3>
         <p>You haven't added any molecules to your favorites yet.</p>
-        <p>Go to the <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>Search</a> page to find and add molecules.</p>
+        <p>Go to the page to find and add molecules.</p>
+        <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>Search</a>
       </div>
     );
   }
