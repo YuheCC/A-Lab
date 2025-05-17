@@ -2649,7 +2649,7 @@ body, html {
 
 .favorites-error button, .no-favorites a {
   display: inline-block;
-  background-color: #0080ff;
+  background-color: #2196F3;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -2661,7 +2661,7 @@ body, html {
 }
 
 .favorites-error button:hover, .no-favorites a:hover {
-  background-color: #0066cc;
+  background-color: #0d8aee;
   transform: translateY(-2px);
 }
 
