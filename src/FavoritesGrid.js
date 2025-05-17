@@ -73,35 +73,37 @@ const FavoritesGrid = () => {
 
   // Sort data when sortConfig changes
   useEffect(() => {
-    let sortableItems = [...filteredFavorites];
     if (sortConfig.key) {
-      sortableItems.sort((a, b) => {
-        // Handle null or undefined values
-        if (a[sortConfig.key] === null || a[sortConfig.key] === undefined) return 1;
-        if (b[sortConfig.key] === null || b[sortConfig.key] === undefined) return -1;
-        
-        let aValue = a[sortConfig.key];
-        let bValue = b[sortConfig.key];
-        
-        // Special case for dates
-        if (sortConfig.key === 'created_at') {
-          aValue = new Date(aValue);
-          bValue = new Date(bValue);
-        }
-        
-        // String comparison for text fields
-        if (typeof aValue === 'string') {
-          const comparison = aValue.localeCompare(bValue);
+      setFilteredFavorites(prevFilteredFavorites => {
+        const sortableItems = [...prevFilteredFavorites];
+        sortableItems.sort((a, b) => {
+          // Handle null or undefined values
+          if (a[sortConfig.key] === null || a[sortConfig.key] === undefined) return 1;
+          if (b[sortConfig.key] === null || b[sortConfig.key] === undefined) return -1;
+          
+          let aValue = a[sortConfig.key];
+          let bValue = b[sortConfig.key];
+          
+          // Special case for dates
+          if (sortConfig.key === 'created_at') {
+            aValue = new Date(aValue);
+            bValue = new Date(bValue);
+          }
+          
+          // String comparison for text fields
+          if (typeof aValue === 'string') {
+            const comparison = aValue.localeCompare(bValue);
+            return sortConfig.direction === 'asc' ? comparison : -comparison;
+          }
+          
+          // Number comparison
+          const comparison = aValue - bValue;
           return sortConfig.direction === 'asc' ? comparison : -comparison;
-        }
-        
-        // Number comparison
-        const comparison = aValue - bValue;
-        return sortConfig.direction === 'asc' ? comparison : -comparison;
+        });
+        return sortableItems;
       });
     }
-    setFilteredFavorites(sortableItems);
-  }, [sortConfig, favorites, searchTerm]);
+  }, [sortConfig]);
 
   // Update the chart whenever selected molecules change
   useEffect(() => {
