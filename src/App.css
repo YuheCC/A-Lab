@@ -3034,3 +3034,258 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
     grid-template-columns: 1fr;
   }
 }
+
+/* New Favorites Page Styles */
+.favorites-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.favorites-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.favorites-search-input {
+  width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.favorites-header .search-container {
+  margin-left: 20px;
+}
+
+.favorites-table-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 15px;
+}
+
+.favorites-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.favorites-table th,
+.favorites-table td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.favorites-table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.favorites-table tr:hover {
+  background-color: #f7f7f7;
+}
+
+.favorites-table .selected-row {
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.favorites-table .selected-row:hover {
+  background-color: rgba(0, 102, 204, 0.15);
+}
+
+.checkbox-column {
+  width: 40px;
+}
+
+.molecule-image-cell {
+  width: 60px;
+  padding: 5px;
+  text-align: center;
+}
+
+.table-molecule-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.remove-favorite-table-button {
+  background-color: transparent;
+  color: #ff3b30;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.remove-favorite-table-button:hover {
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+.show-analysis-button {
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.show-analysis-button:hover {
+  background-color: #0055aa;
+}
+
+.analysis-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.analysis-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.selected-molecules-count {
+  color: #666;
+  font-size: 14px;
+}
+
+.close-analysis-button {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.close-analysis-button:hover {
+  color: #0066cc;
+}
+
+.analysis-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spider-chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spider-chart {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.spider-chart:hover {
+  border: 1px solid #ddd;
+}
+
+.esp-analysis-placeholder,
+.mo-analysis-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #666;
+  font-size: 18px;
+}
+
+.analysis-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.analysis-tab {
+  padding: 8px 15px;
+  border: none;
+  background-color: #f1f1f1;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.analysis-tab.active {
+  background-color: #0066cc;
+  color: white;
+}
+
+.analysis-tab:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+@media (max-width: 1200px) {
+  .favorites-search-input {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .favorites-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .favorites-search-input {
+    width: 100%;
+  }
+  
+  .analysis-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .show-analysis-button {
+    width: 100%;
+  }
+}
+
+/* End New Favorites Page Styles */
