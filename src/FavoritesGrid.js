@@ -528,19 +528,19 @@ const FavoritesGrid = () => {
                 className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
                 onClick={() => handleTabChange('radar')}
               >
-                Radar Analysis
+                Radar
               </button>
               <button 
                 className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
                 onClick={() => handleTabChange('esp')}
               >
-                ESP Analysis
+                ESP
               </button>
               <button 
                 className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
                 onClick={() => handleTabChange('mo')}
               >
-                MO Analysis
+                MO
               </button>
             </div>
             
