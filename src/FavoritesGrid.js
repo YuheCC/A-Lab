@@ -13,6 +13,7 @@ const FavoritesGrid = () => {
   const [filteredFavorites, setFilteredFavorites] = useState([]);
   const [activeTab, setActiveTab] = useState('radar');
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
@@ -69,6 +70,38 @@ const FavoritesGrid = () => {
       setFilteredFavorites(filtered);
     }
   }, [searchTerm, favorites]);
+
+  // Sort data when sortConfig changes
+  useEffect(() => {
+    let sortableItems = [...filteredFavorites];
+    if (sortConfig.key) {
+      sortableItems.sort((a, b) => {
+        // Handle null or undefined values
+        if (a[sortConfig.key] === null || a[sortConfig.key] === undefined) return 1;
+        if (b[sortConfig.key] === null || b[sortConfig.key] === undefined) return -1;
+        
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+        
+        // Special case for dates
+        if (sortConfig.key === 'created_at') {
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+        }
+        
+        // String comparison for text fields
+        if (typeof aValue === 'string') {
+          const comparison = aValue.localeCompare(bValue);
+          return sortConfig.direction === 'asc' ? comparison : -comparison;
+        }
+        
+        // Number comparison
+        const comparison = aValue - bValue;
+        return sortConfig.direction === 'asc' ? comparison : -comparison;
+      });
+    }
+    setFilteredFavorites(sortableItems);
+  }, [sortConfig, favorites, searchTerm]);
 
   // Update the chart whenever selected molecules change
   useEffect(() => {
@@ -184,6 +217,19 @@ const FavoritesGrid = () => {
     } else {
       setSelectedMolecules(prev => prev.filter(mol => mol.id !== favorite.id));
     }
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIndicator = (key) => {
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
   };
 
   const updateSpiderChart = () => {
@@ -582,17 +628,37 @@ const FavoritesGrid = () => {
                     />
                   </th>
                   <th>Image</th>
-                  <th>SMILES</th>
-                  <th>Molecular Weight</th>
-                  <th>HOMO (eV)</th>
-                  <th>LUMO (eV)</th>
-                  <th>MP (°C)</th>
-                  <th>BP (°C)</th>
-                  <th>ESP Min (eV)</th>
-                  <th>ESP Max (eV)</th>
-                  <th>Functional Groups</th>
+                  <th onClick={() => handleSort('smiles')} className="sortable-header">
+                    SMILES {getSortIndicator('smiles')}
+                  </th>
+                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
+                    Molecular Weight {getSortIndicator('molecular_weight')}
+                  </th>
+                  <th onClick={() => handleSort('homo_ev')} className="sortable-header">
+                    HOMO (eV) {getSortIndicator('homo_ev')}
+                  </th>
+                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
+                    LUMO (eV) {getSortIndicator('lumo_ev')}
+                  </th>
+                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
+                    MP (°C) {getSortIndicator('predicted_melting_point')}
+                  </th>
+                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
+                    BP (°C) {getSortIndicator('predicted_boiling_point')}
+                  </th>
+                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
+                    ESP Min (eV) {getSortIndicator('esp_min_ev')}
+                  </th>
+                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
+                    ESP Max (eV) {getSortIndicator('esp_max_ev')}
+                  </th>
+                  <th onClick={() => handleSort('functional_groups')} className="sortable-header">
+                    Functional Groups {getSortIndicator('functional_groups')}
+                  </th>
                   <th>UMAP X/Y</th>
-                  <th>Added Date</th>
+                  <th onClick={() => handleSort('created_at')} className="sortable-header">
+                    Added Date {getSortIndicator('created_at')}
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
