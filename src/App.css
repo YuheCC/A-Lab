@@ -3082,6 +3082,19 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   max-width: 200px;
 }
 
+/* Style for SMILES column to show full text */
+.favorites-table td:nth-child(3) {  /* 3rd column is SMILES */
+  white-space: normal;
+  max-width: 400px;
+  min-width: 300px;
+  word-break: break-word;
+}
+
+/* Make the SMILES header match the cell width */
+.favorites-table th:nth-child(3) {
+  min-width: 300px;
+}
+
 .favorites-table th {
   background-color: #f1f1f1;
   font-weight: 600;
