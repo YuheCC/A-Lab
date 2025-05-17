@@ -14,6 +14,8 @@ const FavoritesGrid = () => {
   const [activeTab, setActiveTab] = useState('radar');
   const [showAnalysis, setShowAnalysis] = useState(false);
   const spiderChartRef = useRef(null);
+  const espChartRef = useRef(null);
+  const moChartRef = useRef(null);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -68,12 +70,18 @@ const FavoritesGrid = () => {
     }
   }, [searchTerm, favorites]);
 
-  // Update the spider chart whenever selected molecules change
+  // Update the chart whenever selected molecules change
   useEffect(() => {
-    if (selectedMolecules.length > 0 && spiderChartRef.current && showAnalysis) {
-      updateSpiderChart();
+    if (selectedMolecules.length > 0 && showAnalysis) {
+      if (activeTab === 'radar' && spiderChartRef.current) {
+        updateSpiderChart();
+      } else if (activeTab === 'esp' && espChartRef.current) {
+        updateESPChart();
+      } else if (activeTab === 'mo' && moChartRef.current) {
+        updateMOChart();
+      }
     }
-  }, [selectedMolecules, showAnalysis]);
+  }, [selectedMolecules, showAnalysis, activeTab]);
 
   const fetchMoleculeImages = async (favoritesData) => {
     const images = {};
@@ -291,18 +299,193 @@ const FavoritesGrid = () => {
     Plotly.newPlot(spiderChartRef.current, traces, layout, {responsive: true});
   };
 
+  const updateESPChart = () => {
+    if (!espChartRef.current || selectedMolecules.length === 0) return;
+
+    // Create scatter plot data for ESP analysis
+    const data = selectedMolecules.map(molecule => ({
+      ESP_MIN_EV: molecule.esp_min_ev,
+      ESP_MAX_EV: molecule.esp_max_ev,
+      HOMO_EV: molecule.homo_ev,
+      LUMO_EV: molecule.lumo_ev,
+      TYPE: 'User Selection', // All selected molecules are the same type
+      ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
+      SMILES: molecule.smiles
+    }));
+
+    // Create traces for the ESP chart
+    const traces = [{
+      type: 'scatter',
+      mode: 'markers+text',
+      x: data.map(d => d.ESP_MIN_EV),
+      y: data.map(d => d.ESP_MAX_EV),
+      text: data.map(d => d.ABBREVIATION),
+      textposition: 'top center',
+      marker: {
+        color: 'rgba(0, 128, 255, 0.7)',
+        size: 10,
+        line: {
+          color: 'rgba(0, 128, 255, 1.0)',
+          width: 1
+        }
+      },
+      hoverinfo: 'text',
+      hovertext: data.map(d => 
+        `SMILES: ${d.SMILES}<br>` +
+        `ESP_MAX_EV: ${d.ESP_MAX_EV?.toFixed(2) || 'N/A'}<br>` +
+        `ESP_MIN_EV: ${d.ESP_MIN_EV?.toFixed(2) || 'N/A'}<br>` +
+        `HOMO_EV: ${d.HOMO_EV?.toFixed(2) || 'N/A'}<br>` +
+        `LUMO_EV: ${d.LUMO_EV?.toFixed(2) || 'N/A'}`
+      ),
+      name: 'Selected Molecules'
+    }];
+
+    // Define layout
+    const layout = {
+      title: 'ESP Max and Min',
+      xaxis: {
+        title: 'ESP_MIN_EV',
+        zeroline: true,
+        gridcolor: 'rgba(0,0,0,0.1)'
+      },
+      yaxis: {
+        title: 'ESP_MAX_EV',
+        zeroline: true,
+        gridcolor: 'rgba(0,0,0,0.1)'
+      },
+      margin: {
+        l: 60,
+        r: 40,
+        t: 60,
+        b: 60
+      },
+      paper_bgcolor: 'rgba(255,255,255,0.9)',
+      plot_bgcolor: 'rgba(255,255,255,0.9)',
+      font: {
+        family: 'Arial, sans-serif',
+        size: 12
+      },
+      autosize: true,
+      hovermode: 'closest',
+      showlegend: true,
+      legend: {
+        x: 0,
+        y: 1,
+        orientation: 'h'
+      }
+    };
+    
+    Plotly.newPlot(espChartRef.current, traces, layout, {responsive: true});
+  };
+
+  const updateMOChart = () => {
+    if (!moChartRef.current || selectedMolecules.length === 0) return;
+
+    // Create scatter plot data for MO analysis
+    const data = selectedMolecules.map(molecule => ({
+      LUMO_EV: molecule.lumo_ev,
+      HOMO_EV: molecule.homo_ev,
+      TYPE: 'User Selection', // All selected molecules are the same type
+      ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
+      SMILES: molecule.smiles
+    }));
+
+    // Create traces for the MO chart
+    const traces = [{
+      type: 'scatter',
+      mode: 'markers+text',
+      x: data.map(d => d.LUMO_EV),
+      y: data.map(d => d.HOMO_EV),
+      text: data.map(d => d.ABBREVIATION),
+      textposition: 'top center',
+      marker: {
+        color: 'rgba(0, 128, 255, 0.7)',
+        size: 10,
+        line: {
+          color: 'rgba(0, 128, 255, 1.0)',
+          width: 1
+        }
+      },
+      hoverinfo: 'text',
+      hovertext: data.map(d => 
+        `SMILES: ${d.SMILES}<br>` +
+        `HOMO (eV): ${d.HOMO_EV?.toFixed(2) || 'N/A'}<br>` +
+        `LUMO (eV): ${d.LUMO_EV?.toFixed(2) || 'N/A'}`
+      ),
+      name: 'Selected Molecules'
+    }];
+
+    // Define layout
+    const layout = {
+      title: 'HOMO vs LUMO Energy Levels',
+      xaxis: {
+        title: 'LUMO (eV)',
+        zeroline: true,
+        gridcolor: 'rgba(0,0,0,0.1)'
+      },
+      yaxis: {
+        title: 'HOMO (eV)',
+        zeroline: true,
+        gridcolor: 'rgba(0,0,0,0.1)'
+      },
+      margin: {
+        l: 60,
+        r: 40,
+        t: 60,
+        b: 60
+      },
+      paper_bgcolor: 'rgba(255,255,255,0.9)',
+      plot_bgcolor: 'rgba(255,255,255,0.9)',
+      font: {
+        family: 'Arial, sans-serif',
+        size: 12
+      },
+      autosize: true,
+      hovermode: 'closest',
+      showlegend: true,
+      legend: {
+        x: 0,
+        y: 1,
+        orientation: 'h'
+      }
+    };
+    
+    Plotly.newPlot(moChartRef.current, traces, layout, {responsive: true});
+  };
+
   const handleShowAnalysis = () => {
     setShowAnalysis(true);
     // Update the chart after state is updated
     setTimeout(() => {
-      if (selectedMolecules.length > 0 && spiderChartRef.current) {
-        updateSpiderChart();
+      if (selectedMolecules.length > 0) {
+        if (activeTab === 'radar' && spiderChartRef.current) {
+          updateSpiderChart();
+        } else if (activeTab === 'esp' && espChartRef.current) {
+          updateESPChart();
+        } else if (activeTab === 'mo' && moChartRef.current) {
+          updateMOChart();
+        }
       }
     }, 0);
   };
 
   const handleCloseAnalysis = () => {
     setShowAnalysis(false);
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (showAnalysis && selectedMolecules.length > 0) {
+      setTimeout(() => {
+        if (tab === 'radar' && spiderChartRef.current) {
+          updateSpiderChart();
+        } else if (tab === 'esp' && espChartRef.current) {
+          updateESPChart();
+        } else if (tab === 'mo' && moChartRef.current) {
+          updateMOChart();
+        }
+      }, 0);
+    }
   };
 
   if (loading) {
@@ -343,19 +526,19 @@ const FavoritesGrid = () => {
             <div className="analysis-tabs">
               <button 
                 className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
-                onClick={() => setActiveTab('radar')}
+                onClick={() => handleTabChange('radar')}
               >
                 Radar Analysis
               </button>
               <button 
                 className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
-                onClick={() => setActiveTab('esp')}
+                onClick={() => handleTabChange('esp')}
               >
                 ESP Analysis
               </button>
               <button 
                 className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
-                onClick={() => setActiveTab('mo')}
+                onClick={() => handleTabChange('mo')}
               >
                 MO Analysis
               </button>
@@ -484,13 +667,13 @@ const FavoritesGrid = () => {
               </div>
             )}
             {activeTab === 'esp' && (
-              <div className="esp-analysis-placeholder">
-                <p>ESP Analysis coming soon</p>
+              <div className="esp-chart-container">
+                <div ref={espChartRef} className="esp-chart"></div>
               </div>
             )}
             {activeTab === 'mo' && (
-              <div className="mo-analysis-placeholder">
-                <p>MO Analysis coming soon</p>
+              <div className="mo-chart-container">
+                <div ref={moChartRef} className="mo-chart"></div>
               </div>
             )}
           </div>
