@@ -807,7 +807,7 @@ const TermsPage = ({ handleNavigation, activePage }) => {
 
   return (
     <div className="terms-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginRight: '20px' }}>
         <h1
           style={{
             textDecoration: 'none',
@@ -1109,7 +1109,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
   return (
     <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
       {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '8px', marginRight: '20px' }}>
+      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginRight: '20px' }}>
         <h1
           style={{
             textDecoration: 'none',
