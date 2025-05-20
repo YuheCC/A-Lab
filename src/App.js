@@ -1377,10 +1377,8 @@ const App = () => {
 
       return true;
     });
-    if (JSON.stringify(filtered) !== JSON.stringify(filteredGraphData)) {
-      setFilteredGraphData(filtered);
-    }
-  }, [graphData, filterRanges, selectedFunctionalGroup, filteredGraphData]);
+    setFilteredGraphData(filtered);
+  }, [graphData, filterRanges, selectedFunctionalGroup]);
 
   // Handle filter slider change
   const handleFilterChange = (property, newValue, isCommitted) => {
@@ -1485,10 +1483,28 @@ const App = () => {
   // Default color for clusters not in the map
   const defaultColor = '#000000'; // black
 
+  const textData = useMemo(() => filteredGraphData.map(node =>
+      `<b>Molecule Information:</b><br>` +
+      `SMILES: ${node.smiles}<br>` +
+      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
+      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
+      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
+      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
+      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
+      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
+      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
+      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
+    ), [filteredGraphData, userPermissions]);
+  
+  const xData = useMemo(() => filteredGraphData.map(node => node.x), [filteredGraphData]);
+  const yData = useMemo(() => filteredGraphData.map(node => node.y), [filteredGraphData]);
+
   // Create search mode plotly data
-  const searchPlotlyData = [{
-    x: filteredGraphData.map(node => node.x),
-    y: filteredGraphData.map(node => node.y),
+  const searchPlotlyData = useMemo(() => [{
+    x: xData,
+    y: yData,
     mode: 'markers',
     type: 'scattergl',
     marker: {
@@ -1509,21 +1525,8 @@ const App = () => {
       })
     },
     hoverinfo: 'text',
-    text: filteredGraphData.map(node =>
-      `<b>Molecule Information:</b><br>` +
-      `SMILES: ${node.smiles}<br>` +
-      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
-      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
-      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
-    )
-  }];
+    text: textData
+  }], [clusterColorMap, filteredGraphData, highlightedMolecules, textData, xData, yData]);
 
   // Add red dots at coordinates where arrows point to for highlighted molecules
   if (highlightedMolecules && highlightedMolecules.length > 0) {
@@ -1570,9 +1573,9 @@ const App = () => {
   }
 
   // Create plotly data for explorer view
-  const plotlyData = [{
-    x: filteredGraphData.map(node => node.x),
-    y: filteredGraphData.map(node => node.y),
+  const plotlyData = useMemo(() => [{
+    x: xData,
+    y: yData,
     mode: 'markers',
     type: 'scattergl',
     marker: {
@@ -1585,21 +1588,8 @@ const App = () => {
       opacity: 0.7
     },
     hoverinfo: 'text',
-    text: filteredGraphData.map(node =>
-      `<b>Molecule Information:</b><br>` +
-      `SMILES: ${node.smiles}<br>` +
-      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
-      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
-      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
-    )
-  }];
+    text: textData,
+  }], [clusterColorMap, filteredGraphData, textData, xData, yData]);
 
   // Add red dots at coordinates where arrows point to for highlighted molecules in explorer view
   if (highlightedMolecules && highlightedMolecules.length > 0) {
