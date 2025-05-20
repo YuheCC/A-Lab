@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ChatbotInterface from './Chatbox';
 import SearchInput from './Search';
-import Papa from 'papaparse';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
-// import logo from the public folder
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
 import FavoritesGrid from './FavoritesGrid';
