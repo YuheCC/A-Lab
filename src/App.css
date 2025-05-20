@@ -3130,12 +3130,29 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   width: 60px;
   padding: 5px;
   text-align: center;
+  position: relative;
+  height: 50px; /* Increased from default */
 }
 
 .table-molecule-image {
   width: 40px;
   height: 40px;
   object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.molecule-image-cell:hover .table-molecule-image {
+  transform: scale(2.5);
+  position: absolute;
+  z-index: 10;
+  left: 30px;
+  max-height: 100px; /* Added to ensure image doesn't get cut off */
+}
+
+/* Create space for the enlarged image */
+.molecule-image-cell:hover {
+  overflow: visible;
+  z-index: 20;
 }
 
 .remove-favorite-table-button {
