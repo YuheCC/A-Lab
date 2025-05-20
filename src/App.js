@@ -188,7 +188,13 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
 // Material UI Slider component
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
   const handleChange = (event, newValue) => {
-    onChange(property, newValue);
+    // This updates temporary state during dragging, not applying the filter yet
+    onChange(property, newValue, false);
+  };
+
+  const handleChangeCommitted = (event, newValue) => {
+    // This applies the filter after dragging is complete
+    onChange(property, newValue, true);
   };
 
   const formatValue = (value) => {
@@ -254,6 +260,7 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
           max={max}
           step={(max - min) / 100}
           onChange={handleChange}
+          onChangeCommitted={handleChangeCommitted}
           valueLabelDisplay="auto"
           disableSwap
           sx={{
@@ -436,6 +443,8 @@ const App = () => {
   const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState(null);
   const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
   const [findClosestFriends, setFindClosestFriends] = useState(false);
+  // New state for temporary filter values during dragging
+  const [tempFilterRanges, setTempFilterRanges] = useState({});
 
   // New state for feedback functionality
   // const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -1374,15 +1383,24 @@ const App = () => {
   }, [graphData, filterRanges, selectedFunctionalGroup, filteredGraphData]);
 
   // Handle filter slider change
-  const handleFilterChange = (property, newValue) => {
-    setFilterRanges(prev => ({
-      ...prev,
-      [property]: {
-        ...prev[property],
-        range: newValue,
-        active: true
-      }
-    }));
+  const handleFilterChange = (property, newValue, isCommitted) => {
+    if (isCommitted) {
+      // When dragging is complete, update the actual filter
+      setFilterRanges(prev => ({
+        ...prev,
+        [property]: {
+          ...prev[property],
+          range: newValue,
+          active: true
+        }
+      }));
+    } else {
+      // During dragging, just update the temporary display
+      setTempFilterRanges(prev => ({
+        ...prev,
+        [property]: newValue
+      }));
+    }
   };
 
   // Reset a specific filter
@@ -1395,6 +1413,13 @@ const App = () => {
         active: false
       }
     }));
+    
+    // Also clear any temporary values for this property
+    setTempFilterRanges(prev => {
+      const newTempRanges = { ...prev };
+      delete newTempRanges[property];
+      return newTempRanges;
+    });
   };
 
   // Reset all filters
@@ -1410,6 +1435,9 @@ const App = () => {
       }
       return newRanges;
     });
+    
+    // Clear all temporary filter values
+    setTempFilterRanges({});
   };
 
   // Handle clicks on Plotly points
@@ -1973,11 +2001,14 @@ const App = () => {
                         return null;
                       }
 
+                      // Use temporary range value if available during dragging
+                      const displayValue = tempFilterRanges[property] || range.range;
+
                       return (
                         <div key={property} className="filter-wrapper">
                           <Slider
                             property={property}
-                            value={range.range}
+                            value={displayValue}
                             min={range.min}
                             max={range.max}
                             onChange={handleFilterChange}
