@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import ChatbotInterface from './Chatbox';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import SearchInput from './Search';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -7,7 +6,6 @@ import Box from '@mui/material/Box';
 import MuiSlider from '@mui/material/Slider';
 import './App.css';
 import API_URL from './Constants.js'; // Contains API URL and any other constants
-import FavoritesGrid from './FavoritesGrid';
 import MoleculeFeedbackBox from './MoleculeFeedbackBox';
 import AuthPage from './pages/AuthPage.js';
 import PricingPage from './pages/PricingPage.js';
@@ -16,6 +14,9 @@ import AboutPage from './pages/AboutPage.js';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
 import RedeemPage from './pages/RedeemPage.js';
 import { authFetch, redirectToLogin } from './utils.js';
+
+const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
+const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -107,6 +108,7 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
 // };
 
 // Material UI Slider component
+
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
   const handleChange = (event, newValue) => {
     // This updates temporary state during dragging, not applying the filter yet
@@ -2313,13 +2315,15 @@ const App = () => {
                   </a>
                 </div>
               </div>
-              <ChatbotInterface
-                messages={chatMessages}
-                setMessages={setChatMessages}
-                userPermissions={userPermissions}
-                remainingQueries={remainingQueries}
-                setRemainingQueries={setRemainingQueries}
-              />
+              <Suspense fallback={<div className="app-loading">Loading...</div>}>
+                <ChatbotInterface
+                  messages={chatMessages}
+                  setMessages={setChatMessages}
+                  userPermissions={userPermissions}
+                  remainingQueries={remainingQueries}
+                  setRemainingQueries={setRemainingQueries}
+                />
+              </Suspense>
             </div>
           ) : (
             <PermissionsError />
@@ -2564,7 +2568,9 @@ const App = () => {
               borderRadius: '8px',
               boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
             }}>
-              <FavoritesGrid />
+              <Suspense fallback={<div className="app-loading">Loading...</div>}>
+                  <FavoritesGrid />
+              </Suspense>
             </div>
           </div>
         ) : (
