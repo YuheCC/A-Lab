@@ -24,6 +24,14 @@ body, html {
   overflow: hidden; /* Prevent scrolling issues */
 }
 
+.app-loading {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .navbar {
   background-color: #f1f1f1;
   border-bottom: 1px solid black;
@@ -507,8 +515,7 @@ body, html {
 /* About Page Styles */
 .about-container {
   display: flex;
-  justify-content: center;
-  padding: 2rem;
+  padding: 20px;
   background-color: #f1f1f1;
   min-height: calc(100vh - 60px);
 }
@@ -727,13 +734,11 @@ body, html {
 .search-container {
   flex: 1;
   display: flex;
-  flex-direction: column;
   padding: 20px;
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
   padding-left: 0;
-  padding-right: 40px;
 }
 
 .search-umap-container {
@@ -745,7 +750,7 @@ body, html {
 }
 
 .search-umap-section {
-  flex: 1.25;
+  flex: 1 1 0;
   min-width: 0;
   border-radius: 0;
   overflow: hidden;
@@ -2651,7 +2656,7 @@ body, html {
 
 .favorites-error button, .no-favorites a {
   display: inline-block;
-  background-color: #0080ff;
+  background-color: #2196F3;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -2663,7 +2668,7 @@ body, html {
 }
 
 .favorites-error button:hover, .no-favorites a:hover {
-  background-color: #0066cc;
+  background-color: #0d8aee;
   transform: translateY(-2px);
 }
 
@@ -2913,28 +2918,21 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 
 .analysis-tab {
   padding: 8px 15px;
-  cursor: pointer;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.3s ease;
-  position: relative;
+  border: none;
+  background-color: #f1f1f1;
   font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
 
 .analysis-tab.active {
-  color: #0080ff;
-  font-weight: 600;
+  background-color: #2196F3;
+  color: white;
 }
 
-.analysis-tab.active:after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #0080ff;
-  border-radius: 2px 2px 0 0;
+.analysis-tab:hover:not(.active) {
+  background-color: #e0e0e0;
 }
 
 .molecule-checkbox {
@@ -3035,4 +3033,374 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   .favorites-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* New Favorites Page Styles */
+.favorites-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.favorites-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.favorites-search-input {
+  width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.favorites-header .search-container {
+  margin-left: 20px;
+}
+
+.favorites-table-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 15px;
+}
+
+.favorites-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.favorites-table th,
+.favorites-table td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Style for SMILES column to show full text */
+.favorites-table td:nth-child(3) {  /* 3rd column is SMILES */
+  white-space: normal;
+  max-width: 400px;
+  min-width: 300px;
+  word-break: break-word;
+}
+
+/* Make the SMILES header match the cell width */
+.favorites-table th:nth-child(3) {
+  min-width: 300px;
+}
+
+.favorites-table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.favorites-table tr:hover {
+  background-color: #f7f7f7;
+}
+
+.favorites-table .selected-row {
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.favorites-table .selected-row:hover {
+  background-color: rgba(0, 102, 204, 0.15);
+}
+
+.checkbox-column {
+  width: 40px;
+}
+
+.molecule-image-cell {
+  width: 60px;
+  padding: 5px;
+  text-align: center;
+  position: relative;
+  height: 50px; /* Increased from default */
+}
+
+.table-molecule-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.molecule-image-cell:hover .table-molecule-image {
+  transform: scale(2.5);
+  position: absolute;
+  z-index: 10;
+  left: 30px;
+  max-height: 100px; /* Added to ensure image doesn't get cut off */
+}
+
+/* Create space for the enlarged image */
+.molecule-image-cell:hover {
+  overflow: visible;
+  z-index: 20;
+}
+
+.remove-favorite-table-button {
+  background-color: transparent;
+  color: #ff3b30;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.remove-favorite-table-button:hover {
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+.show-analysis-button {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.show-analysis-button:hover {
+  background-color: #0d8aee;
+}
+
+.analysis-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.analysis-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.selected-molecules-count {
+  color: #666;
+  font-size: 14px;
+}
+
+.close-analysis-button {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.close-analysis-button:hover {
+  color: #0066cc;
+}
+
+.analysis-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spider-chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spider-chart {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.spider-chart:hover {
+  border: 1px solid #ddd;
+}
+
+.esp-analysis-placeholder,
+.mo-analysis-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #666;
+  font-size: 18px;
+}
+
+.analysis-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.analysis-tab {
+  padding: 8px 15px;
+  border: none;
+  background-color: #f1f1f1;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.analysis-tab.active {
+  background-color: #2196F3;
+  color: white;
+}
+
+.analysis-tab:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+@media (max-width: 1200px) {
+  .favorites-search-input {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .favorites-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .favorites-search-input {
+    width: 100%;
+  }
+  
+  .analysis-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .show-analysis-button {
+    width: 100%;
+  }
+}
+
+/* End New Favorites Page Styles */
+
+.esp-chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.esp-chart {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.esp-chart:hover {
+  border: 1px solid #ddd;
+}
+
+.mo-chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mo-chart {
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.mo-chart:hover {
+  border: 1px solid #ddd;
+}
+
+/* Add styles for sortable headers */
+.sortable-header {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.sortable-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Table styles - this may already exist in your CSS */
+.favorites-table-container {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.favorites-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.favorites-table th {
+  background-color: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+.favorites-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.favorites-table tr:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.selected-row {
+  background-color: rgba(135, 206, 250, 0.2) !important;
 }
