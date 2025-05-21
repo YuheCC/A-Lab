@@ -1315,9 +1315,6 @@ const App = () => {
         setGraphData(nodes);
         setFilteredGraphData(nodes);
 
-        // Log the number of nodes in the UMAP visualization
-        console.log(`UMAP visualization loaded with ${nodes.length} nodes`);
-
         // Initialize filter ranges based on actual data
         const currentFilterRanges = filterRangesRef.current;
         const currentFilterLabels = filterLabelsRef.current;
