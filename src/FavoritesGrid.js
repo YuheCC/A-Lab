@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import API_URL from './Constants.js';
 import './App.css';
 import Plotly from 'plotly.js-dist';
+import { authFetch } from './utils.js';
 
 const FavoritesGrid = () => {
   const [favorites, setFavorites] = useState([]);
@@ -22,11 +23,7 @@ const FavoritesGrid = () => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/favorites-retrieve`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await authFetch(`${API_URL}/favorites-retrieve`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
@@ -124,11 +121,7 @@ const FavoritesGrid = () => {
     for (const favorite of favoritesData) {
       try {
         if (favorite.smiles) {
-          const response = await fetch(`${API_URL}/api/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          });
+          const response = await authFetch(`${API_URL}/api/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`);
           
           if (response.ok) {
             const blob = await response.blob();
@@ -153,11 +146,8 @@ const FavoritesGrid = () => {
     }
     
     try {
-      const response = await fetch(`${API_URL}/favorites-delete/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+      const response = await authFetch(`${API_URL}/favorites-delete/${id}`, {
+        method: 'DELETE'
       });
 
       if (!response.ok) {
