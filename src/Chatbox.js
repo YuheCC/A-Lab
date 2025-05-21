@@ -3,6 +3,7 @@ import FeedbackBox from './FeedbackBox';
 
 import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';
+import { authFetch } from './utils.js';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
@@ -137,13 +138,8 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
             queryUrl += '&query_type=molecule&use_35m=true';
           }
           
-          const res = await fetch(
-            queryUrl,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            }
+          const res = await authFetch(
+            queryUrl
           );
           const data = await res.json();
           return data;
@@ -205,13 +201,12 @@ const handleFindSimilarMolecules = async (details) => {
         ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
-      const response = await fetch(
+      const response = await authFetch(
         `${API_URL}/find-friend-with-image`,
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload),
         }
@@ -232,12 +227,10 @@ const handleFindSimilarMolecules = async (details) => {
     const fetchQueryLimit = async () => {
       if (userPermissions === 'research') {
         try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_URL}/query_limit`, {
+          const response = await authFetch(`${API_URL}/query_limit`, {
             method: "GET",
             headers: { 
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
+              "Content-Type": "application/json"
             }
           });
           
@@ -300,11 +293,10 @@ const handleFindSimilarMolecules = async (details) => {
       const ragModel = isAdvancedTier ? 'o3' : 'o4-mini';
       const ragResultsCount = isAdvancedTier ? 10 : 3;
       // Query the backend via the /rag endpoint using the messages array
-      const response = await fetch(`${API_URL}/rag`, {
+      const response = await authFetch(`${API_URL}/rag`, {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           messages: messagesToSend,
@@ -388,7 +380,6 @@ const handleFindSimilarMolecules = async (details) => {
     if (feedbackMoleculeIndex !== null && similarMolecules && similarMolecules.length > feedbackMoleculeIndex) {
       try {
         const molecule = similarMolecules[feedbackMoleculeIndex];
-        const token = localStorage.getItem('token');
 
         // Gather LLM context for this feedback from the originating message
         const rawInputs = activeFindMessage?.inputs;
@@ -403,11 +394,10 @@ const handleFindSimilarMolecules = async (details) => {
         const contextContent3 = activeFindMessage?.sources || "";
 
         // Submit feedback to backend
-        await fetch(`${API_URL}/api/feedback`, {
+        await authFetch(`${API_URL}/api/feedback`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             isPositive: feedbackType === 'up',
@@ -475,11 +465,10 @@ const handleFindSimilarMolecules = async (details) => {
         umap_y: molecule.UMAP_1 || null
       };
 
-      const response = await fetch(`${API_URL}/favorites`, {
+      const response = await authFetch(`${API_URL}/favorites`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(favoriteData)
       });

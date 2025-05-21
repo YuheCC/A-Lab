@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import API_URL from './Constants.js';
+import { authFetch } from './utils.js';
 
 const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   const [feedbackText, setFeedbackText] = useState('');
@@ -23,14 +24,12 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem('token');
 
       // Submit feedback to backend
-      await fetch(`${API_URL}/api/feedback`, {
+      await authFetch(`${API_URL}/api/feedback`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           isPositive: feedbackType === 'up',

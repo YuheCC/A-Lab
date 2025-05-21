@@ -15,84 +15,7 @@ import TermsPage from './pages/TermsPage.js';
 import AboutPage from './pages/AboutPage.js';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
 import RedeemPage from './pages/RedeemPage.js';
-
-// ---------------------------------------------------------------------------
-// Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
-const redirectToLogin = () => {
-  console.log("Redirecting to login page...");
-  // Already on an auth route?   → do **nothing** to avoid redirect loops.
-  if (/^\/(login|password-reset)/.test(window.location.pathname)) return;
-
-  const current = window.location.pathname + window.location.search;
-  localStorage.removeItem('token');
-  localStorage.removeItem('username');
-  localStorage.removeItem('permissions');
-
-  // Store the current URL to redirect back after login
-  localStorage.setItem('redirectAfterLogin', current);
-
-  // Send them to the sign‑in screen **once**, carrying the original target.
-  window.history.pushState(
-    {},
-    '',
-    `/login?redirect=${encodeURIComponent(current)}`,
-  );
-  window.location.reload();
-};
-
-const _origFetch = window.fetch.bind(window);
-window.fetch = (input, init = {}) => {
-  // -------------------------------------------------------------------
-  // 1) Transparently attach JWT to **any** request going to our backend
-  //    so that all parts of the app stay authenticated even when they
-  //    use plain `fetch()` instead of `authFetch()`.
-  // -------------------------------------------------------------------
-  const token = localStorage.getItem('token');
-  let url = typeof input === 'string' ? input : input?.url || '';
-
-  // Treat bare " /api"‑style paths as same‑origin
-  const sameOrigin = url.startsWith('/') && !url.startsWith('//');
-  const isBackend = url.startsWith(API_URL) || sameOrigin;
-
-  if (token && isBackend) {
-    // Normalise existing headers then merge
-    const hdrs = new Headers(init.headers || {});
-    if (!hdrs.has('Authorization')) {
-      hdrs.set('Authorization', `Bearer ${token}`);
-    }
-    init = { ...init, headers: hdrs };
-  }
-
-  // -------------------------------------------------------------------
-  // 2) Perform the request
-  // -------------------------------------------------------------------
-  return _origFetch(input, init).then((response) => {
-    // 401? → log the user out **unless** we're on an auth page already
-    if (
-      response.status === 401 &&
-      !/^\/(login|signin)/.test(window.location.pathname)
-    ) {
-      redirectToLogin();
-    }
-    return response;
-  });
-};
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Auth‑aware fetch: automatically sends the JWT if we have one
-export const authFetch = (url, options = {}) => {
-  const token = localStorage.getItem('token');
-  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...authHeaders,
-      ...(options.headers || {}),
-    },
-  });
-};
-// ---------------------------------------------------------------------------
+import { authFetch, redirectToLogin } from './utils.js';
 
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
@@ -323,7 +246,6 @@ const PasswordReset = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('current_password', currentPassword);
       formData.append('new_password', newPassword);
@@ -1167,11 +1089,7 @@ const App = () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/verify-token`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const response = await authFetch(`${API_URL}/verify-token`);
 
         if (response.ok) {
           const data = await response.json();
@@ -1181,75 +1099,6 @@ const App = () => {
 
           if (activePage === 'login') {
             setActivePage('map');
-          }
-
-          // Fetch user creation date and set up reset timer
-          if (data.id) {
-            try {
-              const createdAtResponse = await fetch(`${API_URL}/created_at?id=${data.id}`);
-              if (createdAtResponse.ok) {
-                const createdAtData = await createdAtResponse.json();
-                const createdAt = new Date(createdAtData.created_at);
-
-                // Set up timer to reset query limit every 30 seconds after creation time
-                const setupResetTimer = () => {
-                  const now = new Date();
-                  const createdAtTime = createdAt.getTime(); // Creation timestamp in ms
-                  const elapsedMillis = now.getTime() - createdAtTime; // Time elapsed since creation
-                  const intervalMillis = 30 * 1000; // 30 seconds in ms
-
-                  // Calculate time until next 30-second mark
-                  const millisSinceLastInterval = elapsedMillis % intervalMillis;
-                  const timeToNextReset = intervalMillis - millisSinceLastInterval;
-
-                  console.log(`Next query limit reset in ${timeToNextReset / 1000} seconds`);
-
-                  // Set timeout to reset query limit at next 30-second mark
-                  const resetTimeout = setTimeout(async () => {
-                    try {
-                      // Call reset endpoint
-                      const resetResponse = await fetch(`${API_URL}/reset_user_limit?id=${data.id}`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        }
-                      });
-
-                      if (resetResponse.ok) {
-                        const resetData = await resetResponse.json();
-                        console.log('Query limit reset:', resetData);
-                        setRemainingQueries(resetData.query_limit);
-
-                        // Setup next timer
-                        setupResetTimer();
-                      } else {
-                        console.error('Failed to reset query limit');
-                        // Try again after 30 seconds
-                        setTimeout(setupResetTimer, intervalMillis);
-                      }
-                    } catch (error) {
-                      console.error('Error resetting query limit:', error);
-                      // Try again after 30 seconds
-                      setTimeout(setupResetTimer, intervalMillis);
-                    }
-                  }, timeToNextReset);
-
-                  // Store timeout ID to clear on unmount
-                  return resetTimeout;
-                };
-
-                // Initialize the timer
-                const initialTimeoutId = setupResetTimer();
-
-                // Clear timer on component unmount
-                return () => {
-                  if (initialTimeoutId) clearTimeout(initialTimeoutId);
-                };
-              }
-            } catch (error) {
-              console.error('Error fetching user creation date:', error);
-            }
           }
 
           // Removed duplicate login redirect that was overriding the earlier one
@@ -1279,7 +1128,7 @@ const App = () => {
       try {
         setLoading(true);
         // Replace CSV fetching with Snowflake API endpoint
-        const response = await fetch(`${API_URL}/snowflake-query`);
+        const response = await authFetch(`${API_URL}/snowflake-query`);
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
