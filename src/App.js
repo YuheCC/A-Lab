@@ -83,6 +83,8 @@ const App = () => {
   const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState(null);
   const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
   const [findClosestFriends, setFindClosestFriends] = useState(false);
+  // Add state for find-friend error message
+  const [findFriendError, setFindFriendError] = useState(null);
   // New state for temporary filter values during dragging
   const [tempFilterRanges, setTempFilterRanges] = useState({});
 
@@ -295,6 +297,7 @@ const App = () => {
     setSimilarMolecules(null);
     setHighlightedSimilarMolecules(null);
     setSimilarMoleculeImages({}); // Reset similar molecule images
+    setFindFriendError(null); // Reset find friend error
 
     try {
       // Determine which endpoint to use based on user permissions
@@ -326,45 +329,50 @@ const App = () => {
             use_35m: isHighTier
           };
 
-          const response = await authFetch(`${API_URL}/find-friend-with-image`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (!response.ok) {
-            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-          }
-          const data = await response.json();
-          const molecules = data.similar_molecules;
-          setSimilarMolecules(molecules);
-
-          const highlighted = molecules.filter(
-            (mol) => mol.UMAP_0 !== undefined && mol.UMAP_1 !== undefined
-          );
-          if (highlighted.length > 0) {
-            setHighlightedSimilarMolecules(highlighted);
-          }
-
-          // Fetch molecule visualizations for all similar molecules
-          const imageResults = molecules.map((molecule, index) => {
-            const moleculeImageUrl = molecule.image;
-            return { index, imageUrl: moleculeImageUrl };
-          });
-
-          // Create a map of molecule index to image URL
-          const imageMap = {};
-          imageResults.forEach(result => {
-            if (result.imageUrl) {
-              imageMap[result.index] = result.imageUrl;
+          try {
+            const response = await authFetch(`${API_URL}/find-friend-with-image`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+              throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
             }
-          });
+            const data = await response.json();
+            const molecules = data.similar_molecules;
+            setSimilarMolecules(molecules);
 
-          setSimilarMoleculeImages(imageMap);
-          // TODO: Update UMAP with friends
+            const highlighted = molecules.filter(
+              (mol) => mol.UMAP_0 !== undefined && mol.UMAP_1 !== undefined
+            );
+            if (highlighted.length > 0) {
+              setHighlightedSimilarMolecules(highlighted);
+            }
+
+            // Fetch molecule visualizations for all similar molecules
+            const imageResults = molecules.map((molecule, index) => {
+              const moleculeImageUrl = molecule.image;
+              return { index, imageUrl: moleculeImageUrl };
+            });
+
+            // Create a map of molecule index to image URL
+            const imageMap = {};
+            imageResults.forEach(result => {
+              if (result.imageUrl) {
+                imageMap[result.index] = result.imageUrl;
+              }
+            });
+
+            setSimilarMoleculeImages(imageMap);
+          } catch (friendError) {
+            console.error('Error finding similar molecules:', friendError);
+            setFindFriendError('Failed to find similar molecules. Please try again.');
+          }
         }
       }
     } catch (apiError) {
       console.error('Error checking Snowflake database:', apiError);
+      setSearchError('Error searching for molecules. Please try again.');
     } finally {
       setSearchLoading(false);
       setLastSearch(searchInput);
@@ -2327,6 +2335,18 @@ const App = () => {
                                     fontWeight: 'bold'
                                   }}>
                                     {moleculeFavoriteStatus[molecule.smiles].error}
+                                  </div>
+                                )}
+                                
+                                {/* Display find-friend error below favorites button if it exists */}
+                                {findClosestFriends && findFriendError && (
+                                  <div className="error-message" style={{ 
+                                    marginTop: '8px', 
+                                    color: 'red', 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {findFriendError}
                                   </div>
                                 )}
                               </div>
