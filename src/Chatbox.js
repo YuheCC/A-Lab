@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import FeedbackBox from './FeedbackBox';
+import FeedbackBox from './components/FeedbackBox.js';
 
 import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';

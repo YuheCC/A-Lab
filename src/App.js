@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
-import SearchInput from './Search';
 import Plotly from 'plotly.js-basic-dist';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Box from '@mui/material/Box';
-import MuiSlider from '@mui/material/Slider';
-import './App.css';
-import API_URL from './Constants.js'; // Contains API URL and any other constants
-import MoleculeFeedbackBox from './MoleculeFeedbackBox';
-import AuthPage from './pages/AuthPage.js';
-import PricingPage from './pages/PricingPage.js';
-import TermsPage from './pages/TermsPage.js';
+import MoleculeFeedbackBox from './components/MoleculeFeedbackBox';
+import Navbar from './components/Navbar.js';
+import PasswordReset from './components/PasswordReset.js';
+import Slider from './components/Slider.js';
 import AboutPage from './pages/AboutPage.js';
+import AuthPage from './pages/AuthPage.js';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
+import PricingPage from './pages/PricingPage.js';
 import RedeemPage from './pages/RedeemPage.js';
+import TermsPage from './pages/TermsPage.js';
+import SearchInput from './Search';
+
+import API_URL from './Constants.js'; // Contains API URL and any other constants
 import { authFetch, redirectToLogin } from './utils.js';
+
+import './App.css';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
@@ -21,47 +24,6 @@ const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 // Create a Plotly Component using the plotly.js factory
 const Plot = createPlotlyComponent(Plotly);
 
-// Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, onNavigation }) => {
-  // Use the logo from the public folder
-  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
-  return (
-    <nav className="navbar">
-      <div className="navbar-title">
-        <img src={logo} alt="SES AI Logo" className="navbar-logo" />
-      </div>
-      <div className="navbar-links">
-        <a href="https://www.ses.ai/" className="navbar-link">Products</a>
-        <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
-        <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
-        <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
-        <a
-          href="/"
-          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise' || activePage === 'favorites') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
-        >
-          Molecular Universe
-        </a>
-      </div>
-      {isAuthenticated ? (
-        <div className="navbar-user">
-          <span className="username">{username}</span>
-          <div className="settings-dropdown">
-            <button className="reset-password-button">Settings</button>
-            <div className="settings-dropdown-content">
-              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Change Password</a>
-              <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
-            </div>
-          </div>
-          <button className="logout-button" onClick={onLogout}>Logout</button>
-        </div>
-      ) : (
-        <div className="navbar-user">
-          <button className="signin-button" onClick={onSignIn}>Sign In</button>
-        </div>
-      )}
-    </nav>
-  );
-};
 
 // Popup component to display node data
 // const NodePopup = ({ node, onClose, filterLabels }) => {
@@ -106,246 +68,6 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
 //     </div>
 //   );
 // };
-
-// Material UI Slider component
-
-const Slider = ({ property, value, min, max, onChange, label, active }) => {
-  const handleChange = (event, newValue) => {
-    // This updates temporary state during dragging, not applying the filter yet
-    onChange(property, newValue, false);
-  };
-
-  const handleChangeCommitted = (event, newValue) => {
-    // This applies the filter after dragging is complete
-    onChange(property, newValue, true);
-  };
-
-  const formatValue = (value) => {
-    if (typeof value === 'number') {
-      return value.toFixed(2);
-    }
-    return value;
-  };
-
-  return (
-    <div className={`slider-container ${active ? 'active-filter' : 'inactive-filter'}`}>
-      <div className="slider-header">
-        <span className="slider-label">
-          {label}
-          {label === "HOMO (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "LUMO (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "Max ESP (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "Min ESP (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-        </span>
-        <span className="slider-value">
-          {active
-            ? `${formatValue(value[0])} - ${formatValue(value[1])}`
-            : "Off"}
-        </span>
-      </div>
-      <Box sx={{ width: '100%', padding: '5px 0' }}>
-        <MuiSlider
-          size="small"
-          value={value}
-          min={min}
-          max={max}
-          step={(max - min) / 100}
-          onChange={handleChange}
-          onChangeCommitted={handleChangeCommitted}
-          valueLabelDisplay="auto"
-          disableSwap
-          sx={{
-            color: '#0080ff',
-            '& .MuiSlider-thumb': {
-              backgroundColor: active ? '#0080ff' : '#a0a0a0',
-            },
-            '& .MuiSlider-track': {
-              backgroundColor: active ? '#0080ff' : '#a0a0a0',
-            },
-            '& .MuiSlider-rail': {
-              backgroundColor: '#e0e0e0',
-            }
-          }}
-        />
-      </Box>
-    </div>
-  );
-};
-
-// Password Reset component
-const PasswordReset = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  // Use logo from public folder
-  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
-
-  // Add useEffect to redirect after successful password reset
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/map');
-        window.location.reload();
-      }, 5000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    // Validate passwords
-    if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append('current_password', currentPassword);
-      formData.append('new_password', newPassword);
-
-      const response = await authFetch(`${API_URL}/reset-password`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let errorMsg = 'Password reset failed';
-        try {
-          const dataErr = await response.clone().json();
-          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
-        } catch {
-          try {
-            const textErr = await response.text();
-            if (textErr) errorMsg = textErr;
-          } catch { /* ignore */ }
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-      setSuccess(data.message || 'Password reset successfully');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-
-    } catch (err) {
-      console.error('Password reset error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
-      <div className="auth-card">
-        <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>Reset Password</h2>
-          <p>Please enter your current password and a new password</p>
-        </div>
-
-        {error && <div className="auth-error">{error}</div>}
-        {success && <div className="auth-success">{success}</div>}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Current password"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New password"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm New Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Resetting...' : 'Reset Password'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
@@ -3063,11 +2785,17 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
-                                    <MoleculeFeedbackBox 
-                                      molecule={molecule} 
-                                      lastSearch={lastSearch} 
-                                      onClose={() => {}} 
-                                    />
+                                    <tr>
+                                      <td style={{
+                                        width: '100%'
+                                      }}>
+                                        <MoleculeFeedbackBox 
+                                          molecule={molecule} 
+                                          lastSearch={lastSearch} 
+                                          onClose={() => {}} 
+                                        />
+                                      </td>
+                                    </tr>
                                   </tbody>
                                 </table>
                                 {/* Add thumbs up/down buttons here */}
