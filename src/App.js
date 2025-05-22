@@ -1,307 +1,69 @@
-import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
-import SearchInput from './Search';
-import Plotly from 'plotly.js-basic-dist';
-import createPlotlyComponent from 'react-plotly.js/factory';
-import Box from '@mui/material/Box';
-import MuiSlider from '@mui/material/Slider';
-import './App.css';
-import API_URL from './Constants.js'; // Contains API URL and any other constants
-import MoleculeFeedbackBox from './MoleculeFeedbackBox';
-import AuthPage from './pages/AuthPage.js';
-import PricingPage from './pages/PricingPage.js';
-import TermsPage from './pages/TermsPage.js';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import MoleculeFeedbackBox from './components/MoleculeFeedbackBox';
+import Navbar from './components/Navbar.js';
+import PasswordReset from './components/PasswordReset.js';
+import Slider from './components/Slider.js';
+import UMAPClusterPlot from './components/UMAPClusterPlot.js';
 import AboutPage from './pages/AboutPage.js';
+import AuthPage from './pages/AuthPage.js';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
+import PricingPage from './pages/PricingPage.js';
 import RedeemPage from './pages/RedeemPage.js';
+import TermsPage from './pages/TermsPage.js';
+import SearchInput from './Search';
+
+import API_URL from './Constants.js'; // Contains API URL and any other constants
 import { authFetch, redirectToLogin } from './utils.js';
+
+import './App.css';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
-// Create a Plotly Component using the plotly.js factory
-const Plot = createPlotlyComponent(Plotly);
 
-// Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, onNavigation }) => {
-  // Use the logo from the public folder
-  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
-  return (
-    <nav className="navbar">
-      <div className="navbar-title">
-        <img src={logo} alt="SES AI Logo" className="navbar-logo" />
-      </div>
-      <div className="navbar-links">
-        <a href="https://www.ses.ai/" className="navbar-link">Products</a>
-        <a href="https://www.ses.ai/bw" target="_blank" rel="noopener noreferrer" className="navbar-link">Technology</a>
-        <a href="https://www.ses.ai/about" target="_blank" rel="noopener noreferrer" className="navbar-link">Company</a>
-        <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
-        <a
-          href="/"
-          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise' || activePage === 'favorites') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
-        >
-          Molecular Universe
-        </a>
-      </div>
-      {isAuthenticated ? (
-        <div className="navbar-user">
-          <span className="username">{username}</span>
-          <div className="settings-dropdown">
-            <button className="reset-password-button">Settings</button>
-            <div className="settings-dropdown-content">
-              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Change Password</a>
-              <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
-            </div>
-          </div>
-          <button className="logout-button" onClick={onLogout}>Logout</button>
-        </div>
-      ) : (
-        <div className="navbar-user">
-          <button className="signin-button" onClick={onSignIn}>Sign In</button>
-        </div>
-      )}
-    </nav>
-  );
-};
+// Popup component to display node data
+// const NodePopup = ({ node, onClose, filterLabels }) => {
+//   if (!node) return null;
 
-// Material UI Slider component
+//   return (
+//     <div className="popup-overlay" onClick={onClose}>
+//       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
+//         <button className="close-button white-text" onClick={onClose}>×</button>
+//         <h2 className="white-text">Node Details</h2>
+//         <div className="popup-data">
+//           <h3 className="white-text">SMILES</h3>
+//           <p className="dark-field">{node.smiles}</p>
 
-const Slider = ({ property, value, min, max, onChange, label, active }) => {
-  const handleChange = (event, newValue) => {
-    // This updates temporary state during dragging, not applying the filter yet
-    onChange(property, newValue, false);
-  };
+//           <h3 className="white-text">UMAP Coordinates</h3>
+//           <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
 
-  const handleChangeCommitted = (event, newValue) => {
-    // This applies the filter after dragging is complete
-    onChange(property, newValue, true);
-  };
+//           <h3 className="white-text">Properties</h3>
+//           <table className="property-table dark-table">
+//             <tbody>
+//               {Object.entries(node.properties || {}).map(([key, value]) => (
+//                 <tr key={key}>
+//                   <td className="property-name white-text">{filterLabels[key] || key}</td>
+//                   <td className="property-value white-text">
+//                     {value !== null && value !== undefined 
+//                       ? typeof value === 'number' 
+//                         ? value.toFixed(6) 
+//                         : value.toString()
+//                       : 'N/A'}
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
 
-  const formatValue = (value) => {
-    if (typeof value === 'number') {
-      return value.toFixed(2);
-    }
-    return value;
-  };
-
-  return (
-    <div className={`slider-container ${active ? 'active-filter' : 'inactive-filter'}`}>
-      <div className="slider-header">
-        <span className="slider-label">
-          {label}
-          {label === "HOMO (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "LUMO (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "Max ESP (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-          {label === "Min ESP (eV)" && (
-            <span
-              className="search-tooltip-marker"
-              title={`ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.`}
-              style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
-            >
-              ?
-            </span>
-          )}
-        </span>
-        <span className="slider-value">
-          {active
-            ? `${formatValue(value[0])} - ${formatValue(value[1])}`
-            : "Off"}
-        </span>
-      </div>
-      <Box sx={{ width: '100%', padding: '5px 0' }}>
-        <MuiSlider
-          size="small"
-          value={value}
-          min={min}
-          max={max}
-          step={(max - min) / 100}
-          onChange={handleChange}
-          onChangeCommitted={handleChangeCommitted}
-          valueLabelDisplay="auto"
-          disableSwap
-          sx={{
-            color: '#0080ff',
-            '& .MuiSlider-thumb': {
-              backgroundColor: active ? '#0080ff' : '#a0a0a0',
-            },
-            '& .MuiSlider-track': {
-              backgroundColor: active ? '#0080ff' : '#a0a0a0',
-            },
-            '& .MuiSlider-rail': {
-              backgroundColor: '#e0e0e0',
-            }
-          }}
-        />
-      </Box>
-    </div>
-  );
-};
-
-// Password Reset component
-const PasswordReset = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  // Use logo from public folder
-  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
-
-  // Add useEffect to redirect after successful password reset
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/map');
-        window.location.reload();
-      }, 5000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    // Validate passwords
-    if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append('current_password', currentPassword);
-      formData.append('new_password', newPassword);
-
-      const response = await authFetch(`${API_URL}/reset-password`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let errorMsg = 'Password reset failed';
-        try {
-          const dataErr = await response.clone().json();
-          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
-        } catch {
-          try {
-            const textErr = await response.text();
-            if (textErr) errorMsg = textErr;
-          } catch { /* ignore */ }
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-      setSuccess(data.message || 'Password reset successfully');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-
-    } catch (err) {
-      console.error('Password reset error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
-      <div className="auth-card">
-        <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>Reset Password</h2>
-          <p>Please enter your current password and a new password</p>
-        </div>
-
-        {error && <div className="auth-error">{error}</div>}
-        {success && <div className="auth-success">{success}</div>}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Current password"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New password"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm New Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Resetting...' : 'Reset Password'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
+//           <h3 className="white-text">All Data</h3>
+//           <pre className="raw-data dark-field">
+//             {JSON.stringify(node.rawData, null, 2)}
+//           </pre>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
@@ -459,169 +221,6 @@ const App = () => {
 
   // Add new state for highlighted molecule
   const [highlightedMolecules, setHighlightedMolecules] = useState(null);
-  const [arrowOffset, setArrowOffset] = useState(-40);
-
-  // Track Plotly initialization state
-  const [searchPlotInitialized, setSearchPlotInitialized] = useState(false);
-  const [mainPlotInitialized, setMainPlotInitialized] = useState(false);
-
-  // Ref for plots to check if they're initialized
-  const plotlyRef = useRef(null);
-  const searchPlotlyRef = useRef(null);
-
-  // Add bouncing arrow animation when molecule is highlighted
-  // useEffect(() => {
-  //   if (!highlightedMolecules || !searchPlotInitialized) return;
-
-  //   let direction = -1; // Start moving up
-  //   let current = -40;
-  //   const min = -60;
-  //   const max = -30;
-
-  //   const interval = setInterval(() => {
-  //     current += direction * 2;
-
-  //     if (current <= min) {
-  //       direction = 1; // Change to moving down
-  //     } else if (current >= max) {
-  //       direction = -1; // Change to moving up
-  //     }
-
-  //     setArrowOffset(current);
-  //   }, 50);
-
-  //   return () => clearInterval(interval);
-  // }, [highlightedMolecules, searchPlotInitialized]);
-
-  const plotlyLayout = {
-    autosize: true,
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-    font: {
-      family: 'Arial, sans-serif',
-      size: 12,
-      color: '#333'
-    },
-    xaxis: { showgrid: false, zeroline: false, visible: false },
-    yaxis: { showgrid: false, zeroline: false, visible: false },
-    showlegend: false,
-    hovermode: 'closest',
-    hoverlabel: {
-      bgcolor: '#000',
-      bordercolor: '#333',
-      font: {
-        family: 'Arial, sans-serif',
-        size: 12,
-        color: '#fff'
-      }
-    }
-  };
-
-  // Create search mode layout with annotations when needed
-  const searchLayout = useMemo(() => {
-    const layout = {
-      ...plotlyLayout,
-      autosize: true,
-      height: null,
-      width: null
-    };
-
-    let annotations = [];
-
-
-    // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
-    if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-      annotations = annotations.concat(
-        highlightedSimilarMolecules
-          .filter(molecule =>
-            molecule.UMAP_0 !== null &&
-            molecule.UMAP_0 !== undefined &&
-            molecule.UMAP_1 !== null &&
-            molecule.UMAP_1 !== undefined
-          )
-          .map((molecule, idx) => ({
-            x: molecule.UMAP_0,
-            y: molecule.UMAP_1,
-            xref: 'x',
-            yref: 'y',
-            text: `#${idx + 1}`,
-            showarrow: true,
-            arrowhead: 2,
-            arrowsize: 1.5,
-            arrowwidth: 2,
-            arrowcolor: '#FFD700',
-            ax: 0,
-            ay: arrowOffset,
-            bgcolor: 'rgba(255, 255, 0, 0.8)',
-            bordercolor: '#FFD700',
-            borderwidth: 2,
-            borderpad: 4,
-            font: {
-              color: 'black',
-              size: 12
-            }
-          }))
-      );
-    }
-
-    // Add annotations for standard highlighted molecules (using x & y)
-    if (highlightedMolecules && highlightedMolecules.length > 0) {
-      annotations = annotations.concat(
-        highlightedMolecules.map((molecule, idx) => ({
-          x: molecule.x,
-          y: molecule.y,
-          xref: 'x',
-          yref: 'y',
-          text: `#${idx + 1}`,
-          showarrow: true,
-          arrowhead: 2,
-          arrowsize: 1.5,
-          arrowwidth: 2,
-          arrowcolor: '#FF5722',
-          ax: 0,
-          ay: arrowOffset,
-          bgcolor: 'rgba(255, 87, 34, 0.8)',
-          bordercolor: '#FF5722',
-          borderwidth: 2,
-          borderpad: 4,
-          font: {
-            color: 'white',
-            size: 12
-          }
-        }))
-      );
-    }
-
-
-    if (annotations.length > 0) {
-      layout.annotations = annotations;
-    } else if (searchResults) {
-      // Remove default annotation since we don't want to show anything for molecules with null coordinates
-      layout.annotations = [];
-    }
-    return layout;
-  }, [plotlyLayout, highlightedMolecules, highlightedSimilarMolecules, searchResults, arrowOffset]);
-
-  const plotlyConfig = {
-    displayModeBar: true,
-    responsive: true,
-    scrollZoom: true,
-    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
-  };
-
-  // We've removed the dropdown functionality, so we don't need this effect anymore
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setShowDropdown(false);
-  //     }
-  //   };
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, []);
 
   // Update handleSearch function
   const handleSearchedMolecules = async (response, select_first = false) => {
@@ -1252,187 +851,6 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Define a color mapping for clusters (23 distinct colors)
-  const clusterColorMap = {
-    1: '#1f77b4', // blue
-    2: '#ff7f0e', // orange
-    3: '#2ca02c', // green
-    4: '#d62728', // red
-    5: '#9467bd', // purple
-    6: '#8c564b', // brown
-    7: '#e377c2', // pink
-    8: '#7f7f7f', // gray
-    9: '#bcbd22', // olive
-    10: '#17becf', // cyan
-    11: '#aec7e8', // light blue
-    12: '#ffbb78', // light orange
-    13: '#98df8a', // light green
-    14: '#ff9896', // light red
-    15: '#c5b0d5', // light purple
-    16: '#c49c94', // light brown
-    17: '#f7b6d2', // light pink
-    18: '#c7c7c7', // light gray
-    19: '#dbdb8d', // light olive
-    20: '#9edae5', // light cyan
-    21: '#393b79', // dark blue
-    22: '#637939', // dark green
-    23: '#8c6d31'  // dark orange
-  };
-
-  // Default color for clusters not in the map
-  const defaultColor = '#000000'; // black
-
-  const textData = useMemo(() => filteredGraphData.map(node =>
-      `<b>Molecule Information:</b><br>` +
-      `SMILES: ${node.smiles}<br>` +
-      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
-      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
-      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
-    ), [filteredGraphData, userPermissions]);
-  
-  const xData = useMemo(() => filteredGraphData.map(node => node.x), [filteredGraphData]);
-  const yData = useMemo(() => filteredGraphData.map(node => node.y), [filteredGraphData]);
-
-  // Create search mode plotly data
-  const searchPlotlyData = useMemo(() => [{
-    x: xData,
-    y: yData,
-    mode: 'markers',
-    type: 'scattergl',
-    marker: {
-      size: 5,
-      color: filteredGraphData.map(node => {
-        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
-          return '#ff0000'; // Red color for highlighted molecule
-        }
-        // Color by cluster
-        const clusterValue = node.properties?.CLUSTER;
-        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
-      }),
-      opacity: filteredGraphData.map(node => {
-        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
-          return 1; // Full opacity for highlighted molecule
-        }
-        return 0.7; // Default opacity
-      })
-    },
-    hoverinfo: 'text',
-    text: textData
-  }], [clusterColorMap, filteredGraphData, highlightedMolecules, textData, xData, yData]);
-
-  // Add red dots at coordinates where arrows point to for highlighted molecules
-  if (highlightedMolecules && highlightedMolecules.length > 0) {
-    searchPlotlyData.push({
-      x: highlightedMolecules.map(molecule => molecule.x),
-      y: highlightedMolecules.map(molecule => molecule.y),
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        size: 8,
-        color: '#FF0000',
-        symbol: 'circle'
-      },
-      hoverinfo: 'none',
-      showlegend: false
-    });
-  }
-
-  // Add red dots for similar molecules (find friends)
-  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-    const validMolecules = highlightedSimilarMolecules.filter(
-      molecule =>
-        molecule.UMAP_0 !== null &&
-        molecule.UMAP_0 !== undefined &&
-        molecule.UMAP_1 !== null &&
-        molecule.UMAP_1 !== undefined
-    );
-
-    if (validMolecules.length > 0) {
-      searchPlotlyData.push({
-        x: validMolecules.map(molecule => molecule.UMAP_0),
-        y: validMolecules.map(molecule => molecule.UMAP_1),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: 8,
-          color: '#FF0000',
-          symbol: 'circle'
-        },
-        hoverinfo: 'none',
-        showlegend: false
-      });
-    }
-  }
-
-  // Create plotly data for explorer view
-  const plotlyData = useMemo(() => [{
-    x: xData,
-    y: yData,
-    mode: 'markers',
-    type: 'scattergl',
-    marker: {
-      size: 5,
-      color: filteredGraphData.map(node => {
-        // Color by cluster
-        const clusterValue = node.properties?.CLUSTER;
-        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
-      }),
-      opacity: 0.7
-    },
-    hoverinfo: 'text',
-    text: textData,
-  }], [clusterColorMap, filteredGraphData, textData, xData, yData]);
-
-  // Add red dots at coordinates where arrows point to for highlighted molecules in explorer view
-  if (highlightedMolecules && highlightedMolecules.length > 0) {
-    plotlyData.push({
-      x: highlightedMolecules.map(molecule => molecule.x),
-      y: highlightedMolecules.map(molecule => molecule.y),
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        size: 8,
-        color: '#FF0000',
-        symbol: 'circle'
-      },
-      hoverinfo: 'none',
-      showlegend: false
-    });
-  }
-
-  // Add red dots for similar molecules (find friends) in explorer view
-  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-    const validMolecules = highlightedSimilarMolecules.filter(
-      molecule =>
-        molecule.UMAP_0 !== null &&
-        molecule.UMAP_0 !== undefined &&
-        molecule.UMAP_1 !== null &&
-        molecule.UMAP_1 !== undefined
-    );
-
-    if (validMolecules.length > 0) {
-      plotlyData.push({
-        x: validMolecules.map(molecule => molecule.UMAP_0),
-        y: validMolecules.map(molecule => molecule.UMAP_1),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: 8,
-          color: '#FF0000',
-          symbol: 'circle'
-        },
-        hoverinfo: 'none',
-        showlegend: false
-      });
-    }
-  }
 
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
@@ -1805,19 +1223,12 @@ const App = () => {
                 <div className="search-umap-section">
                   <div className="graph-container search-graph">
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={plotlyData}
-                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                      <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        onInitialized={(figure) => {
-                          plotlyRef.current = figure;
-                          setMainPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          plotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -2115,19 +1526,12 @@ const App = () => {
                 <div className="search-umap-section">
                   <div className="graph-container search-graph">
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={plotlyData}
-                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                      <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        onInitialized={(figure) => {
-                          plotlyRef.current = figure;
-                          setMainPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          plotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -2708,20 +2112,12 @@ const App = () => {
                 <div className="graph-container search-graph">
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={searchPlotlyData}
-                        layout={searchPlotInitialized ? searchLayout : { ...plotlyLayout, autosize: true, height: null, width: null }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                       <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        useResizeHandler={true}
-                        onInitialized={(figure) => {
-                          searchPlotlyRef.current = figure;
-                          setSearchPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          searchPlotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -3074,11 +2470,17 @@ const App = () => {
                                         </td>
                                       </tr>
                                     )}
-                                    <MoleculeFeedbackBox 
-                                      molecule={molecule} 
-                                      lastSearch={lastSearch} 
-                                      onClose={() => {}} 
-                                    />
+                                    <tr>
+                                      <td style={{
+                                        width: '100%'
+                                      }}>
+                                        <MoleculeFeedbackBox 
+                                          molecule={molecule} 
+                                          lastSearch={lastSearch} 
+                                          onClose={() => {}} 
+                                        />
+                                      </td>
+                                    </tr>
                                   </tbody>
                                 </table>
                                 {/* Add thumbs up/down buttons here */}
