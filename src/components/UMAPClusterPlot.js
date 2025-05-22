@@ -145,7 +145,7 @@ const UMAPClusterPlot = ({
     highlightedSimilarData = [],
     userPermissions,
     onInitialized,
-    onPointClick,
+    onClick,
 }) => {
 
     /**
@@ -242,12 +242,20 @@ const UMAPClusterPlot = ({
         return plotData.concat(highlightGraphData, highlightSimilarGraphData)
     }, [plotData, highlightGraphData, highlightSimilarGraphData])
 
+    // Handle point click
+    const handlePointClick = (plotlyData) => {
+        if (!onClick || !plotlyData || !plotlyData.points || plotlyData.points.length === 0) return;
+        
+        // Call the onClick handler with the plotly data in the expected format
+        onClick(plotlyData);
+    };
+
     return <Plot
         data={graphData}
         layout={layout}
         config={PLOTLY_CONFIG_DEFAULTS}
         style={{ width: '100%', height: '100%' }}
-        onClick={onPointClick}
+        onClick={handlePointClick}
         useResizeHandler={true}
         onInitialized={(figure) => {
             if (onInitialized) onInitialized();
