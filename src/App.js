@@ -63,50 +63,6 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
   );
 };
 
-// Popup component to display node data
-// const NodePopup = ({ node, onClose, filterLabels }) => {
-//   if (!node) return null;
-
-//   return (
-//     <div className="popup-overlay" onClick={onClose}>
-//       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
-//         <button className="close-button white-text" onClick={onClose}>×</button>
-//         <h2 className="white-text">Node Details</h2>
-//         <div className="popup-data">
-//           <h3 className="white-text">SMILES</h3>
-//           <p className="dark-field">{node.smiles}</p>
-
-//           <h3 className="white-text">UMAP Coordinates</h3>
-//           <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
-
-//           <h3 className="white-text">Properties</h3>
-//           <table className="property-table dark-table">
-//             <tbody>
-//               {Object.entries(node.properties || {}).map(([key, value]) => (
-//                 <tr key={key}>
-//                   <td className="property-name white-text">{filterLabels[key] || key}</td>
-//                   <td className="property-value white-text">
-//                     {value !== null && value !== undefined 
-//                       ? typeof value === 'number' 
-//                         ? value.toFixed(6) 
-//                         : value.toString()
-//                       : 'N/A'}
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-
-//           <h3 className="white-text">All Data</h3>
-//           <pre className="raw-data dark-field">
-//             {JSON.stringify(node.rawData, null, 2)}
-//           </pre>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
 // Material UI Slider component
 
 const Slider = ({ property, value, min, max, onChange, label, active }) => {
@@ -1151,9 +1107,6 @@ const App = () => {
               lumo_eV: row.LUMO_EV,
               esp_min_eV: row.ESP_MIN_EV,
               esp_max_eV: row.ESP_MAX_EV,
-              dipole_x: row.DIPOLE_X,
-              dipole_y: row.DIPOLE_Y,
-              dipole_z: row.DIPOLE_Z,
               functional_groups: row.FUNCTIONAL_GROUPS,
               predicted_mp: row.PREDICTED_MP,
               predicted_bp: row.PREDICTED_BP,
@@ -1615,6 +1568,64 @@ const App = () => {
         }));
       }, 3000);
     }
+  };
+
+  // NodePopup component for displaying molecule information
+  const NodePopup = ({ node, onClose, filterLabels }) => {
+    if (!node) return null;
+
+    const copyToClipboard = () => {
+      const nodeData = JSON.stringify(node.rawData, null, 2);
+      navigator.clipboard.writeText(nodeData)
+        .then(() => {
+          alert('Molecule information copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy molecule data: ', err);
+        });
+    };
+
+    return (
+      <div className="popup-overlay" onClick={onClose}>
+        <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
+          <button className="close-button white-text" onClick={onClose}>×</button>
+          <h2 className="white-text">Molecule Details</h2>
+          <div className="popup-data">
+            <h3 className="white-text">SMILES</h3>
+            <p className="dark-field">{node.smiles}</p>
+
+            <h3 className="white-text">UMAP Coordinates</h3>
+            <p className="dark-field">X: {node.x.toFixed(2)}, Y: {node.y.toFixed(2)}</p>
+
+            <h3 className="white-text">Properties</h3>
+            <table className="property-table dark-table">
+              <tbody>
+                {Object.entries(node.properties || {}).map(([key, value]) => (
+                  <tr key={key}>
+                    <td className="property-name white-text">{filterLabels[key] || key}</td>
+                    <td className="property-value white-text">
+                      {value !== null && value !== undefined 
+                        ? typeof value === 'number' 
+                          ? value.toFixed(2) 
+                          : value.toString()
+                        : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <button 
+                className="copy-button" 
+                onClick={copyToClipboard}
+              >
+                Copy All Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -2795,7 +2806,7 @@ const App = () => {
                                     <td className="property-value">{molecule.properties?.molwt ? molecule.properties.molwt.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
-                                    <td className="property-name">HOMO (eV)</td>
+                                    <td className="property-name"></td>
                                     <td className="property-value">{molecule.properties?.homo_eV ? molecule.properties.homo_eV.toFixed(2) : 'N/A'}</td>
                                   </tr>
                                   <tr>
@@ -3107,7 +3118,7 @@ const App = () => {
       </div>
 
       {/* Node popup */}
-      {/* {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />} */}
+      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
     </div>
   );
 };
