@@ -53,7 +53,6 @@ export const navigate = (path) => {
 // ---------------------------------------------------------------------------
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
 export const redirectToLogin = () => {
-  console.log("Redirecting to login page...");
   // Already on an auth route?   → do **nothing** to avoid redirect loops.
   if (/^\/(login|password-reset)/.test(window.location.pathname)) return;
 

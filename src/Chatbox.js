@@ -646,7 +646,6 @@ const handleFindSimilarMolecules = async (details) => {
 
                         navigator.clipboard.write([clipboardItem])
                           .then(() => {
-                            console.log('Copied to clipboard with both HTML and plain text');
                             // Optionally update the button to indicate success.
                           })
                           .catch(err => console.error('Failed to copy:', err));
