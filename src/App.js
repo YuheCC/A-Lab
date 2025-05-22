@@ -16,6 +16,8 @@ import API_URL from './Constants.js'; // Contains API URL and any other constant
 import { authFetch, redirectToLogin } from './utils.js';
 
 import './App.css';
+import Header from './components/Header.js';
+import Sidebar from './components/Sidebar.js';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
@@ -93,7 +95,7 @@ const App = () => {
   // const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
   // const [feedbackText, setFeedbackText] = useState('');
   // const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
-  
+
   // Add state for favorites functionality - using molecule-specific tracking
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
 
@@ -577,11 +579,11 @@ const App = () => {
     if (userPermissions === 'enterprise') {
       return true;
     }
-    
+
     if (userPermissions === 'joint') {
       return true;
     }
-    
+
 
     // Default to no access
     return false;
@@ -817,7 +819,7 @@ const App = () => {
         active: false
       }
     }));
-    
+
     // Also clear any temporary values for this property
     setTempFilterRanges(prev => {
       const newTempRanges = { ...prev };
@@ -839,7 +841,7 @@ const App = () => {
       }
       return newRanges;
     });
-    
+
     // Clear all temporary filter values
     setTempFilterRanges({});
   };
@@ -920,13 +922,13 @@ const App = () => {
   const handleAddToFavorites = async (molecule) => {
     // Use SMILES as unique identifier for the molecule
     const smiles = molecule.smiles;
-    
+
     // Update state for just this specific molecule
     setMoleculeFavoriteStatus(prev => ({
       ...prev,
       [smiles]: { loading: true, success: null, error: null }
     }));
-    
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -962,13 +964,13 @@ const App = () => {
       }
 
       const data = await response.json();
-      
+
       // Set success for this specific molecule
       setMoleculeFavoriteStatus(prev => ({
         ...prev,
         [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
       }));
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setMoleculeFavoriteStatus(prev => ({
@@ -976,16 +978,16 @@ const App = () => {
           [smiles]: { ...prev[smiles], success: null }
         }));
       }, 3000);
-      
+
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      
+
       // Set error for this specific molecule
       setMoleculeFavoriteStatus(prev => ({
         ...prev,
         [smiles]: { loading: false, success: null, error: error.message || 'Failed to add to favorites' }
       }));
-      
+
       // Hide error message after 3 seconds
       setTimeout(() => {
         setMoleculeFavoriteStatus(prev => ({
@@ -1030,11 +1032,11 @@ const App = () => {
                   <tr key={key}>
                     <td className="property-name white-text">{filterLabels[key] || key}</td>
                     <td className="property-value white-text">
-                      {value !== null && value !== undefined 
-                        ? typeof value === 'number' 
-                          ? key === 'CLUSTER' 
-                            ? Math.round(value) 
-                            : value.toFixed(2) 
+                      {value !== null && value !== undefined
+                        ? typeof value === 'number'
+                          ? key === 'CLUSTER'
+                            ? Math.round(value)
+                            : value.toFixed(2)
                           : value.toString()
                         : 'N/A'}
                     </td>
@@ -1043,15 +1045,15 @@ const App = () => {
               </tbody>
             </table>
             <div style={{ marginTop: '20px', textAlign: 'center' }}>
-              <button 
-                className="copy-button" 
+              <button
+                className="copy-button"
                 onClick={copyToClipboard}
               >
                 Copy All Data
               </button>
               <div style={{ marginTop: '10px' }}></div>
-              <button 
-                className="favorites-button" 
+              <button
+                className="favorites-button"
                 onClick={() => handleAddToFavorites(node)}
                 style={{
                   backgroundColor: '#0080ff',
@@ -1097,552 +1099,278 @@ const App = () => {
         onNavigation={handleNavigation}
       />
 
-      <header className="App-header">
-        <div className="header-content">
-          <div className="header-links">
-            <a
-              href="/map"
-              className={`header-link ${activePage === 'map' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('map'); }}
-            >
-              Map
-            </a>
-            <a
-              href="/ask"
-              className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
-            >
-              Ask
-            </a>
-            <a
-              href="/search"
-              className={`header-link ${activePage === 'search' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
-            >
-              Search
-            </a>
-            <a
-              href="/filter"
-              className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
-            >
-              Filter
-            </a>
-            <a
-              href="/favorites"
-              className={`header-link ${activePage === 'favorites' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); handleNavigation('favorites'); }}
-            >
-              Favorites
-            </a>
-          </div>
-        </div>
-        <div className="stats-container">
-          {activePage === 'explorer' && (
-            <>
-              {/* <div>Showing: {filteredGraphData.length} of {graphData.length} nodes</div> */}
-              {/* <div>Filters: {activeFilterCount} active</div> */}
-              {/* {loading && <div>Loading...</div>} */}
-            </>
-          )}
-        </div>
-      </header>
+      <Header
+        activePage={activePage}
+        handleNavigation={handleNavigation}></Header>
 
       <div className="main-container">
         {activePage === 'permissions-error' ? (
           <PermissionsError />
         ) : activePage === 'explorer' ? (
-          <>
-            <div className="explorer-container" style={{ display: 'flex', height: '100%', paddingLeft: '0', paddingTop: '20px' }}>
-              <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-                <h1
-                  style={{
-                    textDecoration: 'none',
-                    color: 'rgb(51, 51, 51)',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s',
-                    cursor: 'pointer',
-                    marginBottom: '12px',
-                    fontWeight: 'normal'
-                  }}
-                  onClick={() => {
-                    if (activePage === 'about') {
-                      // Already on the about page, just scroll to the top
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    } else {
-                      // Navigate to about page first, then scroll
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const contentWrapper = document.querySelector('.about-content-wrapper');
-                        if (contentWrapper) {
-                          contentWrapper.scrollTop = 0;
-                        }
-                      }, 100);
-                    }
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                >
-                  Motivation
-                </h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <a
-                    href="#features"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const featuresSection = document.getElementById('features-section');
-                        if (featuresSection) {
-                          featuresSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#pricing"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('pricing');
-                    }}
-                  >
-                    Pricing
-                  </a>
-                  <a
-                    href="#news"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const newsfeedSection = document.getElementById('newsfeed');
-                        if (newsfeedSection) {
-                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    News Feed
-                  </a>
+          <Sidebar handleNavigation={handleNavigation} activePage={activePage}>
+            <div className="search-umap-container">
+              <div className="search-umap-section">
+                <div className="graph-container search-graph">
+                  {filteredGraphData.length > 0 ? (
+                    <UMAPClusterPlot
+                      data={filteredGraphData}
+                      highlightedData={highlightedMolecules}
+                      highlightedSimilarData={highlightedSimilarMolecules}
+                      userPermissions={userPermissions}
+                      onClick={handlePointClick}
+                    />
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="search-umap-container">
-                <div className="search-umap-section">
-                  <div className="graph-container search-graph">
-                    {filteredGraphData.length > 0 ? (
-                      <UMAPClusterPlot
-                        data={filteredGraphData}
-                        highlightedData={highlightedMolecules}
-                        highlightedSimilarData={highlightedSimilarMolecules}
-                        userPermissions={userPermissions}
-                        onClick={handlePointClick}
-                      />
-                    ) : (
-                      <div className="loading-message">
-                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
-                      </div>
-                    )}
-                  </div>
-                </div>
 
-                <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '20px' }}>
-                  <h2>
-                    Filters
-                    {activeFilterCount > 0 && (
-                      <button
-                        className="reset-button"
-                        onClick={resetAllFilters}
-                        title="Reset all filters"
+              <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
+                <h2>
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <button
+                      className="reset-button"
+                      onClick={resetAllFilters}
+                      title="Reset all filters"
+                    >
+                      Reset All
+                    </button>
+                  )}
+                </h2>
+                <div className="sliders-container">
+                  {Object.entries(filterRanges).map(([property, range]) => {
+                    // Hide predicted_mp and predicted_bp sliders for users without proper permissions
+                    if ((property === 'predicted_mp' || property === 'predicted_bp') &&
+                      !(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise')) {
+                      return null;
+                    }
+
+                    // Use temporary range value if available during dragging
+                    const displayValue = tempFilterRanges[property] || range.range;
+
+                    return (
+                      <div key={property} className="filter-wrapper">
+                        <Slider
+                          property={property}
+                          value={displayValue}
+                          min={range.min}
+                          max={range.max}
+                          onChange={handleFilterChange}
+                          label={filterLabels[property]}
+                          active={range.active}
+                        />
+                        {range.active && (
+                          <button
+                            className="reset-filter-button"
+                            onClick={() => resetFilter(property)}
+                            title="Reset this filter"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <div className="functional-group-filter">
+                    <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
+                      Functional Group Filter
+                      <span
+                        className="search-tooltip-marker"
+                        title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
+                        style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
                       >
-                        Reset All
+                        ?
+                      </span>
+                    </h3>
+                    <div className="functional-group-input-container">
+                      <select
+                        className="functional-group-select"
+                        value={selectedFunctionalGroup}
+                        onChange={(e) => {
+                          setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
+                        }}
+                      >
+                        <option value="">Select a functional group</option>
+                        <option value="C(=O)Cl">AcidChloride</option>
+                        <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
+                        <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
+                        <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
+                        <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
+                        <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
+                        <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
+                        <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
+                        <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
+                        <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
+                        <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
+                        <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
+                        <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
+                        <option value="[CX3H](=[OX1])">Aldehyde</option>
+                        <option value="[CX3]=[CX3]">Alkene</option>
+                        <option value="[CX2]#[CX2]">Alkyne</option>
+                        <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
+                        <option value="[NX3][CX3](=O)[#6]">Amide</option>
+                        <option value="[#6][NX2]=[#6][N]">Amidine</option>
+                        <option value="[NX4]">Ammonium</option>
+                        <option value="c1ccccc1">Arene</option>
+                        <option value="[#6][N]=[N][#6]">Azo</option>
+                        <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
+                        <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
+                        <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
+                        <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
+                        <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
+                        <option value="[#6][SX2][SX2][#6]">Disulfide</option>
+                        <option value="[CX3][NX3]=[CX3]">Enamine</option>
+                        <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
+                        <option value="[OD2]([#6])[#6]">Ether</option>
+                        <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
+                        <option value="[F][CX4]">FluoroAlkyl_SP3</option>
+                        <option value="[F][CX3]">FluoroAlkyl_SP2</option>
+                        <option value="[F][CX2]">FluoroAlkyl_SP</option>
+                        <option value="[F][CX4][OX2]">FluoroEther</option>
+                        <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
+                        <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
+                        <option value="[NX3][NX3]">Hydrazine</option>
+                        <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
+                        <option value="[C][Cl,Br,I,F]">Halide</option>
+                        <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
+                        <option value="[CX2]=[NX3]">Imine</option>
+                        <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
+                        <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
+                        <option value="[#6]([O][#6])([O][#6])">Ketal</option>
+                        <option value="[CX2]#[NX1]">Nitrile</option>
+                        <option value="[OX2][OX2]">Peroxide</option>
+                        <option value="c1ccccc1[OH]">Phenol</option>
+                        <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
+                        <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
+                        <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
+                        <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
+                        <option value="[Se][#6]">Selenide</option>
+                        <option value="[SeH]">Selenol</option>
+                        <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
+                        <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
+                        <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
+                        <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
+                        <option value="[SX2H]">Thiol</option>
+                        <option value="[#6](=[SX])[H]">Thial</option>
+                        <option value="[#6](=[SX])[NX3]">Thioamide</option>
+                        <option value="[#6](=[SX])[#6]">Thioketone</option>
+                        <option value="[CX2]=[SX1]">Thione</option>
+                        <option value="[SX2]([#6])[#6]">Thioether</option>
+                        <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
+                        <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
+                        <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
+                        <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
+                        <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
+                        <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
+                        <option value="c1ccccc1">Arene (aromatic)</option>
+                      </select>
+                      <button
+                        className="reset-filter-button functional-group-reset"
+                        onClick={() => {
+                          setSelectedFunctionalGroup('');
+                          const dropdown = document.querySelector('.functional-group-select');
+                          if (dropdown) dropdown.selectedIndex = 0;
+                        }}
+                      >
+                        Reset
                       </button>
-                    )}
-                  </h2>
-                  <div className="sliders-container">
-                    {Object.entries(filterRanges).map(([property, range]) => {
-                      // Hide predicted_mp and predicted_bp sliders for users without proper permissions
-                      if ((property === 'predicted_mp' || property === 'predicted_bp') &&
-                        !(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise')) {
-                        return null;
-                      }
-
-                      // Use temporary range value if available during dragging
-                      const displayValue = tempFilterRanges[property] || range.range;
-
-                      return (
-                        <div key={property} className="filter-wrapper">
-                          <Slider
-                            property={property}
-                            value={displayValue}
-                            min={range.min}
-                            max={range.max}
-                            onChange={handleFilterChange}
-                            label={filterLabels[property]}
-                            active={range.active}
-                          />
-                          {range.active && (
-                            <button
-                              className="reset-filter-button"
-                              onClick={() => resetFilter(property)}
-                              title="Reset this filter"
-                            >
-                              ×
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                    <div className="functional-group-filter">
-                      <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
-                        Functional Group Filter
-                        <span
-                          className="search-tooltip-marker"
-                          title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
-                          style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
-                        >
-                          ?
-                        </span>
-                      </h3>
-                      <div className="functional-group-input-container">
-                        <select
-                          className="functional-group-select"
-                          value={selectedFunctionalGroup}
-                          onChange={(e) => {
-                            setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
-                          }}
-                        >
-                          <option value="">Select a functional group</option>
-                          <option value="C(=O)Cl">AcidChloride</option>
-                          <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
-                          <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
-                          <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
-                          <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
-                          <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
-                          <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
-                          <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
-                          <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
-                          <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
-                          <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
-                          <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
-                          <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
-                          <option value="[CX3H](=[OX1])">Aldehyde</option>
-                          <option value="[CX3]=[CX3]">Alkene</option>
-                          <option value="[CX2]#[CX2]">Alkyne</option>
-                          <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
-                          <option value="[NX3][CX3](=O)[#6]">Amide</option>
-                          <option value="[#6][NX2]=[#6][N]">Amidine</option>
-                          <option value="[NX4]">Ammonium</option>
-                          <option value="c1ccccc1">Arene</option>
-                          <option value="[#6][N]=[N][#6]">Azo</option>
-                          <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
-                          <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
-                          <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
-                          <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
-                          <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
-                          <option value="[#6][SX2][SX2][#6]">Disulfide</option>
-                          <option value="[CX3][NX3]=[CX3]">Enamine</option>
-                          <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
-                          <option value="[OD2]([#6])[#6]">Ether</option>
-                          <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
-                          <option value="[F][CX4]">FluoroAlkyl_SP3</option>
-                          <option value="[F][CX3]">FluoroAlkyl_SP2</option>
-                          <option value="[F][CX2]">FluoroAlkyl_SP</option>
-                          <option value="[F][CX4][OX2]">FluoroEther</option>
-                          <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
-                          <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
-                          <option value="[NX3][NX3]">Hydrazine</option>
-                          <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
-                          <option value="[C][Cl,Br,I,F]">Halide</option>
-                          <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
-                          <option value="[CX2]=[NX3]">Imine</option>
-                          <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
-                          <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
-                          <option value="[#6]([O][#6])([O][#6])">Ketal</option>
-                          <option value="[CX2]#[NX1]">Nitrile</option>
-                          <option value="[OX2][OX2]">Peroxide</option>
-                          <option value="c1ccccc1[OH]">Phenol</option>
-                          <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
-                          <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
-                          <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
-                          <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
-                          <option value="[Se][#6]">Selenide</option>
-                          <option value="[SeH]">Selenol</option>
-                          <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
-                          <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
-                          <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
-                          <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
-                          <option value="[SX2H]">Thiol</option>
-                          <option value="[#6](=[SX])[H]">Thial</option>
-                          <option value="[#6](=[SX])[NX3]">Thioamide</option>
-                          <option value="[#6](=[SX])[#6]">Thioketone</option>
-                          <option value="[CX2]=[SX1]">Thione</option>
-                          <option value="[SX2]([#6])[#6]">Thioether</option>
-                          <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
-                          <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
-                          <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
-                          <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
-                          <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
-                          <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
-                          <option value="c1ccccc1">Arene (aromatic)</option>
-                        </select>
-                        <button
-                          className="reset-filter-button functional-group-reset"
-                          onClick={() => {
-                            setSelectedFunctionalGroup('');
-                            const dropdown = document.querySelector('.functional-group-select');
-                            if (dropdown) dropdown.selectedIndex = 0;
-                          }}
-                        >
-                          Reset
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </>
-
+          </Sidebar>
         ) : activePage === 'map' ? (
-          <>
-            <div className="map-container" style={{
-              display: 'flex',
-              height: 'calc(100vh - 170px)',
-              padding: '20px 20px 20px 0',
-              overflowY: 'auto',
-              marginBottom: '0'
-            }}>
-              {/* New left text column (20%) */}
-              <div className="map-text-section left-text" style={{ 
-              width: '7%', 
-              overflowY: 'auto', 
-              padding: '20px', 
-              backgroundColor: '#f1f1f1', 
-              borderRadius: '0 8px 8px 0', 
-              marginLeft: '0', 
-              marginRight: '20px',
-              position: 'sticky',
-              left: 0
-            }}>
-                <h1
-                  style={{
-                    textDecoration: 'none',
-                    color: 'rgb(51, 51, 51)',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s',
-                    cursor: 'pointer',
-                    marginBottom: '12px',
-                    fontWeight: 'normal'
-                  }}
-                  onClick={() => {
-                    if (activePage === 'about') {
-                      // Already on the about page, just scroll to the top
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    } else {
-                      // Navigate to about page first, then scroll
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const contentWrapper = document.querySelector('.about-content-wrapper');
-                        if (contentWrapper) {
-                          contentWrapper.scrollTop = 0;
-                        }
-                      }, 100);
-                    }
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                >
-                  Motivation
-                </h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <a
-                    href="/about#features"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const featuresSection = document.getElementById('features-section');
-                        if (featuresSection) {
-                          featuresSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#pricing"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('pricing');
-                    }}
-                  >
-                    Pricing
-                  </a>
-                  <a
-                    href="#news"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const newsfeedSection = document.getElementById('newsfeed');
-                        if (newsfeedSection) {
-                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    News Feed
-                  </a>
+          <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
+            {/* UMAP Visualization in the middle (50%) */}
+            <div className="search-umap-container">
+              {/* UMAP Visualization in the middle (50%) */}
+              <div className="search-umap-section">
+                <div className="graph-container search-graph">
+                  {filteredGraphData.length > 0 ? (
+                    <UMAPClusterPlot
+                      data={filteredGraphData}
+                      highlightedData={highlightedMolecules}
+                      highlightedSimilarData={highlightedSimilarMolecules}
+                      userPermissions={userPermissions}
+                      onClick={handlePointClick}
+                    />
+                  ) : (
+                    <div className="loading-message">
+                      {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* UMAP Visualization in the middle (50%) */}
-              <div className="search-umap-container">
-                {/* UMAP Visualization in the middle (50%) */}
-                <div className="search-umap-section">
-                  <div className="graph-container search-graph">
-                    {filteredGraphData.length > 0 ? (
-                      <UMAPClusterPlot
-                        data={filteredGraphData}
-                        highlightedData={highlightedMolecules}
-                        highlightedSimilarData={highlightedSimilarMolecules}
-                        userPermissions={userPermissions}
-                        onClick={handlePointClick}
-                      />
-                    ) : (
-                      <div className="loading-message">
-                        {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
-                      </div>
-                    )}
-                  </div>
+              {/* Right text content */}
+              <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', height: 'calc(100vh - 250px)', overflow: 'scroll' }}>
+                <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
+                </p>
+
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+                </p>
+
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                  In MU-0, the map consists of 23 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+                </p>
+
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`}
+                    alt="Molecular Universe Clusters Map"
+                    style={{
+                      maxWidth: '100%',
+                      height: 'auto',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
                 </div>
 
-                {/* Right text content */}
-                <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-                  <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
-                  <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
-                  </p>
-
-                  <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
-                  </p>
-
-                  <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    In MU-0, the map consists of 23 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
-                  </p>
-
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
-                    <img
-                      src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`}
-                      alt="Molecular Universe Clusters Map"
-                      style={{
-                        maxWidth: '100%',
-                        height: 'auto',
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                      }}
-                    />
-                  </div>
-
-                  <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
-                  <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
-                    <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
-                  </div>
+                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
+                <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                  <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
                 </div>
               </div>
             </div>
-
             <div style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0, 
+              right: 0,
               fontSize: '14px',
               color: '#333',
               textAlign: 'center',
               padding: '10px 0',
-              width: '100%',
               backgroundColor: '#f1f1f1'
             }}>
               By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
@@ -1650,124 +1378,10 @@ const App = () => {
                 This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
               </p>
             </div>
-          </>
+          </Sidebar>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
-            <div className="chat-main-container">
-              <div className="about-text-section left-text" style={{
-                width: '7%',
-                overflowY: 'auto',
-                padding: '20px',
-                backgroundColor: '#f1f1f1',
-                borderRadius: '0 8px 8px 0',
-                marginLeft: '0',
-                marginRight: '20px',
-                position: 'sticky',
-                left: 0,
-                top: 20
-              }}>
-                <h1
-                  style={{
-                    textDecoration: 'none',
-                    color: 'rgb(51, 51, 51)',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s',
-                    cursor: 'pointer',
-                    marginBottom: '12px',
-                    fontWeight: 'normal'
-                  }}
-                  onClick={() => {
-                    if (activePage === 'about') {
-                      // Already on the about page, just scroll to the top
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    } else {
-                      // Navigate to about page first, then scroll
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const contentWrapper = document.querySelector('.about-content-wrapper');
-                        if (contentWrapper) {
-                          contentWrapper.scrollTop = 0;
-                        }
-                      }, 100);
-                    }
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                >
-                  Motivation
-                </h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <a
-                    href="#features"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const featuresSection = document.getElementById('features-section');
-                        if (featuresSection) {
-                          featuresSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#pricing"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('pricing');
-                    }}
-                  >
-                    Pricing
-                  </a>
-                  <a
-                    href="#news"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const newsfeedSection = document.getElementById('newsfeed');
-                        if (newsfeedSection) {
-                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    News Feed
-                  </a>
-                </div>
-              </div>
+            <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
               <Suspense fallback={<div className="app-loading">Loading...</div>}>
                 <ChatbotInterface
                   messages={chatMessages}
@@ -1777,380 +1391,43 @@ const App = () => {
                   setRemainingQueries={setRemainingQueries}
                 />
               </Suspense>
-            </div>
+            </Sidebar>
           ) : (
             <PermissionsError />
           )
         ) : activePage === 'pricing' ? (
-          <div style={{ display: 'flex', width: '100%', flexDirection: 'row' }}>
-            <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
-              <h1
-                style={{
-                  textDecoration: 'none',
-                  color: 'rgb(51, 51, 51)',
-                  fontSize: '9.5px',
-                  transition: 'font-size 0.3s',
-                  cursor: 'pointer',
-                  marginBottom: '12px',
-                  fontWeight: 'normal'
-                }}
-                onClick={() => {
-                  if (activePage === 'about') {
-                    // Already on the about page, just scroll to the top
-                    const contentWrapper = document.querySelector('.about-content-wrapper');
-                    if (contentWrapper) {
-                      contentWrapper.scrollTop = 0;
-                    }
-                  } else {
-                    // Navigate to about page first, then scroll
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    }, 100);
-                  }
-                }}
-                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-              >
-                Motivation
-              </h1>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                <a
-                  href="#features"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const featuresSection = document.getElementById('features-section');
-                      if (featuresSection) {
-                        featuresSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }, 100);
-                  }}
-                >
-                  Features
-                </a>
-                <a
-                  href="#pricing"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('pricing');
-                  }}
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#news"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const newsfeedSection = document.getElementById('newsfeed');
-                      if (newsfeedSection) {
-                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }, 100);
-                  }}
-                >
-                  News Feed
-                </a>
-              </div>
-            </div>
-            <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', width: '93%' }}>
-              <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
-            </div>
-          </div>
+          <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'terms' ? (
           <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'about' ? (
           <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
         ) : activePage === 'favorites' ? (
-          <div className="favorites-page-container" style={{ display: 'flex', height: 'calc(100vh - 170px)', paddingLeft: '0', paddingTop: '20px' }}>
-            {/* Left navigation column */}
-            <div className="map-text-section left-text" style={{ 
-              width: '7%', 
-              overflowY: 'auto', 
-              padding: '20px', 
-              backgroundColor: '#f1f1f1', 
-              borderRadius: '0 8px 8px 0', 
-              marginLeft: '0', 
-              marginRight: '0',
-              position: 'sticky',
-              left: 0
-            }}>
-              <h1
-                style={{
-                  textDecoration: 'none',
-                  color: 'rgb(51, 51, 51)',
-                  fontSize: '9.5px',
-                  transition: 'font-size 0.3s',
-                  cursor: 'pointer',
-                  marginBottom: '12px',
-                  fontWeight: 'normal'
-                }}
-                onClick={() => {
-                  if (activePage === 'about') {
-                    // Already on the about page, just scroll to the top
-                    const contentWrapper = document.querySelector('.about-content-wrapper');
-                    if (contentWrapper) {
-                      contentWrapper.scrollTop = 0;
-                    }
-                  } else {
-                    // Navigate to about page first, then scroll
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    }, 100);
-                  }
-                }}
-                onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-              >
-                Motivation
-              </h1>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                <a
-                  href="#features"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const featuresSection = document.getElementById('features-section');
-                      if (featuresSection) {
-                        featuresSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }, 100);
-                  }}
-                >
-                  Features
-                </a>
-                <a
-                  href="#pricing"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('pricing');
-                  }}
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#news"
-                  style={{
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('about');
-                    setTimeout(() => {
-                      const newsfeedSection = document.getElementById('newsfeed');
-                      if (newsfeedSection) {
-                        newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }, 100);
-                  }}
-                >
-                  News Feed
-                </a>
-              </div>
-            </div>
-
+          <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
             {/* Main content area */}
-            <div className="favorites-content-wrapper" style={{ 
-              flex: '1', 
-              padding: '0 20px', 
-              height: '100%', 
+            <div className="favorites-content-wrapper" style={{
+              flex: '1',
+              padding: '0 20px',
+              height: '100%',
               overflowY: 'auto',
               backgroundColor: '#ffffff',
               borderRadius: '8px',
               boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
             }}>
               <Suspense fallback={<div className="app-loading">Loading...</div>}>
-                  <FavoritesGrid />
+                <FavoritesGrid />
               </Suspense>
             </div>
-          </div>
+          </Sidebar>
         ) : (
           // SEARCH PAGE CONTENT:
-          <div className="search-container">
-              {/* Left navigation column */}
-              <div className="about-text-section left-text" style={{
-                width: '7%',
-                overflowY: 'auto',
-                padding: '20px',
-                backgroundColor: '#f1f1f1',
-                borderRadius: '0 8px 8px 0',
-                marginLeft: '0',
-                marginRight: '20px',
-                position: 'sticky',
-                left: 0
-              }}>
-                <h1
-                  style={{
-                    textDecoration: 'none',
-                    color: 'rgb(51, 51, 51)',
-                    fontSize: '9.5px',
-                    transition: 'font-size 0.3s',
-                    cursor: 'pointer',
-                    marginBottom: '12px',
-                    fontWeight: 'normal'
-                  }}
-                  onClick={() => {
-                    if (activePage === 'about') {
-                      // Already on the about page, just scroll to the top
-                      const contentWrapper = document.querySelector('.about-content-wrapper');
-                      if (contentWrapper) {
-                        contentWrapper.scrollTop = 0;
-                      }
-                    } else {
-                      // Navigate to about page first, then scroll
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const contentWrapper = document.querySelector('.about-content-wrapper');
-                        if (contentWrapper) {
-                          contentWrapper.scrollTop = 0;
-                        }
-                      }, 100);
-                    }
-                  }}
-                  onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                  onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                >
-                  Motivation
-                </h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <a
-                    href="#features"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const featuresSection = document.getElementById('features-section');
-                        if (featuresSection) {
-                          featuresSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#pricing"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('pricing');
-                    }}
-                  >
-                    Pricing
-                  </a>
-                  <a
-                    href="#news"
-                    style={{
-                      textDecoration: 'none',
-                      color: '#333',
-                      fontSize: '9.5px',
-                      transition: 'font-size 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-                    onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavigation('about');
-                      setTimeout(() => {
-                        const newsfeedSection = document.getElementById('newsfeed');
-                        if (newsfeedSection) {
-                          newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    News Feed
-                  </a>
-                </div>
-              </div>
+          <Sidebar handleNavigation={handleNavigation} activePage={activePage}>
             <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
-
               {/* UMAP Visualization on the left */}
               <div className="search-umap-section">
                 <div className="graph-container search-graph">
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {filteredGraphData.length > 0 ? (
-                       <UMAPClusterPlot
+                      <UMAPClusterPlot
                         data={filteredGraphData}
                         highlightedData={highlightedMolecules}
                         highlightedSimilarData={highlightedSimilarMolecules}
@@ -2167,13 +1444,13 @@ const App = () => {
               </div>
 
               {/* Search interface on the right */}
-              <div className="search-interface-section" style={{ 
-                  overflowY: 'auto', 
-                  padding: '20px', 
-                  backgroundColor: '#f9f9f9', 
-                  borderRadius: '8px',
-                  flex: '0.8'
-                  }}>
+              <div className="search-interface-section" style={{
+                overflowY: 'auto',
+                padding: '20px',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                flex: '0.8'
+              }}>
                 {/* Search bar container */}
 
                 <SearchInput
@@ -2290,7 +1567,7 @@ const App = () => {
                                   className="molecule-image"
                                 />
                               </div>
-                              
+
                               {/* Add Favorites button */}
                               <div className="favorites-container" style={{ textAlign: 'center' }}>
                                 <button
@@ -2315,34 +1592,34 @@ const App = () => {
                                 >
                                   {moleculeFavoriteStatus[molecule.smiles]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                 </button>
-                                
+
                                 {moleculeFavoriteStatus[molecule.smiles]?.success && (
-                                  <div className="success-message" style={{ 
-                                    marginTop: '8px', 
-                                    color: 'green', 
+                                  <div className="success-message" style={{
+                                    marginTop: '8px',
+                                    color: 'green',
                                     fontSize: '14px',
                                     fontWeight: 'bold'
                                   }}>
                                     {moleculeFavoriteStatus[molecule.smiles].success}
                                   </div>
                                 )}
-                                
+
                                 {moleculeFavoriteStatus[molecule.smiles]?.error && (
-                                  <div className="error-message" style={{ 
-                                    marginTop: '8px', 
-                                    color: 'red', 
+                                  <div className="error-message" style={{
+                                    marginTop: '8px',
+                                    color: 'red',
                                     fontSize: '14px',
                                     fontWeight: 'bold'
                                   }}>
                                     {moleculeFavoriteStatus[molecule.smiles].error}
                                   </div>
                                 )}
-                                
+
                                 {/* Display find-friend error below favorites button if it exists */}
                                 {findClosestFriends && findFriendError && (
-                                  <div className="error-message" style={{ 
-                                    marginTop: '8px', 
-                                    color: 'red', 
+                                  <div className="error-message" style={{
+                                    marginTop: '8px',
+                                    color: 'red',
                                     fontSize: '14px',
                                     fontWeight: 'bold'
                                   }}>
@@ -2455,7 +1732,7 @@ const App = () => {
                                               className="similar-molecule-image"
                                             />
                                           </div>
-                                          
+
                                           {/* Add Favorites button for similar molecules */}
                                           <div className="favorites-container" style={{ textAlign: 'center' }}>
                                             <button
@@ -2494,22 +1771,22 @@ const App = () => {
                                             >
                                               {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                             </button>
-                                            
+
                                             {moleculeFavoriteStatus[molecule.SMILES]?.success && (
-                                              <div className="success-message" style={{ 
-                                                marginTop: '8px', 
-                                                color: 'green', 
+                                              <div className="success-message" style={{
+                                                marginTop: '8px',
+                                                color: 'green',
                                                 fontSize: '14px',
                                                 fontWeight: 'bold'
                                               }}>
                                                 {moleculeFavoriteStatus[molecule.SMILES].success}
                                               </div>
                                             )}
-                                            
+
                                             {moleculeFavoriteStatus[molecule.SMILES]?.error && (
-                                              <div className="error-message" style={{ 
-                                                marginTop: '8px', 
-                                                color: 'red', 
+                                              <div className="error-message" style={{
+                                                marginTop: '8px',
+                                                color: 'red',
                                                 fontSize: '14px',
                                                 fontWeight: 'bold'
                                               }}>
@@ -2524,10 +1801,10 @@ const App = () => {
                                       <td style={{
                                         width: '100%'
                                       }}>
-                                        <MoleculeFeedbackBox 
-                                          molecule={molecule} 
-                                          lastSearch={lastSearch} 
-                                          onClose={() => {}} 
+                                        <MoleculeFeedbackBox
+                                          molecule={molecule}
+                                          lastSearch={lastSearch}
+                                          onClose={() => { }}
                                         />
                                       </td>
                                     </tr>
@@ -2565,15 +1842,15 @@ const App = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </Sidebar>
         )}
       </div>
 
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup 
-        node={selectedNode} 
-        onClose={handleClosePopup} 
-        filterLabels={filterLabels} 
+      {showPopup && selectedNode && <NodePopup
+        node={selectedNode}
+        onClose={handleClosePopup}
+        filterLabels={filterLabels}
         handleAddToFavorites={handleAddToFavorites}
         moleculeFavoriteStatus={moleculeFavoriteStatus}
       />}
