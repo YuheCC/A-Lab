@@ -989,7 +989,7 @@ const App = () => {
   };
 
   // NodePopup component for displaying molecule information
-  const NodePopup = ({ node, onClose, filterLabels }) => {
+  const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
     if (!node) return null;
 
     const copyToClipboard = () => {
@@ -1039,6 +1039,34 @@ const App = () => {
               >
                 Copy All Data
               </button>
+              <div style={{ marginTop: '10px' }}></div>
+              <button 
+                className="favorites-button" 
+                onClick={() => handleAddToFavorites(node)}
+                style={{
+                  backgroundColor: '#0080ff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '8px 15px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  transition: 'background-color 0.3s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+              >
+                Add to Favorites ★
+              </button>
+              {moleculeFavoriteStatus[node.smiles]?.loading && (
+                <div style={{ marginTop: '5px', color: '#aaa' }}>Saving...</div>
+              )}
+              {moleculeFavoriteStatus[node.smiles]?.success && (
+                <div style={{ marginTop: '5px', color: '#4CAF50' }}>{moleculeFavoriteStatus[node.smiles].success}</div>
+              )}
+              {moleculeFavoriteStatus[node.smiles]?.error && (
+                <div style={{ marginTop: '5px', color: '#F44336' }}>{moleculeFavoriteStatus[node.smiles].error}</div>
+              )}
             </div>
           </div>
         </div>
@@ -2520,7 +2548,13 @@ const App = () => {
       </div>
 
       {/* Node popup */}
-      {showPopup && selectedNode && <NodePopup node={selectedNode} onClose={handleClosePopup} filterLabels={filterLabels} />}
+      {showPopup && selectedNode && <NodePopup 
+        node={selectedNode} 
+        onClose={handleClosePopup} 
+        filterLabels={filterLabels} 
+        handleAddToFavorites={handleAddToFavorites}
+        moleculeFavoriteStatus={moleculeFavoriteStatus}
+      />}
     </div>
   );
 };
