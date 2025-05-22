@@ -1,10 +1,9 @@
-import Plotly from 'plotly.js-basic-dist';
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox';
 import Navbar from './components/Navbar.js';
 import PasswordReset from './components/PasswordReset.js';
 import Slider from './components/Slider.js';
+import UMAPClusterPlot from './components/UMAPClusterPlot.js';
 import AboutPage from './pages/AboutPage.js';
 import AuthPage from './pages/AuthPage.js';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
@@ -20,9 +19,6 @@ import './App.css';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
-
-// Create a Plotly Component using the plotly.js factory
-const Plot = createPlotlyComponent(Plotly);
 
 
 // Popup component to display node data
@@ -225,169 +221,6 @@ const App = () => {
 
   // Add new state for highlighted molecule
   const [highlightedMolecules, setHighlightedMolecules] = useState(null);
-  const [arrowOffset, setArrowOffset] = useState(-40);
-
-  // Track Plotly initialization state
-  const [searchPlotInitialized, setSearchPlotInitialized] = useState(false);
-  const [mainPlotInitialized, setMainPlotInitialized] = useState(false);
-
-  // Ref for plots to check if they're initialized
-  const plotlyRef = useRef(null);
-  const searchPlotlyRef = useRef(null);
-
-  // Add bouncing arrow animation when molecule is highlighted
-  // useEffect(() => {
-  //   if (!highlightedMolecules || !searchPlotInitialized) return;
-
-  //   let direction = -1; // Start moving up
-  //   let current = -40;
-  //   const min = -60;
-  //   const max = -30;
-
-  //   const interval = setInterval(() => {
-  //     current += direction * 2;
-
-  //     if (current <= min) {
-  //       direction = 1; // Change to moving down
-  //     } else if (current >= max) {
-  //       direction = -1; // Change to moving up
-  //     }
-
-  //     setArrowOffset(current);
-  //   }, 50);
-
-  //   return () => clearInterval(interval);
-  // }, [highlightedMolecules, searchPlotInitialized]);
-
-  const plotlyLayout = {
-    autosize: true,
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-    font: {
-      family: 'Arial, sans-serif',
-      size: 12,
-      color: '#333'
-    },
-    xaxis: { showgrid: false, zeroline: false, visible: false },
-    yaxis: { showgrid: false, zeroline: false, visible: false },
-    showlegend: false,
-    hovermode: 'closest',
-    hoverlabel: {
-      bgcolor: '#000',
-      bordercolor: '#333',
-      font: {
-        family: 'Arial, sans-serif',
-        size: 12,
-        color: '#fff'
-      }
-    }
-  };
-
-  // Create search mode layout with annotations when needed
-  const searchLayout = useMemo(() => {
-    const layout = {
-      ...plotlyLayout,
-      autosize: true,
-      height: null,
-      width: null
-    };
-
-    let annotations = [];
-
-
-    // Add annotations for highlighted similar molecules (using UMAP_0 and UMAP_1)
-    if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-      annotations = annotations.concat(
-        highlightedSimilarMolecules
-          .filter(molecule =>
-            molecule.UMAP_0 !== null &&
-            molecule.UMAP_0 !== undefined &&
-            molecule.UMAP_1 !== null &&
-            molecule.UMAP_1 !== undefined
-          )
-          .map((molecule, idx) => ({
-            x: molecule.UMAP_0,
-            y: molecule.UMAP_1,
-            xref: 'x',
-            yref: 'y',
-            text: `#${idx + 1}`,
-            showarrow: true,
-            arrowhead: 2,
-            arrowsize: 1.5,
-            arrowwidth: 2,
-            arrowcolor: '#FFD700',
-            ax: 0,
-            ay: arrowOffset,
-            bgcolor: 'rgba(255, 255, 0, 0.8)',
-            bordercolor: '#FFD700',
-            borderwidth: 2,
-            borderpad: 4,
-            font: {
-              color: 'black',
-              size: 12
-            }
-          }))
-      );
-    }
-
-    // Add annotations for standard highlighted molecules (using x & y)
-    if (highlightedMolecules && highlightedMolecules.length > 0) {
-      annotations = annotations.concat(
-        highlightedMolecules.map((molecule, idx) => ({
-          x: molecule.x,
-          y: molecule.y,
-          xref: 'x',
-          yref: 'y',
-          text: `#${idx + 1}`,
-          showarrow: true,
-          arrowhead: 2,
-          arrowsize: 1.5,
-          arrowwidth: 2,
-          arrowcolor: '#FF5722',
-          ax: 0,
-          ay: arrowOffset,
-          bgcolor: 'rgba(255, 87, 34, 0.8)',
-          bordercolor: '#FF5722',
-          borderwidth: 2,
-          borderpad: 4,
-          font: {
-            color: 'white',
-            size: 12
-          }
-        }))
-      );
-    }
-
-
-    if (annotations.length > 0) {
-      layout.annotations = annotations;
-    } else if (searchResults) {
-      // Remove default annotation since we don't want to show anything for molecules with null coordinates
-      layout.annotations = [];
-    }
-    return layout;
-  }, [plotlyLayout, highlightedMolecules, highlightedSimilarMolecules, searchResults, arrowOffset]);
-
-  const plotlyConfig = {
-    displayModeBar: true,
-    responsive: true,
-    scrollZoom: true,
-    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'select2d', 'lasso2d', 'toggleHover']
-  };
-
-  // We've removed the dropdown functionality, so we don't need this effect anymore
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setShowDropdown(false);
-  //     }
-  //   };
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, []);
 
   // Update handleSearch function
   const handleSearchedMolecules = async (response, select_first = false) => {
@@ -1021,187 +854,6 @@ const App = () => {
     setShowPopup(false);
   };
 
-  // Define a color mapping for clusters (23 distinct colors)
-  const clusterColorMap = {
-    1: '#1f77b4', // blue
-    2: '#ff7f0e', // orange
-    3: '#2ca02c', // green
-    4: '#d62728', // red
-    5: '#9467bd', // purple
-    6: '#8c564b', // brown
-    7: '#e377c2', // pink
-    8: '#7f7f7f', // gray
-    9: '#bcbd22', // olive
-    10: '#17becf', // cyan
-    11: '#aec7e8', // light blue
-    12: '#ffbb78', // light orange
-    13: '#98df8a', // light green
-    14: '#ff9896', // light red
-    15: '#c5b0d5', // light purple
-    16: '#c49c94', // light brown
-    17: '#f7b6d2', // light pink
-    18: '#c7c7c7', // light gray
-    19: '#dbdb8d', // light olive
-    20: '#9edae5', // light cyan
-    21: '#393b79', // dark blue
-    22: '#637939', // dark green
-    23: '#8c6d31'  // dark orange
-  };
-
-  // Default color for clusters not in the map
-  const defaultColor = '#000000'; // black
-
-  const textData = useMemo(() => filteredGraphData.map(node =>
-      `<b>Molecule Information:</b><br>` +
-      `SMILES: ${node.smiles}<br>` +
-      `${node.properties?.chemical_formula ? `Formula: ${node.properties.chemical_formula}<br>` : ''}` +
-      `MW: ${node.properties?.molwt ? node.properties.molwt.toFixed(2) : 'N/A'}<br>` +
-      `HOMO (eV): ${node.properties?.homo_eV ? node.properties.homo_eV.toFixed(2) : 'N/A'}<br>` +
-      `LUMO (eV): ${node.properties?.lumo_eV ? node.properties.lumo_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Min: ${node.properties?.esp_min_eV ? node.properties.esp_min_eV.toFixed(2) : 'N/A'}<br>` +
-      `ESP Max: ${node.properties?.esp_max_eV ? node.properties.esp_max_eV.toFixed(2) : 'N/A'}<br>` +
-      `${node.properties?.functional_groups ? `Groups: ${node.properties.functional_groups}<br>` : ''}` +
-      `${node.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `MP: ${node.properties.predicted_mp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? `BP: ${node.properties.predicted_bp.toFixed(2)}°C<br>` : ''}` +
-      `${node.properties?.CLUSTER !== undefined ? `Cluster: ${node.properties.CLUSTER}` : ''}`
-    ), [filteredGraphData, userPermissions]);
-  
-  const xData = useMemo(() => filteredGraphData.map(node => node.x), [filteredGraphData]);
-  const yData = useMemo(() => filteredGraphData.map(node => node.y), [filteredGraphData]);
-
-  // Create search mode plotly data
-  const searchPlotlyData = useMemo(() => [{
-    x: xData,
-    y: yData,
-    mode: 'markers',
-    type: 'scattergl',
-    marker: {
-      size: 5,
-      color: filteredGraphData.map(node => {
-        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
-          return '#ff0000'; // Red color for highlighted molecule
-        }
-        // Color by cluster
-        const clusterValue = node.properties?.CLUSTER;
-        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
-      }),
-      opacity: filteredGraphData.map(node => {
-        if (highlightedMolecules && highlightedMolecules.some(molecule => molecule.smiles === node.smiles)) {
-          return 1; // Full opacity for highlighted molecule
-        }
-        return 0.7; // Default opacity
-      })
-    },
-    hoverinfo: 'text',
-    text: textData
-  }], [clusterColorMap, filteredGraphData, highlightedMolecules, textData, xData, yData]);
-
-  // Add red dots at coordinates where arrows point to for highlighted molecules
-  if (highlightedMolecules && highlightedMolecules.length > 0) {
-    searchPlotlyData.push({
-      x: highlightedMolecules.map(molecule => molecule.x),
-      y: highlightedMolecules.map(molecule => molecule.y),
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        size: 8,
-        color: '#FF0000',
-        symbol: 'circle'
-      },
-      hoverinfo: 'none',
-      showlegend: false
-    });
-  }
-
-  // Add red dots for similar molecules (find friends)
-  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-    const validMolecules = highlightedSimilarMolecules.filter(
-      molecule =>
-        molecule.UMAP_0 !== null &&
-        molecule.UMAP_0 !== undefined &&
-        molecule.UMAP_1 !== null &&
-        molecule.UMAP_1 !== undefined
-    );
-
-    if (validMolecules.length > 0) {
-      searchPlotlyData.push({
-        x: validMolecules.map(molecule => molecule.UMAP_0),
-        y: validMolecules.map(molecule => molecule.UMAP_1),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: 8,
-          color: '#FF0000',
-          symbol: 'circle'
-        },
-        hoverinfo: 'none',
-        showlegend: false
-      });
-    }
-  }
-
-  // Create plotly data for explorer view
-  const plotlyData = useMemo(() => [{
-    x: xData,
-    y: yData,
-    mode: 'markers',
-    type: 'scattergl',
-    marker: {
-      size: 5,
-      color: filteredGraphData.map(node => {
-        // Color by cluster
-        const clusterValue = node.properties?.CLUSTER;
-        return clusterValue ? (clusterColorMap[clusterValue] || defaultColor) : defaultColor;
-      }),
-      opacity: 0.7
-    },
-    hoverinfo: 'text',
-    text: textData,
-  }], [clusterColorMap, filteredGraphData, textData, xData, yData]);
-
-  // Add red dots at coordinates where arrows point to for highlighted molecules in explorer view
-  if (highlightedMolecules && highlightedMolecules.length > 0) {
-    plotlyData.push({
-      x: highlightedMolecules.map(molecule => molecule.x),
-      y: highlightedMolecules.map(molecule => molecule.y),
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        size: 8,
-        color: '#FF0000',
-        symbol: 'circle'
-      },
-      hoverinfo: 'none',
-      showlegend: false
-    });
-  }
-
-  // Add red dots for similar molecules (find friends) in explorer view
-  if (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0) {
-    const validMolecules = highlightedSimilarMolecules.filter(
-      molecule =>
-        molecule.UMAP_0 !== null &&
-        molecule.UMAP_0 !== undefined &&
-        molecule.UMAP_1 !== null &&
-        molecule.UMAP_1 !== undefined
-    );
-
-    if (validMolecules.length > 0) {
-      plotlyData.push({
-        x: validMolecules.map(molecule => molecule.UMAP_0),
-        y: validMolecules.map(molecule => molecule.UMAP_1),
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-          size: 8,
-          color: '#FF0000',
-          symbol: 'circle'
-        },
-        hoverinfo: 'none',
-        showlegend: false
-      });
-    }
-  }
 
   // Count how many filters are active
   const activeFilterCount = Object.values(filterRanges).filter(range => range.active).length;
@@ -1516,19 +1168,12 @@ const App = () => {
                 <div className="search-umap-section">
                   <div className="graph-container search-graph">
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={plotlyData}
-                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                      <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        onInitialized={(figure) => {
-                          plotlyRef.current = figure;
-                          setMainPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          plotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -1826,19 +1471,12 @@ const App = () => {
                 <div className="search-umap-section">
                   <div className="graph-container search-graph">
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={plotlyData}
-                        layout={mainPlotInitialized ? plotlyLayout : { ...plotlyLayout, annotations: [] }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                      <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        onInitialized={(figure) => {
-                          plotlyRef.current = figure;
-                          setMainPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          plotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
@@ -2419,20 +2057,12 @@ const App = () => {
                 <div className="graph-container search-graph">
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {filteredGraphData.length > 0 ? (
-                      <Plot
-                        data={searchPlotlyData}
-                        layout={searchPlotInitialized ? searchLayout : { ...plotlyLayout, autosize: true, height: null, width: null }}
-                        config={plotlyConfig}
-                        style={{ width: '100%', height: '100%' }}
+                       <UMAPClusterPlot
+                        data={filteredGraphData}
+                        highlightedData={highlightedMolecules}
+                        highlightedSimilarData={highlightedSimilarMolecules}
+                        userPermissions={userPermissions}
                         onClick={handlePointClick}
-                        useResizeHandler={true}
-                        onInitialized={(figure) => {
-                          searchPlotlyRef.current = figure;
-                          setSearchPlotInitialized(true);
-                        }}
-                        onUpdate={(figure) => {
-                          searchPlotlyRef.current = figure;
-                        }}
                       />
                     ) : (
                       <div className="loading-message">
