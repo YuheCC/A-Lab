@@ -1024,7 +1024,9 @@ const App = () => {
                     <td className="property-value white-text">
                       {value !== null && value !== undefined 
                         ? typeof value === 'number' 
-                          ? value.toFixed(2) 
+                          ? key === 'CLUSTER' 
+                            ? Math.round(value) 
+                            : value.toFixed(2) 
                           : value.toString()
                         : 'N/A'}
                     </td>
