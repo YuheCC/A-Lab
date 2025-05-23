@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './components/FeedbackBox.js';
+import './Chatbox.css';
 
 import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';
@@ -58,7 +59,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
           checked={ignoreChatHistory}
           onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
         />
-        <label htmlFor="ignoreChatHistory" style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>
+        <label htmlFor="ignoreChatHistory">
           Ignore chat history
         </label>
         <input 
@@ -68,7 +69,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
           onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
           style={{ marginLeft: '20px' }}
         />
-        <label htmlFor="disableLiteratureSearch" style={{ fontSize: '14px', marginLeft: '4px' }}>
+        <label htmlFor="disableLiteratureSearch">
           Disable literature search
         </label>
       </div>
@@ -524,43 +525,15 @@ const handleFindSimilarMolecules = async (details) => {
   return (
     <div className="chatbot-container">
       {reasoningText && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0, left: 0,
-            width: '100%', height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: '#fff',
-              padding: 20,
-              maxWidth: '80%',
-              maxHeight: '80%',
-              overflowY: 'auto',
-              borderRadius: 8,
-              position: 'relative'
-            }}
-          >
+        <div className="modal-overlay">
+          <div className="modal-content">
             <button
+              className="modal-close-button"
               onClick={() => setReasoningText(null)}
-              style={{
-                position: 'absolute',
-                top: 8, right: 8,
-                border: 'none',
-                background: 'transparent',
-                fontSize: 18,
-                cursor: 'pointer'
-              }}
             >
               ×
             </button>
-            <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+            <pre className="modal-pre">
               {reasoningText}
             </pre>
           </div>
@@ -577,7 +550,7 @@ const handleFindSimilarMolecules = async (details) => {
         </div>
         )}
       <div className="chat-and-molecules">
-        <div className="chatbot-content" style={{ width: !showFoundMolecules && !showSimilarMolecules ? '100%' : '90%' }}>
+        <div className={`chatbot-content ${!showFoundMolecules && !showSimilarMolecules ? 'full-width' : 'with-molecules'}`}>
           <div className="chat-messages">
             {messages.map((msg, index) => (
               <div 
@@ -597,23 +570,16 @@ const handleFindSimilarMolecules = async (details) => {
                 )}
                 {msg.molText && <div>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
-                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                  <div className="find-molecules-wrapper">
                     <button 
-                      className="find-molecules-button" 
-                      style={{ backgroundColor: '#ADD8E6', border: 'none', padding: '8px 12px', cursor: 'pointer' }}
+                      className="find-molecules-button"
                       onClick={() => handleFindMolecules(msg)}>
                       Find Molecules
                     </button>
                     {moleculesLoading && (
-                      <span style={{ 
-                        marginLeft: '10px', 
-                        fontStyle: 'italic', 
-                        color: '#555',
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}>
+                      <span className="searching-text">
                         searching our database
-                        <span className="thinking-dots" style={{ marginLeft: '5px' }}>
+                        <span className="thinking-dots">
                           <span></span>
                           <span></span>
                           <span></span>
@@ -624,7 +590,7 @@ const handleFindSimilarMolecules = async (details) => {
                 )}
                 {/* Add thumbs buttons for feedback */}
                 {msg.type === "llm-message" && (
-                  <div className="thumbs" style={{ marginTop: '10px' }}>
+                  <div className="thumbs">
                     <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}>👍</button>
                     <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}>👎</button>
                     <button 
@@ -699,7 +665,7 @@ const handleFindSimilarMolecules = async (details) => {
             </div>
             {foundMolecules.map((details, idx) => {
               return (
-                <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
+                <div key={idx} className="molecule-box">
                   <strong>{details.name}</strong>
                   <p>SMILES: {details.SMILES}</p>
                   <p>Molecular weight: {details.MOLECULAR_WEIGHT}</p>
@@ -720,18 +686,12 @@ const handleFindSimilarMolecules = async (details) => {
                     <img 
                       src={details.image} 
                       alt={`Structure of ${details.SMILE}`} 
-                      style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
+                      className="molecule-image"
                     />
                   )}
-                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                  <div className="molecule-actions">
                     <button 
                       className="find-similar-molecules-button"
-                      style={{
-                        backgroundColor: '#FFA500',
-                        border: 'none',
-                        padding: '6px 10px',
-                        cursor: 'pointer'
-                      }}
                       onClick={() => handleFindSimilarMolecules(details)}
                     >
                       Find Similar Molecules
@@ -742,35 +702,14 @@ const handleFindSimilarMolecules = async (details) => {
                       className="favorites-button"
                       onClick={() => handleAddToFavorites(details)}
                       disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
-                      style={{
-                        backgroundColor: '#0080ff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '6px 10px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                        transition: 'background-color 0.3s',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                     >
                       {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                     </button>
                     
                     {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
-                      <span style={{ 
-                        marginLeft: '10px', 
-                        fontStyle: 'italic', 
-                        color: '#555',
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}>
+                      <span className="searching-text">
                         searching
-                        <span className="thinking-dots" style={{ marginLeft: '5px' }}>
+                        <span className="thinking-dots">
                           <span></span>
                           <span></span>
                           <span></span>
@@ -781,27 +720,13 @@ const handleFindSimilarMolecules = async (details) => {
                   
                   {/* Replace global favorite status messages with molecule-specific ones */}
                   {moleculeFavoriteStatus[details.SMILES]?.success && (
-                    <div className="success-message" style={{ 
-                      marginTop: '8px', 
-                      color: 'green', 
-                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontFamily: 'Arial, sans-serif',
-                      lineHeight: '1.6'
-                    }}>
+                    <div className="success-message">
                       {moleculeFavoriteStatus[details.SMILES].success}
                     </div>
                   )}
                   
                   {moleculeFavoriteStatus[details.SMILES]?.error && (
-                    <div className="error-message" style={{ 
-                      marginTop: '8px', 
-                      color: 'red', 
-                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontFamily: 'Arial, sans-serif',
-                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
-                    }}>
+                    <div className="error-message">
                       {moleculeFavoriteStatus[details.SMILES].error}
                     </div>
                   )}
@@ -812,7 +737,7 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
         )}
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
-          <div className="similar-molecules-container" style={{ marginLeft: '20px' }}>
+          <div className="similar-molecules-container">
             <div className="molecules-header">
               <h3>Friends ranked by likelihood to replace {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
@@ -826,14 +751,14 @@ const handleFindSimilarMolecules = async (details) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
               return (
-                <div key={idx} className="molecule-box" style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#f9f9f9' }}>
+                <div key={idx} className="molecule-box">
                   <p><strong>SMILES: {details.SMILES}</strong></p>
                   {details.grade != null && (
                     <p style={{ display: 'inline' }}>
                       LLM Grade: {details.grade}/10
                       {details.reasoning != null && (
                         <button
-                          style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          className="reasoning-button"
                           onClick={() => setReasoningText(details.reasoning)}
                         >
                           ?
@@ -859,59 +784,25 @@ const handleFindSimilarMolecules = async (details) => {
                     <img 
                       src={details.image} 
                       alt={`Structure of ${details.SMILE}`} 
-                      style={{ width: '150px', height: '150px', marginTop: '10px', objectFit: 'contain' }} 
+                      className="molecule-image"
                     />
                   )}
                   
                   {/* Add molecule feedback buttons */}
-                  <div className="molecule-feedback-buttons" style={{
-                    margin: '10px 0',
-                    textAlign: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    width: '100%'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                      <span style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6', marginRight: '5px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>Rate this match:</span>
-                      <button
-                        onClick={() => handleMoleculeThumbsUp(idx)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          fontSize: '18px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                          cursor: 'pointer',
-                          margin: '0 5px'
-                        }}
-                      >
+                  <div className="molecule-feedback-buttons">
+                    <div>
+                      <span>Rate this match:</span>
+                      <button onClick={() => handleMoleculeThumbsUp(idx)}>
                         👍
                       </button>
-                      <button
-                        onClick={() => handleMoleculeThumbsDown(idx)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          fontSize: '18px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                          cursor: 'pointer',
-                          margin: '0 5px'
-                        }}
-                      >
+                      <button onClick={() => handleMoleculeThumbsDown(idx)}>
                         👎
                       </button>
                     </div>
 
                     {feedbackOpen && feedbackMoleculeIndex === idx && (
-                      <div className="feedback-form" style={{
-                        marginTop: '10px',
-                        padding: '10px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        backgroundColor: '#f9f9f9',
-                        textAlign: 'left',
-                        width: '100%',
-                        maxWidth: '400px'
-                      }}>
-                        <p style={{ margin: '0 0 10px' }}>
+                      <div className="feedback-form">
+                        <p>
                           {feedbackType === 'up'
                             ? 'What makes this a good match?'
                             : 'Why is this not a good match?'}
@@ -920,39 +811,18 @@ const handleFindSimilarMolecules = async (details) => {
                           value={feedbackText}
                           onChange={(e) => setFeedbackText(e.target.value)}
                           rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px',
-                            borderRadius: '4px',
-                            border: '1px solid #ccc'
-                          }}
                           placeholder="Your feedback helps us improve molecule matching"
                         />
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div>
                           <button
+                            className="cancel"
                             onClick={handleMoleculeFeedbackCancel}
-                            style={{
-                              marginRight: '10px',
-                              padding: '5px 10px',
-                              backgroundColor: '#f1f1f1',
-                              border: '1px solid #ccc',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
                           >
                             Cancel
                           </button>
                           <button
+                            className="submit"
                             onClick={handleMoleculeFeedbackSubmit}
-                            style={{
-                              padding: '5px 10px',
-                              backgroundColor: '#0080ff',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
                           >
                             Submit
                           </button>
@@ -963,48 +833,23 @@ const handleFindSimilarMolecules = async (details) => {
                   
                   {/* Replace global favorite status messages with molecule-specific ones in similar molecules section */}
                   {moleculeFavoriteStatus[details.SMILES]?.success && (
-                    <div className="success-message" style={{ 
-                      marginTop: '8px', 
-                      color: 'green', 
-                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
-                    }}>
+                    <div className="success-message">
                       {moleculeFavoriteStatus[details.SMILES].success}
                     </div>
                   )}
                   
                   {moleculeFavoriteStatus[details.SMILES]?.error && (
-                    <div className="error-message" style={{ 
-                      marginTop: '8px', 
-                      color: 'red', 
-                      fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                      fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6'
-                    }}>
+                    <div className="error-message">
                       {moleculeFavoriteStatus[details.SMILES].error}
                     </div>
                   )}
                   
                   {/* Add Favorites button at the bottom of the molecule box */}
-                  <div className="favorites-container" style={{ marginTop: '10px', textAlign: 'center' }}>
+                  <div className="favorites-container">
                     <button
                       className="favorites-button"
                       onClick={() => handleAddToFavorites(details)}
                       disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
-                      style={{
-                        backgroundColor: '#0080ff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '8px 15px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold', fontFamily: 'Arial, sans-serif', lineHeight: '1.6',
-                        transition: 'background-color 0.3s',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                     >
                       {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                     </button>

@@ -1015,6 +1015,7 @@ body, html {
   overflow-y: visible;
   position: relative;
   padding: 0px;
+  height: calc(100vh - 180px); /* Add height calculation matching search-umap-container */
 }
 
 /* .chatbot-container h2 {
@@ -1095,6 +1096,7 @@ body, html {
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #eee;
+  max-height: calc(100vh - 280px); /* Add max height to prevent overflow */
 }
 
 .chat-and-molecules {
@@ -1104,10 +1106,11 @@ body, html {
   width: 90%;
   max-width: 1500px;
   overflow: hidden;
-  margin: 20px auto 0 auto;  /* Use a normal top margin to keep it inside the main container */
+  margin: 0 auto;  /* Remove the top margin */
   position: relative;
   z-index: 1;
   padding: 10px;
+  height: calc((100vh - 180px)); /* Add the same height calculation as search-umap-container */
 }
 
 .found-molecules-container {
