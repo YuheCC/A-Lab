@@ -687,7 +687,7 @@ const App = () => {
     };
 
     checkAuth();
-  }, [API_URL, activePage]);
+  }, [activePage]);
 
   useEffect(() => {
     async function loadData() {
