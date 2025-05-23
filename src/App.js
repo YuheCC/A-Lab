@@ -1827,7 +1827,7 @@ const App = () => {
                       )}
                     </div>
                   )}
-                  {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length == 0)) && (
+                  {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
                     <div className="molecule-not-found">
                       <p>Your query did not return any molecules. Here are several possibilities:
                         <br />
