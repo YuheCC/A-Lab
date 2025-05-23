@@ -1330,16 +1330,17 @@ const App = () => {
                 </p>
 
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
-                  <img
-                    src={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.png`}
-                    alt="Molecular Universe Clusters Map"
-                    style={{
-                      maxWidth: '100%',
-                      height: 'auto',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
+                  <picture>
+                    <source srcSet={`${process.env.PUBLIC_URL}/MU_About_Cluster_Numbered.webp`} type="image/webp" />
+                    <img loading="lazy" src="/MU_About_Cluster_Numbered.jpg" 
+                      alt="Molecular Universe Clusters Map"
+                      style={{
+                        maxWidth: '100%',
+                        height: 'auto',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                      }} />
+                  </picture>
                 </div>
 
                 <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
