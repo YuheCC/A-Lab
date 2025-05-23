@@ -287,9 +287,6 @@ const App = () => {
   const handleSearch = async (searchInput) => {
     if (!searchInput.trim()) return;
 
-    // Attach JWT so /search and /find‑friend‑with‑image stay protected
-    const token = localStorage.getItem('token');
-
     setSearchLoading(true);
     setSearchWarning(null);
     setSearchError(null);
