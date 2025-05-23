@@ -581,7 +581,6 @@ const App = () => {
       return true;
     }
 
-
     // Default to no access
     return false;
   };
