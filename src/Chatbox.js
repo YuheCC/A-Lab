@@ -480,11 +480,19 @@ const handleFindSimilarMolecules = async (details) => {
 
       const data = await response.json();
       
-      // Set success for this specific molecule
-      setMoleculeFavoriteStatus(prev => ({
-        ...prev,
-        [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
-      }));
+      // Check if the molecule was already in favorites
+      if (data.message === "Molecule already in favorites") {
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { loading: false, success: data.message, error: null }
+        }));
+      } else {
+        // Set success for this specific molecule
+        setMoleculeFavoriteStatus(prev => ({
+          ...prev,
+          [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
+        }));
+      }
       
       // Hide success message after 3 seconds
       setTimeout(() => {
