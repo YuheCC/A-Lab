@@ -928,7 +928,7 @@ const App = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('Authentication required to add favorites');
+        throw new Error('You must be logged in to add favorites');
       }
 
       // Prepare favorite data from molecule properties
