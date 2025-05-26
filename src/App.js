@@ -869,6 +869,9 @@ const App = () => {
   // Add password reset state
   const [showPasswordReset, setShowPasswordReset] = useState(false);
 
+  // Add state for footer visibility on map page
+  const [showMapFooter, setShowMapFooter] = useState(true);
+
   // Add handlePasswordReset function here, before it's used
   const handlePasswordReset = () => {
     setShowPasswordReset(true);
@@ -1364,22 +1367,46 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <div style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0, 
-              right: 0,
-              fontSize: '14px',
-              color: '#333',
-              textAlign: 'center',
-              padding: '10px 0',
-              backgroundColor: '#f1f1f1'
-            }}>
-              By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
-              <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
-                This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
-              </p>
-            </div>
+            {showMapFooter && (
+              <div style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0, 
+                right: 0,
+                fontSize: '14px',
+                color: '#333',
+                textAlign: 'center',
+                padding: '10px 0',
+                backgroundColor: '#f1f1f1'
+              }}>
+                <button
+                  onClick={() => setShowMapFooter(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '5px',
+                    right: '10px',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '16px',
+                    color: '#666',
+                    cursor: 'pointer',
+                    padding: '0',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  title="Close this panel"
+                >
+                  ×
+                </button>
+                By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
+                <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
+                  This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
+                </p>
+              </div>
+            )}
           </Sidebar>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
