@@ -4,7 +4,7 @@ import Slider from "../components/Slider";
 import { useEffect, useState, useMemo } from "react";
 
 // Labels for filters
-const filterLabels = {
+export const filterLabels = {
     molwt: "Molecular Weight",
     homo_eV: "HOMO (eV)",
     lumo_eV: "LUMO (eV)",
