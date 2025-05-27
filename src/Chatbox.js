@@ -129,25 +129,25 @@ const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQue
     setShowFoundMolecules(true);
     try {
       setMoleculesLoading(true);
-      const responses = await Promise.all(
+      const responses = await Promise.allSettled(
         moleculeList.map(async (mol) => {
-          const token = localStorage.getItem('token');
-          
           // Add the use_35m parameter when user has appropriate permissions
           let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`;
           if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
             queryUrl += '&query_type=molecule&use_35m=true';
           }
           
-          const res = await authFetch(
-            queryUrl
-          );
-          const data = await res.json();
-          return data;
+          const res = await authFetch(queryUrl);
+          return await res.json();
         })
       );
+
       // Filter out responses that indicate a successful molecule lookup.
-      const validResponses = responses.filter(item => item.found);
+      const validResponses = responses
+        .filter(promise => promise.status === "fulfilled")
+        .map(promise => promise.value)
+        .filter(item => item.found);
+
       // Flatten the molecule_details lists from each response into a single array.
       const flattenedMolecules = validResponses.reduce((acc, cur) => {
         if (Array.isArray(cur.molecule_details)) {
