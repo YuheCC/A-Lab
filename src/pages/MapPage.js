@@ -117,7 +117,8 @@ const MapPage = ({ data, activePage, handleNavigation, userPermissions, handlePo
                     </button>
                     By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
                     <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
-                        This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues.
+                        This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues. <br></br>
+                        Molecule Renderer (Smiles Drawer, Daniel Probst et. al): <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.7b00425">10.1021/acs.jcim.7b00425</a>
                     </p>
                 </div>
             )}
