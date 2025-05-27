@@ -19,14 +19,13 @@ import './App.css';
 import Header from './components/Header.js';
 import Sidebar from './components/Sidebar.js';
 import NodePopup from './components/NodePopup.js';
-import ExplorerPage from './pages/ExplorerPage.js';
+import ExplorerPage, { filterLabels } from './pages/ExplorerPage.js';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
-  const [filteredGraphData, setFilteredGraphData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -44,8 +43,6 @@ const App = () => {
   const [findClosestFriends, setFindClosestFriends] = useState(false);
   // Add state for find-friend error message
   const [findFriendError, setFindFriendError] = useState(null);
-  // New state for temporary filter values during dragging
-  const [tempFilterRanges, setTempFilterRanges] = useState({});
 
   // New state for feedback functionality
   // const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -72,33 +69,6 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
   const [userPermissions, setUserPermissions] = useState('research');
-
-
-  // New filter implementation with range values
-  const [filterRanges, setFilterRanges] = useState({
-    molwt: { min: 0, max: 1000, range: [0, 1000], active: false },
-    homo_eV: { min: -10, max: 0, range: [-10, 0], active: false },
-    lumo_eV: { min: -5, max: 5, range: [-5, 5], active: false },
-    esp_max_eV: { min: -2, max: 2, range: [-2, 2], active: false },
-    esp_min_eV: { min: -2, max: 0, range: [-2, 0], active: false },
-    predicted_mp: { min: 0, max: 300, range: [0, 300], active: false },
-    predicted_bp: { min: 0, max: 300, range: [0, 300], active: false }
-  });
-
-  // Add state for functional group filter
-  const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
-
-  // Labels for filters
-  const filterLabels = {
-    molwt: "Molecular Weight",
-    homo_eV: "HOMO (eV)",
-    lumo_eV: "LUMO (eV)",
-    esp_max_eV: "Max ESP (eV)",
-    esp_min_eV: "Min ESP (eV)",
-    predicted_mp: "Predicted Melting Point (°C)",
-    predicted_bp: "Predicted Boiling Point (°C)"
-  };
-  const filterLabelsRef = useRef(filterLabels);
 
   // Add global CSS styles for containers
   useEffect(() => {
@@ -171,12 +141,6 @@ const App = () => {
       document.head.removeChild(style);
     };
   }, []);
-
-  // Use refs to avoid dependency issues in useEffect
-  const filterRangesRef = useRef(filterRanges);
-  useEffect(() => {
-    filterRangesRef.current = filterRanges;
-  }, [filterRanges]);
 
   const MAX_NODES = 23000;
 
@@ -466,17 +430,6 @@ const App = () => {
       }
     }
 
-    // Reset filters when navigating away from explorer (filter) page
-    if (activePage === 'explorer' && page !== 'explorer') {
-      resetAllFilters();
-      // Also reset functional group filter if it exists
-      if (typeof setSelectedFunctionalGroup === 'function') {
-        setSelectedFunctionalGroup('');
-        const dropdown = document.querySelector('.functional-group-select');
-        if (dropdown) dropdown.selectedIndex = 0;
-      }
-    }
-
     // Clear search results when navigating away from search page
     if (activePage === 'search' && page !== 'search') {
       setsearchResults(null);
@@ -692,30 +645,9 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Change the dependency array to only run once on component mount
 
-
-  // Reset all filters
-  const resetAllFilters = () => {
-    setFilterRanges(prev => {
-      const newRanges = {};
-      for (const [key, range] of Object.entries(prev)) {
-        newRanges[key] = {
-          ...range,
-          range: [range.min, range.max],
-          active: false
-        };
-      }
-      return newRanges;
-    });
-
-    // Clear all temporary filter values
-    setTempFilterRanges({});
-  };
-
   // Handle clicks on Plotly points
-  const handlePointClick = (data) => {
-    if (!data.points || data.points.length === 0) return;
-    const pointIndex = data.points[0].pointIndex;
-    const node = filteredGraphData[pointIndex];
+  const handlePointClick = (evt, node) => {
+    if (!evt.points || evt.points.length === 0) return;
     if (node) {
       setSelectedNode(node);
       setShowPopup(true);
@@ -907,9 +839,9 @@ const App = () => {
               {/* UMAP Visualization in the middle (50%) */}
               <div className="search-umap-section">
                 <div className="graph-container search-graph">
-                  {filteredGraphData.length > 0 ? (
+                  {graphData.length > 0 ? (
                     <UMAPClusterPlot
-                      data={filteredGraphData}
+                      data={graphData}
                       highlightedData={highlightedMolecules}
                       highlightedSimilarData={highlightedSimilarMolecules}
                       userPermissions={userPermissions}
@@ -1065,9 +997,9 @@ const App = () => {
               <div className="search-umap-section">
                 <div className="graph-container search-graph">
                   <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {filteredGraphData.length > 0 ? (
+                    {graphData.length > 0 ? (
                       <UMAPClusterPlot
-                        data={filteredGraphData}
+                        data={graphData}
                         highlightedData={highlightedMolecules}
                         highlightedSimilarData={highlightedSimilarMolecules}
                         userPermissions={userPermissions}

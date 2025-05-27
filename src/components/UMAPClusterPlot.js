@@ -245,9 +245,10 @@ const UMAPClusterPlot = ({
     // Handle point click
     const handlePointClick = (plotlyData) => {
         if (!onClick || !plotlyData || !plotlyData.points || plotlyData.points.length === 0) return;
+        if (!data[plotlyData.points[0].pointIndex]) return
         
         // Call the onClick handler with the plotly data in the expected format
-        onClick(plotlyData);
+        onClick(plotlyData, data[plotlyData.points[0].pointIndex]);
     };
 
     return <Plot
