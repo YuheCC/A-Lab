@@ -1369,9 +1369,7 @@ const App = () => {
                                       </tr>
                                     )}
                                     <tr>
-                                      <td style={{
-                                        width: '100%'
-                                      }}>
+                                      <td colSpan={2}>
                                         <MoleculeFeedbackBox
                                           molecule={molecule}
                                           lastSearch={lastSearch}
