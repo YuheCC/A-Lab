@@ -18,54 +18,10 @@ import { authFetch, redirectToLogin } from './utils.js';
 import './App.css';
 import Header from './components/Header.js';
 import Sidebar from './components/Sidebar.js';
+import NodePopup from './components/NodePopup.js';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
-
-
-// Popup component to display node data
-// const NodePopup = ({ node, onClose, filterLabels }) => {
-//   if (!node) return null;
-
-//   return (
-//     <div className="popup-overlay" onClick={onClose}>
-//       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
-//         <button className="close-button white-text" onClick={onClose}>×</button>
-//         <h2 className="white-text">Node Details</h2>
-//         <div className="popup-data">
-//           <h3 className="white-text">SMILES</h3>
-//           <p className="dark-field">{node.smiles}</p>
-
-//           <h3 className="white-text">UMAP Coordinates</h3>
-//           <p className="dark-field">X: {node.x.toFixed(6)}, Y: {node.y.toFixed(6)}</p>
-
-//           <h3 className="white-text">Properties</h3>
-//           <table className="property-table dark-table">
-//             <tbody>
-//               {Object.entries(node.properties || {}).map(([key, value]) => (
-//                 <tr key={key}>
-//                   <td className="property-name white-text">{filterLabels[key] || key}</td>
-//                   <td className="property-value white-text">
-//                     {value !== null && value !== undefined 
-//                       ? typeof value === 'number' 
-//                         ? value.toFixed(6) 
-//                         : value.toString()
-//                       : 'N/A'}
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-
-//           <h3 className="white-text">All Data</h3>
-//           <pre className="raw-data dark-field">
-//             {JSON.stringify(node.rawData, null, 2)}
-//           </pre>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 const App = () => {
   const [graphData, setGraphData] = useState([]);
@@ -1003,94 +959,6 @@ const App = () => {
         }));
       }, 3000);
     }
-  };
-
-  // NodePopup component for displaying molecule information
-  const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
-    if (!node) return null;
-
-    const copyToClipboard = () => {
-      const nodeData = JSON.stringify(node.rawData, null, 2);
-      navigator.clipboard.writeText(nodeData)
-        .then(() => {
-          alert('Molecule information copied to clipboard!');
-        })
-        .catch(err => {
-          console.error('Failed to copy molecule data: ', err);
-        });
-    };
-
-    return (
-      <div className="popup-overlay" onClick={onClose}>
-        <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
-          <button className="close-button white-text" onClick={onClose}>×</button>
-          <h2 className="white-text">Molecule Details</h2>
-          <div className="popup-data">
-            <h3 className="white-text">SMILES</h3>
-            <p className="dark-field">{node.smiles}</p>
-
-            <h3 className="white-text">UMAP Coordinates</h3>
-            <p className="dark-field">X: {node.x.toFixed(2)}, Y: {node.y.toFixed(2)}</p>
-
-            <h3 className="white-text">Properties</h3>
-            <table className="property-table dark-table">
-              <tbody>
-                {Object.entries(node.properties || {}).map(([key, value]) => (
-                  <tr key={key}>
-                    <td className="property-name white-text">{filterLabels[key] || key}</td>
-                    <td className="property-value white-text">
-                      {value !== null && value !== undefined
-                        ? typeof value === 'number'
-                          ? key === 'CLUSTER'
-                            ? Math.round(value)
-                            : value.toFixed(2)
-                          : value.toString()
-                        : 'N/A'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-              <button
-                className="copy-button"
-                onClick={copyToClipboard}
-              >
-                Copy All Data
-              </button>
-              <div style={{ marginTop: '10px' }}></div>
-              <button
-                className="favorites-button"
-                onClick={() => handleAddToFavorites(node)}
-                style={{
-                  backgroundColor: '#0080ff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '8px 15px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  transition: 'background-color 0.3s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
-              >
-                Add to Favorites ★
-              </button>
-              {moleculeFavoriteStatus[node.smiles]?.loading && (
-                <div style={{ marginTop: '5px', color: '#aaa' }}>Saving...</div>
-              )}
-              {moleculeFavoriteStatus[node.smiles]?.success && (
-                <div style={{ marginTop: '5px', color: '#4CAF50' }}>{moleculeFavoriteStatus[node.smiles].success}</div>
-              )}
-              {moleculeFavoriteStatus[node.smiles]?.error && (
-                <div style={{ marginTop: '5px', color: '#F44336' }}>{moleculeFavoriteStatus[node.smiles].error}</div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
