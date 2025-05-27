@@ -1,3 +1,5 @@
+import MolViewer2D from "./MolViewer2D";
+
 // NodePopup component for displaying molecule information
 const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
   if (!node) return null;
@@ -19,6 +21,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
         <button className="close-button white-text" onClick={onClose}>×</button>
         <h2 className="white-text">Molecule Details</h2>
         <div className="popup-data">
+          <MolViewer2D smile={node.smiles} theme="dark"/>
           <h3 className="white-text">SMILES</h3>
           <p className="dark-field">{node.smiles}</p>
 
