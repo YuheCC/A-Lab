@@ -5,8 +5,11 @@ import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useState } from "react";
 import API_URL from "../Constants";
 import { authFetch } from "../utils";
+import { usePlotDataStore } from "../providers/plotData";
 
-const SearchPage = ({ data, handleNavigation, activePage, userPermissions, handlePointClick, loading, error, moleculeFavoriteStatus, handleAddToFavorites }) => {
+const SearchPage = ({ handleNavigation, activePage, userPermissions, handlePointClick, moleculeFavoriteStatus, handleAddToFavorites }) => {
+
+    const { graphData: data, loading, error } = usePlotDataStore();
 
     const [searchResults, setsearchResults] = useState(null);
     const [lastSearch, setLastSearch] = useState(null);

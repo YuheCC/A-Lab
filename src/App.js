@@ -18,14 +18,15 @@ import NodePopup from './components/NodePopup.js';
 import ExplorerPage, { filterLabels } from './pages/ExplorerPage.js';
 import MapPage from './pages/MapPage.js';
 import SearchPage from './pages/SearchPage.js';
+import PermissionsErrorPage from './pages/PermissionsErrorPage.js';
+
+import { usePlotDataStore } from './providers/plotData.js';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
 const App = () => {
-  const [graphData, setGraphData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [activePage, setActivePage] = useState('map');
@@ -56,8 +57,15 @@ const App = () => {
   const [authLoading, setAuthLoading] = useState(true);
   const [userPermissions, setUserPermissions] = useState('research');
 
+  const fetchData = usePlotDataStore(state => state.fetchData);
+
+  // Handle onMount events
   // Add global CSS styles for containers
   useEffect(() => {
+
+    // Load graph data
+    fetchData();
+
     // Add global styles for proper container sizing and scrolling
     const style = document.createElement('style');
     style.textContent = `
@@ -126,9 +134,9 @@ const App = () => {
     return () => {
       document.head.removeChild(style);
     };
-  }, []);
 
-  const MAX_NODES = 23000;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -309,49 +317,6 @@ const App = () => {
     return false;
   };
 
-  // Update PermissionsError component to show different messages based on user type
-  const PermissionsError = () => {
-    let message = '';
-    let buttonText = '';
-    let buttonAction = () => { };
-
-    if (userPermissions === 'research') {
-      message = 'This feature is only available for admin users. Please contact your administrator for access.';
-      buttonText = 'View Pricing';
-      buttonAction = () => {
-        setActivePage('about');
-        // Use setTimeout to ensure the about page has rendered before scrolling
-        setTimeout(() => {
-          const pricingImage = document.querySelector('.pricing-image');
-          if (pricingImage) {
-            pricingImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 100);
-      };
-    }
-
-    return (
-      <div className="permissions-error-container">
-        <div className="permissions-error-content">
-          <div className="lock-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-          </div>
-          <h2>Access Restricted</h2>
-          <p>{message}</p>
-          <button
-            className="upgrade-button"
-            onClick={buttonAction}
-          >
-            {buttonText}
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   // Check authentication on load
   useEffect(() => {
     // Skip auth check on public auth/password routes
@@ -408,56 +373,6 @@ const App = () => {
 
     checkAuth();
   }, [activePage]);
-
-  useEffect(() => {
-    async function loadData() {
-      // Remove the isAuthenticated check to allow data loading for all users
-      try {
-        setLoading(true);
-        // Replace CSV fetching with Snowflake API endpoint
-        const response = await authFetch(`${API_URL}/snowflake-query`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-        const data = await response.json();
-
-        // Map the data to our node structure with updated property names
-        const nodes = data.data
-          .filter(row => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
-          .slice(0, MAX_NODES)
-          .map((row, index) => ({
-            id: index.toString(),
-            x: Number(row.UMAP_0),
-            y: Number(row.UMAP_1),
-            smiles: row.SMILES,
-            properties: {
-              molwt: row.MOLECULAR_WEIGHT,
-              homo_eV: row.HOMO_EV,
-              lumo_eV: row.LUMO_EV,
-              esp_min_eV: row.ESP_MIN_EV,
-              esp_max_eV: row.ESP_MAX_EV,
-              functional_groups: row.FUNCTIONAL_GROUPS,
-              predicted_mp: row.PREDICTED_MP,
-              predicted_bp: row.PREDICTED_BP,
-              chemical_formula: row.CHEMICAL_FORMULA,
-              CLUSTER: row.CLUSTER
-            },
-            rawData: row
-          }));
-
-        setGraphData(nodes);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error loading data:", err);
-        setError(err.message);
-        setLoading(false);
-      }
-    }
-
-    // Remove the authentication check to load data for all users
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Change the dependency array to only run once on component mount
 
   // Handle clicks on Plotly points
   const handlePointClick = (evt, node) => {
@@ -572,7 +487,7 @@ const App = () => {
       }
 
       const data = await response.json();
-      
+
       // Check if the molecule was already in favorites
       if (data.message === "Molecule already in favorites") {
         setMoleculeFavoriteStatus(prev => ({
@@ -633,24 +548,20 @@ const App = () => {
 
       <div className="main-container">
         {activePage === 'permissions-error' ? (
-          <PermissionsError />
+          <PermissionsErrorPage
+            userPermissions={userPermissions}
+            setActivePage={setActivePage} />
         ) : activePage === 'explorer' ? (
-          <ExplorerPage 
+          <ExplorerPage
             userPermissions={userPermissions}
             handlePointClick={handlePointClick}
-            loading={loading}
-            error={error}
-            data={graphData} 
-            handleNavigation={handleNavigation} 
-            activePage={activePage}/>
+            handleNavigation={handleNavigation}
+            activePage={activePage} />
         ) : activePage === 'map' ? (
-          <MapPage 
-            data={graphData} 
-            userPermissions={userPermissions} 
-            handlePointClick={handlePointClick} 
-            activePage={activePage} 
-            loading={loading}
-            error={error}
+          <MapPage
+            userPermissions={userPermissions}
+            handlePointClick={handlePointClick}
+            activePage={activePage}
             handleNavigation={handleNavigation}></MapPage>
         ) : activePage === 'chatbot' ? (
           checkPageAccess('chatbot') ? (
@@ -666,7 +577,9 @@ const App = () => {
               </Suspense>
             </Sidebar>
           ) : (
-            <PermissionsError />
+            <PermissionsErrorPage
+              userPermissions={userPermissions}
+              setActivePage={setActivePage} />
           )
         ) : activePage === 'pricing' ? (
           <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
@@ -695,14 +608,11 @@ const App = () => {
           <SearchPage
             handleNavigation={handleNavigation}
             activePage={activePage}
-            data={graphData}
             userPermissions={userPermissions}
             handlePointClick={handlePointClick}
-            loading={loading}
-            error={error}
             moleculeFavoriteStatus={moleculeFavoriteStatus}
             handleAddToFavorites={handleAddToFavorites}
-            />
+          />
         )}
       </div>
 
