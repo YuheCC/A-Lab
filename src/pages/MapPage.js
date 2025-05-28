@@ -1,8 +1,11 @@
 import Sidebar from "../components/Sidebar";
 import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import { useState } from "react";
+import { usePlotDataStore } from "../providers/plotData";
 
-const MapPage = ({ data, activePage, handleNavigation, userPermissions, handlePointClick, loading, error }) => {
+const MapPage = ({ activePage, handleNavigation, userPermissions, handlePointClick }) => {
+
+    const { graphData: data, loading, error } = usePlotDataStore(); 
 
     const [showMapFooter, setShowMapFooter] = useState(true);
 

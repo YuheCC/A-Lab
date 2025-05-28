@@ -2,6 +2,7 @@ import Sidebar from "../components/Sidebar";
 import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import Slider from "../components/Slider";
 import { useEffect, useState, useMemo } from "react";
+import { usePlotDataStore } from "../providers/plotData";
 
 // Labels for filters
 export const filterLabels = {
@@ -15,7 +16,9 @@ export const filterLabels = {
 };
 
 
-const ExplorerPage = ({ data, handleNavigation, activePage, userPermissions, handlePointClick, loading, error }) => {
+const ExplorerPage = ({ handleNavigation, activePage, userPermissions, handlePointClick }) => {
+
+    const { graphData: data, loading, error } = usePlotDataStore(); 
 
     const [filteredGraphData, setFilteredGraphData] = useState(data);
     const [tempFilterRanges, setTempFilterRanges] = useState({});
