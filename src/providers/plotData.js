@@ -13,8 +13,7 @@ export const usePlotDataStore = create((set) => ({
 
     loading: false,
     error: null,
-    rawData: [],
-    graphData: [],
+    data: [],
 
     fetchData: async () => {
         try {
@@ -53,8 +52,7 @@ export const usePlotDataStore = create((set) => ({
                 }));
 
             set({
-                rawData: data,
-                graphData: nodes,
+                data: nodes,
                 loading: false,
             })
             return nodes;

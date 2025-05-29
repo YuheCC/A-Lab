@@ -1,6 +1,7 @@
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
 
 // Define a color mapping for clusters (23 distinct colors)
 const clusterColorMap = {
@@ -243,15 +244,15 @@ const UMAPClusterPlot = ({
     }, [plotData, highlightGraphData, highlightSimilarGraphData])
 
     // Handle point click
-    const handlePointClick = (plotlyData) => {
+    const handlePointClick = useCallback((plotlyData) => {
         if (!onClick || !plotlyData || !plotlyData.points || plotlyData.points.length === 0) return;
         if (!data[plotlyData.points[0].pointIndex]) return
         
         // Call the onClick handler with the plotly data in the expected format
         onClick(plotlyData, data[plotlyData.points[0].pointIndex]);
-    };
+    }, [data, onClick]);
 
-    return <Plot
+    return <StrictModeSafePlot
         data={graphData}
         layout={layout}
         config={PLOTLY_CONFIG_DEFAULTS}
@@ -262,6 +263,40 @@ const UMAPClusterPlot = ({
             if (onInitialized) onInitialized();
         }}
     />
+}
+
+export const StrictModeSafePlot = (props) => {
+    const [revision, setRevision] = useState(0);
+    const location = useLocation();
+    const mountedRef = useRef(false);
+
+    useEffect(() => {
+        if (!mountedRef.current) {
+            mountedRef.current = true;
+        } else {
+            setRevision(prev => prev + 1);
+        }
+
+        return () => {
+            mountedRef.current = false;
+        }
+
+    }, [location.pathname, props.data])
+
+    return (
+        <Plot
+            {...props}
+            revision={revision}
+            layout={{
+                ...props.layout
+            }}
+            onInitialized={(figure, graphDiv) => {
+                if (graphDiv && props.onClick) {
+                    graphDiv.removeAllListeners('plotly_click');
+                    graphDiv.on('plotly_click', props.onClick);
+                } 
+            }}/>
+    )
 }
 
 export default UMAPClusterPlot;

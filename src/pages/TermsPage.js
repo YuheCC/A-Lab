@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 
 // Terms Page component
-const TermsPage = ({ handleNavigation, activePage }) => {
+const TermsPage = () => {
   const [currentDate, setCurrentDate] = useState('');
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const TermsPage = ({ handleNavigation, activePage }) => {
   }, []);
 
   return (
-    <Sidebar handleNavigation={handleNavigation} activePage={activePage}>
+    <Sidebar>
       <div className="terms-content" style={{
         width: '100%',
         padding: '40px',

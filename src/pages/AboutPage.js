@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 
 // About Page component
-const AboutPage = ({ handleNavigation, activePage }) => {
+const AboutPage = () => {
 
   // Add useEffect to set up smooth scrolling
   useEffect(() => {
@@ -15,7 +15,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
   }, []);
 
   return (
-    <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
+    <Sidebar>
       {/* Main content */}
       <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">

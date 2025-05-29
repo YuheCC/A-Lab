@@ -2,15 +2,19 @@ import Sidebar from "../components/Sidebar";
 import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import { useState } from "react";
 import { usePlotDataStore } from "../providers/plotData";
+import { NavLink } from "react-router";
+import { useAuthStore } from "../providers/auth";
 
-const MapPage = ({ activePage, handleNavigation, userPermissions, handlePointClick }) => {
+const MapPage = ({ handlePointClick }) => {
 
-    const { graphData: data, loading, error } = usePlotDataStore(); 
+    const userPermissions = useAuthStore(state => state.userPermissions);
+
+    const { data, loading, error } = usePlotDataStore(); 
 
     const [showMapFooter, setShowMapFooter] = useState(true);
 
     return (
-        <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
+        <Sidebar>
             {/* UMAP Visualization in the middle (50%) */}
             <div className="search-umap-container">
                 {/* UMAP Visualization in the middle (50%) */}
@@ -118,7 +122,7 @@ const MapPage = ({ activePage, handleNavigation, userPermissions, handlePointCli
                     >
                         ×
                     </button>
-                    By using Molecular Universe, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('terms'); }} style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</a>
+                    By using Molecular Universe, you agree to our <NavLink to="/terms" style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</NavLink>
                     <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
                         This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues. <br></br>
                         Molecule Renderer (Smiles Drawer, Daniel Probst et. al): <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.7b00425">10.1021/acs.jcim.7b00425</a>

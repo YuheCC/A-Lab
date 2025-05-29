@@ -1,4 +1,10 @@
-const Sidebar = ({ activePage, handleNavigation, children, style }) => {
+import { useLocation, useNavigate } from "react-router";
+
+const Sidebar = ({ children, style }) => {
+
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
+
     return (
         <div style={{ display: 'flex', width: '100%', flexDirection: 'row', paddingTop: 20, height: 'calc(100vh - 170px)' }}>
             <div className="about-text-section left-text" style={{ width: '7%', minWidth: 100, overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
@@ -13,7 +19,7 @@ const Sidebar = ({ activePage, handleNavigation, children, style }) => {
                         fontWeight: 'normal'
                     }}
                     onClick={() => {
-                        if (activePage === 'about') {
+                        if (pathname === '/about') {
                             // Already on the about page, just scroll to the top
                             const contentWrapper = document.querySelector('.about-content-wrapper');
                             if (contentWrapper) {
@@ -21,7 +27,7 @@ const Sidebar = ({ activePage, handleNavigation, children, style }) => {
                             }
                         } else {
                             // Navigate to about page first, then scroll
-                            handleNavigation('about');
+                            navigate('/about');
                             setTimeout(() => {
                                 const contentWrapper = document.querySelector('.about-content-wrapper');
                                 if (contentWrapper) {
@@ -49,7 +55,7 @@ const Sidebar = ({ activePage, handleNavigation, children, style }) => {
                         onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                         onClick={(e) => {
                             e.preventDefault();
-                            handleNavigation('about');
+                            navigate('/about');
                             setTimeout(() => {
                                 const featuresSection = document.getElementById('features-section');
                                 if (featuresSection) {
@@ -73,7 +79,7 @@ const Sidebar = ({ activePage, handleNavigation, children, style }) => {
                         onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                         onClick={(e) => {
                             e.preventDefault();
-                            handleNavigation('pricing');
+                            navigate('/pricing');
                         }}
                     >
                         Pricing
@@ -91,7 +97,7 @@ const Sidebar = ({ activePage, handleNavigation, children, style }) => {
                         onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                         onClick={(e) => {
                             e.preventDefault();
-                            handleNavigation('about');
+                            navigate('/about');
                             setTimeout(() => {
                                 const newsfeedSection = document.getElementById('newsfeed');
                                 if (newsfeedSection) {

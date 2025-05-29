@@ -1,5 +1,13 @@
+import { useNavigate } from "react-router";
+import { useAuthStore } from "../providers/auth";
+
 // Update PermissionsError component to show different messages based on user type
-const PermissionsErrorPage = ({ userPermissions, setActivePage }) => {
+const PermissionsErrorPage = () => {
+
+    const userPermissions = useAuthStore(state => state.userPermissions);
+
+    const navigate = useNavigate();
+
     let message = '';
     let buttonText = '';
     let buttonAction = () => { };
@@ -8,14 +16,7 @@ const PermissionsErrorPage = ({ userPermissions, setActivePage }) => {
         message = 'This feature is only available for admin users. Please contact your administrator for access.';
         buttonText = 'View Pricing';
         buttonAction = () => {
-            setActivePage('about');
-            // Use setTimeout to ensure the about page has rendered before scrolling
-            setTimeout(() => {
-                const pricingImage = document.querySelector('.pricing-image');
-                if (pricingImage) {
-                    pricingImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 100);
+            navigate('/pricing');
         };
     }
 

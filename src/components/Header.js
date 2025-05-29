@@ -1,47 +1,20 @@
-const Header = ({ activePage, handleNavigation }) => {
+import { NavLink, useLocation } from "react-router";
+
+const Header = () => {
+    const { pathname } = useLocation();
     return (
         <header className="App-header">
             <div className="header-content">
                 <div className="header-links">
-                    <a
-                        href="/map"
-                        className={`header-link ${activePage === 'map' ? 'active' : ''}`}
-                        onClick={(e) => { e.preventDefault(); handleNavigation('map'); }}
-                    >
-                        Map
-                    </a>
-                    <a
-                        href="/ask"
-                        className={`header-link ${activePage === 'chatbot' ? 'active' : ''}`}
-                        onClick={(e) => { e.preventDefault(); handleNavigation('chatbot'); }}
-                    >
-                        Ask
-                    </a>
-                    <a
-                        href="/search"
-                        className={`header-link ${activePage === 'search' ? 'active' : ''}`}
-                        onClick={(e) => { e.preventDefault(); handleNavigation('search'); }}
-                    >
-                        Search
-                    </a>
-                    <a
-                        href="/filter"
-                        className={`header-link ${activePage === 'explorer' ? 'active' : ''}`}
-                        onClick={(e) => { e.preventDefault(); handleNavigation('explorer'); }}
-                    >
-                        Filter
-                    </a>
-                    <a
-                        href="/favorites"
-                        className={`header-link ${activePage === 'favorites' ? 'active' : ''}`}
-                        onClick={(e) => { e.preventDefault(); handleNavigation('favorites'); }}
-                    >
-                        Favorites
-                    </a>
+                    <NavLink className='header-link' to="/">Map</NavLink>
+                    <NavLink className='header-link' to="/ask">Ask</NavLink>
+                    <NavLink className='header-link' to="/search">Search</NavLink>
+                    <NavLink className='header-link' to="/filter">Filter</NavLink>
+                    <NavLink className='header-link' to="/favorites">Favorites</NavLink>
                 </div>
             </div>
             <div className="stats-container">
-                {activePage === 'explorer' && (
+                {pathname === '/explorer' && (
                     <>
                         {/* <div>Showing: {filteredGraphData.length} of {graphData.length} nodes</div> */}
                         {/* <div>Filters: {activeFilterCount} active</div> */}

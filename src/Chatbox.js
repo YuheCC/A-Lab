@@ -5,6 +5,7 @@ import './Chatbox.css';
 import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';
 import { authFetch } from './utils.js';
+import { useAuthStore } from './providers/auth.js';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
@@ -78,7 +79,10 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
 });
 
 // Chatbot component
-const ChatbotInterface = ({ messages, setMessages, userPermissions, remainingQueries, setRemainingQueries }) => {
+const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainingQueries }) => {
+
+  const userPermissions = useAuthStore(state => state.userPermissions);
+
   const [foundMolecules, setFoundMolecules] = useState([]);
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);

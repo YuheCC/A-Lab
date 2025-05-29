@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router";
 import Sidebar from "../components/Sidebar";
 
 // Pricing Page component
-const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
+const PricingPage = () => {
+
+  const navigate = useNavigate();
+  
   return (
-    <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
+    <Sidebar>
       <div className="pricing-container" style={{ display: 'flex', width: '100%', padding: '0' }}>
         <div className="pricing-cards" style={{ width: '100%' }}>
           <div className="pricing-card">
@@ -22,7 +26,9 @@ const PricingPage = ({ onSignIn, handleNavigation, activePage }) => {
             </div>
             <button
               className="pricing-cta research"
-              onClick={onSignIn}
+              onClick={() => {
+                navigate('/login');
+              }}
             >
               Get Started
             </button>
