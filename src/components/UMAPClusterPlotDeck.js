@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
-import { hover } from '@testing-library/user-event/dist/hover';
 import MolViewer2D from './MolViewer2D';
 import { CompositeLayer } from 'deck.gl';
+import { House, Maximize, ZoomIn, ZoomOut } from 'lucide-react';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -45,35 +45,42 @@ const defaultColor = '#000000'; // black
 
 // Create a composite layer for markers with labels
 class MarkerWithLabelLayer extends CompositeLayer {
+
+    static get componentName() {
+        return 'MarkerWithLabelLayer';
+    }
+
     renderLayers() {
-        const { data, iconName = 'marker', iconSize = 30 } = this.props;
-        
-        return [
-            new ScatterplotLayer({
-                id: `${this.id}-scatter`,
-                data,
-                getPosition: d => [d.UMAP_0, d.UMAP_1],
+        const { data, iconName = 'marker', iconSize = 30, xKey = 'x', yKey = 'y' } = this.props;
+        const layers = [];
+
+        data.forEach((point, index) => {
+            layers.push(new ScatterplotLayer({
+                id: `${this.id}-scatter-${index}`,
+                data: [point],
+                getPosition: d => [d[xKey], d[yKey]],
                 getRadius: 100,
                 getFillColor: d => [255, 0, 0],
                 radiusMinPixels: 5,
                 radiusMaxPixels: 50,
                 radiusScale: 6,
                 pickable: false
-            }),
-            new IconLayer({
-                id: `${this.id}-icon`,
-                data,
-                getPosition: d => [d.UMAP_0, d.UMAP_1],
+            }));
+
+            layers.push(new IconLayer({
+                id: `${this.id}-icon-${index}`,
+                data: [point],
+                getPosition: d => [d[xKey], d[yKey]],
                 getIcon: d => iconName,
                 getSize: iconSize,
                 iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
-                iconMapping: process.env.PUBLIC_URL + '/atlas_map.json',
-            }),
-            new TextLayer({
-                id: `${this.id}-label`,
-                data,
+            }));
+
+            layers.push(new TextLayer({
+                id: `${this.id}-label-${index}`,
+                data: [point],
                 sizeMinPixels: 10,
-                getPosition: d => [d.UMAP_0, d.UMAP_1],
+                getPosition: d => [d[xKey], d[yKey]],
                 getPixelOffset: [0, -16],
                 getText: (object, objectInfo) => {
                     return (objectInfo.index + 1).toString();
@@ -82,8 +89,11 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 getTextAnchor: 'middle',
                 pickable: false,
                 getSize: 12
-            })
-        ];
+            }))
+
+        });
+
+        return layers;
     }
 }
 
@@ -96,8 +106,9 @@ const UMAPClusterPlotDeck = ({
     onClick,
 }) => {
 
-
+    const hoverRef = useRef(null);
     const containerRef = useRef(null);
+    const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
 
     const onHover = useCallback((info) => {
@@ -106,6 +117,24 @@ const UMAPClusterPlotDeck = ({
         } else {
             setHoveredObject(null);
         }
+    }, []);
+
+    // Track container size changes
+    useEffect(() => {
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                setContainerDimensions({
+                    width: containerRef.current.offsetWidth,
+                    height: containerRef.current.offsetHeight
+                });
+            }
+        };
+
+        // Update on mount and resize
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        
+        return () => window.removeEventListener('resize', updateDimensions);
     }, []);
 
 
@@ -143,10 +172,10 @@ const UMAPClusterPlotDeck = ({
             };
         }
 
-        const minX = Math.min(...xValues) - 2;
-        const maxX = Math.max(...xValues) + 2;
-        const minY = Math.min(...yValues) - 2;
-        const maxY = Math.max(...yValues) + 2;
+        const minX = Math.min(...xValues);
+        const maxX = Math.max(...xValues);
+        const minY = Math.min(...yValues);
+        const maxY = Math.max(...yValues);
 
         // Calculate center
         const centerX = (minX + maxX) / 2;
@@ -157,8 +186,11 @@ const UMAPClusterPlotDeck = ({
         const rangeY = maxY - minY;
         const maxRange = Math.max(rangeX, rangeY);
 
-        // Adjust zoom based on your data range (you may need to tune this)
-        const zoom = Math.max(0, Math.log2(400 / (maxRange || 1)));
+        // Use actual container dimensions for better fitting
+        const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
+        const targetFillRatio = 0.6; // Use 80% of container space
+        
+        const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
 
         return {
             longitude: centerX,
@@ -167,7 +199,7 @@ const UMAPClusterPlotDeck = ({
             pitch: 0,
             bearing: 0
         };
-    }, [data]);
+    }, [containerDimensions.height, containerDimensions.width, data]);
 
     const layers = [
         useMemo(() =>
@@ -211,19 +243,42 @@ const UMAPClusterPlotDeck = ({
                 iconName: 'marker',
                 iconSize: 30
             })
-        , [highlightedData]),
-        
+            , [highlightedData]),
+
         useMemo(() =>
             new MarkerWithLabelLayer({
                 id: 'similar-markers',
                 data: highlightedSimilarData,
                 iconName: 'marker-search',
-                iconSize: 30
+                iconSize: 30,
+                xKey: 'UMAP_0',
+                yKey: 'UMAP_1'
             })
-        , [highlightedSimilarData]),
+            , [highlightedSimilarData]),
     ];
 
+    const position = useMemo(() => {
+        if (!hoveredObject) return {};
+        if (!containerRef.current) return {};
+
+        const boundingRect = containerRef.current.getBoundingClientRect()
+        return {
+            top: Math.min(
+                hoveredObject.y + boundingRect.top,
+                boundingRect.top + containerRef.current.offsetHeight - (hoverRef.current ? hoverRef.current.offsetHeight : 200)),
+            left: Math.min(
+                hoveredObject.x + boundingRect.left,
+                boundingRect.left + containerRef.current.offsetWidth)
+        }
+    }, [hoveredObject, containerRef]);
+
     return <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
+        <div className='deck-controls'>
+            <House className='control-icon' size={15} />
+            <Maximize className='control-icon' size={15} />
+            <ZoomIn className='control-icon' size={15} />
+            <ZoomOut className='control-icon' size={15} />
+        </div>
         <DeckGL
             initialViewState={viewState}
             controller={true}
@@ -242,85 +297,89 @@ const UMAPClusterPlotDeck = ({
             getCursor={() => 'crosshair'}
             layers={layers}
         />
-        {hoveredObject && containerRef.current ? <div className='deck-hover-info' style={{
-            top: Math.min(hoveredObject.y, containerRef.current.offsetHeight - 200),
-            left: Math.min(hoveredObject.x, containerRef.current.offsetWidth)
-        }}>
-            <div className='deck-hover-vis'>
-                {hoveredObject ? <MolViewer2D smile={hoveredObject.object.smiles} width={200} height={200} /> : <div>Loading...</div>}
+        {hoveredObject && containerRef.current ? (
+            <div className='deck-hover-info' ref={hoverRef} style={position}>
+                <div style={{ display: 'flex', flexFlow: 'row' }}>
+                    <div className='deck-hover-vis' translate='no'>
+                        {hoveredObject ? <MolViewer2D smile={hoveredObject.object.smiles} width={200} height={200} /> : <div>Loading...</div>}
+                    </div>
+                    <div className='deck-info-panel'>
+                        <div className='deck-info-title'>Molecule Information</div>
+                        <table translate='no'>
+                            <tbody>
+                                <tr>
+                                    <td colSpan={2}>
+                                        <div className='deck-info-group'>
+                                            <label>SMILES</label>
+                                            <code>{hoveredObject.object.smiles}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Cluster</label>
+                                            <code>{hoveredObject.object.properties.CLUSTER}</code>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Mol Weight</label>
+                                            <code>{hoveredObject.object.properties.molwt}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Esp Max EV</label>
+                                            <code>{hoveredObject.object.properties.esp_max_eV}</code>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Esp Min EV</label>
+                                            <code>{hoveredObject.object.properties.esp_min_eV}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Homo EV</label>
+                                            <code>{hoveredObject.object.properties.homo_eV}</code>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Lumo EV</label>
+                                            <code>{hoveredObject.object.properties.lumo_eV}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Predicted MP</label>
+                                            <code>{hoveredObject.object.properties.predicted_mp ?? "N/A"}</code>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className='deck-info-group'>
+                                            <label>Predicted BP</label>
+                                            <code>{hoveredObject.object.properties.predicted_bp ?? "N/A"}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div className='deck-info-footer'>
+                    Click on the molecule to view more details.
+                </div>
             </div>
-            <div className='deck-info-panel'>
-                <div className='deck-info-title'>Molecule Information</div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td colSpan={2}>
-                                <div className='deck-info-group'>
-                                    <label>SMILES</label>
-                                    <code>{hoveredObject.object.smiles}</code>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Cluster</label>
-                                    <code>{hoveredObject.object.properties.CLUSTER}</code>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Mol Weight</label>
-                                    <code>{hoveredObject.object.properties.molwt}</code>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Esp Max EV</label>
-                                    <code>{hoveredObject.object.properties.esp_max_eV}</code>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Esp Min EV</label>
-                                    <code>{hoveredObject.object.properties.esp_min_eV}</code>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Homo EV</label>
-                                    <code>{hoveredObject.object.properties.homo_eV}</code>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Lumo EV</label>
-                                    <code>{hoveredObject.object.properties.lumo_eV}</code>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Predicted MP</label>
-                                    <code>{hoveredObject.object.properties.predicted_mp ?? "N/A"}</code>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='deck-info-group'>
-                                    <label>Predicted BP</label>
-                                    <code>{hoveredObject.object.properties.predicted_bp ?? "N/A"}</code>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div> : null}
+        ) : null}
     </div>
 }
 

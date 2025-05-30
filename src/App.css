@@ -3454,19 +3454,18 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 
 /* Deckgl Styles */
 .deck-hover-info {
-  transform: translate(50%, 75%);
   position: fixed;
   display: flex;
-  flex-flow:row;
+  flex-flow:column;
   background-color: rgba(255, 255, 255, 0.9);
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 
 .deck-hover-vis {
+  padding: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3478,7 +3477,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 }
 
 .deck-info-panel {
-  padding-left: 10px;
+  padding: 10px;
   border-left: 1px solid #ddd;
   display: flex;
   flex-direction: column;
@@ -3496,10 +3495,41 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 }
 .deck-info-group code {
   font-family: monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: #555;
   max-width: 120px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.deck-hover-info .deck-info-footer {
+  background-color: #f1f1f1;
+  padding: 5px;
+  border-top: 1px solid #ddd;
+  font-size: 12px;
+}
+
+.deck-controls {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  flex-flow:row;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.deck-controls .control-icon {
+  padding: 5px;
+  border-radius:4px;
+  background-color:transparent;
+}
+.deck-controls .control-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 }
