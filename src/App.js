@@ -290,7 +290,9 @@ const App = () => {
                   borderRadius: '8px',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
                 }}>
-                  <FavoritesGrid />
+                  <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
+                    <FavoritesGrid />
+                  </Suspense>
                 </div>
               </Sidebar>
             </ProtectedRoute>
