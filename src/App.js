@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import Navbar from './components/Navbar.js';
 import PasswordReset from './components/PasswordReset.js';
 import AboutPage from './pages/AboutPage.js';
 import AuthPage from './pages/AuthPage.js';
@@ -9,10 +8,9 @@ import RedeemPage from './pages/RedeemPage.js';
 import TermsPage from './pages/TermsPage.js';
 
 import API_URL from './Constants.js'; // Contains API URL and any other constants
-import { authFetch, redirectToLogin } from './utils.js';
+import { authFetch } from './utils.js';
 
 import './App.css';
-import Header from './components/Header.js';
 import Sidebar from './components/Sidebar.js';
 import NodePopup from './components/NodePopup.js';
 import ExplorerPage, { filterLabels } from './pages/ExplorerPage.js';
@@ -21,6 +19,9 @@ import SearchPage from './pages/SearchPage.js';
 import PermissionsErrorPage from './pages/PermissionsErrorPage.js';
 
 import { usePlotDataStore } from './providers/plotData.js';
+import { Route, Routes } from 'react-router';
+import { ProtectedRoute, useAuthStore } from './providers/auth.js';
+import FullNavLayout from './layouts/FullNavLayout.js';
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
@@ -29,7 +30,6 @@ const App = () => {
 
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [activePage, setActivePage] = useState('map');
 
   // New state for feedback functionality
   // const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -51,17 +51,14 @@ const App = () => {
     { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
   ]);
 
-  // Authentication state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
-  const [authLoading, setAuthLoading] = useState(true);
-  const [userPermissions, setUserPermissions] = useState('research');
-
   const fetchData = usePlotDataStore(state => state.fetchData);
+  const { verifyAuth } = useAuthStore();
 
   // Handle onMount events
   // Add global CSS styles for containers
   useEffect(() => {
+    // Verify auth tokens if they are present
+    verifyAuth();
 
     // Load graph data
     fetchData();
@@ -136,243 +133,7 @@ const App = () => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('permissions');
-    setIsAuthenticated(false);
-  };
-
-  // Update useEffect for route handling
-  useEffect(() => {
-    const handleRouteChange = () => {
-      if (authLoading) return;
-      const path = window.location.pathname;
-
-      // If not authenticated, allow access to About, Map, and Pricing pages
-      if (!isAuthenticated) {
-        if (path === '/about' || path === '/' || path === '/map' || path === '/pricing' || path === '/terms' || path === '/redeem' || path === '/password-reset' || path === '/ask' || path === '/search' || path === '/filter') {
-          // Set appropriate active page
-          if (path === '/about') {
-            setActivePage('about');
-          } else if (path === '/pricing') {
-            setActivePage('pricing');
-          } else if (path === '/terms') {
-            setActivePage('terms');
-          } else if (path === '/redeem') {
-            setActivePage('redeem');
-          } else if (path === '/password-reset') {
-            setActivePage('password-reset');
-          } else if (path === '/map') {
-            setActivePage('map');
-          } else if (path === '/ask') {
-            setActivePage('chatbot');
-          } else if (path === '/search') {
-            setActivePage('search');
-          } else if (path === '/filter') {
-            setActivePage('explorer');
-          } else if (path === '/') {
-            // Redirect root to map
-            window.history.pushState({}, '', '/map');
-            setActivePage('map');
-          }
-        } else {
-          // Redirect to login for any other route
-          redirectToLogin();
-          setActivePage('login');
-        }
-        return;
-      }
-
-      // For authenticated users, handle routes based on permissions
-      if (path === '/login' || path === '/redeem') {
-        // Redirect to root if already authenticated
-        window.history.pushState({}, '', '/');
-        setActivePage('about');
-      } else if (path === '/about') {
-        setActivePage('about');
-      } else if (path === '/reset-password') {
-        // Show password reset page
-        setShowPasswordReset(true);
-      } else if (path === '/password-reset') {
-        // Show forgot password page
-        setActivePage('password-reset');
-      } else if (path === '/pricing') {
-        setActivePage('pricing');
-      } else if (path === '/terms') {
-        setActivePage('terms');
-      } else if (path === '/map') {
-        setActivePage('map');
-      } else if (path === '/ask') {
-        setActivePage('chatbot');
-      } else if (path === '/search') {
-        setActivePage('search');
-      } else if (path === '/filter') {
-        setActivePage('explorer');
-      } else if (path === '/favorites') {
-        setActivePage('favorites');
-      } else if (path === '/') {
-        // Redirect root to map
-        window.history.pushState({}, '', '/map');
-        setActivePage('map');
-      } else {
-        // Redirect any other route to map
-        window.history.pushState({}, '', '/map');
-        setActivePage('map');
-      }
-    };
-
-    // Initial route check
-    handleRouteChange();
-
-    // Listen for route changes
-    window.addEventListener('popstate', handleRouteChange);
-    return () => window.removeEventListener('popstate', handleRouteChange);
-  }, [isAuthenticated, userPermissions, authLoading]);
-
-  // Update handleSignIn to use proper navigation
-  const handleSignIn = () => {
-    redirectToLogin();
-    setActivePage('login');
-  };
-
-  // Update handleNavigation to check permissions
-  const handleNavigation = (page) => {
-    if (!checkPageAccess(page)) {
-      setActivePage('permissions-error');
-      return;
-    }
-
-    // Set URL based on page
-    if (page === 'pricing') {
-      window.history.pushState({}, '', '/pricing');
-    } else if (page === 'about') {
-      window.history.pushState({}, '', '/about');
-    } else if (page === 'terms') {
-      window.history.pushState({}, '', '/terms');
-    } else if (page === 'map') {
-      window.history.pushState({}, '', '/map');
-    } else if (page === 'chatbot') {
-      window.history.pushState({}, '', '/ask');
-    } else if (page === 'search') {
-      window.history.pushState({}, '', '/search');
-    } else if (page === 'explorer') {
-      window.history.pushState({}, '', '/filter');
-    } else if (page === 'favorites') {
-      window.history.pushState({}, '', '/favorites');
-    } else {
-      // Keep the URL as root for any other pages
-      if (window.location.pathname !== '/') {
-        window.history.pushState({}, '', '/');
-      }
-    }
-
-    // Special case for enterprise (advanced search) tab
-    if (page === 'enterprise' && activePage === 'search') {
-      // Then navigate to enterprise tab
-      setActivePage(page);
-      return;
-    }
-
-    setActivePage(page);
-  };
-
-  // Move checkPageAccess inside App component
-  const checkPageAccess = (page) => {
-    // Allow all users (including non-authenticated) to access the map page and pricing page
-    if (page === 'map' || page === 'pricing' || page === 'terms' || page === 'favorites') {
-      return true;
-    }
-
-    // Research users can access About, Filter, Simple Search, and Chat pages
-    if (userPermissions === 'research') {
-      return ['about', 'explorer', 'search', 'chatbot', 'favorites'].includes(page);
-    }
-
-    // Admin users can access everything
-    if (userPermissions === 'admin') {
-      return true;
-    }
-
-    // Professional users can also access everything
-    if (userPermissions === 'team') {
-      return true;
-    }
-
-    if (userPermissions === 'explorer') {
-      return true;
-    }
-
-    if (userPermissions === 'enterprise') {
-      return true;
-    }
-
-    if (userPermissions === 'joint') {
-      return true;
-    }
-
-    // Default to no access
-    return false;
-  };
-
-  // Check authentication on load
-  useEffect(() => {
-    // Skip auth check on public auth/password routes
-    const path = window.location.pathname;
-    if (
-      path.startsWith('/login') ||
-      path.startsWith('/register') ||
-      path.startsWith('/redeem')
-    ) {
-      setAuthLoading(false);
-      return;
-    }
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      const permissions = localStorage.getItem('permissions') || 'research';
-      setUserPermissions(permissions);
-
-      if (!token) {
-        setIsAuthenticated(false);
-        setAuthLoading(false);
-        return;
-      }
-
-      try {
-        const response = await authFetch(`${API_URL}/verify-token`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsAuthenticated(true);
-          setUsername(data.username);
-          setUserPermissions(data.permissions || 'research');
-
-          if (activePage === 'login') {
-            setActivePage('map');
-          }
-
-          // Removed duplicate login redirect that was overriding the earlier one
-          // Removed duplicate redirect to explorer;
-        } else {
-          localStorage.removeItem('token');
-          localStorage.removeItem('username');
-          localStorage.removeItem('permissions');
-          setIsAuthenticated(false);
-          setUserPermissions('research');
-        }
-      } catch (err) {
-        console.error('Auth verification error:', err);
-        setIsAuthenticated(false);
-        setUserPermissions('research');
-      } finally {
-        setAuthLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [activePage]);
+  }, [verifyAuth]);
 
   // Handle clicks on Plotly points
   const handlePointClick = (evt, node) => {
@@ -387,59 +148,9 @@ const App = () => {
     setShowPopup(false);
   };
 
-
   // Add state for query limits
-  const [remainingQueries, setRemainingQueries] = useState(0);
-
   // Query limits are now managed on the server side
-
-  // Add password reset state
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
-
-  // Add handlePasswordReset function here, before it's used
-  const handlePasswordReset = () => {
-    setShowPasswordReset(true);
-    // Change URL to indicate password reset page
-    window.history.pushState({}, '', '/reset-password');
-  };
-
-  // If authentication is still being checked, show loading spinner
-  if (authLoading) {
-    return <div className="app-loading">Loading...</div>;
-  }
-
-  // Modified condition to allow non-authenticated users to access the map page and pricing page
-  if (!isAuthenticated && activePage !== 'about' && activePage !== 'map' && activePage !== 'pricing' && activePage !== 'terms' && activePage !== 'redeem' && activePage !== 'password-reset') {
-    return <AuthPage />;
-  }
-
-  // Show redeem page if active
-  if (activePage === 'redeem' && !isAuthenticated) {
-    return <RedeemPage />;
-  }
-
-  // Show forgot password page if active
-  if (activePage === 'password-reset' && !isAuthenticated) {
-    return <ForgotPasswordPage />;
-  }
-
-  // Show password reset page if active
-  if (showPasswordReset && isAuthenticated) {
-    return (
-      <div className="App" style={{ overflow: 'auto', height: '100vh' }}>
-        <Navbar
-          activePage={activePage}
-          isAuthenticated={isAuthenticated}
-          username={username}
-          onLogout={handleLogout}
-          onSignIn={handleSignIn}
-          onPasswordReset={handlePasswordReset}
-          onNavigation={handleNavigation}
-        />
-        <PasswordReset />
-      </div>
-    );
-  }
+  const [remainingQueries, setRemainingQueries] = useState(0);
 
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
@@ -531,90 +242,79 @@ const App = () => {
 
   return (
     <div className="App">
-      {/* Navbar with conditional rendering */}
-      <Navbar
-        activePage={activePage}
-        isAuthenticated={isAuthenticated}
-        username={username}
-        onLogout={handleLogout}
-        onSignIn={handleSignIn}
-        onPasswordReset={handlePasswordReset}
-        onNavigation={handleNavigation}
-      />
+      <Routes>
+        {/* Full Page Routes */}
+        <Route>
+          <Route path="/login" element={<AuthPage />}/>
+          <Route path="/redeem" element={<RedeemPage />}/>
+          <Route path="/forgot-password" element={<ForgotPasswordPage />}/>
+        </Route>
 
-      <Header
-        activePage={activePage}
-        handleNavigation={handleNavigation}></Header>
+        {/* Nav Bar & Header Routes */}
+        <Route element={<FullNavLayout />}>
+          <Route index element={<MapPage handlePointClick={handlePointClick} />} />
+          <Route path="/map" element={<MapPage handlePointClick={handlePointClick} />} />
+          <Route path="/pricing" element={<PricingPage />}/>
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/about" element={<AboutPage />} />
 
-      <div className="main-container">
-        {activePage === 'permissions-error' ? (
-          <PermissionsErrorPage
-            userPermissions={userPermissions}
-            setActivePage={setActivePage} />
-        ) : activePage === 'explorer' ? (
-          <ExplorerPage
-            userPermissions={userPermissions}
-            handlePointClick={handlePointClick}
-            handleNavigation={handleNavigation}
-            activePage={activePage} />
-        ) : activePage === 'map' ? (
-          <MapPage
-            userPermissions={userPermissions}
-            handlePointClick={handlePointClick}
-            activePage={activePage}
-            handleNavigation={handleNavigation}></MapPage>
-        ) : activePage === 'chatbot' ? (
-          checkPageAccess('chatbot') ? (
-            <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
-              <Suspense fallback={<div className="app-loading">Loading...</div>}>
-                <ChatbotInterface
-                  messages={chatMessages}
-                  setMessages={setChatMessages}
-                  userPermissions={userPermissions}
-                  remainingQueries={remainingQueries}
-                  setRemainingQueries={setRemainingQueries}
-                />
-              </Suspense>
-            </Sidebar>
-          ) : (
-            <PermissionsErrorPage
-              userPermissions={userPermissions}
-              setActivePage={setActivePage} />
-          )
-        ) : activePage === 'pricing' ? (
-          <PricingPage onSignIn={handleSignIn} handleNavigation={handleNavigation} activePage={activePage} />
-        ) : activePage === 'terms' ? (
-          <TermsPage handleNavigation={handleNavigation} activePage={activePage} />
-        ) : activePage === 'about' ? (
-          <AboutPage handleNavigation={handleNavigation} activePage={activePage} />
-        ) : activePage === 'favorites' ? (
-          <Sidebar activePage={activePage} handleNavigation={handleNavigation}>
-            {/* Main content area */}
-            <div className="favorites-content-wrapper" style={{
-              flex: '1',
-              padding: '0 20px',
-              height: '100%',
-              overflowY: 'auto',
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <Suspense fallback={<div className="app-loading">Loading...</div>}>
-                <FavoritesGrid />
-              </Suspense>
-            </div>
-          </Sidebar>
-        ) : (
-          <SearchPage
-            handleNavigation={handleNavigation}
-            activePage={activePage}
-            userPermissions={userPermissions}
-            handlePointClick={handlePointClick}
-            moleculeFavoriteStatus={moleculeFavoriteStatus}
-            handleAddToFavorites={handleAddToFavorites}
-          />
-        )}
-      </div>
+          <Route path="/filter" element={
+            <ProtectedRoute>
+              <ExplorerPage handlePointClick={handlePointClick} />
+            </ProtectedRoute>} />
+            
+          <Route path="/ask" element={
+            <ProtectedRoute>
+              <Sidebar>
+                <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
+                  <ChatbotInterface
+                    messages={chatMessages}
+                    setMessages={setChatMessages}
+                    remainingQueries={remainingQueries}
+                    setRemainingQueries={setRemainingQueries}
+                  />
+                </Suspense>
+              </Sidebar>
+            </ProtectedRoute>
+          } />
+          <Route path="/favorites" element={
+            <ProtectedRoute>
+              <Sidebar>
+                {/* Main content area */}
+                <div className="favorites-content-wrapper" style={{
+                  flex: '1',
+                  padding: '0 20px',
+                  height: '100%',
+                  overflowY: 'auto',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+                }}>
+                  <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
+                    <FavoritesGrid />
+                  </Suspense>
+                </div>
+              </Sidebar>
+            </ProtectedRoute>
+          } />
+          <Route path="/search" element={
+            <ProtectedRoute>
+              <SearchPage
+                handlePointClick={handlePointClick}
+                moleculeFavoriteStatus={moleculeFavoriteStatus}
+                handleAddToFavorites={handleAddToFavorites}
+              />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/reset-password" element={
+            <ProtectedRoute>
+              <PasswordReset />
+            </ProtectedRoute>
+          }/>
+          <Route path="/unauthorized" element={<PermissionsErrorPage />}/>
+        </Route>
+      </Routes>      
 
       {/* Node popup */}
       {showPopup && selectedNode && <NodePopup

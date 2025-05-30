@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { authFetch } from '../utils';
 import API_URL from '../Constants';
+import { useNavigate } from 'react-router';
 
 const PasswordReset = () => {
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,13 +19,13 @@ const PasswordReset = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/map');
+        navigate('/');
         window.location.reload();
       }, 5000);
       
       return () => clearTimeout(timer);
     }
-  }, [success]);
+  }, [success, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

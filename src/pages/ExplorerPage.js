@@ -3,6 +3,7 @@ import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import Slider from "../components/Slider";
 import { useEffect, useState, useMemo } from "react";
 import { usePlotDataStore } from "../providers/plotData";
+import { useAuthStore } from "../providers/auth";
 
 // Labels for filters
 export const filterLabels = {
@@ -16,9 +17,10 @@ export const filterLabels = {
 };
 
 
-const ExplorerPage = ({ handleNavigation, activePage, userPermissions, handlePointClick }) => {
+const ExplorerPage = ({ handlePointClick }) => {
 
-    const { graphData: data, loading, error } = usePlotDataStore(); 
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const { data, loading, error } = usePlotDataStore(); 
 
     const [filteredGraphData, setFilteredGraphData] = useState(data);
     const [tempFilterRanges, setTempFilterRanges] = useState({});
@@ -166,7 +168,7 @@ const ExplorerPage = ({ handleNavigation, activePage, userPermissions, handlePoi
     }, [filteredGraphData, loading, error, userPermissions, handlePointClick]);
 
 
-    return (<Sidebar handleNavigation={handleNavigation} activePage={activePage}>
+    return (<Sidebar>
         <div className="search-umap-container">
             <div className="search-umap-section">
                 <div className="graph-container search-graph">

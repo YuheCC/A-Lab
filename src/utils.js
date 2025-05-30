@@ -46,15 +46,11 @@ export const authFetch = (input, init = {}) => {
   });
 };
 
-export const navigate = (path) => {
-    window.history.pushState({}, '', path);
-};
-
 // ---------------------------------------------------------------------------
 // Global fetch wrapper that (1) attaches JWT to backend requests and (2) logs the user out on 401 Unauthorized responses
 export const redirectToLogin = () => {
   // Already on an auth route?   → do **nothing** to avoid redirect loops.
-  if (/^\/(login|password-reset)/.test(window.location.pathname)) return;
+  if (/^\/(login|reset-password)/.test(window.location.pathname)) return;
 
   const current = window.location.pathname + window.location.search;
   localStorage.removeItem('token');

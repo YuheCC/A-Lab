@@ -1,5 +1,12 @@
+import { NavLink, useLocation } from "react-router";
+import { useAuthStore } from "../providers/auth";
+
 // Navigation bar component
-const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onPasswordReset, onNavigation }) => {
+const Navbar = () => {
+  const { isAuthenticated, userName, logout } = useAuthStore();
+
+  const { pathname } = useLocation();
+
   // Use the logo from the public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
   return (
@@ -14,26 +21,26 @@ const Navbar = ({ activePage, isAuthenticated, username, onLogout, onSignIn, onP
         <a href="https://www.ses.ai/media-news" target="_blank" rel="noopener noreferrer" className="navbar-link">Media</a>
         <a
           href="/"
-          className={`navbar-link ${(activePage === 'map' || activePage === 'explorer' || activePage === 'about' || activePage === 'search' || activePage === 'chatbot' || activePage === 'enterprise' || activePage === 'favorites') && window.location.pathname !== '/reset-password' ? 'active' : ''}`}
+          className={`navbar-link ${(pathname === '/' || pathname === '/map' || pathname === '/filter' || pathname === '/about' || pathname === '/search' || pathname === '/ask' || pathname === '/enterprise' || pathname === '/favorites') && pathname !== '/reset-password' ? 'active' : ''}`}
         >
           Molecular Universe
         </a>
       </div>
       {isAuthenticated ? (
         <div className="navbar-user">
-          <span className="username">{username}</span>
+          <span className="username">{userName}</span>
           <div className="settings-dropdown">
             <button className="reset-password-button">Settings</button>
             <div className="settings-dropdown-content">
-              <a href="#" onClick={(e) => { e.preventDefault(); onPasswordReset(); }}>Change Password</a>
+              <NavLink to="/reset-password">Change Password</NavLink>
               <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
             </div>
           </div>
-          <button className="logout-button" onClick={onLogout}>Logout</button>
+          <button className="logout-button" onClick={logout}>Logout</button>
         </div>
       ) : (
         <div className="navbar-user">
-          <button className="signin-button" onClick={onSignIn}>Sign In</button>
+          <NavLink to={`/login?redirect=${encodeURI('/')}`} className="signin-button">Sign In</NavLink>
         </div>
       )}
     </nav>

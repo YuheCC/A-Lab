@@ -2,14 +2,17 @@ import Sidebar from "../components/Sidebar";
 import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import SearchInput from "../Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import API_URL from "../Constants";
 import { authFetch } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
+import { useAuthStore } from "../providers/auth";
 
-const SearchPage = ({ handleNavigation, activePage, userPermissions, handlePointClick, moleculeFavoriteStatus, handleAddToFavorites }) => {
+const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavorites }) => {
 
-    const { graphData: data, loading, error } = usePlotDataStore();
+    const userPermissions = useAuthStore(state => state.userPermissions);
+
+    const { data, loading, error } = usePlotDataStore();
 
     const [searchResults, setsearchResults] = useState(null);
     const [lastSearch, setLastSearch] = useState(null);
@@ -182,7 +185,7 @@ const SearchPage = ({ handleNavigation, activePage, userPermissions, handlePoint
 
     return (
         // SEARCH PAGE CONTENT:
-        <Sidebar handleNavigation={handleNavigation} activePage={activePage}>
+        <Sidebar>
             <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
                 {/* UMAP Visualization on the left */}
                 <div className="search-umap-section">
