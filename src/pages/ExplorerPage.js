@@ -4,6 +4,7 @@ import Slider from "../components/Slider";
 import { useEffect, useState, useMemo } from "react";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
+import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 
 // Labels for filters
 export const filterLabels = {
@@ -154,7 +155,7 @@ const ExplorerPage = ({ handlePointClick }) => {
     // - This prevents rerendering on tempFilterRanges changes
     const memoizedPlot = useMemo(() => {
         return (filteredGraphData.length > 0 ? (
-            <UMAPClusterPlot
+            <UMAPClusterPlotDeck
                 data={filteredGraphData}
                 highlightedData={[]}
                 highlightedSimilarData={[]}
