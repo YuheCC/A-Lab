@@ -561,9 +561,10 @@ const handleFindSimilarMolecules = async (details) => {
                 key={index} 
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div>{msg.text}</div>
+                <div notranslate>{msg.text}</div>
                 {msg.sources && (
                   <div
+                    notranslate
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(msg.sources, {
                         ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
@@ -572,7 +573,7 @@ const handleFindSimilarMolecules = async (details) => {
                     }}
                   />
                 )}
-                {msg.molText && <div>{msg.molText}</div>}
+                {msg.molText && <div notranslate>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
                     <button 
