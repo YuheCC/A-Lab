@@ -552,67 +552,6 @@ const FavoritesGrid = () => {
       'diluent': 'blue'
     };
 
-    // Helper function to get rotated ellipse points
-    const getEllipsePoints = (center, width, height, angleDeg, nPoints = 100) => {
-      const t = Array.from({length: nPoints}, (_, i) => (2 * Math.PI * i) / nPoints);
-      const theta = (angleDeg * Math.PI) / 180;
-      const cosTheta = Math.cos(theta);
-      const sinTheta = Math.sin(theta);
-      
-      const x = [];
-      const y = [];
-      
-      t.forEach(angle => {
-        const ellipseX = (width / 2) * Math.cos(angle);
-        const ellipseY = (height / 2) * Math.sin(angle);
-        
-        // Rotate the ellipse
-        const rotatedX = ellipseX * cosTheta - ellipseY * sinTheta;
-        const rotatedY = ellipseX * sinTheta + ellipseY * cosTheta;
-        
-        x.push(rotatedX + center[0]);
-        y.push(rotatedY + center[1]);
-      });
-      
-      return { x, y };
-    };
-
-    // Custom ellipses configuration for HOMO/LUMO space
-    const customEllipses = [
-      {
-        center: [-5.5, -1.5],
-        width: 1.2,
-        height: 0.8,
-        angle: 0,
-        color: 'green',
-        label: 'high solubility'
-      },
-      {
-        center: [-6.5, -2.5],
-        width: 1.0,
-        height: 1.0,
-        angle: 0,
-        color: 'red',
-        label: 'low solubility'
-      },
-      {
-        center: [-5.0, -2.0],
-        width: 0.8,
-        height: 1.5,
-        angle: 45,
-        color: 'blue',
-        label: 'diluent'
-      },
-      {
-        center: [-6.0, -1.8],
-        width: 1.5,
-        height: 0.6,
-        angle: -30,
-        color: 'orange',
-        label: 'medium solubility'
-      }
-    ];
-
     // Prepare data for plotting
     const data = selectedMolecules.map(molecule => ({
       HOMO_EV: molecule.homo_ev,
@@ -671,47 +610,9 @@ const FavoritesGrid = () => {
       }
     });
 
-    // Add custom ellipses
-    customEllipses.forEach(ellipse => {
-      const ellipsePoints = getEllipsePoints(
-        ellipse.center,
-        ellipse.width,
-        ellipse.height,
-        ellipse.angle
-      );
-
-      // Convert color to rgba with transparency
-      const colorToRgba = (color, alpha = 0.2) => {
-        const colors = {
-          'green': `rgba(0, 128, 0, ${alpha})`,
-          'red': `rgba(255, 0, 0, ${alpha})`,
-          'blue': `rgba(0, 0, 255, ${alpha})`,
-          'orange': `rgba(255, 165, 0, ${alpha})`
-        };
-        return colors[color] || `rgba(128, 128, 128, ${alpha})`;
-      };
-
-      traces.push({
-        type: 'scatter',
-        x: ellipsePoints.x,
-        y: ellipsePoints.y,
-        mode: 'lines',
-        fill: 'toself',
-        fillcolor: colorToRgba(ellipse.color, 0.2),
-        line: {
-          color: ellipse.color,
-          dash: 'dash',
-          width: 2
-        },
-        name: `${ellipse.label} region`,
-        showlegend: true,
-        hoverinfo: 'name'
-      });
-    });
-
     // Define layout
     const layout = {
-      title: 'HOMO_EV vs LUMO_EV with Solubility Regions',
+      title: 'HOMO_EV vs LUMO_EV',
       xaxis: {
         title: 'HOMO_EV',
         zeroline: true,
