@@ -41,6 +41,7 @@ const ExplorerPage = ({ handlePointClick }) => {
 
     // Add state for functional group filter
     const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
+    const [functionGroupValue, setFunctionalGroupValue] = useState('');
 
     useEffect(() => {
         setFilterRanges(oldFilterRanges => {
@@ -236,10 +237,12 @@ const ExplorerPage = ({ handlePointClick }) => {
                         <div className="functional-group-input-container">
                             <select
                                 className="functional-group-select"
-                                value={selectedFunctionalGroup}
+                                value={functionGroupValue}
                                 onChange={(e) => {
+                                    setFunctionalGroupValue(e.target.value);
                                     setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
                                 }}
+                                translate="no"
                             >
                                 <option value="">Select a functional group</option>
                                 <option value="C(=O)Cl">AcidChloride</option>
@@ -318,6 +321,7 @@ const ExplorerPage = ({ handlePointClick }) => {
                             <button
                                 className="reset-filter-button functional-group-reset"
                                 onClick={() => {
+                                    setFunctionalGroupValue('');
                                     setSelectedFunctionalGroup('');
                                     const dropdown = document.querySelector('.functional-group-select');
                                     if (dropdown) dropdown.selectedIndex = 0;
