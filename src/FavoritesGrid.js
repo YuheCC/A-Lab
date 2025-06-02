@@ -340,47 +340,170 @@ const FavoritesGrid = () => {
   const updateESPChart = () => {
     if (!espChartRef.current || selectedMolecules.length === 0) return;
 
-    // Create scatter plot data for ESP analysis
+    // Color map for each solubility type (assuming we have this data)
+    const colorMap = {
+      'high solubility': 'green',
+      'medium solubility': 'orange', 
+      'low solubility': 'red',
+      'diluent': 'blue'
+    };
+
+    // Helper function to get rotated ellipse points
+    const getEllipsePoints = (center, width, height, angleDeg, nPoints = 100) => {
+      const t = Array.from({length: nPoints}, (_, i) => (2 * Math.PI * i) / nPoints);
+      const theta = (angleDeg * Math.PI) / 180;
+      const cosTheta = Math.cos(theta);
+      const sinTheta = Math.sin(theta);
+      
+      const x = [];
+      const y = [];
+      
+      t.forEach(angle => {
+        const ellipseX = (width / 2) * Math.cos(angle);
+        const ellipseY = (height / 2) * Math.sin(angle);
+        
+        // Rotate the ellipse
+        const rotatedX = ellipseX * cosTheta - ellipseY * sinTheta;
+        const rotatedY = ellipseX * sinTheta + ellipseY * cosTheta;
+        
+        x.push(rotatedX + center[0]);
+        y.push(rotatedY + center[1]);
+      });
+      
+      return { x, y };
+    };
+
+    // Custom ellipses configuration
+    const customEllipses = [
+      {
+        center: [-1.5, 1.6],
+        width: 1.5,
+        height: 0.55,
+        angle: 65,
+        color: 'green',
+        label: 'high solubility'
+      },
+      {
+        center: [-0.75, 0.65],
+        width: 0.6,
+        height: 0.6,
+        angle: 0,
+        color: 'red',
+        label: 'low solubility'
+      },
+      {
+        center: [-0.55, 1.6],
+        width: 0.65,
+        height: 1.3,
+        angle: 0,
+        color: 'blue',
+        label: 'diluent'
+      }
+    ];
+
+    // Prepare data for plotting
     const data = selectedMolecules.map(molecule => ({
       ESP_MIN_EV: molecule.esp_min_ev,
       ESP_MAX_EV: molecule.esp_max_ev,
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      TYPE: 'User Selection', // All selected molecules are the same type
+      SOLUBILITY: molecule.solubility || 'unknown', // Assuming solubility field exists
       ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
       SMILES: molecule.smiles
     }));
 
-    // Create traces for the ESP chart
-    const traces = [{
-      type: 'scatter',
-      mode: 'markers+text',
-      x: data.map(d => d.ESP_MIN_EV),
-      y: data.map(d => d.ESP_MAX_EV),
-      text: data.map(d => d.ABBREVIATION),
-      textposition: 'top center',
-      marker: {
-        color: 'rgba(0, 128, 255, 0.7)',
-        size: 10,
+    // Filter out molecules with missing ESP data
+    const validData = data.filter(d => d.ESP_MIN_EV !== null && d.ESP_MIN_EV !== undefined && 
+                                      d.ESP_MAX_EV !== null && d.ESP_MAX_EV !== undefined);
+
+    // Group data by solubility type
+    const groupedData = {};
+    validData.forEach(d => {
+      if (!groupedData[d.SOLUBILITY]) {
+        groupedData[d.SOLUBILITY] = [];
+      }
+      groupedData[d.SOLUBILITY].push(d);
+    });
+
+    // Create traces for each solubility type
+    const traces = [];
+    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'unknown'];
+    
+    legendOrder.forEach(solubilityType => {
+      if (groupedData[solubilityType]) {
+        const typeData = groupedData[solubilityType];
+        const color = colorMap[solubilityType] || 'gray';
+        
+        traces.push({
+          type: 'scatter',
+          mode: 'markers+text',
+          x: typeData.map(d => d.ESP_MIN_EV),
+          y: typeData.map(d => d.ESP_MAX_EV),
+          text: typeData.map(d => d.ABBREVIATION),
+          textposition: 'top center',
+          name: solubilityType,
+          hoverinfo: 'text',
+          hovertext: typeData.map(d => 
+            `ABBREVIATION: ${d.ABBREVIATION}<br>` +
+            `ESP_MIN_EV: ${d.ESP_MIN_EV?.toFixed(3) || 'N/A'}<br>` +
+            `ESP_MAX_EV: ${d.ESP_MAX_EV?.toFixed(3) || 'N/A'}<br>` +
+            `SMILES: ${d.SMILES}<br>` +
+            `HOMO_EV: ${d.HOMO_EV?.toFixed(2) || 'N/A'}<br>` +
+            `LUMO_EV: ${d.LUMO_EV?.toFixed(2) || 'N/A'}`
+          ),
+          marker: {
+            size: 8,
+            color: color,
+            line: {
+              color: color,
+              width: 1
+            }
+          }
+        });
+      }
+    });
+
+    // Add custom ellipses
+    customEllipses.forEach(ellipse => {
+      const ellipsePoints = getEllipsePoints(
+        ellipse.center,
+        ellipse.width,
+        ellipse.height,
+        ellipse.angle
+      );
+
+      // Convert color to rgba with transparency
+      const colorToRgba = (color, alpha = 0.2) => {
+        const colors = {
+          'green': `rgba(0, 128, 0, ${alpha})`,
+          'red': `rgba(255, 0, 0, ${alpha})`,
+          'blue': `rgba(0, 0, 255, ${alpha})`,
+          'orange': `rgba(255, 165, 0, ${alpha})`
+        };
+        return colors[color] || `rgba(128, 128, 128, ${alpha})`;
+      };
+
+      traces.push({
+        type: 'scatter',
+        x: ellipsePoints.x,
+        y: ellipsePoints.y,
+        mode: 'lines',
+        fill: 'toself',
+        fillcolor: colorToRgba(ellipse.color, 0.2),
         line: {
-          color: 'rgba(0, 128, 255, 1.0)',
-          width: 1
-        }
-      },
-      hoverinfo: 'text',
-      hovertext: data.map(d => 
-        `SMILES: ${d.SMILES}<br>` +
-        `ESP_MAX_EV: ${d.ESP_MAX_EV?.toFixed(2) || 'N/A'}<br>` +
-        `ESP_MIN_EV: ${d.ESP_MIN_EV?.toFixed(2) || 'N/A'}<br>` +
-        `HOMO_EV: ${d.HOMO_EV?.toFixed(2) || 'N/A'}<br>` +
-        `LUMO_EV: ${d.LUMO_EV?.toFixed(2) || 'N/A'}`
-      ),
-      name: 'Selected Molecules'
-    }];
+          color: ellipse.color,
+          dash: 'dash',
+          width: 2
+        },
+        name: `${ellipse.label} region`,
+        showlegend: true,
+        hoverinfo: 'name'
+      });
+    });
 
     // Define layout
     const layout = {
-      title: 'ESP Max and Min',
+      title: 'ESP_MIN_EV vs ESP_MAX_EV with Solubility Regions',
       xaxis: {
         title: 'ESP_MIN_EV',
         zeroline: true,
@@ -390,6 +513,12 @@ const FavoritesGrid = () => {
         title: 'ESP_MAX_EV',
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)'
+      },
+      legend: {
+        title: 'SOLUBILITY',
+        x: 0,
+        y: 1,
+        orientation: 'v'
       },
       margin: {
         l: 60,
@@ -405,12 +534,8 @@ const FavoritesGrid = () => {
       },
       autosize: true,
       hovermode: 'closest',
-      showlegend: true,
-      legend: {
-        x: 0,
-        y: 1,
-        orientation: 'h'
-      }
+      width: 1200,
+      height: 800
     };
     
     Plotly.newPlot(espChartRef.current, traces, layout, {responsive: true});
