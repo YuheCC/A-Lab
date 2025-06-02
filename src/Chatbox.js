@@ -37,6 +37,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
     <div className="chat-input-group">
       <div className="chat-input-container">
         <textarea
+          translate='no'
           className="chat-input"
           placeholder="Ask me anything, as long as it's about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
           rows={2}
@@ -561,9 +562,10 @@ const handleFindSimilarMolecules = async (details) => {
                 key={index} 
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div>{msg.text}</div>
+                <div translate='no'>{msg.text}</div>
                 {msg.sources && (
                   <div
+                    translate='no'
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(msg.sources, {
                         ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
@@ -572,7 +574,7 @@ const handleFindSimilarMolecules = async (details) => {
                     }}
                   />
                 )}
-                {msg.molText && <div>{msg.molText}</div>}
+                {msg.molText && <div translate='no'>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
                     <button 

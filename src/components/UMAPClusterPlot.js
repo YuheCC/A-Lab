@@ -284,6 +284,10 @@ export const StrictModeSafePlot = (props) => {
     }, [location.pathname, props.data])
 
     return (
+        <div translate='no' style={{
+            width: '100%',
+            height: '100%'
+        }}>
         <Plot
             {...props}
             revision={revision}
@@ -296,6 +300,7 @@ export const StrictModeSafePlot = (props) => {
                     graphDiv.on('plotly_click', props.onClick);
                 } 
             }}/>
+        </div>
     )
 }
 
