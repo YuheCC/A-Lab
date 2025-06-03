@@ -1,5 +1,4 @@
 import Sidebar from "../components/Sidebar";
-import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import { useState } from "react";
 import { usePlotDataStore } from "../providers/plotData";
 import { NavLink } from "react-router";

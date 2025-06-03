@@ -1,5 +1,4 @@
 import Sidebar from "../components/Sidebar";
-import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import Slider from "../components/Slider";
 import { useEffect, useState, useMemo } from "react";
 import { usePlotDataStore } from "../providers/plotData";

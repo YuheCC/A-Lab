@@ -1,5 +1,4 @@
 import Sidebar from "../components/Sidebar";
-import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import SearchInput from "../Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";

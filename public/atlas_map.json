@@ -2,7 +2,7 @@
   "marker": {
     "x": 0,
     "y": 0,
-    "width": 72,
+    "width": 70,
     "height": 88,
     "anchorY": 88,
     "mask": false
@@ -10,7 +10,7 @@
   "marker-search": {
     "x": 80,
     "y": 0,
-    "width": 72,
+    "width": 70,
     "height": 88,
     "anchorY": 88,
     "mask": false

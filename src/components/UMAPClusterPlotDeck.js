@@ -3,7 +3,7 @@ import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
 import MolViewer2D from './MolViewer2D';
 import { CompositeLayer } from 'deck.gl';
-import { House, Maximize, ZoomIn, ZoomOut } from 'lucide-react';
+import { House, ZoomIn, ZoomOut } from 'lucide-react';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -12,6 +12,60 @@ const hexToRgb = (hex) => {
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
     return [r, g, b];
+}
+
+const fitToData = (data, containerDimensions) => {
+    if (!data || data.length === 0) {
+        return {
+            longitude: 0,
+            latitude: 0,
+            zoom: 4,
+            pitch: 0,
+            bearing: 0
+        };
+    }
+
+    // Calculate bounds
+    const xValues = data.map(d => d.x).filter(x => x !== null && x !== undefined);
+    const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
+
+    if (xValues.length === 0 || yValues.length === 0) {
+        return {
+            longitude: 0,
+            latitude: 0,
+            zoom: 4,
+            pitch: 0,
+            bearing: 0
+        };
+    }
+
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const minY = Math.min(...yValues);
+    const maxY = Math.max(...yValues);
+
+    // Calculate center
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // Calculate zoom level based on data spread
+    const rangeX = maxX - minX;
+    const rangeY = maxY - minY;
+    const maxRange = Math.max(rangeX, rangeY);
+
+    // Use actual container dimensions for better fitting
+    const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
+    const targetFillRatio = 0.6; // Use 80% of container space
+
+    const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
+
+    return {
+        longitude: centerX,
+        latitude: centerY,
+        zoom: zoom,
+        pitch: 0,
+        bearing: 0
+    };
 }
 
 const clusterColorMap = {
@@ -59,11 +113,11 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 id: `${this.id}-scatter-${index}`,
                 data: [point],
                 getPosition: d => [d[xKey], d[yKey]],
-                getRadius: 100,
+                getRadius: 5,
                 getFillColor: d => [255, 0, 0],
-                radiusMinPixels: 5,
+                radiusMinPixels: 2,
                 radiusMaxPixels: 50,
-                radiusScale: 6,
+                radiusScale: 2,
                 pickable: false
             }));
 
@@ -74,6 +128,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 getIcon: d => iconName,
                 getSize: iconSize,
                 iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
+                iconMapping: process.env.PUBLIC_URL + '/atlas_map.json',
             }));
 
             layers.push(new TextLayer({
@@ -82,11 +137,16 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 sizeMinPixels: 10,
                 getPosition: d => [d[xKey], d[yKey]],
                 getPixelOffset: [0, -16],
-                getText: (object, objectInfo) => {
-                    return (objectInfo.index + 1).toString();
+                getText: () => (index + 1).toString(),
+                fontSettings: {
+                    fontSize: 64,
+                    buffer: 8,
+                    sdf: true,
                 },
-                getColor: [255, 255, 255],
+                fontFamily: 'Consolas, monospace',
+                getColor: [0, 0, 0],
                 getTextAnchor: 'middle',
+                fontWeight: 'normal',
                 pickable: false,
                 getSize: 12
             }))
@@ -106,6 +166,13 @@ const UMAPClusterPlotDeck = ({
     onClick,
 }) => {
 
+    const [viewState, setViewState] = useState({
+        longitude: 0,
+        latitude: 0,
+        zoom: 4,
+        pitch: 0,
+        bearing: 0
+    });
     const hoverRef = useRef(null);
     const containerRef = useRef(null);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
@@ -147,59 +214,9 @@ const UMAPClusterPlotDeck = ({
     }, [onClick, hoveredObject]);
 
     // Calculate bounds from data to fit the view
-    const viewState = useMemo(() => {
-        if (!data || data.length === 0) {
-            return {
-                longitude: 0,
-                latitude: 0,
-                zoom: 4,
-                pitch: 0,
-                bearing: 0
-            };
-        }
-
-        // Calculate bounds
-        const xValues = data.map(d => d.x).filter(x => x !== null && x !== undefined);
-        const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
-
-        if (xValues.length === 0 || yValues.length === 0) {
-            return {
-                longitude: 0,
-                latitude: 0,
-                zoom: 4,
-                pitch: 0,
-                bearing: 0
-            };
-        }
-
-        const minX = Math.min(...xValues);
-        const maxX = Math.max(...xValues);
-        const minY = Math.min(...yValues);
-        const maxY = Math.max(...yValues);
-
-        // Calculate center
-        const centerX = (minX + maxX) / 2;
-        const centerY = (minY + maxY) / 2;
-
-        // Calculate zoom level based on data spread
-        const rangeX = maxX - minX;
-        const rangeY = maxY - minY;
-        const maxRange = Math.max(rangeX, rangeY);
-
-        // Use actual container dimensions for better fitting
-        const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
-        const targetFillRatio = 0.6; // Use 80% of container space
-        
-        const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
-
-        return {
-            longitude: centerX,
-            latitude: centerY,
-            zoom: zoom,
-            pitch: 0,
-            bearing: 0
-        };
-    }, [containerDimensions.height, containerDimensions.width, data]);
+    useEffect(() => {
+        setViewState(fitToData(data, containerDimensions));
+    }, [containerDimensions, data]);
 
     const layers = [
         useMemo(() =>
@@ -213,7 +230,7 @@ const UMAPClusterPlotDeck = ({
                 },
                 radiusMinPixels: 2,
                 radiusMaxPixels: 50,
-                radiusScale: 6,
+                radiusScale: 3,
                 opacity: 0.3,
                 pickable: true,
                 autoHighlight: true,
@@ -238,15 +255,6 @@ const UMAPClusterPlotDeck = ({
             , [data, onHover, handlePointClick]),
         useMemo(() =>
             new MarkerWithLabelLayer({
-                id: 'selected-markers',
-                data: highlightedData,
-                iconName: 'marker',
-                iconSize: 30
-            })
-            , [highlightedData]),
-
-        useMemo(() =>
-            new MarkerWithLabelLayer({
                 id: 'similar-markers',
                 data: highlightedSimilarData,
                 iconName: 'marker-search',
@@ -255,6 +263,14 @@ const UMAPClusterPlotDeck = ({
                 yKey: 'UMAP_1'
             })
             , [highlightedSimilarData]),
+        useMemo(() =>
+            new MarkerWithLabelLayer({
+                id: 'selected-markers',
+                data: highlightedData,
+                iconName: 'marker',
+                iconSize: 30
+            })
+            , [highlightedData]),
     ];
 
     const position = useMemo(() => {
@@ -272,16 +288,45 @@ const UMAPClusterPlotDeck = ({
         }
     }, [hoveredObject, containerRef]);
 
+
+    const handleReturnToHome = () => {
+        // Reset view state to initial
+        setHoveredObject(null);
+        onHover(null);
+        setViewState(fitToData(data, containerDimensions));
+    };
+
+    const handleZoomIn = () => {
+        setViewState(prev => ({
+            ...prev,
+            zoom: Math.min(20, prev.zoom + 0.5)
+        }));
+    }
+    const handleZoomOut = () => {
+        setViewState(prev => ({
+            ...prev,
+            zoom: Math.max(2, prev.zoom - 0.5)
+        }));
+    }
+
     return <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
         <div className='deck-controls'>
-            <House className='control-icon' size={15} />
-            <Maximize className='control-icon' size={15} />
-            <ZoomIn className='control-icon' size={15} />
-            <ZoomOut className='control-icon' size={15} />
+            <House className='control-icon' size={15} onClick={handleReturnToHome} />
+            <ZoomIn className='control-icon' size={15} onClick={handleZoomIn} />
+            <ZoomOut className='control-icon' size={15} onClick={handleZoomOut} />
         </div>
         <DeckGL
-            initialViewState={viewState}
+            useDevicePixels={true}
             controller={true}
+            viewState={viewState}
+            onViewStateChange={({ viewState }) => {
+                setViewState({
+                    ...viewState,
+                    longitude: Math.max(-20, Math.min(20, viewState.longitude)), // Clamp longitude
+                    latitude: Math.max(-20, Math.min(20, viewState.latitude)), // Clamp latitude
+                    zoom: Math.max(2, Math.min(20, viewState.zoom)) // Clamp zoom level
+                });
+            }}
             onClick={(info) => {
                 if (info.layer === null) {
                     onHover(null);
@@ -298,7 +343,10 @@ const UMAPClusterPlotDeck = ({
             layers={layers}
         />
         {hoveredObject && containerRef.current ? (
-            <div className='deck-hover-info' ref={hoverRef} style={position}>
+            <div className='deck-hover-info' ref={hoverRef} style={position} onMouseEnter={() => {
+                setHoveredObject(null);
+                onHover(null);
+            }}>
                 <div style={{ display: 'flex', flexFlow: 'row' }}>
                     <div className='deck-hover-vis' translate='no'>
                         {hoveredObject ? <MolViewer2D smile={hoveredObject.object.smiles} width={200} height={200} /> : <div>Loading...</div>}
