@@ -7,7 +7,7 @@ export const RowGroup = ({ data, propList = [] }) => {
                 <td key={prop.label} colSpan={propList.length === 1 ? 2 : 1}>
                     <div className='deck-info-group'>
                         <label>{prop.label}</label>
-                        <code>{prop.value ?? "N/A"}</code>
+                        <code>{prop.value ?? "N/A"}{prop.value && prop?.suffix ? prop.suffix : ""}</code>
                     </div>
                 </td>
             ))}

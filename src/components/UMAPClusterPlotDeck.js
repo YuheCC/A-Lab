@@ -374,20 +374,22 @@ const UMAPClusterPlotDeck = ({
                         { label: 'Mol Weight', value: hoveredObject.object.properties.molwt },
                     ],
                     [
-                        { label: 'Esp Max EV', value: hoveredObject.object.properties.esp_max_eV },
-                        { label: 'Esp Min EV', value: hoveredObject.object.properties.esp_min_eV },
+                        { label: 'Esp Max EV', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
+                        { label: 'Esp Min EV', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
                     ],
                     [
-                        { label: 'Homo EV', value: hoveredObject.object.properties.homo_eV },
-                        { label: 'Lumo EV', value: hoveredObject.object.properties.lumo_eV },
+                        { label: 'Homo EV', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
+                        { label: 'Lumo EV', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
                     ],
                     [
                         {
                             label: 'Predicted MP', value: hoveredObject.object.properties.predicted_mp,
+                            suffix: ' °C',
                             show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                         },
                         {
                             label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
+                            suffix: ' °C',
                             show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                         }
                     ]
