@@ -1,9 +1,9 @@
 import Sidebar from "../components/Sidebar";
-import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import { useState } from "react";
 import { usePlotDataStore } from "../providers/plotData";
 import { NavLink } from "react-router";
 import { useAuthStore } from "../providers/auth";
+import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 
 const MapPage = ({ handlePointClick }) => {
 
@@ -21,7 +21,7 @@ const MapPage = ({ handlePointClick }) => {
                 <div className="search-umap-section">
                     <div className="graph-container search-graph">
                         {data.length > 0 ? (
-                            <UMAPClusterPlot
+                            <UMAPClusterPlotDeck
                                 data={data}
                                 userPermissions={userPermissions}
                                 onClick={handlePointClick}

@@ -14,7 +14,7 @@ const MolViewer2D = ({ smile, theme = "light" }) => {
     }, [smile, sd, theme])
 
     return (
-        <img id="smiles-image-popup" ref={imageRef} width={200} height={200} alt={`Molecule for smile string: ${smile}`} style={{
+        <svg id="smiles-image-popup" ref={imageRef} width={200} height={200} alt={`Molecule for smile string: ${smile}`} style={{
             maxWidth: '100%',
         }} />
     )

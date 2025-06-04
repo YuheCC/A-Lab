@@ -1,5 +1,4 @@
 import Sidebar from "../components/Sidebar";
-import UMAPClusterPlot from "../components/UMAPClusterPlot";
 import SearchInput from "../Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
@@ -7,6 +6,7 @@ import API_URL from "../Constants";
 import { authFetch } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
+import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 
 const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavorites }) => {
 
@@ -192,7 +192,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     <div className="graph-container search-graph">
                         <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             {data.length > 0 ? (
-                                <UMAPClusterPlot
+                                <UMAPClusterPlotDeck
                                     data={data}
                                     highlightedData={highlightedMolecules}
                                     highlightedSimilarData={highlightedSimilarMolecules}
