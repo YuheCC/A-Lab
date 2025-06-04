@@ -9,7 +9,7 @@ import { useAuthStore } from './providers/auth.js';
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
- disableLiteratureSearch, onDisableLiteratureSearchChange }) => {
+ disableLiteratureSearch, onDisableLiteratureSearchChange, userPermissions }) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (e) => {
@@ -64,16 +64,20 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         <label htmlFor="ignoreChatHistory">
           Ignore chat history
         </label>
-        <input 
-          type="checkbox" 
-          id="disableLiteratureSearch" 
-          checked={disableLiteratureSearch}
-          onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
-          style={{ marginLeft: '20px' }}
-        />
-        <label htmlFor="disableLiteratureSearch">
-          Disable literature search
-        </label>
+        {userPermissions === 'admin' && (
+          <>
+            <input 
+              type="checkbox" 
+              id="disableLiteratureSearch" 
+              checked={disableLiteratureSearch}
+              onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
+              style={{ marginLeft: '20px' }}
+            />
+            <label htmlFor="disableLiteratureSearch">
+              Disable literature search
+            </label>
+          </>
+        )}
       </div>
     </div>
   );
@@ -656,6 +660,7 @@ const handleFindSimilarMolecules = async (details) => {
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
             disableLiteratureSearch={disableLiteratureSearch}
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
+            userPermissions={userPermissions}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
