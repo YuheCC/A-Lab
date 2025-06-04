@@ -1,7 +1,6 @@
 import MolViewer2D from './MolViewer2D';
 
 export const RowGroup = ({ data, propList = [] }) => {
-    console.log('RowGroup', data, propList);
     return (
         <tr>
             {propList.filter(prop => prop?.show !== false).map((prop) => (
