@@ -4,6 +4,7 @@ import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
 import MolViewer2D from './MolViewer2D';
 import { CompositeLayer } from 'deck.gl';
 import { House, ZoomIn, ZoomOut } from 'lucide-react';
+import { Tooltip } from '@mui/material';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -311,9 +312,15 @@ const UMAPClusterPlotDeck = ({
 
     return <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
         <div className='deck-controls'>
-            <House className='control-icon' size={15} onClick={handleReturnToHome} />
-            <ZoomIn className='control-icon' size={15} onClick={handleZoomIn} />
-            <ZoomOut className='control-icon' size={15} onClick={handleZoomOut} />
+            <Tooltip title="Reset Viewport" placement="bottom">
+                <House className='control-icon' size={15} onClick={handleReturnToHome} />
+            </Tooltip>
+            <Tooltip title="Zoom In" placement="bottom">
+                <ZoomIn className='control-icon' size={15} onClick={handleZoomIn} />
+            </Tooltip>
+            <Tooltip title="Zoom Out" placement="bottom">
+                <ZoomOut className='control-icon' size={15} onClick={handleZoomOut} />
+            </Tooltip>
         </div>
         <DeckGL
             useDevicePixels={true}
