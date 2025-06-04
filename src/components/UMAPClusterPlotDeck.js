@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
 import MolViewer2D from './MolViewer2D';
-import { CompositeLayer } from 'deck.gl';
+import { CompositeLayer, LinearInterpolator } from 'deck.gl';
 import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
 
@@ -18,9 +18,9 @@ const hexToRgb = (hex) => {
 const fitToData = (data, containerDimensions) => {
     if (!data || data.length === 0) {
         return {
-            longitude: 0,
-            latitude: 0,
-            zoom: 4,
+            longitude: 3.7,
+            latitude: 6,
+            zoom: 3.5,
             pitch: 0,
             bearing: 0
         };
@@ -168,14 +168,15 @@ const UMAPClusterPlotDeck = ({
 }) => {
 
     const [viewState, setViewState] = useState({
-        longitude: 0,
-        latitude: 0,
-        zoom: 4,
+        longitude: 3.7,
+        latitude: 6.4,
+        zoom: 3.3,
         pitch: 0,
         bearing: 0
     });
     const hoverRef = useRef(null);
     const containerRef = useRef(null);
+    const [containerReady, setContainerReady] = useState(false);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
 
@@ -195,14 +196,18 @@ const UMAPClusterPlotDeck = ({
                     width: containerRef.current.offsetWidth,
                     height: containerRef.current.offsetHeight
                 });
+                setContainerReady(true);
             }
         };
 
         // Update on mount and resize
-        updateDimensions();
+        const timeout = setTimeout(updateDimensions, 0);
         window.addEventListener('resize', updateDimensions);
         
-        return () => window.removeEventListener('resize', updateDimensions);
+        return () => {
+            window.removeEventListener('resize', updateDimensions);
+            clearTimeout(timeout);
+        }
     }, []);
 
 
@@ -216,8 +221,10 @@ const UMAPClusterPlotDeck = ({
 
     // Calculate bounds from data to fit the view
     useEffect(() => {
-        setViewState(fitToData(data, containerDimensions));
-    }, [containerDimensions, data]);
+        if (containerReady) {
+            setViewState(fitToData(data, containerDimensions));
+        }
+    }, [containerDimensions, data, containerReady]);
 
     const layers = [
         useMemo(() =>
@@ -344,7 +351,7 @@ const UMAPClusterPlotDeck = ({
             }}
             style={{
                 width: '100%',
-                height: '100%',
+                height: '100%'
             }}
             getCursor={() => 'crosshair'}
             layers={layers}
@@ -412,7 +419,7 @@ const UMAPClusterPlotDeck = ({
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? <tr>
                                     <td>
                                         <div className='deck-info-group'>
                                             <label>Predicted MP</label>
@@ -425,7 +432,7 @@ const UMAPClusterPlotDeck = ({
                                             <code>{hoveredObject.object.properties.predicted_bp ?? "N/A"}</code>
                                         </div>
                                     </td>
-                                </tr>
+                                </tr> : null}
                             </tbody>
                         </table>
                     </div>
