@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
+import Sidebar from '../components/Sidebar';
 
 // About Page component
-const AboutPage = ({ handleNavigation, activePage }) => {
+const AboutPage = () => {
 
   // Add useEffect to set up smooth scrolling
   useEffect(() => {
@@ -14,116 +15,11 @@ const AboutPage = ({ handleNavigation, activePage }) => {
   }, []);
 
   return (
-    <div className="about-container" style={{ display: 'flex', width: '93%', paddingLeft: '0' }}>
-      {/* Left navigation column */}
-      <div className="about-text-section left-text" style={{ width: '7%', overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginRight: '20px' }}>
-        <h1
-          style={{
-            textDecoration: 'none',
-            color: 'rgb(51, 51, 51)',
-            fontSize: '9.5px',
-            transition: 'font-size 0.3s',
-            cursor: 'pointer',
-            marginBottom: '12px',
-            fontWeight: 'normal'
-          }}
-          onClick={() => {
-            if (activePage === 'about') {
-              // Already on the about page, just scroll to the top
-              const contentWrapper = document.querySelector('.about-content-wrapper');
-              if (contentWrapper) {
-                contentWrapper.scrollTop = 0;
-              }
-            } else {
-              // Navigate to about page first, then scroll
-              handleNavigation('about');
-              setTimeout(() => {
-                const contentWrapper = document.querySelector('.about-content-wrapper');
-                if (contentWrapper) {
-                  contentWrapper.scrollTop = 0;
-                }
-              }, 100);
-            }
-          }}
-          onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-          onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-        >
-          Motivation
-        </h1>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
-          <a
-            href="#features"
-            style={{
-              textDecoration: 'none',
-              color: '#333',
-              fontSize: '9.5px',
-              transition: 'font-size 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavigation('about');
-              setTimeout(() => {
-                const featuresSection = document.getElementById('features-section');
-                if (featuresSection) {
-                  featuresSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }}
-          >
-            Features
-          </a>
-          <a
-            href="#pricing"
-            style={{
-              textDecoration: 'none',
-              color: '#333',
-              fontSize: '9.5px',
-              transition: 'font-size 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavigation('pricing');
-            }}
-          >
-            Pricing
-          </a>
-          <a
-            href="#news"
-            style={{
-              textDecoration: 'none',
-              color: '#333',
-              fontSize: '9.5px',
-              transition: 'font-size 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
-            onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavigation('about');
-              setTimeout(() => {
-                const newsfeedSection = document.getElementById('newsfeed');
-                if (newsfeedSection) {
-                  newsfeedSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }}
-          >
-            News Feed
-          </a>
-        </div>
-      </div>
-
+    <Sidebar>
       {/* Main content */}
       <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">
-          <img src="/MakeContact.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />
+          <img loading="lazy" src="/MakeContact_small.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />   
 
           <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>"If it's just us, it seems like an awful waste of space."</p>
           <p style={{ fontStyle: 'italic', marginBottom: '50px' }}>Contact, 1997</p>
@@ -152,7 +48,9 @@ const AboutPage = ({ handleNavigation, activePage }) => {
             <p>That's why at SES AI, we've always sought to develop electrolytes for various practical battery chemistries including Li-Metal, high silicon Li-ion, and LFP Li-ion - for use across everything from drones to robotics, electric cars to urban air mobility, and grid storage to consumer electronics.</p>
 
             <p style={{ fontWeight: 'bold' }}>Battery Technology Starts with Small Molecules</p>
-            <img src="/funnel.png" alt="Molecule Funnel" style={{ width: '100%', marginBottom: '20px' }} />
+
+            <img loading="lazy" src="/funnel_small.png" alt="Molecule Funnel" style={{ width: '100%', marginBottom: '20px' }} />
+            
             <p>In the battery world, it all comes down to small molecules.</p>
             <p>While the universe of molecules is infinite, the universe of small molecules is not. It's measurable. In fact, we know that there are 10<sup>60</sup> possible small molecules in the universe. Of these, 10<sup>11</sup> could be used for batteries. And of those, less than 1,000 have been studied for batteries in the past 30 years.</p>
             <p>So, we have only mapped one hundred millionth of the possible database. If that's all we need, it seems like an awful waste of molecules.</p>
@@ -231,7 +129,7 @@ const AboutPage = ({ handleNavigation, activePage }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Sidebar>
   );
 };
 

@@ -19,7 +19,7 @@ const RedeemPage = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/map');
+        window.history.pushState({}, '', '/');
         window.location.reload();
       }, 5000);
       

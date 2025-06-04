@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import API_URL from "../Constants.js";
+import { useNavigate, useSearchParams } from "react-router";
+import { useAuthStore } from "../providers/auth.js";
 
 // Login component
 const AuthPage = () => {
@@ -10,26 +12,21 @@ const AuthPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [organizationName, setOrganizationName] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  const navigate = useNavigate();
+  const { isLoading, login, register } = useAuthStore();
 
   // signin redirect logic
-  const [redirectPath, setRedirectPath] = useState('/');
+  const [searchParams] = useSearchParams();
+  const [redirectPath, setRedirectPath] = useState(null);
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const dest = params.get('redirect');
-    
-    // Check URL parameter first, then fall back to localStorage
-    if (dest) {
-      setRedirectPath(dest);
-    } else {
-      // Check if we have a stored redirect path
-      const storedRedirect = localStorage.getItem('redirectAfterLogin');
-      if (storedRedirect) {
-        setRedirectPath(storedRedirect);
-      }
-    }
-  }, []);
+    setRedirectPath(
+      searchParams.get('redirect') ?? 
+      localStorage.getItem('redirectAfterLogin')
+    );
+  }, [searchParams]);
 
   // Use logo from public folder
   const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
@@ -39,78 +36,48 @@ const AuthPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
-    try {
-      // sign‑up validation: no password, still only .edu
-      // if (!isLogin && !email.endsWith('.edu')) {
-      //   throw new Error('Only .edu e‑mail addresses are allowed for registration');
-      // }
-
-      const formData = new FormData();
-      formData.append('username', username);
-
-      if (isLogin) {
-        formData.append('password', password);          // login path unchanged
-      } else {
-        // sign‑up: DO NOT send a password
-        formData.append('email', email);
-        formData.append('first_name', firstName);
-        formData.append('last_name', lastName);
-        formData.append('organization_name', organizationName);
-      }
-
-      const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'register'}`, {
-        method: 'POST',
-        body: formData,
+    if (isLogin) {
+      const response = await login({
+        username,
+        password
       });
 
-      // --- richer error handling ---
-      if (!response.ok) {
-        let errorMsg = 'Authentication failed';
-        try {
-          // Most FastAPI errors are JSON { detail: "…" }
-          const dataErr = await response.clone().json();
-          if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
-        } catch {
-          try {
-            // Fallback: plain‑text body
-            const textErr = await response.text();
-            if (textErr) errorMsg = textErr;
-          } catch { /* ignore */ }
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-
-      if (isLogin) {
-        // Store token and user info in localStorage
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('permissions', data.permissions);
-
-        console.log("Stored local credentials.")
-
+      if (response.success) {
         // Clear the stored redirect path since we're about to use it
         localStorage.removeItem('redirectAfterLogin');
-
-        // Navigate to the map page instead of just reloading
-        window.location.replace(redirectPath);
+        if (redirectPath) navigate(redirectPath);
+        else {
+          // Return to home page
+          navigate("/");
+        }
+        
+      } else {
+        console.error('Authentication error:', response.error);
+        setError(response.error.toString());
       }
-      else {
-        alert(data.message || 'Verification e‑mail sent.');
-        setIsLogin(true);             // return to Sign‑In view
+
+    } else {
+      const response = await register({
+        username,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        organization_name: organizationName
+      });
+
+      if (!response.success) {
+        console.error('Authentication error:', response.error);
+        setError(response.error);
         return;
       }
+
+      alert(response.message || 'Verification e‑mail sent.');
+      setIsLogin(true);
+      return;
     }
-    catch (err) {
-      console.error('Authentication error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }               // nothing else to do
+
   };
 
   return (
@@ -208,9 +175,9 @@ const AuthPage = () => {
           <button
             type="submit"
             className="auth-button"
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
+            {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
@@ -219,7 +186,7 @@ const AuthPage = () => {
             <>
               <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
               <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>Redeem code for team members</a></p>
-              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/password-reset'; }}><strong>Reset</strong></a></p>
+              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/reset-password'; }}><strong>Reset</strong></a></p>
             </>
           ) : (
             <>

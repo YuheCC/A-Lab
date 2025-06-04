@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import API_URL from './Constants.js';
+import API_URL from '../Constants.js';
+import { authFetch } from '../utils.js';
 
 const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   const [feedbackText, setFeedbackText] = useState('');
@@ -23,14 +24,12 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem('token');
 
       // Submit feedback to backend
-      await fetch(`${API_URL}/api/feedback`, {
+      await authFetch(`${API_URL}/api/feedback`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           isPositive: feedbackType === 'up',
@@ -64,8 +63,9 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
     <div className="molecule-feedback-buttons" style={{
       margin: '10px 0',
       textAlign: 'center',
+      flexGrow: 1,
       display: 'flex',
-      flexDirection: 'column',
+      flexFlow: 'column',
       alignItems: 'flex-start',
       width: '100%'
     }}>
@@ -111,8 +111,10 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
           borderRadius: '4px',
           backgroundColor: '#f9f9f9',
           textAlign: 'left',
+          maxWidth: '400px',
           width: '100%',
-          maxWidth: '400px'
+          display: 'flex',
+          flexFlow: 'column',
         }}>
           <p style={{ margin: '0 0 10px' }}>
             {feedbackType === 'up'
@@ -124,7 +126,7 @@ const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
             onChange={(e) => setFeedbackText(e.target.value)}
             rows={4}
             style={{
-              width: '100%',
+              flexGrow: 1,
               padding: '8px',
               marginBottom: '10px',
               borderRadius: '4px',
