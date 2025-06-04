@@ -104,16 +104,24 @@ const FavoritesGrid = () => {
 
   // Update the chart whenever selected molecules change
   useEffect(() => {
-    if (selectedMolecules.length > 0 && showAnalysis) {
-      if (activeTab === 'radar' && spiderChartRef.current) {
+    if (showAnalysis) {
+      if (activeTab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
         updateSpiderChart();
-      } else if (activeTab === 'esp' && espChartRef.current) {
+      } else if (activeTab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
         updateESPChart();
       } else if (activeTab === 'mo' && moChartRef.current) {
+        // MO chart always updates and shows reference points
         updateMOChart();
       }
     }
   }, [selectedMolecules, showAnalysis, activeTab]);
+
+  // Separate effect to ensure MO chart data is ready when molecules are selected
+  useEffect(() => {
+    if (moChartRef.current && showAnalysis && activeTab === 'mo') {
+      updateMOChart();
+    }
+  }, [selectedMolecules]);
 
   const fetchMoleculeImages = async (favoritesData) => {
     const images = {};
@@ -542,9 +550,9 @@ const FavoritesGrid = () => {
   };
 
   const updateMOChart = () => {
-    if (!moChartRef.current || selectedMolecules.length === 0) return;
+    if (!moChartRef.current) return;
 
-    // Color map for each solubility type (same as ESP chart)
+    // Color map for each solubility type (matching Python code)
     const colorMap = {
       'high solubility': 'green',
       'medium solubility': 'orange', 
@@ -552,76 +560,196 @@ const FavoritesGrid = () => {
       'diluent': 'blue'
     };
 
-    // Prepare data for plotting
-    const data = selectedMolecules.map(molecule => ({
+    // Hardcoded reference data points
+    const referenceData = [
+      { ABBREVIATION: 'DEC', HOMO_EV: -8.0, LUMO_EV: 1.0, SOLUBILITY: 'medium solubility' },
+      { ABBREVIATION: 'DME', HOMO_EV: -7.2, LUMO_EV: 1.15, SOLUBILITY: 'medium solubility' },
+      { ABBREVIATION: 'AN', HOMO_EV: -9.1, LUMO_EV: 0.72, SOLUBILITY: 'high solubility' },
+      { ABBREVIATION: 'TTE', HOMO_EV: -9.3, LUMO_EV: 0.6, SOLUBILITY: 'diluent' },
+      { ABBREVIATION: 'BTFE', HOMO_EV: -8.5, LUMO_EV: 0.68, SOLUBILITY: 'diluent' },
+      { ABBREVIATION: 'EC', HOMO_EV: -8.2, LUMO_EV: 0.64, SOLUBILITY: 'high solubility' },
+      { ABBREVIATION: 'PC', HOMO_EV: -8.2, LUMO_EV: 0.56, SOLUBILITY: 'high solubility' },
+      { ABBREVIATION: 'FDMB', HOMO_EV: -7.6, LUMO_EV: 0.68, SOLUBILITY: 'medium solubility' },
+      { ABBREVIATION: 'MA', HOMO_EV: -7.6, LUMO_EV: 0.22, SOLUBILITY: 'medium solubility' },
+      { ABBREVIATION: 'DFEC', HOMO_EV: -9.1, LUMO_EV: -0.14, SOLUBILITY: 'high solubility' },
+      { ABBREVIATION: 'Benzene', HOMO_EV: -6.9, LUMO_EV: -0.22, SOLUBILITY: 'low solubility' },
+      { ABBREVIATION: 'MTFP', HOMO_EV: -8.0, LUMO_EV: -0.52, SOLUBILITY: 'medium solubility' }
+    ];
+
+    // Prepare selected molecules data
+    const selectedData = selectedMolecules.length > 0 ? selectedMolecules.map(molecule => ({
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'unknown', // Assuming solubility field exists
-      ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
-      SMILES: molecule.smiles
-    }));
+      SOLUBILITY: molecule.solubility || 'unknown',
+      ABBREVIATION: molecule.abbreviation || (molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles),
+      SMILES: molecule.smiles,
+      isSelected: true
+    })).filter(d => d.HOMO_EV !== null && d.HOMO_EV !== undefined && d.LUMO_EV !== null && d.LUMO_EV !== undefined) : [];
 
-    // Filter out molecules with missing HOMO/LUMO data
-    const validData = data.filter(d => d.HOMO_EV !== null && d.HOMO_EV !== undefined && 
-                                      d.LUMO_EV !== null && d.LUMO_EV !== undefined);
+    // Add jitter to prevent overlapping points
+    const addJitter = (data, jitterAmount = 0.02) => {
+      const positionMap = new Map();
+      
+      return data.map(d => {
+        const key = `${d.HOMO_EV.toFixed(2)}_${d.LUMO_EV.toFixed(2)}`;
+        const count = positionMap.get(key) || 0;
+        positionMap.set(key, count + 1);
+        
+        // Add small offset for overlapping points
+        const offsetX = count * jitterAmount * (Math.random() - 0.5);
+        const offsetY = count * jitterAmount * (Math.random() - 0.5);
+        
+        return {
+          ...d,
+          HOMO_EV_DISPLAY: d.HOMO_EV + offsetX,
+          LUMO_EV_DISPLAY: d.LUMO_EV + offsetY
+        };
+      });
+    };
 
-    // Group data by solubility type
+    // Apply jitter to selected data to prevent overlap
+    const jitteredSelectedData = addJitter(selectedData);
+
+    // Combine reference data with selected data
+    const allData = [
+      ...referenceData.map(d => ({ ...d, isSelected: false, HOMO_EV_DISPLAY: d.HOMO_EV, LUMO_EV_DISPLAY: d.LUMO_EV })),
+      ...jitteredSelectedData
+    ];
+
+    // Group data by solubility type and selection status
     const groupedData = {};
-    validData.forEach(d => {
-      if (!groupedData[d.SOLUBILITY]) {
-        groupedData[d.SOLUBILITY] = [];
+    allData.forEach(d => {
+      const key = d.isSelected ? `${d.SOLUBILITY} (Selected)` : `${d.SOLUBILITY} (Reference)`;
+      if (!groupedData[key]) {
+        groupedData[key] = [];
       }
-      groupedData[d.SOLUBILITY].push(d);
+      groupedData[key].push(d);
     });
 
-    // Create traces for each solubility type
+    // Create traces for each group
     const traces = [];
     const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'unknown'];
     
+    // First add reference points (smaller, semi-transparent)
     legendOrder.forEach(solubilityType => {
-      if (groupedData[solubilityType]) {
-        const typeData = groupedData[solubilityType];
+      const refKey = `${solubilityType} (Reference)`;
+      if (groupedData[refKey]) {
+        const typeData = groupedData[refKey];
         const color = colorMap[solubilityType] || 'gray';
         
         traces.push({
           type: 'scatter',
           mode: 'markers+text',
-          x: typeData.map(d => d.HOMO_EV),
-          y: typeData.map(d => d.LUMO_EV),
+          x: typeData.map(d => d.HOMO_EV_DISPLAY),
+          y: typeData.map(d => d.LUMO_EV_DISPLAY),
           text: typeData.map(d => d.ABBREVIATION),
           textposition: 'top center',
-          name: solubilityType,
-          hoverinfo: 'text',
-          hovertext: typeData.map(d => 
-            `ABBREVIATION: ${d.ABBREVIATION}<br>` +
-            `HOMO_EV: ${d.HOMO_EV?.toFixed(3) || 'N/A'}<br>` +
-            `LUMO_EV: ${d.LUMO_EV?.toFixed(3) || 'N/A'}<br>` +
-            `SMILES: ${d.SMILES}`
-          ),
+          name: `${solubilityType} (ref)`,
+          hovertemplate: 
+            `ABBREVIATION: %{text}<br>` +
+            `HOMO_EV: %{x:.3f}<br>` +
+            `LUMO_EV: %{y:.3f}<br>` +
+            `Type: Reference<br>` +
+            `<extra></extra>`,
           marker: {
-            size: 8,
+            size: 6,
             color: color,
+            opacity: 0.6,
             line: {
               color: color,
               width: 1
             }
+          },
+          textfont: {
+            size: 10,
+            color: color
           }
         });
       }
     });
 
-    // Define layout
+    // Then add selected points (larger, more prominent)
+    legendOrder.forEach(solubilityType => {
+      const selKey = `${solubilityType} (Selected)`;
+      if (groupedData[selKey]) {
+        const typeData = groupedData[selKey];
+        const color = colorMap[solubilityType] || 'gray';
+        
+        traces.push({
+          type: 'scatter',
+          mode: 'markers+text',
+          x: typeData.map(d => d.HOMO_EV_DISPLAY),
+          y: typeData.map(d => d.LUMO_EV_DISPLAY),
+          text: typeData.map(d => d.ABBREVIATION),
+          textposition: 'top center',
+          name: `${solubilityType} (selected)`,
+          customdata: typeData.map(d => d.SMILES || 'N/A'),
+          hovertemplate: 
+            `ABBREVIATION: %{text}<br>` +
+            `HOMO_EV: %{x:.3f}<br>` +
+            `LUMO_EV: %{y:.3f}<br>` +
+            `SMILES: %{customdata}<br>` +
+            `Type: Selected<br>` +
+            `<extra></extra>`,
+          marker: {
+            size: 10,
+            color: color,
+            opacity: 1.0,
+            line: {
+              color: 'black',
+              width: 2
+            },
+            symbol: 'star'
+          },
+          textfont: {
+            size: 12,
+            color: 'black'
+          }
+        });
+      }
+    });
+
+    // Calculate dynamic axis ranges to include all data points
+    let xMin = Math.min(...allData.map(d => d.HOMO_EV_DISPLAY));
+    let xMax = Math.max(...allData.map(d => d.HOMO_EV_DISPLAY));
+    let yMin = Math.min(...allData.map(d => d.LUMO_EV_DISPLAY));
+    let yMax = Math.max(...allData.map(d => d.LUMO_EV_DISPLAY));
+    
+    // Add padding (10% of range)
+    const xPadding = (xMax - xMin) * 0.1;
+    const yPadding = (yMax - yMin) * 0.1;
+    
+    xMin -= xPadding;
+    xMax += xPadding;
+    yMin -= yPadding;
+    yMax += yPadding;
+    
+    // Set minimum ranges to ensure chart is readable
+    if (xMax - xMin < 2) {
+      const center = (xMax + xMin) / 2;
+      xMin = center - 1;
+      xMax = center + 1;
+    }
+    if (yMax - yMin < 1) {
+      const center = (yMax + yMin) / 2;
+      yMin = center - 0.5;
+      yMax = center + 0.5;
+    }
+
+    // Define layout (matching Python code)
     const layout = {
       title: 'HOMO_EV vs LUMO_EV',
       xaxis: {
         title: 'HOMO_EV',
         zeroline: true,
-        gridcolor: 'rgba(0,0,0,0.1)'
+        gridcolor: 'rgba(0,0,0,0.1)',
+        range: [xMin, xMax]
       },
       yaxis: {
         title: 'LUMO_EV',
         zeroline: true,
-        gridcolor: 'rgba(0,0,0,0.1)'
+        gridcolor: 'rgba(0,0,0,0.1)',
+        range: [yMin, yMax]
       },
       legend: {
         title: 'SOLUBILITY',
@@ -654,16 +782,14 @@ const FavoritesGrid = () => {
     setShowAnalysis(true);
     // Update the chart after state is updated
     setTimeout(() => {
-      if (selectedMolecules.length > 0) {
-        if (activeTab === 'radar' && spiderChartRef.current) {
-          updateSpiderChart();
-        } else if (activeTab === 'esp' && espChartRef.current) {
-          updateESPChart();
-        } else if (activeTab === 'mo' && moChartRef.current) {
-          updateMOChart();
-        }
+      if (activeTab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
+        updateSpiderChart();
+      } else if (activeTab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
+        updateESPChart();
+      } else if (activeTab === 'mo' && moChartRef.current) {
+        updateMOChart();
       }
-    }, 0);
+    }, 100);
   };
 
   const handleCloseAnalysis = () => {
@@ -672,16 +798,16 @@ const FavoritesGrid = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (showAnalysis && selectedMolecules.length > 0) {
+    if (showAnalysis) {
       setTimeout(() => {
-        if (tab === 'radar' && spiderChartRef.current) {
+        if (tab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
           updateSpiderChart();
-        } else if (tab === 'esp' && espChartRef.current) {
+        } else if (tab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
           updateESPChart();
         } else if (tab === 'mo' && moChartRef.current) {
           updateMOChart();
         }
-      }, 0);
+      }, 100);
     }
   };
 
