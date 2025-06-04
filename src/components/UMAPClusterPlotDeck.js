@@ -5,6 +5,7 @@ import MolViewer2D from './MolViewer2D';
 import { CompositeLayer, LinearInterpolator } from 'deck.gl';
 import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
+import { MolCard } from './MolCard';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -203,7 +204,7 @@ const UMAPClusterPlotDeck = ({
         // Update on mount and resize
         const timeout = setTimeout(updateDimensions, 0);
         window.addEventListener('resize', updateDimensions);
-        
+
         return () => {
             window.removeEventListener('resize', updateDimensions);
             clearTimeout(timeout);
@@ -292,7 +293,8 @@ const UMAPClusterPlotDeck = ({
                 boundingRect.top + containerRef.current.offsetHeight - (hoverRef.current ? hoverRef.current.offsetHeight : 200)),
             left: Math.min(
                 hoveredObject.x + boundingRect.left,
-                boundingRect.left + containerRef.current.offsetWidth)
+                boundingRect.left + containerRef.current.offsetWidth),
+            position: 'fixed'
         }
     }, [hoveredObject, containerRef]);
 
@@ -356,91 +358,41 @@ const UMAPClusterPlotDeck = ({
             getCursor={() => 'crosshair'}
             layers={layers}
         />
-        {hoveredObject && containerRef.current ? (
-            <div className='deck-hover-info' ref={hoverRef} style={position} onMouseEnter={() => {
-                setHoveredObject(null);
-                onHover(null);
-            }}>
-                <div style={{ display: 'flex', flexFlow: 'row' }}>
-                    <div className='deck-hover-vis' translate='no'>
-                        {hoveredObject ? <MolViewer2D smile={hoveredObject.object.smiles} width={200} height={200} /> : <div>Loading...</div>}
-                    </div>
-                    <div className='deck-info-panel'>
-                        <div className='deck-info-title'>Molecule Information</div>
-                        <table translate='no'>
-                            <tbody>
-                                <tr>
-                                    <td colSpan={2}>
-                                        <div className='deck-info-group'>
-                                            <label>SMILES</label>
-                                            <code>{hoveredObject.object.smiles}</code>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Cluster</label>
-                                            <code>{hoveredObject.object.properties.CLUSTER}</code>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Mol Weight</label>
-                                            <code>{hoveredObject.object.properties.molwt}</code>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Esp Max EV</label>
-                                            <code>{hoveredObject.object.properties.esp_max_eV}</code>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Esp Min EV</label>
-                                            <code>{hoveredObject.object.properties.esp_min_eV}</code>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Homo EV</label>
-                                            <code>{hoveredObject.object.properties.homo_eV}</code>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Lumo EV</label>
-                                            <code>{hoveredObject.object.properties.lumo_eV}</code>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') ? <tr>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Predicted MP</label>
-                                            <code>{hoveredObject.object.properties.predicted_mp ?? "N/A"}</code>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className='deck-info-group'>
-                                            <label>Predicted BP</label>
-                                            <code>{hoveredObject.object.properties.predicted_bp ?? "N/A"}</code>
-                                        </div>
-                                    </td>
-                                </tr> : null}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div className='deck-info-footer'>
-                    Click on the molecule to view more details.
-                </div>
-            </div>
+        {hoveredObject && hoveredObject.object ? (
+            <MolCard
+                ref={hoverRef}
+                style={position}
+                showMoreDetails={true}
+                onMouseEnter={() => {
+                    setHoveredObject(null);
+                    onHover(null);
+                }}
+                propGroups={[
+                    [{ label: 'SMILES', value: hoveredObject.object.smiles }],
+                    [
+                        { label: 'Cluster', value: hoveredObject.object.properties.CLUSTER },
+                        { label: 'Mol Weight', value: hoveredObject.object.properties.molwt },
+                    ],
+                    [
+                        { label: 'Esp Max EV', value: hoveredObject.object.properties.esp_max_eV },
+                        { label: 'Esp Min EV', value: hoveredObject.object.properties.esp_min_eV },
+                    ],
+                    [
+                        { label: 'Homo EV', value: hoveredObject.object.properties.homo_eV },
+                        { label: 'Lumo EV', value: hoveredObject.object.properties.lumo_eV },
+                    ],
+                    [
+                        {
+                            label: 'Predicted MP', value: hoveredObject.object.properties.predicted_mp,
+                            show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        },
+                        {
+                            label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
+                            show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        }
+                    ]
+                ]}
+            />
         ) : null}
     </div>
 }
