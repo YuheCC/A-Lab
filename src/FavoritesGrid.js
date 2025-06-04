@@ -619,16 +619,25 @@ const FavoritesGrid = () => {
     // Group data by solubility type and selection status
     const groupedData = {};
     allData.forEach(d => {
-      const key = d.isSelected ? `${d.SOLUBILITY} (Selected)` : `${d.SOLUBILITY} (Reference)`;
-      if (!groupedData[key]) {
-        groupedData[key] = [];
+      if (d.isSelected) {
+        // Group all selected molecules together regardless of solubility
+        if (!groupedData['Selected Molecules']) {
+          groupedData['Selected Molecules'] = [];
+        }
+        groupedData['Selected Molecules'].push(d);
+      } else {
+        // Keep reference data grouped by solubility
+        const key = `${d.SOLUBILITY} (Reference)`;
+        if (!groupedData[key]) {
+          groupedData[key] = [];
+        }
+        groupedData[key].push(d);
       }
-      groupedData[key].push(d);
     });
 
     // Create traces for each group
     const traces = [];
-    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'unknown'];
+    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent'];
     
     // First add reference points (smaller, semi-transparent)
     legendOrder.forEach(solubilityType => {
@@ -668,46 +677,42 @@ const FavoritesGrid = () => {
       }
     });
 
-    // Then add selected points (larger, more prominent)
-    legendOrder.forEach(solubilityType => {
-      const selKey = `${solubilityType} (Selected)`;
-      if (groupedData[selKey]) {
-        const typeData = groupedData[selKey];
-        const color = colorMap[solubilityType] || 'gray';
-        
-        traces.push({
-          type: 'scatter',
-          mode: 'markers+text',
-          x: typeData.map(d => d.HOMO_EV_DISPLAY),
-          y: typeData.map(d => d.LUMO_EV_DISPLAY),
-          text: typeData.map(d => d.ABBREVIATION),
-          textposition: 'top center',
-          name: `${solubilityType} (selected)`,
-          customdata: typeData.map(d => d.SMILES || 'N/A'),
-          hovertemplate: 
-            `ABBREVIATION: %{text}<br>` +
-            `HOMO_EV: %{x:.3f}<br>` +
-            `LUMO_EV: %{y:.3f}<br>` +
-            `SMILES: %{customdata}<br>` +
-            `Type: Selected<br>` +
-            `<extra></extra>`,
-          marker: {
-            size: 10,
-            color: color,
-            opacity: 1.0,
-            line: {
-              color: 'black',
-              width: 2
-            },
-            symbol: 'star'
+    // Then add all selected molecules as one group
+    if (groupedData['Selected Molecules']) {
+      const selectedData = groupedData['Selected Molecules'];
+      
+      traces.push({
+        type: 'scatter',
+        mode: 'markers+text',
+        x: selectedData.map(d => d.HOMO_EV_DISPLAY),
+        y: selectedData.map(d => d.LUMO_EV_DISPLAY),
+        text: selectedData.map(d => d.ABBREVIATION),
+        textposition: 'top center',
+        name: 'Selected Molecules',
+        customdata: selectedData.map(d => d.SMILES || 'N/A'),
+        hovertemplate: 
+          `ABBREVIATION: %{text}<br>` +
+          `HOMO_EV: %{x:.3f}<br>` +
+          `LUMO_EV: %{y:.3f}<br>` +
+          `SMILES: %{customdata}<br>` +
+          `Type: Selected<br>` +
+          `<extra></extra>`,
+        marker: {
+          size: 10,
+          color: 'purple',
+          opacity: 1.0,
+          line: {
+            color: 'black',
+            width: 2
           },
-          textfont: {
-            size: 12,
-            color: 'black'
-          }
-        });
-      }
-    });
+          symbol: 'star'
+        },
+        textfont: {
+          size: 12,
+          color: 'black'
+        }
+      });
+    }
 
     // Calculate dynamic axis ranges to include all data points
     let xMin = Math.min(...allData.map(d => d.HOMO_EV_DISPLAY));
