@@ -16,13 +16,13 @@ export const RowGroup = ({ data, propList = [] }) => {
 };
 
 export const MolCard = (props) => {
-    const { showMoreDetails = false, propGroups = [], name, children } = props;
+    const { showMoreDetails = false, propGroups = [], name, children, ...domProps } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
     // - Each inner array should contain objects with 'value' and 'label' properties (maybe null/undefined)
     if (!propGroups.every(group => Array.isArray(group) && group.every(prop => prop.hasOwnProperty('value') && prop.hasOwnProperty('label')))) {
-        return <div className='deck-hover-info' {...props}><div className='deck-error'>Invalid molecule data structure.</div></div>;
+        return <div className='deck-hover-info' {...domProps}><div className='deck-error'>Invalid molecule data structure.</div></div>;
     }
 
     const smileString = propGroups.reduce((acc, group) => {
@@ -32,11 +32,11 @@ export const MolCard = (props) => {
     }, null);
 
     if (!smileString) {
-        return <div className='deck-hover-info' {...props}><div className='deck-error'>No molecule data available.</div></div>;
+        return <div className='deck-hover-info' {...domProps}><div className='deck-error'>No molecule data available.</div></div>;
     }
 
     return (
-        <div className='deck-hover-info' {...props}>
+        <div className='deck-hover-info' {...domProps}>
             <div style={{ display: 'flex', flexFlow: 'row' }}>
                 <div className='deck-hover-vis' translate='no'>
                     {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{

@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
-import MolViewer2D from './MolViewer2D';
-import { CompositeLayer, LinearInterpolator } from 'deck.gl';
+import { CompositeLayer } from 'deck.gl';
 import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
 import { MolCard } from './MolCard';
@@ -16,7 +15,7 @@ const hexToRgb = (hex) => {
     return [r, g, b];
 }
 
-const fitToData = (data, containerDimensions) => {
+const fitToData = (data, containerDimensions, prevViewState = null) => {
     if (!data || data.length === 0) {
         return {
             longitude: 3.7,
@@ -57,9 +56,32 @@ const fitToData = (data, containerDimensions) => {
 
     // Use actual container dimensions for better fitting
     const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
-    const targetFillRatio = 0.6; // Use 80% of container space
+    const targetFillRatio = 0.6; // Use 60% of container space
 
     const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
+
+    if (prevViewState) {
+        // Fractional position in previous bounds
+        const fracX = (prevViewState.longitude - minX) / (maxX - minX);
+        const fracY = (prevViewState.latitude - minY) / (maxY - minY);
+
+        // Map to new bounds
+        const newLongitude = minX + fracX * (maxX - minX);
+        const newLatitude = minY + fracY * (maxY - minY);
+
+        // Adjust zoom: difference in data range
+        const prevRange = Math.max(maxX - minX, maxY - minY);
+        const zoomDelta = Math.log2(prevRange / maxRange);
+        const newZoom = Math.max(0, Math.min(20, prevViewState.zoom + zoomDelta));
+
+        return {
+            longitude: newLongitude,
+            latitude: newLatitude,
+            zoom: newZoom,
+            pitch: 0,
+            bearing: 0
+        };
+    }
 
     return {
         longitude: centerX,
@@ -107,7 +129,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
     }
 
     renderLayers() {
-        const { data, iconName = 'marker', iconSize = 30, xKey = 'x', yKey = 'y' } = this.props;
+        const { data, iconName = 'marker', iconSize = 30, xKey = 'x', yKey = 'y', opacity = 1 } = this.props;
         const layers = [];
 
         data.forEach((point, index) => {
@@ -131,7 +153,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 getSize: iconSize,
                 iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
                 iconMapping: process.env.PUBLIC_URL + '/atlas_map.json',
-                opacity: 0.6
+                opacity
             }));
 
             layers.push(new TextLayer({
@@ -178,6 +200,7 @@ const UMAPClusterPlotDeck = ({
     });
     const hoverRef = useRef(null);
     const containerRef = useRef(null);
+    const [isManipulated, setIsManipulated] = useState(false);
     const [containerReady, setContainerReady] = useState(false);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
@@ -193,6 +216,7 @@ const UMAPClusterPlotDeck = ({
     // Track container size changes
     useEffect(() => {
         const updateDimensions = () => {
+            console.log("resize event triggered");
             if (containerRef.current) {
                 setContainerDimensions({
                     width: containerRef.current.offsetWidth,
@@ -205,9 +229,15 @@ const UMAPClusterPlotDeck = ({
         // Update on mount and resize
         const timeout = setTimeout(updateDimensions, 0);
         window.addEventListener('resize', updateDimensions);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateDimensions);
+        }
 
         return () => {
             window.removeEventListener('resize', updateDimensions);
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', updateDimensions);
+            }
             clearTimeout(timeout);
         }
     }, []);
@@ -224,7 +254,11 @@ const UMAPClusterPlotDeck = ({
     // Calculate bounds from data to fit the view
     useEffect(() => {
         if (containerReady) {
-            setViewState(fitToData(data, containerDimensions));
+            if (isManipulated) {
+                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState));
+            } else {
+                setViewState(fitToData(data, containerDimensions));
+            }
         }
     }, [containerDimensions, data, containerReady]);
 
@@ -270,7 +304,8 @@ const UMAPClusterPlotDeck = ({
                 iconName: 'marker-search',
                 iconSize: 30,
                 xKey: 'UMAP_0',
-                yKey: 'UMAP_1'
+                yKey: 'UMAP_1',
+                opacity: 0.8
             })
             , [highlightedSimilarData]),
         useMemo(() =>
@@ -305,15 +340,18 @@ const UMAPClusterPlotDeck = ({
         setHoveredObject(null);
         onHover(null);
         setViewState(fitToData(data, containerDimensions));
+        setIsManipulated(false);
     };
 
     const handleZoomIn = () => {
+        setIsManipulated(true);
         setViewState(prev => ({
             ...prev,
             zoom: Math.min(20, prev.zoom + 0.5)
         }));
     }
     const handleZoomOut = () => {
+        setIsManipulated(true);
         setViewState(prev => ({
             ...prev,
             zoom: Math.max(2, prev.zoom - 0.5)
@@ -336,7 +374,16 @@ const UMAPClusterPlotDeck = ({
             useDevicePixels={true}
             controller={true}
             viewState={viewState}
-            onViewStateChange={({ viewState }) => {
+            onViewStateChange={({ viewState, interactionState }) => {
+                // Set flag if user is interacting
+                if (
+                    interactionState.isDragging ||
+                    interactionState.isZooming ||
+                    interactionState.isRotating ||
+                    interactionState.isPanning
+                ) {
+                    setIsManipulated(true);
+                }
                 setViewState({
                     ...viewState,
                     longitude: Math.max(-20, Math.min(20, viewState.longitude)), // Clamp longitude
