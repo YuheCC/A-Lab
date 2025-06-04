@@ -131,6 +131,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 getSize: iconSize,
                 iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
                 iconMapping: process.env.PUBLIC_URL + '/atlas_map.json',
+                opacity: 0.6
             }));
 
             layers.push(new TextLayer({
@@ -371,15 +372,15 @@ const UMAPClusterPlotDeck = ({
                     [{ label: 'SMILES', value: hoveredObject.object.smiles }],
                     [
                         { label: 'Cluster', value: hoveredObject.object.properties.CLUSTER },
-                        { label: 'Mol Weight', value: hoveredObject.object.properties.molwt },
+                        { label: 'Mol Weight', value: hoveredObject.object.properties.molwt, suffix: ' g/mol' },
                     ],
                     [
-                        { label: 'Esp Max EV', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
-                        { label: 'Esp Min EV', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
+                        { label: 'Esp Max', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
+                        { label: 'Esp Min', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
                     ],
                     [
-                        { label: 'Homo EV', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
-                        { label: 'Lumo EV', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
+                        { label: 'HOMO', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
+                        { label: 'LUMO', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
                     ],
                     [
                         {
