@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import API_URL from '../Constants';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Forgot Password component for password reset
 const ForgotPasswordPage = () => {

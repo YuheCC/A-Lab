@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { authFetch } from '../utils';
-import API_URL from '../Constants';
 import { useNavigate } from 'react-router';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const PasswordReset = () => {
   const navigate = useNavigate();
