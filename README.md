@@ -72,3 +72,17 @@ This front end react application is hosted on AWS amplify. Currently, it is setu
 - Currently there are two domains we have for the front end applications running on
 1) https://demo.ses.ai
 2) https://molecular-universe.ses.ai
+
+## Setup
+
+1. Run `npm install`
+2. Create .env file to specify API endpoint (REACT_APP_API_URL is the env variable used)
+```
+# REACT_APP_API_URL=http://0.0.0.0:8000
+# REACT_APP_API_URL=https://api.ses.ai
+
+# Create React App expects environment variables to be prefixed with `REACT_APP_`
+REACT_APP_API_URL=https://prod-api.ses.ai
+```
+
+3. Run `npm run start`

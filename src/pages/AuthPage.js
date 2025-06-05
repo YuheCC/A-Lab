@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import API_URL from "../Constants.js";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAuthStore } from "../providers/auth.js";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Login component
 const AuthPage = () => {

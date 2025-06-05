@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { authFetch } from "../utils";
-import API_URL from "../Constants";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const MAX_NODES = 23000;
 

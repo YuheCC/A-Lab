@@ -1,5 +1,6 @@
-import API_URL from "./Constants";
 import React from "react";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 /**
  * Fetch wrapper that automatically attaches JWT to all requests

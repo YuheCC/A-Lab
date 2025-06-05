@@ -2,11 +2,12 @@ import Sidebar from "../components/Sidebar";
 import SearchInput from "../Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
-import API_URL from "../Constants";
 import { authFetch } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavorites }) => {
 
