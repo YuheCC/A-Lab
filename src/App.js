@@ -136,12 +136,9 @@ const App = () => {
   }, [verifyAuth]);
 
   // Handle clicks on Plotly points
-  const handlePointClick = (evt, node) => {
-    if (!evt.points || evt.points.length === 0) return;
-    if (node) {
-      setSelectedNode(node);
-      setShowPopup(true);
-    }
+  const handlePointClick = (evt) => {
+    setSelectedNode(evt);
+    setShowPopup(true);
   };
 
   const handleClosePopup = () => {
