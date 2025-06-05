@@ -19,17 +19,19 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
         <button className="close-button white-text" onClick={onClose}>×</button>
-        <h2 className="white-text">Molecule Details</h2>
+        <h2 className="white-text" style={{ textAlign: 'center' }}>Molecule Details</h2>
         <div className="popup-data">
-          <MolViewer2D smile={node.smiles} theme="dark"/>
-          <h3 className="white-text">SMILES</h3>
-          <p className="dark-field">{node.smiles}</p>
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <MolViewer2D smile={node.smiles} theme="dark"/>
+          </div>
+          <h3 className="white-text" style={{ textAlign: 'center' }}>SMILES</h3>
+          <p className="dark-field" style={{ textAlign: 'center' }}>{node.smiles}</p>
 
-          <h3 className="white-text">UMAP Coordinates</h3>
-          <p className="dark-field">X: {node.x.toFixed(2)}, Y: {node.y.toFixed(2)}</p>
+          <h3 className="white-text" style={{ textAlign: 'center' }}>UMAP Coordinates</h3>
+          <p className="dark-field" style={{ textAlign: 'center' }}>X: {node.x.toFixed(2)}, Y: {node.y.toFixed(2)}</p>
 
-          <h3 className="white-text">Properties</h3>
-          <table className="property-table dark-table">
+          <h3 className="white-text" style={{ textAlign: 'center' }}>Properties</h3>
+          <table className="property-table dark-table" style={{ margin: '0 auto' }}>
             <tbody>
               {Object.entries(node.properties || {}).map(([key, value]) => (
                 <tr key={key}>

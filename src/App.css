@@ -369,11 +369,13 @@ body, html {
 .property-table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0 auto; /* Center the table horizontally */
 }
 
 .property-table td {
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
+  text-align: center; /* Center the content within cells */
 }
 
 .property-name {
@@ -2262,20 +2264,19 @@ body, html {
   flex: 2;
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 0;
+  margin: 0 auto; /* Center the table horizontally */
 }
 
 .property-table td {
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-bottom: 1px solid #eee;
-  font-size: 14px;
+  text-align: center; /* Center the content within cells */
 }
 
 .property-name {
   font-weight: 600;
   color: #555;
   width: 40%;
-  white-space: nowrap;
 }
 
 .property-value {
@@ -2329,6 +2330,7 @@ body, html {
 
 .molecule-properties {
   margin-bottom: 20px;
+  text-align: center; /* Center the properties section */
 }
 
 .molecule-properties h3 {
@@ -2337,6 +2339,7 @@ body, html {
   margin-bottom: 15px;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+  text-align: center; /* Center the Properties heading */
 }
 
 .error-message {
@@ -2871,6 +2874,8 @@ body, html {
 .molecule-entry, .similar-molecule {
   margin-bottom: 25px;
   padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: center; /* Center the molecule entry content */
 }
 
 .molecule-entry:last-child, .similar-molecule:last-child {
