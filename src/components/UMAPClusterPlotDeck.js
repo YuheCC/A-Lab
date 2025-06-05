@@ -15,6 +15,9 @@ const hexToRgb = (hex) => {
     return [r, g, b];
 }
 
+
+const X_STRETCH = 1.3;
+
 const fitToData = (data, containerDimensions, prevViewState = null) => {
     if (!data || data.length === 0) {
         return {
@@ -27,7 +30,7 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
     }
 
     // Calculate bounds
-    const xValues = data.map(d => d.x).filter(x => x !== null && x !== undefined);
+    const xValues = data.map(d => d.x * X_STRETCH).filter(x => x !== null && x !== undefined);
     const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
 
     if (xValues.length === 0 || yValues.length === 0) {
@@ -56,7 +59,7 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
 
     // Use actual container dimensions for better fitting
     const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
-    const targetFillRatio = 0.6; // Use 60% of container space
+    const targetFillRatio = 0.7; // Use 80% of container space
 
     const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
 
@@ -136,7 +139,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
             layers.push(new ScatterplotLayer({
                 id: `${this.id}-scatter-${index}`,
                 data: [point],
-                getPosition: d => [d[xKey], d[yKey]],
+                getPosition: d => [X_STRETCH * d[xKey], d[yKey]],
                 getRadius: 5,
                 getFillColor: d => [255, 0, 0],
                 radiusMinPixels: 2,
@@ -148,7 +151,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
             layers.push(new IconLayer({
                 id: `${this.id}-icon-${index}`,
                 data: [point],
-                getPosition: d => [d[xKey], d[yKey]],
+                getPosition: d => [X_STRETCH * d[xKey], d[yKey]],
                 getIcon: d => iconName,
                 getSize: iconSize,
                 iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
@@ -160,7 +163,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 id: `${this.id}-label-${index}`,
                 data: [point],
                 sizeMinPixels: 10,
-                getPosition: d => [d[xKey], d[yKey]],
+                getPosition: d => [X_STRETCH * d[xKey], d[yKey]],
                 getPixelOffset: [0, -16],
                 getText: () => (index + 1).toString(),
                 fontSettings: {
@@ -267,7 +270,7 @@ const UMAPClusterPlotDeck = ({
             new ScatterplotLayer({
                 id: 'scatterplot-layer',
                 data,
-                getPosition: d => [d.x, d.y],
+                getPosition: d => [X_STRETCH * d.x, d.y],
                 getRadius: d => 100,
                 getFillColor: d => {
                     return clusterColorMap[d.properties.CLUSTER % 23] || defaultColor
