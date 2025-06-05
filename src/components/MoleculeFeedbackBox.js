@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { authFetch } from '../utils.js';
+import { authFetch, getAPIUrl } from '../utils.js';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = getAPIUrl();
 
 const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   const [feedbackText, setFeedbackText] = useState('');

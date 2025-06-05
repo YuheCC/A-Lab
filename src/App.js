@@ -6,7 +6,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
 import PricingPage from './pages/PricingPage.js';
 import RedeemPage from './pages/RedeemPage.js';
 import TermsPage from './pages/TermsPage.js';
-import { authFetch } from './utils.js';
+import { authFetch, getAPIUrl } from './utils.js';
 
 import './App.css';
 import Sidebar from './components/Sidebar.js';
@@ -21,7 +21,7 @@ import { Route, Routes } from 'react-router';
 import { ProtectedRoute, useAuthStore } from './providers/auth.js';
 import FullNavLayout from './layouts/FullNavLayout.js';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = getAPIUrl();
 
 const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
