@@ -64,6 +64,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         const formattedMolecule = formattedMolecules[0];
                         setsearchedMolecules([formattedMolecule]);
                         setsearchResults([formattedMolecule.image]);
+                        
                         if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
                             formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
                             setHighlightedMolecules([formattedMolecule]);
@@ -72,13 +73,11 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         // Store all molecules and their images
                         setsearchedMolecules(formattedMolecules);
                         setsearchResults(formattedMolecules.map((mol) => mol.image));
-                        // Filter molecules to only include those with x and y values defined and not null
-                        const highlighted = formattedMolecules.filter(
-                            (mol) => mol.x !== null && mol.y !== null &&
-                                mol.x !== undefined && mol.y !== undefined
-                        );
-                        if (highlighted && highlighted.length > 0) {
-                            setHighlightedMolecules(highlighted);
+
+                        // Don't filter out null values for highlightedMolecules as that messes up indexing
+                        // - deckgl handles null values gracefully
+                        if (formattedMolecules && formattedMolecules.length > 0) {
+                            setHighlightedMolecules(formattedMolecules);
                         }
                     }
                 }
@@ -146,11 +145,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         const molecules = data.similar_molecules;
                         setSimilarMolecules(molecules);
 
-                        const highlighted = molecules.filter(
-                            (mol) => mol.UMAP_0 !== undefined && mol.UMAP_1 !== undefined
-                        );
-                        if (highlighted.length > 0) {
-                            setHighlightedSimilarMolecules(highlighted);
+                        if (molecules.length > 0) {
+                            setHighlightedSimilarMolecules(molecules);
                         }
 
                         // Fetch molecule visualizations for all similar molecules
