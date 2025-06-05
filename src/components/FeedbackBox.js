@@ -1,7 +1,8 @@
 // FeedbackBox.js
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import API_URL from '../Constants.js';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
