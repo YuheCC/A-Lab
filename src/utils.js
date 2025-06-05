@@ -1,6 +1,9 @@
 import React from "react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://prod-api.ses.ai';
+
+const API_URL = getAPIUrl();
+
 
 /**
  * Fetch wrapper that automatically attaches JWT to all requests
