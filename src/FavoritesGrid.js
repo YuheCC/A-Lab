@@ -3,6 +3,7 @@ import API_URL from './Constants.js';
 import './App.css';
 import Plotly from 'plotly.js-dist';
 import { authFetch } from './utils.js';
+import NodePopup from './components/NodePopup.js';
 
 const FavoritesGrid = () => {
   const [favorites, setFavorites] = useState([]);
@@ -15,6 +16,9 @@ const FavoritesGrid = () => {
   const [activeTab, setActiveTab] = useState('radar');
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
@@ -547,6 +551,9 @@ const FavoritesGrid = () => {
     };
     
     Plotly.newPlot(espChartRef.current, traces, layout, {responsive: true});
+    
+    // Add click event listener for ESP chart
+    espChartRef.current.on('plotly_click', handlePointClick);
   };
 
   const updateMOChart = () => {
@@ -781,6 +788,9 @@ const FavoritesGrid = () => {
     };
     
     Plotly.newPlot(moChartRef.current, traces, layout, {responsive: true});
+    
+    // Add click event listener for MO chart
+    moChartRef.current.on('plotly_click', handlePointClick);
   };
 
   const handleShowAnalysis = () => {
@@ -814,6 +824,91 @@ const FavoritesGrid = () => {
         }
       }, 100);
     }
+  };
+
+  // Handle clicks on chart points to show popup
+  const handlePointClick = (data) => {
+    if (data.points && data.points[0]) {
+      const point = data.points[0];
+      
+      // Find the molecule data from the clicked point
+      let clickedMolecule = null;
+      
+      if (activeTab === 'esp') {
+        // For ESP chart, find by ESP coordinates
+        clickedMolecule = selectedMolecules.find(mol => 
+          Math.abs(mol.esp_min_ev - point.x) < 0.001 && 
+          Math.abs(mol.esp_max_ev - point.y) < 0.001
+        );
+      } else if (activeTab === 'mo') {
+        // For MO chart, check if this is a selected molecule (not reference)
+        if (point.data.name === 'Selected Molecules') {
+          // Find by HOMO/LUMO coordinates
+          clickedMolecule = selectedMolecules.find(mol => 
+            Math.abs(mol.homo_ev - point.x) < 0.1 && 
+            Math.abs(mol.lumo_ev - point.y) < 0.1
+          );
+        }
+      }
+      
+      if (clickedMolecule) {
+        // Transform favorite data to match NodePopup expected format
+        const nodeData = {
+          smiles: clickedMolecule.smiles,
+          x: clickedMolecule.umap_x || 0,
+          y: clickedMolecule.umap_y || 0,
+          properties: {
+            molwt: clickedMolecule.molecular_weight,
+            homo_eV: clickedMolecule.homo_ev,
+            lumo_eV: clickedMolecule.lumo_ev,
+            esp_min_eV: clickedMolecule.esp_min_ev,
+            esp_max_eV: clickedMolecule.esp_max_ev,
+            predicted_mp: clickedMolecule.predicted_melting_point,
+            predicted_bp: clickedMolecule.predicted_boiling_point,
+            functional_groups: clickedMolecule.functional_groups
+          },
+          rawData: clickedMolecule
+        };
+        
+        setSelectedNode(nodeData);
+        setShowPopup(true);
+      }
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedNode(null);
+  };
+
+  // Function to handle adding molecule to favorites (already in favorites, so just show message)
+  const handleAddToFavorites = async (molecule) => {
+    const smiles = molecule.smiles;
+    
+    setMoleculeFavoriteStatus(prev => ({
+      ...prev,
+      [smiles]: { loading: false, success: 'This molecule is already in your favorites!', error: null }
+    }));
+
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      setMoleculeFavoriteStatus(prev => ({
+        ...prev,
+        [smiles]: { ...prev[smiles], success: null }
+      }));
+    }, 3000);
+  };
+
+  // Create filter labels for the popup
+  const filterLabels = {
+    molwt: 'Molecular Weight',
+    homo_eV: 'HOMO (eV)',
+    lumo_eV: 'LUMO (eV)',
+    esp_min_eV: 'ESP Min (eV)',
+    esp_max_eV: 'ESP Max (eV)',
+    predicted_mp: 'Predicted Melting Point (°C)',
+    predicted_bp: 'Predicted Boiling Point (°C)',
+    functional_groups: 'Functional Groups'
   };
 
   if (loading) {
@@ -1027,6 +1122,15 @@ const FavoritesGrid = () => {
           </div>
         </div>
       )}
+      
+      {/* Node popup */}
+      {showPopup && selectedNode && <NodePopup
+        node={selectedNode}
+        onClose={handleClosePopup}
+        filterLabels={filterLabels}
+        handleAddToFavorites={handleAddToFavorites}
+        moleculeFavoriteStatus={moleculeFavoriteStatus}
+      />}
     </div>
   );
 };
