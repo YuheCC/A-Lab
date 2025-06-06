@@ -419,7 +419,7 @@ const FavoritesGrid = () => {
       ESP_MAX_EV: molecule.esp_max_ev,
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'unknown', // Assuming solubility field exists
+      SOLUBILITY: molecule.solubility || 'Selected Molecules', // Assuming solubility field exists
       ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
       SMILES: molecule.smiles
     }));
@@ -439,7 +439,7 @@ const FavoritesGrid = () => {
 
     // Create traces for each solubility type
     const traces = [];
-    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'unknown'];
+    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'Selected Molecules'];
     
     legendOrder.forEach(solubilityType => {
       if (groupedData[solubilityType]) {
@@ -587,7 +587,7 @@ const FavoritesGrid = () => {
     const selectedData = selectedMolecules.length > 0 ? selectedMolecules.map(molecule => ({
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'unknown',
+      SOLUBILITY: molecule.solubility || 'Selected Molecules',
       ABBREVIATION: molecule.abbreviation || (molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles),
       SMILES: molecule.smiles,
       isSelected: true
