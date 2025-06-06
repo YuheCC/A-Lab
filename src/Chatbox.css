@@ -246,18 +246,30 @@
 }
 
 .molecule-feedback-buttons {
-  margin: 10px 0;
-  text-align: center;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
+}
+
+.molecule-feedback-buttons .feedback-icon {
+  padding: 5px;
+  border-radius: 4px;
+}
+.molecule-feedback-buttons .feedback-icon:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.molecule-feedback-buttons .feedback-buttons {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  padding: 5px;
 }
 
 .molecule-feedback-buttons > div {
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
 }
 
 .molecule-feedback-buttons span {
