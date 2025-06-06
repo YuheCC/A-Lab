@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { authFetch } from "../utils";
-import API_URL from "../Constants";
+import { authFetch, getAPIUrl } from "../utils";
+
+const API_URL = getAPIUrl();
 
 const MAX_NODES = 23000;
 

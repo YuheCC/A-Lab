@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
-import API_URL from './Constants.js';
 import DOMPurify from 'dompurify';
-import { authFetch } from './utils.js';
+import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
+
+const API_URL = getAPIUrl();
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,

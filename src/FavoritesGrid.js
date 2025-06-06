@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import API_URL from './Constants.js';
 import './App.css';
 import Plotly from 'plotly.js-dist';
-import { authFetch } from './utils.js';
+import { authFetch, getAPIUrl } from './utils.js';
 import NodePopup from './components/NodePopup.js';
+
+const API_URL = getAPIUrl();
 
 const FavoritesGrid = () => {
   const [favorites, setFavorites] = useState([]);

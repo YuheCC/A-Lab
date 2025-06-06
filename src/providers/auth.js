@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import API_URL from '../Constants';
-import { authFetch } from '../utils';
+import { authFetch, getAPIUrl } from '../utils';
 import { Navigate, useLocation } from 'react-router';
 import { useEffect } from 'react';
+
+const API_URL = getAPIUrl();
 
 export const useAuthStore = create((set, get) => ({
 

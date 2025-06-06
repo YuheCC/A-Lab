@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import API_URL from '../Constants';
+import { getAPIUrl } from '../utils';
+
+const API_URL = getAPIUrl();
 
 // Redeem Code component for team members
 const RedeemPage = () => {
