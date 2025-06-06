@@ -518,12 +518,24 @@ const FavoritesGrid = () => {
     const layout = {
       title: 'ESP_MIN_EV vs ESP_MAX_EV with Solubility Regions',
       xaxis: {
-        title: 'ESP_MIN_EV',
+        title: {
+          text: 'esp_min (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)'
       },
       yaxis: {
-        title: 'ESP_MAX_EV',
+        title: {
+          text: 'esp_max (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)'
       },
@@ -534,10 +546,10 @@ const FavoritesGrid = () => {
         orientation: 'v'
       },
       margin: {
-        l: 60,
+        l: 80,
         r: 40,
         t: 60,
-        b: 60
+        b: 80
       },
       paper_bgcolor: 'rgba(255,255,255,0.9)',
       plot_bgcolor: 'rgba(255,255,255,0.9)',
@@ -753,13 +765,25 @@ const FavoritesGrid = () => {
     const layout = {
       title: 'HOMO_EV vs LUMO_EV',
       xaxis: {
-        title: 'HOMO_EV',
+        title: {
+          text: 'HOMO (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)',
         range: [xMin, xMax]
       },
       yaxis: {
-        title: 'LUMO_EV',
+        title: {
+          text: 'LUMO (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)',
         range: [yMin, yMax]
@@ -771,10 +795,10 @@ const FavoritesGrid = () => {
         orientation: 'v'
       },
       margin: {
-        l: 60,
+        l: 80,
         r: 40,
         t: 60,
-        b: 60
+        b: 80
       },
       paper_bgcolor: 'rgba(255,255,255,0.9)',
       plot_bgcolor: 'rgba(255,255,255,0.9)',
