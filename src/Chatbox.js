@@ -566,7 +566,8 @@ const handleFindSimilarMolecules = async (details) => {
                 key={index} 
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div translate='no'>
+                <div
+                  translate='no'
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(msg.text, {
                       ALLOWED_TAGS: [
@@ -577,7 +578,7 @@ const handleFindSimilarMolecules = async (details) => {
                       ALLOWED_ATTR: ['href', 'target', 'rel']
                     })
                   }}
-                </div>
+                ></div>
                 { // new backend code cites references itself
                   /* {msg.sources && (
                   <div
