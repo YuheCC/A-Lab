@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router";
 import { useAuthStore } from "../providers/auth";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 // Navigation bar component
 const Navbar = () => {
@@ -26,23 +27,26 @@ const Navbar = () => {
           Molecular Universe
         </a>
       </div>
-      {isAuthenticated ? (
-        <div className="navbar-user">
-          <span className="username">{userName}</span>
-          <div className="settings-dropdown">
-            <button className="reset-password-button">Settings</button>
-            <div className="settings-dropdown-content">
-              <NavLink to="/reset-password">Change Password</NavLink>
-              <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
+      <div className="navbar-actions">
+        <LanguageSwitcher />
+        {isAuthenticated ? (
+          <div className="navbar-user">
+            <span className="username">{userName}</span>
+            <div className="settings-dropdown">
+              <button className="reset-password-button">Settings</button>
+              <div className="settings-dropdown-content">
+                <NavLink to="/reset-password">Change Password</NavLink>
+                <a href="https://billing.stripe.com/p/login/aEU4iHc1QaDedtS5kk" target="_blank" rel="noopener noreferrer">Manage Subscription</a>
+              </div>
             </div>
+            <button className="logout-button" onClick={logout}>Logout</button>
           </div>
-          <button className="logout-button" onClick={logout}>Logout</button>
-        </div>
-      ) : (
-        <div className="navbar-user">
-          <NavLink to={`/login?redirect=${encodeURI('/')}`} className="signin-button">Sign In</NavLink>
-        </div>
-      )}
+        ) : (
+          <div className="navbar-user">
+            <NavLink to={`/login?redirect=${encodeURI('/')}`} className="signin-button">Sign In</NavLink>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
