@@ -1,0 +1,116 @@
+.molecule-feedback-buttons {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.molecule-feedback-buttons .feedback-icon {
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.molecule-feedback-buttons .feedback-icon.active {
+    opacity: 1;
+}
+
+.molecule-feedback-buttons .feedback-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.molecule-feedback-buttons .feedback-buttons {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    margin-left: 4px;
+    border-radius: 4px;
+    border: solid 1px #ccc;
+}
+
+.rate-text {
+    font-size: 14px;
+    margin-right: 5px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.feedback-form {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    min-width: 250px;
+    margin-top: 0px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: left;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.feedback-question {
+    margin: 0 0 10px;
+}
+
+.feedback-textarea {
+    flex-grow: 1;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+.feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cancel-button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+}
+
+.submit-button {
+    padding: 5px 10px;
+    background-color: #0080ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+}
+
+.cancel-button:disabled,
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.status-message {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.status-message.success {
+    color: green;
+}
+
+.status-message.error {
+    color: red;
+}

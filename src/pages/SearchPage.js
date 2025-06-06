@@ -6,6 +6,7 @@ import { authFetch, getAPIUrl } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
+import { MolCard } from "../components/MolCard";
 
 const API_URL = getAPIUrl();
 
@@ -223,12 +224,23 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     {/* Add "Find closest friends" checkbox */}
                     <div className="search-options">
                         <label className="search-option">
-                            <input
-                                type="checkbox"
-                                checked={findClosestFriends}
-                                onChange={(e) => setFindClosestFriends(e.target.checked)}
-                            />
-                            <span>Find "friends" (Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.)</span>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={findClosestFriends}
+                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
+                                    />
+                                    <div>Find "friends"</div>
+                                </div>
+                                <div style={{
+                                    fontSize: '12px',
+                                    color: '#666',
+                                }}>Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.</div>
+                            </div>
                         </label>
                     </div>
 
@@ -258,83 +270,35 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                     <div className="molecule-properties">
                                         <h3>Searched Molecules</h3>
                                         {searchedMolecules.map((molecule, index) => (
-                                            <div key={index} className="molecule-entry">
-                                                <h4>Molecule #{index + 1}</h4>
-                                                <table className="property-table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className="property-name">SMILES</td>
-                                                            <td className="property-value">{molecule.smiles}</td>
-                                                        </tr>
-                                                        {molecule.properties?.chemical_formula && (
-                                                            <tr>
-                                                                <td className="property-name">Chemical Formula</td>
-                                                                <td className="property-value">{molecule.properties.chemical_formula}</td>
-                                                            </tr>
-                                                        )}
-                                                        <tr>
-                                                            <td className="property-name">Molecular Weight</td>
-                                                            <td className="property-value">{molecule.properties?.molwt ? molecule.properties.molwt.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="property-name"></td>
-                                                            <td className="property-value">{molecule.properties?.homo_eV ? molecule.properties.homo_eV.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="property-name">LUMO (eV)</td>
-                                                            <td className="property-value">{molecule.properties?.lumo_eV ? molecule.properties.lumo_eV.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="property-name">ESP Min (eV)</td>
-                                                            <td className="property-value">{molecule.properties?.esp_min_eV ? molecule.properties.esp_min_eV.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="property-name">ESP Max (eV)</td>
-                                                            <td className="property-value">{molecule.properties?.esp_max_eV ? molecule.properties.esp_max_eV.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        {molecule.properties?.predicted_mp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
-                                                            <tr>
-                                                                <td className="property-name">Predicted Melting Point (°C)</td>
-                                                                <td className="property-value">{molecule.properties.predicted_mp.toFixed(2)}</td>
-                                                            </tr>
-                                                        )}
-                                                        {molecule.properties?.predicted_bp && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
-                                                            <tr>
-                                                                <td className="property-name">Predicted Boiling Point (°C)</td>
-                                                                <td className="property-value">{molecule.properties.predicted_bp.toFixed(2)}</td>
-                                                            </tr>
-                                                        )}
-                                                        {molecule.properties?.functional_groups && (
-                                                            <tr>
-                                                                <td className="property-name">Functional Groups</td>
-                                                                <td className="property-value">{molecule.properties.functional_groups}</td>
-                                                            </tr>
-                                                        )}
-                                                        <tr>
-                                                            <td className="property-name">UMAP_X</td>
-                                                            <td className="property-value">{molecule.x !== undefined && molecule.x !== null ? molecule.x.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td className="property-name">UMAP_Y</td>
-                                                            <td className="property-value">{molecule.y !== undefined && molecule.y !== null ? molecule.y.toFixed(2) : 'N/A'}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <div className="molecule-image-container">
-                                                    <img
-                                                        src={molecule.image}
-                                                        alt={`Molecule ${index + 1} visualization`}
-                                                        className="molecule-image"
-                                                    />
-                                                </div>
-
-                                                {/* Add Favorites button */}
-                                                <div className="favorites-container" style={{ textAlign: 'center' }}>
+                                            <MolCard
+                                                key={index}
+                                                name={`Molecule ${index + 1}`}
+                                                showMoreDetails={false}
+                                                large={true}
+                                                propGroups={[
+                                                    { label: 'SMILES', value: molecule.smiles, span: 2 },
+                                                    { label: 'Molecular Weight', value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
+                                                    { label: 'Predicted Melting Point', value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                     },
+                                                    { label: 'Predicted Boiling Point', value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
+                                                ]} foldPropGroups={[
+                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
+                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                                ]}>
+                                                <div style={{ display: 'flex', textAlign: 'center', width: '100%' }}>
                                                     <button
                                                         className="favorites-button"
                                                         onClick={() => handleAddToFavorites(molecule)}
                                                         disabled={moleculeFavoriteStatus[molecule.smiles]?.loading}
                                                         style={{
+                                                            width: '100%',
                                                             backgroundColor: '#0080ff',
                                                             color: 'white',
                                                             border: 'none',
@@ -387,7 +351,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            </MolCard>
                                         ))}
                                     </div>
                                 )}
@@ -395,182 +359,101 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                     <div className="similar-molecules">
                                         <h3>Similar Molecules</h3>
                                         {similarMolecules.map((molecule, index) => (
-                                            <div key={index} className="similar-molecule">
-                                                <h4>Similar Molecule #{index + 1}</h4>
-                                                <div className="similar-molecule-content">
-                                                    <table className="property-table">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td className="property-name">SMILES</td>
-                                                                <td className="property-value">{molecule.SMILES}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">HOMO (eV)</td>
-                                                                <td className="property-value">
-                                                                    {molecule.HOMO_eV !== null && molecule.HOMO_eV !== undefined
-                                                                        ? molecule.HOMO_eV.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">LUMO (eV)</td>
-                                                                <td className="property-value">
-                                                                    {molecule.LUMO_eV !== null && molecule.LUMO_eV !== undefined
-                                                                        ? molecule.LUMO_eV.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">ESP Min (eV)</td>
-                                                                <td className="property-value">
-                                                                    {molecule.ESP_min_eV !== null && molecule.ESP_min_eV !== undefined
-                                                                        ? molecule.ESP_min_eV.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">ESP Max (eV)</td>
-                                                                <td className="property-value">
-                                                                    {molecule.ESP_max_eV !== null && molecule.ESP_max_eV !== undefined
-                                                                        ? molecule.ESP_max_eV.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') &&
-                                                                molecule.predicted_MP_celsius !== null && molecule.predicted_MP_celsius !== undefined && (
-                                                                    <tr>
-                                                                        <td className="property-name">Predicted Melting Point (°C)</td>
-                                                                        <td className="property-value">
-                                                                            {molecule.predicted_MP_celsius.toFixed(2)}
-                                                                        </td>
-                                                                    </tr>
-                                                                )}
-                                                            {(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise') &&
-                                                                molecule.predicted_BP_celsius !== null && molecule.predicted_BP_celsius !== undefined && (
-                                                                    <tr>
-                                                                        <td className="property-name">Predicted Boiling Point (°C)</td>
-                                                                        <td className="property-value">
-                                                                            {molecule.predicted_BP_celsius.toFixed(2)}
-                                                                        </td>
-                                                                    </tr>
-                                                                )}
-                                                            <tr>
-                                                                <td className="property-name">Molecular Weight</td>
-                                                                <td className="property-value">
-                                                                    {molecule.molecular_weight !== null && molecule.molecular_weight !== undefined
-                                                                        ? molecule.molecular_weight.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">Functional Groups</td>
-                                                                <td className="property-value">{molecule.functional_groups || 'N/A'}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">UMAP_X</td>
-                                                                <td className="property-value">
-                                                                    {molecule.UMAP_0 !== null && molecule.UMAP_0 !== undefined
-                                                                        ? molecule.UMAP_0.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="property-name">UMAP_Y</td>
-                                                                <td className="property-value">
-                                                                    {molecule.UMAP_1 !== null && molecule.UMAP_1 !== undefined
-                                                                        ? molecule.UMAP_1.toFixed(2)
-                                                                        : 'N/A'}
-                                                                </td>
-                                                            </tr>
-                                                            {similarMoleculeImages[index] && (
-                                                                <tr>
-                                                                    <td colSpan="2">
-                                                                        <div className="similar-molecule-image-container">
-                                                                            <img
-                                                                                src={similarMoleculeImages[index]}
-                                                                                alt={`Molecule ${index + 1} visualization`}
-                                                                                className="similar-molecule-image"
-                                                                            />
-                                                                        </div>
+                                            <MolCard
+                                                style={{ marginBottom: '20px' }}
+                                                key={index}
+                                                name={`Similar Molecule #${index + 1}`}
+                                                showMoreDetails={false}
+                                                large={true}
+                                                propGroups={[
+                                                    { label: 'SMILES', value: molecule.SMILES, span: 2 },
+                                                    { label: 'Molecular Weight', value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                                                    { label: 'Predicted Melting Point', value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                     },
+                                                    { label: 'Predicted Boiling Point', value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                     },
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
+                                                ]} 
+                                                foldPropGroups={[
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
+                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
+                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                ]}
+                                            >
+                                                <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
+                                                 <div style={{ position: 'relative', minWidth: '300px' }}>
+                                                    <button
+                                                        className="favorites-button"
+                                                        onClick={() => handleAddToFavorites({
+                                                            smiles: molecule.SMILES,
+                                                            properties: {
+                                                                molwt: molecule.molecular_weight,
+                                                                homo_eV: molecule.HOMO_eV,
+                                                                lumo_eV: molecule.LUMO_eV,
+                                                                esp_min_eV: molecule.ESP_min_eV,
+                                                                esp_max_eV: molecule.ESP_max_eV,
+                                                                predicted_mp: molecule.predicted_MP_celsius,
+                                                                predicted_bp: molecule.predicted_BP_celsius,
+                                                                functional_groups: molecule.functional_groups
+                                                            },
+                                                            x: molecule.UMAP_0,
+                                                            y: molecule.UMAP_1
+                                                        })}
+                                                        disabled={moleculeFavoriteStatus[molecule.SMILES]?.loading}
+                                                        style={{
+                                                            width: '100%',
+                                                            backgroundColor: '#0080ff',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '4px',
+                                                            padding: '8px 15px',
+                                                            cursor: 'pointer',
+                                                            fontWeight: 'bold',
+                                                            transition: 'background-color 0.3s',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}
+                                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
+                                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                                    >
+                                                        {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
+                                                    </button>
 
-                                                                        {/* Add Favorites button for similar molecules */}
-                                                                        <div className="favorites-container" style={{ textAlign: 'center' }}>
-                                                                            <button
-                                                                                className="favorites-button"
-                                                                                onClick={() => handleAddToFavorites({
-                                                                                    smiles: molecule.SMILES,
-                                                                                    properties: {
-                                                                                        molwt: molecule.molecular_weight,
-                                                                                        homo_eV: molecule.HOMO_eV,
-                                                                                        lumo_eV: molecule.LUMO_eV,
-                                                                                        esp_min_eV: molecule.ESP_min_eV,
-                                                                                        esp_max_eV: molecule.ESP_max_eV,
-                                                                                        predicted_mp: molecule.predicted_MP_celsius,
-                                                                                        predicted_bp: molecule.predicted_BP_celsius,
-                                                                                        functional_groups: molecule.functional_groups
-                                                                                    },
-                                                                                    x: molecule.UMAP_0,
-                                                                                    y: molecule.UMAP_1
-                                                                                })}
-                                                                                disabled={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                                                style={{
-                                                                                    backgroundColor: '#0080ff',
-                                                                                    color: 'white',
-                                                                                    border: 'none',
-                                                                                    borderRadius: '4px',
-                                                                                    padding: '8px 15px',
-                                                                                    cursor: 'pointer',
-                                                                                    fontWeight: 'bold',
-                                                                                    transition: 'background-color 0.3s',
-                                                                                    display: 'inline-flex',
-                                                                                    alignItems: 'center',
-                                                                                    justifyContent: 'center'
-                                                                                }}
-                                                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                                                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
-                                                                            >
-                                                                                {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                                                                            </button>
+                                                    {moleculeFavoriteStatus[molecule.SMILES]?.success && (
+                                                        <div className="success-message" style={{
+                                                            marginTop: '8px',
+                                                            color: 'green',
+                                                            fontSize: '14px',
+                                                            fontWeight: 'bold'
+                                                        }}>
+                                                            {moleculeFavoriteStatus[molecule.SMILES].success}
+                                                        </div>
+                                                    )}
 
-                                                                            {moleculeFavoriteStatus[molecule.SMILES]?.success && (
-                                                                                <div className="success-message" style={{
-                                                                                    marginTop: '8px',
-                                                                                    color: 'green',
-                                                                                    fontSize: '14px',
-                                                                                    fontWeight: 'bold'
-                                                                                }}>
-                                                                                    {moleculeFavoriteStatus[molecule.SMILES].success}
-                                                                                </div>
-                                                                            )}
-
-                                                                            {moleculeFavoriteStatus[molecule.SMILES]?.error && (
-                                                                                <div className="error-message" style={{
-                                                                                    marginTop: '8px',
-                                                                                    color: 'red',
-                                                                                    fontSize: '14px',
-                                                                                    fontWeight: 'bold'
-                                                                                }}>
-                                                                                    {moleculeFavoriteStatus[molecule.SMILES].error}
-                                                                                </div>
-                                                                            )}
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            )}
-                                                            <tr>
-                                                                <td colSpan={2}>
-                                                                    <MoleculeFeedbackBox
-                                                                        molecule={molecule}
-                                                                        lastSearch={lastSearch}
-                                                                        onClose={() => { }}
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    {/* Add thumbs up/down buttons here */}
+                                                    {moleculeFavoriteStatus[molecule.SMILES]?.error && (
+                                                        <div className="error-message" style={{
+                                                            marginTop: '8px',
+                                                            color: 'red',
+                                                            fontSize: '14px',
+                                                            fontWeight: 'bold'
+                                                        }}>
+                                                            {moleculeFavoriteStatus[molecule.SMILES].error}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </div>
+                                                <MoleculeFeedbackBox
+                                                    molecule={molecule}
+                                                    lastSearch={lastSearch}
+                                                    onClose={() => { }}
+                                                />
+                                                </div>
+                                            </MolCard>
                                         ))}
                                     </div>
                                 )}
