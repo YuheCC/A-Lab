@@ -40,8 +40,6 @@ export const MolCard = (props) => {
     const [expanded, setExpanded] = useState(false);
     const { showMoreDetails = false, large = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
 
-    console.log(propGroups, foldPropGroups);
-
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
     // - Each inner array should contain objects with 'value' and 'label' properties (maybe null/undefined)
