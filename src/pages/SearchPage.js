@@ -299,7 +299,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'UMAP_Y', value: molecule.y, span: 1 },
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
-                                                <div style={{ display: 'flex', textAlign: 'center', width: '100%' }}>
+                                                <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
                                                     <button
                                                         className="favorites-button"
                                                         onClick={() => handleAddToFavorites(molecule)}
