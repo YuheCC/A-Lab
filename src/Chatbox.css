@@ -50,6 +50,18 @@
   overflow: hidden;
 }
 
+/* make GFM tables render with grid lines */
+.chatbot-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.chatbot-content table th,
+.chatbot-content table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+}
+
 .chatbot-content.full-width {
   width: 100%;
 }
