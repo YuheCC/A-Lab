@@ -568,17 +568,44 @@ const handleFindSimilarMolecules = async (details) => {
                 key={index} 
                 className={msg.type} 
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div translate='no'>{msg.text}</div>
-                {msg.sources && (
+                <div
+                  translate='no'
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(msg.text, {
+                      ALLOWED_TAGS: [
+                        'a',          // for links
+                        'sup', 'sub',        // for superscript numbers
+                        'strong', 'em', 'br', 'p', 'ul', 'li', 'ol', 'i'
+                      ],
+                      ALLOWED_ATTR: ['href', 'target', 'rel']
+                    })
+                  }}
+                ></div>
+                { // new backend code cites references itself
+                  /* {msg.sources && (
                   <div
                     translate='no'
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(msg.sources, {
-                        ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
+                        ALLOWED_TAGS: [
+                          'a',          // for links
+                          'sup', 'sub',        // for superscript numbers
+                          'strong', 'em', 'br', 'p', 'ul', 'li', 'ol', 'i'
+                        ],
                         ALLOWED_ATTR: ['href', 'target', 'rel']
                       })
                     }}
                   />
+                )} */}
+                <>
+                  
+                </>
+                {msg.molText && (
+                  <div>
+                    <br></br>
+                    <strong>Detected chemical keywords in LLM response:</strong>
+                    <br></br>
+                  </div>
                 )}
                 {msg.molText && <div translate='no'>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
