@@ -138,10 +138,12 @@ const ExplorerPage = ({ handlePointClick }) => {
             }
             return updatedRanges;
         });
+    }, [data]);
 
+    useEffect(() => {
         // Update functional group options based on data
         const newFunctionalGroupOptions = functionGroupOptions.map(option => {
-            const matches = data.filter(node => 
+            const matches = filteredGraphData.filter(node => 
                 node.properties?.functional_groups?.includes(option.label)
             ).length;
             return {
@@ -150,8 +152,7 @@ const ExplorerPage = ({ handlePointClick }) => {
             };
         }).filter(option => option.count > 0); // Only keep options with matches
         setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
-
-    }, [data])
+    }, [filteredGraphData])
 
     // Apply filters based on range slider values and functional group
     useEffect(() => {
