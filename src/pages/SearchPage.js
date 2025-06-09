@@ -114,6 +114,13 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
             // Fetch the searched molecule's properties 
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
 
+            // Ratelimit handling
+            if (moleculeResponse.status === 429) {
+                setSearchWarning('Too many requests. Please wait a moment before trying again.');
+                setSearchLoading(false);
+                return;
+            }
+
             console.log(moleculeResponse);
             const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
             console.log(formattedMolecules);
