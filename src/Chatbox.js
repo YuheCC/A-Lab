@@ -5,6 +5,7 @@ import './Chatbox.css';
 import DOMPurify from 'dompurify';
 import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
+import { Tooltip } from '@mui/material';
 
 const API_URL = getAPIUrl();
 
@@ -604,40 +605,42 @@ const handleFindSimilarMolecules = async (details) => {
                   <div className="thumbs">
                     <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}>👍</button>
                     <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}>👎</button>
-                    <button 
-                      className="copy-btn" 
-                      onClick={() => {
-                        // Create a temporary element and set its innerHTML to the message's HTML content.
-                        const tempEl = document.createElement('div');
-                        tempEl.innerHTML = msg.text;
-                        
-                        // Get the raw HTML.
-                        const rawHtml = tempEl.innerHTML;
-                        // Replace newline characters with <br> tags.
-                        const htmlToCopy = rawHtml.replace(/\n/g, '<br>');
-                        
-                        // Also, get the plain text version (which already has newlines)
-                        const plainTextToCopy = tempEl.innerText;
+                    <Tooltip title="Copy" placement='bottom'>
+                      <button 
+                        className="copy-btn" 
+                        onClick={() => {
+                          // Create a temporary element and set its innerHTML to the message's HTML content.
+                          const tempEl = document.createElement('div');
+                          tempEl.innerHTML = msg.text;
+                          
+                          // Get the raw HTML.
+                          const rawHtml = tempEl.innerHTML;
+                          // Replace newline characters with <br> tags.
+                          const htmlToCopy = rawHtml.replace(/\n/g, '<br>');
+                          
+                          // Also, get the plain text version (which already has newlines)
+                          const plainTextToCopy = tempEl.innerText;
 
-                        // Create Blob objects for each representation.
-                        const blobHTML = new Blob([htmlToCopy], { type: 'text/html' });
-                        const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
+                          // Create Blob objects for each representation.
+                          const blobHTML = new Blob([htmlToCopy], { type: 'text/html' });
+                          const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
 
-                        // Create a ClipboardItem that includes both formats.
-                        const clipboardItem = new ClipboardItem({
-                          'text/html': blobHTML,
-                          'text/plain': blobText,
-                        });
+                          // Create a ClipboardItem that includes both formats.
+                          const clipboardItem = new ClipboardItem({
+                            'text/html': blobHTML,
+                            'text/plain': blobText,
+                          });
 
-                        navigator.clipboard.write([clipboardItem])
-                          .then(() => {
-                            // Optionally update the button to indicate success.
-                          })
-                          .catch(err => console.error('Failed to copy:', err));
-                      }}
-                    >
-                      📋
-                    </button>
+                          navigator.clipboard.write([clipboardItem])
+                            .then(() => {
+                              // Optionally update the button to indicate success.
+                            })
+                            .catch(err => console.error('Failed to copy:', err));
+                        }}
+                      >
+                        📋
+                      </button>
+                    </Tooltip>
                   </div>
                 )}
               </div>
