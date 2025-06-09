@@ -237,8 +237,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                     <div>Find "friends"</div>
                                 </div>
                                 <div style={{
-                                    fontSize: '12px',
-                                    color: '#666',
+                                    color: '#555',
+                                    fontSize: '14px',
                                 }}>Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.</div>
                             </div>
                         </label>
@@ -386,7 +386,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 ]}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
-                                                 <div style={{ position: 'relative', minWidth: '300px' }}>
+                                                 <div style={{ position: 'relative', minWidth: '300px', width: '100%' }}>
                                                     <button
                                                         className="favorites-button"
                                                         onClick={() => handleAddToFavorites({
