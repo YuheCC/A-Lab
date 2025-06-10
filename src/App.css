@@ -1235,7 +1235,7 @@ body, html {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-family: 'Arial, sans-serif';
+  font-family: 'Arial', sans-serif;
   font-size: 14px;
   resize: none;
 }
