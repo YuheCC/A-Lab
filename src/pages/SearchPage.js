@@ -7,6 +7,7 @@ import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
+import MolEditor from "../components/MolEditor";
 
 const API_URL = getAPIUrl();
 
@@ -182,6 +183,23 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
         }
     };
 
+    const [molString, setMolString] = useState('');
+
+    const handleMolChange = (mol) => {
+        setMolString(mol);
+        // Handle the molecule change from the MolEditor
+        // if (mol) {
+        //     handleSearch(mol);
+        // } else {
+        //     setsearchResults(null);
+        //     setsearchedMolecules(null);
+        //     setHighlightedMolecules(null);
+        //     setSimilarMolecules(null);
+        //     setHighlightedSimilarMolecules(null);
+        //     setSimilarMoleculeImages({});
+        // }
+    }
+
     return (
         // SEARCH PAGE CONTENT:
         <Sidebar>
@@ -216,11 +234,13 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     flex: '0.8'
                 }}>
                     {/* Search bar container */}
-
                     <SearchInput
+                        overrideValue={molString}
                         onSearch={handleSearch}
                         disabled={searchLoading}
                     />
+
+                    <MolEditor onMolChange={handleMolChange}/>
 
                     {/* Add "Find closest friends" checkbox */}
                     <div className="search-options">

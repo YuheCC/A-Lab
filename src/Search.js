@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 
 // SearchInput now maintains its own internal input state.
-const SearchInput = React.memo(({ onSearch, disabled }) => {
+const SearchInput = React.memo(({ onSearch, disabled, overrideValue }) => {
     const [inputValue, setInputValue] = useState("");
-  
+
     const handleChange = (e) => {
       setInputValue(e.target.value);
     };
@@ -24,6 +24,11 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
     const handleTooltipClick = () => {
       window.open(pubChemUrl, '_blank', 'noopener,noreferrer');
     };
+
+    // Update inputValue when overrideValue changes
+    useEffect(() => {
+      setInputValue(overrideValue || "");
+    }, [overrideValue]);
   
     return (
       <div className="search-bar-container" style={{ display: 'flex', alignItems: 'center' }}>
