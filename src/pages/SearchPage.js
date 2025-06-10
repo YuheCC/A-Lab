@@ -22,8 +22,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     const [searchError, setSearchError] = useState(null);
     const [searchWarning, setSearchWarning] = useState(null);
     const [searchedMolecules, setsearchedMolecules] = useState(null);
-    const [similarMolecules, setSimilarMolecules] = useState(null);
-    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState(null);
+    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
 
@@ -31,7 +30,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     const [findFriendError, setFindFriendError] = useState(null);
 
     // Add new state for highlighted molecule
-    const [highlightedMolecules, setHighlightedMolecules] = useState(null);
+    const [highlightedMolecules, setHighlightedMolecules] = useState([]);
 
     // Update handleSearch function
     const handleSearchedMolecules = async (response, select_first = false) => {
@@ -95,9 +94,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
         setSearchError(null);
         setsearchResults(null);
         setsearchedMolecules(null);
-        setHighlightedMolecules(null);
-        setSimilarMolecules(null);
-        setHighlightedSimilarMolecules(null);
+        setHighlightedMolecules([]);
+        setHighlightedSimilarMolecules([]);
         setSimilarMoleculeImages({}); // Reset similar molecule images
         setFindFriendError(null); // Reset find friend error
 
@@ -149,7 +147,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         }
                         const data = await response.json();
                         const molecules = data.similar_molecules;
-                        setSimilarMolecules(molecules);
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
@@ -359,10 +356,10 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                         ))}
                                     </div>
                                 )}
-                                {findClosestFriends && similarMolecules && similarMolecules.length > 0 && (
+                                {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
                                     <div className="similar-molecules">
                                         <h3>Similar Molecules</h3>
-                                        {similarMolecules.map((molecule, index) => (
+                                        {highlightedSimilarMolecules.map((molecule, index) => (
                                             <MolCard
                                                 style={{ marginBottom: '20px' }}
                                                 key={index}
