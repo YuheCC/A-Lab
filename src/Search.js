@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 // SearchInput now maintains its own internal input state.
 const SearchInput = React.memo(({ onSearch, disabled }) => {
+    const { t } = useTranslation();
     const [inputValue, setInputValue] = useState("");
   
     const handleChange = (e) => {
@@ -30,7 +32,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
         <input
           type="text"
           className="search-input search-input-full"
-          placeholder="Enter SMILES string, molecule name, or query"
+          placeholder={t('search.searchPlaceholder')}
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -41,16 +43,11 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           onClick={handleClickSend}
           disabled={disabled}
         >
-          Search
+          {t('search.searchButton')}
         </button>
         <span
           className="search-tooltip-marker"
-          title={`Valid queries can search over any numerical properties of molecules. For example:
- - "Find all molecules with HOMO at most -8"
- - "Find all molecules with LUMO at least -2 and molecular weight at most 200"
-For more open-ended queries, use Ask.
-
-To draw and look up SMILES strings, please click this icon or visit ${pubChemUrl}`}
+          title={t('search.searchTooltip', { pubChemUrl })}
           style={{ marginLeft: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}
           onClick={handleTooltipClick}
         >
