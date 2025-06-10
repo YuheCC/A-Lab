@@ -1,0 +1,40 @@
+export default {
+  analyzeSelected: '선택된 분자 분석',
+  analyzeMolecules: '분자 분석',
+  
+  // Loading and Error States
+  loadingMessage: '즐겨찾기 분자를 로딩 중...',
+  errorLoadingFavorites: '즐겨찾기 로딩 오류',
+  tryAgain: '다시 시도',
+  
+  // No Favorites State
+  noFavoriteMolecules: '즐겨찾기 분자 없음',
+  noFavoritesMessage: '아직 즐겨찾기에 분자를 추가하지 않았습니다.',
+  goToSearchPage: '검색 페이지로 가서 분자를 찾고 추가하세요.',
+  search: '검색',
+  
+  // Analysis Tabs
+  radarTab: '레이더',
+  espTab: 'ESP',
+  moTab: 'MO',
+  
+  // Search and Table
+  searchPlaceholder: '분자 검색...',
+  loadingImage: '로딩 중...',
+  
+  // Analysis View
+  radarAnalysis: '레이더 분석',
+  espAnalysis: 'ESP 분석',
+  moAnalysis: 'MO 분석',
+  moleculesSelected: '개 분자 선택됨',
+  
+  // Confirmation and Messages
+  confirmRemove: '이 분자를 즐겨찾기에서 제거하시겠습니까?',
+  moleculeRemoved: '분자가 즐겨찾기에서 제거됨',
+  removeFailed: '즐겨찾기에서 제거 실패. 다시 시도하세요.',
+  removeFromFavorites: '즐겨찾기에서 제거',
+  alreadyInFavorites: '이 분자는 이미 즐겨찾기에 있습니다!',
+  
+  // Molecule structure alt text
+  moleculeStructure: '분자 구조'
+}; 

@@ -22,4 +22,4 @@ export default {
     feedback,
     chatbox,
     favorites
-}
+} 

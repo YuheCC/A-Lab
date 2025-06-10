@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../providers/auth.js";
 import { getAPIUrl } from "../utils.js";
 
@@ -7,6 +8,7 @@ const API_URL = getAPIUrl();
 
 // Login component
 const AuthPage = () => {
+  const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -75,7 +77,7 @@ const AuthPage = () => {
         return;
       }
 
-      alert(response.message || 'Verification e‑mail sent.');
+      alert(response.message || t('auth.messages.verificationSent'));
       setIsLogin(true);
       return;
     }
@@ -86,9 +88,9 @@ const AuthPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-          <p>{isLogin ? 'Sign in to access the Molecular Universe' : 'Join the Molecular Universe community'}</p>
+          <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
+          <h2>{isLogin ? t('auth.header.welcomeBack') : t('auth.header.createAccount')}</h2>
+          <p>{isLogin ? t('auth.header.signInSubtitle') : t('auth.header.signUpSubtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -97,37 +99,37 @@ const AuthPage = () => {
           {!isLogin && (
             <>
               <div className="form-group">
-                <label htmlFor="firstName">First Name</label>
+                <label htmlFor="firstName">{t('auth.form.firstName')}</label>
                 <input
                   type="text"
                   id="firstName"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First Name"
+                  placeholder={t('auth.form.firstName')}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="lastName">Last Name</label>
+                <label htmlFor="lastName">{t('auth.form.lastName')}</label>
                 <input
                   type="text"
                   id="lastName"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last Name"
+                  placeholder={t('auth.form.lastName')}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="organizationName">Organization Name</label>
+                <label htmlFor="organizationName">{t('auth.form.organizationName')}</label>
                 <input
                   type="text"
                   id="organizationName"
                   value={organizationName}
                   onChange={(e) => setOrganizationName(e.target.value)}
-                  placeholder="Organization Name"
+                  placeholder={t('auth.form.organizationName')}
                   required
                 />
               </div>
@@ -135,26 +137,26 @@ const AuthPage = () => {
           )}
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">{t('auth.form.username')}</label>
             <input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder={t('auth.form.username')}
               required
             />
           </div>
 
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="email">Email Address (academia only)</label>
+              <label htmlFor="email">{t('auth.form.email')}</label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Academic email address"
+                placeholder={t('auth.form.emailPlaceholder')}
                 required
               />
             </div>
@@ -162,13 +164,13 @@ const AuthPage = () => {
 
           {isLogin && (
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">{t('auth.form.password')}</label>
               <input
                 type="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder={t('auth.form.password')}
                 required
               />
             </div>
@@ -179,22 +181,22 @@ const AuthPage = () => {
             className="auth-button"
             disabled={isLoading}
           >
-            {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
+            {isLoading ? t('auth.form.processing') : isLogin ? t('auth.form.signIn') : t('auth.form.createAccount')}
           </button>
         </form>
 
         <div className="auth-switch">
           {isLogin ? (
             <>
-              <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
-              <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>Redeem code for team members</a></p>
-              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/forgot-password'; }}><strong>Reset</strong></a></p>
+              <p>{t('auth.switch.noAccount')} <button onClick={() => setIsLogin(false)}>{t('auth.switch.signUp')}</button></p>
+              <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>{t('auth.switch.redeemCode')}</a></p>
+              <p>{t('auth.switch.forgotPassword')} <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/forgot-password'; }}><strong>{t('auth.switch.reset')}</strong></a></p>
             </>
           ) : (
             <>
-              <p>Already have an account? <button onClick={() => setIsLogin(true)}>Sign In</button></p>
+              <p>{t('auth.switch.haveAccount')} <button onClick={() => setIsLogin(true)}>{t('auth.switch.signIn')}</button></p>
               <p className="terms-text">
-                By using Molecular Universe, you agree to SES AI's <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/terms'); window.location.reload(); }} className="terms-link">Terms and Conditions</a>.
+                {t('auth.switch.termsText')} <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/terms'); window.location.reload(); }} className="terms-link">{t('auth.switch.termsLink')}</a>.
               </p>
             </>
           )}
