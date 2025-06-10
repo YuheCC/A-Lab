@@ -420,7 +420,7 @@ const FavoritesGrid = () => {
       ESP_MAX_EV: molecule.esp_max_ev,
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'unknown', // Assuming solubility field exists
+      SOLUBILITY: molecule.solubility || 'Selected Molecules', // Assuming solubility field exists
       ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
       SMILES: molecule.smiles
     }));
@@ -440,7 +440,7 @@ const FavoritesGrid = () => {
 
     // Create traces for each solubility type
     const traces = [];
-    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'unknown'];
+    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'Selected Molecules'];
     
     legendOrder.forEach(solubilityType => {
       if (groupedData[solubilityType]) {
@@ -518,12 +518,24 @@ const FavoritesGrid = () => {
     const layout = {
       title: 'ESP_MIN_EV vs ESP_MAX_EV with Solubility Regions',
       xaxis: {
-        title: 'ESP_MIN_EV',
+        title: {
+          text: 'esp_min (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)'
       },
       yaxis: {
-        title: 'ESP_MAX_EV',
+        title: {
+          text: 'esp_max (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)'
       },
@@ -534,10 +546,10 @@ const FavoritesGrid = () => {
         orientation: 'v'
       },
       margin: {
-        l: 60,
+        l: 80,
         r: 40,
         t: 60,
-        b: 60
+        b: 80
       },
       paper_bgcolor: 'rgba(255,255,255,0.9)',
       plot_bgcolor: 'rgba(255,255,255,0.9)',
@@ -588,7 +600,7 @@ const FavoritesGrid = () => {
     const selectedData = selectedMolecules.length > 0 ? selectedMolecules.map(molecule => ({
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'unknown',
+      SOLUBILITY: molecule.solubility || 'Selected Molecules',
       ABBREVIATION: molecule.abbreviation || (molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles),
       SMILES: molecule.smiles,
       isSelected: true
@@ -753,13 +765,25 @@ const FavoritesGrid = () => {
     const layout = {
       title: 'HOMO_EV vs LUMO_EV',
       xaxis: {
-        title: 'HOMO_EV',
+        title: {
+          text: 'HOMO (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)',
         range: [xMin, xMax]
       },
       yaxis: {
-        title: 'LUMO_EV',
+        title: {
+          text: 'LUMO (eV)',
+          font: {
+            size: 14,
+            color: '#000000'
+          }
+        },
         zeroline: true,
         gridcolor: 'rgba(0,0,0,0.1)',
         range: [yMin, yMax]
@@ -771,10 +795,10 @@ const FavoritesGrid = () => {
         orientation: 'v'
       },
       margin: {
-        l: 60,
+        l: 80,
         r: 40,
         t: 60,
-        b: 60
+        b: 80
       },
       paper_bgcolor: 'rgba(255,255,255,0.9)',
       plot_bgcolor: 'rgba(255,255,255,0.9)',

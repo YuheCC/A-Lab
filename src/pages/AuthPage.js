@@ -188,7 +188,7 @@ const AuthPage = () => {
             <>
               <p>Don't have an account? <button onClick={() => setIsLogin(false)}>Sign Up</button></p>
               <p><a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/redeem'); window.location.reload(); }}>Redeem code for team members</a></p>
-              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/reset-password'; }}><strong>Reset</strong></a></p>
+              <p>Forgot password? <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/forgot-password'; }}><strong>Reset</strong></a></p>
             </>
           ) : (
             <>

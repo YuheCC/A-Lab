@@ -362,7 +362,11 @@ const UMAPClusterPlotDeck = ({
     }
 
     return <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
-        <div className='deck-controls'>
+        <div className='icon-controls-group' style={{
+            position: "absolute",
+            top: "0px",
+            right: "0px",
+        }}>
             <Tooltip title="Reset Viewport" placement="bottom">
                 <House className='control-icon' size={15} onClick={handleReturnToHome} />
             </Tooltip>
@@ -419,31 +423,24 @@ const UMAPClusterPlotDeck = ({
                     onHover(null);
                 }}
                 propGroups={[
-                    [{ label: 'SMILES', value: hoveredObject.object.smiles }],
-                    [
-                        { label: 'Cluster', value: hoveredObject.object.properties.CLUSTER },
-                        { label: 'Mol Weight', value: hoveredObject.object.properties.molwt, suffix: ' g/mol' },
-                    ],
-                    [
-                        { label: 'Esp Max', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
-                        { label: 'Esp Min', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
-                    ],
-                    [
-                        { label: 'HOMO', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
-                        { label: 'LUMO', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
-                    ],
-                    [
-                        {
-                            label: 'Predicted MP', value: hoveredObject.object.properties.predicted_mp,
-                            suffix: ' °C',
-                            show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                        },
-                        {
-                            label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
-                            suffix: ' °C',
-                            show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                        }
-                    ]
+                    { label: 'SMILES', value: hoveredObject.object.smiles, span: 2 },
+                    { label: 'Cluster', value: hoveredObject.object.properties.CLUSTER },
+                    { label: 'Mol Weight', value: hoveredObject.object.properties.molwt, suffix: ' g/mol' },
+                    { label: 'Esp Max', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
+                    { label: 'Esp Min', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
+                    { label: 'HOMO', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
+                    { label: 'LUMO', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
+                    {
+                        label: 'Predicted MP', value: hoveredObject.object.properties.predicted_mp,
+                        suffix: ' °C',
+                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    },
+                    {
+                        label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
+                        suffix: ' °C',
+                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    }
+
                 ]}
             />
         ) : null}
