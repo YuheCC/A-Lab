@@ -673,18 +673,18 @@ const handleFindSimilarMolecules = async (details) => {
                 <div key={idx} className="molecule-box">
                   <strong>{details.name}</strong>
                   <p>SMILES: {details.SMILES}</p>
-                  <p>Molecular weight: {details.MOLECULAR_WEIGHT}</p>
-                  <p>HOMO: {Number(details.HOMO).toFixed(2)} eV</p>
-                  <p>LUMO: {Number(details.LUMO).toFixed(2)} eV</p>
-                  <p>ESP Max: {Number(details.ESP_MAX).toFixed(2)} eV</p>
-                  <p>ESP Min: {Number(details.ESP_MIN).toFixed(2)} eV</p>
-                  <p>Functional groups: {details.FUNCTIONAL_GROUPS}</p>
+                  <p>Molecular weight: {details.molecular_weight}</p>
+                  <p>HOMO: {Number(details.HOMO_eV).toFixed(2)} eV</p>
+                  <p>LUMO: {Number(details.LUMO_eV).toFixed(2)} eV</p>
+                  <p>ESP Max: {Number(details.ESP_max_eV).toFixed(2)} eV</p>
+                  <p>ESP Min: {Number(details.ESP_min_eV).toFixed(2)} eV</p>
+                  <p>Functional groups: {details.functional_groups}</p>
                   {/* <p>UMAP_X: {details.UMAP_0 !== undefined && details.UMAP_0 !== null ? details.UMAP_0.toFixed(2) : 'N/A'}</p>
                   <p>UMAP_Y: {details.UMAP_1 !== undefined && details.UMAP_1 !== null ? details.UMAP_1.toFixed(2) : 'N/A'}</p> */}
                   {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
                     <>
-                      <p>Predicted MP: {details.PREDICTED_MP} °C</p>
-                      <p>Predicted BP: {details.PREDICTED_BP} °C</p>
+                      <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
+                      <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
                     </>
                   )}
                   {details.image && (
