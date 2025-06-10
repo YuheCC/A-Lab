@@ -46,18 +46,15 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             properties: {
-                                molwt: mol.MOLECULAR_WEIGHT,
-                                homo_eV: mol.HOMO,
-                                lumo_eV: mol.LUMO,
-                                esp_min_eV: mol.ESP_MIN,
-                                esp_max_eV: mol.ESP_MAX,
-                                functional_groups: mol.FUNCTIONAL_GROUPS,
-                                predicted_mp: mol.PREDICTED_MP,
-                                predicted_bp: mol.PREDICTED_BP,
-                                chemical_formula: mol.CHEMICAL_FORMULA,
-                                CLUSTER: mol.CLUSTER
+                                molwt: mol.molecular_weight,
+                                homo_eV: mol.HOMO_eV,
+                                lumo_eV: mol.LUMO_eV,
+                                esp_min_eV: mol.ESP_min_eV,
+                                esp_max_eV: mol.ESP_max_eV,
+                                functional_groups: mol.functional_groups,
+                                predicted_mp: mol.predicted_MP_celsius,
+                                predicted_bp: mol.predicted_BP_celsius
                             },
-                            image: mol.image,
                             rawData: mol
                         };
                     });
