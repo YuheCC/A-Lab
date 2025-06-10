@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAPIUrl } from '../utils';
 
 const API_URL = getAPIUrl();
 
 // Forgot Password component for password reset
 const ForgotPasswordPage = () => {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -46,7 +48,7 @@ const ForgotPasswordPage = () => {
 
       // Rich error handling
       if (!response.ok) {
-        let errorMsg = 'Password reset request failed';
+        let errorMsg = t('auth.forgotPassword.messages.defaultError');
         try {
           // Most FastAPI errors are JSON { detail: "…" }
           const dataErr = await response.clone().json();
@@ -62,7 +64,7 @@ const ForgotPasswordPage = () => {
       }
 
       const data = await response.json();
-      setSuccess(data.message || 'If your information matches our records, a password reset email will be sent.');
+      setSuccess(data.message || t('auth.forgotPassword.messages.defaultSuccess'));
 
       // Clear form after successful submission
       setFirstName('');
@@ -81,9 +83,9 @@ const ForgotPasswordPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>Forgot Password</h2>
-          <p>Enter your details to reset your password</p>
+          <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
+          <h2>{t('auth.forgotPassword.header.title')}</h2>
+          <p>{t('auth.forgotPassword.header.subtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -91,37 +93,37 @@ const ForgotPasswordPage = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="firstName">{t('auth.forgotPassword.form.firstName')}</label>
             <input
               type="text"
               id="firstName"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="First Name"
+              placeholder={t('auth.forgotPassword.form.firstName')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
+            <label htmlFor="lastName">{t('auth.forgotPassword.form.lastName')}</label>
             <input
               type="text"
               id="lastName"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last Name"
+              placeholder={t('auth.forgotPassword.form.lastName')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">{t('auth.forgotPassword.form.email')}</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
+              placeholder={t('auth.forgotPassword.form.emailPlaceholder')}
               required
             />
           </div>
@@ -131,12 +133,12 @@ const ForgotPasswordPage = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Reset Password'}
+            {loading ? t('auth.forgotPassword.form.processing') : t('auth.forgotPassword.form.resetPassword')}
           </button>
         </form>
 
         <div className="auth-switch">
-          <p>Remembered your password? <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>Sign In</a></p>
+          <p>{t('auth.forgotPassword.switch.rememberedPassword')} <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>{t('auth.forgotPassword.switch.signIn')}</a></p>
         </div>
       </div>
     </div>
