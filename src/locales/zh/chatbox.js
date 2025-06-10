@@ -29,8 +29,8 @@ export default {
     },
     molecules: {
         llmFoundMolecules: "LLM 分析出的分子",
-        friendsRankedBy: "Friends ranked by likelihood to replace",
-        name: "Name",
+        friendsRankedBy: "按替代可能性排序的朋友",
+        name: "名称",
         smiles: "SMILES",
         molecularWeight: "Molecular weight",
         homo: "HOMO",
@@ -41,8 +41,8 @@ export default {
         predictedMP: "Predicted MP",
         predictedBP: "Predicted BP",
         llmGrade: "LLM Grade",
-        saving: "Saving...",
-        rateMatch: "Rate this match:"
+        saving: "保存中...",
+        rateMatch: "评价此匹配："
     },
     feedback: {
         goodMatch: "什么使这成为一个好的匹配？",
