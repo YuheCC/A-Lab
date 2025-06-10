@@ -135,7 +135,9 @@ class MarkerWithLabelLayer extends CompositeLayer {
         const { data, iconName = 'marker', iconSize = 30, xKey = 'x', yKey = 'y', opacity = 1 } = this.props;
         const layers = [];
 
-        data.forEach((point, index) => {
+        // Only render points with valid x and y umap coordinates
+        data.filter(d => d[xKey] !== null && d[yKey] !== null)
+            .forEach((point, index) => {
             layers.push(new ScatterplotLayer({
                 id: `${this.id}-scatter-${index}`,
                 data: [point],
