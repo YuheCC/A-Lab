@@ -187,6 +187,41 @@ class MarkerWithLabelLayer extends CompositeLayer {
     }
 }
 
+/**
+ * Dynamically calculate bounds for the map based on data points.
+ * @param {*} data array of data points, each with x and y properties
+ * @param {*} padding extra padding around the bounds
+ * @returns 
+ */
+const calculateClampBounds = (data, padding = 10) => {
+    const defaultBounds = {
+        minLongitude: -25,
+        maxLongitude: 35,
+        minLatitude: -20,
+        maxLatitude: 30
+    }
+    if (!data || data.length === 0) {
+        return defaultBounds
+    }
+    const xValues = data.map(d => d.x * X_STRETCH).filter(x => x !== null && x !== undefined);
+    const yValues = data.map(d => d.y).filter(y => y !== null && y !== undefined);
+
+    if (xValues.length === 0 || yValues.length === 0) {
+        return defaultBounds
+    }
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const minY = Math.min(...yValues);
+    const maxY = Math.max(...yValues);
+
+    return {
+        minLongitude: Math.max(-25, minX - padding * X_STRETCH),
+        maxLongitude: Math.min(35, maxX + padding * X_STRETCH),
+        minLatitude: Math.max(-20, minY - padding),
+        maxLatitude: Math.min(30, maxY + padding)
+    };
+}
+
 
 const UMAPClusterPlotDeck = ({
     data,
@@ -209,6 +244,8 @@ const UMAPClusterPlotDeck = ({
     const [containerReady, setContainerReady] = useState(false);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
+
+    const clampBounds = useMemo(() => calculateClampBounds(data), [data]);
 
     const onHover = useCallback((info) => {
         if (info && info.object) {
@@ -393,10 +430,11 @@ const UMAPClusterPlotDeck = ({
                 ) {
                     setIsManipulated(true);
                 }
+
                 setViewState({
                     ...viewState,
-                    longitude: Math.max(-20, Math.min(20, viewState.longitude)), // Clamp longitude
-                    latitude: Math.max(-20, Math.min(20, viewState.latitude)), // Clamp latitude
+                    longitude: Math.max(clampBounds.minLongitude, Math.min(clampBounds.maxLongitude, viewState.longitude)), // Clamp longitude
+                    latitude: Math.max(clampBounds.minLatitude, Math.min(clampBounds.maxLatitude, viewState.latitude)), // Clamp latitude
                     zoom: Math.max(2, Math.min(20, viewState.zoom)) // Clamp zoom level
                 });
             }}
