@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
+import { Autocomplete, TextField } from "@mui/material";
 
 // Labels for filters
 export const filterLabels = {
@@ -16,6 +17,78 @@ export const filterLabels = {
     predicted_bp: "Predicted Boiling Point (°C)"
 };
 
+export const functionGroupOptions = [
+    { label: "AcidChloride", value: "C(=O)Cl" },
+    { label: "SulfonylChloride", value: "[$(S-!@[#6])](=O)(=O)(Cl)" },
+    { label: "Amine", value: "[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]" },
+    { label: "BoronicAcid", value: "[$(B-!@[#6])](O)(O)" },
+    { label: "Isocyanate", value: "[$(N-!@[#6])](=!@C=!@O)" },
+    { label: "Alcohol", value: "[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]" },
+    { label: "Halogen", value: "[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]" },
+    { label: "Azide", value: "[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]" },
+    { label: "Nitro", value: "[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]" },
+    { label: "TerminalAlkyne", value: "[C;$(C#[CH])]" },
+    { label: "Acyl halide", value: "[CX3](=O)[Cl,Br,I,F]" },
+    { label: "Aldehyde", value: "[CX3H](=[OX1])" },
+    { label: "Alkene", value: "[CX3]=[CX3]" },
+    { label: "Alkyne", value: "[CX2]#[CX2]" },
+    { label: "Isonitrile (isocyanide)", value: "[N+]#[C-]" },
+    { label: "Amide", value: "[NX3][CX3](=O)[#6]" },
+    { label: "Amidine", value: "[#6][NX2]=[#6][N]" },
+    { label: "Ammonium", value: "[NX4]" },
+    { label: "Arene", value: "c1ccccc1" },
+    { label: "Azo", value: "[#6][N]=[N][#6]" },
+    { label: "Carbamate", value: "[NX3][CX3](=O)[OX2H0]" },
+    { label: "Carbonate", value: "[#6][OX2][CX3](=[OX1])[OX2][#6]" },
+    { label: "CarboxylicAcid", value: "[CX3](=O)[OX2H1]" },
+    { label: "CarboxylicAcidAnhydride", value: "[CX3](=O)[OX2][CX3](=O)" },
+    { label: "Cyanate", value: "[#6][OX2][CX2]#[NX1]" },
+    { label: "Disulfide", value: "[#6][SX2][SX2][#6]" },
+    { label: "Enamine", value: "[CX3][NX3]=[CX3]" },
+    { label: "Ester", value: "[CX3](=O)[OX2H0][#6]" },
+    { label: "Ether", value: "[OD2]([#6])[#6]" },
+    { label: "Epoxide", value: "[OX2r3]1[#6][#6]1" },
+    { label: "FluoroAlkyl_SP3", value: "[F][CX4]" },
+    { label: "FluoroAlkyl_SP2", value: "[F][CX3]" },
+    { label: "FluoroAlkyl_SP", value: "[F][CX2]" },
+    { label: "FluoroEther", value: "[F][CX4][OX2]" },
+    { label: "FluoroSulfonyl", value: "[SX4](=O)(=O)([F])[#6]" },
+    { label: "Guanidine", value: "[NX3][CX3](=[NX3])[NX3]" },
+    { label: "Hydrazine", value: "[NX3][NX3]" },
+    { label: "Hydroxylamines", value: "[#6][NX3]([#6])[OX2][#6]" },
+    { label: "Halide", value: "[C][Cl,Br,I,F]" },
+    { label: "Imide", value: "[CX3](=O)[NX3][CX3](=O)" },
+    { label: "Imine", value: "[CX2]=[NX3]" },
+    { label: "Isothiocyanate", value: "[NX2]=[CX2]=[SX2]" },
+    { label: "Ketone", value: "[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]" },
+    { label: "Ketal", value: "[#6]([O][#6])([O][#6])" },
+    { label: "Nitrile", value: "[CX2]#[NX1]" },
+    { label: "Peroxide", value: "[OX2][OX2]" },
+    { label: "Phenol", value: "c1ccccc1[OH]" },
+    { label: "Phosphino", value: "[#6][PX3]([#6])[#6]" },
+    { label: "Phosphono", value: "[#6][PX4](=[OX1])([OX2])[OX2]" },
+    { label: "Phosphate", value: "[OX2][PX4](=[OX1])([OX2])[OX2]" },
+    { label: "Quinone", value: "[O]=[c]1[cH][cH][cH][cH][cH]1" },
+    { label: "Selenide", value: "[Se][#6]" },
+    { label: "Selenol", value: "[SeH]" },
+    { label: "Sulfone", value: "[SX4](=O)(=O)([#6])[#6]" },
+    { label: "Sulfonate ester", value: "[#6][SX4](=[OX1])(=[OX1])[OX2][#6]" },
+    { label: "Sulfoxide", value: "[SX4](=O)([#6])[#6]" },
+    { label: "NitroSulfonylFluoride", value: "[SX4](=O)(=O)(F)[#7]" },
+    { label: "Thiol", value: "[SX2H]" },
+    { label: "Thial", value: "[#6](=[SX])[H]" },
+    { label: "Thioamide", value: "[#6](=[SX])[NX3]" },
+    { label: "Thioketone", value: "[#6](=[SX])[#6]" },
+    { label: "Thione", value: "[CX2]=[SX1]" },
+    { label: "Thioether", value: "[SX2]([#6])[#6]" },
+    { label: "Thiocyanate", value: "[SX2]=[CX2]=[NX1]" },
+    { label: "Pyrazole-like Heterocycle", value: "[nH]1nccc1" },
+    { label: "Heterocyclic-P-CN-1", value: "[c]1[c][n][n][c]1" },
+    { label: "Heterocyclic-P-CN-2", value: "[n]1[c][n][n][c]1" },
+    { label: "Heterocyclic-P-CS-1", value: "[c]1[c][c][c][s]1" },
+    { label: "Heterocyclic-P-CO-1", value: "[c]1[c][c][o][c]1" }
+]
+
 
 const ExplorerPage = ({ handlePointClick }) => {
 
@@ -24,6 +97,8 @@ const ExplorerPage = ({ handlePointClick }) => {
 
     const [filteredGraphData, setFilteredGraphData] = useState(data);
     const [tempFilterRanges, setTempFilterRanges] = useState({});
+
+    const [filteredFunctionalGroupOptions, setFilteredFunctionalGroupOptions] = useState(functionGroupOptions);
 
     // New filter implementation with range values
     const [filterRanges, setFilterRanges] = useState({
@@ -63,7 +138,21 @@ const ExplorerPage = ({ handlePointClick }) => {
             }
             return updatedRanges;
         });
-    }, [data])
+    }, [data]);
+
+    useEffect(() => {
+        // Update functional group options based on data
+        const newFunctionalGroupOptions = functionGroupOptions.map(option => {
+            const matches = filteredGraphData.filter(node => 
+                node.properties?.functional_groups?.includes(option.label)
+            ).length;
+            return {
+                ...option,
+                count: matches
+            };
+        }).filter(option => option.count > 0); // Only keep options with matches
+        setFilteredFunctionalGroupOptions(newFunctionalGroupOptions);
+    }, [filteredGraphData])
 
     // Apply filters based on range slider values and functional group
     useEffect(() => {
@@ -235,100 +324,36 @@ const ExplorerPage = ({ handlePointClick }) => {
                             </span>
                         </h3>
                         <div className="functional-group-input-container">
-                            <select
-                                className="functional-group-select"
+                            <Autocomplete
+                                style={{ backgroundColor: '#fff' }}
+                                options={filteredFunctionalGroupOptions}
                                 value={functionGroupValue}
-                                onChange={(e) => {
-                                    setFunctionalGroupValue(e.target.value);
-                                    setSelectedFunctionalGroup(e.target.options[e.target.selectedIndex].text);
+                                onChange={(event, newValue) => {
+                                    setFunctionalGroupValue(newValue);
+                                    setSelectedFunctionalGroup(newValue?.label || '');
                                 }}
-                                translate="no"
-                            >
-                                <option value="">Select a functional group</option>
-                                <option value="C(=O)Cl">AcidChloride</option>
-                                <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
-                                <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
-                                <option value="[N;$(N-[#6]);!$(N-[!#6;!#1]);!$(N-C=[O,N,S])]">Amine</option>
-                                <option value="[$(B-!@[#6])](O)(O)">BoronicAcid</option>
-                                <option value="[$(N-!@[#6])](=!@C=!@O)">Isocyanate</option>
-                                <option value="[O;H1;$(O-!@[#6;!$(C=!@[O,N,S])])]">Alcohol</option>
-                                <option value="[CH;D2;!$(C-[!#6;!#1])]=O">Aldehyde</option>
-                                <option value="[$([F,Cl,Br,I]-!@[#6]);!$([F,Cl,Br,I]-!@C-!@[F,Cl,Br,I]);!$([F,Cl,Br,I]-[C,S](=[O,S,N]))]">Halogen</option>
-                                <option value="[N;H0;$(N-[#6]);D2]=[N;D2]=[N;D1]">Azide</option>
-                                <option value="[N;H0;$(N-[#6]);D3](=[O;D1])~[O;D1]">Nitro</option>
-                                <option value="[C;$(C#[CH])]">TerminalAlkyne</option>
-                                <option value="[CX3](=O)[Cl,Br,I,F]">Acyl halide</option>
-                                <option value="[CX3H](=[OX1])">Aldehyde</option>
-                                <option value="[CX3]=[CX3]">Alkene</option>
-                                <option value="[CX2]#[CX2]">Alkyne</option>
-                                <option value="[N+]#[C-]">Isonitrile (isocyanide)</option>
-                                <option value="[NX3][CX3](=O)[#6]">Amide</option>
-                                <option value="[#6][NX2]=[#6][N]">Amidine</option>
-                                <option value="[NX4]">Ammonium</option>
-                                <option value="c1ccccc1">Arene</option>
-                                <option value="[#6][N]=[N][#6]">Azo</option>
-                                <option value="[NX3][CX3](=O)[OX2H0]">Carbamate</option>
-                                <option value="[#6][OX2][CX3](=[OX1])[OX2][#6]">Carbonate</option>
-                                <option value="[CX3](=O)[OX2H1]">CarboxylicAcid</option>
-                                <option value="[CX3](=O)[OX2][CX3](=O)">CarboxylicAcidAnhydride</option>
-                                <option value="[#6][OX2][CX2]#[NX1]">Cyanate</option>
-                                <option value="[#6][SX2][SX2][#6]">Disulfide</option>
-                                <option value="[CX3][NX3]=[CX3]">Enamine</option>
-                                <option value="[CX3](=O)[OX2H0][#6]">Ester</option>
-                                <option value="[OD2]([#6])[#6]">Ether</option>
-                                <option value="[OX2r3]1[#6][#6]1">Epoxide</option>
-                                <option value="[F][CX4]">FluoroAlkyl_SP3</option>
-                                <option value="[F][CX3]">FluoroAlkyl_SP2</option>
-                                <option value="[F][CX2]">FluoroAlkyl_SP</option>
-                                <option value="[F][CX4][OX2]">FluoroEther</option>
-                                <option value="[SX4](=O)(=O)([F])[#6]">FluoroSulfonyl</option>
-                                <option value="[NX3][CX3](=[NX3])[NX3]">Guanidine</option>
-                                <option value="[NX3][NX3]">Hydrazine</option>
-                                <option value="[#6][NX3]([#6])[OX2][#6]">Hydroxylamines</option>
-                                <option value="[C][Cl,Br,I,F]">Halide</option>
-                                <option value="[CX3](=O)[NX3][CX3](=O)">Imide</option>
-                                <option value="[CX2]=[NX3]">Imine</option>
-                                <option value="[NX2]=[CX2]=[SX2]">Isothiocyanate</option>
-                                <option value="[CX3;!$(C(=O)[N,O])](=O)[CX3;!$(C(=O)[N,O])]">Ketone</option>
-                                <option value="[#6]([O][#6])([O][#6])">Ketal</option>
-                                <option value="[CX2]#[NX1]">Nitrile</option>
-                                <option value="[OX2][OX2]">Peroxide</option>
-                                <option value="c1ccccc1[OH]">Phenol</option>
-                                <option value="[#6][PX3]([#6])[#6]">Phosphino</option>
-                                <option value="[#6][PX4](=[OX1])([OX2])[OX2]">Phosphono</option>
-                                <option value="[OX2][PX4](=[OX1])([OX2])[OX2]">Phosphate</option>
-                                <option value="[O]=[c]1[cH][cH][cH][cH][cH]1">Quinone</option>
-                                <option value="[Se][#6]">Selenide</option>
-                                <option value="[SeH]">Selenol</option>
-                                <option value="[SX4](=O)(=O)([#6])[#6]">Sulfone</option>
-                                <option value="[#6][SX4](=[OX1])(=[OX1])[OX2][#6]">Sulfonate ester</option>
-                                <option value="[SX4](=O)([#6])[#6]">Sulfoxide</option>
-                                <option value="[SX4](=O)(=O)(F)[#7]">NitroSulfonylFluoride</option>
-                                <option value="[SX2H]">Thiol</option>
-                                <option value="[#6](=[SX])[H]">Thial</option>
-                                <option value="[#6](=[SX])[NX3]">Thioamide</option>
-                                <option value="[#6](=[SX])[#6]">Thioketone</option>
-                                <option value="[CX2]=[SX1]">Thione</option>
-                                <option value="[SX2]([#6])[#6]">Thioether</option>
-                                <option value="[SX2]=[CX2]=[NX1]">Thiocyanate</option>
-                                <option value="[nH]1nccc1">Pyrazole-like Heterocycle</option>
-                                <option value="[c]1[c][n][n][c]1">Heterocyclic-P-CN-1</option>
-                                <option value="[n]1[c][n][n][c]1">Heterocyclic-P-CN-2</option>
-                                <option value="[c]1[c][c][c][s]1">Heterocyclic-P-CS-1</option>
-                                <option value="[c]1[c][c][o][c]1">Heterocyclic-P-CO-1</option>
-                                <option value="c1ccccc1">Arene (aromatic)</option>
-                            </select>
-                            <button
-                                className="reset-filter-button functional-group-reset"
-                                onClick={() => {
-                                    setFunctionalGroupValue('');
-                                    setSelectedFunctionalGroup('');
-                                    const dropdown = document.querySelector('.functional-group-select');
-                                    if (dropdown) dropdown.selectedIndex = 0;
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Search or select a functional group" variant="outlined" fullWidth />
+                                )}
+                                renderOption={(props, option) => (
+                                    <li {...props} key={option.value}>
+                                        <span style={{ fontSize: '14px' }}>{option.label}</span>
+                                        <span style={{ fontSize: '12px', color: '#888', marginLeft: '8px' }}>{option.count} matches</span>
+                                    </li>
+                                )}
+                                clearText="Reset Filter"
+                                sx={{
+                                    '& .MuiInputBase-input': {
+                                        fontSize: '14px', // Adjust this value
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        fontSize: '14px', // Label font size
+                                    },
+                                    '& .MuiAutocomplete-option': {
+                                        fontSize: '14px'
+                                    }
                                 }}
-                            >
-                                Reset
-                            </button>
+                            />
                         </div>
                     </div>
                 </div>
