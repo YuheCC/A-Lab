@@ -2,7 +2,7 @@ export default {
   // Header navigation links
   header: {
     map: "地图",
-    ask: "询问",
+    ask: "智能问答",
     search: "搜索",
     filter: "筛选",
     favorites: "收藏"
