@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../utils';
 import { useNavigate } from 'react-router';
 
 const API_URL = getAPIUrl();
 
 const PasswordReset = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -36,13 +38,13 @@ const PasswordReset = () => {
 
     // Validate passwords
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
+      setError(t('auth.passwordReset.messages.passwordsNotMatch'));
       setLoading(false);
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters long');
+      setError(t('auth.passwordReset.messages.passwordTooShort'));
       setLoading(false);
       return;
     }
@@ -58,7 +60,7 @@ const PasswordReset = () => {
       });
 
       if (!response.ok) {
-        let errorMsg = 'Password reset failed';
+        let errorMsg = t('auth.passwordReset.messages.defaultError');
         try {
           const dataErr = await response.clone().json();
           if (dataErr && dataErr.detail) errorMsg = dataErr.detail;
@@ -72,7 +74,7 @@ const PasswordReset = () => {
       }
 
       const data = await response.json();
-      setSuccess(data.message || 'Password reset successfully');
+      setSuccess(data.message || t('auth.passwordReset.messages.defaultSuccess'));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -89,9 +91,9 @@ const PasswordReset = () => {
     <div className="auth-container" style={{ overflow: 'auto', padding: '40px 0' }}>
       <div className="auth-card">
         <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>Reset Password</h2>
-          <p>Please enter your current password and a new password</p>
+          <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
+          <h2>{t('auth.passwordReset.header.title')}</h2>
+          <p>{t('auth.passwordReset.header.subtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -99,37 +101,37 @@ const PasswordReset = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
+            <label htmlFor="currentPassword">{t('auth.passwordReset.form.currentPassword')}</label>
             <input
               type="password"
               id="currentPassword"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Current password"
+              placeholder={t('auth.passwordReset.form.currentPasswordPlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
+            <label htmlFor="newPassword">{t('auth.passwordReset.form.newPassword')}</label>
             <input
               type="password"
               id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New password"
+              placeholder={t('auth.passwordReset.form.newPasswordPlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm New Password</label>
+            <label htmlFor="confirmPassword">{t('auth.passwordReset.form.confirmPassword')}</label>
             <input
               type="password"
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
+              placeholder={t('auth.passwordReset.form.confirmPasswordPlaceholder')}
               required
             />
           </div>
@@ -139,7 +141,7 @@ const PasswordReset = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? t('auth.passwordReset.form.processing') : t('auth.passwordReset.form.resetPassword')}
           </button>
         </form>
       </div>

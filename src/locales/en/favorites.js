@@ -22,11 +22,47 @@ export default {
   searchPlaceholder: 'Search molecules...',
   loadingImage: 'Loading...',
   
+  // Table Headers
+  tableHeaders: {
+    image: 'Image',
+    smiles: 'SMILES',
+    molecularWeight: 'Molecular Weight',
+    homo: 'HOMO (eV)',
+    lumo: 'LUMO (eV)',
+    meltingPoint: 'MP (°C)',
+    boilingPoint: 'BP (°C)',
+    espMin: 'ESP Min (eV)',
+    espMax: 'ESP Max (eV)',
+    functionalGroups: 'Functional Groups',
+    umapCoordinates: 'UMAP X/Y',
+    addedDate: 'Added Date',
+    actions: 'Actions'
+  },
+  
   // Analysis View
   radarAnalysis: 'Radar Analysis',
   espAnalysis: 'ESP Analysis',
   moAnalysis: 'MO Analysis',
   moleculesSelected: 'molecules selected',
+  closeAnalysis: 'Close Analysis',
+  
+  // Chart Titles
+  chartTitles: {
+    radar: 'Radar Chart Properties',
+    esp: 'ESP_MIN_EV vs ESP_MAX_EV with Solubility Regions',
+    mo: 'HOMO_EV vs LUMO_EV'
+  },
+  
+  // Chart Properties
+  chartProperties: {
+    homo: 'HOMO (eV)',
+    lumo: 'LUMO (eV)',
+    meltingPoint: 'MP (°C)',
+    boilingPoint: 'BP (°C)',
+    molecularWeight: 'Molecular Weight',
+    espMin: 'esp_min (eV)',
+    espMax: 'esp_max (eV)'
+  },
   
   // Confirmation and Messages
   confirmRemove: 'Are you sure you want to remove this molecule from your favorites?',
@@ -36,5 +72,14 @@ export default {
   alreadyInFavorites: 'This molecule is already in your favorites!',
   
   // Molecule structure alt text
-  moleculeStructure: 'Molecule structure'
+  moleculeStructure: 'Molecule structure',
+  
+  // Data Values
+  notAvailable: 'N/A',
+  
+  // Buttons
+  buttons: {
+    showAnalysis: 'Analyze Selected',
+    closeButton: '×'
+  }
 }; 
