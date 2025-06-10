@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
+import { useTranslation } from 'react-i18next';
 
 // Labels for filters
 export const filterLabels = {
@@ -18,6 +19,7 @@ export const filterLabels = {
 
 
 const ExplorerPage = ({ handlePointClick }) => {
+    const { t } = useTranslation();
 
     const userPermissions = useAuthStore(state => state.userPermissions);
     const { data, loading, error } = usePlotDataStore(); 
@@ -42,6 +44,11 @@ const ExplorerPage = ({ handlePointClick }) => {
     // Add state for functional group filter
     const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
     const [functionGroupValue, setFunctionalGroupValue] = useState('');
+
+    // Get localized filter labels
+    const getFilterLabel = (property) => {
+        return t(`explorer.filterLabels.${property}`, filterLabels[property]);
+    };
 
     useEffect(() => {
         setFilterRanges(oldFilterRanges => {
@@ -163,10 +170,10 @@ const ExplorerPage = ({ handlePointClick }) => {
             />
         ) : (
             <div className="loading-message">
-                {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
+                {loading ? t('explorer.loadingMap') : error ? t('explorer.errorLoadingData') : t('explorer.noDataAvailable')}
             </div>
         ))
-    }, [filteredGraphData, loading, error, userPermissions, handlePointClick]);
+    }, [filteredGraphData, loading, error, userPermissions, handlePointClick, t]);
 
 
     return (<Sidebar>
@@ -178,14 +185,14 @@ const ExplorerPage = ({ handlePointClick }) => {
             </div>
             <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
                 <h2>
-                    Filters
+                    {t('explorer.filtersTitle')}
                     {activeFilterCount > 0 && (
                         <button
                             className="reset-button"
                             onClick={resetAllFilters}
-                            title="Reset all filters"
+                            title={t('explorer.resetAllButton')}
                         >
-                            Reset All
+                            {t('explorer.resetAllButton')}
                         </button>
                     )}
                 </h2>
@@ -208,14 +215,14 @@ const ExplorerPage = ({ handlePointClick }) => {
                                     min={range.min}
                                     max={range.max}
                                     onChange={handleFilterChange}
-                                    label={filterLabels[property]}
+                                    label={getFilterLabel(property)}
                                     active={range.active}
                                 />
                                 {range.active && (
                                     <button
                                         className="reset-filter-button"
                                         onClick={() => resetFilter(property)}
-                                        title="Reset this filter"
+                                        title={t('explorer.resetFilterButton')}
                                     >
                                         ×
                                     </button>
@@ -225,10 +232,10 @@ const ExplorerPage = ({ handlePointClick }) => {
                     })}
                     <div className="functional-group-filter">
                         <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
-                            Functional Group Filter
+                            {t('explorer.functionalGroupFilter.title')}
                             <span
                                 className="search-tooltip-marker"
-                                title={`Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.`}
+                                title={t('explorer.functionalGroupFilter.tooltip')}
                                 style={{ marginLeft: '8px', cursor: 'help', fontWeight: 'bold', fontSize: '1.2em' }}
                             >
                                 ?
@@ -244,7 +251,7 @@ const ExplorerPage = ({ handlePointClick }) => {
                                 }}
                                 translate="no"
                             >
-                                <option value="">Select a functional group</option>
+                                <option value="">{t('explorer.functionalGroupFilter.selectPlaceholder')}</option>
                                 <option value="C(=O)Cl">AcidChloride</option>
                                 <option value="C(=O)[O;H,-]">CarboxylicAcid</option>
                                 <option value="[$(S-!@[#6])](=O)(=O)(Cl)">SulfonylChloride</option>
@@ -327,7 +334,7 @@ const ExplorerPage = ({ handlePointClick }) => {
                                     if (dropdown) dropdown.selectedIndex = 0;
                                 }}
                             >
-                                Reset
+                                {t('explorer.resetFilterButton')}
                             </button>
                         </div>
                     </div>

@@ -10,32 +10,34 @@ export default {
 SMILES 문자열을 그리고 조회하려면 이 아이콘을 클릭하거나 {{pubChemUrl}}을 방문하세요`,
     
     // Search Options
-    findFriendsLabel: '"친구들" 찾기 (유사한 물리화학적 속성을 가진 분자들. "친구들"에는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들이 포함됩니다. 목록은 쿼리 분자와 물리화학적 속성이 얼마나 유사한지에 따라 정렬됩니다.)',
+    findFriendsLabel: '"친구들" 찾기',
+    findFriendsDescription: '유사한 물리화학적 속성을 가진 분자들. "친구들"에는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들이 포함됩니다. 목록은 쿼리 분자와 물리화학적 속성이 얼마나 유사한지에 따라 정렬됩니다.',
     
     // Loading and Status Messages
     searching: "검색 중...",
     loadingMap: "분자 우주 지도 로딩 중",
     errorLoadingData: "데이터 로딩 오류",
     noDataAvailable: "사용 가능한 데이터가 없습니다",
+    tooManyRequests: "요청이 너무 많습니다. 잠시 기다린 후 다시 시도해주세요.",
     
     // Search Results
     searchedMolecules: "검색된 분자",
-    moleculeNumber: "분자 #{{number}}",
+    moleculeNumber: "분자 {{number}}",
     similarMolecules: "유사한 분자",
     similarMoleculeNumber: "유사한 분자 #{{number}}",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
         smiles: "SMILES",
-        chemicalFormula: "화학식",
-        molecularWeight: "분자량",
-        homo: "HOMO (eV)",
-        lumo: "LUMO (eV)",
-        espMin: "ESP Min (eV)",
-        espMax: "ESP Max (eV)",
-        predictedMp: "예측 융점 (°C)",
-        predictedBp: "예측 비점 (°C)",
-        functionalGroups: "기능기",
+        chemicalFormula: "Chemical Formula",
+        molecularWeight: "Molecular Weight",
+        homo: "HOMO",
+        lumo: "LUMO",
+        espMin: "ESP Min",
+        espMax: "ESP Max",
+        predictedMp: "Predicted Melting Point",
+        predictedBp: "Predicted Boiling Point",
+        functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },

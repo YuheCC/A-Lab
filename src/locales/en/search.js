@@ -10,17 +10,19 @@ For more open-ended queries, use Ask.
 To draw and look up SMILES strings, please click this icon or visit {{pubChemUrl}}`,
     
     // Search Options
-    findFriendsLabel: 'Find "friends" (Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.)',
+    findFriendsLabel: 'Find "friends"',
+    findFriendsDescription: 'Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.',
     
     // Loading and Status Messages
     searching: "Searching...",
     loadingMap: "Loading Map of the Molecular Universe",
     errorLoadingData: "Error loading data",
     noDataAvailable: "No data available",
+    tooManyRequests: "Too many requests. Please wait a moment before trying again.",
     
     // Search Results
     searchedMolecules: "Searched Molecules",
-    moleculeNumber: "Molecule #{{number}}",
+    moleculeNumber: "Molecule {{number}}",
     similarMolecules: "Similar Molecules",
     similarMoleculeNumber: "Similar Molecule #{{number}}",
     
@@ -29,12 +31,12 @@ To draw and look up SMILES strings, please click this icon or visit {{pubChemUrl
         smiles: "SMILES",
         chemicalFormula: "Chemical Formula",
         molecularWeight: "Molecular Weight",
-        homo: "HOMO (eV)",
-        lumo: "LUMO (eV)",
-        espMin: "ESP Min (eV)",
-        espMax: "ESP Max (eV)",
-        predictedMp: "Predicted Melting Point (°C)",
-        predictedBp: "Predicted Boiling Point (°C)",
+        homo: "HOMO",
+        lumo: "LUMO",
+        espMin: "ESP Min",
+        espMax: "ESP Max",
+        predictedMp: "Predicted Melting Point",
+        predictedBp: "Predicted Boiling Point",
         functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"

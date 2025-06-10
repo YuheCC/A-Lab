@@ -10,17 +10,19 @@ export default {
 要绘制和查找SMILES字符串，请点击此图标或访问 {{pubChemUrl}}`,
     
     // Search Options
-    findFriendsLabel: '查找"朋友"（具有相似物理化学性质的分子。"朋友"有意包括一些具有相似结构的分子和一些具有不同结构的分子。列表按与查询分子物理化学性质的相似程度排序。）',
+    findFriendsLabel: '查找"朋友"',
+    findFriendsDescription: '具有相似物理化学性质的分子。"朋友"有意包括一些具有相似结构的分子和一些具有不同结构的分子。列表按与查询分子物理化学性质的相似程度排序。',
     
     // Loading and Status Messages
     searching: "搜索中...",
     loadingMap: "正在加载分子宇宙地图",
     errorLoadingData: "数据加载错误",
     noDataAvailable: "无可用数据",
+    tooManyRequests: "请求过多。请稍等片刻再重试。",
     
     // Search Results
     searchedMolecules: "搜索结果分子",
-    moleculeNumber: "分子 #{{number}}",
+    moleculeNumber: "分子 {{number}}",
     similarMolecules: "相似分子",
     similarMoleculeNumber: "相似分子 #{{number}}",
     
@@ -29,12 +31,12 @@ export default {
         smiles: "SMILES",
         chemicalFormula: "Chemical Formula",
         molecularWeight: "Molecular Weight",
-        homo: "HOMO (eV)",
-        lumo: "LUMO (eV)",
-        espMin: "ESP Min (eV)",
-        espMax: "ESP Max (eV)",
-        predictedMp: "Predicted Melting Point (°C)",
-        predictedBp: "Predicted Boiling Point (°C)",
+        homo: "HOMO",
+        lumo: "LUMO",
+        espMin: "ESP Min",
+        espMax: "ESP Max",
+        predictedMp: "Predicted Melting Point",
+        predictedBp: "Predicted Boiling Point",
         functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
