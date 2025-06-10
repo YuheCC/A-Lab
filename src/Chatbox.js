@@ -3,6 +3,8 @@ import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
 import DOMPurify from 'dompurify';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
 import { Tooltip } from '@mui/material';
@@ -564,26 +566,24 @@ const handleFindSimilarMolecules = async (details) => {
         <div className={`chatbot-content ${!showFoundMolecules && !showSimilarMolecules ? 'full-width' : 'with-molecules'}`}>
           <div className="chat-messages">
             {messages.map((msg, index) => (
-              <div 
-                key={index} 
-                className={msg.type} 
+              <div
+                key={index}
+                className={msg.type}
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <div translate='no'>{msg.text}</div>
-                {msg.sources && (
-                  <div
-                    translate='no'
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(msg.sources, {
-                        ALLOWED_TAGS: ['a', 'strong', 'em', 'br', 'p', 'ul', 'li', 'ol'],
-                        ALLOWED_ATTR: ['href', 'target', 'rel']
-                      })
-                    }}
-                  />
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {msg.text}
+                </ReactMarkdown>
+                {msg.molText && (
+                  <div>
+                    <br></br>
+                    <strong>Detected chemical keywords in LLM response:</strong>
+                    <br></br>
+                  </div>
                 )}
                 {msg.molText && <div translate='no'>{msg.molText}</div>}
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
-                    <button 
+                    <button
                       className="find-molecules-button"
                       onClick={() => handleFindMolecules(msg)}>
                       Find Molecules
@@ -606,31 +606,21 @@ const handleFindSimilarMolecules = async (details) => {
                     <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}>👍</button>
                     <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}>👎</button>
                     <Tooltip title="Copy" placement='bottom'>
-                      <button 
-                        className="copy-btn" 
+                      <button
+                        className="copy-btn"
                         onClick={() => {
-                          // Create a temporary element and set its innerHTML to the message's HTML content.
+                          // Create a temporary element and set its innerHTML to the message's text.
                           const tempEl = document.createElement('div');
-                          tempEl.innerHTML = msg.text;
-                          
-                          // Get the raw HTML.
-                          const rawHtml = tempEl.innerHTML;
-                          // Replace newline characters with <br> tags.
-                          const htmlToCopy = rawHtml.replace(/\n/g, '<br>');
-                          
-                          // Also, get the plain text version (which already has newlines)
+                          tempEl.innerText = msg.text;
+                          // Get the plain text version (which already has newlines)
                           const plainTextToCopy = tempEl.innerText;
-
-                          // Create Blob objects for each representation.
-                          const blobHTML = new Blob([htmlToCopy], { type: 'text/html' });
+                          // For markdown, copy plain text and also the markdown string as text/markdown
                           const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
-
-                          // Create a ClipboardItem that includes both formats.
+                          const blobMarkdown = new Blob([msg.text], { type: 'text/markdown' });
                           const clipboardItem = new ClipboardItem({
-                            'text/html': blobHTML,
                             'text/plain': blobText,
+                            'text/markdown': blobMarkdown,
                           });
-
                           navigator.clipboard.write([clipboardItem])
                             .then(() => {
                               // Optionally update the button to indicate success.
