@@ -16,7 +16,9 @@ export default {
     noMoleculeData: "No molecule data available.",
     loading: "Loading...",
     clickForDetails: "Click on the molecule to view more details.",
-    notAvailable: "N/A"
+    notAvailable: "N/A",
+    clickToCollapse: "Click to collapse",
+    clickToExpand: "Click to expand for more details"
   },
   umapPlot: {
     controls: {

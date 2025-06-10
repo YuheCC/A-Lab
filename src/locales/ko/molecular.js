@@ -16,7 +16,9 @@ export default {
     noMoleculeData: "사용 가능한 분자 데이터가 없습니다.",
     loading: "로딩 중...",
     clickForDetails: "자세한 내용을 보려면 분자를 클릭하세요.",
-    notAvailable: "N/A"
+    notAvailable: "N/A",
+    clickToCollapse: "클릭하여 접기",
+    clickToExpand: "클릭하여 자세한 내용 확장"
   },
   umapPlot: {
     controls: {

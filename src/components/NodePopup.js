@@ -1,17 +1,19 @@
 import MolViewer2D from "./MolViewer2D";
+import { useTranslation } from 'react-i18next';
 
 // NodePopup component for displaying molecule information
 const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
+  const { t } = useTranslation();
   if (!node) return null;
 
   const copyToClipboard = () => {
     const nodeData = JSON.stringify(node.rawData, null, 2);
     navigator.clipboard.writeText(nodeData)
       .then(() => {
-        alert('Molecule information copied to clipboard!');
+        alert(t('molecular.nodePopup.copySuccess'));
       })
       .catch(err => {
-        console.error('Failed to copy molecule data: ', err);
+        console.error(t('molecular.nodePopup.copyError'), err);
       });
   };
 
@@ -19,18 +21,18 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
         <button className="close-button white-text" onClick={onClose}>×</button>
-        <h2 className="white-text" style={{ textAlign: 'center' }}>Molecule Details</h2>
+        <h2 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.title')}</h2>
         <div className="popup-data">
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
             <MolViewer2D smile={node.smiles} theme="dark"/>
           </div>
-          <h3 className="white-text" style={{ textAlign: 'center' }}>SMILES</h3>
+          <h3 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.smiles')}</h3>
           <p className="dark-field" style={{ textAlign: 'center' }}>{node.smiles}</p>
 
-          <h3 className="white-text" style={{ textAlign: 'center' }}>UMAP Coordinates</h3>
+          <h3 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.umapCoordinates')}</h3>
           <p className="dark-field" style={{ textAlign: 'center' }}>X: {node.x.toFixed(2)}, Y: {node.y.toFixed(2)}</p>
 
-          <h3 className="white-text" style={{ textAlign: 'center' }}>Properties</h3>
+          <h3 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.properties')}</h3>
           <table className="property-table dark-table" style={{ margin: '0 auto' }}>
             <tbody>
               {Object.entries(node.properties || {}).map(([key, value]) => (
@@ -54,7 +56,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
               className="copy-button"
               onClick={copyToClipboard}
             >
-              Copy All Data
+              {t('molecular.nodePopup.copyAllData')}
             </button>
             <div style={{ marginTop: '10px' }}></div>
             <button
@@ -73,10 +75,10 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
             >
-              Add to Favorites ★
+              {t('molecular.nodePopup.addToFavorites')}
             </button>
             {moleculeFavoriteStatus[node.smiles]?.loading && (
-              <div style={{ marginTop: '5px', color: '#aaa' }}>Saving...</div>
+              <div style={{ marginTop: '5px', color: '#aaa' }}>{t('molecular.nodePopup.saving')}</div>
             )}
             {moleculeFavoriteStatus[node.smiles]?.success && (
               <div style={{ marginTop: '5px', color: '#4CAF50' }}>{moleculeFavoriteStatus[node.smiles].success}</div>

@@ -5,6 +5,7 @@ import { CompositeLayer } from 'deck.gl';
 import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
 import { MolCard } from './MolCard';
+import { useTranslation } from 'react-i18next';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -193,6 +194,7 @@ const UMAPClusterPlotDeck = ({
     userPermissions,
     onClick,
 }) => {
+    const { t } = useTranslation();
 
     const [viewState, setViewState] = useState({
         longitude: 3.7,
@@ -367,13 +369,13 @@ const UMAPClusterPlotDeck = ({
             top: "0px",
             right: "0px",
         }}>
-            <Tooltip title="Reset Viewport" placement="bottom">
+            <Tooltip title={t('molecular.umapPlot.controls.resetViewport')} placement="bottom">
                 <House className='control-icon' size={15} onClick={handleReturnToHome} />
             </Tooltip>
-            <Tooltip title="Zoom In" placement="bottom">
+            <Tooltip title={t('molecular.umapPlot.controls.zoomIn')} placement="bottom">
                 <ZoomIn className='control-icon' size={15} onClick={handleZoomIn} />
             </Tooltip>
-            <Tooltip title="Zoom Out" placement="bottom">
+            <Tooltip title={t('molecular.umapPlot.controls.zoomOut')} placement="bottom">
                 <ZoomOut className='control-icon' size={15} onClick={handleZoomOut} />
             </Tooltip>
         </div>
@@ -423,21 +425,21 @@ const UMAPClusterPlotDeck = ({
                     onHover(null);
                 }}
                 propGroups={[
-                    { label: 'SMILES', value: hoveredObject.object.smiles, span: 2 },
-                    { label: 'Cluster', value: hoveredObject.object.properties.CLUSTER },
-                    { label: 'Mol Weight', value: hoveredObject.object.properties.molwt, suffix: ' g/mol' },
-                    { label: 'Esp Max', value: hoveredObject.object.properties.esp_max_eV, suffix: ' eV' },
-                    { label: 'Esp Min', value: hoveredObject.object.properties.esp_min_eV, suffix: ' eV' },
-                    { label: 'HOMO', value: hoveredObject.object.properties.homo_eV, suffix: ' eV' },
-                    { label: 'LUMO', value: hoveredObject.object.properties.lumo_eV, suffix: ' eV' },
+                    { label: t('molecular.nodePopup.smiles'), value: hoveredObject.object.smiles, span: 2 },
+                    { label: t('molecular.umapPlot.properties.cluster'), value: hoveredObject.object.properties.CLUSTER },
+                    { label: t('molecular.umapPlot.properties.molWeight'), value: hoveredObject.object.properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
+                    { label: t('molecular.umapPlot.properties.espMax'), value: hoveredObject.object.properties.esp_max_eV, suffix: t('molecular.umapPlot.units.eV') },
+                    { label: t('molecular.umapPlot.properties.espMin'), value: hoveredObject.object.properties.esp_min_eV, suffix: t('molecular.umapPlot.units.eV') },
+                    { label: t('molecular.umapPlot.properties.homo'), value: hoveredObject.object.properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
+                    { label: t('molecular.umapPlot.properties.lumo'), value: hoveredObject.object.properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
                     {
-                        label: 'Predicted MP', value: hoveredObject.object.properties.predicted_mp,
-                        suffix: ' °C',
+                        label: t('molecular.umapPlot.properties.predictedMp'), value: hoveredObject.object.properties.predicted_mp,
+                        suffix: t('molecular.umapPlot.units.celsius'),
                         show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     },
                     {
-                        label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
-                        suffix: ' °C',
+                        label: t('molecular.umapPlot.properties.predictedBp'), value: hoveredObject.object.properties.predicted_bp,
+                        suffix: t('molecular.umapPlot.units.celsius'),
                         show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     }
 
