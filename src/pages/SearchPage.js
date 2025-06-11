@@ -7,7 +7,6 @@ import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
-import MolEditor from "../components/MolEditor";
 
 const API_URL = getAPIUrl();
 
@@ -221,7 +220,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         onSearch={handleSearch}
                         disabled={searchLoading}
                     />
-
 
                     {/* Add "Find closest friends" checkbox */}
                     <div className="search-options">
