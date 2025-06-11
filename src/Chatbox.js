@@ -570,17 +570,19 @@ const handleFindSimilarMolecules = async (details) => {
                 key={index}
                 className={msg.type}
                 style={{ whiteSpace: 'pre-wrap' }}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {msg.text}
-                </ReactMarkdown>
-                {msg.molText && (
-                  <div>
-                    <br></br>
-                    <strong>Detected chemical keywords in LLM response:</strong>
-                    <br></br>
-                  </div>
-                )}
-                {msg.molText && <div translate='no'>{msg.molText}</div>}
+                <div className='message-content'>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.text}
+                  </ReactMarkdown>
+                  {msg.molText && (
+                    <div>
+                      <br></br>
+                      <strong>Detected chemical keywords in LLM response:</strong>
+                      <br></br>
+                    </div>
+                  )}
+                  {msg.molText && <div translate='no'>{msg.molText}</div>}
+                </div>
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
                     <button
@@ -608,18 +610,30 @@ const handleFindSimilarMolecules = async (details) => {
                     <Tooltip title="Copy" placement='bottom'>
                       <button
                         className="copy-btn"
-                        onClick={() => {
+                        onClick={(evt) => {
+
+                          // Extract the message html from the event target
+                          const messageElement = evt.target.closest('.llm-message').querySelector('.message-content');
+
                           // Create a temporary element and set its innerHTML to the message's text.
                           const tempEl = document.createElement('div');
                           tempEl.innerText = msg.text;
+
                           // Get the plain text version (which already has newlines)
                           const plainTextToCopy = tempEl.innerText;
+
+                          // Sanitize the HTML in case the backend returns unusual HTML
+                          const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
+                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li'],
+                            ALLOWED_ATTR: ['href', 'target']
+                          }) : msg.text;
+
                           // For markdown, copy plain text and also the markdown string as text/markdown
                           const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
-                          const blobMarkdown = new Blob([msg.text], { type: 'text/markdown' });
+                          const blobHtml = new Blob([htmlToCopy], { type: 'text/html' });
                           const clipboardItem = new ClipboardItem({
                             'text/plain': blobText,
-                            'text/markdown': blobMarkdown,
+                            'text/html': blobHtml,
                           });
                           navigator.clipboard.write([clipboardItem])
                             .then(() => {

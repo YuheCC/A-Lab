@@ -77,6 +77,10 @@
   padding: 10px;
 }
 
+.message-content p {
+  margin: 0;
+}
+
 .thinking-message {
   display: flex;
   align-items: center;
