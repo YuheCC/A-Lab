@@ -7,7 +7,7 @@ import './Search.css';
 
 // SearchInput now maintains its own internal input state.
 const SearchInput = React.memo(({ onSearch, disabled }) => {
-  const [showMolEditor, setShowMolEditor] = useState(true);
+  const [showMolEditor, setShowMolEditor] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const handleChange = (e) => {
