@@ -2,6 +2,7 @@ import { Kekule } from 'kekule';
 import 'kekule/theme/default';
 import './MolEditor.css';
 import { useEffect, useRef, useState } from 'react';
+import { AtomIcon } from 'lucide-react';
 
 const MolEditor = ({ onMolChange, style }) => {
     const [focused, setFocused] = useState(false);
@@ -12,7 +13,7 @@ const MolEditor = ({ onMolChange, style }) => {
         if (focused) {
             // Handle undo
             if (event.shiftKey && (
-                (event.ctrlKey && event.key === 'z') || 
+                (event.ctrlKey && event.key === 'z') ||
                 (event.metaKey && event.key === 'z' && !event.altKey)
             )) {
                 event.preventDefault();
@@ -39,7 +40,6 @@ const MolEditor = ({ onMolChange, style }) => {
     const onMouseLeave = (e) => {
         setFocused(false);
     }
-
 
     useEffect(() => {
         if (!editorRef.current) return;
@@ -78,6 +78,10 @@ const MolEditor = ({ onMolChange, style }) => {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}>
         <div ref={editorRef} className='mol-editor' id='kekule-editor'></div>
+        <div className='tips'>If you need to modify the atoms at the corners use the <AtomIcon size={14} style={{
+            marginLeft: 5,
+            marginRight: 5
+        }} /> Atom Tool and click on the atoms.</div>
     </div>);
 };
 
