@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import SearchInput from "../Search";
+import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
 import { authFetch, getAPIUrl } from "../utils";
@@ -216,7 +216,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     flex: '0.8'
                 }}>
                     {/* Search bar container */}
-
                     <SearchInput
                         onSearch={handleSearch}
                         disabled={searchLoading}
