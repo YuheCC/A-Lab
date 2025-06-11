@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import SearchInput from "../Search";
+import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
 import { authFetch, getAPIUrl } from "../utils";
@@ -183,23 +183,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
         }
     };
 
-    const [molString, setMolString] = useState('');
-
-    const handleMolChange = (mol) => {
-        setMolString(mol);
-        // Handle the molecule change from the MolEditor
-        // if (mol) {
-        //     handleSearch(mol);
-        // } else {
-        //     setsearchResults(null);
-        //     setsearchedMolecules(null);
-        //     setHighlightedMolecules(null);
-        //     setSimilarMolecules(null);
-        //     setHighlightedSimilarMolecules(null);
-        //     setSimilarMoleculeImages({});
-        // }
-    }
-
     return (
         // SEARCH PAGE CONTENT:
         <Sidebar>
@@ -235,12 +218,10 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                 }}>
                     {/* Search bar container */}
                     <SearchInput
-                        overrideValue={molString}
                         onSearch={handleSearch}
                         disabled={searchLoading}
                     />
 
-                    <MolEditor onMolChange={handleMolChange}/>
 
                     {/* Add "Find closest friends" checkbox */}
                     <div className="search-options">
