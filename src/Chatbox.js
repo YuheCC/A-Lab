@@ -97,6 +97,7 @@ const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainin
   const [feedbackData, setFeedbackData] = useState(null);
   const messagesEndRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [thinkingTime, setThinkingTime] = useState(0);
   const [moleculesLoading, setMoleculesLoading] = useState(false);
   const [similarMoleculesLoading, setSimilarMoleculesLoading] = useState(false);
   const [similarMolecules, setSimilarMolecules] = useState([]);
@@ -120,6 +121,22 @@ const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainin
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Timer for thinking message
+  useEffect(() => {
+    let interval = null;
+    if (isThinking) {
+      setThinkingTime(0);
+      interval = setInterval(() => {
+        setThinkingTime(time => time + 1);
+      }, 1000);
+    } else {
+      setThinkingTime(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isThinking]);
 
   // Define handlers for thumbs feedback
   const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
@@ -651,7 +668,7 @@ const handleFindSimilarMolecules = async (details) => {
             ))}
             {isThinking && (
               <div className="thinking-message">
-                <span>thinking</span>
+                <span>thinking for {thinkingTime} second{thinkingTime !== 1 ? 's' : ''}</span>
                 <div className="thinking-dots">
                   <span></span>
                   <span></span>
