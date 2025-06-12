@@ -276,7 +276,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: 'SMILES', value: molecule.smiles, span: 2 },
+                                                    { label: 'SMILES', value: molecule.smiles, span: 4 },
                                                     { label: 'Molecular Weight', value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: 'Predicted Melting Point', value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -366,7 +366,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: 'SMILES', value: molecule.SMILES, span: 2 },
+                                                    { label: 'SMILES', value: molecule.SMILES, span: 4 },
                                                     { label: 'Molecular Weight', value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: 'Predicted Melting Point', value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
