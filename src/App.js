@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PasswordReset from './components/PasswordReset.js';
 import AboutPage from './pages/AboutPage.js';
 import AuthPage from './pages/AuthPage.js';
@@ -27,6 +28,7 @@ const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
 const App = () => {
+  const { t } = useTranslation();
 
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -48,7 +50,7 @@ const App = () => {
 
   // Chat state (moved from ChatbotInterface)
   const [chatMessages, setChatMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
+    { type: "system-message", text: t('chatbox.systemMessage.welcome') }
   ]);
 
   const fetchData = usePlotDataStore(state => state.fetchData);
@@ -163,7 +165,7 @@ const App = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('You must be logged in to add favorites');
+        throw new Error(t('chatbox.errors.loginRequired'));
       }
 
       // Prepare favorite data from molecule properties
@@ -191,7 +193,7 @@ const App = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to add to favorites');
+        throw new Error(errorData.detail || t('chatbox.errors.addToFavoritesError'));
       }
 
       const data = await response.json();
@@ -206,7 +208,7 @@ const App = () => {
         // Set success for this specific molecule
         setMoleculeFavoriteStatus(prev => ({
           ...prev,
-          [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
+          [smiles]: { loading: false, success: t('chatbox.molecules.addedToFavorites'), error: null }
         }));
       }
 
@@ -224,7 +226,7 @@ const App = () => {
       // Set error for this specific molecule
       setMoleculeFavoriteStatus(prev => ({
         ...prev,
-        [smiles]: { loading: false, success: null, error: error.message || 'Failed to add to favorites' }
+        [smiles]: { loading: false, success: null, error: error.message || t('chatbox.errors.addToFavoritesError') }
       }));
 
       // Hide error message after 3 seconds

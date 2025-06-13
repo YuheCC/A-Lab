@@ -71,6 +71,12 @@ body, html {
   text-decoration: underline;
 }
 
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .app-tabs {
   display: flex;
   background-color: #fff;

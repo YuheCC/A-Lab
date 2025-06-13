@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import Plotly from 'plotly.js-dist';
 import { authFetch, getAPIUrl } from './utils.js';
@@ -24,6 +25,8 @@ const FavoritesGrid = () => {
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -31,7 +34,7 @@ const FavoritesGrid = () => {
         const response = await authFetch(`${API_URL}/favorites-retrieve`);
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
+          throw new Error(`${t('favorites.errorLoadingFavorites')}: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -49,7 +52,7 @@ const FavoritesGrid = () => {
     };
 
     fetchFavorites();
-  }, []);
+  }, [t]);
 
   // Filter favorites when searchTerm changes
   useEffect(() => {
@@ -154,7 +157,7 @@ const FavoritesGrid = () => {
     event.stopPropagation();
     
     // Ask for confirmation before removing
-    if (!window.confirm("Are you sure you want to remove this molecule from your favorites?")) {
+    if (!window.confirm(t('favorites.confirmRemove'))) {
       return;
     }
     
@@ -164,7 +167,7 @@ const FavoritesGrid = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to remove favorite: ${response.status} ${response.statusText}`);
+        throw new Error(`${t('favorites.removeFailed')}: ${response.status} ${response.statusText}`);
       }
 
       // Remove the favorite from the state
@@ -176,7 +179,7 @@ const FavoritesGrid = () => {
       // Show success message
       const successToast = document.createElement('div');
       successToast.className = 'toast-message success';
-      successToast.textContent = 'Molecule removed from favorites';
+      successToast.textContent = t('favorites.moleculeRemoved');
       document.body.appendChild(successToast);
       
       // Remove the toast after 3 seconds
@@ -192,7 +195,7 @@ const FavoritesGrid = () => {
       // Show error message
       const errorToast = document.createElement('div');
       errorToast.className = 'toast-message error';
-      errorToast.textContent = 'Failed to remove from favorites. Please try again.';
+      errorToast.textContent = t('favorites.removeFailed');
       document.body.appendChild(errorToast);
       
       // Remove the toast after 3 seconds
@@ -241,7 +244,7 @@ const FavoritesGrid = () => {
     if (!spiderChartRef.current || selectedMolecules.length === 0) return;
 
     // Define the categories for the radar chart
-    const categories = ['HOMO (eV)', 'LUMO (eV)', 'MP (°C)', 'BP (°C)', 'Molecular Weight'];
+    const categories = [t('favorites.chartProperties.homo'), t('favorites.chartProperties.lumo'), t('favorites.chartProperties.meltingPoint'), t('favorites.chartProperties.boilingPoint'), t('favorites.chartProperties.molecularWeight')];
     
     // Calculate min/max values for scaling
     let minValues = {};
@@ -252,19 +255,19 @@ const FavoritesGrid = () => {
       categories.forEach(category => {
         let value;
         switch(category) {
-          case 'HOMO (eV)':
+          case t('favorites.chartProperties.homo'):
             value = molecule.homo_ev;
             break;
-          case 'LUMO (eV)':
+          case t('favorites.chartProperties.lumo'):
             value = molecule.lumo_ev;
             break;
-          case 'MP (°C)':
+          case t('favorites.chartProperties.meltingPoint'):
             value = molecule.predicted_melting_point;
             break;
-          case 'BP (°C)':
+          case t('favorites.chartProperties.boilingPoint'):
             value = molecule.predicted_boiling_point;
             break;
-          case 'Molecular Weight':
+          case t('favorites.chartProperties.molecularWeight'):
             value = molecule.molecular_weight;
             break;
           default:
@@ -286,15 +289,15 @@ const FavoritesGrid = () => {
     const traces = selectedMolecules.map(molecule => {
       const values = categories.map(category => {
         switch(category) {
-          case 'HOMO (eV)':
+          case t('favorites.chartProperties.homo'):
             return molecule.homo_ev;
-          case 'LUMO (eV)':
+          case t('favorites.chartProperties.lumo'):
             return molecule.lumo_ev;
-          case 'MP (°C)':
+          case t('favorites.chartProperties.meltingPoint'):
             return molecule.predicted_melting_point;
-          case 'BP (°C)':
+          case t('favorites.chartProperties.boilingPoint'):
             return molecule.predicted_boiling_point;
-          case 'Molecular Weight':
+          case t('favorites.chartProperties.molecularWeight'):
             return molecule.molecular_weight;
           default:
             return null;
@@ -516,10 +519,10 @@ const FavoritesGrid = () => {
 
     // Define layout
     const layout = {
-      title: 'ESP_MIN_EV vs ESP_MAX_EV with Solubility Regions',
+      title: t('favorites.chartTitles.esp'),
       xaxis: {
         title: {
-          text: 'esp_min (eV)',
+          text: t('favorites.chartProperties.espMin'),
           font: {
             size: 14,
             color: '#000000'
@@ -530,7 +533,7 @@ const FavoritesGrid = () => {
       },
       yaxis: {
         title: {
-          text: 'esp_max (eV)',
+          text: t('favorites.chartProperties.espMax'),
           font: {
             size: 14,
             color: '#000000'
@@ -763,10 +766,10 @@ const FavoritesGrid = () => {
 
     // Define layout (matching Python code)
     const layout = {
-      title: 'HOMO_EV vs LUMO_EV',
+      title: t('favorites.chartTitles.mo'),
       xaxis: {
         title: {
-          text: 'HOMO (eV)',
+          text: t('favorites.chartProperties.homo'),
           font: {
             size: 14,
             color: '#000000'
@@ -778,7 +781,7 @@ const FavoritesGrid = () => {
       },
       yaxis: {
         title: {
-          text: 'LUMO (eV)',
+          text: t('favorites.chartProperties.lumo'),
           font: {
             size: 14,
             color: '#000000'
@@ -912,7 +915,7 @@ const FavoritesGrid = () => {
     
     setMoleculeFavoriteStatus(prev => ({
       ...prev,
-      [smiles]: { loading: false, success: 'This molecule is already in your favorites!', error: null }
+      [smiles]: { loading: false, success: t('favorites.alreadyInFavorites'), error: null }
     }));
 
     // Hide success message after 3 seconds
@@ -938,31 +941,31 @@ const FavoritesGrid = () => {
 
   if (loading) {
     return (
-      <div className="favorites-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading your favorite molecules...</p>
-      </div>
+              <div className="favorites-loading">
+          <div className="loading-spinner"></div>
+          <p>{t('favorites.loadingMessage')}</p>
+        </div>
     );
   }
 
   if (error) {
     return (
-      <div className="favorites-error">
-        <h3>Error loading favorites</h3>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Try Again</button>
-      </div>
+              <div className="favorites-error">
+          <h3>{t('favorites.errorLoadingFavorites')}</h3>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>{t('favorites.tryAgain')}</button>
+        </div>
     );
   }
 
   if (favorites.length === 0) {
     return (
-      <div className="no-favorites">
-        <h3>No Favorite Molecules</h3>
-        <p>You haven't added any molecules to your favorites yet.</p>
-        <p>Go to the Search page to find and add molecules.</p>
-        <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>Search</a>
-      </div>
+              <div className="no-favorites">
+          <h3>{t('favorites.noFavoriteMolecules')}</h3>
+          <p>{t('favorites.noFavoritesMessage')}</p>
+          <p>{t('favorites.goToSearchPage')}</p>
+          <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>{t('favorites.search')}</a>
+        </div>
     );
   }
 
@@ -972,43 +975,43 @@ const FavoritesGrid = () => {
         <>
           <div className="favorites-header">
             <div className="analysis-tabs">
-              <button 
-                className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
-                onClick={() => handleTabChange('radar')}
-              >
-                Radar
-              </button>
-              <button 
-                className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
-                onClick={() => handleTabChange('esp')}
-              >
-                ESP
-              </button>
-              <button 
-                className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
-                onClick={() => handleTabChange('mo')}
-              >
-                MO
-              </button>
+                              <button 
+                  className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
+                  onClick={() => handleTabChange('radar')}
+                >
+                  {t('favorites.radarTab')}
+                </button>
+                <button 
+                  className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
+                  onClick={() => handleTabChange('esp')}
+                >
+                  {t('favorites.espTab')}
+                </button>
+                <button 
+                  className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
+                  onClick={() => handleTabChange('mo')}
+                >
+                  {t('favorites.moTab')}
+                </button>
             </div>
             
             <div className="search-container">
-              <input
-                type="text"
-                className="favorites-search-input"
-                placeholder="Search molecules..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                              <input
+                  type="text"
+                  className="favorites-search-input"
+                  placeholder={t('favorites.searchPlaceholder')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
             
             {selectedMolecules.length > 0 && (
-              <button 
-                className="show-analysis-button"
-                onClick={handleShowAnalysis}
-              >
-                Analyze Selected ({selectedMolecules.length})
-              </button>
+                              <button 
+                  className="show-analysis-button"
+                  onClick={handleShowAnalysis}
+                >
+                  {t('favorites.buttons.showAnalysis')} ({selectedMolecules.length})
+                </button>
             )}
           </div>
           
@@ -1029,39 +1032,39 @@ const FavoritesGrid = () => {
                       checked={selectedMolecules.length === filteredFavorites.length && filteredFavorites.length > 0}
                     />
                   </th>
-                  <th>Image</th>
-                  <th onClick={() => handleSort('smiles')} className="sortable-header">
-                    SMILES {getSortIndicator('smiles')}
-                  </th>
-                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
-                    Molecular Weight {getSortIndicator('molecular_weight')}
-                  </th>
-                  <th onClick={() => handleSort('homo_ev')} className="sortable-header">
-                    HOMO (eV) {getSortIndicator('homo_ev')}
-                  </th>
-                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
-                    LUMO (eV) {getSortIndicator('lumo_ev')}
-                  </th>
-                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
-                    MP (°C) {getSortIndicator('predicted_melting_point')}
-                  </th>
-                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
-                    BP (°C) {getSortIndicator('predicted_boiling_point')}
-                  </th>
-                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
-                    ESP Min (eV) {getSortIndicator('esp_min_ev')}
-                  </th>
-                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
-                    ESP Max (eV) {getSortIndicator('esp_max_ev')}
-                  </th>
-                  <th onClick={() => handleSort('functional_groups')} className="sortable-header">
-                    Functional Groups {getSortIndicator('functional_groups')}
-                  </th>
-                  <th>UMAP X/Y</th>
-                  <th onClick={() => handleSort('created_at')} className="sortable-header">
-                    Added Date {getSortIndicator('created_at')}
-                  </th>
-                  <th>Actions</th>
+                                      <th>{t('favorites.tableHeaders.image')}</th>
+                    <th onClick={() => handleSort('smiles')} className="sortable-header">
+                      {t('favorites.tableHeaders.smiles')} {getSortIndicator('smiles')}
+                    </th>
+                    <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
+                      {t('favorites.tableHeaders.molecularWeight')} {getSortIndicator('molecular_weight')}
+                    </th>
+                    <th onClick={() => handleSort('homo_ev')} className="sortable-header">
+                      {t('favorites.tableHeaders.homo')} {getSortIndicator('homo_ev')}
+                    </th>
+                    <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
+                      {t('favorites.tableHeaders.lumo')} {getSortIndicator('lumo_ev')}
+                    </th>
+                    <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
+                      {t('favorites.tableHeaders.meltingPoint')} {getSortIndicator('predicted_melting_point')}
+                    </th>
+                    <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
+                      {t('favorites.tableHeaders.boilingPoint')} {getSortIndicator('predicted_boiling_point')}
+                    </th>
+                    <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
+                      {t('favorites.tableHeaders.espMin')} {getSortIndicator('esp_min_ev')}
+                    </th>
+                    <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
+                      {t('favorites.tableHeaders.espMax')} {getSortIndicator('esp_max_ev')}
+                    </th>
+                    <th onClick={() => handleSort('functional_groups')} className="sortable-header">
+                      {t('favorites.tableHeaders.functionalGroups')} {getSortIndicator('functional_groups')}
+                    </th>
+                    <th>{t('favorites.tableHeaders.umapCoordinates')}</th>
+                    <th onClick={() => handleSort('created_at')} className="sortable-header">
+                      {t('favorites.tableHeaders.addedDate')} {getSortIndicator('created_at')}
+                    </th>
+                    <th>{t('favorites.tableHeaders.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1078,32 +1081,32 @@ const FavoritesGrid = () => {
                       {moleculeImages[favorite.id] ? (
                         <img 
                           src={moleculeImages[favorite.id]} 
-                          alt="Molecule structure" 
+                          alt={t('favorites.moleculeStructure')} 
                           className="table-molecule-image"
                         />
                       ) : (
-                        'Loading...'
+                        t('favorites.loadingImage')
                       )}
                     </td>
                     <td>{favorite.smiles}</td>
-                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.functional_groups || 'N/A'}</td>
+                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.functional_groups || t('favorites.notAvailable')}</td>
                     <td>
-                      {favorite.umap_x ? favorite.umap_x.toFixed(2) : 'N/A'} / 
-                      {favorite.umap_y ? favorite.umap_y.toFixed(2) : 'N/A'}
+                      {favorite.umap_x ? favorite.umap_x.toFixed(2) : t('favorites.notAvailable')} / 
+                      {favorite.umap_y ? favorite.umap_y.toFixed(2) : t('favorites.notAvailable')}
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
                     <td>
                       <button 
                         className="remove-favorite-table-button" 
                         onClick={(e) => handleRemoveFavorite(favorite.id, e)}
-                        title="Remove from favorites"
+                        title={t('favorites.removeFromFavorites')}
                       >
                         ×
                       </button>
@@ -1117,14 +1120,14 @@ const FavoritesGrid = () => {
       ) : (
         <div className="analysis-view">
           <div className="analysis-header">
-            <h2>
-              {activeTab === 'radar' ? 'Radar Analysis' : 
-               activeTab === 'esp' ? 'ESP Analysis' : 
-               'MO Analysis'}
-            </h2>
-            <div className="selected-molecules-count">
-              {selectedMolecules.length} molecules selected
-            </div>
+                          <h2>
+                {activeTab === 'radar' ? t('favorites.radarAnalysis') : 
+                 activeTab === 'esp' ? t('favorites.espAnalysis') : 
+                 t('favorites.moAnalysis')}
+              </h2>
+              <div className="selected-molecules-count">
+                {selectedMolecules.length} {t('favorites.moleculesSelected')}
+              </div>
             <button className="close-analysis-button" onClick={handleCloseAnalysis}>×</button>
           </div>
           

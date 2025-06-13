@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
@@ -14,6 +15,7 @@ const API_URL = getAPIUrl();
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
  disableLiteratureSearch, onDisableLiteratureSearchChange, userPermissions }) => {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (e) => {
@@ -43,7 +45,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         <textarea
           translate='no'
           className="chat-input"
-          placeholder="Ask me anything, as long as it's about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
+          placeholder={t('chatbox.input.placeholder')}
           rows={2}
           value={inputValue}
           onChange={handleChange}
@@ -55,7 +57,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
           onClick={handleClickSend}
           disabled={disabled}
         >
-          Send
+          {t('chatbox.input.sendButton')}
         </button>
       </div>
       <div className="checkbox-group">
@@ -66,7 +68,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
           onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
         />
         <label htmlFor="ignoreChatHistory">
-          Ignore chat history
+          {t('chatbox.checkboxes.ignoreChatHistory')}
         </label>
         {userPermissions === 'admin' && (
           <>
@@ -78,7 +80,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
               style={{ marginLeft: '20px' }}
             />
             <label htmlFor="disableLiteratureSearch">
-              Disable literature search
+              {t('chatbox.checkboxes.disableLiteratureSearch')}
             </label>
           </>
         )}
@@ -89,6 +91,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
 
 // Chatbot component
 const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainingQueries }) => {
+  const { t } = useTranslation();
 
   const userPermissions = useAuthStore(state => state.userPermissions);
 
@@ -270,7 +273,7 @@ const handleFindSimilarMolecules = async (details) => {
     if (userPermissions === 'research' && remainingQueries <= 0) {
       const errorMessage = { 
         type: "llm-message", 
-        text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
+        text: t('chatbox.queryLimit.reachedLimit')
       };
       setMessages(prev => [...prev, errorMessage]);
       return;
@@ -432,7 +435,7 @@ const handleFindSimilarMolecules = async (details) => {
         setFeedbackText('');
 
         // You might want to show a success message
-        alert('Thank you for your feedback!');
+        alert(t('chatbox.feedback.thankYou'));
       } catch (error) {
         console.error('Error submitting feedback:', error);
         alert('Failed to submit feedback. Please try again.');
@@ -489,7 +492,7 @@ const handleFindSimilarMolecules = async (details) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to add to favorites');
+        throw new Error(errorData.detail || t('chatbox.errors.addToFavoritesError'));
       }
 
       const data = await response.json();
@@ -522,7 +525,7 @@ const handleFindSimilarMolecules = async (details) => {
       // Set error for this specific molecule
       setMoleculeFavoriteStatus(prev => ({
         ...prev,
-        [smiles]: { loading: false, success: null, error: error.message || 'Failed to add to favorites' }
+        [smiles]: { loading: false, success: null, error: error.message || t('chatbox.errors.addToFavoritesError') }
       }));
       
       // Hide error message after 3 seconds
@@ -557,7 +560,7 @@ const handleFindSimilarMolecules = async (details) => {
           <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
             <span className="query-limit-icon">💬</span>
             <span>
-              Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
+              {t('chatbox.queryLimit.queriesRemaining')} <span className="query-limit-count">{remainingQueries}</span>
             </span>
           </div>
         </div>
@@ -588,11 +591,11 @@ const handleFindSimilarMolecules = async (details) => {
                     <button
                       className="find-molecules-button"
                       onClick={() => handleFindMolecules(msg)}>
-                      Find Molecules
+                      {t('chatbox.buttons.findMolecules')}
                     </button>
                     {moleculesLoading && (
                       <span className="searching-text">
-                        searching our database
+                        {t('chatbox.status.searchingDatabase')}
                         <span className="thinking-dots">
                           <span></span>
                           <span></span>
@@ -651,7 +654,7 @@ const handleFindSimilarMolecules = async (details) => {
             ))}
             {isThinking && (
               <div className="thinking-message">
-                <span>thinking</span>
+                <span>{t('chatbox.status.thinking')}</span>
                 <div className="thinking-dots">
                   <span></span>
                   <span></span>
@@ -674,7 +677,7 @@ const handleFindSimilarMolecules = async (details) => {
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
           <div className="found-molecules-container">
             <div className="molecules-header">
-              <h3>LLM Found Molecules</h3>
+              <h3>{t('chatbox.molecules.llmFoundMolecules')}</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowFoundMolecules(false)}
@@ -713,7 +716,7 @@ const handleFindSimilarMolecules = async (details) => {
                       className="find-similar-molecules-button"
                       onClick={() => handleFindSimilarMolecules(details)}
                     >
-                      Find Similar Molecules
+                      {t('chatbox.buttons.findSimilarMolecules')}
                     </button>
                     
                     {/* Add to Favorites button */}
@@ -722,12 +725,12 @@ const handleFindSimilarMolecules = async (details) => {
                       onClick={() => handleAddToFavorites(details)}
                       disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
                     >
-                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
+                      {moleculeFavoriteStatus[details.SMILES]?.loading ? t('chatbox.molecules.saving') : t('chatbox.buttons.addToFavorites')}
                     </button>
                     
                     {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
                       <span className="searching-text">
-                        searching
+                        {t('chatbox.status.searching')}
                         <span className="thinking-dots">
                           <span></span>
                           <span></span>
@@ -758,7 +761,7 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container">
             <div className="molecules-header">
-              <h3>Friends ranked by likelihood to replace {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
+              <h3>{t('chatbox.molecules.friendsRankedBy')} {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowSimilarMolecules(false)}
@@ -810,7 +813,7 @@ const handleFindSimilarMolecules = async (details) => {
                   {/* Add molecule feedback buttons */}
                   <div className="molecule-feedback-buttons">
                     <div>
-                      <span>Rate this match:</span>
+                      <span>{t('chatbox.molecules.rateMatch')}</span>
                       <button onClick={() => handleMoleculeThumbsUp(idx)}>
                         👍
                       </button>
@@ -823,27 +826,27 @@ const handleFindSimilarMolecules = async (details) => {
                       <div className="feedback-form">
                         <p>
                           {feedbackType === 'up'
-                            ? 'What makes this a good match?'
-                            : 'Why is this not a good match?'}
+                            ? t('chatbox.feedback.goodMatch')
+                            : t('chatbox.feedback.badMatch')}
                         </p>
                         <textarea
                           value={feedbackText}
                           onChange={(e) => setFeedbackText(e.target.value)}
                           rows={4}
-                          placeholder="Your feedback helps us improve molecule matching"
+                          placeholder={t('chatbox.feedback.placeholder')}
                         />
                         <div>
                           <button
                             className="cancel"
                             onClick={handleMoleculeFeedbackCancel}
                           >
-                            Cancel
+                            {t('chatbox.buttons.cancel')}
                           </button>
                           <button
                             className="submit"
                             onClick={handleMoleculeFeedbackSubmit}
                           >
-                            Submit
+                            {t('chatbox.buttons.submit')}
                           </button>
                         </div>
                       </div>
@@ -870,7 +873,7 @@ const handleFindSimilarMolecules = async (details) => {
                       onClick={() => handleAddToFavorites(details)}
                       disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
                     >
-                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
+                      {moleculeFavoriteStatus[details.SMILES]?.loading ? t('chatbox.molecules.saving') : t('chatbox.buttons.addToFavorites')}
                     </button>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../../utils.js';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 
@@ -7,6 +8,7 @@ import './MoleculeFeedbackBox.css';
 const API_URL = getAPIUrl();
 
 export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
+  const { t } = useTranslation();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [submitting, setSubmitting] = useState(false);
@@ -22,7 +24,7 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
 
   const handleFeedbackSubmit = async () => {
     if (!feedbackType) {
-      setStatusMessage('Please select thumbs up or down first');
+      setStatusMessage(t('chatbox.feedback.selectFirst'));
       return;
     }
 
@@ -48,11 +50,11 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
         }),
       });
 
-      setStatusMessage('Thank you for your feedback!');
+      setStatusMessage(t('chatbox.feedback.thankYou'));
       setTimeout(() => onClose(), 1500);
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      setStatusMessage('Failed to submit feedback. Please try again.');
+      setStatusMessage(t('chatbox.success.feedbackSubmitted'));
     } finally {
       setSubmitting(false);
     }
@@ -66,7 +68,7 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   return (
     <div className="molecule-feedback-buttons">
       <div className='feedback-buttons'>
-        <span className="rate-text">Rate this match</span>
+        <span className="rate-text">{t('chatbox.molecules.rateMatch')}</span>
         <ThumbsUp className={`feedback-icon ${feedbackType === 'up' ? 'active' : ''}`} size={18} onClick={handleThumbsUp} />
         <ThumbsDown className={`feedback-icon ${feedbackType === 'down' ? 'active' : ''}`} size={18} onClick={handleThumbsDown} />
       </div>
@@ -75,15 +77,15 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
         <div className="feedback-form">
           <p className="feedback-question">
             {feedbackType === 'up'
-              ? 'What makes this a good match?'
-              : 'Why is this not a good match?'}
+              ? t('chatbox.feedback.goodMatch')
+              : t('chatbox.feedback.badMatch')}
           </p>
           <textarea
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             rows={4}
             className="feedback-textarea"
-            placeholder="Your feedback helps us improve molecule matching"
+            placeholder={t('chatbox.feedback.placeholder')}
           />
           <div className="feedback-actions">
             <button
@@ -91,14 +93,14 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
               className="cancel-button"
               disabled={submitting}
             >
-              Cancel
+              {t('chatbox.buttons.cancel')}
             </button>
             <button
               onClick={handleFeedbackSubmit}
               className="submit-button"
               disabled={submitting}
             >
-              {submitting ? 'Submitting...' : 'Submit'}
+              {submitting ? t('chatbox.feedback.submitting') : t('chatbox.buttons.submit')}
             </button>
           </div>
           {statusMessage && (

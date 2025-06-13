@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from "react-router";
+import { useTranslation } from 'react-i18next';
 
 const Sidebar = ({ children, style }) => {
 
     const { pathname } = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         <div style={{ display: 'flex', width: '100%', flexDirection: 'row', paddingTop: 20, height: 'calc(100vh - 170px)' }}>
@@ -39,7 +41,7 @@ const Sidebar = ({ children, style }) => {
                     onMouseEnter={(e) => e.target.style.fontSize = '12.3px'}
                     onMouseLeave={(e) => e.target.style.fontSize = '9.5px'}
                 >
-                    Motivation
+                    {t('navigation.sidebar.motivation')}
                 </h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                     <a
@@ -64,7 +66,7 @@ const Sidebar = ({ children, style }) => {
                             }, 100);
                         }}
                     >
-                        Features
+                        {t('navigation.sidebar.features')}
                     </a>
                     <a
                         href="#pricing"
@@ -82,7 +84,7 @@ const Sidebar = ({ children, style }) => {
                             navigate('/pricing');
                         }}
                     >
-                        Pricing
+                        {t('navigation.sidebar.pricing')}
                     </a>
                     <a
                         href="#news"
@@ -106,7 +108,7 @@ const Sidebar = ({ children, style }) => {
                             }, 100);
                         }}
                     >
-                        News Feed
+                        {t('navigation.sidebar.newsFeed')}
                     </a>
                 </div>
             </div>

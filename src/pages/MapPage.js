@@ -4,9 +4,10 @@ import { usePlotDataStore } from "../providers/plotData";
 import { NavLink } from "react-router";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
+import { useTranslation } from "react-i18next";
 
 const MapPage = ({ handlePointClick }) => {
-
+    const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
 
     const { data, loading, error } = usePlotDataStore(); 
@@ -28,7 +29,7 @@ const MapPage = ({ handlePointClick }) => {
                             />
                         ) : (
                             <div className="loading-message">
-                                {loading ? 'Loading Map of the Molecular Universe' : error ? 'Error loading data' : 'No data available'}
+                                {loading ? t('map.loading.message') : error ? t('map.loading.error') : t('map.loading.noData')}
                             </div>
                         )}
                     </div>
@@ -36,22 +37,22 @@ const MapPage = ({ handlePointClick }) => {
 
                 {/* Right text content */}
                 <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', height: 'calc(100vh - 250px)', overflow: 'scroll' }}>
-                    <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>About Molecular Universe</h2>
+                    <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>{t('map.about.title')}</h2>
                     <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                        Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that's like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.
+                        {t('map.about.description1')}
                     </p>
 
                     <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                        This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It's the world's largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.
+                        {t('map.about.description2')}
                     </p>
 
                     <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                        In MU-0, the map consists of 23 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+                        {t('map.about.description3')}
                     </p>
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                         <img loading="lazy" src="/MU_About_Cluster_Numbered.jpg"
-                            alt="Molecular Universe Clusters Map"
+                            alt={t('map.imageAlt')}
                             style={{
                                 maxWidth: '100%',
                                 height: 'auto',
@@ -60,31 +61,31 @@ const MapPage = ({ handlePointClick }) => {
                             }} />
                     </div>
 
-                    <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>Cluster Descriptions</h3>
+                    <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.clusterTitle')}</h3>
                     <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> Outlier cluster, "catch all"</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> Largely populated by molecules with polycyclic and heteroatom aromatics.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> Largely populated by molecules with polycyclic heteroatom aromatics and carbonyl functionalities.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> Largely populated by monocyclic molecules containing double-bonded N or O atoms.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> Largely populated by linear molecules containing O and N atoms.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> Largely populated by non-aromatic monocyclic sulfones</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> Largely populated by linear molecules with sulfone, ethereal and carbonyl functionalities (most linear ethers are here)</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> Largely populated by monocyclic, non-aromatic molecules with carbonyl functionalities (most carbonate esters are here)</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> Largely populated by polycyclic fused ring aromatic molecules</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules (some cyclic ethers are here)</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic molecules</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> Largely populated by polycyclic fused aromatic + non-aromatic molecules containing more than 2 rings</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> Largely populated by polycyclic molecules with a mix of co-occurring aromatic & non-aromatic rings</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> Largely populated by monocyclic non-aromatic molecules with no double bonds and long chain functional groups</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> Largely populated by monocyclic non-aromatic molecules with carbonyl functional groups</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> Largely populated by non-aromatic polycyclic molecules</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> Largely populated by non-aromatic polycyclic molecules</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> {t('map.clusters.cluster1')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> {t('map.clusters.cluster2')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> {t('map.clusters.cluster3')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> {t('map.clusters.cluster4')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> {t('map.clusters.cluster5')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> {t('map.clusters.cluster6')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> {t('map.clusters.cluster7')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> {t('map.clusters.cluster8')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> {t('map.clusters.cluster9')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> {t('map.clusters.cluster10')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> {t('map.clusters.cluster11')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> {t('map.clusters.cluster12')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> {t('map.clusters.cluster13')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> {t('map.clusters.cluster14')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> {t('map.clusters.cluster15')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> {t('map.clusters.cluster16')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> {t('map.clusters.cluster17')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> {t('map.clusters.cluster18')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> {t('map.clusters.cluster19')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> {t('map.clusters.cluster20')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> {t('map.clusters.cluster21')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> {t('map.clusters.cluster22')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> {t('map.clusters.cluster23')}</p>
                     </div>
                 </div>
             </div>
@@ -118,14 +119,14 @@ const MapPage = ({ handlePointClick }) => {
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}
-                        title="Close this panel"
+                        title={t('map.footer.closeButton')}
                     >
                         ×
                     </button>
-                    By using Molecular Universe, you agree to our <NavLink to="/terms" style={{ color: '#0066cc', textDecoration: 'underline' }}>Terms and Privacy Policy.</NavLink>
+                    {t('map.footer.agreement')} <NavLink to="/terms" style={{ color: '#0066cc', textDecoration: 'underline' }}>{t('map.footer.termsLink')}</NavLink>
                     <p style={{ fontSize: '10.5px', marginTop: '8px', marginBottom: '0' }}>
-                        This interactive UMAP runs best on devices from 2019 or newer with at least 8 GB RAM and a modern processor (e.g. Apple M1+, Intel i5+), as older or lower-end systems may experience lag or loading issues. <br></br>
-                        Molecule Renderer (Smiles Drawer, Daniel Probst et. al): <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.7b00425">10.1021/acs.jcim.7b00425</a>
+                        {t('map.footer.systemRequirements')} <br></br>
+                        {t('map.footer.citation')} <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.7b00425">10.1021/acs.jcim.7b00425</a>
                     </p>
                 </div>
             )}

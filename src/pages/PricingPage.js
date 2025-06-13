@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from 'react-i18next';
 import Sidebar from "../components/Sidebar";
 
 // Pricing Page component
 const PricingPage = () => {
-
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   return (
@@ -16,13 +17,13 @@ const PricingPage = () => {
               <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm4-9H8v2h8Z"/>
             </svg>
           </div> */}
-            <h2>Research (academia only)</h2>
+            <h2>{t('pricing.research.title')}</h2>
             <p className="pricing-description">
-              Access to Partial Molecular Universe (1M)
+              {t('pricing.research.description')}
             </p>
             <div className="pricing-price">
-              <span className="price-amount">$0</span>
-              <span className="price-period">/ month</span>
+              <span className="price-amount">{t('pricing.research.price')}</span>
+              <span className="price-period">{t('pricing.research.period')}</span>
             </div>
             <button
               className="pricing-cta research"
@@ -30,117 +31,108 @@ const PricingPage = () => {
                 navigate('/login');
               }}
             >
-              Get Started
+              {t('pricing.research.cta')}
             </button>
             <div className="pricing-details">
               <ul>
-                <li>Map</li>
-                <li>Filter</li>
-                <li>Search</li>
-                <li>Ask (≤ 100 queries/month)</li>
+                {t('pricing.research.details', { returnObjects: true }).map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="pricing-card">
-            <h2>Explorer</h2>
+            <h2>{t('pricing.explorer.title')}</h2>
             <p className="pricing-description">
-              Access to Partial Molecular Universe (1M)
+              {t('pricing.explorer.description')}
             </p>
             <div className="pricing-price">
-              <span className="price-amount">$150</span>
-              <span className="price-period">/ month</span>
+              <span className="price-amount">{t('pricing.explorer.price')}</span>
+              <span className="price-period">{t('pricing.explorer.period')}</span>
             </div>
             <button
               className="pricing-cta professional"
               onClick={() => window.open('https://buy.stripe.com/6oE165fCb3Tf0qA5kl', '_blank')}
             >
-              Get Started
+              {t('pricing.explorer.cta')}
             </button>
             <div className="pricing-details">
               <ul>
-                <li>Map</li>
-                <li>Filter</li>
-                <li>Search</li>
-                <li>Ask (no cap)</li>
+                {t('pricing.explorer.details', { returnObjects: true }).map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="pricing-card">
-            <h2>Team</h2>
+            <h2>{t('pricing.team.title')}</h2>
             <p className="pricing-description">
-              Access to Partial Molecular Universe (1M)
+              {t('pricing.team.description')}
             </p>
             <div className="pricing-price">
-              <span className="price-amount">$1,000</span>
-              <span className="price-period">/ month (Up to 10 users)</span>
+              <span className="price-amount">{t('pricing.team.price')}</span>
+              <span className="price-period">{t('pricing.team.period')}</span>
             </div>
             <button className="pricing-cta unlimited"
               onClick={() => window.open('https://buy.stripe.com/dR67utfCb3TffludQS', '_blank')}
             >
-              Get Started
+              {t('pricing.team.cta')}
             </button>
             <div className="pricing-details">
               <ul>
-                <li>Map</li>
-                <li>Filter</li>
-                <li>Search</li>
-                <li>Ask (no cap)</li>
+                {t('pricing.team.details', { returnObjects: true }).map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="pricing-card">
-            <h2>Enterprise</h2>
+            <h2>{t('pricing.enterprise.title')}</h2>
             <p className="pricing-description">
-              Access to Whole Molecular Universe (100M)
+              {t('pricing.enterprise.description')}
             </p>
             <div className="pricing-price">
-              <span className="price-amount"></span>
-              <span className="price-period"></span>
+              <span className="price-amount">{t('pricing.enterprise.price')}</span>
+              <span className="price-period">{t('pricing.enterprise.period')}</span>
             </div>
             <button
               className="pricing-cta strategic"
               onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
             >
-              Contact Sales
+              {t('pricing.enterprise.cta')}
             </button>
             <div className="pricing-details">
               <ul>
-                <li>Map</li>
-                <li>Filter</li>
-                <li>Search</li>
-                <li>Ask (no cap, battery-specific LLM)</li>
-                <li>More molecule properties (inc. melting and boiling point predictions)</li>
-                <li>Expert consulting</li>
+                {t('pricing.enterprise.details', { returnObjects: true }).map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="pricing-card">
-            <h2>Joint Development</h2>
+            <h2>{t('pricing.joint.title')}</h2>
             <p className="pricing-description">
-              Access to Whole Molecular Universe (100M)
+              {t('pricing.joint.description')}
             </p>
             <div className="pricing-price">
-              <span className="price-amount"></span>
-              <span className="price-period"></span>
+              <span className="price-amount">{t('pricing.joint.price')}</span>
+              <span className="price-period">{t('pricing.joint.period')}</span>
             </div>
             <button
               className="pricing-cta joint"
               onClick={() => window.location.href = 'mailto:Yumin.Zhang@ses.ai?subject=Joint Development Inquiry'}
             >
-              Contact Sales
+              {t('pricing.joint.cta')}
             </button>
             <div className="pricing-details">
               <ul>
-                <li>Map</li>
-                <li>Filter</li>
-                <li>Search</li>
-                <li>Ask (no cap, battery-specific LLM)</li>
-                <li>More molecule properties (inc. melting and boiling point predictions)</li>
-                <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
+                {t('pricing.joint.details', { returnObjects: true }).map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
               </ul>
             </div>
           </div>

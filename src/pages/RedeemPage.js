@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAPIUrl } from '../utils';
 
 const API_URL = getAPIUrl();
 
 // Redeem Code component for team members
 const RedeemPage = () => {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -50,7 +52,7 @@ const RedeemPage = () => {
 
       // Rich error handling
       if (!response.ok) {
-        let errorMsg = 'Voucher redemption failed';
+        let errorMsg = t('auth.redeem.messages.defaultError');
         try {
           // Most FastAPI errors are JSON { detail: "…" }
           const dataErr = await response.clone().json();
@@ -66,7 +68,7 @@ const RedeemPage = () => {
       }
 
       const data = await response.json();
-      setSuccess(data.message || 'Account created successfully. Check your inbox for a temporary password.');
+      setSuccess(data.message || t('auth.redeem.messages.defaultSuccess'));
 
       // Clear form after successful submission
       setFirstName('');
@@ -87,9 +89,9 @@ const RedeemPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <img src={logo} alt="SES AI Logo" className="auth-logo" />
-          <h2>Redeem Team Code</h2>
-          <p>Join your team on the Molecular Universe platform</p>
+          <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
+          <h2>{t('auth.redeem.header.title')}</h2>
+          <p>{t('auth.redeem.header.subtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -97,61 +99,61 @@ const RedeemPage = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="firstName">{t('auth.redeem.form.firstName')}</label>
             <input
               type="text"
               id="firstName"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="First Name"
+              placeholder={t('auth.redeem.form.firstName')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
+            <label htmlFor="lastName">{t('auth.redeem.form.lastName')}</label>
             <input
               type="text"
               id="lastName"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last Name"
+              placeholder={t('auth.redeem.form.lastName')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">{t('auth.redeem.form.username')}</label>
             <input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder={t('auth.redeem.form.username')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">{t('auth.redeem.form.email')}</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
+              placeholder={t('auth.redeem.form.emailPlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="voucher">Team Code</label>
+            <label htmlFor="voucher">{t('auth.redeem.form.teamCode')}</label>
             <input
               type="text"
               id="voucher"
               value={voucher}
               onChange={(e) => setVoucher(e.target.value)}
-              placeholder="Enter your team code"
+              placeholder={t('auth.redeem.form.teamCodePlaceholder')}
               required
             />
           </div>
@@ -161,12 +163,12 @@ const RedeemPage = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Redeem Code'}
+            {loading ? t('auth.redeem.form.processing') : t('auth.redeem.form.redeemCode')}
           </button>
         </form>
 
         <div className="auth-switch">
-          <p>Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>Sign In</a></p>
+          <p>{t('auth.redeem.switch.haveAccount')} <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>{t('auth.redeem.switch.signIn')}</a></p>
         </div>
       </div>
     </div>
