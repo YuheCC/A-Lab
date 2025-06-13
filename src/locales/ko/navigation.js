@@ -1,10 +1,10 @@
 export default {
   // Header navigation links
   header: {
-    map: "지도",
-    ask: "질문",
-    search: "검색",
-    filter: "필터",
+    map: "분자 지도",
+    ask: "질문하기",
+    search: "검색하기",
+    filter: "조건별 검색",
     favorites: "즐겨찾기"
   },
   
@@ -24,9 +24,9 @@ export default {
   
   // Sidebar links
   sidebar: {
-    motivation: "동기",
-    features: "기능",
-    pricing: "가격",
+    motivation: "서비스 소개",
+    features: "주요 기능",
+    pricing: "이용 플랜",
     newsFeed: "뉴스 피드"
   }
 } 
