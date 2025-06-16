@@ -57,12 +57,9 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           disabled={disabled}
         />
         <Tooltip
-          title={
-            t('search.searchTooltip', {
-              pubChemUrl,
-              defaultValue: `Valid queries can search over any numerical properties of molecules. For example:\n- \"Find all molecules with HOMO at most -8\"\n- \"Find all molecules with LUMO at least -2 and molecular weight at most 200\"\nFor more open-ended queries, use Ask.`
-            })
-          }
+          title={<>
+            <div style={{ whiteSpace: 'pre-line', width: '300px' }} dangerouslySetInnerHTML={{ __html: t('search.searchTooltip', { pubChemUrl }) }} />
+          </>}
         >
           <CircleHelp size={18} style={{
             marginLeft: '8px',

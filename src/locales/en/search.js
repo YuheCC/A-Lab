@@ -2,12 +2,7 @@ export default {
     // Search Input
     searchPlaceholder: "Enter SMILES string, molecule name, or query",
     searchButton: "Search",
-    searchTooltip: `Valid queries can search over any numerical properties of molecules. For example:
- - "Find all molecules with HOMO at most -8"
- - "Find all molecules with LUMO at least -2 and molecular weight at most 200"
-For more open-ended queries, use Ask.
-
-To draw and look up SMILES strings, please click this icon or visit {{pubChemUrl}}`,
+    searchTooltip: '<p>Valid queries can search over any numerical properties of molecules. For example:</p><p>- "Find all molecules with HOMO at most -8"<br/>- "Find all molecules with LUMO at least -2 and molecular weight at most 200"</p><p>For more open-ended queries, use Ask.</p><p>To draw and look up SMILES strings, please click this icon or visit <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "Draw molecule",
     
     // Search Options

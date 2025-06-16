@@ -2,12 +2,7 @@ export default {
     // Search Input
     searchPlaceholder: "SMILES 문자열, 분자명 또는 쿼리를 입력하세요",
     searchButton: "검색",
-    searchTooltip: `유효한 쿼리는 분자의 모든 수치 속성을 검색할 수 있습니다. 예를 들어:
- - "HOMO가 최대 -8인 모든 분자 찾기"
- - "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"
-더 개방적인 쿼리의 경우 Ask를 사용하세요.
-
-SMILES 문자열을 그리고 조회하려면 이 아이콘을 클릭하거나 {{pubChemUrl}}을 방문하세요`,
+    searchTooltip: `<p>유효한 쿼리는 분자의 모든 수치 속성을 검색할 수 있습니다. 예를 들어:</p><p>- "HOMO가 -8 이하인 모든 분자 찾기"</p><p>- "LUMO가 -2 이상이고 분자량이 200 이하인 모든 분자 찾기"</p><p>더 열린 질문에 대해서는 Ask를 사용하세요.</p><p>SMILES 문자열을 그리고 조회하려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>를 방문하세요.</p>`,
     drawMolecule: "분자 그리기",
     
     // Search Options
