@@ -17,7 +17,8 @@ export default {
     status: {
         thinking: "thinking",
         searching: "searching",
-        searchingDatabase: "searching our database"
+        searchingDatabase: "searching our database",
+        thinkingForSeconds: "thinking for {{seconds}} s"
     },
     buttons: {
         findMolecules: "Find Molecules",

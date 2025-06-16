@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import SearchInput from "../Search";
+import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -217,7 +217,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     flex: '0.8'
                 }}>
                     {/* Search bar container */}
-
                     <SearchInput
                         onSearch={handleSearch}
                         disabled={searchLoading}
@@ -278,7 +277,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 2 },
+                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -368,7 +367,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 2 },
+                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'

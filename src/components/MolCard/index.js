@@ -1,12 +1,18 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import MolViewer2D from '../MolViewer2D';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { useEffect, useRef, useState } from 'react';
 
 import './Molcard.css';
+import { Tooltip } from '@mui/material';
 
 export const PropItem = ({ prop }) => {
     const { t } = useTranslation();
+
+    // State used for tooltip visibility
+    const codeRef = useRef(null);
+    const [showTooltip, setShowTooltip] = useState(false);
+
     // Create and format the value string based on prop value and suffix
     let valueString;
     if (prop?.value) {
@@ -27,12 +33,27 @@ export const PropItem = ({ prop }) => {
             valueString = prop.value.join(", ");
         }
     }
+    
+    // Enable tooltip if the value string is too long and gets truncated
+    useEffect(() => {
+        const el = codeRef.current;
+        if (!el) return;
+        setShowTooltip(el.scrollWidth > el.clientWidth);
+    }, [valueString])
 
     return prop?.show !== false ? (
             <div style={{ gridColumn: `span ${prop.span || 1}` }}>
                 <div className='molcard-property-group'>
                     <label>{prop.label}</label>
-                    <code>{valueString}</code>
+                    <Tooltip title={
+                        <div className='molcard-property-group'>
+                            <label>{prop.label}</label>
+                            <div className='molcard-property-value'>{valueString}</div>
+                        </div>
+                    } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
+                      enterDelay={500} enterNextDelay={500}>
+                        <code ref={codeRef}>{valueString}</code>
+                    </Tooltip>
                 </div>
             </div>
     ) : null;

@@ -21,7 +21,15 @@ const AboutPage = () => {
       {/* Main content */}
       <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">
-          <img loading="lazy" src="/MakeContact_small.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />   
+          <picture>
+            <source srcSet="/MakeContact.webp" type="image/webp" />
+            <img
+              loading="lazy"
+              src="/MakeContact_small.png"
+              alt="Make Contact"
+              style={{ width: '100%', marginBottom: '20px' }}
+            />
+          </picture>
 
           <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>"{t('about.quote')}"</p>
           <p style={{ fontStyle: 'italic', marginBottom: '50px' }}>{t('about.quoteSource')}</p>
@@ -51,7 +59,15 @@ const AboutPage = () => {
 
             <p style={{ fontWeight: 'bold' }}>{t('about.whyBuilding.technologyTitle')}</p>
 
-            <img loading="lazy" src="/funnel_small.png" alt="Molecule Funnel" style={{ width: '100%', marginBottom: '20px' }} />
+            <picture>
+              <source srcSet="/funnel.webp" type="image/webp" />
+              <img
+                loading="lazy"
+                src="/funnel_small.png"
+                alt="Molecule Funnel"
+                style={{ width: '100%', marginBottom: '20px' }}
+              />
+            </picture>
             
             <p>{t('about.whyBuilding.allAbout')}</p>
             <p>{t('about.whyBuilding.universe')}</p>

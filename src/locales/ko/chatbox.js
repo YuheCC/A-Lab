@@ -17,7 +17,8 @@ export default {
     status: {
         thinking: "사고 중",
         searching: "검색 중",
-        searchingDatabase: "데이터베이스 검색 중"
+        searchingDatabase: "데이터베이스 검색 중",
+        thinkingForSeconds: "{{seconds}}초 동안 사고 중"
     },
     buttons: {
         findMolecules: "분자 찾기",

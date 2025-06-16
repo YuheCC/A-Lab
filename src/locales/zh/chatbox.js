@@ -17,7 +17,8 @@ export default {
     status: {
         thinking: "思考中",
         searching: "搜索中",
-        searchingDatabase: "搜索我们的数据库"
+        searchingDatabase: "搜索我们的数据库",
+        thinkingForSeconds: "思考了{{seconds}}秒"
     },
     buttons: {
         findMolecules: "查找分子",
