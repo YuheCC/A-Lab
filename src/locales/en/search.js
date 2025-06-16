@@ -8,6 +8,7 @@ export default {
 For more open-ended queries, use Ask.
 
 To draw and look up SMILES strings, please click this icon or visit {{pubChemUrl}}`,
+    drawMolecule: "Draw molecule",
     
     // Search Options
     findFriendsLabel: 'Find "friends"',

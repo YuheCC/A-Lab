@@ -8,6 +8,7 @@ export default {
 对于更开放式的查询，请使用智能问答功能。
 
 要绘制和查找SMILES字符串，请点击此图标或访问 {{pubChemUrl}}`,
+    drawMolecule: "绘制分子",
     
     // Search Options
     findFriendsLabel: '查找"朋友"',

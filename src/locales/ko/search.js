@@ -8,6 +8,7 @@ export default {
 더 개방적인 쿼리의 경우 Ask를 사용하세요.
 
 SMILES 문자열을 그리고 조회하려면 이 아이콘을 클릭하거나 {{pubChemUrl}}을 방문하세요`,
+    drawMolecule: "분자 그리기",
     
     // Search Options
     findFriendsLabel: '"친구들" 찾기',
