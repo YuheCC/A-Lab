@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import streamSSE from "./components/streamSSE.js";
 import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
@@ -13,7 +14,8 @@ const API_URL = getAPIUrl();
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
- disableLiteratureSearch, onDisableLiteratureSearchChange, userPermissions }) => {
+    disableLiteratureSearch, onDisableLiteratureSearchChange,
+    userPermissions, useMultiAgent, onUseMultiAgentChange }) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (e) => {
@@ -82,6 +84,18 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             </label>
           </>
         )}
+        {['enterprise', 'admin'].includes(userPermissions) && (
+          <>
+            <input
+              type="checkbox"
+              id="useMultiAgent"
+              checked={useMultiAgent}
+              onChange={e => onUseMultiAgentChange(e.target.checked)}
+              style={{ marginLeft: '20px' }}
+            />
+            <label htmlFor="useMultiAgent">Use multi-agent system</label>
+          </>
+        )}
       </div>
     </div>
   );
@@ -116,6 +130,12 @@ const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainin
   
   // Add favorites state - remove unused states
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
+
+  // multi-agent state
+  const [useMultiAgent, setUseMultiAgent] = useState(false);
+  // clarification round‑trip state
+  const [awaitingClarify, setAwaitingClarify] = useState(false);
+  const [multiAgentHistory, setMultiAgentHistory] = useState([]);
 
   useEffect(() => {
     scrollToBottom();
@@ -266,6 +286,7 @@ const handleFindSimilarMolecules = async (details) => {
   const handleSend = async (input) => {
     if (!input.trim()) return;
 
+
     // For research users, check query limit
     if (userPermissions === 'research' && remainingQueries <= 0) {
       const errorMessage = { 
@@ -307,43 +328,112 @@ const handleFindSimilarMolecules = async (details) => {
       const ragModel = isAdvancedTier ? 'o3' : 'o4-mini';
       const ragResultsCount = isAdvancedTier ? 10 : 3;
       // Query the backend via the /rag endpoint using the messages array
-      const response = await authFetch(`${API_URL}/rag`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          messages: messagesToSend,
-          maxOutputLength: 8192, // deprecated
-          ragEnabled: !disableLiteratureSearch,
-          webSearchEnabled: false,
-          webSearchClient: "Tavily",
-          numRagResults: ragResultsCount,
-          model: ragModel
-        })
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        let message = "Network response was not ok";
-        if (response.status === 400 && errorText.includes("Query is not relevant to batteries or battery chemistry")) {
-          message = "Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.";
-        } else {
-          try {
-            const errData = JSON.parse(errorText);
-            if (errData.detail) message = errData.detail;
-          } catch {
-            // leave default message
+      let data;   // will hold the final backend payload
+
+      if (useMultiAgent) {
+        // --- MULTI‑AGENT WORKFLOW ---
+        if (awaitingClarify) {
+          // ↪ we already have clarifying questions; send user reply + history to /multi-agent
+          const updatedHistory = [
+            ...multiAgentHistory,
+            { role: "user", content: input.trim() },
+          ];
+          setMultiAgentHistory(updatedHistory);
+
+          const res = await authFetch(`${API_URL}/multi-agent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+            body: JSON.stringify({ messages: updatedHistory }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          for await (const evt of streamSSE(res)) {
+            if (evt.answer || evt.error) {
+              data = evt;
+              break;
+            }
           }
+
+          // done with clarification phase
+          setAwaitingClarify(false);
+          setMultiAgentHistory([]);
+
+        } else {
+          // ↪ FIRST call: get clarifying questions
+          const res = await authFetch(`${API_URL}/multi-agent/clarify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: messagesToSend }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          data = await res.json();
+
+          console.log(data)
+
+          // If backend returned clarifying questions, show them and wait
+          if (
+            data.clarifying_questions &&
+            data.clarifying_questions.length > 0
+          ) {
+            const clarMsgText = data.clarifying_questions;
+            const clarMsg = {
+              type: "llm-message",
+              text: clarMsgText,
+            };
+            setMessages(prev => [...prev, clarMsg]);
+            setAwaitingClarify(true);
+            // Store history (original user msg + clar prompt)
+            setMultiAgentHistory([
+              ...messagesToSend,
+              { role: "assistant", content: clarMsgText },
+            ]);
+            setIsThinking(false);
+            return; // Wait for user clarification before continuing
+          }
+
+          // No clarifying questions— fall through to direct multi-agent call
+          const res2 = await authFetch(`${API_URL}/multi-agent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+            body: JSON.stringify({ messages: messagesToSend }),
+          });
+          if (!res2.ok) throw new Error(await res2.text());
+          for await (const evt of streamSSE(res2)) {
+            if (evt.answer || evt.error) {
+              data = evt;
+              break;
+            }
+          }
+
         }
-        throw new Error(message);
+      } else {
+        // --- NORMAL /rag path ---
+        const res = await authFetch(`${API_URL}/rag`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({
+            messages: messagesToSend,
+            ragEnabled: !disableLiteratureSearch,
+            webSearchEnabled:false,
+            webSearchClient:"Tavily",
+            numRagResults: ragResultsCount,
+            model: ragModel
+          })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        data = await res.json();
       }
-      const data = await response.json();
+
+      // Check for error in data after multi-agent branch
+      if (data && data.error) {
+        throw new Error(data.error);
+      }
+
       // Assuming the response returns an 'outputs' field with the result text
       // Use llmOutput for chat history (only the raw LLM response) and fullOutput for display
       const llmMessage = { 
         type: "llm-message", 
-        inputs: data.inputs, 
-        text: data.llmOutput, 
+        inputs: data.inputs || null, 
+        text:  data.llmOutput || data.answer || "",
         sources: data.source_html, 
         molText: data.molecule_text,
         molecules: data.molecules 
@@ -655,6 +745,8 @@ const handleFindSimilarMolecules = async (details) => {
             disableLiteratureSearch={disableLiteratureSearch}
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
             userPermissions={userPermissions}
+            useMultiAgent={useMultiAgent}
+            onUseMultiAgentChange={setUseMultiAgent}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
