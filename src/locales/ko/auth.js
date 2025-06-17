@@ -29,7 +29,8 @@ export default {
     termsLink: '이용약관에 동의합니다'
   },
   messages: {
-    verificationSent: '인증 이메일이 발송되었습니다.'
+    verificationSent: '인증 이메일이 발송되었습니다.',
+    emailAddressDenied: "Molecular Universe 서비스를 제공할 수 없습니다. 이유: 당신 또는 관련 조직이 미국 무역 부, 국무부 또는 재무부의（U.S. Department of Commerce,U.S. Department of State,U.S. Department of the Treasury） 일부 목록（Entity List）에 포함되어 있습니다."
   },
   logo: {
     alt: 'SES AI 로고'

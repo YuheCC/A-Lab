@@ -29,7 +29,8 @@ export default {
     termsLink: '条款和条件'
   },
   messages: {
-    verificationSent: '验证邮件已发送。'
+    verificationSent: '验证邮件已发送。',
+    emailAddressDenied: "很抱歉，由于相关合规政策限制，您的邮箱暂无法注册或使用分子宇宙服务，感谢您的理解与支持。"
   },
   logo: {
     alt: 'SES AI 标志'

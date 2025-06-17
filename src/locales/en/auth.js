@@ -29,7 +29,8 @@ export default {
     termsLink: 'Terms and Conditions'
   },
   messages: {
-    verificationSent: 'Verification e‑mail sent.'
+    verificationSent: 'Verification e‑mail sent.',
+    emailAddressDenied: "Unfortunately we are unable to provide you with the Molecular Universe service as you or your affiliated entity falls under one or more of the US Department of Commerce, State and Treasury's screening lists."
   },
   logo: {
     alt: 'SES AI Logo'

@@ -72,8 +72,10 @@ const AuthPage = () => {
       });
 
       if (!response.success) {
-        console.error('Authentication error:', response.error);
-        setError(response.error);
+        const errorMessage = response.error.toString();
+        const showMessage = errorMessage.includes('denied entity list') ? t('auth.messages.emailAddressDenied') : errorMessage;
+        console.error('Authentication error:', showMessage);
+        setError(showMessage);
         return;
       }
 
