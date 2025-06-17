@@ -19,8 +19,8 @@ export default {
     // Search Results
     searchedMolecules: "검색된 분자",
     moleculeNumber: "분자 {{number}}",
-    similarMolecules: "유사한 분자",
-    similarMoleculeNumber: "유사한 분자 #{{number}}",
+    similarMolecules: "유사 분자",
+    similarMoleculeNumber: "유사 분자 번호 #{{number}}",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
