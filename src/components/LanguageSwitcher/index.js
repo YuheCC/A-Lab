@@ -13,7 +13,15 @@ const LanguageSwitcher = () => {
     { code: 'ko', name: '한국어', flag: '🇰🇷' }
   ];
 
-  const currentLang = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // 归一化语言代码，兼容zh-CN等
+  const normalizeLang = (lang) => {
+    if (lang.startsWith('zh')) return 'zh';
+    if (lang.startsWith('en')) return 'en';
+    if (lang.startsWith('ko')) return 'ko';
+    return lang;
+  };
+
+  const currentLang = languages.find(lang => lang.code === normalizeLang(i18n.language)) || languages[0];
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -64,7 +72,7 @@ const LanguageSwitcher = () => {
           {languages.map((lang) => (
             <button
               key={lang.code}
-              className={`language-option ${lang.code === i18n.language ? 'active' : ''}`}
+              className={`language-option ${lang.code === normalizeLang(i18n.language) ? 'active' : ''}`}
               onClick={() => changeLanguage(lang.code)}
             >
               <span className="flag">{lang.flag}</span>
