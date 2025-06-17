@@ -21,17 +21,17 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+      convertDetectedLanguage: (lng) => {
+        if (lng.startsWith('zh')) return 'zh';
+        if (lng.startsWith('en')) return 'en';
+        if (lng.startsWith('ko')) return 'ko';
+        return lng;
+      }
     },
 
     supportedLngs: ['en', 'zh', 'ko'],
     load: 'languageOnly',
-    lng: (function() {
-      const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-      if (navLang.startsWith('zh')) return 'zh';
-      if (navLang.startsWith('en')) return 'en';
-      if (navLang.startsWith('ko')) return 'ko';
-      return undefined;
-    })(),
 
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',

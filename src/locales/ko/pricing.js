@@ -31,7 +31,7 @@ export default {
     description: "Molecular Universe 제한 접근 (1M)",
     price: "$1,000",
     period: "/ 월 (최대 10명)",
-    cta: "기업용",
+    cta: "시작하기",
     details: [
       "분자 지도",
       "조건별 검색",

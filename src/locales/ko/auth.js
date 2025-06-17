@@ -1,32 +1,32 @@
 export default {
   header: {
-    welcomeBack: '다시 오신 것을 환영합니다',
+    welcomeBack: '환영합니다',
     createAccount: '계정 생성',
-    signInSubtitle: '분자 우주에 접근하려면 로그인하세요',
-    signUpSubtitle: '분자 우주 커뮤니티에 가입하세요'
+    signInSubtitle: 'Molecular Universe 접속을 위해 로그인해 주세요.',
+    signUpSubtitle: 'Molecular Universe 커뮤니티에 참여하세요'
   },
   form: {
     firstName: '이름',
     lastName: '성',
     organizationName: '조직명',
-    username: '사용자명',
-    email: '이메일 주소 (학술 기관만)',
-    emailPlaceholder: '학술 이메일 주소',
+    username: '아이디',
+    email: '이메일 주소 (학술기관 전용)',
+    emailPlaceholder: '학교/연구기관 이메일 주소',
     password: '비밀번호',
     processing: '처리 중...',
     signIn: '로그인',
-    createAccount: '계정 생성'
+    createAccount: '새 계정 등록'
   },
   switch: {
-    noAccount: "계정이 없으신가요?",
+    noAccount: "아직 계정이 없으신가요?",
     signUp: '회원가입',
-    redeemCode: '팀 멤버를 위한 코드 사용',
+    redeemCode: '팀원 전용 코드 입력',
     forgotPassword: '비밀번호를 잊으셨나요?',
     reset: '재설정',
     haveAccount: '이미 계정이 있으신가요?',
     signIn: '로그인',
-    termsText: '분자 우주를 사용함으로써 SES AI의',
-    termsLink: '이용약관에 동의합니다'
+    termsText: 'Molecular Universe를 사용함으로써, 귀하는 SES AI의 ',
+    termsLink: '이용 약관에 동의하는 것으로 간주됩니다'
   },
   messages: {
     verificationSent: '인증 이메일이 발송되었습니다.',
@@ -38,7 +38,7 @@ export default {
   redeem: {
     header: {
       title: '팀 코드 사용',
-      subtitle: '분자 우주 플랫폼에서 팀에 합류하세요'
+      subtitle: 'Molecular Universe 플랫폼에서 귀하의 팀에 참여해 보세요'
     },
     form: {
       firstName: '이름',
@@ -49,7 +49,7 @@ export default {
       teamCode: '팀 코드',
       teamCodePlaceholder: '팀 코드를 입력하세요',
       processing: '처리 중...',
-      redeemCode: '코드 사용'
+      redeemCode: '코드 사용하기'
     },
     messages: {
       defaultSuccess: '계정이 성공적으로 생성되었습니다. 임시 비밀번호는 받은 편지함을 확인하세요.',
@@ -85,7 +85,7 @@ export default {
   passwordReset: {
     header: {
       title: '비밀번호 재설정',
-      subtitle: '현재 비밀번호와 새 비밀번호를 입력해주세요'
+      subtitle: '현재 비밀번호와 새 비밀번호를 입력해 주세요.'
     },
     form: {
       currentPassword: '현재 비밀번호',

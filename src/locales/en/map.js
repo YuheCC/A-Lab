@@ -12,6 +12,7 @@ export default {
     clusterTitle: 'Cluster Descriptions'
   },
   clusters: {
+    clusterName: 'Cluster',
     cluster1: 'Outlier cluster, "catch all"',
     cluster2: 'Largely populated by molecules with carbonyl functionalities and monocyclic aromatic structure.',
     cluster3: 'Largely populated by molecules with sulfone functionalities and monocyclic aromatic structure.',

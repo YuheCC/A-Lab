@@ -69,29 +69,29 @@ const MapPage = ({ handlePointClick }) => {
 
                     <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.clusterTitle')}</h3>
                     <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> {t('map.clusters.cluster1')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> {t('map.clusters.cluster2')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> {t('map.clusters.cluster3')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> {t('map.clusters.cluster4')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> {t('map.clusters.cluster5')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> {t('map.clusters.cluster6')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> {t('map.clusters.cluster7')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> {t('map.clusters.cluster8')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> {t('map.clusters.cluster9')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> {t('map.clusters.cluster10')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> {t('map.clusters.cluster11')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> {t('map.clusters.cluster12')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> {t('map.clusters.cluster13')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> {t('map.clusters.cluster14')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> {t('map.clusters.cluster15')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> {t('map.clusters.cluster16')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> {t('map.clusters.cluster17')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> {t('map.clusters.cluster18')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> {t('map.clusters.cluster19')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> {t('map.clusters.cluster20')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> {t('map.clusters.cluster21')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> {t('map.clusters.cluster22')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> {t('map.clusters.cluster23')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 1:</strong> {t('map.clusters.cluster1')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 2:</strong> {t('map.clusters.cluster2')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 3:</strong> {t('map.clusters.cluster3')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 4:</strong> {t('map.clusters.cluster4')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 5:</strong> {t('map.clusters.cluster5')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 6:</strong> {t('map.clusters.cluster6')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 7:</strong> {t('map.clusters.cluster7')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 8:</strong> {t('map.clusters.cluster8')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 9:</strong> {t('map.clusters.cluster9')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 10:</strong> {t('map.clusters.cluster10')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 11:</strong> {t('map.clusters.cluster11')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 12:</strong> {t('map.clusters.cluster12')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 13:</strong> {t('map.clusters.cluster13')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 14:</strong> {t('map.clusters.cluster14')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 15:</strong> {t('map.clusters.cluster15')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 16:</strong> {t('map.clusters.cluster16')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 17:</strong> {t('map.clusters.cluster17')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 18:</strong> {t('map.clusters.cluster18')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 19:</strong> {t('map.clusters.cluster19')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 20:</strong> {t('map.clusters.cluster20')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 21:</strong> {t('map.clusters.cluster21')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 22:</strong> {t('map.clusters.cluster22')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 23:</strong> {t('map.clusters.cluster23')}</p>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@ export default {
     clusterTitle: '簇描述'
   },
   clusters: {
+    clusterName: '簇',
     cluster1: '异常值簇，"包罗万象"',
     cluster2: '主要由具有羰基官能团和单环芳香结构的分子组成。',
     cluster3: '主要由具有砜官能团和单环芳香结构的分子组成。',
