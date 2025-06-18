@@ -402,7 +402,7 @@
 .modal-content {
   background-color: #fff;
   padding: 20px;
-  max-width: 80%;
+  max-width: 45vw;
   max-height: 80%;
   overflow-y: auto;
   border-radius: 8px;

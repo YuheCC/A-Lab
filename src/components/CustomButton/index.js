@@ -13,6 +13,7 @@ const CustomButton = ({
   loadingText,
   errorMessage,
   successMessage,
+  hideTime = STATUS_HIDE_TIME,
   sideError,
   fullWidth = false,
   style,
@@ -33,9 +34,9 @@ const CustomButton = ({
     setTimeout(() => {
         setStatusState('');
         setLocalStatusMessage('');
-    }, STATUS_HIDE_TIME);
+    }, hideTime);
 
-  }, [errorMessage, successMessage]);
+  }, [errorMessage, successMessage, hideTime]);
 
   return (
     <div className={`custom-button-group ${sideError ? 'side' : ''} ${fullWidth ? 'full-width' : ''}`} style={style}>
