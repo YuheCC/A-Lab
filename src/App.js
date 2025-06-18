@@ -46,11 +46,6 @@ const App = () => {
   const [enterpriseSearchError, setEnterpriseSearchError] = useState(null);
   const [includeRelatives, setIncludeRelatives] = useState(false);
 
-  // Chat state (moved from ChatbotInterface)
-  const [chatMessages, setChatMessages] = useState([
-    { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
-  ]);
-
   const fetchData = usePlotDataStore(state => state.fetchData);
   const { verifyAuth } = useAuthStore();
 
@@ -262,16 +257,12 @@ const App = () => {
             
           <Route path="/ask" element={
             <ProtectedRoute>
-              <Sidebar>
-                <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
-                  <ChatbotInterface
-                    messages={chatMessages}
-                    setMessages={setChatMessages}
-                    remainingQueries={remainingQueries}
-                    setRemainingQueries={setRemainingQueries}
-                  />
-                </Suspense>
-              </Sidebar>
+              <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
+                <ChatbotInterface
+                  remainingQueries={remainingQueries}
+                  setRemainingQueries={setRemainingQueries}
+                />
+              </Suspense>
             </ProtectedRoute>
           } />
           <Route path="/favorites" element={

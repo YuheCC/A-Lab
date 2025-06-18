@@ -258,7 +258,6 @@ const UMAPClusterPlotDeck = ({
     // Track container size changes
     useEffect(() => {
         const updateDimensions = () => {
-            console.log("resize event triggered");
             if (containerRef.current) {
                 setContainerDimensions({
                     width: containerRef.current.offsetWidth,
