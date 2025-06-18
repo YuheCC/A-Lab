@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, use } from 'react';
 import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
@@ -7,7 +7,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
-import { Tooltip } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
+import {MolCard} from './components/MolCard';
+import { useChatStore, useActiveChatData } from './providers/chat.js';
+import { useShallow } from 'zustand/react/shallow';
+import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
+import CustomButton from './components/CustomButton/index.js';
+import { Copy, Info, InfoIcon, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 
 const API_URL = getAPIUrl();
 
@@ -15,9 +22,15 @@ const API_URL = getAPIUrl();
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
  disableLiteratureSearch, onDisableLiteratureSearchChange, userPermissions }) => {
   const [inputValue, setInputValue] = React.useState("");
+  const textareaRef = useRef(null);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
+
+    // Auto-resize textarea
+    if (!textareaRef.current) return;
+    textareaRef.current.style.height = 'auto'; // Reset height to auto to shrink if needed
+    textareaRef.current.style.height = (textareaRef.current.scrollHeight - 20) + 'px';
   };
 
   const handleKeyDown = (e) => {
@@ -26,6 +39,11 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
       if (inputValue.trim()) {
         onSend(inputValue);
         setInputValue("");
+
+        // Reset height after sending
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+        }
       }
     }
   };
@@ -34,6 +52,11 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
     if (inputValue.trim()) {
       onSend(inputValue);
       setInputValue("");
+
+      // Reset height after sending
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
 
@@ -41,14 +64,21 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
     <div className="chat-input-group">
       <div className="chat-input-container">
         <textarea
+          ref={textareaRef}
           translate='no'
           className="chat-input"
-          placeholder="Ask me anything, as long as it's about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further."
-          rows={2}
+          placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics."
+          rows={1}
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           disabled={disabled}
+          style={{
+            resize: 'none',
+            overflowY: 'scroll',
+            minHeight: '10px',
+            maxHeight: '200px',
+          }}
         />
         <button 
           className="send-button" 
@@ -88,20 +118,38 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
 });
 
 // Chatbot component
-const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainingQueries }) => {
+const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
+  const { 
+    messages, 
+    activeMolecule,
+    foundMolecules,
+    similarMolecules,
+    isThinking,
+    moleculesLoading,
+    similarMoleculesLoading,
+  } = useActiveChatData();
+
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading } = useChatStore(useShallow(state => ({
+    addMessage: state.addMessage,
+    setActiveMolecule: state.setActiveMolecule,
+    setFoundMolecules: state.setFoundMolecules,
+    setSimilarMolecules: state.setSimilarMolecules,
+    loadHistory: state.loadHistory,
+    isLoading: state.isLoading,
+    isSynced: state.isSynced,
+    setIsThinking: state.setIsThinking,
+    updateNewChatId: state.updateNewChatId,
+    activeChat: state.activeChat,
+    setMoleculesLoading: state.setMoleculesLoading,
+    setSimilarMoleculesLoading: state.setSimilarMoleculesLoading,
+  })));
 
   const userPermissions = useAuthStore(state => state.userPermissions);
 
-  const [foundMolecules, setFoundMolecules] = useState([]);
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
   const messagesEndRef = useRef(null);
-  const [isThinking, setIsThinking] = useState(false);
   const [thinkingTime, setThinkingTime] = useState(0);
-  const [moleculesLoading, setMoleculesLoading] = useState(false);
-  const [similarMoleculesLoading, setSimilarMoleculesLoading] = useState(false);
-  const [similarMolecules, setSimilarMolecules] = useState([]);
-  const [activeMolecule, setActiveMolecule] = useState(null);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
@@ -186,12 +234,11 @@ const ChatbotInterface = ({ messages, setMessages, remainingQueries, setRemainin
         return acc;
       }, []);
 
-      setFoundMolecules(flattenedMolecules);
-      console.log(flattenedMolecules);
+      setFoundMolecules(flattenedMolecules, activeChat);
     } catch (err) {
       console.error("Error fetching molecule details:", err);
     } finally {
-      setMoleculesLoading(false);
+      setMoleculesLoading(false, activeChat);
     }
   };
 
@@ -243,13 +290,15 @@ const handleFindSimilarMolecules = async (details) => {
         }
       );
       const data = await response.json();
-      console.log(data);
-      console.log(data["similar_molecules"]);
-      setSimilarMolecules(data["similar_molecules"]);
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Failed to find similar molecules");
+      }
+      setSimilarMolecules(data["similar_molecules"], activeChat);
     } catch (error) {
       console.error("Error finding similar molecules:", error);
     } finally {
-      setSimilarMoleculesLoading(false);
+      setSimilarMoleculesLoading(false, activeChat);
     }
   };
 
@@ -280,7 +329,14 @@ const handleFindSimilarMolecules = async (details) => {
     fetchQueryLimit();
   }, [userPermissions, setRemainingQueries]);
 
-  const handleSend = async (input) => {
+  useEffect(() => {
+    // Load chat history
+    if (!isSynced) {
+      loadHistory();
+    }
+  }, [isSynced, loadHistory]);
+
+  const handleSend = useCallback(async (input) => {
     if (!input.trim()) return;
 
     // For research users, check query limit
@@ -289,7 +345,7 @@ const handleFindSimilarMolecules = async (details) => {
         type: "llm-message", 
         text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
       };
-      setMessages(prev => [...prev, errorMessage]);
+      addMessage(errorMessage);
       return;
     }
 
@@ -297,7 +353,7 @@ const handleFindSimilarMolecules = async (details) => {
     const newUserMessage = { type: "user-message", text: input.trim() };
     // Update the messages state
     const updatedMessages = [...messages, newUserMessage];
-    setMessages(updatedMessages);
+    addMessage(newUserMessage);
 
     // Build the messages array to send to the backend
     let messagesToSend;
@@ -317,6 +373,7 @@ const handleFindSimilarMolecules = async (details) => {
 
     setIsThinking(true);
 
+    const currentChat = activeChat ? parseInt(activeChat) : -1;
     try {
       const token = localStorage.getItem('token');
       // Determine RAG model and result count based on user tier
@@ -330,6 +387,7 @@ const handleFindSimilarMolecules = async (details) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
+          chatId: activeChat ? parseInt(activeChat) : -1, 
           messages: messagesToSend,
           maxOutputLength: 8192, // deprecated
           ragEnabled: !disableLiteratureSearch,
@@ -355,6 +413,11 @@ const handleFindSimilarMolecules = async (details) => {
         throw new Error(message);
       }
       const data = await response.json();
+
+      // Update chat ID if it is a new chat
+      if (currentChat === -1)
+        updateNewChatId(data.chat_id);
+
       // Assuming the response returns an 'outputs' field with the result text
       // Use llmOutput for chat history (only the raw LLM response) and fullOutput for display
       const llmMessage = { 
@@ -365,7 +428,12 @@ const handleFindSimilarMolecules = async (details) => {
         molText: data.molecule_text,
         molecules: data.molecules 
       };
-      setMessages(prev => [...prev, llmMessage]);
+      
+      // Add the LLM message to the chat history
+      // - Need to specify chat_id because activeChat may have changed
+      addMessage(llmMessage, data.chat_id);
+      setIsThinking(false, data.chat_id);
+      // setMessages(prev => [...prev, llmMessage]);
 
       // Update remaining queries based on server payload
       if (userPermissions === 'research' && data.remaining_queries !== undefined) {
@@ -373,18 +441,14 @@ const handleFindSimilarMolecules = async (details) => {
       }
     } catch (error) {
       const errorMessage = { type: "llm-message", text: "Error: " + error.message };
-      setMessages(prev => [...prev, errorMessage]);
+      addMessage(errorMessage);
+      setIsThinking(false, currentChat);
     } finally {
-      setIsThinking(false);
+      if (currentChat !== -1) {
+        setIsThinking(false, currentChat);
+      }
     }
-  };
-
-  const handleKeyDown = React.useCallback((e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  }, [handleSend]);
+  }, [userPermissions, remainingQueries, messages, addMessage, ignoreChatHistory, activeChat, disableLiteratureSearch, updateNewChatId, setRemainingQueries]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -569,18 +633,19 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
         </div>
       )}
-      {userPermissions === 'research' && (
-        <div className="chatbot-header">
-          <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
-            <span className="query-limit-icon">💬</span>
-            <span>
-              Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
-            </span>
-          </div>
-        </div>
-        )}
       <div className="chat-and-molecules">
+        <ChatHistorySidebar/>
         <div className={`chatbot-content ${!showFoundMolecules && !showSimilarMolecules ? 'full-width' : 'with-molecules'}`}>
+          {userPermissions === 'research' && (
+            <div className="chatbot-header">
+              <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
+                <MessageCircle size={18} className='query-limit-icon'></MessageCircle>
+                <span>
+                  Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
+                </span>
+              </div>
+            </div>
+            )} 
           <div className="chat-messages">
             {messages.map((msg, index) => (
               <div
@@ -591,44 +656,48 @@ const handleFindSimilarMolecules = async (details) => {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {msg.text}
                   </ReactMarkdown>
-                  {msg.molText && (
-                    <div>
-                      <br></br>
-                      <strong>Detected chemical keywords in LLM response:</strong>
-                      <br></br>
-                    </div>
+                  {msg.molText && msg.molecules && msg.molecules.length > 0 && (
+                    <>
+                      <div>
+                        <br></br>
+                        <strong>Detected chemical keywords in LLM response:</strong>
+                        <br></br>
+                      </div>
+                      <div translate='no'>{msg.molText}</div>
+                    </>
                   )}
-                  {msg.molText && <div translate='no'>{msg.molText}</div>}
                 </div>
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
-                    <button
-                      className="find-molecules-button"
-                      onClick={() => handleFindMolecules(msg)}>
+                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg)} size="small" 
+                      loading={moleculesLoading} loadingText={"searching our database"}
+                      style={{ marginRight: 10 }}>
                       Find Molecules
-                    </button>
-                    {moleculesLoading && (
-                      <span className="searching-text">
-                        searching our database
-                        <span className="thinking-dots">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </span>
-                      </span>
-                    )}
+                    </CustomButton>
                   </div>
                 )}
                 {/* Add thumbs buttons for feedback */}
                 {msg.type === "llm-message" && (
                   <div className="thumbs">
-                    <button onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}>👍</button>
-                    <button onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}>👎</button>
+                    <IconButton
+                      onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}
+                      size="small"
+                      style={{ marginRight: 5 }} variant="contained">
+                        <ThumbsUp size={18} style={{ margin: 4}} />
+                      </IconButton>
+                    <IconButton
+                      onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}
+                      size="small"
+                      style={{ marginRight: 5 }} variant="contained">
+                        <ThumbsDown size={18} style={{ margin: 4}} />
+                      </IconButton>
                     <Tooltip title="Copy" placement='bottom'>
-                      <button
+                      <IconButton
+                        size="small"
+                        style={{ marginRight: 5 }}
+                        variant="contained"
                         className="copy-btn"
                         onClick={(evt) => {
-
                           // Extract the message html from the event target
                           const messageElement = evt.target.closest('.llm-message').querySelector('.message-content');
 
@@ -659,8 +728,8 @@ const handleFindSimilarMolecules = async (details) => {
                             .catch(err => console.error('Failed to copy:', err));
                         }}
                       >
-                        📋
-                      </button>
+                        <Copy size={18} style={{ margin: 4 }} />
+                      </IconButton>
                     </Tooltip>
                   </div>
                 )}
@@ -680,7 +749,7 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
           <ChatInput 
             onSend={handleSend}
-            disabled={userPermissions === 'research' && remainingQueries <= 0}
+            disabled={(userPermissions === 'research' && remainingQueries <= 0) || isThinking || isLoading || !isSynced}
             ignoreChatHistory={ignoreChatHistory}
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
             disableLiteratureSearch={disableLiteratureSearch}
@@ -700,74 +769,49 @@ const handleFindSimilarMolecules = async (details) => {
               </button>
             </div>
             {foundMolecules.map((details, idx) => {
-              return (
-                <div key={idx} className="molecule-box">
-                  <strong>{details.name}</strong>
-                  <p>SMILES: {details.SMILES}</p>
-                  <p>Molecular weight: {details.molecular_weight}</p>
-                  <p>HOMO: {Number(details.HOMO_eV).toFixed(2)} eV</p>
-                  <p>LUMO: {Number(details.LUMO_eV).toFixed(2)} eV</p>
-                  <p>ESP Max: {Number(details.ESP_max_eV).toFixed(2)} eV</p>
-                  <p>ESP Min: {Number(details.ESP_min_eV).toFixed(2)} eV</p>
-                  <p>Functional groups: {details.functional_groups}</p>
-                  {/* <p>UMAP_X: {details.UMAP_0 !== undefined && details.UMAP_0 !== null ? details.UMAP_0.toFixed(2) : 'N/A'}</p>
-                  <p>UMAP_Y: {details.UMAP_1 !== undefined && details.UMAP_1 !== null ? details.UMAP_1.toFixed(2) : 'N/A'}</p> */}
-                  {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
-                    <>
-                      <p>Predicted MP: {details.predicted_MP_celsius} °C</p>
-                      <p>Predicted BP: {details.predicted_BP_celsius} °C</p>
-                    </>
-                  )}
-                  {details.image && (
-                    <img 
-                      src={details.image} 
-                      alt={`Structure of ${details.SMILE}`} 
-                      className="molecule-image"
-                    />
-                  )}
+              return <MolCard
+                key={idx}
+                vertical={true}
+                name={details.name}
+                large={true}
+                style={{ margin: 5 }}
+                propGroups={[
+                  { label: 'SMILES', value: details.SMILES, span: 2 },
+                  { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
+                  { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                   },
+                  { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                   },
+                  { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
+                ]} foldPropGroups={[
+                  { label: 'UMAP X', value: details.UMAP_0, span: 2 },
+                  { label: 'UMAP Y', value: details.UMAP_1, span: 2 },
+                  { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
+                ]}>
                   <div className="molecule-actions">
-                    <button 
-                      className="find-similar-molecules-button"
-                      onClick={() => handleFindSimilarMolecules(details)}
-                    >
-                      Find Similar Molecules
-                    </button>
-                    
                     {/* Add to Favorites button */}
-                    <button
-                      className="favorites-button"
-                      onClick={() => handleAddToFavorites(details)}
-                      disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
-                    >
-                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                    </button>
-                    
-                    {similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES && (
-                      <span className="searching-text">
-                        searching
-                        <span className="thinking-dots">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </span>
-                      </span>
-                    )}
+                    <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
+                      fullWidth
+                      loading={moleculeFavoriteStatus[details.SMILES]?.loading}
+                      loadingText={"Saving ..."}
+                      successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
+                      errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
+                      Add To Favorites
+                    </CustomButton>
+                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
+                      fullWidth
+                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
+                      loadingText={"Searching for friends"}
+                      size="small">
+                      Find Similar Molecules
+                    </CustomButton>
                   </div>
-                  
-                  {/* Replace global favorite status messages with molecule-specific ones */}
-                  {moleculeFavoriteStatus[details.SMILES]?.success && (
-                    <div className="success-message">
-                      {moleculeFavoriteStatus[details.SMILES].success}
-                    </div>
-                  )}
-                  
-                  {moleculeFavoriteStatus[details.SMILES]?.error && (
-                    <div className="error-message">
-                      {moleculeFavoriteStatus[details.SMILES].error}
-                    </div>
-                  )}
-                </div>
-              );
+                </MolCard>
               })
             }
           </div>
@@ -775,7 +819,7 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container">
             <div className="molecules-header">
-              <h3>Friends ranked by likelihood to replace {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
+                <h3>Friends ranked by likelihood to replace: {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => setShowSimilarMolecules(false)}
@@ -786,112 +830,63 @@ const handleFindSimilarMolecules = async (details) => {
             {similarMolecules.map((item, idx) => {
               // Adjust based on your response structure (if using item.molecule_details or directly item)
               const details = item.molecule_details || item;
-              return (
-                <div key={idx} className="molecule-box">
-                  <p><strong>SMILES: {details.SMILES}</strong></p>
-                  {details.grade != null && (
-                    <p style={{ display: 'inline' }}>
-                      LLM Grade: {details.grade}/10
-                      {details.reasoning != null && (
-                        <button
-                          className="reasoning-button"
-                          onClick={() => setReasoningText(details.reasoning)}
-                        >
-                          ?
-                        </button>
-                      )}
-                    </p>
-                  )}
-                  <p>Molecular weight: {details.molecular_weight}</p>
-                  <p>HOMO eV: {Number(details.HOMO_eV).toFixed(2)} eV</p>
-                  <p>LUMO eV: {Number(details.LUMO_eV).toFixed(2)} eV</p>
-                  <p>ESP Max: {Number(details.ESP_max_eV).toFixed(2)} eV</p>
-                  <p>ESP Min: {Number(details.ESP_min_eV).toFixed(2)} eV</p>
-                  <p>Functional groups: {details.functional_groups}</p>
-                  {/* <p>UMAP_X: {details.UMAP_0 !== undefined && details.UMAP_0 !== null ? details.UMAP_0.toFixed(2) : 'N/A'}</p>
-                  <p>UMAP_Y: {details.UMAP_1 !== undefined && details.UMAP_1 !== null ? details.UMAP_1.toFixed(2) : 'N/A'}</p> */}
-                  {(userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') && (
-                    <>
-                      <p>Predicted MP: {Number(details.predicted_MP_celsius).toFixed(2)} °C</p>
-                      <p>Predicted BP: {Number(details.predicted_BP_celsius).toFixed(2)} °C</p>
-                    </>
-                  )}
-                  {details.image && (
-                    <img 
-                      src={details.image} 
-                      alt={`Structure of ${details.SMILE}`} 
-                      className="molecule-image"
-                    />
-                  )}
-                  
-                  {/* Add molecule feedback buttons */}
-                  <div className="molecule-feedback-buttons">
-                    <div>
-                      <span>Rate this match:</span>
-                      <button onClick={() => handleMoleculeThumbsUp(idx)}>
-                        👍
-                      </button>
-                      <button onClick={() => handleMoleculeThumbsDown(idx)}>
-                        👎
-                      </button>
-                    </div>
 
-                    {feedbackOpen && feedbackMoleculeIndex === idx && (
-                      <div className="feedback-form">
-                        <p>
-                          {feedbackType === 'up'
-                            ? 'What makes this a good match?'
-                            : 'Why is this not a good match?'}
-                        </p>
-                        <textarea
-                          value={feedbackText}
-                          onChange={(e) => setFeedbackText(e.target.value)}
-                          rows={4}
-                          placeholder="Your feedback helps us improve molecule matching"
-                        />
-                        <div>
-                          <button
-                            className="cancel"
-                            onClick={handleMoleculeFeedbackCancel}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            className="submit"
-                            onClick={handleMoleculeFeedbackSubmit}
-                          >
-                            Submit
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Replace global favorite status messages with molecule-specific ones in similar molecules section */}
-                  {moleculeFavoriteStatus[details.SMILES]?.success && (
-                    <div className="success-message">
-                      {moleculeFavoriteStatus[details.SMILES].success}
-                    </div>
-                  )}
-                  
-                  {moleculeFavoriteStatus[details.SMILES]?.error && (
-                    <div className="error-message">
-                      {moleculeFavoriteStatus[details.SMILES].error}
-                    </div>
-                  )}
-                  
+              return <MolCard
+                key={idx}
+                vertical={true}
+                name={details.SMILES}
+                large={true}
+                style={{ margin: 5 }}
+                propGroups={[
+                  { label: 'LLM Grade', value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ?
+                    <IconButton onClick={() => {
+                          setReasoningText(details.reasoning);
+                        }} style={{ marginLeft: 5 }} size="small">
+                      <Info size={18} style={{ margin: 2 }}/>
+                    </IconButton> : null
+                  )},
+                  { label: 'SMILES', value: details.SMILES, span: 2 },
+                  { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
+                  { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                   },
+                  { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                   },
+                   {
+                    label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV'
+                   },
+                   {
+                    label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV'
+                   },
+                   {
+                    label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV'
+                   },
+                    {
+                      label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV'
+                    },
+                  ]} foldPropGroups={[
+                    { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }
+                  ]}>
+                <div className='molecule-actions'>
+
+                  <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
+                    loading={moleculeFavoriteStatus[details.SMILES]?.loading}
+                    fullWidth
+                    loadingText={"Saving ..."}
+                    successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
+                    errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
+                    Add To Favorites
+                  </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
-                  <div className="favorites-container">
-                    <button
-                      className="favorites-button"
-                      onClick={() => handleAddToFavorites(details)}
-                      disabled={moleculeFavoriteStatus[details.SMILES]?.loading}
-                    >
-                      {moleculeFavoriteStatus[details.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                    </button>
-                  </div>
+                  <MoleculeFeedbackBox
+                    fullWidth={true}
+                    molecule={details}
+                    lastSearch={activeMolecule}
+                    onClose={() => { }}
+                  />
                 </div>
-              );
+              </MolCard>
             })}
           </div>
         )}
