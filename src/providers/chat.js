@@ -8,6 +8,7 @@ const API_URL = getAPIUrl();
  const generateNewChat = () => ({
     name: 'New Chat',
     isThinking: false,
+    thinkingStartedAt: null,
     moleculesLoading: false,
     similarMoleculesLoading: false,
     messages: [
@@ -73,15 +74,15 @@ export const useChatStore = create(persist((set, get) => ({
 
                 if (historyData.length > 0) {
                     historyData.forEach(chat => {
-                            draft.chatMap[chat.id] = {
-                                createdAt: chat.created_at,
-                                name: chat.chat_name || 'New Chat',
-                                messages: chat.content.map(item => ({
-                                    type: item.role === 'system' ? 'system-message' : item.role === 'user' ? 'user-message' : 'llm-message',
-                                    text: item.content || '',
-                                    molText: item.molecules.join(", ") || [],
-                                    molecules: item.molecules || [],
-                                })) || [],
+                        draft.chatMap[chat.id] = {
+                            createdAt: chat.created_at,
+                            name: chat.chat_name || 'New Chat',
+                            messages: chat.content.map(item => ({
+                                type: item.role === 'system' ? 'system-message' : item.role === 'user' ? 'user-message' : 'llm-message',
+                                text: item.content || '',
+                                molText: item.molecules.join(", ") || [],
+                                molecules: item.molecules || [],
+                            })) || [],
                             activeMolecule: chat.meta_active_molecule || null,
                             foundMolecules: chat.meta_molecules || [],
                             similarMolecules: chat.meta_similar_molecules || [],
@@ -167,6 +168,15 @@ export const useChatStore = create(persist((set, get) => ({
     // LLM actions
     setIsThinking: (isThinking, chatId = null) => set(produce((state) => {
         console.log("Setting isThinking for chat:", chatId || state.activeChat, isThinking);
+
+        if (isThinking) {
+            // If thinking starts, set the timestamp
+            state.chatMap[chatId || state.activeChat].thinkingStartedAt = new Date().toISOString();
+        } else {
+            // If thinking ends, clear the timestamp
+            state.chatMap[chatId || state.activeChat].thinkingStartedAt = null;
+        }
+        
         const chat = state.chatMap[chatId || state.activeChat];
         if (!chat) return;
         chat.isThinking = isThinking;
