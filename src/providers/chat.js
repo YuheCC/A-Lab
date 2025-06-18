@@ -282,7 +282,6 @@ export const useChatStore = create(persist((set, get) => ({
     storage: createJSONStorage(() => localStorage),
     partialize: (state) => ({
         isSynced: false,
-        activeChat: state.activeChat,
         chatMap: Object.fromEntries(
             Object.entries(state.chatMap).map(([key, value]) => [
                 key,

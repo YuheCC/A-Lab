@@ -7,13 +7,13 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import {MolCard} from './components/MolCard';
 import { useChatStore, useActiveChatData } from './providers/chat.js';
 import { useShallow } from 'zustand/react/shallow';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
-import { Copy, Info, InfoIcon, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Copy, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 
 const API_URL = getAPIUrl();
@@ -154,6 +154,8 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
+  const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
+  const [foundMoleculesError, setFoundMoleculesError] = useState(null);
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
   
   // Add new state for molecule feedback functionality
@@ -200,13 +202,15 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   };
 
   
-  const handleFindMolecules = async (message) => {
+  const handleFindMolecules = async (message, index) => {
+    setFoundMoleculesMessageIndex(index);
     setActiveFindMessage(message);
     const moleculeList = message.molecules || [];
     setSimilarMolecules([]);
     setFoundMolecules(null);
     setActiveMolecule(null);
     setShowFoundMolecules(true);
+    setFoundMoleculesError(null);
     try {
       setMoleculesLoading(true);
       const responses = await Promise.allSettled(
@@ -236,9 +240,16 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
         return acc;
       }, []);
 
-      setFoundMolecules(flattenedMolecules, activeChat);
+      if (flattenedMolecules.length === 0) {
+        setMoleculesLoading(false, activeChat);
+        setFoundMoleculesError("No molecules found.");
+      } else {
+        setFoundMolecules(flattenedMolecules, activeChat);
+        setFoundMoleculesError(null);
+      }
     } catch (err) {
       console.error("Error fetching molecule details:", err);
+      setFoundMoleculesError("Failed to find molecules. Please try again later.");
     } finally {
       setMoleculesLoading(false, activeChat);
     }
@@ -671,8 +682,12 @@ const handleFindSimilarMolecules = async (details) => {
                 </div>
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
-                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg)} size="small" 
-                      loading={moleculesLoading} loadingText={"searching our database"}
+                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
+                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={"searching our database"}
+                      errorMessage={foundMoleculesMessageIndex === index ? foundMoleculesError : null}
+                      sideError
+                      hideTime={10000} // 10 seconds
+                      disabled={moleculesLoading && foundMoleculesMessageIndex !== index}
                       style={{ marginRight: 10 }}>
                       Find Molecules
                     </CustomButton>
@@ -765,7 +780,13 @@ const handleFindSimilarMolecules = async (details) => {
               <h3>LLM Found Molecules</h3>
               <button 
                 className="close-molecules-button"
-                onClick={() => setShowFoundMolecules(false)}
+                onClick={() => {
+                  setShowFoundMolecules(false);
+                  setFoundMolecules([]);
+                  setActiveMolecule(null);
+                  setFoundMoleculesError(null);
+                  setFoundMoleculesMessageIndex(null);
+                }}
               >
                 ×
               </button>
@@ -824,7 +845,11 @@ const handleFindSimilarMolecules = async (details) => {
                 <h3>Friends ranked by likelihood to replace: {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
                 className="close-molecules-button"
-                onClick={() => setShowSimilarMolecules(false)}
+                onClick={() => {
+                  setShowSimilarMolecules(false);
+                  setSimilarMolecules([]);
+                  setActiveMolecule(null);
+                }}
               >
                 ×
               </button>
@@ -846,7 +871,7 @@ const handleFindSimilarMolecules = async (details) => {
                         }} style={{ marginLeft: 5 }} size="small">
                       <Info size={18} style={{ margin: 2 }}/>
                     </IconButton> : null
-                  )},
+                  ), show: details.grade !== null && details.grade !== undefined },
                   { label: 'SMILES', value: details.SMILES, span: 2 },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
                   { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',

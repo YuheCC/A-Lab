@@ -11,8 +11,10 @@ const CustomButton = ({
   variant,
   loading,
   loadingText,
+  disabled = false,
   errorMessage,
   successMessage,
+  hideTime = STATUS_HIDE_TIME,
   sideError,
   fullWidth = false,
   style,
@@ -33,9 +35,9 @@ const CustomButton = ({
     setTimeout(() => {
         setStatusState('');
         setLocalStatusMessage('');
-    }, STATUS_HIDE_TIME);
+    }, hideTime);
 
-  }, [errorMessage, successMessage]);
+  }, [errorMessage, successMessage, hideTime]);
 
   return (
     <div className={`custom-button-group ${sideError ? 'side' : ''} ${fullWidth ? 'full-width' : ''}`} style={style}>
@@ -44,8 +46,9 @@ const CustomButton = ({
         color={color || 'primary'}
         onClick={onClick}
         size="small"
+        disabled={disabled}
         className='icon-button'
-        loading={loading}
+        loading={loading && !disabled}
         loadingPosition='start'
         fullWidth={fullWidth}
         startIcon={
