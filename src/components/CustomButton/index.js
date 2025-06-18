@@ -11,6 +11,7 @@ const CustomButton = ({
   variant,
   loading,
   loadingText,
+  disabled = false,
   errorMessage,
   successMessage,
   hideTime = STATUS_HIDE_TIME,
@@ -45,8 +46,9 @@ const CustomButton = ({
         color={color || 'primary'}
         onClick={onClick}
         size="small"
+        disabled={disabled}
         className='icon-button'
-        loading={loading}
+        loading={loading && !disabled}
         loadingPosition='start'
         fullWidth={fullWidth}
         startIcon={

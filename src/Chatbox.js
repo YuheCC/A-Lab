@@ -154,6 +154,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
+  const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
   
@@ -201,7 +202,8 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   };
 
   
-  const handleFindMolecules = async (message) => {
+  const handleFindMolecules = async (message, index) => {
+    setFoundMoleculesMessageIndex(index);
     setActiveFindMessage(message);
     const moleculeList = message.molecules || [];
     setSimilarMolecules([]);
@@ -680,11 +682,12 @@ const handleFindSimilarMolecules = async (details) => {
                 </div>
                 {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
-                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg)} size="small" 
-                      loading={moleculesLoading} loadingText={"searching our database"}
-                      errorMessage={foundMoleculesError}
+                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
+                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={"searching our database"}
+                      errorMessage={foundMoleculesMessageIndex === index ? foundMoleculesError : null}
                       sideError
                       hideTime={10000} // 10 seconds
+                      disabled={moleculesLoading && foundMoleculesMessageIndex !== index}
                       style={{ marginRight: 10 }}>
                       Find Molecules
                     </CustomButton>
@@ -777,7 +780,13 @@ const handleFindSimilarMolecules = async (details) => {
               <h3>LLM Found Molecules</h3>
               <button 
                 className="close-molecules-button"
-                onClick={() => setShowFoundMolecules(false)}
+                onClick={() => {
+                  setShowFoundMolecules(false);
+                  setFoundMolecules([]);
+                  setActiveMolecule(null);
+                  setFoundMoleculesError(null);
+                  setFoundMoleculesMessageIndex(null);
+                }}
               >
                 ×
               </button>
@@ -836,7 +845,11 @@ const handleFindSimilarMolecules = async (details) => {
                 <h3>Friends ranked by likelihood to replace: {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
               <button 
                 className="close-molecules-button"
-                onClick={() => setShowSimilarMolecules(false)}
+                onClick={() => {
+                  setShowSimilarMolecules(false);
+                  setSimilarMolecules([]);
+                  setActiveMolecule(null);
+                }}
               >
                 ×
               </button>
