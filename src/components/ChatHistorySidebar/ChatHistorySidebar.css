@@ -29,6 +29,7 @@
 
 .close-sidebar-button {
     padding: 5px;
+    border-radius: 4px;
 }
 
 .sidebar-header-content {
@@ -107,6 +108,15 @@
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.1s ease, visibility 0.1s ease;
+}
+.open-sidebar-button {
+    display: flex;
+    align-items: center;
+}
+.open-sidebar-text {
+    font-size: 14px;
+    color: #777;
+    margin-left: 10px;
 }
 
 /* Chat Confirm Delete Modal */
