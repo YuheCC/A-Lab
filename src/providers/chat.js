@@ -44,6 +44,11 @@ export const useChatStore = create(persist((set, get) => ({
                 console.warn(`Chat with id ${chatId} already exists, skipping update.`);
                 return;
             }
+
+            if (chatId === null) {
+                console.warn("Chat ID is null, not updating.");
+                return;
+            }
             
             // Add chat with new ID
             state.chatMap[chatId] = chatData;
