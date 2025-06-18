@@ -85,7 +85,13 @@ export const ChatHistorySidebar = () => {
                     <h2>Your Chats</h2>
                 </span>
                 <IconButton className="close-sidebar-button" style={{ marginLeft: 'auto' }} onClick={() => setCollapsed(!collapsed)} size="small">
-                    {collapsed ? <Tooltip title="View Chat History" placement="right" enterNextDelay={5000} enterDelay={200}><PanelLeftOpen size={21} /></Tooltip> : <PanelLeftClose size={21} />}
+                    {collapsed ? 
+                        <Tooltip title="View Chat History" placement="right" enterNextDelay={5000} enterDelay={200}>
+                            <div className="open-sidebar-button">
+                                <PanelLeftOpen size={21} />
+                                <span className="open-sidebar-text">Your Chats</span>
+                            </div>
+                        </Tooltip> : <PanelLeftClose size={21} />}
                 </IconButton>
             </div>
             <div className="chat-history">
