@@ -169,7 +169,6 @@ export const useAuthStore = create((set, get) => ({
             }
 
             const data = await response.json();
-            console.log('response', data);
 
             set({
                 isLoading: false,
