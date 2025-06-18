@@ -9,6 +9,13 @@
   z-index: 1000;
 }
 
+.molcard-vertical .molcard-visualization {
+  display: flex;
+  justify-content: center;
+  width: calc(100% - 10px);
+  max-width: none;
+}
+
 .molcard-visualization {
   padding: 5px;
   display: flex;
@@ -19,6 +26,13 @@
   width: 200px;
   max-width: 200px;
   margin-right: 5px;
+}
+
+.molcard-vertical .molcard-info-panel {
+  border-left: none;
+  border-top: 1px solid #ddd;
+  max-width: none;
+  min-width: 0;
 }
 
 .molcard-info-panel {
@@ -33,6 +47,7 @@
 }
 
 .molcard-property-group {
+  position: relative;
   display: flex;
   flex-flow: column;
   font-size: 12px;
@@ -46,6 +61,9 @@
   font-size: 12px;
   color: #555;
   max-width: 200px;
+  display: flex;
+  flex-flow:row;
+  align-items: center;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

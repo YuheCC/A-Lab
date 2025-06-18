@@ -50,7 +50,9 @@ export const PropItem = ({ prop }) => {
                         </div>
                     } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
                       enterDelay={500} enterNextDelay={500}>
-                        <code ref={codeRef}>{valueString}</code>
+                        <code ref={codeRef}>{valueString}{prop?.action && (
+                            prop?.action
+                        )}</code>
                     </Tooltip>
                 </div>
             </div>
@@ -59,7 +61,7 @@ export const PropItem = ({ prop }) => {
 
 export const MolCard = (props) => {
     const [expanded, setExpanded] = useState(false);
-    const { showMoreDetails = false, large = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
+    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
@@ -78,8 +80,8 @@ export const MolCard = (props) => {
     }
 
     return (
-        <div className={`molcard-container ${large ? 'molcard-large': ''}`} {...domProps}>
-            <div style={{ display: 'flex', flexFlow: 'row' }}>
+        <div className={`molcard-container ${large ? 'molcard-large': ''} ${vertical ? 'molcard-vertical': ''}`} {...domProps}>
+            <div style={{ display: 'flex', flexFlow: vertical ? 'column' : 'row', width: '100%' }}>
                 <div className='molcard-visualization' translate='no'>
                     {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{
                         width: '150px',
