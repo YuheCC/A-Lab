@@ -125,6 +125,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     foundMolecules,
     similarMolecules,
     isThinking,
+    thinkingStartedAt,
     moleculesLoading,
     similarMoleculesLoading,
   } = useActiveChatData();
@@ -173,8 +174,9 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   // Timer for thinking message
   useEffect(() => {
     let interval = null;
-    if (isThinking) {
-      setThinkingTime(0);
+    if (thinkingStartedAt && isThinking) {
+      const timeElapsed = Math.floor((Date.now() - new Date(thinkingStartedAt).getTime()) / 1000);
+      setThinkingTime(timeElapsed);
       interval = setInterval(() => {
         setThinkingTime(time => time + 1);
       }, 1000);
@@ -184,7 +186,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isThinking]);
+  }, [thinkingStartedAt, isThinking]);
 
   // Define handlers for thumbs feedback
   const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
