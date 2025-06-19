@@ -592,7 +592,7 @@ const handleFindSimilarMolecules = async (details) => {
         </div>
       )}
       <div className="chat-and-molecules">
-        <ChatHistorySidebar/>
+        <ChatHistorySidebar compressed={foundMolecules?.length > 0 && similarMolecules?.length > 0}/>
         <div className={`chatbot-content ${!showFoundMolecules && !showSimilarMolecules ? 'full-width' : 'with-molecules'}`}>
           {userPermissions === 'research' && (
             <div className="chatbot-header">

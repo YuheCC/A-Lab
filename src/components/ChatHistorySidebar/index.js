@@ -51,7 +51,7 @@ const ConfirmDeleteChat = ({ onDelete, onCancel }) => {
     );
 }
 
-export const ChatHistorySidebar = () => {
+export const ChatHistorySidebar = ({ compressed = false }) => {
 
     const { createChat, deleteChat, setActiveChat, chatMap, activeChat } = useChatStore(useShallow((state) => ({
         createChat: state.createChat,
@@ -82,13 +82,13 @@ export const ChatHistorySidebar = () => {
                             <MessageCirclePlus size={21}/>
                         </IconButton>
                     </Tooltip>
-                    <h2>Your Chats</h2>
+                     <h2>Your Chats</h2>
                 </span>
                 <IconButton className="close-sidebar-button" style={{ marginLeft: 'auto' }} onClick={() => setCollapsed(!collapsed)} size="small">
                     {collapsed ? (
                         <div className="open-sidebar-button">
                             <PanelLeftOpen size={21} />
-                            <span className="open-sidebar-text">Your Chats</span>
+                            {(compressed === false) &&<span className="open-sidebar-text">Your Chats</span>}
                         </div>
                     ): <PanelLeftClose size={21} />}
                 </IconButton>
