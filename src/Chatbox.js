@@ -159,11 +159,12 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
   
   // Add new state for molecule feedback functionality
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackMoleculeIndex, setFeedbackMoleculeIndex] = useState(null);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [activeFindMessage, setActiveFindMessage] = useState(null);
+  const [contextObject, setContextObject] = useState({
+    contextContent1: "",
+    contextContent2: "",
+    contextContent3: "",
+  });
   const [reasoningText, setReasoningText] = useState(null);
   
   // Add favorites state - remove unused states
@@ -190,7 +191,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     };
   }, [thinkingStartedAt, isThinking]);
 
-  // Define handlers for thumbs feedback
+  // Define handlers for llm response thumbs feedback
   const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
     setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
@@ -467,79 +468,6 @@ const handleFindSimilarMolecules = async (details) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Add feedback handlers for thumbs up/down
-  const handleMoleculeThumbsUp = (moleculeIndex) => {
-    const message = activeFindMessage;
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('up');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleMoleculeThumbsDown = (moleculeIndex) => {
-    const message = activeFindMessage;
-    setFeedbackMoleculeIndex(moleculeIndex);
-    setFeedbackType('down');
-    setFeedbackOpen(true);
-    setFeedbackText('');
-  };
-
-  const handleMoleculeFeedbackSubmit = async () => {
-    if (feedbackMoleculeIndex !== null && similarMolecules && similarMolecules.length > feedbackMoleculeIndex) {
-      try {
-        const molecule = similarMolecules[feedbackMoleculeIndex];
-
-        // Gather LLM context for this feedback from the originating message
-        const rawInputs = activeFindMessage?.inputs;
-        let contextContent1 = "";
-        if (Array.isArray(rawInputs)) {
-          const lastUserMsg = rawInputs.filter(m => m.role === "user").pop() || {};
-          contextContent1 = lastUserMsg.content || "";
-        } else if (typeof rawInputs === "string") {
-          contextContent1 = rawInputs;
-        }
-        const contextContent2 = activeFindMessage?.text || "";
-        const contextContent3 = activeFindMessage?.sources || "";
-
-        // Submit feedback to backend
-        await authFetch(`${API_URL}/api/feedback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            isPositive: feedbackType === 'up',
-            feedbackText: feedbackText.trim(),
-            inputContent: activeMolecule ? activeMolecule.SMILES : '',
-            responseContent: molecule.SMILES,
-            contextContent1,
-            contextContent2,
-            contextContent3,
-            timestamp: new Date().toISOString(),
-            collection: 'friends-feedback',
-          }),
-        });
-
-        // Close the feedback form
-        setFeedbackOpen(false);
-        setFeedbackMoleculeIndex(null);
-        setFeedbackText('');
-
-        // You might want to show a success message
-        alert('Thank you for your feedback!');
-      } catch (error) {
-        console.error('Error submitting feedback:', error);
-        alert('Failed to submit feedback. Please try again.');
-      }
-    }
-  };
-
-  const handleMoleculeFeedbackCancel = () => {
-    setFeedbackOpen(false);
-    setFeedbackMoleculeIndex(null);
-    setFeedbackText('');
-  };
-
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
     // Remove global loading state
@@ -628,6 +556,23 @@ const handleFindSimilarMolecules = async (details) => {
       }, 3000);
     }
   };
+
+  useEffect(() => {
+    // Extract feedback context information from the source message
+    const rawInputs = activeFindMessage?.inputs;
+    const contextContent1 = Array.isArray(rawInputs)
+      ? rawInputs.filter(m => m.role === "user").pop()?.content || ""
+      : rawInputs || "";
+    const contextContent2 = activeFindMessage?.text || "";
+    const contextContent3 = activeFindMessage?.sources || "";
+
+    setContextObject({
+      contextContent1: contextContent1,
+      contextContent2: contextContent2,
+      contextContent3: contextContent3,
+    });
+
+  }, [activeFindMessage])
 
   return (
     <div className="chatbot-container">
@@ -910,6 +855,9 @@ const handleFindSimilarMolecules = async (details) => {
                     fullWidth={true}
                     molecule={details}
                     lastSearch={activeMolecule}
+                    contextContent1={contextObject.contextContent1}
+                    contextContent2={contextObject.contextContent2}
+                    contextContent3={contextObject.contextContent3}
                     onClose={() => { }}
                   />
                 </div>
