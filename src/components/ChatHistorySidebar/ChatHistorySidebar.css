@@ -98,6 +98,7 @@
 }
 
 .collapsed .chat-history {
+        display: none;
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.1s ease, visibility 0.1s ease;
