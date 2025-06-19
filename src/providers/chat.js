@@ -25,7 +25,7 @@ export const useChatStore = create(persist((set, get) => ({
     isLoading: false,
     error: null,
     isSynced: false,
-    activeChat: "-1",
+    activeChat: '-1', 
     chatMap: {
         "-1": generateNewChat()
     },
@@ -279,9 +279,13 @@ export const useChatStore = create(persist((set, get) => ({
 
 }), {
     name: 'chat-store',
-    storage: createJSONStorage(() => localStorage),
+    storage: createJSONStorage(() => sessionStorage),
     partialize: (state) => ({
         isSynced: false,
+        // If default chat exists, save it as active chat
+        // Otherwise, set active chat to the first available chat
+        /* activeChat: Object.keys(state.chatMap).includes("-1") ? "-1" : 
+            state.activeChat !== "-1" ? state.activeChat : Object.keys(state.chatMap)[0], */
         chatMap: Object.fromEntries(
             Object.entries(state.chatMap).map(([key, value]) => [
                 key,
@@ -294,8 +298,18 @@ export const useChatStore = create(persist((set, get) => ({
                     createdAt: value.createdAt,
                 }
             ])
-        )
+        ),
     }),
+    onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        
+        // Ensure default chat exists after rehydration
+        if (!state.chatMap['-1']) {
+            console.log("Default chat not found after rehydration, creating a new one.");
+            state.chatMap['-1'] = generateNewChat();
+            state.activeChat = '-1';
+        }
+    }
 }));
 
 export const useActiveChatData = () => {
