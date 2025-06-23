@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, use } from 'react';
+import React, { useState, useEffect, useRef, useCallback, use, useMemo } from 'react';
+import streamSSE from "./components/streamSSE.js";
+
 import FeedbackBox from './components/FeedbackBox.js';
 import './Chatbox.css';
 
@@ -20,7 +22,8 @@ const API_URL = getAPIUrl();
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
- disableLiteratureSearch, onDisableLiteratureSearchChange, userPermissions }) => {
+    disableLiteratureSearch, onDisableLiteratureSearchChange,
+    userPermissions, useMultiAgent, onUseMultiAgentChange }) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
 
@@ -112,6 +115,27 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             </label>
           </>
         )}
+        alert(userPermissions);
+        {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
+          <>
+            <input
+              type="checkbox"
+              id="useMultiAgent"
+              checked={useMultiAgent}
+              onChange={e => onUseMultiAgentChange(e.target.checked)}
+              style={{ marginLeft: '20px' }}
+            />
+            <label htmlFor="useMultiAgent">
+              Invoke the Constellation (BETA)
+              <Tooltip
+                title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
+                placement="top"
+              >
+                <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
+              </Tooltip>
+            </label>
+          </>
+        )}
       </div>
     </div>
   );
@@ -169,6 +193,12 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   
   // Add favorites state - remove unused states
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
+
+  // multi-agent state
+  const [useMultiAgent, setUseMultiAgent] = useState(false);
+  // clarification round‑trip state
+  const [awaitingClarify, setAwaitingClarify] = useState(false);
+  const [multiAgentHistory, setMultiAgentHistory] = useState([]);
 
   useEffect(() => {
     scrollToBottom();
@@ -350,119 +380,197 @@ const handleFindSimilarMolecules = async (details) => {
     }
   }, [isSynced, loadHistory]);
 
-  const handleSend = useCallback(async (input) => {
-    if (!input.trim()) return;
+  const handleSend = useCallback(
+    async (input) => {
+      if (!input.trim()) return;
 
-    // For research users, check query limit
-    if (userPermissions === 'research' && remainingQueries <= 0) {
-      const errorMessage = { 
-        type: "llm-message", 
-        text: "You have reached your monthly query limit. Please contact an administrator for assistance." 
-      };
-      addMessage(errorMessage);
-      return;
-    }
-
-    // Create new user message
-    const newUserMessage = { type: "user-message", text: input.trim() };
-    // Update the messages state
-    const updatedMessages = [...messages, newUserMessage];
-    addMessage(newUserMessage);
-
-    // Build the messages array to send to the backend
-    let messagesToSend;
-    if (ignoreChatHistory) {
-      messagesToSend = [{ role: "user", content: input.trim() }];
-    } else {
-      messagesToSend = updatedMessages
-        .filter(msg => msg.type === "user-message" || msg.type === "llm-message")
-        .map(msg => {
-          if (msg.type === "user-message") {
-            return { role: "user", content: msg.text };
-          } else if (msg.type === "llm-message") {
-            return { role: "assistant", content: msg.text };
-          }
+      /* enforce research-tier quota */
+      if (userPermissions === 'research' && remainingQueries <= 0) {
+        addMessage({
+          type : "llm-message",
+          text : "You have reached your monthly query limit. Please contact an administrator for assistance."
         });
-    }
+        return;
+      }
 
-    setIsThinking(true);
+      /* push new user message */
+      const newUserMessage = { type: "user-message", text: input.trim() };
+      addMessage(newUserMessage);
 
-    const currentChat = activeChat ? parseInt(activeChat) : -1;
-    try {
-      const token = localStorage.getItem('token');
-      // Determine RAG model and result count based on user tier
-      const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel = isAdvancedTier ? 'o3' : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10 : 3;
-      // Query the backend via the /rag endpoint using the messages array
-      const response = await authFetch(`${API_URL}/rag`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          chatId: activeChat ? parseInt(activeChat) : -1, 
-          messages: messagesToSend,
-          maxOutputLength: 8192, // deprecated
-          ragEnabled: !disableLiteratureSearch,
-          webSearchEnabled: false,
-          webSearchClient: "Tavily",
-          numRagResults: ragResultsCount,
-          model: ragModel
-        })
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        let message = "Network response was not ok";
-        if (response.status === 400 && errorText.includes("Query is not relevant to batteries or battery chemistry")) {
-          message = "Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.";
-        } else {
-          try {
-            const errData = JSON.parse(errorText);
-            if (errData.detail) message = errData.detail;
-          } catch {
-            // leave default message
+      /* construct message list for the back-end */
+      const messagesToSend = ignoreChatHistory
+        ? [{ role: "user", content: input.trim() }]
+        : [...messages, newUserMessage]
+            .filter(m => m.type === "user-message" || m.type === "llm-message")
+            .map(m => ({
+              role   : m.type === "user-message" ? "user" : "assistant",
+              content: m.text,
+            }));
+
+      setIsThinking(true);
+      const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
+      const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
+      const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
+      const ragResultsCount = isAdvancedTier ? 10          : 3;
+
+      let data;          // final payload from the back-end
+      let effectiveChatId = currentChatId;
+
+      try {
+        /* ---------------------------------------------------------- */
+        /* MULTI-AGENT WORKFLOW                                      */
+        /* ---------------------------------------------------------- */
+        if (useMultiAgent) {
+
+          /* 1️⃣  Second half of a clarification round --------------- */
+          if (awaitingClarify) {
+            const updatedHistory = [
+              ...multiAgentHistory,
+              { role: "user", content: input.trim() }
+            ];
+            setMultiAgentHistory(updatedHistory);
+
+            const res = await authFetch(`${API_URL}/multi-agent`, {
+              method : "POST",
+              headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+              body   : JSON.stringify({ messages: updatedHistory }),
+            });
+            if (!res.ok) throw new Error(await res.text());
+
+            for await (const evt of streamSSE(res)) {
+              if (evt.answer || evt.error) {
+                data = evt;
+                break;
+              }
+            }
+
+            setAwaitingClarify(false);
+            setMultiAgentHistory([]);
+
+          /* 2️⃣  First contact – ask for clarifying questions -------- */
+          } else {
+            const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
+              method : "POST",
+              headers: { "Content-Type": "application/json" },
+              body   : JSON.stringify({ messages: messagesToSend }),
+            });
+            if (!clarRes.ok) throw new Error(await clarRes.text());
+            const clarData = await clarRes.json();
+
+            if (clarData.clarifying_questions?.length) {
+              const clarMsg = {
+                type: "llm-message",
+                text: clarData.clarifying_questions,
+              };
+              addMessage(clarMsg);
+              setAwaitingClarify(true);
+              setMultiAgentHistory([
+                ...messagesToSend,
+                { role: "assistant", content: clarData.clarifying_questions },
+              ]);
+              setIsThinking(false);
+              return;                 // wait for user reply
+            }
+
+            /* 3️⃣  No clarifications – run Constellation directly ---- */
+            const res = await authFetch(`${API_URL}/multi-agent`, {
+              method : "POST",
+              headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+              body   : JSON.stringify({ messages: messagesToSend }),
+            });
+            if (!res.ok) throw new Error(await res.text());
+
+            for await (const evt of streamSSE(res)) {
+              if (evt.answer || evt.error) {
+                data = evt;
+                break;
+              }
+            }
           }
+
+        /* ---------------------------------------------------------- */
+        /* NORMAL `/rag` WORKFLOW                                    */
+        /* ---------------------------------------------------------- */
+        } else {
+          const res = await authFetch(`${API_URL}/rag`, {
+            method : "POST",
+            headers: { "Content-Type": "application/json" },
+            body   : JSON.stringify({
+              chatId          : currentChatId,
+              messages        : messagesToSend,
+              ragEnabled      : !disableLiteratureSearch,
+              webSearchEnabled: false,
+              webSearchClient : "Tavily",
+              numRagResults   : ragResultsCount,
+              model           : ragModel,
+            }),
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            if (res.status === 400 &&
+                errText.includes("Query is not relevant to batteries or battery chemistry"))
+              throw new Error("Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.");
+
+            throw new Error(errText || "Network response was not ok");
+          }
+          data = await res.json();
         }
-        throw new Error(message);
-      }
-      const data = await response.json();
 
-      // Update chat ID if it is a new chat
-      if (currentChat === -1)
-        updateNewChatId(data.chat_id);
+        /* ---------------------------------------------------------- */
+        /* Common post-processing                                     */
+        /* ---------------------------------------------------------- */
+        if (data?.error) throw new Error(data.error);
 
-      // Assuming the response returns an 'outputs' field with the result text
-      // Use llmOutput for chat history (only the raw LLM response) and fullOutput for display
-      const llmMessage = { 
-        type: "llm-message", 
-        inputs: data.inputs, 
-        text: data.llmOutput, 
-        sources: data.source_html, 
-        molText: data.molecule_text,
-        molecules: data.molecules 
-      };
-      
-      // Add the LLM message to the chat history
-      // - Need to specify chat_id because activeChat may have changed
-      addMessage(llmMessage, data.chat_id);
-      setIsThinking(false, data.chat_id);
-      // setMessages(prev => [...prev, llmMessage]);
+        /* adopt/assign chat ID */
+        if (effectiveChatId === -1 && data.chat_id !== undefined) {
+          updateNewChatId(data.chat_id);
+          effectiveChatId = data.chat_id;
+        }
 
-      // Update remaining queries based on server payload
-      if (userPermissions === 'research' && data.remaining_queries !== undefined) {
-        setRemainingQueries(data.remaining_queries);
+        /* build LLM message */
+        const llmMessage = {
+          type     : "llm-message",
+          inputs   : data.inputs || null,
+          text     : data.llmOutput || data.answer || "",
+          sources  : data.source_html,
+          molText  : data.molecule_text,
+          molecules: data.molecules,
+        };
+
+        addMessage(llmMessage, effectiveChatId);
+        setIsThinking(false, effectiveChatId);
+
+        /* refresh quota for research tier */
+        if (userPermissions === 'research' && data.remaining_queries !== undefined)
+          setRemainingQueries(data.remaining_queries);
+
+      } catch (err) {
+        addMessage({ type: "llm-message", text: "Error: " + err.message });
+        setIsThinking(false, effectiveChatId);
+      } finally {
+        if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
       }
-    } catch (error) {
-      const errorMessage = { type: "llm-message", text: "Error: " + error.message };
-      addMessage(errorMessage);
-      setIsThinking(false, currentChat);
-    } finally {
-      if (currentChat !== -1) {
-        setIsThinking(false, currentChat);
-      }
-    }
-  }, [userPermissions, remainingQueries, messages, addMessage, ignoreChatHistory, activeChat, disableLiteratureSearch, updateNewChatId, setRemainingQueries]);
+    },
+
+    /* dependencies */
+    [
+      userPermissions,
+      remainingQueries,
+      messages,
+      addMessage,
+      ignoreChatHistory,
+      activeChat,
+      disableLiteratureSearch,
+      updateNewChatId,
+      setRemainingQueries,
+      useMultiAgent,
+      awaitingClarify,
+      multiAgentHistory,
+      setMultiAgentHistory,
+      setAwaitingClarify,
+    ]
+  );
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -717,6 +825,8 @@ const handleFindSimilarMolecules = async (details) => {
             disableLiteratureSearch={disableLiteratureSearch}
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
             userPermissions={userPermissions}
+            useMultiAgent={useMultiAgent}
+            onUseMultiAgentChange={setUseMultiAgent}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
@@ -787,7 +897,10 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container">
             <div className="molecules-header">
-                <h3>Friends ranked by likelihood to replace: {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
+              <h3>
+                Friends ranked by likelihood to replace:&nbsp;
+                {((activeMolecule?.name || activeMolecule?.SMILES || '')).toLowerCase()}
+              </h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => {
