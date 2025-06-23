@@ -115,7 +115,6 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             </label>
           </>
         )}
-        alert(userPermissions);
         {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
           <>
             <input
