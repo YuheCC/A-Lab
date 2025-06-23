@@ -93,7 +93,15 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
               onChange={e => onUseMultiAgentChange(e.target.checked)}
               style={{ marginLeft: '20px' }}
             />
-            <label htmlFor="useMultiAgent">Use multi-agent system</label>
+            <label htmlFor="useMultiAgent">
+              Invoke the Constellation (BETA)
+              <Tooltip
+                title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer."
+                placement="top"
+              >
+                <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
+              </Tooltip>
+            </label>
           </>
         )}
       </div>
