@@ -1,10 +1,16 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import MolViewer2D from '../MolViewer2D';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import './Molcard.css';
+import { Tooltip } from '@mui/material';
 
 export const PropItem = ({ prop }) => {
+
+    // State used for tooltip visibility
+    const codeRef = useRef(null);
+    const [showTooltip, setShowTooltip] = useState(false);
+
     // Create and format the value string based on prop value and suffix
     let valueString;
     if (prop?.value) {
@@ -25,12 +31,29 @@ export const PropItem = ({ prop }) => {
             valueString = prop.value.join(", ");
         }
     }
+    
+    // Enable tooltip if the value string is too long and gets truncated
+    useEffect(() => {
+        const el = codeRef.current;
+        if (!el) return;
+        setShowTooltip(el.scrollWidth > el.clientWidth);
+    }, [valueString])
 
     return prop?.show !== false ? (
             <div style={{ gridColumn: `span ${prop.span || 1}` }}>
                 <div className='molcard-property-group'>
                     <label>{prop.label}</label>
-                    <code>{valueString}</code>
+                    <Tooltip title={
+                        <div className='molcard-property-group'>
+                            <label>{prop.label}</label>
+                            <div className='molcard-property-value'>{valueString}</div>
+                        </div>
+                    } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
+                      enterDelay={500} enterNextDelay={500}>
+                        <code ref={codeRef}>{valueString}{prop?.action && (
+                            prop?.action
+                        )}</code>
+                    </Tooltip>
                 </div>
             </div>
     ) : null;
@@ -38,7 +61,7 @@ export const PropItem = ({ prop }) => {
 
 export const MolCard = (props) => {
     const [expanded, setExpanded] = useState(false);
-    const { showMoreDetails = false, large = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
+    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
@@ -57,8 +80,8 @@ export const MolCard = (props) => {
     }
 
     return (
-        <div className={`molcard-container ${large ? 'molcard-large': ''}`} {...domProps}>
-            <div style={{ display: 'flex', flexFlow: 'row' }}>
+        <div className={`molcard-container ${large ? 'molcard-large': ''} ${vertical ? 'molcard-vertical': ''}`} {...domProps}>
+            <div style={{ display: 'flex', flexFlow: vertical ? 'column' : 'row', width: '100%' }}>
                 <div className='molcard-visualization' translate='no'>
                     {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{
                         width: '150px',

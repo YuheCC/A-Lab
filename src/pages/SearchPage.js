@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import SearchInput from "../Search";
+import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
 import { authFetch, getAPIUrl } from "../utils";
@@ -7,6 +7,8 @@ import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
+import CustomButton from "../components/CustomButton";
+import { Star } from "lucide-react";
 
 const API_URL = getAPIUrl();
 
@@ -22,8 +24,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     const [searchError, setSearchError] = useState(null);
     const [searchWarning, setSearchWarning] = useState(null);
     const [searchedMolecules, setsearchedMolecules] = useState(null);
-    const [similarMolecules, setSimilarMolecules] = useState(null);
-    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState(null);
+    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
 
@@ -31,7 +32,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     const [findFriendError, setFindFriendError] = useState(null);
 
     // Add new state for highlighted molecule
-    const [highlightedMolecules, setHighlightedMolecules] = useState(null);
+    const [highlightedMolecules, setHighlightedMolecules] = useState([]);
 
     // Update handleSearch function
     const handleSearchedMolecules = async (response, select_first = false) => {
@@ -95,9 +96,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
         setSearchError(null);
         setsearchResults(null);
         setsearchedMolecules(null);
-        setHighlightedMolecules(null);
-        setSimilarMolecules(null);
-        setHighlightedSimilarMolecules(null);
+        setHighlightedMolecules([]);
+        setHighlightedSimilarMolecules([]);
         setSimilarMoleculeImages({}); // Reset similar molecule images
         setFindFriendError(null); // Reset find friend error
 
@@ -118,10 +118,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                 return;
             }
 
-            console.log(moleculeResponse);
             const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
-            console.log(formattedMolecules);
-            console.log(searchedMolecules);
             if (formattedMolecules && findClosestFriends) {
                 // check if formattedMolecules has length > 1 - if so display warning
                 if (formattedMolecules.length > 1) {
@@ -149,7 +146,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         }
                         const data = await response.json();
                         const molecules = data.similar_molecules;
-                        setSimilarMolecules(molecules);
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
@@ -219,7 +215,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                     flex: '0.8'
                 }}>
                     {/* Search bar container */}
-
                     <SearchInput
                         onSearch={handleSearch}
                         disabled={searchLoading}
@@ -280,7 +275,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: 'SMILES', value: molecule.smiles, span: 2 },
+                                                    { label: 'SMILES', value: molecule.smiles, span: 4 },
                                                     { label: 'Molecular Weight', value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: 'Predicted Melting Point', value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -297,51 +292,19 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
                                                 <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
-                                                    <button
-                                                        className="favorites-button"
-                                                        onClick={() => handleAddToFavorites(molecule)}
-                                                        disabled={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                   <CustomButton
+                                                        Icon={Star}
                                                         style={{
-                                                            width: '100%',
-                                                            backgroundColor: '#0080ff',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            borderRadius: '4px',
-                                                            padding: '8px 15px',
-                                                            cursor: 'pointer',
-                                                            fontWeight: 'bold',
-                                                            transition: 'background-color 0.3s',
-                                                            display: 'inline-flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center'
+                                                            flexGrow: 1,
                                                         }}
-                                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                                        onClick={() => handleAddToFavorites(molecule)}
+                                                        loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                        loadingText="Saving..."
+                                                        successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
+                                                        errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
                                                     >
-                                                        {moleculeFavoriteStatus[molecule.smiles]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                                                    </button>
-
-                                                    {moleculeFavoriteStatus[molecule.smiles]?.success && (
-                                                        <div className="success-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'green',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.smiles].success}
-                                                        </div>
-                                                    )}
-
-                                                    {moleculeFavoriteStatus[molecule.smiles]?.error && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.smiles].error}
-                                                        </div>
-                                                    )}
+                                                        Add to Favorites
+                                                    </CustomButton>
 
                                                     {/* Display find-friend error below favorites button if it exists */}
                                                     {findClosestFriends && findFriendError && (
@@ -359,10 +322,10 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                         ))}
                                     </div>
                                 )}
-                                {findClosestFriends && similarMolecules && similarMolecules.length > 0 && (
+                                {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
                                     <div className="similar-molecules">
                                         <h3>Similar Molecules</h3>
-                                        {similarMolecules.map((molecule, index) => (
+                                        {highlightedSimilarMolecules.map((molecule, index) => (
                                             <MolCard
                                                 style={{ marginBottom: '20px' }}
                                                 key={index}
@@ -370,7 +333,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                 showMoreDetails={false}
                                                 large={true}
                                                 propGroups={[
-                                                    { label: 'SMILES', value: molecule.SMILES, span: 2 },
+                                                    { label: 'SMILES', value: molecule.SMILES, span: 4 },
                                                     { label: 'Molecular Weight', value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: 'Predicted Melting Point', value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -389,10 +352,12 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
                                                 ]}
                                             >
-                                                <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
-                                                 <div style={{ position: 'relative', minWidth: '300px', width: '100%' }}>
-                                                    <button
-                                                        className="favorites-button"
+                                                <div className="molecule-actions">
+                                                    <CustomButton
+                                                        Icon={Star}
+                                                        style={{
+                                                            flexGrow: 1,
+                                                        }}
                                                         onClick={() => handleAddToFavorites({
                                                             smiles: molecule.SMILES,
                                                             properties: {
@@ -408,54 +373,18 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                             x: molecule.UMAP_0,
                                                             y: molecule.UMAP_1
                                                         })}
-                                                        disabled={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        style={{
-                                                            width: '100%',
-                                                            backgroundColor: '#0080ff',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            borderRadius: '4px',
-                                                            padding: '8px 15px',
-                                                            cursor: 'pointer',
-                                                            fontWeight: 'bold',
-                                                            transition: 'background-color 0.3s',
-                                                            display: 'inline-flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center'
-                                                        }}
-                                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                                                        loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
+                                                        loadingText="Saving..."
+                                                        successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
+                                                        errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
                                                     >
-                                                        {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                                                    </button>
-
-                                                    {moleculeFavoriteStatus[molecule.SMILES]?.success && (
-                                                        <div className="success-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'green',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.SMILES].success}
-                                                        </div>
-                                                    )}
-
-                                                    {moleculeFavoriteStatus[molecule.SMILES]?.error && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.SMILES].error}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <MoleculeFeedbackBox
-                                                    molecule={molecule}
-                                                    lastSearch={lastSearch}
-                                                    onClose={() => { }}
-                                                />
+                                                        Add to Favorites
+                                                    </CustomButton>
+                                                    <MoleculeFeedbackBox
+                                                        molecule={molecule}
+                                                        lastSearch={lastSearch}
+                                                        onClose={() => { }}
+                                                    />
                                                 </div>
                                             </MolCard>
                                         ))}

@@ -19,7 +19,15 @@ const AboutPage = () => {
       {/* Main content */}
       <div className="about-content-wrapper" style={{ width: '85%' }}>
         <div className="about-content">
-          <img loading="lazy" src="/MakeContact_small.png" alt="Make Contact" style={{ width: '100%', marginBottom: '20px' }} />   
+          <picture>
+            <source srcSet="/MakeContact.webp" type="image/webp" />
+            <img
+              loading="lazy"
+              src="/MakeContact_small.png"
+              alt="Make Contact"
+              style={{ width: '100%', marginBottom: '20px' }}
+            />
+          </picture>
 
           <p style={{ fontStyle: 'italic', marginBottom: '5px' }}>"If it's just us, it seems like an awful waste of space."</p>
           <p style={{ fontStyle: 'italic', marginBottom: '50px' }}>Contact, 1997</p>
@@ -49,7 +57,15 @@ const AboutPage = () => {
 
             <p style={{ fontWeight: 'bold' }}>Battery Technology Starts with Small Molecules</p>
 
-            <img loading="lazy" src="/funnel_small.png" alt="Molecule Funnel" style={{ width: '100%', marginBottom: '20px' }} />
+            <picture>
+              <source srcSet="/funnel.webp" type="image/webp" />
+              <img
+                loading="lazy"
+                src="/funnel_small.png"
+                alt="Molecule Funnel"
+                style={{ width: '100%', marginBottom: '20px' }}
+              />
+            </picture>
             
             <p>In the battery world, it all comes down to small molecules.</p>
             <p>While the universe of molecules is infinite, the universe of small molecules is not. It's measurable. In fact, we know that there are 10<sup>60</sup> possible small molecules in the universe. Of these, 10<sup>11</sup> could be used for batteries. And of those, less than 1,000 have been studied for batteries in the past 30 years.</p>

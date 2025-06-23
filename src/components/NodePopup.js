@@ -49,7 +49,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
               ))}
             </tbody>
           </table>
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', gap: '4px', justifyContent: 'center' }}>
             <button
               className="copy-button"
               onClick={copyToClipboard}
