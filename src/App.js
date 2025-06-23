@@ -28,7 +28,8 @@ const FavoritesGrid = lazy(() => import('./FavoritesGrid.js'));
 const ChatbotInterface = lazy(() => import('./Chatbox.js'));
 
 const App = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { language } = i18n;
 
   const [selectedNode, setSelectedNode] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -52,6 +53,12 @@ const App = () => {
   const [chatMessages, setChatMessages] = useState([
     { type: "system-message", text: t('chatbox.systemMessage.welcome') }
   ]);
+
+  useEffect(() => {
+    setChatMessages([
+      { type: "system-message", text: t('chatbox.systemMessage.welcome') }
+    ]);
+  }, [language]);
 
   const fetchData = usePlotDataStore(state => state.fetchData);
   const { verifyAuth } = useAuthStore();
@@ -202,13 +209,13 @@ const App = () => {
       if (data.message === "Molecule already in favorites") {
         setMoleculeFavoriteStatus(prev => ({
           ...prev,
-          [smiles]: { loading: false, success: data.message, error: null }
+          [smiles]: { loading: false, success: t('chatbox.success.alreadyInFavorites'), error: null }
         }));
       } else {
         // Set success for this specific molecule
         setMoleculeFavoriteStatus(prev => ({
           ...prev,
-          [smiles]: { loading: false, success: t('chatbox.molecules.addedToFavorites'), error: null }
+          [smiles]: { loading: false, success: t('chatbox.success.addedToFavorites'), error: null }
         }));
       }
 

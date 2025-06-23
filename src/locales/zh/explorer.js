@@ -13,7 +13,8 @@ export default {
     functionalGroupFilter: {
         title: "官能团筛选器",
         tooltip: "官能团：通过子结构筛选器定位特定的化学性质，从氟化链到磺酰基团。",
-        selectPlaceholder: "选择官能团"
+        selectPlaceholder: "选择官能团",
+        searchLabel: "搜索或选择官能团"
     },
     
     // Filter Labels (Professional terms - kept in English as per rules)

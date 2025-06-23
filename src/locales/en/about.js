@@ -81,9 +81,9 @@ export default {
     filter: {
       title: "Filter",
       description: "Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.",
-      homo: "HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.",
-      esp: "ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.",
-      functional: "Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
+      homo: "These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.",
+      esp: "Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.",
+      functional: "Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
       overlay: "You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular) that meet your criteria."
     }
   },

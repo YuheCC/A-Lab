@@ -117,7 +117,7 @@ const AboutPage = () => {
             <li>{t('about.features.search.way3')}</li>
           </ol>
           <p style={{ color: 'black' }}>
-            {t('about.features.search.resultInfo')} <a>box</a> :
+            {t('about.features.search.resultInfo')}
           </p>
           <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
             <li>{t('about.features.search.discover1')}</li>

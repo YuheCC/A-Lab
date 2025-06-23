@@ -36,7 +36,7 @@ export default {
     functionalGroups: 'Functional Groups',
     umapCoordinates: 'UMAP X/Y',
     addedDate: '추가 날짜',
-    actions: '동작'
+    actions: '삭제'
   },
   
   // Analysis View

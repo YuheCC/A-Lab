@@ -13,7 +13,8 @@ export default {
     functionalGroupFilter: {
         title: "Functional Group Filter",
         tooltip: "Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
-        selectPlaceholder: "Select a functional group"
+        selectPlaceholder: "Select a functional group",
+        searchLabel: "Search or select a functional group"
     },
     
     // Filter Labels (Professional terms - kept in English as per rules)

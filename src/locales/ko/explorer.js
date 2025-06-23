@@ -13,7 +13,8 @@ export default {
     functionalGroupFilter: {
         title: "기능기 필터",
         tooltip: "기능기: 플루오르화 체인부터 설포닐 그룹까지 부구조 필터로 특정 화학물질을 타겟팅합니다.",
-        selectPlaceholder: "기능기를 선택하세요"
+        selectPlaceholder: "기능기를 선택하세요",
+        searchLabel: "작용기를 검색하거나 선택하세요."
     },
     
     // Filter Labels (Professional terms - kept in English as per rules)

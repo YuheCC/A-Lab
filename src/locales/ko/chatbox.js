@@ -1,9 +1,9 @@
 export default {
     systemMessage: {
-        welcome: "분자 우주에 오신 것을 환영합니다. 오늘 어떻게 도와드릴까요?"
+        welcome: "Molecular Universe에 오신 것을 환영합니다. 무엇을 도와드릴까요?"
     },
     input: {
-        placeholder: "배터리에 대한 질문이라면 무엇이든 물어보세요. 질문에 답하는 분자들을 반환하고 추가 탐색을 위한 친구들을 제안해드리겠습니다.",
+        placeholder: "배터리에 대한 질문이라면 무엇이든 물어보세요. 질문에 답하는 분자들을 찾아드리고 추가 탐색을 위한 ‘친구’ 분자들을 제안해드리겠습니다.",
         sendButton: "전송"
     },
     checkboxes: {
@@ -18,7 +18,7 @@ export default {
         thinking: "사고 중",
         searching: "검색 중",
         searchingDatabase: "데이터베이스 검색 중",
-        thinkingForSeconds: "{{seconds}}초 동안 사고 중"
+        thinkingForSeconds: "{{seconds}}초 동안 생각 중…"
     },
     buttons: {
         findMolecules: "분자 찾기",
@@ -43,7 +43,8 @@ export default {
         predictedBP: "예측 BP",
         llmGrade: "LLM 등급",
         saving: "저장 중...",
-        rateMatch: "이 매치를 평가하세요:"
+        rateMatch: "이 결과를 평가해주세요",
+        detectedChemicalKeywords: "LLM 응답에서 탐지된 화학 키워드:"
     },
     feedback: {
         goodMatch: "이것이 좋은 매치인 이유는 무엇인가요?",
@@ -52,7 +53,7 @@ export default {
         thankYou: "피드백을 주셔서 감사합니다!"
     },
     success: {
-        addedToFavorites: "분자가 즐겨찾기에 성공적으로 추가되었습니다!",
+        addedToFavorites: "분자가 즐겨찾기에 추가되었습니다!",
         alreadyInFavorites: "분자가 이미 즐겨찾기에 있습니다",
         feedbackSubmitted: "피드백 제출에 실패했습니다. 다시 시도해주세요."
     },

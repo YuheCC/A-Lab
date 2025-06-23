@@ -518,13 +518,13 @@ const handleFindSimilarMolecules = async (details) => {
       if (data.message === "Molecule already in favorites") {
         setMoleculeFavoriteStatus(prev => ({
           ...prev,
-          [smiles]: { loading: false, success: data.message, error: null }
+          [smiles]: { loading: false, success: t('chatbox.success.alreadyInFavorites'), error: null }
         }));
       } else {
         // Set success for this specific molecule
         setMoleculeFavoriteStatus(prev => ({
           ...prev,
-          [smiles]: { loading: false, success: 'Molecule added to favorites successfully!', error: null }
+          [smiles]: { loading: false, success: t('chatbox.success.addedToFavorites'), error: null }
         }));
       }
       
@@ -597,7 +597,7 @@ const handleFindSimilarMolecules = async (details) => {
                   {msg.molText && (
                     <div>
                       <br></br>
-                      <strong>Detected chemical keywords in LLM response:</strong>
+                      <strong>{t('chatbox.molecules.detectedChemicalKeywords')}</strong>
                       <br></br>
                     </div>
                   )}

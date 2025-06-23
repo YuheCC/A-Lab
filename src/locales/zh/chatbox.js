@@ -43,7 +43,8 @@ export default {
         predictedBP: "Predicted BP",
         llmGrade: "LLM Grade",
         saving: "保存中...",
-        rateMatch: "评价此匹配："
+        rateMatch: "评价此匹配：",
+        detectedChemicalKeywords: "LLM 分析出的化学关键词："
     },
     feedback: {
         goodMatch: "什么使这成为一个好的匹配？",

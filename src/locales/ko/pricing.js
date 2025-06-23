@@ -59,7 +59,7 @@ export default {
     description: "Molecular Universe 전체 접근 (100M)",
     price: "",
     period: "",
-    cta: "영업팀 연락",
+    cta: "영업팀에 문의하기",
     details: [
       "분자 지도",
       "조건별 검색",

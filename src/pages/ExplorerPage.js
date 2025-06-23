@@ -340,7 +340,7 @@ const ExplorerPage = ({ handlePointClick }) => {
                                     setSelectedFunctionalGroup(newValue?.label || '');
                                 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Search or select a functional group" variant="outlined" fullWidth />
+                                    <TextField {...params} label={t('explorer.functionalGroupFilter.searchLabel')} variant="outlined" fullWidth />
                                 )}
                                 renderOption={(props, option) => (
                                     <li {...props} key={option.value}>

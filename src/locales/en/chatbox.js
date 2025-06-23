@@ -43,7 +43,8 @@ export default {
         predictedBP: "Predicted BP",
         llmGrade: "LLM Grade",
         saving: "Saving...",
-        rateMatch: "Rate this match:"
+        rateMatch: "Rate this match:",
+        detectedChemicalKeywords: "Detected chemical keywords in LLM response:"
     },
     feedback: {
         goodMatch: "What makes this a good match?",
