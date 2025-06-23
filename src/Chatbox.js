@@ -208,7 +208,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     setActiveFindMessage(message);
     const moleculeList = message.molecules || [];
     setSimilarMolecules([]);
-    setFoundMolecules(null);
+    setFoundMolecules([]);
     setActiveMolecule(null);
     setShowFoundMolecules(true);
     setFoundMoleculesError(null);

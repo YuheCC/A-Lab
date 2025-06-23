@@ -20,6 +20,12 @@ const API_URL = getAPIUrl();
     createdAt: new Date().toISOString(),
 })
 
+
+/**
+ * State management for chat functionality using Zustand.
+ * - This store handles chat creation, deletion, message management, and molecule handling.
+ * - It also loads chat history from server and persists state in session storage.
+ */
 export const useChatStore = create(persist((set, get) => ({
     
     isLoading: false,
@@ -30,6 +36,10 @@ export const useChatStore = create(persist((set, get) => ({
         "-1": generateNewChat()
     },
 
+    /**
+     * Method to update new chat ID after receiving it from the server.
+     * @param {*} chatId 
+     */
     updateNewChatId: (chatId) => {
         set(produce((state) => {
             console.log("Updating new chat ID to:", chatId);
@@ -58,9 +68,13 @@ export const useChatStore = create(persist((set, get) => ({
         }));
     },
 
+    /**
+     * Method to load chat history from the server.
+     * - It fetches chat history, updates the chat map, and sets the active chat.
+     * - If you want to sync chat history, this method needs to be called on page load
+     */
     loadHistory: async () => {
         console.log("Loading chat history from server...");
-        get().createChat(); // Ensure default chat is created if not present
         try {
             const historyData = await authFetch(`${API_URL}/chat-history`).then(res => res.json());
             console.log("Chat history loaded:", historyData);
@@ -147,6 +161,11 @@ export const useChatStore = create(persist((set, get) => ({
         }
     },
 
+    /**
+     * Creates a new chat with the given name.
+     * - If a chat with ID '-1' already exists, it will not create a new one. (Limited to one new chat without a server set ID)
+     * @param {*} name 
+     */
     createChat: (name = 'New Chat') => {
         set(produce((state) => {
             if (state.chatMap['-1']) {
@@ -166,6 +185,7 @@ export const useChatStore = create(persist((set, get) => ({
     },
 
     // LLM actions
+    // - LLM actions states are only tracked locally, not on the server
     setIsThinking: (isThinking, chatId = null) => set(produce((state) => {
         console.log("Setting isThinking for chat:", chatId || state.activeChat, isThinking);
 
@@ -183,6 +203,7 @@ export const useChatStore = create(persist((set, get) => ({
     })),
 
     // Message actions (immer: only update active chat)
+    // - Messages are persistent, but through ChatBox.js since the backend expects specific formats (and a chat message being set != a chat message being sent)
     setMessages: (messagesOrUpdater, chatId = null) => set(produce((state) => {
         console.log("Setting messages for chat:", chatId || state.activeChat);
         const chat = state.chatMap[chatId || state.activeChat];
@@ -208,7 +229,15 @@ export const useChatStore = create(persist((set, get) => ({
     })),
 
     // Molecule actions (immer: only update active chat)
-    setFoundMolecules: async (molecules, chatId = null) => {
+    // - Molecule actions are persistent, through both sessionStorage and server
+    // - Setting either found or similar molecules will update the history on the server
+    setFoundMolecules: async (preMolecules, chatId = null) => {
+
+        const molecules = preMolecules.map(molecule => {
+            const { image, ...moleculeWithoutImage } = molecule;
+            return moleculeWithoutImage;
+        });
+
         set(produce((state) => {
             console.log("Setting found molecules for chat:", chatId || state.activeChat, molecules);
             const chat = state.chatMap[chatId || state.activeChat];
@@ -232,7 +261,14 @@ export const useChatStore = create(persist((set, get) => ({
             console.error("Failed to update found molecules on server:", error);
         }
     },
-    setSimilarMolecules: async (molecules, chatId = null) => {
+    setSimilarMolecules: async (preMolecules, chatId = null) => {
+        console.log("Setting similar molecules for chat:", chatId || get().activeChat, preMolecules);
+
+        const molecules = preMolecules.map(molecule => {
+            const { image, ...moleculeWithoutImage } = molecule;
+            return moleculeWithoutImage;
+        });
+
         set(produce((state) => {
             console.log("Setting similar molecules for chat:", chatId || state.activeChat, molecules);
             const chat = state.chatMap[chatId || state.activeChat];
@@ -256,12 +292,30 @@ export const useChatStore = create(persist((set, get) => ({
             console.error("Failed to update similar molecules on server:", error);
         }
     },
-    setActiveMolecule: (molecule, chatId = null) => set(produce((state) => {
-        console.log("Setting active molecule for chat:", chatId || state.activeChat, molecule);
-        const chat = state.chatMap[chatId || state.activeChat];
-        if (!chat) return;
-        chat.activeMolecule = molecule;
-    })),
+    setActiveMolecule: async (molecule, chatId = null) => {
+        set(produce((state) => {
+            console.log("Setting active molecule for chat:", chatId || state.activeChat, molecule);
+            const chat = state.chatMap[chatId || state.activeChat];
+            if (!chat) return;
+            chat.activeMolecule = molecule;
+        }));
+
+        // Send active molecule to server
+        try {
+            await authFetch(`${API_URL}/chat-history/update`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: parseInt(chatId || get().activeChat),
+                    meta_active_molecule: JSON.stringify(molecule),
+                })
+            });
+        } catch (error) {
+            console.error("Failed to update active molecule on server:", error);
+        }
+    },
 
     setMoleculesLoading: (isLoading, chatId = null) => set(produce((state) => {
         console.log("Setting molecules loading state for chat:", chatId || state.activeChat, isLoading);
@@ -279,7 +333,7 @@ export const useChatStore = create(persist((set, get) => ({
 
 }), {
     name: 'chat-store',
-    storage: createJSONStorage(() => sessionStorage),
+    storage: createJSONStorage(() => localStorage),
     partialize: (state) => ({
         isSynced: false,
         // If default chat exists, save it as active chat

@@ -106,6 +106,9 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
                     />
                 }
                 )}
+                <div className="chat-history-footer">
+                    <span className="note">Chat history shows the last 20 chats you've had.</span>
+                </div>
             </div>
             {chatIdToDelete !== null && (
                 <ConfirmDeleteChat 
