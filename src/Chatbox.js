@@ -115,7 +115,8 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             </label>
           </>
         )}
-        {['enterprise', 'admin'].includes(userPermissions) && (
+        alert(userPermissions);
+        {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
           <>
             <input
               type="checkbox"
@@ -127,7 +128,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             <label htmlFor="useMultiAgent">
               Invoke the Constellation (BETA)
               <Tooltip
-                title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer."
+                title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
                 placement="top"
               >
                 <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
@@ -896,7 +897,10 @@ const handleFindSimilarMolecules = async (details) => {
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
           <div className="similar-molecules-container">
             <div className="molecules-header">
-                <h3>Friends ranked by likelihood to replace: {activeMolecule ? activeMolecule.name.toLowerCase() : ''}</h3>
+              <h3>
+                Friends ranked by likelihood to replace:&nbsp;
+                {((activeMolecule?.name || activeMolecule?.SMILES || '')).toLowerCase()}
+              </h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => {
