@@ -26,14 +26,14 @@ export default {
   tableHeaders: {
     image: '이미지',
     smiles: 'SMILES',
-    molecularWeight: 'Molecular Weight',
+    molecularWeight: '분자량',
     homo: 'HOMO (eV)',
     lumo: 'LUMO (eV)',
-    meltingPoint: 'MP (°C)',
-    boilingPoint: 'BP (°C)',
-    espMin: 'ESP Min (eV)',
-    espMax: 'ESP Max (eV)',
-    functionalGroups: 'Functional Groups',
+    meltingPoint: '녹는점 (°C)',
+    boilingPoint: '끓는점 (°C)',
+    espMin: 'ESP 최소값 (eV)',
+    espMax: 'ESP 최대값 (eV)',
+    functionalGroups: '작용기',
     umapCoordinates: 'UMAP X/Y',
     addedDate: '추가 날짜',
     actions: '삭제'
@@ -57,11 +57,11 @@ export default {
   chartProperties: {
     homo: 'HOMO (eV)',
     lumo: 'LUMO (eV)',
-    meltingPoint: 'MP (°C)',
-    boilingPoint: 'BP (°C)',
-    molecularWeight: 'Molecular Weight',
-    espMin: 'esp_min (eV)',
-    espMax: 'esp_max (eV)'
+    meltingPoint: '녹는점 (°C)',
+    boilingPoint: '끓는점 (°C)',
+    molecularWeight: '분자량',
+    espMin: 'ESP 최소값 (eV)',
+    espMax: 'ESP 최대값 (eV)'
   },
   
   // Confirmation and Messages
