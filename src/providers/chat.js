@@ -95,7 +95,7 @@ export const useChatStore = create(persist((set, get) => ({
                 if (historyData.length > 0) {
                     historyData.forEach(chat => {
                         draft.chatMap[chat.id] = {
-                            createdAt: chat.created_at,
+                            createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
                             useMultiAgent: false,
                             name: chat.chat_name || 'New Chat',
                             messages: chat.content.map(item => ({
