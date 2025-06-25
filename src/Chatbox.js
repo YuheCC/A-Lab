@@ -169,10 +169,11 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     moleculesLoading,
     similarMoleculesLoading,
     awaitingClarify,
+    isInClarifyFlow,
     useMultiAgent
   } = useActiveChatData();
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -187,6 +188,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     setSimilarMoleculesLoading: state.setSimilarMoleculesLoading,
     setAwaitingClarify: state.setAwaitingClarify,
     setUseMultiAgent: state.setUseMultiAgent,
+    setIsInClarifyFlow: state.setIsInClarifyFlow,
   })));
 
   const userPermissions = useAuthStore(state => state.userPermissions);
@@ -463,6 +465,9 @@ const handleFindSimilarMolecules = async (details) => {
 
           /* 2️⃣  First contact – ask for clarifying questions -------- */
           } else {
+            // Track whether we are in a clarification flow
+            setIsInClarifyFlow(true, effectiveChatId);
+
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
               method : "POST",
               headers: { "Content-Type": "application/json" },
@@ -486,6 +491,8 @@ const handleFindSimilarMolecules = async (details) => {
               setIsThinking(false, effectiveChatId);
               return;                 // wait for user reply
             }
+
+            setIsInClarifyFlow(false, effectiveChatId);
 
             /* 3️⃣  No clarifications – run Deep Space directly ---- */
             const res = await authFetch(`${API_URL}/multi-agent`, {
@@ -836,9 +843,9 @@ const handleFindSimilarMolecules = async (details) => {
                 </div>
                 {useMultiAgent && 
                   <div className="thinking-note">
-                    <Info size={16} style={{ margin: 5, marginRight: 10 }} />
+                    <Info size={16} style={{ margin: 3, marginRight: 10 }} />
                     <span>
-                      The Deep Space Multi-Agent LLM may take 10-20 minutes to respond, depending on the complexity of your question.
+                      {isInClarifyFlow ? "We may ask you to reply to a few clarifying questions shortly.": "The Deep Space Multi-Agent LLM is now working, it may take 10-20 minutes to respond, depending on the complexity of your question."}
                     </span>
                   </div>
                 }
