@@ -171,6 +171,9 @@ const App = () => {
         esp_max_ev: molecule.properties?.esp_max_eV || null,
         predicted_melting_point: molecule.properties?.predicted_mp || null,
         predicted_boiling_point: molecule.properties?.predicted_bp || null,
+        predicted_fp_celsius: molecule.properties?.predicted_fp || null,
+        combustion_enthalpy_ev: molecule.properties?.combustion_enthalpy || null,
+        commercial_score: molecule.properties?.commercial_score || null,
         functional_groups: molecule.properties?.functional_groups || null,
         umap_x: molecule.x || null,
         umap_y: molecule.y || null

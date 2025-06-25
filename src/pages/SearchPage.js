@@ -55,8 +55,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 functional_groups: mol.functional_groups,
                                 predicted_mp: mol.predicted_MP_celsius,
                                 predicted_bp: mol.predicted_BP_celsius,
-                                predicted_fp: mol.predicted_FP_celsius,
-                                combustion_enthalpy: mol.COMBUSTION_ENTHALPY_EV,
+                                predicted_fp_celsius: mol.predicted_FP_celsius,
+                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
                                 commercial_score: mol.COMMERCIAL_SCORE,
                                 commercial_link: mol.COMMERCIAL_LINK
                             },
@@ -286,12 +286,12 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                      },
                                                     { label: 'Predicted Boiling Point', value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: 'Predicted Flash Point', value: molecule.properties?.predicted_fp, suffix: '°C', span: 2, 
+                                                    { label: 'Predicted Flash Point', value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                     },
                                                     {
                                                         label: 'Combustion Enthalpy',
-                                                        value: molecule.properties?.combustion_enthalpy,
+                                                        value: molecule.properties?.combustion_enthalpy_ev,
                                                         span: 2,
                                                         suffix: ' eV',
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
