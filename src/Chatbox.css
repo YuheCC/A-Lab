@@ -207,7 +207,22 @@
 }
 
 .checkbox-group {
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px 0px 20px;
+}
+
+.admin-controls {
+  display: flex;
+  flex-flow:column;
+  background-color: #ebebeb;
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+.admin-controls-label {
+  font-size:10px;
+  font-weight: bold;
+  color: #727272;
 }
 
 /* Thumbs Feedback */
