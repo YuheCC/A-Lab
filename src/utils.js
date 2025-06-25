@@ -1,9 +1,14 @@
-import React from "react";
-
 export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://prod-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
+// Commercial score map for displaying the commercial viability of compounds
+export const COMMERCIAL_SCORE_MAP = {
+  0: "Requires R&D to assess viability",
+  1: "Likely synthesizable but probably not commercially available",
+  2: "Likely synthesizable, may be commercially available",
+  3: "Likely commercially available"
+}
 
 /**
  * Fetch wrapper that automatically attaches JWT to all requests

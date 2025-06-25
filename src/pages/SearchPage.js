@@ -2,13 +2,13 @@ import Sidebar from "../components/Sidebar";
 import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
-import { authFetch, getAPIUrl } from "../utils";
+import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
 import CustomButton from "../components/CustomButton";
-import { Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 
 const API_URL = getAPIUrl();
 
@@ -54,7 +54,11 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 esp_max_eV: mol.ESP_max_eV,
                                 functional_groups: mol.functional_groups,
                                 predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius
+                                predicted_bp: mol.predicted_BP_celsius,
+                                predicted_fp: mol.predicted_FP_celsius,
+                                combustion_enthalpy: mol.COMBUSTION_ENTHALPY_EV,
+                                commercial_score: mol.COMMERCIAL_SCORE,
+                                commercial_link: mol.COMMERCIAL_LINK
                             },
                             rawData: mol
                         };
@@ -237,7 +241,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 </div>
                                 <div style={{
                                     color: '#555',
-                                    fontSize: '14px',
+                                    fontSize: '12px',
                                 }}>Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.</div>
                             </div>
                         </label>
@@ -282,29 +286,45 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                      },
                                                     { label: 'Predicted Boiling Point', value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
+                                                    { label: 'Predicted Flash Point', value: molecule.properties?.predicted_fp, suffix: '°C', span: 2, 
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                    },
+                                                    {
+                                                        label: 'Combustion Enthalpy',
+                                                        value: molecule.properties?.combustion_enthalpy,
+                                                        span: 2,
+                                                        suffix: ' eV',
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                    },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score], span: 4, wrap: true}
                                                 ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
                                                 <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
-                                                   <CustomButton
-                                                        Icon={Star}
-                                                        style={{
-                                                            flexGrow: 1,
-                                                        }}
-                                                        onClick={() => handleAddToFavorites(molecule)}
-                                                        loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
-                                                        loadingText="Saving..."
-                                                        successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
-                                                        errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
-                                                    >
-                                                        Add to Favorites
-                                                    </CustomButton>
+                                                    <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                        <CustomButton
+                                                            Icon={Star}
+                                                            style={{
+                                                                flexGrow: 1,
+                                                            }}
+                                                            onClick={() => handleAddToFavorites(molecule)}
+                                                            loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                            loadingText="Saving..."
+                                                            successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
+                                                            errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
+                                                        >
+                                                            Add to Favorites
+                                                        </CustomButton>
+                                                        {molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                            window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
+                                                        }}>
+                                                            View in MolPort
+                                                        </CustomButton>}
+                                                    </div>
 
                                                     {/* Display find-friend error below favorites button if it exists */}
                                                     {findClosestFriends && findFriendError && (
@@ -341,15 +361,23 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'Predicted Boiling Point', value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
+                                                    { label: 'Predicted Flash Point', value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                     },
+                                                    { label: 'Combustion Enthalpy',
+                                                        value: molecule.COMBUSTION_ENTHALPY_EV,
+                                                        span: 2,
+                                                        suffix: ' eV',
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
+                                                    },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE], span:4, wrap: true}
                                                 ]} 
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
                                                 ]}
                                             >
                                                 <div className="molecule-actions">
@@ -385,6 +413,11 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         lastSearch={lastSearch}
                                                         onClose={() => { }}
                                                     />
+                                                    {molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                        window.open(molecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                                                    }}>
+                                                        View in MolPort
+                                                    </CustomButton>}
                                                 </div>
                                             </MolCard>
                                         ))}

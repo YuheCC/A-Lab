@@ -7,7 +7,7 @@ import './Chatbox.css';
 import DOMPurify from 'dompurify';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { authFetch, getAPIUrl } from './utils.js';
+import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
 import { IconButton, Tooltip } from '@mui/material';
 import {MolCard} from './components/MolCard/index.js';
@@ -15,7 +15,7 @@ import { useChatStore, useActiveChatData } from './providers/chat.js';
 import { useShallow } from 'zustand/react/shallow';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
-import { Copy, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 
 const API_URL = getAPIUrl();
@@ -139,6 +139,19 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
     </div>
   );
 });
+
+const formatThinkingTime = (seconds) => {
+  if (seconds === undefined || seconds === null || Number.isNaN(seconds) || seconds < 0) {
+    return "0 seconds";
+  }
+  if (seconds < 60) {
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+  } else {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes} minute${minutes !== 1 ? 's' : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
+  }
+}
 
 // Chatbot component
 const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
@@ -808,7 +821,7 @@ const handleFindSimilarMolecules = async (details) => {
             {isThinking && (
               <div className="thinking-message">
                 <div className='thinking-header'>
-                  <span>thinking for {thinkingTime} second{thinkingTime !== 1 ? 's' : ''}</span>
+                  <span>thinking for {formatThinkingTime(thinkingTime)}</span>
                   <div className="thinking-dots">
                     <span></span>
                     <span></span>
@@ -872,13 +885,22 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                    },
+                  {
+                    label: 'Predicted Flash Point', value: details.predicted_FP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  {
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
                   { label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
+                  {
+                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                  }
                 ]} foldPropGroups={[
-                  { label: 'UMAP X', value: details.UMAP_0, span: 2 },
-                  { label: 'UMAP Y', value: details.UMAP_1, span: 2 },
                   { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
                 ]}>
                   <div className="molecule-actions">
@@ -898,6 +920,11 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small">
                       Find Similar Molecules
                     </CustomButton>
+                    {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                        window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                    }}>
+                        View in MolPort
+                    </CustomButton>}
                   </div>
                 </MolCard>
               })
@@ -933,33 +960,40 @@ const handleFindSimilarMolecules = async (details) => {
                 large={true}
                 style={{ margin: 5 }}
                 propGroups={[
-                  { label: 'LLM Grade', value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ?
-                    <IconButton onClick={() => {
-                          setReasoningText(details.reasoning);
-                        }} style={{ marginLeft: 5 }} size="small">
-                      <Info size={18} style={{ margin: 2 }}/>
-                    </IconButton> : null
-                  ), show: details.grade !== null && details.grade !== undefined },
+                  {
+                    label: 'LLM Grade', value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ?
+                      <IconButton onClick={() => {
+                        setReasoningText(details.reasoning);
+                      }} style={{ marginLeft: 5 }} size="small">
+                        <Info size={18} style={{ margin: 2 }} />
+                      </IconButton> : null
+                    ), show: details.grade !== null && details.grade !== undefined
+                  },
                   { label: 'SMILES', value: details.SMILES, span: 2 },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
-                  { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
+                  {
+                    label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
-                   },
-                  { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
+                  },
+                  {
+                    label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
-                   },
-                   {
-                    label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV'
-                   },
-                   {
-                    label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV'
-                   },
-                   {
-                    label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV'
-                   },
-                    {
-                      label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV'
-                    },
+                  },
+                  {
+                    label: 'Predicted Flash Point', value: details.predicted_FP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  {
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
+                  {
+                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                  }
                   ]} foldPropGroups={[
                     { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }
                   ]}>
@@ -983,6 +1017,11 @@ const handleFindSimilarMolecules = async (details) => {
                     contextContent3={contextObject.contextContent3}
                     onClose={() => { }}
                   />
+                  {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                    window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                  }}>
+                    View in MolPort
+                  </CustomButton>}
                 </div>
               </MolCard>
             })}
