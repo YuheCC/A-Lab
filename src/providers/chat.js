@@ -8,6 +8,7 @@ const API_URL = getAPIUrl();
  const generateNewChat = () => ({
     name: 'New Chat',
     useMultiAgent: false,
+    isInClarifyFlow: false,
     isThinking: false,
     thinkingStartedAt: null,
     moleculesLoading: false,
@@ -107,6 +108,7 @@ export const useChatStore = create(persist((set, get) => ({
                             foundMolecules: chat.meta_molecules || [],
                             similarMolecules: chat.meta_similar_molecules || [],
                             awaitingClarify: chat.awaiting_clarification || false,
+                            isInClarifyFlow: false,
                         };
                     });
                 }
@@ -368,7 +370,13 @@ export const useChatStore = create(persist((set, get) => ({
         } catch (error) {
             console.error("Failed to update awaiting clarification on server:", error);
         }
-    }
+    },
+    setIsInClarifyFlow: (isInClarifyFlow, chatId = null) => set(produce((state) => {
+        console.log("Setting isInClarifyFlow for chat:", chatId || state.activeChat, isInClarifyFlow);
+        const chat = state.chatMap[chatId || state.activeChat];
+        if (!chat) return;
+        chat.isInClarifyFlow = isInClarifyFlow;
+    }))
 
 }), {
     name: 'chat-store',
@@ -389,6 +397,8 @@ export const useChatStore = create(persist((set, get) => ({
                     foundMolecules: value.foundMolecules,
                     similarMolecules: value.similarMolecules,
                     awaitingClarify: value.awaitingClarify,
+                    isInClarifyFlow: value.isInClarifyFlow,
+                    useMultiAgent: value.useMultiAgent,
                     createdAt: value.createdAt,
                 }
             ])
