@@ -65,7 +65,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
 
   return (
     <div className="chat-input-group">
-      <div className="chat-input-container">
+      <div className={"chat-input-container " + (disabled ? "disabled" : "")}>
         <textarea
           ref={textareaRef}
           translate='no'
@@ -125,7 +125,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
               style={{ marginLeft: '20px' }}
             />
             <label htmlFor="useMultiAgent">
-              Invoke the Deep Space (BETA)
+              Enter Deep Space (BETA)
               <Tooltip
                 title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
                 placement="top"
