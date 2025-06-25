@@ -554,7 +554,7 @@ const handleFindSimilarMolecules = async (details) => {
         const llmMessage = {
           role     : "assistant",
           inputs   : data.inputs || null,
-          content     : data.llmOutput || data.answer || "",
+          content  : data.llmOutput || data.answer || "",
           sources  : data.source_html,
           molText  : data.molecule_text,
           molecules: data.molecules,
@@ -806,7 +806,7 @@ const handleFindSimilarMolecules = async (details) => {
 
                           // Sanitize the HTML in case the backend returns unusual HTML
                           const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
-                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li'],
+                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
                             ALLOWED_ATTR: ['href', 'target']
                           }) : msg.content;
 
