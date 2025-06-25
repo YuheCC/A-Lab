@@ -43,10 +43,24 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
         };
     }
 
-    const minX = Math.min(...xValues);
-    const maxX = Math.max(...xValues);
-    const minY = Math.min(...yValues);
-    const maxY = Math.max(...yValues);
+    let minX = xValues[0];
+    let maxX = xValues[0];
+    let minY = yValues[0];
+    let maxY = yValues[0];
+    for (let i = 0; i < xValues.length; i++) {
+        if (xValues[i] < minX) {
+            minX = xValues[i];
+        }
+        if (xValues[i] > maxX) {
+            maxX = xValues[i];
+        }
+        if (yValues[i] < minY) {
+            minY = yValues[i];
+        }
+        if (yValues[i] > maxY) {
+            maxY = yValues[i];
+        }
+    }
 
     // Calculate center
     const centerX = (minX + maxX) / 2;
@@ -96,33 +110,36 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
 }
 
 const clusterColorMap = {
-    1: hexToRgb('#1f77b4'), // blue
-    2: hexToRgb('#ff7f0e'), // orange
-    3: hexToRgb('#2ca02c'), // green
-    4: hexToRgb('#d62728'), // red
-    5: hexToRgb('#9467bd'), // purple
-    6: hexToRgb('#8c564b'), // brown
-    7: hexToRgb('#e377c2'), // pink
-    8: hexToRgb('#7f7f7f'), // gray
-    9: hexToRgb('#bcbd22'), // olive
-    10: hexToRgb('#17becf'), // cyan
-    11: hexToRgb('#aec7e8'), // light blue
-    12: hexToRgb('#ffbb78'), // light orange
-    13: hexToRgb('#98df8a'), // light green
-    14: hexToRgb('#ff9896'), // light red
-    15: hexToRgb('#c5b0d5'), // light purple
-    16: hexToRgb('#c49c94'), // light brown
-    17: hexToRgb('#f7b6d2'), // light pink
-    18: hexToRgb('#c7c7c7'), // light gray
-    19: hexToRgb('#dbdb8d'), // light olive
-    20: hexToRgb('#9edae5'), // light cyan
-    21: hexToRgb('#393b79'), // dark blue
-    22: hexToRgb('#637939'), // dark green
-    23: hexToRgb('#8c6d31')  // dark orange
+    0: hexToRgb('#e6194b'),
+    1: hexToRgb('#228b22'), // darkened from #3cb44b
+    2: hexToRgb('#b2a900'), // darkened from #ffe119
+    3: hexToRgb('#0082c8'),
+    4: hexToRgb('#f58231'),
+    5: hexToRgb('#911eb4'),
+    6: hexToRgb('#46f0f0'), // darkened from #46f0f0
+    7: hexToRgb('#f032e6'),
+    8: hexToRgb('#7a8c1c'), // darkened from #d2f53c
+    9: hexToRgb('#b97a7a'), // darkened from #fabebe
+    10: hexToRgb('#008080'),
+    11: hexToRgb('#a48fcf'), // darkened from #e6beff
+    12: hexToRgb('#aa6e28'),
+    13: hexToRgb('#bdbb8b'), // darkened from #fffac8
+    14: hexToRgb('#800000'),
+    15: hexToRgb('#5fa87a'), // darkened from #aaffc3
+    16: hexToRgb('#808000'),
+    17: hexToRgb('#bfa07a'), // darkened from #ffd8b1
+    18: hexToRgb('#000080'),
+    19: hexToRgb('#808080'),
+    20: hexToRgb('#c0c0c0'),
+    21: hexToRgb('#a4d11b'), // darkened from #bcf60c
+    22: hexToRgb('#ff1493'),
+    23: hexToRgb('#a52a2a'),
+    24: hexToRgb('#20b2aa'),
+    [-1]: hexToRgb('#ececec')
 };
 
 // Default color for clusters not in the map
-const defaultColor = '#000000'; // black
+const defaultColor = '#ececec'; // light gray
 
 // Create a composite layer for markers with labels
 class MarkerWithLabelLayer extends CompositeLayer {
@@ -209,10 +226,25 @@ const calculateClampBounds = (data, padding = 10) => {
     if (xValues.length === 0 || yValues.length === 0) {
         return defaultBounds
     }
-    const minX = Math.min(...xValues);
-    const maxX = Math.max(...xValues);
-    const minY = Math.min(...yValues);
-    const maxY = Math.max(...yValues);
+
+    let minX = xValues[0];
+    let maxX = xValues[0];
+    let minY = yValues[0];
+    let maxY = yValues[0];
+    for (let i = 0; i < xValues.length; i++) {
+        if (xValues[i] < minX) {
+            minX = xValues[i];
+        }
+        if (xValues[i] > maxX) {
+            maxX = xValues[i];
+        }
+        if (yValues[i] < minY) {
+            minY = yValues[i];
+        }
+        if (yValues[i] > maxY) {
+            maxY = yValues[i];
+        }
+    }
 
     return {
         minLongitude: Math.max(-25, minX - padding * X_STRETCH),
@@ -311,9 +343,9 @@ const UMAPClusterPlotDeck = ({
                 getPosition: d => [X_STRETCH * d.x, d.y],
                 getRadius: d => 100,
                 getFillColor: d => {
-                    return clusterColorMap[d.properties.CLUSTER % 23] || defaultColor
+                    return clusterColorMap[d.properties.CLUSTER] || defaultColor
                 },
-                radiusMinPixels: 2,
+                radiusMinPixels: 1.2,
                 radiusMaxPixels: 50,
                 radiusScale: 3,
                 opacity: 0.3,
@@ -478,8 +510,16 @@ const UMAPClusterPlotDeck = ({
                         label: 'Predicted BP', value: hoveredObject.object.properties.predicted_bp,
                         suffix: ' °C',
                         show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    },
+                    {
+                        label: 'Predicted FP', value: hoveredObject.object.properties.predicted_fp,
+                        suffix: ' °C',
+                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    },
+                    {
+                        label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',
+                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     }
-
                 ]}
             />
         ) : null}
