@@ -92,31 +92,19 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         </button>
       </div>
       <div className="checkbox-group">
-        <input 
-          type="checkbox" 
-          id="ignoreChatHistory" 
-          checked={ignoreChatHistory}
-          onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
-        />
-        <label htmlFor="ignoreChatHistory">
-          Ignore chat history
-        </label>
-        {userPermissions === 'admin' && (
-          <>
-            <input 
-              type="checkbox" 
-              id="disableLiteratureSearch" 
-              checked={disableLiteratureSearch}
-              onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
-              style={{ marginLeft: '20px' }}
-            />
-            <label htmlFor="disableLiteratureSearch">
-              Disable literature search
-            </label>
-          </>
-        )}
+        <div className='checkbox-item'>
+          <input 
+            type="checkbox" 
+            id="ignoreChatHistory" 
+            checked={ignoreChatHistory}
+            onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
+          />
+          <label htmlFor="ignoreChatHistory">
+            Ignore chat history
+          </label>
+        </div>
         {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
-          <>
+          <div className='checkbox-item'>
             <input
               type="checkbox"
               id="useMultiAgent"
@@ -133,7 +121,23 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
               </Tooltip>
             </label>
-          </>
+          </div>
+        )}
+        {userPermissions === 'admin' && (
+          <div className='admin-controls' style={{ marginLeft: 'auto' }}>
+            <label className='admin-controls-label'>ADMIN</label>
+            <div className='checkbox-item'>
+              <input 
+                type="checkbox" 
+                id="disableLiteratureSearch" 
+                checked={disableLiteratureSearch}
+                onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
+              />
+              <label htmlFor="disableLiteratureSearch">
+                Disable literature search
+              </label>
+            </div>
+          </div>
         )}
       </div>
     </div>
