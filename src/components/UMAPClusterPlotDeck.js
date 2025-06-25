@@ -111,27 +111,27 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
 
 const clusterColorMap = {
     0: hexToRgb('#e6194b'),
-    1: hexToRgb('#228b22'), // darkened from #3cb44b
-    2: hexToRgb('#b2a900'), // darkened from #ffe119
+    1: hexToRgb('#3cb44b'),
+    2: hexToRgb('#ffe119'),
     3: hexToRgb('#0082c8'),
     4: hexToRgb('#f58231'),
     5: hexToRgb('#911eb4'),
-    6: hexToRgb('#46f0f0'), // darkened from #46f0f0
+    6: hexToRgb('#46f0f0'),
     7: hexToRgb('#f032e6'),
-    8: hexToRgb('#7a8c1c'), // darkened from #d2f53c
-    9: hexToRgb('#b97a7a'), // darkened from #fabebe
+    8: hexToRgb('#d2f53c'),
+    9: hexToRgb('#fabebe'),
     10: hexToRgb('#008080'),
-    11: hexToRgb('#a48fcf'), // darkened from #e6beff
+    11: hexToRgb('#e6beff'),
     12: hexToRgb('#aa6e28'),
-    13: hexToRgb('#bdbb8b'), // darkened from #fffac8
+    13: hexToRgb('#fffac8'),
     14: hexToRgb('#800000'),
-    15: hexToRgb('#5fa87a'), // darkened from #aaffc3
+    15: hexToRgb('#aaffc3'),
     16: hexToRgb('#808000'),
-    17: hexToRgb('#bfa07a'), // darkened from #ffd8b1
+    17: hexToRgb('#ffd8b1'),
     18: hexToRgb('#000080'),
     19: hexToRgb('#808080'),
     20: hexToRgb('#c0c0c0'),
-    21: hexToRgb('#a4d11b'), // darkened from #bcf60c
+    21: hexToRgb('#bcf60c'),
     22: hexToRgb('#ff1493'),
     23: hexToRgb('#a52a2a'),
     24: hexToRgb('#20b2aa'),
