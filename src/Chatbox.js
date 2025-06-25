@@ -467,7 +467,6 @@ const handleFindSimilarMolecules = async (details) => {
             if (!clarRes.ok) throw new Error(await clarRes.text());
             const clarData = await clarRes.json();
 
-
             // Update chat ID for new chat
             if (effectiveChatId === -1 && clarData.chat_id !== undefined) {
               updateNewChatId(clarData.chat_id);

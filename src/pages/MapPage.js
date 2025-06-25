@@ -51,11 +51,11 @@ const MapPage = ({ handlePointClick }) => {
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                         <picture>
-                            <source srcSet="/MU_About_Cluster_Numbered.webp" type="image/webp" />
+                            <source srcSet="/MU05_Cluster_Numbered.webp" type="image/webp" />
                             <img
                                 loading="lazy"
-                                src="/MU_About_Cluster_Numbered.jpg"
-                                alt="Molecular Universe Clusters Map"
+                                src="/MU05_Cluster_Numbered.png"
+                                alt="Molecular Universe 0.5 Clusters Map"
                                 style={{
                                     maxWidth: '100%',
                                     height: 'auto',

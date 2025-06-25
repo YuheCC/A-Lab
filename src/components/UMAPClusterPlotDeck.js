@@ -135,7 +135,7 @@ const clusterColorMap = {
     22: hexToRgb('#ff1493'),
     23: hexToRgb('#a52a2a'),
     24: hexToRgb('#20b2aa'),
-    [-1]: hexToRgb('#ececec')
+    [-1]: hexToRgb('#d3d3d3')
 };
 
 // Default color for clusters not in the map
