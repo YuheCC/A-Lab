@@ -49,6 +49,8 @@ export const usePlotDataStore = create((set) => ({
                         predicted_fp: row.PREDICTED_FP_CELSIUS,
                         chemical_formula: row.CHEMICAL_FORMULA,
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: row.COMMERCIAL_SCORE,
+                        commercial_link: row.COMMERCIAL_LINK,
                         CLUSTER: row.CLUSTER
                     },
                     rawData: row

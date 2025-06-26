@@ -939,6 +939,8 @@ const FavoritesGrid = () => {
     esp_max_eV: 'ESP Max (eV)',
     predicted_mp: 'Predicted Melting Point (°C)',
     predicted_bp: 'Predicted Boiling Point (°C)',
+    commercial_score: 'Commercial Score',
+    commercial_link: 'Commercial Link',
     functional_groups: 'Functional Groups'
   };
 
