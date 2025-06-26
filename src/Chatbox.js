@@ -446,6 +446,8 @@ const handleFindSimilarMolecules = async (details) => {
               ...messages,
               { role: "user", content: input.trim() }
             ];
+            
+            setIsInClarifyFlow(false, effectiveChatId);
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
