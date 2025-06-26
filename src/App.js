@@ -174,6 +174,7 @@ const App = () => {
         predicted_fp_celsius: molecule.properties?.predicted_fp || null,
         combustion_enthalpy_ev: molecule.properties?.combustion_enthalpy || null,
         commercial_score: molecule.properties?.commercial_score || null,
+        commercial_link: molecule.properties?.commercial_link || molecule.COMMERCIAL_LINK || null,
         functional_groups: molecule.properties?.functional_groups || null,
         umap_x: molecule.x || null,
         umap_y: molecule.y || null

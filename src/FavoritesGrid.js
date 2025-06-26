@@ -1070,6 +1070,7 @@ const FavoritesGrid = () => {
                   <th onClick={() => handleSort('created_at')} className="sortable-header">
                     Added Date {getSortIndicator('created_at')}
                   </th>
+                  <th>Commercial Link</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -1111,6 +1112,11 @@ const FavoritesGrid = () => {
                       {favorite.umap_y ? favorite.umap_y.toFixed(2) : 'N/A'}
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
+                    <td>
+                      {favorite.commercial_link ? (
+                        <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">View Link</a>
+                      ) : 'N/A'}
+                    </td>
                     <td>
                       <button 
                         className="remove-favorite-table-button" 

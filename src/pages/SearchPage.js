@@ -396,7 +396,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                                 esp_max_eV: molecule.ESP_max_eV,
                                                                 predicted_mp: molecule.predicted_MP_celsius,
                                                                 predicted_bp: molecule.predicted_BP_celsius,
-                                                                functional_groups: molecule.functional_groups
+                                                                functional_groups: molecule.functional_groups,
+                                                                commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null
                                                             },
                                                             x: molecule.UMAP_0,
                                                             y: molecule.UMAP_1

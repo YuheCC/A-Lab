@@ -68,7 +68,8 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                     ...properties,
                     predicted_fp_celsius: properties.predicted_fp_celsius ?? properties.predicted_fp ?? properties.predicted_FP_celsius,
                     combustion_enthalpy_ev: properties.combustion_enthalpy_ev ?? properties.combustion_enthalpy ?? properties.COMBUSTION_ENTHALPY_EV,
-                    commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE
+                    commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE,
+                    commercial_link: properties.commercial_link ?? (properties.COMMERCIAL_LINK || node.COMMERCIAL_LINK || null)
                   }
                 };
                 handleAddToFavorites(mappedNode);

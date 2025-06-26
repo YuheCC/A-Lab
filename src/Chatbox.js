@@ -630,6 +630,7 @@ const handleFindSimilarMolecules = async (details) => {
         predicted_fp_celsius: molecule.PREDICTED_FP_CELSIUS || molecule.predicted_fp_celsius || null,
         combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV || molecule.combustion_enthalpy_ev || null,
         commercial_score: molecule.COMMERCIAL_SCORE || molecule.commercial_score || null,
+        commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null,
         functional_groups: molecule.FUNCTIONAL_GROUPS || molecule.functional_groups || null,
         umap_x: molecule.UMAP_0 || null,
         umap_y: molecule.UMAP_1 || null
