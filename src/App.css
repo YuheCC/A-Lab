@@ -3338,3 +3338,42 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 .icon-controls-group  .control-icon:active {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+/* Favorites actions container */
+.favorites-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Bulk delete button */
+.bulk-delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.bulk-delete-button:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.bulk-delete-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Ensure favorites header has proper flex layout */
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}

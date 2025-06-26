@@ -20,6 +20,7 @@ const FavoritesGrid = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
+  const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
@@ -203,6 +204,87 @@ const FavoritesGrid = () => {
           document.body.removeChild(errorToast);
         }
       }, 3000);
+    }
+  };
+
+  const handleBulkDeleteFavorites = async () => {
+    if (selectedMolecules.length === 0) return;
+    
+    // Ask for confirmation before removing
+    const confirmMessage = `Are you sure you want to remove ${selectedMolecules.length} molecules from your favorites? This action cannot be undone.`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+    
+    setBulkDeleteLoading(true);
+    
+    try {
+      const deletePromises = selectedMolecules.map(molecule => 
+        authFetch(`${API_URL}/favorites-delete/${molecule.id}`, {
+          method: 'DELETE'
+        })
+      );
+      
+      // Wait for all delete requests to complete
+      const results = await Promise.allSettled(deletePromises);
+      
+      // Check for any failures
+      const failures = results.filter(result => result.status === 'rejected' || 
+        (result.status === 'fulfilled' && !result.value.ok));
+      
+      if (failures.length > 0) {
+        console.error('Some deletions failed:', failures);
+        
+        // Show partial success/error message
+        const errorToast = document.createElement('div');
+        errorToast.className = 'toast-message error';
+        errorToast.textContent = `Failed to remove ${failures.length} out of ${selectedMolecules.length} molecules. Please try again.`;
+        document.body.appendChild(errorToast);
+        
+        setTimeout(() => {
+          if (errorToast.parentNode) {
+            document.body.removeChild(errorToast);
+          }
+        }, 5000);
+      }
+      
+      // Remove successfully deleted molecules from state
+      const successfulDeletions = selectedMolecules.filter((_, index) => 
+        results[index].status === 'fulfilled' && results[index].value.ok
+      );
+      
+      const deletedIds = successfulDeletions.map(molecule => molecule.id);
+      setFavorites(favorites.filter(favorite => !deletedIds.includes(favorite.id)));
+      setSelectedMolecules([]);
+      
+      // Show success message
+      const successToast = document.createElement('div');
+      successToast.className = 'toast-message success';
+      successToast.textContent = `Successfully removed ${successfulDeletions.length} molecules from favorites`;
+      document.body.appendChild(successToast);
+      
+      setTimeout(() => {
+        if (successToast.parentNode) {
+          document.body.removeChild(successToast);
+        }
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Error during bulk delete:', err);
+      
+      // Show error message
+      const errorToast = document.createElement('div');
+      errorToast.className = 'toast-message error';
+      errorToast.textContent = 'Failed to remove molecules from favorites. Please try again.';
+      document.body.appendChild(errorToast);
+      
+      setTimeout(() => {
+        if (errorToast.parentNode) {
+          document.body.removeChild(errorToast);
+        }
+      }, 3000);
+    } finally {
+      setBulkDeleteLoading(false);
     }
   };
 
@@ -1010,14 +1092,37 @@ const FavoritesGrid = () => {
               />
             </div>
             
-            {selectedMolecules.length > 0 && (
-              <button 
-                className="show-analysis-button"
-                onClick={handleShowAnalysis}
-              >
-                Analyze Selected ({selectedMolecules.length})
-              </button>
-            )}
+            <div className="favorites-actions">
+              {selectedMolecules.length > 0 && (
+                <button 
+                  className="show-analysis-button"
+                  onClick={handleShowAnalysis}
+                >
+                  Analyze Selected ({selectedMolecules.length})
+                </button>
+              )}
+              
+              {selectedMolecules.length > 1 && (
+                <button 
+                  className="bulk-delete-button"
+                  onClick={handleBulkDeleteFavorites}
+                  disabled={bulkDeleteLoading}
+                  style={{
+                    backgroundColor: bulkDeleteLoading ? '#ccc' : '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '8px 16px',
+                    cursor: bulkDeleteLoading ? 'not-allowed' : 'pointer',
+                    marginLeft: '10px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {bulkDeleteLoading ? 'Deleting...' : `Delete Selected (${selectedMolecules.length})`}
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="favorites-table-container">
