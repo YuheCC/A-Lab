@@ -66,7 +66,7 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
 
     const chatItemsSortedByDate = useMemo(() => (Object.entries(chatMap).sort((a, b) => {
         // Sort by newest first (descending order)
-        return new Date(b[1].createdAt).getTime() - new Date(a[1].createdAt).getTime();
+        return new Date(b[1].createdAt) - new Date(a[1].createdAt);
     })), [chatMap]);
 
     const handleConfirmDelete = (chatId) => {

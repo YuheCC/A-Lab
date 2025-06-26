@@ -40,7 +40,9 @@
 
 
 /* MUI color overrides for button */
-
+.icon-button {
+    font-size: 12px !important;
+}
 .icon-button.MuiButton-containedPrimary {
     background-color: #0080ff !important;
     color: #ffffff !important;

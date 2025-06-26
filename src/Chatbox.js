@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, use, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import streamSSE from "./components/streamSSE.js";
 
 import FeedbackBox from './components/FeedbackBox.js';
@@ -7,15 +7,15 @@ import './Chatbox.css';
 import DOMPurify from 'dompurify';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { authFetch, getAPIUrl } from './utils.js';
+import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
 import { IconButton, Tooltip } from '@mui/material';
-import {MolCard} from './components/MolCard';
+import {MolCard} from './components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from './providers/chat.js';
 import { useShallow } from 'zustand/react/shallow';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
-import { Copy, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 
 const API_URL = getAPIUrl();
@@ -65,7 +65,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
 
   return (
     <div className="chat-input-group">
-      <div className="chat-input-container">
+      <div className={"chat-input-container " + (disabled ? "disabled" : "")}>
         <textarea
           ref={textareaRef}
           translate='no'
@@ -92,31 +92,19 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         </button>
       </div>
       <div className="checkbox-group">
-        <input 
-          type="checkbox" 
-          id="ignoreChatHistory" 
-          checked={ignoreChatHistory}
-          onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
-        />
-        <label htmlFor="ignoreChatHistory">
-          Ignore chat history
-        </label>
-        {userPermissions === 'admin' && (
-          <>
-            <input 
-              type="checkbox" 
-              id="disableLiteratureSearch" 
-              checked={disableLiteratureSearch}
-              onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
-              style={{ marginLeft: '20px' }}
-            />
-            <label htmlFor="disableLiteratureSearch">
-              Disable literature search
-            </label>
-          </>
-        )}
+        <div className='checkbox-item'>
+          <input 
+            type="checkbox" 
+            id="ignoreChatHistory" 
+            checked={ignoreChatHistory}
+            onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
+          />
+          <label htmlFor="ignoreChatHistory">
+            Ignore chat history
+          </label>
+        </div>
         {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
-          <>
+          <div className='checkbox-item'>
             <input
               type="checkbox"
               id="useMultiAgent"
@@ -125,7 +113,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
               style={{ marginLeft: '20px' }}
             />
             <label htmlFor="useMultiAgent">
-              Invoke the Constellation (BETA)
+              Enter Deep Space (BETA)
               <Tooltip
                 title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
                 placement="top"
@@ -133,12 +121,41 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
               </Tooltip>
             </label>
-          </>
+          </div>
+        )}
+        {userPermissions === 'admin' && (
+          <div className='admin-controls' style={{ marginLeft: 'auto' }}>
+            <label className='admin-controls-label'>ADMIN</label>
+            <div className='checkbox-item'>
+              <input 
+                type="checkbox" 
+                id="disableLiteratureSearch" 
+                checked={disableLiteratureSearch}
+                onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
+              />
+              <label htmlFor="disableLiteratureSearch">
+                Disable literature search
+              </label>
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
 });
+
+const formatThinkingTime = (seconds) => {
+  if (seconds === undefined || seconds === null || Number.isNaN(seconds) || seconds < 0) {
+    return "0 seconds";
+  }
+  if (seconds < 60) {
+    return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+  } else {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes} minute${minutes !== 1 ? 's' : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
+  }
+}
 
 // Chatbot component
 const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
@@ -151,9 +168,12 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     thinkingStartedAt,
     moleculesLoading,
     similarMoleculesLoading,
+    awaitingClarify,
+    isInClarifyFlow,
+    useMultiAgent
   } = useActiveChatData();
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -166,6 +186,9 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     activeChat: state.activeChat,
     setMoleculesLoading: state.setMoleculesLoading,
     setSimilarMoleculesLoading: state.setSimilarMoleculesLoading,
+    setAwaitingClarify: state.setAwaitingClarify,
+    setUseMultiAgent: state.setUseMultiAgent,
+    setIsInClarifyFlow: state.setIsInClarifyFlow,
   })));
 
   const userPermissions = useAuthStore(state => state.userPermissions);
@@ -193,11 +216,11 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   // Add favorites state - remove unused states
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
 
-  // multi-agent state
-  const [useMultiAgent, setUseMultiAgent] = useState(false);
-  // clarification round‑trip state
-  const [awaitingClarify, setAwaitingClarify] = useState(false);
-  const [multiAgentHistory, setMultiAgentHistory] = useState([]);
+  useEffect(() => {
+    // If awaitingClarify is true, set useMultiAgent to true
+    if (awaitingClarify)
+      setUseMultiAgent(awaitingClarify);
+  }, [awaitingClarify, setUseMultiAgent]);
 
   useEffect(() => {
     scrollToBottom();
@@ -299,7 +322,7 @@ const handleFindSimilarMolecules = async (details) => {
             ? (activeFindMessage.inputs.filter(m => m.role === "user").pop() || {}).content
             : activeFindMessage?.inputs)
         : undefined;
-      const llmResponse = isHighTier ? activeFindMessage?.text : undefined;
+      const llmResponse = isHighTier ? activeFindMessage?.content : undefined;
       // Build selected molecule string if high-tier
       const selectedMoleculeStr = isHighTier
         ? [
@@ -386,25 +409,21 @@ const handleFindSimilarMolecules = async (details) => {
       /* enforce research-tier quota */
       if (userPermissions === 'research' && remainingQueries <= 0) {
         addMessage({
-          type : "llm-message",
-          text : "You have reached your monthly query limit. Please contact an administrator for assistance."
+          role : "assistant",
+          content : "You have reached your monthly query limit. Please contact an administrator for assistance."
         });
         return;
       }
 
       /* push new user message */
-      const newUserMessage = { type: "user-message", text: input.trim() };
+      const newUserMessage = { role: "user", content: input.trim() };
       addMessage(newUserMessage);
 
       /* construct message list for the back-end */
       const messagesToSend = ignoreChatHistory
         ? [{ role: "user", content: input.trim() }]
         : [...messages, newUserMessage]
-            .filter(m => m.type === "user-message" || m.type === "llm-message")
-            .map(m => ({
-              role   : m.type === "user-message" ? "user" : "assistant",
-              content: m.text,
-            }));
+            .filter(m => m.role === "user" || m.role === "assistant");
 
       setIsThinking(true);
       const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
@@ -424,15 +443,16 @@ const handleFindSimilarMolecules = async (details) => {
           /* 1️⃣  Second half of a clarification round --------------- */
           if (awaitingClarify) {
             const updatedHistory = [
-              ...multiAgentHistory,
+              ...messages,
               { role: "user", content: input.trim() }
             ];
-            setMultiAgentHistory(updatedHistory);
+            
+            setIsInClarifyFlow(false, effectiveChatId);
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify({ messages: updatedHistory }),
+              body   : JSON.stringify(({ messages: updatedHistory, chat_id: currentChatId })),
             });
             if (!res.ok) throw new Error(await res.text());
 
@@ -443,39 +463,44 @@ const handleFindSimilarMolecules = async (details) => {
               }
             }
 
-            setAwaitingClarify(false);
-            setMultiAgentHistory([]);
+            setAwaitingClarify(false, effectiveChatId);
 
           /* 2️⃣  First contact – ask for clarifying questions -------- */
           } else {
+            // Track whether we are in a clarification flow
+            setIsInClarifyFlow(true, effectiveChatId);
+
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
               method : "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify({ messages: messagesToSend }),
+              body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
             });
             if (!clarRes.ok) throw new Error(await clarRes.text());
             const clarData = await clarRes.json();
 
+            // Update chat ID for new chat
+            if (effectiveChatId === -1 && clarData.chat_id !== undefined) {
+              updateNewChatId(clarData.chat_id);
+              effectiveChatId = clarData.chat_id;
+            }
+
             if (clarData.clarifying_questions?.length) {
-              const clarMsg = {
-                type: "llm-message",
-                text: clarData.clarifying_questions,
-              };
-              addMessage(clarMsg);
-              setAwaitingClarify(true);
-              setMultiAgentHistory([
-                ...messagesToSend,
-                { role: "assistant", content: clarData.clarifying_questions },
-              ]);
-              setIsThinking(false);
+              addMessage({
+                role: "assistant",
+                content: clarData.clarifying_questions,
+              }, effectiveChatId);
+              setAwaitingClarify(true, effectiveChatId);
+              setIsThinking(false, effectiveChatId);
               return;                 // wait for user reply
             }
 
-            /* 3️⃣  No clarifications – run Constellation directly ---- */
+            setIsInClarifyFlow(false, effectiveChatId);
+
+            /* 3️⃣  No clarifications – run Deep Space directly ---- */
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify({ messages: messagesToSend }),
+              body   : JSON.stringify({ messages: messagesToSend, chat_id: effectiveChatId }),
             });
             if (!res.ok) throw new Error(await res.text());
 
@@ -522,16 +547,16 @@ const handleFindSimilarMolecules = async (details) => {
         if (data?.error) throw new Error(data.error);
 
         /* adopt/assign chat ID */
-        if (effectiveChatId === -1 && data.chat_id !== undefined) {
+        if (effectiveChatId === -1 && data?.chat_id !== undefined) {
           updateNewChatId(data.chat_id);
           effectiveChatId = data.chat_id;
         }
 
         /* build LLM message */
         const llmMessage = {
-          type     : "llm-message",
+          role     : "assistant",
           inputs   : data.inputs || null,
-          text     : data.llmOutput || data.answer || "",
+          content  : data.llmOutput || data.answer || "",
           sources  : data.source_html,
           molText  : data.molecule_text,
           molecules: data.molecules,
@@ -545,7 +570,7 @@ const handleFindSimilarMolecules = async (details) => {
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ type: "llm-message", text: "Error: " + err.message });
+        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
         setIsThinking(false, effectiveChatId);
       } finally {
         if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
@@ -554,6 +579,7 @@ const handleFindSimilarMolecules = async (details) => {
 
     /* dependencies */
     [
+      setIsThinking,
       userPermissions,
       remainingQueries,
       messages,
@@ -565,8 +591,6 @@ const handleFindSimilarMolecules = async (details) => {
       setRemainingQueries,
       useMultiAgent,
       awaitingClarify,
-      multiAgentHistory,
-      setMultiAgentHistory,
       setAwaitingClarify,
     ]
   );
@@ -603,6 +627,9 @@ const handleFindSimilarMolecules = async (details) => {
         esp_max_ev: molecule.ESP_MAX || molecule.ESP_max_eV || null,
         predicted_melting_point: molecule.PREDICTED_MP || molecule.predicted_MP_celsius || null,
         predicted_boiling_point: molecule.PREDICTED_BP || molecule.predicted_BP_celsius || null,
+        predicted_fp_celsius: molecule.PREDICTED_FP_CELSIUS || molecule.predicted_fp_celsius || null,
+        combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV || molecule.combustion_enthalpy_ev || null,
+        commercial_score: molecule.COMMERCIAL_SCORE || molecule.commercial_score || null,
         functional_groups: molecule.FUNCTIONAL_GROUPS || molecule.functional_groups || null,
         umap_x: molecule.UMAP_0 || null,
         umap_y: molecule.UMAP_1 || null
@@ -670,7 +697,7 @@ const handleFindSimilarMolecules = async (details) => {
     const contextContent1 = Array.isArray(rawInputs)
       ? rawInputs.filter(m => m.role === "user").pop()?.content || ""
       : rawInputs || "";
-    const contextContent2 = activeFindMessage?.text || "";
+    const contextContent2 = activeFindMessage?.content || "";
     const contextContent3 = activeFindMessage?.sources || "";
 
     setContextObject({
@@ -715,11 +742,11 @@ const handleFindSimilarMolecules = async (details) => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={msg.type}
+                className={`message-${msg.role}`}
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.text}
+                    {msg.content}
                   </ReactMarkdown>
                   {msg.molText && msg.molecules && msg.molecules.length > 0 && (
                     <>
@@ -732,7 +759,7 @@ const handleFindSimilarMolecules = async (details) => {
                     </>
                   )}
                 </div>
-                {msg.type === "llm-message" && msg.molecules && msg.molecules.length > 0 && (
+                {msg.role === "assistant" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
                     <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
                       loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={"searching our database"}
@@ -746,16 +773,16 @@ const handleFindSimilarMolecules = async (details) => {
                   </div>
                 )}
                 {/* Add thumbs buttons for feedback */}
-                {msg.type === "llm-message" && (
+                {msg.role === "assistant" && (
                   <div className="thumbs">
                     <IconButton
-                      onClick={() => handleThumbsUp(msg.inputs, msg.text, msg.sources)}
+                      onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
                       size="small"
                       style={{ marginRight: 5 }} variant="contained">
                         <ThumbsUp size={18} style={{ margin: 4}} />
                       </IconButton>
                     <IconButton
-                      onClick={() => handleThumbsDown(msg.inputs, msg.text, msg.sources)}
+                      onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
                       size="small"
                       style={{ marginRight: 5 }} variant="contained">
                         <ThumbsDown size={18} style={{ margin: 4}} />
@@ -768,20 +795,22 @@ const handleFindSimilarMolecules = async (details) => {
                         className="copy-btn"
                         onClick={(evt) => {
                           // Extract the message html from the event target
-                          const messageElement = evt.target.closest('.llm-message').querySelector('.message-content');
+                          const messageElement = evt.target.closest('.message-assistant').querySelector('.message-content');
 
                           // Create a temporary element and set its innerHTML to the message's text.
                           const tempEl = document.createElement('div');
-                          tempEl.innerText = msg.text;
+                          tempEl.innerText = msg.content;
+
+                          console.log("Copying message:", tempEl.innerText);
 
                           // Get the plain text version (which already has newlines)
                           const plainTextToCopy = tempEl.innerText;
 
                           // Sanitize the HTML in case the backend returns unusual HTML
                           const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
-                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li'],
+                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
                             ALLOWED_ATTR: ['href', 'target']
-                          }) : msg.text;
+                          }) : msg.content;
 
                           // For markdown, copy plain text and also the markdown string as text/markdown
                           const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
@@ -806,12 +835,22 @@ const handleFindSimilarMolecules = async (details) => {
             ))}
             {isThinking && (
               <div className="thinking-message">
-                <span>thinking for {thinkingTime} second{thinkingTime !== 1 ? 's' : ''}</span>
-                <div className="thinking-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                <div className='thinking-header'>
+                  <span>thinking for {formatThinkingTime(thinkingTime)}</span>
+                  <div className="thinking-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
                 </div>
+                {useMultiAgent && 
+                  <div className="thinking-note">
+                    <Info size={16} style={{ margin: 3, marginRight: 10 }} />
+                    <span>
+                      {isInClarifyFlow ? "We may ask you to reply to a few clarifying questions shortly.": "The Deep Space Multi-Agent LLM is now working, it may take 10-20 minutes to respond, depending on the complexity of your question."}
+                    </span>
+                  </div>
+                }
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -861,13 +900,22 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                    },
+                  {
+                    label: 'Predicted Flash Point', value: details.predicted_FP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  {
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
                   { label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
+                  {
+                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                  }
                 ]} foldPropGroups={[
-                  { label: 'UMAP X', value: details.UMAP_0, span: 2 },
-                  { label: 'UMAP Y', value: details.UMAP_1, span: 2 },
                   { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
                 ]}>
                   <div className="molecule-actions">
@@ -887,6 +935,11 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small">
                       Find Similar Molecules
                     </CustomButton>
+                    {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                        window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                    }}>
+                        View in MolPort
+                    </CustomButton>}
                   </div>
                 </MolCard>
               })
@@ -922,33 +975,40 @@ const handleFindSimilarMolecules = async (details) => {
                 large={true}
                 style={{ margin: 5 }}
                 propGroups={[
-                  { label: 'LLM Grade', value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ?
-                    <IconButton onClick={() => {
-                          setReasoningText(details.reasoning);
-                        }} style={{ marginLeft: 5 }} size="small">
-                      <Info size={18} style={{ margin: 2 }}/>
-                    </IconButton> : null
-                  ), show: details.grade !== null && details.grade !== undefined },
+                  {
+                    label: 'LLM Grade', value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ?
+                      <IconButton onClick={() => {
+                        setReasoningText(details.reasoning);
+                      }} style={{ marginLeft: 5 }} size="small">
+                        <Info size={18} style={{ margin: 2 }} />
+                      </IconButton> : null
+                    ), show: details.grade !== null && details.grade !== undefined
+                  },
                   { label: 'SMILES', value: details.SMILES, span: 2 },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
-                  { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
+                  {
+                    label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
-                   },
-                  { label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
+                  },
+                  {
+                    label: 'Predicted Boiling Point', value: details.predicted_BP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
-                   },
-                   {
-                    label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV'
-                   },
-                   {
-                    label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV'
-                   },
-                   {
-                    label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV'
-                   },
-                    {
-                      label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV'
-                    },
+                  },
+                  {
+                    label: 'Predicted Flash Point', value: details.predicted_FP_celsius, span: 2, suffix: ' °C',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  {
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                  },
+                  { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'LUMO', value: details.LUMO_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
+                  { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
+                  {
+                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                  }
                   ]} foldPropGroups={[
                     { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }
                   ]}>
@@ -972,6 +1032,11 @@ const handleFindSimilarMolecules = async (details) => {
                     contextContent3={contextObject.contextContent3}
                     onClose={() => { }}
                   />
+                  {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                    window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                  }}>
+                    View in MolPort
+                  </CustomButton>}
                 </div>
               </MolCard>
             })}

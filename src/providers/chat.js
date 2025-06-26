@@ -7,16 +7,22 @@ const API_URL = getAPIUrl();
 
  const generateNewChat = () => ({
     name: 'New Chat',
+    useMultiAgent: false,
+    isInClarifyFlow: false,
     isThinking: false,
     thinkingStartedAt: null,
     moleculesLoading: false,
     similarMoleculesLoading: false,
     messages: [
-        { type: "system-message", text: "Welcome to the Molecular Universe. How can I help you today?" }
+        { role: "system", content: "Welcome to the Molecular Universe. How can I help you today?" }
     ],
     activeMolecule: null,
     foundMolecules: [],
     similarMolecules: [],
+
+    // Deep Space metadata
+    awaitingClarify: false,
+
     createdAt: new Date().toISOString(),
 })
 
@@ -89,17 +95,20 @@ export const useChatStore = create(persist((set, get) => ({
                 if (historyData.length > 0) {
                     historyData.forEach(chat => {
                         draft.chatMap[chat.id] = {
-                            createdAt: chat.created_at,
+                            createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
+                            useMultiAgent: false,
                             name: chat.chat_name || 'New Chat',
                             messages: chat.content.map(item => ({
-                                type: item.role === 'system' ? 'system-message' : item.role === 'user' ? 'user-message' : 'llm-message',
-                                text: item.content || '',
+                                role: item.role,
+                                content: item.content || '',
                                 molText: item.molecules.join(", ") || [],
                                 molecules: item.molecules || [],
                             })) || [],
                             activeMolecule: chat.meta_active_molecule || null,
                             foundMolecules: chat.meta_molecules || [],
                             similarMolecules: chat.meta_similar_molecules || [],
+                            awaitingClarify: chat.awaiting_clarification || false,
+                            isInClarifyFlow: false,
                         };
                     });
                 }
@@ -213,8 +222,8 @@ export const useChatStore = create(persist((set, get) => ({
             : [...messagesOrUpdater];
     })),
     addMessage: (message, chatId = null) => set(produce((state) => {
-        if (message.type === 'user-message' && state.activeChat === '-1') {
-            state.chatMap[state.activeChat].name = message.text;
+        if (message.role === 'user' && state.activeChat === '-1') {
+            state.chatMap[state.activeChat].name = message.content;
         }
         console.log("Adding message to chat:", chatId || state.activeChat, message);
         const chat = state.chatMap[chatId || state.activeChat];
@@ -331,6 +340,44 @@ export const useChatStore = create(persist((set, get) => ({
         chat.similarMoleculesLoading = isLoading;
     })),
 
+    // Deep Space actions
+    setUseMultiAgent: (multiAgent, chatId = null) => set(produce((state) => {
+        console.log("Setting useMultiAgent for chat:", chatId || state.activeChat, multiAgent);
+        const chat = state.chatMap[chatId || state.activeChat];
+        if (!chat) return;
+        chat.useMultiAgent = multiAgent;
+    })),
+    setAwaitingClarify: async (awaitingClarify, chatId = null) => {
+        set(produce((state) => {
+            console.log("Setting awaitingClarify for chat:", chatId || state.activeChat, awaitingClarify);
+            const chat = state.chatMap[chatId || state.activeChat];
+            if (!chat) return;
+            chat.awaitingClarify = awaitingClarify;
+        }));
+
+        // Send awaitingClarify to server
+        try {
+            await authFetch(`${API_URL}/chat-history/update`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: parseInt(chatId || get().activeChat),
+                    awaiting_clarification: awaitingClarify,
+                })
+            });
+        } catch (error) {
+            console.error("Failed to update awaiting clarification on server:", error);
+        }
+    },
+    setIsInClarifyFlow: (isInClarifyFlow, chatId = null) => set(produce((state) => {
+        console.log("Setting isInClarifyFlow for chat:", chatId || state.activeChat, isInClarifyFlow);
+        const chat = state.chatMap[chatId || state.activeChat];
+        if (!chat) return;
+        chat.isInClarifyFlow = isInClarifyFlow;
+    }))
+
 }), {
     name: 'chat-store',
     storage: createJSONStorage(() => localStorage),
@@ -349,6 +396,9 @@ export const useChatStore = create(persist((set, get) => ({
                     activeMolecule: value.activeMolecule,
                     foundMolecules: value.foundMolecules,
                     similarMolecules: value.similarMolecules,
+                    awaitingClarify: value.awaitingClarify,
+                    isInClarifyFlow: value.isInClarifyFlow,
+                    useMultiAgent: value.useMultiAgent,
                     createdAt: value.createdAt,
                 }
             ])
@@ -376,7 +426,8 @@ export const useActiveChatData = () => {
             oldData.messages === newData.messages &&
             oldData.isThinking === newData.isThinking &&
             oldData.moleculesLoading === newData.moleculesLoading &&
-            oldData.similarMoleculesLoading === newData.similarMoleculesLoading
+            oldData.similarMoleculesLoading === newData.similarMoleculesLoading &&
+            oldData.awaitingClarify === newData.awaitingClarify
         );
     });
 };
