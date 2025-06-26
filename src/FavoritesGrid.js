@@ -1057,10 +1057,10 @@ const FavoritesGrid = () => {
                     BP (°C) {getSortIndicator('predicted_boiling_point')}
                   </th>
                   <th>
-                    Predicted Flash Point
+                    Predicted Flash Point (°C)
                   </th>
                   <th>
-                    Combustion Enthalpy
+                    Combustion Enthalpy (eV)
                   </th>
                   <th>
                     Commercial Score
