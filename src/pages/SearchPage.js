@@ -311,7 +311,10 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                             style={{
                                                                 flexGrow: 1,
                                                             }}
-                                                            onClick={() => handleAddToFavorites(molecule)}
+                                                            onClick={() => {
+                                                                console.log('Add to Favorites payload (search):', molecule);
+                                                                handleAddToFavorites(molecule);
+                                                            }}
                                                             loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
                                                             loadingText="Saving..."
                                                             successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
@@ -386,22 +389,28 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         style={{
                                                             flexGrow: 1,
                                                         }}
-                                                        onClick={() => handleAddToFavorites({
-                                                            smiles: molecule.SMILES,
-                                                            properties: {
-                                                                molwt: molecule.molecular_weight,
-                                                                homo_eV: molecule.HOMO_eV,
-                                                                lumo_eV: molecule.LUMO_eV,
-                                                                esp_min_eV: molecule.ESP_min_eV,
-                                                                esp_max_eV: molecule.ESP_max_eV,
-                                                                predicted_mp: molecule.predicted_MP_celsius,
-                                                                predicted_bp: molecule.predicted_BP_celsius,
-                                                                functional_groups: molecule.functional_groups,
-                                                                commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null
-                                                            },
-                                                            x: molecule.UMAP_0,
-                                                            y: molecule.UMAP_1
-                                                        })}
+                                                        onClick={() => {
+                                                            console.log('Add to Favorites payload (search):', molecule);
+                                                            handleAddToFavorites({
+                                                                smiles: molecule.SMILES,
+                                                                properties: {
+                                                                    molwt: molecule.molecular_weight,
+                                                                    homo_eV: molecule.HOMO_eV,
+                                                                    lumo_eV: molecule.LUMO_eV,
+                                                                    esp_min_eV: molecule.ESP_min_eV,
+                                                                    esp_max_eV: molecule.ESP_max_eV,
+                                                                    predicted_mp: molecule.predicted_MP_celsius,
+                                                                    predicted_bp: molecule.predicted_BP_celsius,
+                                                                    predicted_fp_celsius: molecule.predicted_FP_celsius,
+                                                                    combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
+                                                                    commercial_score: molecule.COMMERCIAL_SCORE,
+                                                                    functional_groups: molecule.functional_groups,
+                                                                    commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null
+                                                                },
+                                                                x: molecule.UMAP_0,
+                                                                y: molecule.UMAP_1
+                                                            });
+                                                        }}
                                                         loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
                                                         loadingText="Saving..."
                                                         successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}

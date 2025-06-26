@@ -37,6 +37,8 @@ const FavoritesGrid = () => {
         const data = await response.json();
         setFavorites(data);
         setFilteredFavorites(data);
+        // Debug: log the favorites array to inspect its properties
+        console.log('Fetched favorites:', data);
         
         // Fetch molecule images for each favorite
         fetchMoleculeImages(data);
@@ -877,6 +879,8 @@ const FavoritesGrid = () => {
       }
       
       if (clickedMolecule) {
+        // Debug: log the clicked molecule to inspect its properties
+        console.log('Clicked molecule:', clickedMolecule);
         // Transform favorite data to match NodePopup expected format
         const nodeData = {
           smiles: clickedMolecule.smiles,
@@ -890,7 +894,9 @@ const FavoritesGrid = () => {
             esp_max_eV: clickedMolecule.esp_max_ev,
             predicted_mp: clickedMolecule.predicted_melting_point,
             predicted_bp: clickedMolecule.predicted_boiling_point,
-            functional_groups: clickedMolecule.functional_groups
+            functional_groups: clickedMolecule.functional_groups,
+            commercial_score: clickedMolecule.commercial_score,
+            commercial_link: clickedMolecule.commercial_link
           },
           rawData: clickedMolecule
         };
