@@ -18,7 +18,8 @@ export const filterLabels = {
     predicted_fp: "Predicted Flash Point (°C)",
     chemical_formula: "Chemical Formula",
     combustion_enthalpy: "Combustion Enthalpy (eV)",
-    CLUSTER: "Cluster"
+    CLUSTER: "Cluster",
+    functional_groups: "Functional Groups"
 };
 
 export const functionGroupOptions = [
