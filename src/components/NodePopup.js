@@ -50,10 +50,11 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
             </tbody>
           </table>
           <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '10px' }}>
               <button
                 className="copy-button"
                 onClick={copyToClipboard}
+                style={{ flex: '1', maxWidth: '140px' }}
               >
                 Copy All Data
               </button>
@@ -66,28 +67,19 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                     ...node,
                     properties: {
                       ...properties,
-                      predicted_fp_celsius: properties.predicted_fp_celsius ?? properties.predicted_fp ?? properties.predicted_FP_celsius,
-                      combustion_enthalpy_ev: properties.combustion_enthalpy_ev ?? properties.combustion_enthalpy ?? properties.COMBUSTION_ENTHALPY_EV,
+                      predicted_mp: properties.predicted_mp,
+                      predicted_bp: properties.predicted_bp,
+                      predicted_fp: properties.predicted_fp_celsius || properties.predicted_fp,
+                      combustion_enthalpy: properties.combustion_enthalpy_ev || properties.combustion_enthalpy,
                       commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE,
-                      commercial_link: properties.commercial_link ?? (properties.COMMERCIAL_LINK || node.COMMERCIAL_LINK || null)
+                      commercial_link: properties.commercial_link || properties.COMMERCIAL_LINK || null,
                     }
                   };
                   handleAddToFavorites(mappedNode);
                 }}
-                style={{
-                  backgroundColor: '#0080ff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '8px 15px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  transition: 'background-color 0.3s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
+                style={{ flex: '1', maxWidth: '140px' }}
               >
-                Add to Favorites ★
+                Add to Favorites
               </button>
             </div>
             {moleculeFavoriteStatus[node.smiles]?.loading && (
