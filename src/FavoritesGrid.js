@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Plotly from 'plotly.js-dist';
 import { authFetch, getAPIUrl } from './utils.js';
+import { useAuthStore } from './providers/auth.js';
 import NodePopup from './components/NodePopup.js';
 
 const API_URL = getAPIUrl();
 
 const FavoritesGrid = () => {
+  const { isAuthenticated, userPermissions } = useAuthStore();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1379,6 +1381,8 @@ const FavoritesGrid = () => {
         filterLabels={filterLabels}
         handleAddToFavorites={handleAddToFavorites}
         moleculeFavoriteStatus={moleculeFavoriteStatus}
+        userPermissions={userPermissions}
+        isAuthenticated={isAuthenticated}
       />}
     </div>
   );

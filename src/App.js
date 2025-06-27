@@ -47,7 +47,7 @@ const App = () => {
   const [includeRelatives, setIncludeRelatives] = useState(false);
 
   const fetchData = usePlotDataStore(state => state.fetchData);
-  const { verifyAuth } = useAuthStore();
+  const { verifyAuth, isAuthenticated, userPermissions } = useAuthStore();
 
   // Handle onMount events
   // Add global CSS styles for containers
@@ -323,6 +323,8 @@ const App = () => {
         filterLabels={filterLabels}
         handleAddToFavorites={handleAddToFavorites}
         moleculeFavoriteStatus={moleculeFavoriteStatus}
+        userPermissions={userPermissions}
+        isAuthenticated={isAuthenticated}
       />}
     </div>
   );

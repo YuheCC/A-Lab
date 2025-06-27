@@ -2,8 +2,11 @@ import MolViewer2D from "./MolViewer2D";
 import { COMMERCIAL_SCORE_MAP } from "../utils";
 
 // NodePopup component for displaying molecule information
-const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
+const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus, userPermissions, isAuthenticated }) => {
   if (!node) return null;
+
+  // Check if user has permission to see predicted properties
+  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
 
   const copyToClipboard = () => {
     const nodeData = JSON.stringify(node.rawData, null, 2);
@@ -40,6 +43,13 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                   if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
                   }
+                  
+                  // Hide predicted properties for users without proper permissions
+                  if (!canSeePredictedProperties && 
+                      (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
+                    return false;
+                  }
+                  
                   return true;
                 })
                 .map(([key, value]) => (
