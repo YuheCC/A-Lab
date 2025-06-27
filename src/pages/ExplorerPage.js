@@ -18,7 +18,7 @@ export const filterLabels = {
     predicted_fp: "Predicted Flash Point (°C)",
     chemical_formula: "Chemical Formula",
     combustion_enthalpy: "Combustion Enthalpy (eV)",
-    commercial_score: "Commercial Score",
+    commercial_score: "Commercial Viability",
     commercial_link: "Commercial Link",
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups"

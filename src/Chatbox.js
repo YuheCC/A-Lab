@@ -914,7 +914,7 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   {
-                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
                   }
                 ]} foldPropGroups={[
                   { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
@@ -1008,7 +1008,7 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   {
-                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: '', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
                   }
                   ]} foldPropGroups={[
                     { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }

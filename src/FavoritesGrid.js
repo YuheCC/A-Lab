@@ -1021,7 +1021,7 @@ const FavoritesGrid = () => {
     esp_max_eV: 'ESP Max (eV)',
     predicted_mp: 'Predicted Melting Point (°C)',
     predicted_bp: 'Predicted Boiling Point (°C)',
-    commercial_score: 'Commercial Score',
+    commercial_score: 'Commercial Viability',
     commercial_link: 'Commercial Link',
     functional_groups: 'Functional Groups'
   };
@@ -1168,7 +1168,7 @@ const FavoritesGrid = () => {
                     Combustion Enthalpy (eV)
                   </th>
                   <th>
-                    Commercial Score
+                    Commercial Viability
                   </th>
                   <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
                     ESP Min (eV) {getSortIndicator('esp_min_ev')}

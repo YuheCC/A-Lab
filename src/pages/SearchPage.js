@@ -300,7 +300,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score], span: 4, wrap: true}
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score], span: 4, wrap: true}
                                                 ]} foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
@@ -377,7 +377,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE], span:4, wrap: true}
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE], span:4, wrap: true}
                                                 ]} 
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
