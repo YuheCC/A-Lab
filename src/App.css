@@ -3287,6 +3287,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  table-layout: fixed; /* Enable fixed table layout for column resizing */
 }
 
 .favorites-table th {
@@ -3302,6 +3303,9 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 .favorites-table td {
   padding: 8px;
   border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .favorites-table tr:hover {
@@ -3310,6 +3314,59 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 
 .selected-row {
   background-color: rgba(135, 206, 250, 0.2) !important;
+}
+
+/* Column resizing styles */
+.resizable-header {
+  position: relative;
+  user-select: none;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+  border-right: 2px solid transparent;
+  z-index: 1;
+}
+
+.resize-handle:hover {
+  border-right: 2px solid #0080ff;
+  background-color: rgba(0, 128, 255, 0.1);
+}
+
+.resize-handle:active {
+  border-right: 2px solid #0066cc;
+  background-color: rgba(0, 102, 204, 0.2);
+}
+
+/* Prevent text selection during resize */
+body.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow text wrapping for certain columns when they're wide enough */
+.favorites-table td:nth-child(3) { /* SMILES column */
+  white-space: normal;
+  word-break: break-word;
+}
+
+.favorites-table td:nth-child(11) { /* Commercial Viability column */
+  white-space: normal;
+  word-break: break-word;
+  min-width: 120px;
+}
+
+.favorites-table td:nth-child(14) { /* Functional Groups column */
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Deckgl Styles */

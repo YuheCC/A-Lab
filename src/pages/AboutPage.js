@@ -139,9 +139,9 @@ const AboutPage = () => {
             You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular) that meet your criteria.
           </p>
 
-          <div id="newsfeed" className="feature-section">
+          <div id="newsfeed">
             <h3>Newsfeed</h3>
-            <p>April 29, 2025: Molecular Universe MU-0 is released to public</p>
+            <p>April 29, 2025: Molecular Universe MU-0 is released to public.</p>
           </div>
         </div>
       </div>

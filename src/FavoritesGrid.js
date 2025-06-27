@@ -21,6 +21,31 @@ const FavoritesGrid = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  // Column resizing state
+  const [columnWidths, setColumnWidths] = useState({
+    checkbox: 40,
+    image: 60,
+    smiles: 300,
+    molecularWeight: 120,
+    homo: 100,
+    lumo: 100,
+    mp: 100,
+    bp: 100,
+    fp: 140,
+    combustion: 140,
+    commercial: 140,
+    espMin: 100,
+    espMax: 100,
+    functionalGroups: 200,
+    umap: 100,
+    addedDate: 150,
+    commercialLink: 120,
+    actions: 80
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizingColumn, setResizingColumn] = useState(null);
+  const [startX, setStartX] = useState(0);
+  const [startWidth, setStartWidth] = useState(0);
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
@@ -130,6 +155,47 @@ const FavoritesGrid = () => {
       updateMOChart();
     }
   }, [selectedMolecules]);
+
+  // Column resizing handlers
+  const handleMouseDown = (e, columnKey) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setResizingColumn(columnKey);
+    setStartX(e.clientX);
+    setStartWidth(columnWidths[columnKey]);
+    document.body.classList.add('no-select'); // Prevent text selection
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing || !resizingColumn) return;
+    
+    const diff = e.clientX - startX;
+    const newWidth = Math.max(50, startWidth + diff); // Minimum width of 50px
+    
+    setColumnWidths(prev => ({
+      ...prev,
+      [resizingColumn]: newWidth
+    }));
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+    setResizingColumn(null);
+    document.body.classList.remove('no-select'); // Re-enable text selection
+  };
+
+  // Add global mouse event listeners for resizing
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing, resizingColumn, startX, startWidth]);
 
   const fetchMoleculeImages = async (favoritesData) => {
     const images = {};
@@ -1129,7 +1195,7 @@ const FavoritesGrid = () => {
             <table className="favorites-table">
               <thead>
                 <tr>
-                  <th className="checkbox-column">
+                  <th className="checkbox-column resizable-header" style={{ width: columnWidths.checkbox }}>
                     <input 
                       type="checkbox" 
                       onChange={(e) => {
@@ -1141,50 +1207,76 @@ const FavoritesGrid = () => {
                       }}
                       checked={selectedMolecules.length === filteredFavorites.length && filteredFavorites.length > 0}
                     />
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'checkbox')}></div>
                   </th>
-                  <th>Image</th>
-                  <th onClick={() => handleSort('smiles')} className="sortable-header">
+                  <th className="resizable-header" style={{ width: columnWidths.image }}>
+                    Image
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'image')}></div>
+                  </th>
+                  <th onClick={() => handleSort('smiles')} className="sortable-header resizable-header" style={{ width: columnWidths.smiles }}>
                     SMILES {getSortIndicator('smiles')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'smiles')}></div>
                   </th>
-                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
+                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header resizable-header" style={{ width: columnWidths.molecularWeight }}>
                     Molecular Weight {getSortIndicator('molecular_weight')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'molecularWeight')}></div>
                   </th>
-                  <th onClick={() => handleSort('homo_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('homo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.homo }}>
                     HOMO (eV) {getSortIndicator('homo_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'homo')}></div>
                   </th>
-                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.lumo }}>
                     LUMO (eV) {getSortIndicator('lumo_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'lumo')}></div>
                   </th>
-                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
+                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header resizable-header" style={{ width: columnWidths.mp }}>
                     MP (°C) {getSortIndicator('predicted_melting_point')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'mp')}></div>
                   </th>
-                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
+                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header resizable-header" style={{ width: columnWidths.bp }}>
                     BP (°C) {getSortIndicator('predicted_boiling_point')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'bp')}></div>
                   </th>
-                  <th>
+                  <th className="resizable-header" style={{ width: columnWidths.fp }}>
                     Predicted Flash Point (°C)
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'fp')}></div>
                   </th>
-                  <th>
+                  <th className="resizable-header" style={{ width: columnWidths.combustion }}>
                     Combustion Enthalpy (eV)
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'combustion')}></div>
                   </th>
-                  <th>
+                  <th className="resizable-header" style={{ width: columnWidths.commercial }}>
                     Commercial Viability
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercial')}></div>
                   </th>
-                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMin }}>
                     ESP Min (eV) {getSortIndicator('esp_min_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMin')}></div>
                   </th>
-                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMax }}>
                     ESP Max (eV) {getSortIndicator('esp_max_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMax')}></div>
                   </th>
-                  <th onClick={() => handleSort('functional_groups')} className="sortable-header">
+                  <th onClick={() => handleSort('functional_groups')} className="sortable-header resizable-header" style={{ width: columnWidths.functionalGroups }}>
                     Functional Groups {getSortIndicator('functional_groups')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'functionalGroups')}></div>
                   </th>
-                  <th>UMAP X/Y</th>
-                  <th onClick={() => handleSort('created_at')} className="sortable-header">
+                  <th className="resizable-header" style={{ width: columnWidths.umap }}>
+                    UMAP X/Y
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'umap')}></div>
+                  </th>
+                  <th onClick={() => handleSort('created_at')} className="sortable-header resizable-header" style={{ width: columnWidths.addedDate }}>
                     Added Date {getSortIndicator('created_at')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'addedDate')}></div>
                   </th>
-                  <th>Commercial Link</th>
-                  <th>Actions</th>
+                  <th className="resizable-header" style={{ width: columnWidths.commercialLink }}>
+                    Commercial Link
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercialLink')}></div>
+                  </th>
+                  <th className="resizable-header" style={{ width: columnWidths.actions }}>
+                    Actions
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'actions')}></div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
