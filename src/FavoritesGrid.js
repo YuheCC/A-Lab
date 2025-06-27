@@ -52,6 +52,9 @@ const FavoritesGrid = () => {
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
 
+  // Helper function to check if user has admin or enterprise permissions
+  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
+
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -1232,18 +1235,24 @@ const FavoritesGrid = () => {
                     LUMO (eV) {getSortIndicator('lumo_ev')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'lumo')}></div>
                   </th>
-                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header resizable-header" style={{ width: columnWidths.mp }}>
-                    MP (°C) {getSortIndicator('predicted_melting_point')}
-                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'mp')}></div>
-                  </th>
-                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header resizable-header" style={{ width: columnWidths.bp }}>
-                    BP (°C) {getSortIndicator('predicted_boiling_point')}
-                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'bp')}></div>
-                  </th>
-                  <th className="resizable-header" style={{ width: columnWidths.fp }}>
-                    Predicted Flash Point (°C)
-                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'fp')}></div>
-                  </th>
+                  {canSeePredictedProperties && (
+                    <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header resizable-header" style={{ width: columnWidths.mp }}>
+                      MP (°C) {getSortIndicator('predicted_melting_point')}
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'mp')}></div>
+                    </th>
+                  )}
+                  {canSeePredictedProperties && (
+                    <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header resizable-header" style={{ width: columnWidths.bp }}>
+                      BP (°C) {getSortIndicator('predicted_boiling_point')}
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'bp')}></div>
+                    </th>
+                  )}
+                  {canSeePredictedProperties && (
+                    <th className="resizable-header" style={{ width: columnWidths.fp }}>
+                      Predicted Flash Point (°C)
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'fp')}></div>
+                    </th>
+                  )}
                   <th className="resizable-header" style={{ width: columnWidths.combustion }}>
                     Combustion Enthalpy (eV)
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'combustion')}></div>
@@ -1307,9 +1316,15 @@ const FavoritesGrid = () => {
                     <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : 'N/A'}</td>
                     <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : 'N/A'}</td>
                     <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
+                    )}
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
+                    )}
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                    )}
                     <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : 'N/A'}</td>
                     <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : 'N/A'}</td>
                     <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
