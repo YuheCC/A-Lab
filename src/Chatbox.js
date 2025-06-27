@@ -635,7 +635,7 @@ const handleFindSimilarMolecules = async (details) => {
         esp_max_ev: molecule.ESP_MAX || molecule.ESP_max_eV || null,
         predicted_melting_point: molecule.PREDICTED_MP || molecule.predicted_MP_celsius || null,
         predicted_boiling_point: molecule.PREDICTED_BP || molecule.predicted_BP_celsius || null,
-        predicted_fp_celsius: molecule.PREDICTED_FP_CELSIUS || molecule.predicted_fp_celsius || null,
+        predicted_fp_celsius: molecule.PREDICTED_FP || molecule.PREDICTED_FP_CELSIUS || molecule.predicted_FP_celsius || molecule.predicted_fp_celsius || null,
         combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV || molecule.combustion_enthalpy_ev || null,
         commercial_score: commercialScoreText,
         commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null,
