@@ -18,6 +18,8 @@ export const filterLabels = {
     predicted_fp: "Predicted Flash Point (°C)",
     combustion_enthalpy: "Combustion Enthalpy (eV)",
     commercial_score: "Commercial Viability",
+    chemical_formula: "Chemical Formula",
+    functional_groups: "Functional Groups",
     CLUSTER: "Cluster"
 };
 
