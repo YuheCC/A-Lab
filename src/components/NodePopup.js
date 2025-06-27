@@ -1,4 +1,5 @@
 import MolViewer2D from "./MolViewer2D";
+import { COMMERCIAL_SCORE_MAP } from "../utils";
 
 // NodePopup component for displaying molecule information
 const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
@@ -63,6 +64,13 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                 onClick={() => {
                   // Ensure the properties object has the correct keys for favorites
                   const properties = node.properties || {};
+                  
+                  // Get the raw commercial score (numeric 0-3) and convert to text
+                  const rawCommercialScore = properties.commercial_score ?? properties.COMMERCIAL_SCORE;
+                  const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+                    ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+                    : null;
+                  
                   const mappedNode = {
                     ...node,
                     properties: {
@@ -71,7 +79,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                       predicted_bp: properties.predicted_bp,
                       predicted_fp: properties.predicted_fp_celsius || properties.predicted_fp,
                       combustion_enthalpy: properties.combustion_enthalpy_ev || properties.combustion_enthalpy,
-                      commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE,
+                      commercial_score: commercialScoreText,
                       commercial_link: properties.commercial_link || properties.COMMERCIAL_LINK || null,
                     }
                   };

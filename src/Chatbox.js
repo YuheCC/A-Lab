@@ -617,6 +617,14 @@ const handleFindSimilarMolecules = async (details) => {
         throw new Error('You must be logged in to add favorites');
       }
 
+      // Get the raw commercial score (numeric 0-3)
+      const rawCommercialScore = molecule.COMMERCIAL_SCORE || molecule.commercial_score;
+      
+      // Convert commercial score from numeric to descriptive text
+      const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+        ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+        : null;
+
       // Prepare favorite data from molecule properties
       const favoriteData = {
         smiles: smiles,
@@ -629,7 +637,7 @@ const handleFindSimilarMolecules = async (details) => {
         predicted_boiling_point: molecule.PREDICTED_BP || molecule.predicted_BP_celsius || null,
         predicted_fp_celsius: molecule.PREDICTED_FP_CELSIUS || molecule.predicted_fp_celsius || null,
         combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV || molecule.combustion_enthalpy_ev || null,
-        commercial_score: molecule.COMMERCIAL_SCORE || molecule.commercial_score || null,
+        commercial_score: commercialScoreText,
         commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null,
         functional_groups: molecule.FUNCTIONAL_GROUPS || molecule.functional_groups || null,
         umap_x: molecule.UMAP_0 || null,

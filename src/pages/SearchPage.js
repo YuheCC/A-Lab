@@ -391,6 +391,15 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         }}
                                                         onClick={() => {
                                                             console.log('Add to Favorites payload (search):', molecule);
+                                                            
+                                                            // Get the raw commercial score (numeric 0-3)
+                                                            const rawCommercialScore = molecule.COMMERCIAL_SCORE;
+                                                            
+                                                            // Convert commercial score from numeric to descriptive text
+                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+                                                                ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+                                                                : null;
+                                                            
                                                             handleAddToFavorites({
                                                                 smiles: molecule.SMILES,
                                                                 properties: {
@@ -403,7 +412,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                                     predicted_bp: molecule.predicted_BP_celsius,
                                                                     predicted_fp_celsius: molecule.predicted_FP_celsius,
                                                                     combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
-                                                                    commercial_score: molecule.COMMERCIAL_SCORE,
+                                                                    commercial_score: commercialScoreText,
                                                                     functional_groups: molecule.functional_groups,
                                                                     commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null
                                                                 },

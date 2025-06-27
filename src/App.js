@@ -6,7 +6,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
 import PricingPage from './pages/PricingPage.js';
 import RedeemPage from './pages/RedeemPage.js';
 import TermsPage from './pages/TermsPage.js';
-import { authFetch, getAPIUrl } from './utils.js';
+import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from './utils.js';
 
 import './App.css';
 import Sidebar from './components/Sidebar.js';
@@ -161,6 +161,14 @@ const App = () => {
         throw new Error('You must be logged in to add favorites');
       }
 
+      // Get the raw commercial score (numeric 0-3)
+      const rawCommercialScore = molecule.properties?.commercial_score || molecule.properties?.COMMERCIAL_SCORE;
+      
+      // Convert commercial score from numeric to descriptive text
+      const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+        ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+        : null;
+
       // Prepare favorite data from molecule properties
       const favoriteData = {
         smiles: molecule.smiles,
@@ -173,7 +181,7 @@ const App = () => {
         predicted_boiling_point: molecule.properties?.predicted_bp || null,
         predicted_fp_celsius: molecule.properties?.predicted_fp_celsius || molecule.properties?.predicted_fp || null,
         combustion_enthalpy_ev: molecule.properties?.combustion_enthalpy_ev || molecule.properties?.combustion_enthalpy || null,
-        commercial_score: molecule.properties?.commercial_score || molecule.properties?.COMMERCIAL_SCORE || null,
+        commercial_score: commercialScoreText,
         commercial_link: molecule.properties?.commercial_link || molecule.COMMERCIAL_LINK || null,
         functional_groups: molecule.properties?.functional_groups || null,
         umap_x: molecule.x || null,
