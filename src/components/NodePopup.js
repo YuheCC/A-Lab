@@ -34,7 +34,15 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
           <h3 className="white-text" style={{ textAlign: 'center' }}>Properties</h3>
           <table className="property-table dark-table" style={{ margin: '0 auto' }}>
             <tbody>
-              {Object.entries(node.properties || {}).map(([key, value]) => (
+              {Object.entries(node.properties || {})
+                .filter(([key, value]) => {
+                  // Hide commercial_link row if value is "N/A"
+                  if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map(([key, value]) => (
                 <tr key={key}>
                   <td className="property-name white-text">{filterLabels[key] || key}</td>
                   <td className="property-value white-text">
@@ -65,11 +73,9 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                   // Ensure the properties object has the correct keys for favorites
                   const properties = node.properties || {};
                   
-                  // Get the raw commercial score (numeric 0-3) and convert to text
+                  // Keep the raw commercial score (numeric 0-3) for the backend
+                  // Don't convert to text here - let handleAddToFavorites do the conversion
                   const rawCommercialScore = properties.commercial_score ?? properties.COMMERCIAL_SCORE;
-                  const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
-                    ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
-                    : null;
                   
                   const mappedNode = {
                     ...node,
@@ -79,7 +85,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                       predicted_bp: properties.predicted_bp,
                       predicted_fp: properties.predicted_fp_celsius || properties.predicted_fp,
                       combustion_enthalpy: properties.combustion_enthalpy_ev || properties.combustion_enthalpy,
-                      commercial_score: commercialScoreText,
+                      commercial_score: rawCommercialScore, // Keep the numeric value, don't convert to text
                       commercial_link: properties.commercial_link || properties.COMMERCIAL_LINK || null,
                     }
                   };

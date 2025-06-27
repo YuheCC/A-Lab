@@ -1089,6 +1089,7 @@ const FavoritesGrid = () => {
     predicted_bp: 'Predicted Boiling Point (°C)',
     commercial_score: 'Commercial Viability',
     commercial_link: 'Commercial Link',
+    chemical_formula: 'Chemical Formula',
     functional_groups: 'Functional Groups'
   };
 
