@@ -409,13 +409,13 @@ body, html {
 .sliders-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 2.5px; /* Reduced from 5px by 50% */
   padding: 10px 0;
   width: 100%;
 }
 
 .slider-container {
-  margin: 2px 0;
+  margin: 1px 0; /* Reduced from 2px by 50% */
   width: 100%;
   font-family: Arial, sans-serif;
   padding: 0px 10px;
@@ -426,7 +426,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* Reduced from 8px by 50% */
 }
 
 .slider-label {
@@ -463,7 +463,7 @@ body, html {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 5px;
+  padding: 2.5px; /* Reduced from 5px by 50% */
 }
 
 .reset-filter-button {
@@ -3084,6 +3084,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }

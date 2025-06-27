@@ -16,12 +16,9 @@ export const filterLabels = {
     predicted_mp: "Predicted Melting Point (°C)",
     predicted_bp: "Predicted Boiling Point (°C)",
     predicted_fp: "Predicted Flash Point (°C)",
-    chemical_formula: "Chemical Formula",
     combustion_enthalpy: "Combustion Enthalpy (eV)",
     commercial_score: "Commercial Viability",
-    commercial_link: "Commercial Link",
-    CLUSTER: "Cluster",
-    functional_groups: "Functional Groups"
+    CLUSTER: "Cluster"
 };
 
 export const functionGroupOptions = [
