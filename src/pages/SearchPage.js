@@ -425,7 +425,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
                                                     >
                                                         {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
-                                                    </button>
+                                                    </CustomButton>
 
                                                     {moleculeFavoriteStatus[molecule.SMILES]?.success && (
                                                         <div className="success-message" style={{
@@ -454,7 +454,6 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     lastSearch={lastSearch}
                                                     onClose={() => { }}
                                                 />
-                                                </div>
                                             </MolCard>
                                         ))}
                                     </div>
