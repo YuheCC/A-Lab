@@ -141,7 +141,7 @@ const AboutPage = () => {
             {t('about.features.filter.overlay')}
           </p>
 
-          <div id="newsfeed" className="feature-section">
+          <div id="newsfeed">
             <h3>{t('about.newsfeed.title')}</h3>
             <p>{t('about.newsfeed.release')}</p>
           </div>

@@ -120,7 +120,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
                 placement="top"
               >
-                <span style={{ cursor: 'help', marginLeft: '4px' }}>?</span>
+                <Info size={18} style={{ cursor: 'help', marginLeft: '4px' }} />
               </Tooltip>
             </label>
           </div>
@@ -620,6 +620,14 @@ const handleFindSimilarMolecules = async (details) => {
         throw new Error('You must be logged in to add favorites');
       }
 
+      // Get the raw commercial score (numeric 0-3)
+      const rawCommercialScore = molecule.COMMERCIAL_SCORE || molecule.commercial_score;
+      
+      // Convert commercial score from numeric to descriptive text
+      const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+        ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+        : null;
+
       // Prepare favorite data from molecule properties
       const favoriteData = {
         smiles: smiles,
@@ -630,9 +638,10 @@ const handleFindSimilarMolecules = async (details) => {
         esp_max_ev: molecule.ESP_MAX || molecule.ESP_max_eV || null,
         predicted_melting_point: molecule.PREDICTED_MP || molecule.predicted_MP_celsius || null,
         predicted_boiling_point: molecule.PREDICTED_BP || molecule.predicted_BP_celsius || null,
-        predicted_fp_celsius: molecule.PREDICTED_FP_CELSIUS || molecule.predicted_fp_celsius || null,
+        predicted_fp_celsius: molecule.PREDICTED_FP || molecule.PREDICTED_FP_CELSIUS || molecule.predicted_FP_celsius || molecule.predicted_fp_celsius || null,
         combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV || molecule.combustion_enthalpy_ev || null,
-        commercial_score: molecule.COMMERCIAL_SCORE || molecule.commercial_score || null,
+        commercial_score: commercialScoreText,
+        commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null,
         functional_groups: molecule.FUNCTIONAL_GROUPS || molecule.functional_groups || null,
         umap_x: molecule.UMAP_0 || null,
         umap_y: molecule.UMAP_1 || null
@@ -916,7 +925,7 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   {
-                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
                   }
                 ]} foldPropGroups={[
                   { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
@@ -1010,7 +1019,7 @@ const handleFindSimilarMolecules = async (details) => {
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   {
-                    label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: '', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
                   }
                   ]} foldPropGroups={[
                     { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }
