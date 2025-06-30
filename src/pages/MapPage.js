@@ -14,6 +14,19 @@ const MapPage = ({ handlePointClick }) => {
 
     const [showMapFooter, setShowMapFooter] = useState(true);
 
+    // Generate cluster descriptions dynamically
+    const renderClusterDescriptions = () => {
+        const clusters = [];
+        for (let i = 0; i <= 24; i++) {
+            clusters.push(
+                <p key={i} style={{ marginBottom: '10px' }}>
+                    <strong>Cluster {i}:</strong> {t(`map.clusters.cluster${i}`)}
+                </p>
+            );
+        }
+        return clusters;
+    };
+
     return (
         <Sidebar>
             {/* UMAP Visualization in the middle (50%) */}
@@ -69,31 +82,7 @@ const MapPage = ({ handlePointClick }) => {
 
                     <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.clusterTitle')}</h3>
                     <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 0:</strong> is characterized by Sulfone, Alkyne, NitroSulfonylFluoride functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> is characterized by Heterocyclic-P-CO-1, Amide, Amine functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> is characterized by FluoroSulfonyl, Sulfone, Alkene functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> is characterized by Ether, Heterocyclic-P-CN-2, Thioketone functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> is characterized by Pyridine, Ketone, Thioketone functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> is characterized by Heterocyclic-P-CO-1, Amide, Thioamide functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> is characterized by Sulfone, Amide, FluoroSulfonyl functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> is characterized by Amino carbonyl, Imide, Amine functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> is characterized by Amine, Ether, Ketal functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> is characterized by Arene, Amide, Halogen functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> is characterized by Arene, Ketal, Ether functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> is characterized by Amide, Amine, Alkene functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> is characterized by Amide, Amine, Disulfide functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> is characterized by Amine, Amide, Heterocyclic-P-CO-1 functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> is characterized by Sulfonate ester, Sulfone, BoronicAcid functional groups. (This cluster contains DTD.)</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> is characterized by Arene, Amide, Halogen functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> is characterized by Ketone, Sulfone, Halogen functional groups. (This cluster contains EC, PC, FEC, DEC, DMC, DME, and F5DEE.)</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> is characterized by Heterocyclic-P-CO-1, Ketone, Heterocyclic-P-CS-1 functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> is characterized by Arene, Imide, Amide functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> is characterized by Amine, Nitro, Pyridine functional groups.</p>
-                        <p style={{ marginBottom: '10px' }}><strong>Cluster 24:</strong> is characterized by Amide, Amine, Ether functional groups.</p>
+                        {renderClusterDescriptions()}
                     </div>
                 </div>
             </div>
