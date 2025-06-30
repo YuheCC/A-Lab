@@ -9,6 +9,7 @@ import NodePopup from './components/NodePopup.js';
 const API_URL = getAPIUrl();
 
 const FavoritesGrid = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, userPermissions } = useAuthStore();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,9 @@ const FavoritesGrid = () => {
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
+
+  // Helper function to check if user has admin or enterprise permissions
+  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
 
   useEffect(() => {
     const fetchFavorites = async () => {
