@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 // NodePopup component for displaying molecule information
 const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus, userPermissions, isAuthenticated }) => {
-  if (!node) return null;
   const { t } = useTranslation();
+  if (!node) return null;
 
   // Check if user has permission to see predicted properties
   const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');

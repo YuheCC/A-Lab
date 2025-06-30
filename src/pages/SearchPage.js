@@ -2,7 +2,7 @@ import Sidebar from "../components/Sidebar";
 import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
-import { authFetch, getAPIUrl } from "../utils";
+import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
