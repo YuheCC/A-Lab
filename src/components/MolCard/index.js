@@ -38,7 +38,7 @@ export const PropItem = ({ prop }) => {
     useEffect(() => {
         const el = codeRef.current;
         if (!el) return;
-        setShowTooltip(el.scrollWidth > el.clientWidth);
+        setShowTooltip(el.scrollWidth > el.clientWidth && !prop.wrap);
     }, [valueString])
 
     return prop?.show !== false ? (
@@ -52,7 +52,9 @@ export const PropItem = ({ prop }) => {
                         </div>
                     } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
                       enterDelay={500} enterNextDelay={500}>
-                        <code ref={codeRef}>{valueString}</code>
+                        <code ref={codeRef} style={(prop.wrap ? { whiteSpace: 'wrap', textOverflow: 'initial'} : { whiteSpace: 'nowrap' })}>{prop.hasOwnProperty('value') && valueString}{prop?.action && (
+                            prop?.action
+                        )}</code>
                     </Tooltip>
                 </div>
             </div>
@@ -62,13 +64,18 @@ export const PropItem = ({ prop }) => {
 export const MolCard = (props) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const { showMoreDetails = false, large = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
+    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
     // - Each inner array should contain objects with 'value' and 'label' properties (maybe null/undefined)
-    if (!propGroups.every(group => group.hasOwnProperty('value') && group.hasOwnProperty('label'))) {
-        return <div className='molcard-container' {...domProps}><div className='deck-error'>{t('molecular.molCard.invalidData')}</div></div>;
+    // - Or each inner array should contain objects with 'label' and 'action' properties
+    const validFormat = propGroups.every(group => 
+        (group.hasOwnProperty('value') && group.hasOwnProperty('label')) ||
+        (group.hasOwnProperty('label') && group.hasOwnProperty('action') && group.action !== null && group.action !== undefined)
+    );
+    if (!validFormat) {
+        return <div className='molcard-container' {...domProps}><div className='deck-error'>Invalid molecule data structure.</div></div>;
     }
 
     const smileString = propGroups.reduce((acc, group) => {
@@ -81,8 +88,8 @@ export const MolCard = (props) => {
     }
 
     return (
-        <div className={`molcard-container ${large ? 'molcard-large': ''}`} {...domProps}>
-            <div style={{ display: 'flex', flexFlow: 'row' }}>
+        <div className={`molcard-container ${large ? 'molcard-large': ''} ${vertical ? 'molcard-vertical': ''}`} {...domProps}>
+            <div style={{ display: 'flex', flexFlow: vertical ? 'column' : 'row', width: '100%' }}>
                 <div className='molcard-visualization' translate='no'>
                     {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{
                         width: '150px',
@@ -112,8 +119,8 @@ export const MolCard = (props) => {
             {foldPropGroups && foldPropGroups.length > 0 ? (
                 <div className='molcard-footer-expanded'>
                     <div className='molcard-expand-controls' onClick={() => setExpanded(!expanded)}>
-                        {expanded ? <ChevronDown className='molcard-control-icon' size={15} /> : <ChevronUp className='molcard-control-icon' size={15} />}
-                        <span className='deck-info-footer-text'>{expanded ? t('molecular.molCard.clickToCollapse') : t('molecular.molCard.clickToExpand')}</span>
+                        {expanded ? <ChevronUp className='molcard-control-icon' size={15} /> :  <ChevronDown className='molcard-control-icon' size={15} /> }
+                        <span className='deck-info-footer-text'>{expanded ? "Click to collapse" : "Click to expand for more details"}</span>
                     </div>
                     {expanded ? (
                         <div className='molcard-expanded-content'>

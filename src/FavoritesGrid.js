@@ -1032,39 +1032,48 @@ const FavoritesGrid = () => {
                       checked={selectedMolecules.length === filteredFavorites.length && filteredFavorites.length > 0}
                     />
                   </th>
-                                      <th>{t('favorites.tableHeaders.image')}</th>
-                    <th onClick={() => handleSort('smiles')} className="sortable-header">
-                      {t('favorites.tableHeaders.smiles')} {getSortIndicator('smiles')}
-                    </th>
-                    <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
-                      {t('favorites.tableHeaders.molecularWeight')} {getSortIndicator('molecular_weight')}
-                    </th>
-                    <th onClick={() => handleSort('homo_ev')} className="sortable-header">
-                      {t('favorites.tableHeaders.homo')} {getSortIndicator('homo_ev')}
-                    </th>
-                    <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
-                      {t('favorites.tableHeaders.lumo')} {getSortIndicator('lumo_ev')}
-                    </th>
-                    <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
-                      {t('favorites.tableHeaders.meltingPoint')} {getSortIndicator('predicted_melting_point')}
-                    </th>
-                    <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
-                      {t('favorites.tableHeaders.boilingPoint')} {getSortIndicator('predicted_boiling_point')}
-                    </th>
-                    <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
-                      {t('favorites.tableHeaders.espMin')} {getSortIndicator('esp_min_ev')}
-                    </th>
-                    <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
-                      {t('favorites.tableHeaders.espMax')} {getSortIndicator('esp_max_ev')}
-                    </th>
-                    <th onClick={() => handleSort('functional_groups')} className="sortable-header">
-                      {t('favorites.tableHeaders.functionalGroups')} {getSortIndicator('functional_groups')}
-                    </th>
-                    <th>{t('favorites.tableHeaders.umapCoordinates')}</th>
-                    <th onClick={() => handleSort('created_at')} className="sortable-header">
-                      {t('favorites.tableHeaders.addedDate')} {getSortIndicator('created_at')}
-                    </th>
-                    <th>{t('favorites.tableHeaders.actions')}</th>
+                  <th>Image</th>
+                  <th onClick={() => handleSort('smiles')} className="sortable-header">
+                    SMILES {getSortIndicator('smiles')}
+                  </th>
+                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
+                    Molecular Weight {getSortIndicator('molecular_weight')}
+                  </th>
+                  <th onClick={() => handleSort('homo_ev')} className="sortable-header">
+                    HOMO (eV) {getSortIndicator('homo_ev')}
+                  </th>
+                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
+                    LUMO (eV) {getSortIndicator('lumo_ev')}
+                  </th>
+                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
+                    MP (°C) {getSortIndicator('predicted_melting_point')}
+                  </th>
+                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
+                    BP (°C) {getSortIndicator('predicted_boiling_point')}
+                  </th>
+                  <th>
+                    Predicted Flash Point
+                  </th>
+                  <th>
+                    Combustion Enthalpy
+                  </th>
+                  <th>
+                    Commercial Score
+                  </th>
+                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
+                    ESP Min (eV) {getSortIndicator('esp_min_ev')}
+                  </th>
+                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
+                    ESP Max (eV) {getSortIndicator('esp_max_ev')}
+                  </th>
+                  <th onClick={() => handleSort('functional_groups')} className="sortable-header">
+                    Functional Groups {getSortIndicator('functional_groups')}
+                  </th>
+                  <th>UMAP X/Y</th>
+                  <th onClick={() => handleSort('created_at')} className="sortable-header">
+                    Added Date {getSortIndicator('created_at')}
+                  </th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1089,14 +1098,17 @@ const FavoritesGrid = () => {
                       )}
                     </td>
                     <td>{favorite.smiles}</td>
-                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.functional_groups || t('favorites.notAvailable')}</td>
+                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : 'N/A'}</td>
+                    <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : 'N/A'}</td>
+                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.functional_groups || 'N/A'}</td>
                     <td>
                       {favorite.umap_x ? favorite.umap_x.toFixed(2) : t('favorites.notAvailable')} / 
                       {favorite.umap_y ? favorite.umap_y.toFixed(2) : t('favorites.notAvailable')}

@@ -2,12 +2,14 @@ import Sidebar from "../components/Sidebar";
 import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
 import { useMemo, useState } from "react";
-import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
+import CustomButton from "../components/CustomButton";
+import { ExternalLink, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const API_URL = getAPIUrl();
 
@@ -53,7 +55,11 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 esp_max_eV: mol.ESP_max_eV,
                                 functional_groups: mol.functional_groups,
                                 predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius
+                                predicted_bp: mol.predicted_BP_celsius,
+                                predicted_fp_celsius: mol.predicted_FP_celsius,
+                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                                commercial_score: mol.COMMERCIAL_SCORE,
+                                commercial_link: mol.COMMERCIAL_LINK
                             },
                             rawData: mol
                         };
@@ -117,10 +123,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                 return;
             }
 
-            console.log(moleculeResponse);
             const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
-            console.log(formattedMolecules);
-            console.log(searchedMolecules);
             if (formattedMolecules && findClosestFriends) {
                 // check if formattedMolecules has length > 1 - if so display warning
                 if (formattedMolecules.length > 1) {
@@ -240,7 +243,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 <div style={{
                                     color: '#555',
                                     fontSize: '14px',
-                                }}>{t('search.findFriendsDescription')}</div>
+                                }}>Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.</div>
                             </div>
                         </label>
                     </div>
@@ -284,14 +287,14 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.homo'), value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.lumo'), value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.espMin'), value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.espMax'), value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
                                                 ]} foldPropGroups={[
-                                                    { label: t('search.properties.umapX'), value: molecule.x, span: 1 },
-                                                    { label: t('search.properties.umapY'), value: molecule.y, span: 1 },
-                                                    { label: t('search.properties.functionalGroups'), value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
+                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
                                                 <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
                                                     <button
@@ -315,7 +318,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                                                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                                                     >
-                                                        {moleculeFavoriteStatus[molecule.smiles]?.loading ? t('search.saving') : t('search.addToFavorites')}
+                                                        {moleculeFavoriteStatus[molecule.smiles]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                                     </button>
 
                                                     {moleculeFavoriteStatus[molecule.smiles]?.success && (
@@ -375,15 +378,15 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
-                                                    { label: t('search.properties.homo'), value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.lumo'), value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.espMin'), value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
-                                                    { label: t('search.properties.espMax'), value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
                                                 ]} 
                                                 foldPropGroups={[
-                                                    { label: t('search.properties.functionalGroups'), value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: t('search.properties.umapX'), value: molecule.UMAP_0, span: 1 },
-                                                    { label: t('search.properties.umapY'), value: molecule.UMAP_1, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
+                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
+                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
                                                 ]}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
@@ -423,7 +426,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
                                                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
                                                     >
-                                                        {moleculeFavoriteStatus[molecule.SMILES]?.loading ? t('search.saving') : t('search.addToFavorites')}
+                                                        {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
                                                     </button>
 
                                                     {moleculeFavoriteStatus[molecule.SMILES]?.success && (

@@ -59,6 +59,9 @@ dependencies:
   i18next-http-backend:
     specifier: ^3.0.2
     version: 3.0.2
+  immer:
+    specifier: ^10.1.1
+    version: 10.1.1
   kekule:
     specifier: ^1.0.2
     version: 1.0.2
@@ -115,7 +118,7 @@ dependencies:
     version: 2.1.4
   zustand:
     specifier: ^5.0.5
-    version: 5.0.5(@types/react@19.1.6)(react@19.1.0)
+    version: 5.0.5(@types/react@19.1.6)(immer@10.1.1)(react@19.1.0)
 
 devDependencies:
   source-map-explorer:
@@ -9398,6 +9401,10 @@ packages:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
     dev: false
 
+  /immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+    dev: false
+
   /immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
     dev: false
@@ -16428,7 +16435,7 @@ packages:
     dev: false
     optional: true
 
-  /zustand@5.0.5(@types/react@19.1.6)(react@19.1.0):
+  /zustand@5.0.5(@types/react@19.1.6)(immer@10.1.1)(react@19.1.0):
     resolution: {integrity: sha512-mILtRfKW9xM47hqxGIxCv12gXusoY/xTSHBYApXozR0HmQv299whhBeeAcRy+KrPPybzosvJBCOmVjq6x12fCg==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
@@ -16447,6 +16454,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 19.1.6
+      immer: 10.1.1
       react: 19.1.0
     dev: false
 

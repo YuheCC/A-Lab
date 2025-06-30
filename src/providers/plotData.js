@@ -44,9 +44,11 @@ export const usePlotDataStore = create((set) => ({
                         esp_min_eV: row.ESP_MIN_EV,
                         esp_max_eV: row.ESP_MAX_EV,
                         functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP,
-                        predicted_bp: row.PREDICTED_BP,
+                        predicted_mp: row.PREDICTED_MP_CELSIUS,
+                        predicted_bp: row.PREDICTED_BP_CELSIUS,
+                        predicted_fp: row.PREDICTED_FP_CELSIUS,
                         chemical_formula: row.CHEMICAL_FORMULA,
+                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         CLUSTER: row.CLUSTER
                     },
                     rawData: row

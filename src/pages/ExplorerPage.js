@@ -15,7 +15,11 @@ export const filterLabels = {
     esp_max_eV: "Max ESP (eV)",
     esp_min_eV: "Min ESP (eV)",
     predicted_mp: "Predicted Melting Point (°C)",
-    predicted_bp: "Predicted Boiling Point (°C)"
+    predicted_bp: "Predicted Boiling Point (°C)",
+    predicted_fp: "Predicted Flash Point (°C)",
+    chemical_formula: "Chemical Formula",
+    combustion_enthalpy: "Combustion Enthalpy (eV)",
+    CLUSTER: "Cluster"
 };
 
 export const functionGroupOptions = [

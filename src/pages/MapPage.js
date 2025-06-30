@@ -52,10 +52,10 @@ const MapPage = ({ handlePointClick }) => {
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                         <picture>
-                            <source srcSet="/MU_About_Cluster_Numbered.webp" type="image/webp" />
+                            <source srcSet="/MU05_Cluster_Numbered.webp" type="image/webp" />
                             <img
                                 loading="lazy"
-                                src="/MU_About_Cluster_Numbered.jpg"
+                                src="/MU05_Cluster_Numbered.png"
                                 alt={t('map.imageAlt')}
                                 style={{
                                     maxWidth: '100%',
@@ -69,29 +69,31 @@ const MapPage = ({ handlePointClick }) => {
 
                     <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.clusterTitle')}</h3>
                     <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 1:</strong> {t('map.clusters.cluster1')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 2:</strong> {t('map.clusters.cluster2')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 3:</strong> {t('map.clusters.cluster3')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 4:</strong> {t('map.clusters.cluster4')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 5:</strong> {t('map.clusters.cluster5')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 6:</strong> {t('map.clusters.cluster6')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 7:</strong> {t('map.clusters.cluster7')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 8:</strong> {t('map.clusters.cluster8')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 9:</strong> {t('map.clusters.cluster9')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 10:</strong> {t('map.clusters.cluster10')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 11:</strong> {t('map.clusters.cluster11')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 12:</strong> {t('map.clusters.cluster12')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 13:</strong> {t('map.clusters.cluster13')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 14:</strong> {t('map.clusters.cluster14')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 15:</strong> {t('map.clusters.cluster15')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 16:</strong> {t('map.clusters.cluster16')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 17:</strong> {t('map.clusters.cluster17')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 18:</strong> {t('map.clusters.cluster18')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 19:</strong> {t('map.clusters.cluster19')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 20:</strong> {t('map.clusters.cluster20')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 21:</strong> {t('map.clusters.cluster21')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 22:</strong> {t('map.clusters.cluster22')}</p>
-                        <p style={{ marginBottom: '10px' }}><strong>{t('map.clusters.clusterName')} 23:</strong> {t('map.clusters.cluster23')}</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 0:</strong> is characterized by Sulfone, Alkyne, NitroSulfonylFluoride functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 1:</strong> is characterized by Heterocyclic-P-CO-1, Amide, Amine functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 2:</strong> is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 3:</strong> is characterized by FluoroSulfonyl, Sulfone, Alkene functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 4:</strong> is characterized by Ether, Heterocyclic-P-CN-2, Thioketone functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 5:</strong> is characterized by Pyridine, Ketone, Thioketone functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 6:</strong> is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 7:</strong> is characterized by Heterocyclic-P-CO-1, Amide, Thioamide functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 8:</strong> is characterized by Sulfone, Amide, FluoroSulfonyl functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 9:</strong> is characterized by Amino carbonyl, Imide, Amine functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 10:</strong> is characterized by Amine, Ether, Ketal functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 11:</strong> is characterized by Arene, Amide, Halogen functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 12:</strong> is characterized by Arene, Ketal, Ether functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 13:</strong> is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 14:</strong> is characterized by Amide, Amine, Alkene functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 15:</strong> is characterized by Amide, Amine, Disulfide functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 16:</strong> is characterized by Amine, Amide, Heterocyclic-P-CO-1 functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 17:</strong> is characterized by Sulfonate ester, Sulfone, BoronicAcid functional groups. (This cluster contains DTD.)</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 18:</strong> is characterized by Arene, Amide, Halogen functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 19:</strong> is characterized by Ketone, Sulfone, Halogen functional groups. (This cluster contains EC, PC, FEC, DEC, DMC, DME, and F5DEE.)</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 20:</strong> is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 21:</strong> is characterized by Heterocyclic-P-CO-1, Ketone, Heterocyclic-P-CS-1 functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 22:</strong> is characterized by Arene, Imide, Amide functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 23:</strong> is characterized by Amine, Nitro, Pyridine functional groups.</p>
+                        <p style={{ marginBottom: '10px' }}><strong>Cluster 24:</strong> is characterized by Amide, Amine, Ether functional groups.</p>
                     </div>
                 </div>
             </div>

@@ -51,7 +51,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
               ))}
             </tbody>
           </table>
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', gap: '4px', justifyContent: 'center' }}>
             <button
               className="copy-button"
               onClick={copyToClipboard}
@@ -61,7 +61,20 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
             <div style={{ marginTop: '10px' }}></div>
             <button
               className="favorites-button"
-              onClick={() => handleAddToFavorites(node)}
+              onClick={() => {
+                // Ensure the properties object has the correct keys for favorites
+                const properties = node.properties || {};
+                const mappedNode = {
+                  ...node,
+                  properties: {
+                    ...properties,
+                    predicted_fp_celsius: properties.predicted_fp_celsius ?? properties.predicted_fp ?? properties.predicted_FP_celsius,
+                    combustion_enthalpy_ev: properties.combustion_enthalpy_ev ?? properties.combustion_enthalpy ?? properties.COMBUSTION_ENTHALPY_EV,
+                    commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE
+                  }
+                };
+                handleAddToFavorites(mappedNode);
+              }}
               style={{
                 backgroundColor: '#0080ff',
                 color: 'white',
