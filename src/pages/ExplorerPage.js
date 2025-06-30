@@ -16,8 +16,8 @@ export const filterLabels = {
     predicted_mp: "Predicted Melting Point (°C)",
     predicted_bp: "Predicted Boiling Point (°C)",
     predicted_fp: "Predicted Flash Point (°C)",
-    chemical_formula: "Chemical Formula",
     combustion_enthalpy: "Combustion Enthalpy (eV)",
+    commercial_score: "Commercial Viability",
     CLUSTER: "Cluster"
 };
 
@@ -96,7 +96,7 @@ export const functionGroupOptions = [
 
 const ExplorerPage = ({ handlePointClick }) => {
 
-    const userPermissions = useAuthStore(state => state.userPermissions);
+    const { userPermissions, isAuthenticated } = useAuthStore();
     const { data, loading, error } = usePlotDataStore(); 
 
     const [filteredGraphData, setFilteredGraphData] = useState(data);
@@ -122,9 +122,24 @@ const ExplorerPage = ({ handlePointClick }) => {
     const [selectedFunctionalGroup, setSelectedFunctionalGroup] = useState('');
     const [functionGroupValue, setFunctionalGroupValue] = useState('');
 
+    // Clean up any stale filter entries when component mounts
+    useEffect(() => {
+        setFilterRanges(prev => {
+            const cleanedRanges = {};
+            // Only keep entries that are in filterLabels
+            for (const [key, range] of Object.entries(prev)) {
+                if (filterLabels[key]) {
+                    cleanedRanges[key] = range;
+                }
+            }
+            return cleanedRanges;
+        });
+    }, []); // Run only on mount
+
     useEffect(() => {
         setFilterRanges(oldFilterRanges => {
-            const updatedRanges = { ...oldFilterRanges };
+            const updatedRanges = {};
+            // Only include properties that are in filterLabels
             for (const key in filterLabels) {
                 const values = data
                     .map(node => node.properties[key])
@@ -229,12 +244,15 @@ const ExplorerPage = ({ handlePointClick }) => {
     const resetAllFilters = () => {
         setFilterRanges(prev => {
             const newRanges = {};
+            // Only reset filters that are in filterLabels
             for (const [key, range] of Object.entries(prev)) {
-                newRanges[key] = {
-                    ...range,
-                    range: [range.min, range.max],
-                    active: false
-                };
+                if (filterLabels[key]) {
+                    newRanges[key] = {
+                        ...range,
+                        range: [range.min, range.max],
+                        active: false
+                    };
+                }
             }
             return newRanges;
         });
@@ -284,9 +302,9 @@ const ExplorerPage = ({ handlePointClick }) => {
                 </h2>
                 <div className="sliders-container">
                     {Object.entries(filterRanges).map(([property, range]) => {
-                        // Hide predicted_mp and predicted_bp sliders for users without proper permissions
-                        if ((property === 'predicted_mp' || property === 'predicted_bp') &&
-                            !(userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise')) {
+                        // Hide predicted properties sliders for users without proper permissions
+                        if ((property === 'predicted_mp' || property === 'predicted_bp' || property === 'predicted_fp') &&
+                            !(isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise'))) {
                             return null;
                         }
 

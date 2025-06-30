@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Plotly from 'plotly.js-dist';
 import { authFetch, getAPIUrl } from './utils.js';
+import { useAuthStore } from './providers/auth.js';
 import NodePopup from './components/NodePopup.js';
 
 const API_URL = getAPIUrl();
 
 const FavoritesGrid = () => {
+  const { isAuthenticated, userPermissions } = useAuthStore();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,9 +22,38 @@ const FavoritesGrid = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
+  const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  // Column resizing state
+  const [columnWidths, setColumnWidths] = useState({
+    checkbox: 40,
+    image: 60,
+    smiles: 300,
+    molecularWeight: 120,
+    homo: 100,
+    lumo: 100,
+    mp: 100,
+    bp: 100,
+    fp: 140,
+    combustion: 140,
+    commercial: 140,
+    espMin: 100,
+    espMax: 100,
+    functionalGroups: 200,
+    umap: 100,
+    addedDate: 150,
+    commercialLink: 120,
+    actions: 80
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizingColumn, setResizingColumn] = useState(null);
+  const [startX, setStartX] = useState(0);
+  const [startWidth, setStartWidth] = useState(0);
   const spiderChartRef = useRef(null);
   const espChartRef = useRef(null);
   const moChartRef = useRef(null);
+
+  // Helper function to check if user has admin or enterprise permissions
+  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -37,6 +68,8 @@ const FavoritesGrid = () => {
         const data = await response.json();
         setFavorites(data);
         setFilteredFavorites(data);
+        // Debug: log the favorites array to inspect its properties
+        console.log('Fetched favorites:', data);
         
         // Fetch molecule images for each favorite
         fetchMoleculeImages(data);
@@ -128,6 +161,47 @@ const FavoritesGrid = () => {
     }
   }, [selectedMolecules]);
 
+  // Column resizing handlers
+  const handleMouseDown = (e, columnKey) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setResizingColumn(columnKey);
+    setStartX(e.clientX);
+    setStartWidth(columnWidths[columnKey]);
+    document.body.classList.add('no-select'); // Prevent text selection
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing || !resizingColumn) return;
+    
+    const diff = e.clientX - startX;
+    const newWidth = Math.max(50, startWidth + diff); // Minimum width of 50px
+    
+    setColumnWidths(prev => ({
+      ...prev,
+      [resizingColumn]: newWidth
+    }));
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+    setResizingColumn(null);
+    document.body.classList.remove('no-select'); // Re-enable text selection
+  };
+
+  // Add global mouse event listeners for resizing
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing, resizingColumn, startX, startWidth]);
+
   const fetchMoleculeImages = async (favoritesData) => {
     const images = {};
     
@@ -201,6 +275,87 @@ const FavoritesGrid = () => {
           document.body.removeChild(errorToast);
         }
       }, 3000);
+    }
+  };
+
+  const handleBulkDeleteFavorites = async () => {
+    if (selectedMolecules.length === 0) return;
+    
+    // Ask for confirmation before removing
+    const confirmMessage = `Are you sure you want to remove ${selectedMolecules.length} molecules from your favorites? This action cannot be undone.`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+    
+    setBulkDeleteLoading(true);
+    
+    try {
+      const deletePromises = selectedMolecules.map(molecule => 
+        authFetch(`${API_URL}/favorites-delete/${molecule.id}`, {
+          method: 'DELETE'
+        })
+      );
+      
+      // Wait for all delete requests to complete
+      const results = await Promise.allSettled(deletePromises);
+      
+      // Check for any failures
+      const failures = results.filter(result => result.status === 'rejected' || 
+        (result.status === 'fulfilled' && !result.value.ok));
+      
+      if (failures.length > 0) {
+        console.error('Some deletions failed:', failures);
+        
+        // Show partial success/error message
+        const errorToast = document.createElement('div');
+        errorToast.className = 'toast-message error';
+        errorToast.textContent = `Failed to remove ${failures.length} out of ${selectedMolecules.length} molecules. Please try again.`;
+        document.body.appendChild(errorToast);
+        
+        setTimeout(() => {
+          if (errorToast.parentNode) {
+            document.body.removeChild(errorToast);
+          }
+        }, 5000);
+      }
+      
+      // Remove successfully deleted molecules from state
+      const successfulDeletions = selectedMolecules.filter((_, index) => 
+        results[index].status === 'fulfilled' && results[index].value.ok
+      );
+      
+      const deletedIds = successfulDeletions.map(molecule => molecule.id);
+      setFavorites(favorites.filter(favorite => !deletedIds.includes(favorite.id)));
+      setSelectedMolecules([]);
+      
+      // Show success message
+      const successToast = document.createElement('div');
+      successToast.className = 'toast-message success';
+      successToast.textContent = `Successfully removed ${successfulDeletions.length} molecules from favorites`;
+      document.body.appendChild(successToast);
+      
+      setTimeout(() => {
+        if (successToast.parentNode) {
+          document.body.removeChild(successToast);
+        }
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Error during bulk delete:', err);
+      
+      // Show error message
+      const errorToast = document.createElement('div');
+      errorToast.className = 'toast-message error';
+      errorToast.textContent = 'Failed to remove molecules from favorites. Please try again.';
+      document.body.appendChild(errorToast);
+      
+      setTimeout(() => {
+        if (errorToast.parentNode) {
+          document.body.removeChild(errorToast);
+        }
+      }, 3000);
+    } finally {
+      setBulkDeleteLoading(false);
     }
   };
 
@@ -877,6 +1032,8 @@ const FavoritesGrid = () => {
       }
       
       if (clickedMolecule) {
+        // Debug: log the clicked molecule to inspect its properties
+        console.log('Clicked molecule:', clickedMolecule);
         // Transform favorite data to match NodePopup expected format
         const nodeData = {
           smiles: clickedMolecule.smiles,
@@ -890,7 +1047,9 @@ const FavoritesGrid = () => {
             esp_max_eV: clickedMolecule.esp_max_ev,
             predicted_mp: clickedMolecule.predicted_melting_point,
             predicted_bp: clickedMolecule.predicted_boiling_point,
-            functional_groups: clickedMolecule.functional_groups
+            functional_groups: clickedMolecule.functional_groups,
+            commercial_score: clickedMolecule.commercial_score,
+            commercial_link: clickedMolecule.commercial_link
           },
           rawData: clickedMolecule
         };
@@ -933,6 +1092,9 @@ const FavoritesGrid = () => {
     esp_max_eV: 'ESP Max (eV)',
     predicted_mp: 'Predicted Melting Point (°C)',
     predicted_bp: 'Predicted Boiling Point (°C)',
+    commercial_score: 'Commercial Viability',
+    commercial_link: 'Commercial Link',
+    chemical_formula: 'Chemical Formula',
     functional_groups: 'Functional Groups'
   };
 
@@ -1002,21 +1164,44 @@ const FavoritesGrid = () => {
               />
             </div>
             
-            {selectedMolecules.length > 0 && (
-              <button 
-                className="show-analysis-button"
-                onClick={handleShowAnalysis}
-              >
-                Analyze Selected ({selectedMolecules.length})
-              </button>
-            )}
+            <div className="favorites-actions">
+              {selectedMolecules.length > 0 && (
+                <button 
+                  className="show-analysis-button"
+                  onClick={handleShowAnalysis}
+                >
+                  Analyze Selected ({selectedMolecules.length})
+                </button>
+              )}
+              
+              {selectedMolecules.length > 1 && (
+                <button 
+                  className="bulk-delete-button"
+                  onClick={handleBulkDeleteFavorites}
+                  disabled={bulkDeleteLoading}
+                  style={{
+                    backgroundColor: bulkDeleteLoading ? '#ccc' : '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '8px 16px',
+                    cursor: bulkDeleteLoading ? 'not-allowed' : 'pointer',
+                    marginLeft: '10px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {bulkDeleteLoading ? 'Deleting...' : `Delete Selected (${selectedMolecules.length})`}
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="favorites-table-container">
             <table className="favorites-table">
               <thead>
                 <tr>
-                  <th className="checkbox-column">
+                  <th className="checkbox-column resizable-header" style={{ width: columnWidths.checkbox }}>
                     <input 
                       type="checkbox" 
                       onChange={(e) => {
@@ -1028,49 +1213,82 @@ const FavoritesGrid = () => {
                       }}
                       checked={selectedMolecules.length === filteredFavorites.length && filteredFavorites.length > 0}
                     />
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'checkbox')}></div>
                   </th>
-                  <th>Image</th>
-                  <th onClick={() => handleSort('smiles')} className="sortable-header">
+                  <th className="resizable-header" style={{ width: columnWidths.image }}>
+                    Image
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'image')}></div>
+                  </th>
+                  <th onClick={() => handleSort('smiles')} className="sortable-header resizable-header" style={{ width: columnWidths.smiles }}>
                     SMILES {getSortIndicator('smiles')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'smiles')}></div>
                   </th>
-                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header">
+                  <th onClick={() => handleSort('molecular_weight')} className="sortable-header resizable-header" style={{ width: columnWidths.molecularWeight }}>
                     Molecular Weight {getSortIndicator('molecular_weight')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'molecularWeight')}></div>
                   </th>
-                  <th onClick={() => handleSort('homo_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('homo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.homo }}>
                     HOMO (eV) {getSortIndicator('homo_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'homo')}></div>
                   </th>
-                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('lumo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.lumo }}>
                     LUMO (eV) {getSortIndicator('lumo_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'lumo')}></div>
                   </th>
-                  <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header">
-                    MP (°C) {getSortIndicator('predicted_melting_point')}
+                  {canSeePredictedProperties && (
+                    <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header resizable-header" style={{ width: columnWidths.mp }}>
+                      MP (°C) {getSortIndicator('predicted_melting_point')}
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'mp')}></div>
+                    </th>
+                  )}
+                  {canSeePredictedProperties && (
+                    <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header resizable-header" style={{ width: columnWidths.bp }}>
+                      BP (°C) {getSortIndicator('predicted_boiling_point')}
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'bp')}></div>
+                    </th>
+                  )}
+                  {canSeePredictedProperties && (
+                    <th className="resizable-header" style={{ width: columnWidths.fp }}>
+                      Predicted Flash Point (°C)
+                      <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'fp')}></div>
+                    </th>
+                  )}
+                  <th className="resizable-header" style={{ width: columnWidths.combustion }}>
+                    Combustion Enthalpy (eV)
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'combustion')}></div>
                   </th>
-                  <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header">
-                    BP (°C) {getSortIndicator('predicted_boiling_point')}
+                  <th className="resizable-header" style={{ width: columnWidths.commercial }}>
+                    Commercial Viability
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercial')}></div>
                   </th>
-                  <th>
-                    Predicted Flash Point
-                  </th>
-                  <th>
-                    Combustion Enthalpy
-                  </th>
-                  <th>
-                    Commercial Score
-                  </th>
-                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('esp_min_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMin }}>
                     ESP Min (eV) {getSortIndicator('esp_min_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMin')}></div>
                   </th>
-                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header">
+                  <th onClick={() => handleSort('esp_max_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMax }}>
                     ESP Max (eV) {getSortIndicator('esp_max_ev')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMax')}></div>
                   </th>
-                  <th onClick={() => handleSort('functional_groups')} className="sortable-header">
+                  <th onClick={() => handleSort('functional_groups')} className="sortable-header resizable-header" style={{ width: columnWidths.functionalGroups }}>
                     Functional Groups {getSortIndicator('functional_groups')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'functionalGroups')}></div>
                   </th>
-                  <th>UMAP X/Y</th>
-                  <th onClick={() => handleSort('created_at')} className="sortable-header">
+                  <th className="resizable-header" style={{ width: columnWidths.umap }}>
+                    UMAP X/Y
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'umap')}></div>
+                  </th>
+                  <th onClick={() => handleSort('created_at')} className="sortable-header resizable-header" style={{ width: columnWidths.addedDate }}>
                     Added Date {getSortIndicator('created_at')}
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'addedDate')}></div>
                   </th>
-                  <th>Actions</th>
+                  <th className="resizable-header" style={{ width: columnWidths.commercialLink }}>
+                    Commercial Link
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercialLink')}></div>
+                  </th>
+                  <th className="resizable-header" style={{ width: columnWidths.actions }}>
+                    Actions
+                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'actions')}></div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1098,9 +1316,15 @@ const FavoritesGrid = () => {
                     <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : 'N/A'}</td>
                     <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : 'N/A'}</td>
                     <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
+                    )}
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
+                    )}
+                    {canSeePredictedProperties && (
+                      <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                    )}
                     <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : 'N/A'}</td>
                     <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : 'N/A'}</td>
                     <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
@@ -1111,6 +1335,11 @@ const FavoritesGrid = () => {
                       {favorite.umap_y ? favorite.umap_y.toFixed(2) : 'N/A'}
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
+                    <td>
+                      {favorite.commercial_link ? (
+                        <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">View Link</a>
+                      ) : 'N/A'}
+                    </td>
                     <td>
                       <button 
                         className="remove-favorite-table-button" 
@@ -1167,6 +1396,8 @@ const FavoritesGrid = () => {
         filterLabels={filterLabels}
         handleAddToFavorites={handleAddToFavorites}
         moleculeFavoriteStatus={moleculeFavoriteStatus}
+        userPermissions={userPermissions}
+        isAuthenticated={isAuthenticated}
       />}
     </div>
   );

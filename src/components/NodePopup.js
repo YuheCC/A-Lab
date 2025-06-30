@@ -1,8 +1,12 @@
 import MolViewer2D from "./MolViewer2D";
+import { COMMERCIAL_SCORE_MAP } from "../utils";
 
 // NodePopup component for displaying molecule information
-const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus }) => {
+const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus, userPermissions, isAuthenticated }) => {
   if (!node) return null;
+
+  // Check if user has permission to see predicted properties
+  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
 
   const copyToClipboard = () => {
     const nodeData = JSON.stringify(node.rawData, null, 2);
@@ -33,7 +37,22 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
           <h3 className="white-text" style={{ textAlign: 'center' }}>Properties</h3>
           <table className="property-table dark-table" style={{ margin: '0 auto' }}>
             <tbody>
-              {Object.entries(node.properties || {}).map(([key, value]) => (
+              {Object.entries(node.properties || {})
+                .filter(([key, value]) => {
+                  // Hide commercial_link row if value is "N/A"
+                  if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
+                    return false;
+                  }
+                  
+                  // Hide predicted properties for users without proper permissions
+                  if (!canSeePredictedProperties && 
+                      (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
+                    return false;
+                  }
+                  
+                  return true;
+                })
+                .map(([key, value]) => (
                 <tr key={key}>
                   <td className="property-name white-text">{filterLabels[key] || key}</td>
                   <td className="property-value white-text">
@@ -49,53 +68,52 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
               ))}
             </tbody>
           </table>
-          <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', gap: '4px', justifyContent: 'center' }}>
-            <button
-              className="copy-button"
-              onClick={copyToClipboard}
-            >
-              Copy All Data
-            </button>
-            <div style={{ marginTop: '10px' }}></div>
-            <button
-              className="favorites-button"
-              onClick={() => {
-                // Ensure the properties object has the correct keys for favorites
-                const properties = node.properties || {};
-                const mappedNode = {
-                  ...node,
-                  properties: {
-                    ...properties,
-                    predicted_fp_celsius: properties.predicted_fp_celsius ?? properties.predicted_fp ?? properties.predicted_FP_celsius,
-                    combustion_enthalpy_ev: properties.combustion_enthalpy_ev ?? properties.combustion_enthalpy ?? properties.COMBUSTION_ENTHALPY_EV,
-                    commercial_score: properties.commercial_score ?? properties.COMMERCIAL_SCORE
-                  }
-                };
-                handleAddToFavorites(mappedNode);
-              }}
-              style={{
-                backgroundColor: '#0080ff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                padding: '8px 15px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                transition: 'background-color 0.3s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0066cc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0080ff'}
-            >
-              Add to Favorites ★
-            </button>
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '10px' }}>
+              <button
+                className="copy-button"
+                onClick={copyToClipboard}
+                style={{ flex: '1', maxWidth: '140px' }}
+              >
+                Copy All Data
+              </button>
+              <button
+                className="favorites-button"
+                onClick={() => {
+                  // Ensure the properties object has the correct keys for favorites
+                  const properties = node.properties || {};
+                  
+                  // Keep the raw commercial score (numeric 0-3) for the backend
+                  // Don't convert to text here - let handleAddToFavorites do the conversion
+                  const rawCommercialScore = properties.commercial_score ?? properties.COMMERCIAL_SCORE;
+                  
+                  const mappedNode = {
+                    ...node,
+                    properties: {
+                      ...properties,
+                      predicted_mp: properties.predicted_mp,
+                      predicted_bp: properties.predicted_bp,
+                      predicted_fp: properties.predicted_fp_celsius || properties.predicted_fp,
+                      combustion_enthalpy: properties.combustion_enthalpy_ev || properties.combustion_enthalpy,
+                      commercial_score: rawCommercialScore, // Keep the numeric value, don't convert to text
+                      commercial_link: properties.commercial_link || properties.COMMERCIAL_LINK || null,
+                    }
+                  };
+                  handleAddToFavorites(mappedNode);
+                }}
+                style={{ flex: '1', maxWidth: '140px' }}
+              >
+                Add to Favorites
+              </button>
+            </div>
             {moleculeFavoriteStatus[node.smiles]?.loading && (
-              <div style={{ marginTop: '5px', color: '#aaa' }}>Saving...</div>
+              <div style={{ color: '#aaa', fontSize: '14px' }}>Saving...</div>
             )}
             {moleculeFavoriteStatus[node.smiles]?.success && (
-              <div style={{ marginTop: '5px', color: '#4CAF50' }}>{moleculeFavoriteStatus[node.smiles].success}</div>
+              <div style={{ color: '#4CAF50', fontSize: '14px' }}>{moleculeFavoriteStatus[node.smiles].success}</div>
             )}
             {moleculeFavoriteStatus[node.smiles]?.error && (
-              <div style={{ marginTop: '5px', color: '#F44336' }}>{moleculeFavoriteStatus[node.smiles].error}</div>
+              <div style={{ color: '#F44336', fontSize: '14px' }}>{moleculeFavoriteStatus[node.smiles].error}</div>
             )}
           </div>
         </div>
