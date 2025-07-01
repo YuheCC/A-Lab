@@ -3,12 +3,15 @@ export default {
         welcome: "Welcome to the Molecular Universe. How can I help you today?"
     },
     input: {
-        placeholder: "Ask me anything, as long as it's about batteries, and we will return molecules that answer your questions and suggest their friends for you to explore further.",
+        placeholder: "Ask me anything, as long as it's about batteries, battery chemistry, or related topics.",
         sendButton: "Send"
     },
     checkboxes: {
         ignoreChatHistory: "Ignore chat history",
-        disableLiteratureSearch: "Disable literature search"
+        disableLiteratureSearch: "Disable literature search",
+        enterDeepSpace: "Enter Deep Space (BETA)",
+        deepSpaceTooltip: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
+        admin: "ADMIN"
     },
     queryLimit: {
         queriesRemaining: "Queries remaining this month:",
@@ -18,19 +21,24 @@ export default {
         thinking: "thinking",
         searching: "searching",
         searchingDatabase: "searching our database",
-        thinkingForSeconds: "thinking for {{seconds}} s"
+        thinkingForSeconds: "thinking for {{seconds}} s",
+        noMoleculesFound: "No molecules found.",
+        findMoleculesFailed: "Failed to find molecules. Please try again later.",
+        clarifyingQuestions: "We may ask you to reply to a few clarifying questions shortly.",
+        deepSpaceWorking: "The Deep Space Multi-Agent LLM is now working, it may take 10-20 minutes to respond, depending on the complexity of your question."
     },
     buttons: {
         findMolecules: "Find Molecules",
         findSimilarMolecules: "Find Similar Molecules",
-        addToFavorites: "Add to Favorites ★",
-        copy: "📋",
+        addToFavorites: "Add To Favorites",
+        copy: "Copy",
         cancel: "Cancel",
-        submit: "Submit"
+        submit: "Submit",
+        viewInMolPort: "View in MolPort"
     },
     molecules: {
         llmFoundMolecules: "LLM Found Molecules",
-        friendsRankedBy: "Friends ranked by likelihood to replace",
+        friendsRankedBy: "Friends ranked by likelihood to replace:",
         name: "Name",
         smiles: "SMILES",
         molecularWeight: "Molecular weight",
@@ -44,7 +52,8 @@ export default {
         llmGrade: "LLM Grade",
         saving: "Saving...",
         rateMatch: "Rate this match:",
-        detectedChemicalKeywords: "Detected chemical keywords in LLM response:"
+        detectedChemicalKeywords: "Detected chemical keywords in LLM response:",
+        searchingForFriends: "Searching for friends"
     },
     feedback: {
         goodMatch: "What makes this a good match?",

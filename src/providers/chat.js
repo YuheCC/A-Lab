@@ -2,10 +2,15 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { produce } from 'immer';
 import { authFetch, getAPIUrl } from '../utils';
+import i18n from '../locales/i18n';
 
 const API_URL = getAPIUrl();
 
- const generateNewChat = () => ({
+const getWelcomeMessage = () => {
+    return i18n.t('chatbox.systemMessage.welcome') || "Welcome to the Molecular Universe. How can I help you today?";
+};
+
+const generateNewChat = () => ({
     name: 'New Chat',
     useMultiAgent: false,
     isInClarifyFlow: false,
@@ -14,7 +19,7 @@ const API_URL = getAPIUrl();
     moleculesLoading: false,
     similarMoleculesLoading: false,
     messages: [
-        { role: "system", content: "Welcome to the Molecular Universe. How can I help you today?" }
+        { role: "system", content: getWelcomeMessage() }
     ],
     activeMolecule: null,
     foundMolecules: [],
@@ -25,7 +30,6 @@ const API_URL = getAPIUrl();
 
     createdAt: new Date().toISOString(),
 })
-
 
 /**
  * State management for chat functionality using Zustand.
@@ -40,6 +44,31 @@ export const useChatStore = create(persist((set, get) => ({
     activeChat: '-1', 
     chatMap: {
         "-1": generateNewChat()
+    },
+
+    /**
+     * 更新所有聊天中的系统欢迎消息（用于语言切换时）
+     */
+    updateWelcomeMessages: () => {
+        const welcomeMessage = getWelcomeMessage();
+        set(produce((state) => {
+            Object.keys(state.chatMap).forEach(chatId => {
+                const chat = state.chatMap[chatId];
+                if (chat.messages && chat.messages.length > 0 && chat.messages[0].role === 'system') {
+                    // 只更新默认的欢迎消息，不更新其他系统消息
+                    const originalContent = chat.messages[0].content;
+                    // 检测是否为默认欢迎消息的各种语言版本
+                    const isWelcomeMessage = 
+                        originalContent.includes('Welcome to the Molecular Universe') || 
+                        originalContent.includes('欢迎来到分子宇宙') || 
+                        originalContent.includes('Molecular Universe에 오신 것을 환영합니다');
+                    
+                    if (isWelcomeMessage) {
+                        chat.messages[0].content = welcomeMessage;
+                    }
+                }
+            });
+        }));
     },
 
     /**

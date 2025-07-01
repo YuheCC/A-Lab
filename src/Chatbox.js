@@ -72,7 +72,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
           ref={textareaRef}
           translate='no'
           className="chat-input"
-          placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics."
+          placeholder={t('chatbox.input.placeholder')}
           rows={1}
           value={inputValue}
           onChange={handleChange}
@@ -102,7 +102,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             onChange={(e) => onIgnoreChatHistoryChange(e.target.checked)}
           />
           <label htmlFor="ignoreChatHistory">
-            Ignore chat history
+            {t('chatbox.checkboxes.ignoreChatHistory')}
           </label>
         </div>
         {['enterprise', 'admin', 'joint'].includes(userPermissions) && (
@@ -115,9 +115,9 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
               style={{ marginLeft: '20px' }}
             />
             <label htmlFor="useMultiAgent">
-              Enter Deep Space (BETA)
+              {t('chatbox.checkboxes.enterDeepSpace')}
               <Tooltip
-                title="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes."
+                title={t('chatbox.checkboxes.deepSpaceTooltip')}
                 placement="top"
               >
                 <Info size={18} style={{ cursor: 'help', marginLeft: '4px' }} />
@@ -127,7 +127,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         )}
         {userPermissions === 'admin' && (
           <div className='admin-controls' style={{ marginLeft: 'auto' }}>
-            <label className='admin-controls-label'>ADMIN</label>
+            <label className='admin-controls-label'>{t('chatbox.checkboxes.admin')}</label>
             <div className='checkbox-item'>
               <input 
                 type="checkbox" 
@@ -136,7 +136,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 onChange={(e) => onDisableLiteratureSearchChange(e.target.checked)}
               />
               <label htmlFor="disableLiteratureSearch">
-                Disable literature search
+                {t('chatbox.checkboxes.disableLiteratureSearch')}
               </label>
             </div>
           </div>
@@ -298,14 +298,14 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
 
       if (flattenedMolecules.length === 0) {
         setMoleculesLoading(false, activeChat);
-        setFoundMoleculesError("No molecules found.");
+        setFoundMoleculesError(t('chatbox.status.noMoleculesFound'));
       } else {
         setFoundMolecules(flattenedMolecules, activeChat);
         setFoundMoleculesError(null);
       }
     } catch (err) {
       console.error("Error fetching molecule details:", err);
-      setFoundMoleculesError("Failed to find molecules. Please try again later.");
+      setFoundMoleculesError(t('chatbox.status.findMoleculesFailed'));
     } finally {
       setMoleculesLoading(false, activeChat);
     }
@@ -413,7 +413,7 @@ const handleFindSimilarMolecules = async (details) => {
       if (userPermissions === 'research' && remainingQueries <= 0) {
         addMessage({
           role : "assistant",
-          content : "You have reached your monthly query limit. Please contact an administrator for assistance."
+          content : t('chatbox.queryLimit.reachedLimit')
         });
         return;
       }
@@ -537,9 +537,9 @@ const handleFindSimilarMolecules = async (details) => {
             const errText = await res.text();
             if (res.status === 400 &&
                 errText.includes("Query is not relevant to batteries or battery chemistry"))
-              throw new Error("Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.");
+              throw new Error(t('chatbox.errors.batteryRelevance'));
 
-            throw new Error(errText || "Network response was not ok");
+            throw new Error(errText || t('chatbox.errors.networkError'));
           }
           data = await res.json();
         }
@@ -745,7 +745,7 @@ const handleFindSimilarMolecules = async (details) => {
               <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
                 <MessageCircle size={18} className='query-limit-icon'></MessageCircle>
                 <span>
-                  Queries remaining this month: <span className="query-limit-count">{remainingQueries}</span>
+                  {t('chatbox.queryLimit.queriesRemaining')} <span className="query-limit-count">{remainingQueries}</span>
                 </span>
               </div>
             </div>
@@ -761,26 +761,26 @@ const handleFindSimilarMolecules = async (details) => {
                     {msg.content}
                   </ReactMarkdown>
                   {msg.molText && msg.molecules && msg.molecules.length > 0 && (
-                    <>
-                      <div>
-                        <br></br>
-                        <strong>Detected chemical keywords in LLM response:</strong>
-                        <br></br>
-                      </div>
-                      <div translate='no'>{msg.molText}</div>
-                    </>
+                                          <>
+                        <div>
+                          <br></br>
+                          <strong>{t('chatbox.molecules.detectedChemicalKeywords')}</strong>
+                          <br></br>
+                        </div>
+                        <div translate='no'>{msg.molText}</div>
+                      </>
                   )}
                 </div>
                 {msg.role === "assistant" && msg.molecules && msg.molecules.length > 0 && (
                   <div className="find-molecules-wrapper">
                     <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
-                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={"searching our database"}
+                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={t('chatbox.status.searchingDatabase')}
                       errorMessage={foundMoleculesMessageIndex === index ? foundMoleculesError : null}
                       sideError
                       hideTime={10000} // 10 seconds
                       disabled={moleculesLoading && foundMoleculesMessageIndex !== index}
                       style={{ marginRight: 10 }}>
-                      Find Molecules
+                      {t('chatbox.buttons.findMolecules')}
                     </CustomButton>
                   </div>
                 )}
@@ -799,7 +799,7 @@ const handleFindSimilarMolecules = async (details) => {
                       style={{ marginRight: 5 }} variant="contained">
                         <ThumbsDown size={18} style={{ margin: 4}} />
                       </IconButton>
-                    <Tooltip title="Copy" placement='bottom'>
+                    <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
                         style={{ marginRight: 5 }}
@@ -848,7 +848,7 @@ const handleFindSimilarMolecules = async (details) => {
             {isThinking && (
               <div className="thinking-message">
                 <div className='thinking-header'>
-                  <span>thinking for {formatThinkingTime(thinkingTime)}</span>
+                  <span>{t('chatbox.status.thinking')} {formatThinkingTime(thinkingTime)}</span>
                   <div className="thinking-dots">
                     <span></span>
                     <span></span>
@@ -859,7 +859,7 @@ const handleFindSimilarMolecules = async (details) => {
                   <div className="thinking-note">
                     <Info size={16} style={{ margin: 3, marginRight: 10 }} />
                     <span>
-                      {isInClarifyFlow ? "We may ask you to reply to a few clarifying questions shortly.": "The Deep Space Multi-Agent LLM is now working, it may take 10-20 minutes to respond, depending on the complexity of your question."}
+                      {isInClarifyFlow ? t('chatbox.status.clarifyingQuestions') : t('chatbox.status.deepSpaceWorking')}
                     </span>
                   </div>
                 }
@@ -935,22 +935,22 @@ const handleFindSimilarMolecules = async (details) => {
                     <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
                       fullWidth
                       loading={moleculeFavoriteStatus[details.SMILES]?.loading}
-                      loadingText={"Saving ..."}
+                      loadingText={t('chatbox.molecules.saving')}
                       successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
-                      Add To Favorites
+                      {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
                     <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
-                      loadingText={"Searching for friends"}
+                      loadingText={t('chatbox.molecules.searchingForFriends')}
                       size="small">
-                      Find Similar Molecules
+                      {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
                     {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
-                        View in MolPort
+                        {t('chatbox.buttons.viewInMolPort')}
                     </CustomButton>}
                   </div>
                 </MolCard>
@@ -962,7 +962,7 @@ const handleFindSimilarMolecules = async (details) => {
           <div className="similar-molecules-container">
             <div className="molecules-header">
               <h3>
-                Friends ranked by likelihood to replace:&nbsp;
+                {t('chatbox.molecules.friendsRankedBy')}&nbsp;
                 {((activeMolecule?.name || activeMolecule?.SMILES || '')).toLowerCase()}
               </h3>
               <button 
@@ -1029,10 +1029,10 @@ const handleFindSimilarMolecules = async (details) => {
                   <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
                     loading={moleculeFavoriteStatus[details.SMILES]?.loading}
                     fullWidth
-                    loadingText={"Saving ..."}
+                    loadingText={t('chatbox.molecules.saving')}
                     successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
                     errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
-                    Add To Favorites
+                    {t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
                   <MoleculeFeedbackBox
@@ -1047,7 +1047,7 @@ const handleFindSimilarMolecules = async (details) => {
                   {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                     window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
-                    View in MolPort
+                    {t('chatbox.buttons.viewInMolPort')}
                   </CustomButton>}
                 </div>
               </MolCard>

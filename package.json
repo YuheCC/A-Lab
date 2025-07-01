@@ -43,7 +43,7 @@
     "zustand": "^5.0.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai react-scripts start",
     "build": "react-scripts build",
     "build:staging": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai react-scripts build",
     "test": "react-scripts test",
