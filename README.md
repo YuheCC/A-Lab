@@ -86,3 +86,13 @@ REACT_APP_API_URL=https://prod-api.ses.ai
 ```
 
 3. Run `npm run start`
+
+## Current Architecture Chart For All Environemnts and Databases
+
+| Backend Server | Backend Server URL | Back-end Repo | Back-end Branch | Frontend Server Name | Frontend Server Link | Frontend Repo | Frontend Branch | Database |
+|---|---|---|---|---|---|---|---|---|
+| current-production-server | prod-api.ses.ai | Lowry's personal | main | UMAP-APP-SH | https://molecular-universe.ses.ai | https://github.com/FrankWangSes/UMAP-APP/tree/main-sh | main-sh | Production RDS Database |
+| current-staging-server | demo-api.ses.ai | https://github.com/codywirthses/UMAP-APP | staging | UMAP-APP-US-STAGING | https://staging.d5wqg9ff3njti.amplifyapp.com/ | https://github.com/codywirthses/UMAP-APP | staging | Production RDS Database |
+| staging-sh | ? | Lowry's personal | ? | UMAP-APP-SH-Staging: Overview | https://demo-sh.ses.ai/ | https://github.com/FrankWangSes/UMAP-APP/tree/staging-sh | staging-sh | Production RDS Database |
+| llm-team-staging-server | llm-staging.ses.ai | https://github.com/codywirthses/umap-backend | llm-staging | LLM-FRONTEND-STAGING | https://staging.d3k7q9ivq7by5c.amplifyapp.com | https://github.com/codywirthses/UMAP-APP | staging | Production RDS Database |
+| molecular-universe-demo | demo-api.ses.ai | https://github.com/codywirthses/umap-backend | main | UMAP-APP-Demo | https://demo.ses.ai | https://github.com/codywirthses/UMAP-APP | main | Production RDS Database |

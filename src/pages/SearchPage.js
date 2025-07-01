@@ -300,7 +300,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score], span: 4, wrap: true}
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score], span: 4, wrap: true}
                                                 ]} foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
@@ -311,7 +311,10 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                             style={{
                                                                 flexGrow: 1,
                                                             }}
-                                                            onClick={() => handleAddToFavorites(molecule)}
+                                                            onClick={() => {
+                                                                console.log('Add to Favorites payload (search):', molecule);
+                                                                handleAddToFavorites(molecule);
+                                                            }}
                                                             loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
                                                             loadingText="Saving..."
                                                             successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
@@ -374,7 +377,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'Commercial Score', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE], span:4, wrap: true}
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE], span:4, wrap: true}
                                                 ]} 
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
@@ -386,21 +389,37 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         style={{
                                                             flexGrow: 1,
                                                         }}
-                                                        onClick={() => handleAddToFavorites({
-                                                            smiles: molecule.SMILES,
-                                                            properties: {
-                                                                molwt: molecule.molecular_weight,
-                                                                homo_eV: molecule.HOMO_eV,
-                                                                lumo_eV: molecule.LUMO_eV,
-                                                                esp_min_eV: molecule.ESP_min_eV,
-                                                                esp_max_eV: molecule.ESP_max_eV,
-                                                                predicted_mp: molecule.predicted_MP_celsius,
-                                                                predicted_bp: molecule.predicted_BP_celsius,
-                                                                functional_groups: molecule.functional_groups
-                                                            },
-                                                            x: molecule.UMAP_0,
-                                                            y: molecule.UMAP_1
-                                                        })}
+                                                        onClick={() => {
+                                                            console.log('Add to Favorites payload (search):', molecule);
+                                                            
+                                                            // Get the raw commercial score (numeric 0-3)
+                                                            const rawCommercialScore = molecule.COMMERCIAL_SCORE;
+                                                            
+                                                            // Convert commercial score from numeric to descriptive text
+                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+                                                                ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+                                                                : null;
+                                                            
+                                                            handleAddToFavorites({
+                                                                smiles: molecule.SMILES,
+                                                                properties: {
+                                                                    molwt: molecule.molecular_weight,
+                                                                    homo_eV: molecule.HOMO_eV,
+                                                                    lumo_eV: molecule.LUMO_eV,
+                                                                    esp_min_eV: molecule.ESP_min_eV,
+                                                                    esp_max_eV: molecule.ESP_max_eV,
+                                                                    predicted_mp: molecule.predicted_MP_celsius,
+                                                                    predicted_bp: molecule.predicted_BP_celsius,
+                                                                    predicted_fp_celsius: molecule.predicted_FP_celsius,
+                                                                    combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
+                                                                    commercial_score: commercialScoreText,
+                                                                    functional_groups: molecule.functional_groups,
+                                                                    commercial_link: molecule.COMMERCIAL_LINK || molecule.commercial_link || null
+                                                                },
+                                                                x: molecule.UMAP_0,
+                                                                y: molecule.UMAP_1
+                                                            });
+                                                        }}
                                                         loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
                                                         loadingText="Saving..."
                                                         successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
