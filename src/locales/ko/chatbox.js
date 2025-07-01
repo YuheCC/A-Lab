@@ -76,5 +76,14 @@ export default {
         loginRequired: "즐겨찾기를 추가하려면 로그인해야 합니다",
         feedbackError: "피드백 제출 오류:",
         copyError: "복사 실패:"
+    },
+    history: {
+        title: "채팅 목록",
+        createNewChat: "새 채팅 만들기",
+        newChat: "새 채팅",
+        confirmDelete: "정말로 이 채팅을 삭제하시겠습니까?",
+        cancel: "취소",
+        delete: "삭제",
+        footer: "채팅 기록은 최근 20개의 채팅을 보여줍니다."
     }
 }; 

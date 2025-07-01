@@ -76,5 +76,14 @@ export default {
         loginRequired: "您必须登录才能添加收藏夹",
         feedbackError: "提交反馈时出错：",
         copyError: "复制失败："
+    },
+    history: {
+        title: "您的聊天",
+        createNewChat: "创建新聊天",
+        newChat: "新聊天",
+        confirmDelete: "您确定要删除这个聊天吗？",
+        cancel: "取消",
+        delete: "删除",
+        footer: "聊天历史显示您最近的20次聊天记录。"
     }
 }; 

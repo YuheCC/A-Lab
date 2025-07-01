@@ -11,7 +11,7 @@ const getWelcomeMessage = () => {
 };
 
 const generateNewChat = () => ({
-    name: 'New Chat',
+    name: i18n.t('chatbox.history.newChat') || "New Chat",
     useMultiAgent: false,
     isInClarifyFlow: false,
     isThinking: false,

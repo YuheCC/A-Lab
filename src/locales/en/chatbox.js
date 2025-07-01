@@ -76,5 +76,14 @@ export default {
         loginRequired: "You must be logged in to add favorites",
         feedbackError: "Error submitting feedback:",
         copyError: "Failed to copy:"
+    },
+    history: {
+        title: "Your Chats",
+        createNewChat: "Create New Chat",
+        newChat: "New Chat",
+        confirmDelete: "Are you sure you want to delete this chat?",
+        cancel: "Cancel",
+        delete: "Delete",
+        footer: "Chat history shows the last 20 chats you've had."
     }
 }; 

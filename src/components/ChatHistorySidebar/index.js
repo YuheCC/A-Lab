@@ -1,6 +1,7 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { LoaderCircle, MessageCirclePlus, PanelLeftClose, PanelLeftOpen, Trash, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useChatStore } from "../../providers/chat";
 import { useShallow } from "zustand/react/shallow";
 import CustomButton from "../CustomButton";
@@ -32,18 +33,20 @@ export const ChatItem = ({ chatId, chatName, isActive, onConfirmDelete, onClick,
 };
 
 const ConfirmDeleteChat = ({ onDelete, onCancel }) => {
+    const { t } = useTranslation();
+    
     return (
         <div className="confirm-delete-cover" onClick={onCancel}>
             <div className="confirm-delete-chat">
-                <h3>Are you sure you want to delete this chat?</h3>
+                <h3>{t('chatbox.history.confirmDelete')}</h3>
                 <div className="confirm-delete-actions">
                  <CustomButton onClick={() => onCancel()} size="small" variant={"outlined"}
                       style={{ marginRight: 10 }}>
-                      Cancel
+                      {t('chatbox.history.cancel')}
                   </CustomButton>
                  <CustomButton Icon={Trash} onClick={() => onDelete()} size="small"
                       style={{ marginRight: 10 }} color="error">
-                      Delete
+                      {t('chatbox.history.delete')}
                     </CustomButton>
                 </div>
             </div>
@@ -52,6 +55,7 @@ const ConfirmDeleteChat = ({ onDelete, onCancel }) => {
 }
 
 export const ChatHistorySidebar = ({ compressed = false }) => {
+    const { t } = useTranslation();
 
     const { createChat, deleteChat, setActiveChat, chatMap, activeChat } = useChatStore(useShallow((state) => ({
         createChat: state.createChat,
@@ -77,18 +81,18 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
         <div className={`chat-history-sidebar ${collapsed ? 'collapsed' : ''}`}>
             <div className="sidebar-header">
                 <span className="sidebar-header-content">
-                    <Tooltip title="Create New Chat" placement="right" enterNextDelay={5000} enterDelay={500}>
-                        <IconButton style={{ marginRight: '8px' }} size="small" onClick={() => createChat("New Chat")}>
+                    <Tooltip title={t('chatbox.history.createNewChat')} placement="right" enterNextDelay={5000} enterDelay={500}>
+                        <IconButton style={{ marginRight: '8px' }} size="small" onClick={() => createChat(t('chatbox.history.newChat'))}>
                             <MessageCirclePlus size={21}/>
                         </IconButton>
                     </Tooltip>
-                     <h2>Your Chats</h2>
+                     <h2>{t('chatbox.history.title')}</h2>
                 </span>
                 <IconButton className="close-sidebar-button" style={{ marginLeft: 'auto' }} onClick={() => setCollapsed(!collapsed)} size="small">
                     {collapsed ? (
                         <div className="open-sidebar-button">
                             <PanelLeftOpen size={21} />
-                            {(compressed === false) &&<span className="open-sidebar-text">Your Chats</span>}
+                            {(compressed === false) &&<span className="open-sidebar-text">{t('chatbox.history.title')}</span>}
                         </div>
                     ): <PanelLeftClose size={21} />}
                 </IconButton>
@@ -107,7 +111,7 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
                 }
                 )}
                 <div className="chat-history-footer">
-                    <span className="note">Chat history shows the last 20 chats you've had.</span>
+                    <span className="note">{t('chatbox.history.footer')}</span>
                 </div>
             </div>
             {chatIdToDelete !== null && (
