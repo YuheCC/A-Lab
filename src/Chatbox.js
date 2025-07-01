@@ -947,7 +947,7 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small">
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
-                    {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                    {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
                         {t('chatbox.buttons.viewInMolPort')}
@@ -1044,7 +1044,7 @@ const handleFindSimilarMolecules = async (details) => {
                     contextContent3={contextObject.contextContent3}
                     onClose={() => { }}
                   />
-                  {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                  {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                     window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
                     {t('chatbox.buttons.viewInMolPort')}

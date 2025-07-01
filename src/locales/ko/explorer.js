@@ -25,6 +25,16 @@ export default {
         esp_max_eV: "Max ESP (eV)",
         esp_min_eV: "Min ESP (eV)",
         predicted_mp: "예측 융점 (°C)",
-        predicted_bp: "예측 비점 (°C)"
+        predicted_bp: "예측 비점 (°C)", 
+        flash_point: "예측 인화점 (°C)",
+        commercial_score: "상용 가능성",
+        CLUSTER: "Cluster",
+        predicted_mp: "예측 융점 (°C)",
+        predicted_bp: "예측 비점 (°C)",
+        flash_point: "예측 인화점 (°C)",
+        combustion_enthalpy: "연소 엔탈피 (eV)",
+        commercial_viability: "상용 가능성",
+        functional_groups: "작용기",
+        umap_coordinates: "UMAP X/Y"
     }
 }; 
