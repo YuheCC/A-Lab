@@ -243,7 +243,9 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                 <div style={{
                                     color: '#555',
                                     fontSize: '14px',
-                                }}>Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.</div>
+                                }}>
+                                {t('search.findFriendsDescription')}
+                                </div>
                             </div>
                         </label>
                     </div>
@@ -313,13 +315,13 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                             successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
                                                             errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
                                                         >
-                                                            Add to Favorites
+                                                            {t("chatbox.buttons.addToFavorites")}
                                                         </CustomButton>
                                                         {
-                                                        molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                        false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
                                                             window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
                                                             }}>
-                                                                {moleculeFavoriteStatus[molecule.smiles].success}
+                                                                {t("chatbox.buttons.viewInMolPort")}
                                                             </CustomButton>
                                                         }
                                                     </div>
