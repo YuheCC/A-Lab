@@ -91,5 +91,11 @@ export default {
   newsfeed: {
     title: "Newsfeed",
     release: "April 29, 2025: Molecular Universe MU-0 is released to public"
+  },
+  commercial_viability: {
+    requires_rd: "Requires R&D to assess viability",
+    likely_synthesizable_but_not_commercially_available: "Likely synthesizable but probably not commercially available",
+    likely_synthesizable_may_be_commercially_available: "Likely synthesizable, may be commercially available",
+    likely_commercially_available: "Likely commercially available"
   }
 }; 
