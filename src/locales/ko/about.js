@@ -91,5 +91,11 @@ export default {
   newsfeed: {
     title: "뉴스 피드",
     release: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다"
+  },
+  commercial_viability: {
+    requires_rd: "상용 가능성 평가를 위해 R&D 필요",
+    likely_synthesizable_but_not_commercially_available: "상용 가능성이 높지만 상용 가능성이 낮음",
+    likely_synthesizable_may_be_commercially_available: "상용 가능성이 높지만 상용 가능성이 높음",
+    likely_commercially_available: "상용 가능성이 높음"
   }
 }; 
