@@ -14,7 +14,7 @@ export default {
   search: '搜索',
   
   // Analysis Tabs
-  radarTab: '雷达',
+  radarTab: '雷达图',
   espTab: 'ESP',
   moTab: 'MO',
   
@@ -31,18 +31,30 @@ export default {
     lumo: 'LUMO (eV)',
     meltingPoint: 'MP (°C)',
     boilingPoint: 'BP (°C)',
+    flashPoint: 'Predicted Flash Point (°C)',
+    combustionEnthalpy: 'Combustion Enthalpy (eV)',
+    commercialViability: 'Commercial Viability',
     espMin: 'ESP Min (eV)',
     espMax: 'ESP Max (eV)',
     functionalGroups: 'Functional Groups',
     umapCoordinates: 'UMAP X/Y',
     addedDate: '添加日期',
+    commercialLink: '商业链接',
     actions: '操作'
   },
   
+  // Bulk Operations
+  bulkDelete: '删除已选择的',
+  bulkDeleting: '删除中...',
+  bulkDeleteConfirm: '您确定要从收藏夹中删除 {{count}} 个分子吗？此操作无法撤销。',
+  bulkDeleteSuccess: '成功从收藏夹中删除了 {{count}} 个分子',
+  bulkDeletePartialError: '删除失败 {{failed}} 个（共 {{total}} 个）分子。请重试。',
+  bulkDeleteError: '从收藏夹删除分子失败。请重试。',
+  
   // Analysis View
-  radarAnalysis: '雷达分析',
-  espAnalysis: 'ESP分析',
-  moAnalysis: 'MO分析',
+  radarAnalysis: '雷达图分析',
+  espAnalysis: 'ESP 分析',
+  moAnalysis: 'MO 分析',
   moleculesSelected: '个分子已选择',
   closeAnalysis: '关闭分析',
   
@@ -64,6 +76,17 @@ export default {
     espMax: 'esp_max (eV)'
   },
   
+  // Chart Labels
+  chartLabels: {
+    selectedMolecules: '已选择的分子',
+    reference: '参考',
+    highSolubility: '高溶解度',
+    mediumSolubility: '中等溶解度',
+    lowSolubility: '低溶解度',
+    diluent: '稀释剂',
+    solubilityRegion: '区域'
+  },
+  
   // Confirmation and Messages
   confirmRemove: '您确定要从收藏夹中删除这个分子吗？',
   moleculeRemoved: '分子已从收藏夹中移除',
@@ -71,15 +94,20 @@ export default {
   removeFromFavorites: '从收藏夹删除',
   alreadyInFavorites: '此分子已在您的收藏夹中！',
   
-  // Molecule structure alt text
-  moleculeStructure: '分子结构',
-  
   // Data Values
-  notAvailable: '不可用',
+  notAvailable: 'N/A',
+  viewLink: '查看链接',
   
   // Buttons
   buttons: {
     showAnalysis: '分析已选择的',
     closeButton: '×'
+  },
+  
+  // Tooltips
+  tooltips: {
+    removeFromFavorites: '从收藏夹删除',
+    selectAll: '选择所有分子',
+    viewCommercialLink: '查看商业链接'
   }
 }; 

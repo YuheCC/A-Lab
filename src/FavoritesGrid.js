@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import './App.css';
 import Plotly from 'plotly.js-dist';
 import { authFetch, getAPIUrl } from './utils.js';
 import { useAuthStore } from './providers/auth.js';
 import NodePopup from './components/NodePopup.js';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = getAPIUrl();
 
@@ -84,7 +84,7 @@ const FavoritesGrid = () => {
     };
 
     fetchFavorites();
-  }, [t]);
+  }, []);
 
   // Filter favorites when searchTerm changes
   useEffect(() => {
@@ -240,7 +240,7 @@ const FavoritesGrid = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`${t('favorites.removeFailed')}: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to remove favorite: ${response.status} ${response.statusText}`);
       }
 
       // Remove the favorite from the state
@@ -284,7 +284,7 @@ const FavoritesGrid = () => {
     if (selectedMolecules.length === 0) return;
     
     // Ask for confirmation before removing
-    const confirmMessage = `Are you sure you want to remove ${selectedMolecules.length} molecules from your favorites? This action cannot be undone.`;
+    const confirmMessage = t('favorites.bulkDeleteConfirm', { count: selectedMolecules.length });
     if (!window.confirm(confirmMessage)) {
       return;
     }
@@ -311,7 +311,7 @@ const FavoritesGrid = () => {
         // Show partial success/error message
         const errorToast = document.createElement('div');
         errorToast.className = 'toast-message error';
-        errorToast.textContent = `Failed to remove ${failures.length} out of ${selectedMolecules.length} molecules. Please try again.`;
+        errorToast.textContent = t('favorites.bulkDeletePartialError', { failed: failures.length, total: selectedMolecules.length });
         document.body.appendChild(errorToast);
         
         setTimeout(() => {
@@ -333,7 +333,7 @@ const FavoritesGrid = () => {
       // Show success message
       const successToast = document.createElement('div');
       successToast.className = 'toast-message success';
-      successToast.textContent = `Successfully removed ${successfulDeletions.length} molecules from favorites`;
+      successToast.textContent = t('favorites.bulkDeleteSuccess', { count: successfulDeletions.length });
       document.body.appendChild(successToast);
       
       setTimeout(() => {
@@ -348,7 +348,7 @@ const FavoritesGrid = () => {
       // Show error message
       const errorToast = document.createElement('div');
       errorToast.className = 'toast-message error';
-      errorToast.textContent = 'Failed to remove molecules from favorites. Please try again.';
+      errorToast.textContent = t('favorites.bulkDeleteError');
       document.body.appendChild(errorToast);
       
       setTimeout(() => {
@@ -362,7 +362,7 @@ const FavoritesGrid = () => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return t('favorites.notAvailable');
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
@@ -398,7 +398,13 @@ const FavoritesGrid = () => {
     if (!spiderChartRef.current || selectedMolecules.length === 0) return;
 
     // Define the categories for the radar chart
-    const categories = [t('favorites.chartProperties.homo'), t('favorites.chartProperties.lumo'), t('favorites.chartProperties.meltingPoint'), t('favorites.chartProperties.boilingPoint'), t('favorites.chartProperties.molecularWeight')];
+    const categories = [
+      t('favorites.chartProperties.homo'),
+      t('favorites.chartProperties.lumo'),
+      t('favorites.chartProperties.meltingPoint'),
+      t('favorites.chartProperties.boilingPoint'),
+      t('favorites.chartProperties.molecularWeight')
+    ];
     
     // Calculate min/max values for scaling
     let minValues = {};
@@ -406,22 +412,22 @@ const FavoritesGrid = () => {
     
     // Initialize with the first molecule's values
     selectedMolecules.forEach(molecule => {
-      categories.forEach(category => {
+      categories.forEach((category, index) => {
         let value;
-        switch(category) {
-          case t('favorites.chartProperties.homo'):
+        switch(index) {
+          case 0: // HOMO
             value = molecule.homo_ev;
             break;
-          case t('favorites.chartProperties.lumo'):
+          case 1: // LUMO
             value = molecule.lumo_ev;
             break;
-          case t('favorites.chartProperties.meltingPoint'):
+          case 2: // MP
             value = molecule.predicted_melting_point;
             break;
-          case t('favorites.chartProperties.boilingPoint'):
+          case 3: // BP
             value = molecule.predicted_boiling_point;
             break;
-          case t('favorites.chartProperties.molecularWeight'):
+          case 4: // Molecular Weight
             value = molecule.molecular_weight;
             break;
           default:
@@ -441,17 +447,17 @@ const FavoritesGrid = () => {
     
     // Create traces for each molecule
     const traces = selectedMolecules.map(molecule => {
-      const values = categories.map(category => {
-        switch(category) {
-          case t('favorites.chartProperties.homo'):
+      const values = categories.map((category, index) => {
+        switch(index) {
+          case 0: // HOMO
             return molecule.homo_ev;
-          case t('favorites.chartProperties.lumo'):
+          case 1: // LUMO
             return molecule.lumo_ev;
-          case t('favorites.chartProperties.meltingPoint'):
+          case 2: // MP
             return molecule.predicted_melting_point;
-          case t('favorites.chartProperties.boilingPoint'):
+          case 3: // BP
             return molecule.predicted_boiling_point;
-          case t('favorites.chartProperties.molecularWeight'):
+          case 4: // Molecular Weight
             return molecule.molecular_weight;
           default:
             return null;
@@ -577,7 +583,7 @@ const FavoritesGrid = () => {
       ESP_MAX_EV: molecule.esp_max_ev,
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'Selected Molecules', // Assuming solubility field exists
+      SOLUBILITY: molecule.solubility || t('favorites.chartLabels.selectedMolecules'), // Assuming solubility field exists
       ABBREVIATION: molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles,
       SMILES: molecule.smiles
     }));
@@ -757,7 +763,7 @@ const FavoritesGrid = () => {
     const selectedData = selectedMolecules.length > 0 ? selectedMolecules.map(molecule => ({
       HOMO_EV: molecule.homo_ev,
       LUMO_EV: molecule.lumo_ev,
-      SOLUBILITY: molecule.solubility || 'Selected Molecules',
+      SOLUBILITY: molecule.solubility || t('favorites.chartLabels.selectedMolecules'),
       ABBREVIATION: molecule.abbreviation || (molecule.smiles.length > 10 ? molecule.smiles.substring(0, 10) + '...' : molecule.smiles),
       SMILES: molecule.smiles,
       isSelected: true
@@ -798,13 +804,14 @@ const FavoritesGrid = () => {
     allData.forEach(d => {
       if (d.isSelected) {
         // Group all selected molecules together regardless of solubility
-        if (!groupedData['Selected Molecules']) {
-          groupedData['Selected Molecules'] = [];
+        const selectedKey = t('favorites.chartLabels.selectedMolecules');
+        if (!groupedData[selectedKey]) {
+          groupedData[selectedKey] = [];
         }
-        groupedData['Selected Molecules'].push(d);
+        groupedData[selectedKey].push(d);
       } else {
         // Keep reference data grouped by solubility
-        const key = `${d.SOLUBILITY} (Reference)`;
+        const key = `${d.SOLUBILITY} (${t('favorites.chartLabels.reference')})`;
         if (!groupedData[key]) {
           groupedData[key] = [];
         }
@@ -830,7 +837,7 @@ const FavoritesGrid = () => {
           y: typeData.map(d => d.LUMO_EV_DISPLAY),
           text: typeData.map(d => d.ABBREVIATION),
           textposition: 'top center',
-          name: `${solubilityType} (ref)`,
+          name: `${solubilityType} (${t('favorites.chartLabels.reference').toLowerCase()})`,
           hovertemplate: 
             `ABBREVIATION: %{text}<br>` +
             `HOMO_EV: %{x:.3f}<br>` +
@@ -855,8 +862,9 @@ const FavoritesGrid = () => {
     });
 
     // Then add all selected molecules as one group
-    if (groupedData['Selected Molecules']) {
-      const selectedData = groupedData['Selected Molecules'];
+    const selectedKey = t('favorites.chartLabels.selectedMolecules');
+    if (groupedData[selectedKey]) {
+      const selectedData = groupedData[selectedKey];
       
       traces.push({
         type: 'scatter',
@@ -865,7 +873,7 @@ const FavoritesGrid = () => {
         y: selectedData.map(d => d.LUMO_EV_DISPLAY),
         text: selectedData.map(d => d.ABBREVIATION),
         textposition: 'top center',
-        name: 'Selected Molecules',
+        name: selectedKey,
         customdata: selectedData.map(d => d.SMILES || 'N/A'),
         hovertemplate: 
           `ABBREVIATION: %{text}<br>` +
@@ -1024,7 +1032,7 @@ const FavoritesGrid = () => {
         );
       } else if (activeTab === 'mo') {
         // For MO chart, check if this is a selected molecule (not reference)
-        if (point.data.name === 'Selected Molecules') {
+        if (point.data.name === t('favorites.chartLabels.selectedMolecules')) {
           // Find by HOMO/LUMO coordinates
           clickedMolecule = selectedMolecules.find(mol => 
             Math.abs(mol.homo_ev - point.x) < 0.1 && 
@@ -1102,31 +1110,31 @@ const FavoritesGrid = () => {
 
   if (loading) {
     return (
-              <div className="favorites-loading">
-          <div className="loading-spinner"></div>
-          <p>{t('favorites.loadingMessage')}</p>
-        </div>
+      <div className="favorites-loading">
+        <div className="loading-spinner"></div>
+        <p>{t('favorites.loadingMessage')}</p>
+      </div>
     );
   }
 
   if (error) {
     return (
-              <div className="favorites-error">
-          <h3>{t('favorites.errorLoadingFavorites')}</h3>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()}>{t('favorites.tryAgain')}</button>
-        </div>
+      <div className="favorites-error">
+        <h3>{t('favorites.errorLoadingFavorites')}</h3>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>{t('favorites.tryAgain')}</button>
+      </div>
     );
   }
 
   if (favorites.length === 0) {
     return (
-              <div className="no-favorites">
-          <h3>{t('favorites.noFavoriteMolecules')}</h3>
-          <p>{t('favorites.noFavoritesMessage')}</p>
-          <p>{t('favorites.goToSearchPage')}</p>
-          <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>{t('favorites.search')}</a>
-        </div>
+      <div className="no-favorites">
+        <h3>{t('favorites.noFavoriteMolecules')}</h3>
+        <p>{t('favorites.noFavoritesMessage')}</p>
+        <p>{t('favorites.goToSearchPage')}</p>
+        <a href="/search" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/search'); window.location.reload(); }}>{t('favorites.search')}</a>
+      </div>
     );
   }
 
@@ -1136,44 +1144,67 @@ const FavoritesGrid = () => {
         <>
           <div className="favorites-header">
             <div className="analysis-tabs">
-                              <button 
-                  className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
-                  onClick={() => handleTabChange('radar')}
-                >
-                  {t('favorites.radarTab')}
-                </button>
-                <button 
-                  className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
-                  onClick={() => handleTabChange('esp')}
-                >
-                  {t('favorites.espTab')}
-                </button>
-                <button 
-                  className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
-                  onClick={() => handleTabChange('mo')}
-                >
-                  {t('favorites.moTab')}
-                </button>
+              <button 
+                className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
+                onClick={() => handleTabChange('radar')}
+              >
+                {t('favorites.radarTab')}
+              </button>
+              <button 
+                className={`analysis-tab ${activeTab === 'esp' ? 'active' : ''}`}
+                onClick={() => handleTabChange('esp')}
+              >
+                {t('favorites.espTab')}
+              </button>
+              <button 
+                className={`analysis-tab ${activeTab === 'mo' ? 'active' : ''}`}
+                onClick={() => handleTabChange('mo')}
+              >
+                {t('favorites.moTab')}
+              </button>
             </div>
             
             <div className="search-container">
-                              <input
-                  type="text"
-                  className="favorites-search-input"
-                  placeholder={t('favorites.searchPlaceholder')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <input
+                type="text"
+                className="favorites-search-input"
+                placeholder={t('favorites.searchPlaceholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
             
-            {selectedMolecules.length > 0 && (
-              <button 
-                className="show-analysis-button"
-                onClick={handleShowAnalysis}
-              >
-                {t('favorites.analyzeSelected')} ({selectedMolecules.length})
-              </button>
-            )}
+            <div className="favorites-actions">
+              {selectedMolecules.length > 0 && (
+                <button 
+                  className="show-analysis-button"
+                  onClick={handleShowAnalysis}
+                >
+                  {t('favorites.analyzeSelected')} ({selectedMolecules.length})
+                </button>
+              )}
+              
+              {selectedMolecules.length > 1 && (
+                <button 
+                  className="bulk-delete-button"
+                  onClick={handleBulkDeleteFavorites}
+                  disabled={bulkDeleteLoading}
+                  style={{
+                    backgroundColor: bulkDeleteLoading ? '#ccc' : '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '8px 16px',
+                    cursor: bulkDeleteLoading ? 'not-allowed' : 'pointer',
+                    marginLeft: '10px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {bulkDeleteLoading ? t('favorites.bulkDeleting') : `${t('favorites.bulkDelete')} (${selectedMolecules.length})`}
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="favorites-table-container">
@@ -1195,77 +1226,77 @@ const FavoritesGrid = () => {
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'checkbox')}></div>
                   </th>
                   <th className="resizable-header" style={{ width: columnWidths.image }}>
-                    Image
+                    {t('favorites.tableHeaders.image')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'image')}></div>
                   </th>
                   <th onClick={() => handleSort('smiles')} className="sortable-header resizable-header" style={{ width: columnWidths.smiles }}>
-                    SMILES {getSortIndicator('smiles')}
+                    {t('favorites.tableHeaders.smiles')} {getSortIndicator('smiles')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'smiles')}></div>
                   </th>
                   <th onClick={() => handleSort('molecular_weight')} className="sortable-header resizable-header" style={{ width: columnWidths.molecularWeight }}>
-                    Molecular Weight {getSortIndicator('molecular_weight')}
+                    {t('favorites.tableHeaders.molecularWeight')} {getSortIndicator('molecular_weight')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'molecularWeight')}></div>
                   </th>
                   <th onClick={() => handleSort('homo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.homo }}>
-                    HOMO (eV) {getSortIndicator('homo_ev')}
+                    {t('favorites.tableHeaders.homo')} {getSortIndicator('homo_ev')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'homo')}></div>
                   </th>
                   <th onClick={() => handleSort('lumo_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.lumo }}>
-                    LUMO (eV) {getSortIndicator('lumo_ev')}
+                    {t('favorites.tableHeaders.lumo')} {getSortIndicator('lumo_ev')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'lumo')}></div>
                   </th>
                   {canSeePredictedProperties && (
                     <th onClick={() => handleSort('predicted_melting_point')} className="sortable-header resizable-header" style={{ width: columnWidths.mp }}>
-                      MP (°C) {getSortIndicator('predicted_melting_point')}
+                      {t('favorites.tableHeaders.meltingPoint')} {getSortIndicator('predicted_melting_point')}
                       <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'mp')}></div>
                     </th>
                   )}
                   {canSeePredictedProperties && (
                     <th onClick={() => handleSort('predicted_boiling_point')} className="sortable-header resizable-header" style={{ width: columnWidths.bp }}>
-                      BP (°C) {getSortIndicator('predicted_boiling_point')}
+                      {t('favorites.tableHeaders.boilingPoint')} {getSortIndicator('predicted_boiling_point')}
                       <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'bp')}></div>
                     </th>
                   )}
                   {canSeePredictedProperties && (
                     <th className="resizable-header" style={{ width: columnWidths.fp }}>
-                      Predicted Flash Point (°C)
+                      {t('favorites.tableHeaders.flashPoint')}
                       <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'fp')}></div>
                     </th>
                   )}
                   <th className="resizable-header" style={{ width: columnWidths.combustion }}>
-                    Combustion Enthalpy (eV)
+                    {t('favorites.tableHeaders.combustionEnthalpy')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'combustion')}></div>
                   </th>
                   <th className="resizable-header" style={{ width: columnWidths.commercial }}>
-                    Commercial Viability
+                    {t('favorites.tableHeaders.commercialViability')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercial')}></div>
                   </th>
                   <th onClick={() => handleSort('esp_min_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMin }}>
-                    ESP Min (eV) {getSortIndicator('esp_min_ev')}
+                    {t('favorites.tableHeaders.espMin')} {getSortIndicator('esp_min_ev')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMin')}></div>
                   </th>
                   <th onClick={() => handleSort('esp_max_ev')} className="sortable-header resizable-header" style={{ width: columnWidths.espMax }}>
-                    ESP Max (eV) {getSortIndicator('esp_max_ev')}
+                    {t('favorites.tableHeaders.espMax')} {getSortIndicator('esp_max_ev')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'espMax')}></div>
                   </th>
                   <th onClick={() => handleSort('functional_groups')} className="sortable-header resizable-header" style={{ width: columnWidths.functionalGroups }}>
-                    Functional Groups {getSortIndicator('functional_groups')}
+                    {t('favorites.tableHeaders.functionalGroups')} {getSortIndicator('functional_groups')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'functionalGroups')}></div>
                   </th>
                   <th className="resizable-header" style={{ width: columnWidths.umap }}>
-                    UMAP X/Y
+                    {t('favorites.tableHeaders.umapCoordinates')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'umap')}></div>
                   </th>
                   <th onClick={() => handleSort('created_at')} className="sortable-header resizable-header" style={{ width: columnWidths.addedDate }}>
-                    Added Date {getSortIndicator('created_at')}
+                    {t('favorites.tableHeaders.addedDate')} {getSortIndicator('created_at')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'addedDate')}></div>
                   </th>
                   <th className="resizable-header" style={{ width: columnWidths.commercialLink }}>
-                    Commercial Link
+                    {t('favorites.tableHeaders.commercialLink')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercialLink')}></div>
                   </th>
                   <th className="resizable-header" style={{ width: columnWidths.actions }}>
-                    Actions
+                    {t('favorites.tableHeaders.actions')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'actions')}></div>
                   </th>
                 </tr>
@@ -1284,7 +1315,7 @@ const FavoritesGrid = () => {
                       {moleculeImages[favorite.id] ? (
                         <img 
                           src={moleculeImages[favorite.id]} 
-                          alt={t('favorites.moleculeStructure')} 
+                          alt="Molecule structure" 
                           className="table-molecule-image"
                         />
                       ) : (
@@ -1292,23 +1323,23 @@ const FavoritesGrid = () => {
                       )}
                     </td>
                     <td>{favorite.smiles}</td>
-                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : 'N/A'}</td>
+                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
                     {canSeePredictedProperties && (
-                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : 'N/A'}</td>
+                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : t('favorites.notAvailable')}</td>
                     )}
                     {canSeePredictedProperties && (
-                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : 'N/A'}</td>
+                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : t('favorites.notAvailable')}</td>
                     )}
                     {canSeePredictedProperties && (
-                      <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
+                      <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : t('favorites.notAvailable')}</td>
                     )}
-                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : 'N/A'}</td>
-                    <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : 'N/A'}</td>
-                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : 'N/A'}</td>
-                    <td>{favorite.functional_groups || 'N/A'}</td>
+                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : t('favorites.notAvailable')}</td>
+                    <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.functional_groups || t('favorites.notAvailable')}</td>
                     <td>
                       {favorite.umap_x ? favorite.umap_x.toFixed(2) : t('favorites.notAvailable')} / 
                       {favorite.umap_y ? favorite.umap_y.toFixed(2) : t('favorites.notAvailable')}
@@ -1316,14 +1347,14 @@ const FavoritesGrid = () => {
                     <td>{formatDate(favorite.created_at)}</td>
                     <td>
                       {favorite.commercial_link ? (
-                        <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">View Link</a>
-                      ) : 'N/A'}
+                        <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">{t('favorites.viewLink')}</a>
+                      ) : t('favorites.notAvailable')}
                     </td>
                     <td>
                       <button 
                         className="remove-favorite-table-button" 
                         onClick={(e) => handleRemoveFavorite(favorite.id, e)}
-                        title={t('favorites.removeFromFavorites')}
+                        title={t('favorites.tooltips.removeFromFavorites')}
                       >
                         ×
                       </button>
@@ -1337,14 +1368,14 @@ const FavoritesGrid = () => {
       ) : (
         <div className="analysis-view">
           <div className="analysis-header">
-                          <h2>
-                {activeTab === 'radar' ? t('favorites.radarAnalysis') : 
-                 activeTab === 'esp' ? t('favorites.espAnalysis') : 
-                 t('favorites.moAnalysis')}
-              </h2>
-              <div className="selected-molecules-count">
-                {selectedMolecules.length} {t('favorites.moleculesSelected')}
-              </div>
+            <h2>
+              {activeTab === 'radar' ? t('favorites.radarAnalysis') : 
+               activeTab === 'esp' ? t('favorites.espAnalysis') : 
+               t('favorites.moAnalysis')}
+            </h2>
+            <div className="selected-molecules-count">
+              {selectedMolecules.length} {t('favorites.moleculesSelected')}
+            </div>
             <button className="close-analysis-button" onClick={handleCloseAnalysis}>×</button>
           </div>
           
