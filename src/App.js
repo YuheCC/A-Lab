@@ -7,7 +7,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
 import PricingPage from './pages/PricingPage.js';
 import RedeemPage from './pages/RedeemPage.js';
 import TermsPage from './pages/TermsPage.js';
-import { authFetch, getAPIUrl } from './utils.js';
+import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from './utils.js';
 
 import './App.css';
 import Sidebar from './components/Sidebar.js';
@@ -61,7 +61,7 @@ const App = () => {
   }, [language]);
 
   const fetchData = usePlotDataStore(state => state.fetchData);
-  const { verifyAuth } = useAuthStore();
+  const { verifyAuth, isAuthenticated, userPermissions } = useAuthStore();
 
   // Handle onMount events
   // Add global CSS styles for containers
@@ -175,6 +175,14 @@ const App = () => {
         throw new Error(t('chatbox.errors.loginRequired'));
       }
 
+      // Get the raw commercial score (numeric 0-3)
+      const rawCommercialScore = molecule.properties?.commercial_score || molecule.properties?.COMMERCIAL_SCORE;
+      
+      // Convert commercial score from numeric to descriptive text
+      const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+        ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+        : null;
+
       // Prepare favorite data from molecule properties
       const favoriteData = {
         smiles: molecule.smiles,
@@ -185,6 +193,10 @@ const App = () => {
         esp_max_ev: molecule.properties?.esp_max_eV || null,
         predicted_melting_point: molecule.properties?.predicted_mp || null,
         predicted_boiling_point: molecule.properties?.predicted_bp || null,
+        predicted_fp_celsius: molecule.properties?.predicted_fp_celsius || molecule.properties?.predicted_fp || null,
+        combustion_enthalpy_ev: molecule.properties?.combustion_enthalpy_ev || molecule.properties?.combustion_enthalpy || null,
+        commercial_score: commercialScoreText,
+        commercial_link: molecule.properties?.commercial_link || molecule.COMMERCIAL_LINK || null,
         functional_groups: molecule.properties?.functional_groups || null,
         umap_x: molecule.x || null,
         umap_y: molecule.y || null
@@ -271,16 +283,12 @@ const App = () => {
             
           <Route path="/ask" element={
             <ProtectedRoute>
-              <Sidebar>
-                <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
-                  <ChatbotInterface
-                    messages={chatMessages}
-                    setMessages={setChatMessages}
-                    remainingQueries={remainingQueries}
-                    setRemainingQueries={setRemainingQueries}
-                  />
-                </Suspense>
-              </Sidebar>
+              <Suspense fallback={<div className='loading-screen'>Loading...</div>}>
+                <ChatbotInterface
+                  remainingQueries={remainingQueries}
+                  setRemainingQueries={setRemainingQueries}
+                />
+              </Suspense>
             </ProtectedRoute>
           } />
           <Route path="/favorites" element={
@@ -329,6 +337,8 @@ const App = () => {
         filterLabels={filterLabels}
         handleAddToFavorites={handleAddToFavorites}
         moleculeFavoriteStatus={moleculeFavoriteStatus}
+        userPermissions={userPermissions}
+        isAuthenticated={isAuthenticated}
       />}
     </div>
   );

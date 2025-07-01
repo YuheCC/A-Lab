@@ -3,12 +3,15 @@ export default {
         welcome: "Molecular Universe에 오신 것을 환영합니다. 무엇을 도와드릴까요?"
     },
     input: {
-        placeholder: "배터리에 대한 질문이라면 무엇이든 물어보세요. 질문에 답하는 분자들을 찾아드리고 추가 탐색을 위한 ‘친구’ 분자들을 제안해드리겠습니다.",
+        placeholder: "배터리, 배터리 화학 또는 관련 주제에 대한 질문이라면 무엇이든 물어보세요.",
         sendButton: "전송"
     },
     checkboxes: {
         ignoreChatHistory: "채팅 기록 무시",
-        disableLiteratureSearch: "문헌 검색 비활성화"
+        disableLiteratureSearch: "문헌 검색 비활성화",
+        enterDeepSpace: "딥 스페이스 진입 (BETA)",
+        deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+        admin: "관리자"
     },
     queryLimit: {
         queriesRemaining: "이번 달 남은 쿼리:",
@@ -18,19 +21,24 @@ export default {
         thinking: "사고 중",
         searching: "검색 중",
         searchingDatabase: "데이터베이스 검색 중",
-        thinkingForSeconds: "{{seconds}}초 동안 생각 중…"
+        thinkingForSeconds: "{{seconds}}초 동안 생각 중…",
+        noMoleculesFound: "분자를 찾을 수 없습니다.",
+        findMoleculesFailed: "분자 찾기에 실패했습니다. 나중에 다시 시도해주세요.",
+        clarifyingQuestions: "곧 몇 가지 명확한 질문에 답변을 요청할 수 있습니다.",
+        deepSpaceWorking: "딥 스페이스 멀티 에이전트 LLM이 작업 중입니다. 질문의 복잡성에 따라 응답하는 데 10-20분이 걸릴 수 있습니다."
     },
     buttons: {
         findMolecules: "분자 찾기",
         findSimilarMolecules: "유사한 분자 찾기",
-        addToFavorites: "즐겨찾기에 추가 ★",
-        copy: "📋",
+        addToFavorites: "즐겨찾기에 추가",
+        copy: "복사",
         cancel: "취소",
-        submit: "제출"
+        submit: "제출",
+        viewInMolPort: "MolPort에서 보기"
     },
     molecules: {
         llmFoundMolecules: "LLM이 찾은 분자",
-        friendsRankedBy: "대체 가능성에 따라 순위가 매겨진 친구들",
+        friendsRankedBy: "대체 가능성에 따라 순위가 매겨진 친구들:",
         name: "이름",
         smiles: "SMILES",
         molecularWeight: "분자량",
@@ -44,7 +52,8 @@ export default {
         llmGrade: "LLM 등급",
         saving: "저장 중...",
         rateMatch: "이 결과를 평가해주세요",
-        detectedChemicalKeywords: "LLM 응답에서 탐지된 화학 키워드:"
+        detectedChemicalKeywords: "LLM 응답에서 탐지된 화학 키워드:",
+        searchingForFriends: "친구들 검색 중"
     },
     feedback: {
         goodMatch: "이것이 좋은 매치인 이유는 무엇인가요?",
@@ -67,5 +76,14 @@ export default {
         loginRequired: "즐겨찾기를 추가하려면 로그인해야 합니다",
         feedbackError: "피드백 제출 오류:",
         copyError: "복사 실패:"
+    },
+    history: {
+        title: "채팅 목록",
+        createNewChat: "새 채팅 만들기",
+        newChat: "새 채팅",
+        confirmDelete: "정말로 이 채팅을 삭제하시겠습니까?",
+        cancel: "취소",
+        delete: "삭제",
+        footer: "채팅 기록은 최근 20개의 채팅을 보여줍니다."
     }
 }; 

@@ -7,7 +7,7 @@ import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
+export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3 }) => {
   const { t } = useTranslation();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
@@ -42,9 +42,9 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
           feedbackText: feedbackText.trim(),
           inputContent: lastSearch || '',
           responseContent: molecule.SMILES || molecule.smiles || '',
-          contextContent1: '',
-          contextContent2: '',
-          contextContent3: '',
+          contextContent1,
+          contextContent2,
+          contextContent3,
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
         }),
@@ -66,7 +66,7 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   };
 
   return (
-    <div className="molecule-feedback-buttons">
+    <div className={`molecule-feedback-buttons ${fullWidth ? 'full-width' : ''}`}>
       <div className='feedback-buttons'>
         <span className="rate-text">{t('chatbox.molecules.rateMatch')}</span>
         <ThumbsUp className={`feedback-icon ${feedbackType === 'up' ? 'active' : ''}`} size={18} onClick={handleThumbsUp} />
@@ -97,7 +97,7 @@ export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
             </button>
             <button
               onClick={handleFeedbackSubmit}
-              className="submit-button"
+              className={`submit-button ${feedbackType === 'up' ? 'sucess' : 'error'}`}
               disabled={submitting}
             >
               {submitting ? t('chatbox.feedback.submitting') : t('chatbox.buttons.submit')}

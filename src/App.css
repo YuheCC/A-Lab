@@ -415,13 +415,13 @@ body, html {
 .sliders-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 2.5px; /* Reduced from 5px by 50% */
   padding: 10px 0;
   width: 100%;
 }
 
 .slider-container {
-  margin: 2px 0;
+  margin: 1px 0; /* Reduced from 2px by 50% */
   width: 100%;
   font-family: Arial, sans-serif;
   padding: 0px 10px;
@@ -432,7 +432,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* Reduced from 8px by 50% */
 }
 
 .slider-label {
@@ -469,7 +469,7 @@ body, html {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 5px;
+  padding: 2.5px; /* Reduced from 5px by 50% */
 }
 
 .reset-filter-button {
@@ -994,9 +994,11 @@ body, html {
 
 
 .chatbot-content {
-  width: 90%;
+  width: 100%;
   max-width: 800px;
+  min-width: 600px;
   min-height: 500px;
+  font-size: 14px;
   display: flex;
   flex-direction: column;
   /* height: calc(100vh - 260px); */
@@ -1010,42 +1012,6 @@ body, html {
   border-bottom: 1px solid #ddd;
 }
 
-.chatbot-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
-.query-limit-display {
-  background-color: #f8f9fa;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #666;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  margin-top: 10px;
-  width: fit-content;
-}
-
-.query-limit-display.warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border-color: #ffeeba;
-}
-
-.query-limit-display.danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-color: #f5c6cb;
-}
-
-.query-limit-icon {
-  font-size: 16px;
-}
 
 .query-limit-count {
   font-weight: 600;
@@ -1057,33 +1023,25 @@ body, html {
   padding: 10px;
   background-color: white;
   border-radius: 8px;
-  margin-bottom: 20px;
   border: 1px solid #eee;
-  max-height: calc(100vh - 280px); /* Add max height to prevent overflow */
 }
 
 .chat-and-molecules {
   display: flex;
   flex-direction: row;
-  gap: 20px;
-  width: 90%;
-  max-width: 1500px;
-  overflow: hidden;
+  max-width: 90vw;
   margin: 0 auto;  /* Remove the top margin */
   position: relative;
   z-index: 1;
-  padding: 10px;
   height: calc((100vh - 180px)); /* Add the same height calculation as search-umap-container */
 }
 
 .found-molecules-container {
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 10px;
   /* height: calc(100vh - 279px); */
   overflow-y: auto;
   background-color: #fff;
-  max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
   flex-shrink: 0;
   position: relative;
 }
@@ -1095,7 +1053,6 @@ body, html {
   position: sticky;
   top: 0;
   background-color: #fff;
-  padding: 10px 0;
   margin-top: 0;
   z-index: 10;
   border-bottom: 1px solid #eee;
@@ -1116,51 +1073,42 @@ body, html {
 }
 
 .found-molecules-container h3 {
-  position: sticky;
-  top: 0;
   background-color: #fff;
-  padding: 10px 0;
-  margin-top: 0;
+  margin:0;
   z-index: 10;
-  border-bottom: 1px solid #eee;
+
 }
 
 .similar-molecules-container {
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 10px;
   /* height: calc(100vh - 279px); */
   overflow-y: auto;
   background-color: #fff;
-  max-width: 300px; /* Adjust width as needed so it lines up with the chatbox */
   flex-shrink: 0;
   position: relative;
 }
 
 .similar-molecules-container h3 {
-  position: sticky;
-  top: 0;
   background-color: #fff;
-  padding: 10px 0;
-  margin-top: 0;
+  margin: 0;
   z-index: 10;
-  border-bottom: 1px solid #eee;
 }
 
-.system-message {
+.message-system {
   background-color: #e9f5ff;
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 15px;
-  max-width: 80%;
+  max-width: 95%;
   color: #333;
 }
 
 /* Style for user messages: slightly darker grey and constrained to the right 2/3 of the chat window */
-.chat-messages .user-message {
+.chat-messages .message-user {
   background-color: #dcdcdc; /* slightly darker grey */
-  margin-left: 33%;           /* pushes the message to the right, constraining it to the right 2/3 */
-  max-width: 66%;             /* ensures the message doesn't span the full width */
+  margin-left: auto;          /* pushes the message to the right, constraining it to the right 2/3 */
+  max-width: max(66%, 500px);             /* ensures the message doesn't span the full width */
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -1168,17 +1116,18 @@ body, html {
 }
 
 /* Optionally, style chatbot messages for contrast */
-.chat-messages .llm-message {
+.chat-messages .message-assistant,
+.chat-messages .message-system {
   background-color: #e9f5ff; /* a lighter grey for chatbot responses */
-  margin-right: 33%;          /* aligns these messages to the left 2/3 of the window */
-  max-width: 66%;
+  margin-right: auto;          /* aligns these messages to the left 2/3 of the window */
+  max-width: 95%;
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 10px;
   text-align: left;
 }
 
-.system-message p {
+.message-system p {
   margin: 0;
 }
 
@@ -1187,9 +1136,6 @@ body, html {
   gap: 10px;
 }
 
-.checkbox-group {
-  margin-top: 0px;
-}
 
 .chat-input {
   flex: 1;
@@ -1823,50 +1769,6 @@ body, html {
     font-size: 24px;
   }
 }
-
-.thinking-message {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  border-radius: 16px;
-  margin: 8px 0;
-  align-self: flex-end;
-  max-width: fit-content;
-  margin-left: auto;
-}
-
-.thinking-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.thinking-dots span {
-  width: 6px;
-  height: 6px;
-  background-color: #666;
-  border-radius: 50%;
-  animation: thinking 1.4s infinite;
-}
-
-.thinking-dots span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.thinking-dots span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes thinking {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
 .explorer-container {
   display: flex;
   height: 100%;
@@ -1874,11 +1776,7 @@ body, html {
 }
 
 /* Disabled state for chat input */
-.chat-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+
 
 .send-button:disabled {
   background-color: #cccccc;
@@ -2280,6 +2178,11 @@ body, html {
 }
 
 /* Search results container */
+.molecule-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
 .molecule-card {
   background-color: #fff;
   border-radius: 8px;
@@ -3187,6 +3090,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -3390,6 +3294,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  table-layout: fixed; /* Enable fixed table layout for column resizing */
 }
 
 .favorites-table th {
@@ -3405,6 +3310,9 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 .favorites-table td {
   padding: 8px;
   border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .favorites-table tr:hover {
@@ -3413,6 +3321,59 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 
 .selected-row {
   background-color: rgba(135, 206, 250, 0.2) !important;
+}
+
+/* Column resizing styles */
+.resizable-header {
+  position: relative;
+  user-select: none;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+  border-right: 2px solid transparent;
+  z-index: 1;
+}
+
+.resize-handle:hover {
+  border-right: 2px solid #0080ff;
+  background-color: rgba(0, 128, 255, 0.1);
+}
+
+.resize-handle:active {
+  border-right: 2px solid #0066cc;
+  background-color: rgba(0, 102, 204, 0.2);
+}
+
+/* Prevent text selection during resize */
+body.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow text wrapping for certain columns when they're wide enough */
+.favorites-table td:nth-child(3) { /* SMILES column */
+  white-space: normal;
+  word-break: break-word;
+}
+
+.favorites-table td:nth-child(11) { /* Commercial Viability column */
+  white-space: normal;
+  word-break: break-word;
+  min-width: 120px;
+}
+
+.favorites-table td:nth-child(14) { /* Functional Groups column */
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Deckgl Styles */
@@ -3440,4 +3401,68 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a 
 
 .icon-controls-group  .control-icon:active {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Favorites actions container */
+.favorites-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Bulk delete button */
+.bulk-delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.bulk-delete-button:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.bulk-delete-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Ensure favorites header has proper flex layout */
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Favorites button styles */
+.favorites-button {
+  padding: 10px 20px;
+  background-color: #0080ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.favorites-button:hover {
+  background-color: #0066cc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.favorites-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
 }
