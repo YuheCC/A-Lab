@@ -24,7 +24,15 @@ export default {
         lumo_eV: "LUMO (eV)",
         esp_max_eV: "Max ESP (eV)",
         esp_min_eV: "Min ESP (eV)",
+        predicted_fp: "Predicted Flash Point (°C)",
+        commercial_score: "Commercial Score",
+        CLUSTER: "Cluster",
         predicted_mp: "Predicted Melting Point (°C)",
-        predicted_bp: "Predicted Boiling Point (°C)"
+        predicted_bp: "Predicted Boiling Point (°C)",
+        flash_point: "Predicted Flash Point (°C)",
+        combustion_enthalpy: "Predicted Combustion Enthalpy (eV)",
+        commercial_viability: "Predicted Commercial Viability",
+        functional_groups: "Functional Groups",
+        umap_coordinates: "UMAP X/Y"
     }
 }; 
