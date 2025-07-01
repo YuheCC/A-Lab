@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { MolCard } from './MolCard';
 import { useAuthStore } from '../providers/auth';
+import { COMMERCIAL_SCORE_MAP } from '../utils';
 import './InlineMoleculeRenderer.css';
 
 // Component for individual clickable and hoverable molecule links
@@ -111,9 +112,10 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     // Add commercial score if available
     if (moleculeData.COMMERCIAL_SCORE !== undefined) {
       propGroups.push({
-        label: 'Commercial Score',
-        value: moleculeData.COMMERCIAL_SCORE,
-        span: 2
+        label: 'Commercial Viability',
+        value: COMMERCIAL_SCORE_MAP[moleculeData.COMMERCIAL_SCORE],
+        span: 2,
+        wrap: true
       });
     }
 
