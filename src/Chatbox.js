@@ -436,6 +436,12 @@ const handleFindSimilarMolecules = async (details) => {
     }
   }, [isSynced, loadHistory]);
 
+  // Clear selected molecule state when switching chats
+  useEffect(() => {
+    setSelectedMolecule(null);
+    setShowSelectedMolecule(false);
+  }, [activeChat]);
+
   const handleSend = useCallback(
     async (input) => {
       if (!input.trim()) return;
