@@ -17,8 +17,29 @@ import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
+import { InlineMoleculeRenderer } from './components/InlineMoleculeRenderer.js';
 
 const API_URL = getAPIUrl();
+
+// Helper function to check if content contains inline molecules
+const hasInlineMolecules = (content) => {
+  return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
+};
+
+// Custom message content renderer that handles both markdown and inline molecules
+const MessageContentRenderer = ({ content }) => {
+  if (hasInlineMolecules(content)) {
+    // If content has inline molecules, render them with hover capability
+    return <InlineMoleculeRenderer content={content} />;
+  } else {
+    // Otherwise, render as normal markdown
+    return (
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {content}
+      </ReactMarkdown>
+    );
+  }
+};
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
@@ -754,9 +775,7 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.content}
-                  </ReactMarkdown>
+                  <MessageContentRenderer content={msg.content} />
                   {msg.molText && msg.molecules && msg.molecules.length > 0 && (
                     <>
                       <div>
