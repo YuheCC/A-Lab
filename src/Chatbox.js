@@ -795,30 +795,8 @@ const handleFindSimilarMolecules = async (details) => {
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.molText && msg.molecules && msg.molecules.length > 0 && (
-                    <>
-                      <div>
-                        <br></br>
-                        <strong>Detected chemical keywords in LLM response:</strong>
-                        <br></br>
-                      </div>
-                      <div translate='no'>{msg.molText}</div>
-                    </>
-                  )}
                 </div>
-                {msg.role === "assistant" && msg.molecules && msg.molecules.length > 0 && (
-                  <div className="find-molecules-wrapper">
-                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
-                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={"searching our database"}
-                      errorMessage={foundMoleculesMessageIndex === index ? foundMoleculesError : null}
-                      sideError
-                      hideTime={10000} // 10 seconds
-                      disabled={moleculesLoading && foundMoleculesMessageIndex !== index}
-                      style={{ marginRight: 10 }}>
-                      Find Molecules
-                    </CustomButton>
-                  </div>
-                )}
+
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
