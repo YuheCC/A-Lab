@@ -1171,7 +1171,7 @@ const FavoritesGrid = () => {
                 className="show-analysis-button"
                 onClick={handleShowAnalysis}
               >
-                Analyze Selected ({selectedMolecules.length})
+                {t('favorites.analyzeSelected')} ({selectedMolecules.length})
               </button>
             )}
           </div>

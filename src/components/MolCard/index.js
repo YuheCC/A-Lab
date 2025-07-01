@@ -120,7 +120,7 @@ export const MolCard = (props) => {
                 <div className='molcard-footer-expanded'>
                     <div className='molcard-expand-controls' onClick={() => setExpanded(!expanded)}>
                         {expanded ? <ChevronUp className='molcard-control-icon' size={15} /> :  <ChevronDown className='molcard-control-icon' size={15} /> }
-                        <span className='deck-info-footer-text'>{expanded ? "Click to collapse" : "Click to expand for more details"}</span>
+                        <span className='deck-info-footer-text'>{expanded ? t('molecular.molCard.clickToCollapse') : t('molecular.molCard.clickToExpand')}</span>
                     </div>
                     {expanded ? (
                         <div className='molcard-expanded-content'>
