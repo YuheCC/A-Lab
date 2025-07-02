@@ -57,11 +57,13 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
                   <td className="property-name white-text">{filterLabels[key] || key}</td>
                   <td className="property-value white-text">
                     {value !== null && value !== undefined
-                      ? typeof value === 'number'
-                        ? key === 'CLUSTER'
-                          ? Math.round(value)
-                          : value.toFixed(2)
-                        : value.toString()
+                      ? key === 'commercial_score' && typeof value === 'number'
+                        ? COMMERCIAL_SCORE_MAP[value] || 'N/A'
+                        : typeof value === 'number'
+                          ? key === 'CLUSTER'
+                            ? Math.round(value)
+                            : value.toFixed(2)
+                          : value.toString()
                       : 'N/A'}
                   </td>
                 </tr>
