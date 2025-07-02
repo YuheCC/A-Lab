@@ -3,7 +3,7 @@ import { authFetch, getAPIUrl } from "../utils";
 
 const API_URL = getAPIUrl();
 
-const MAX_NODES = 23000;
+const MAX_NODES = 100000;
 
 /**
  * Zustand Datastore for Plot Data
