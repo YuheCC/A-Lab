@@ -272,6 +272,8 @@
   margin: 0;
   font-size: 14px;
   color: #333;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .close-molecules-button {

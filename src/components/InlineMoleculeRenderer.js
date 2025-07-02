@@ -1,4 +1,6 @@
 import React, { useState, useRef, useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { MolCard } from './MolCard';
 import { useAuthStore } from '../providers/auth';
 import { COMMERCIAL_SCORE_MAP } from '../utils';
@@ -50,14 +52,13 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     }
   };
 
-  // Calculate popup position based on mouse position
   const position = useMemo(() => {
-    if (!hoveredObject || !linkRef.current) return {};
+    if (!hoveredObject) return {};
 
+    const popupWidth = 300;
+    const popupHeight = 400;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const popupWidth = 450; // Estimated popup width
-    const popupHeight = 300; // Estimated popup height
 
     let left = mousePosition.x + 10;
     let top = mousePosition.y + 10;
@@ -156,104 +157,308 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
 
 // Main component for parsing and rendering inline molecules
 export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
-  // Parse inline molecules from content
-  const parseInlineMolecules = (text) => {
-    // More flexible regex that captures the full inline_molecule structure
+  // Parse and prepare the content for rendering
+  const { processedContent, moleculeMap } = useMemo(() => {
     const inlineMoleculeRegex = /<inline_molecule>(\{.*?\})<\/inline_molecule>/g;
-    const parts = [];
-    let lastIndex = 0;
+    const molecules = new Map();
+    let processedText = content;
+    let index = 0;
+
+    // Find all matches first to avoid replacement issues
+    const matches = [];
     let match;
+    while ((match = inlineMoleculeRegex.exec(content)) !== null) {
+      matches.push({
+        fullMatch: match[0],
+        dataString: match[1],
+        startIndex: match.index,
+        endIndex: match.index + match[0].length
+      });
+    }
 
-    while ((match = inlineMoleculeRegex.exec(text)) !== null) {
-      // Add text before the match
-      if (match.index > lastIndex) {
-        parts.push({
-          type: 'text',
-          content: text.slice(lastIndex, match.index)
-        });
-      }
-
-      // Parse the molecule data
+    // Process matches in reverse order to avoid index shifting
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const currentMatch = matches[i];
       try {
-        const fullDataString = match[1];
-        
-        // Parse the outer JSON structure
-        const outerData = JSON.parse(fullDataString);
+        const outerData = JSON.parse(currentMatch.dataString);
         const moleculeText = outerData.text;
         const dataArray = outerData.data;
         
         if (dataArray && dataArray.length > 0) {
-          parts.push({
-            type: 'molecule',
+          const placeholderId = `{{MOLECULE_${index}}}`;
+          molecules.set(placeholderId, {
             text: moleculeText,
             data: dataArray
           });
+          
+          // Replace by position to ensure correct replacement
+          processedText = processedText.slice(0, currentMatch.startIndex) + 
+                         placeholderId + 
+                         processedText.slice(currentMatch.endIndex);
+          index++;
         } else {
-          // Fall back to plain text if no data
-          parts.push({
-            type: 'text',
-            content: moleculeText
-          });
+          // Remove the tag but keep the text
+          processedText = processedText.slice(0, currentMatch.startIndex) + 
+                         moleculeText + 
+                         processedText.slice(currentMatch.endIndex);
         }
       } catch (error) {
         console.error('Error parsing inline molecule data:', error);
-        console.error('Failed to parse:', match[1]);
-        
         // Try to extract just the text field as fallback
         try {
-          const textMatch = match[1].match(/text:"([^"]+)"/);
+          const textMatch = currentMatch.dataString.match(/text:"([^"]+)"/);
           if (textMatch) {
-            parts.push({
-              type: 'text',
-              content: textMatch[1]
-            });
+            processedText = processedText.slice(0, currentMatch.startIndex) + 
+                           textMatch[1] + 
+                           processedText.slice(currentMatch.endIndex);
           } else {
-            parts.push({
-              type: 'text',
-              content: match[0] // Show the whole tag as fallback
-            });
+            // Keep the original match as fallback
+            processedText = processedText.slice(0, currentMatch.startIndex) + 
+                           currentMatch.fullMatch + 
+                           processedText.slice(currentMatch.endIndex);
           }
         } catch (fallbackError) {
-          parts.push({
-            type: 'text',
-            content: match[0]
-          });
+          // Keep the original match as fallback - do nothing, leave as is
         }
       }
-
-      lastIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
-    if (lastIndex < text.length) {
-      parts.push({
-        type: 'text',
-        content: text.slice(lastIndex)
+    return {
+      processedContent: processedText,
+      moleculeMap: molecules
+    };
+  }, [content]);
+
+  // Custom ReactMarkdown components
+  const components = {
+    // Handle all text rendering to find and replace molecule placeholders
+    text: ({ node, children, ...props }) => {
+      console.log('TEXT COMPONENT CALLED with:', children);
+      const text = children;
+      if (typeof text !== 'string') {
+        return text;
+      }
+
+      // Check for new placeholder format: {{MOLECULE_X}}
+      if (!text.includes('{{MOLECULE_')) {
+        return text;
+      }
+
+      console.log('Found text with placeholders:', text);
+
+      // Split text by molecule placeholders (new format)
+      const parts = text.split(/({{MOLECULE_\d+}})/);
+      if (parts.length === 1) {
+        return text; // No placeholders found
+      }
+
+      return (
+        <>
+          {parts.map((part, index) => {
+            // Handle new format: {{MOLECULE_X}}
+            if (part.match(/^{{MOLECULE_\d+}}$/)) {
+              const moleculeInfo = moleculeMap.get(part);
+              
+              if (moleculeInfo) {
+                console.log(`Replacing ${part} with ${moleculeInfo.text}`);
+                return (
+                  <MoleculeLink
+                    key={`mol-${index}`}
+                    text={moleculeInfo.text}
+                    data={moleculeInfo.data}
+                    onMoleculeClick={onMoleculeClick}
+                  />
+                );
+              }
+              // If molecule not found, return the placeholder for debugging
+              console.log(`Molecule not found for ${part}`);
+              return <span key={`missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+            }
+            return part;
+          })}
+        </>
+      );
+    },
+    
+    // Process paragraph content which might be mixed arrays
+    p: ({ node, children, ...props }) => {
+      console.log('P COMPONENT CALLED with:', children);
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `p${childIndex}-`);
+        }
+        return child;
       });
+      
+      return <p {...props}>{processedChildren}</p>;
+    },
+    
+    // Process list item content which might be mixed arrays
+    li: ({ node, children, ...props }) => {
+      console.log('LI COMPONENT CALLED with:', children);
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `li${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <li {...props}>{processedChildren}</li>;
+    },
+    
+    // Process table cell content (td and th) which might contain molecule placeholders
+    td: ({ node, children, ...props }) => {
+      console.log('TD COMPONENT CALLED with:', children);
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `td${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <td {...props}>{processedChildren}</td>;
+    },
+    
+    // Process table header content which might contain molecule placeholders
+    th: ({ node, children, ...props }) => {
+      console.log('TH COMPONENT CALLED with:', children);
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `th${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <th {...props}>{processedChildren}</th>;
     }
-
-    return parts;
   };
 
-  const parts = parseInlineMolecules(content);
+  console.log('Rendering ReactMarkdown with components:', components);
+  console.log('Content to render:', processedContent);
 
   return (
-    <span>
-      {parts.map((part, index) => {
-        if (part.type === 'molecule') {
-          return (
-            <MoleculeLink
-              key={index}
-              text={part.text}
-              data={part.data}
-              onMoleculeClick={onMoleculeClick}
-            />
-          );
-        } else {
-          return <span key={index}>{part.content}</span>;
-        }
-      })}
-    </span>
+    <ReactMarkdown 
+      remarkPlugins={[remarkGfm]}
+      components={components}
+    >
+      {processedContent}
+    </ReactMarkdown>
   );
 };
 
