@@ -6,10 +6,10 @@ const API_URL = getAPIUrl();
 
 // Commercial score map for displaying the commercial viability of compounds
 export const COMMERCIAL_SCORE_MAP = {
-  0: i18n.t('about.commercial_viability.requires_rd'),
-  1: i18n.t('about.commercial_viability.likely_synthesizable_but_not_commercially_available'),
-  2: i18n.t('about.commercial_viability.likely_synthesizable_may_be_commercially_available'),
-  3: i18n.t('about.commercial_viability.likely_commercially_available')
+  0: 'Requires R&D to assess viability',
+  1: 'Likely synthesizable but probably not commercially available',
+  2: 'Likely synthesizable, may be commercially available',
+  3: 'Likely commercially available'
 }
 
 /**
