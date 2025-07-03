@@ -60,7 +60,7 @@ const App = () => {
     ]);
   }, [language]);
 
-  const fetchData = usePlotDataStore(state => state.fetchData);
+  const {fetchData, fetchInitialData} = usePlotDataStore();
   const { verifyAuth, isAuthenticated, userPermissions } = useAuthStore();
 
   // Handle onMount events
@@ -70,6 +70,7 @@ const App = () => {
     verifyAuth();
 
     // Load graph data
+    fetchInitialData();
     fetchData();
 
     // Add global styles for proper container sizing and scrolling
