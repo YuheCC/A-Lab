@@ -72,7 +72,7 @@ export const usePlotDataStore = create((set) => ({
     fetchInitialData: async () => {
         try {
             set({ loading: true });
-            const response = await authFetch(`/map-init.json`);
+            const response = await authFetch(`${API_URL}/snowflake-query?simple=true`);
 
             if (!response.ok) {
                 set({ loading: false });
