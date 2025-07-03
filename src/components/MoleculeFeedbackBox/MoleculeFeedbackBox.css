@@ -58,6 +58,32 @@
     flex-flow: column;
 }
 
+.feedback-close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.feedback-close-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.feedback-close-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .feedback-question {
     margin: 0 0 10px;
 }
