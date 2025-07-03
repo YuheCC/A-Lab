@@ -1,7 +1,7 @@
 import Sidebar from "../components/Sidebar";
 import SearchInput from "../components/Search";
 import MoleculeFeedbackBox from "../components/MoleculeFeedbackBox";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "../utils";
 import { usePlotDataStore } from "../providers/plotData";
 import { useAuthStore } from "../providers/auth";
@@ -34,6 +34,55 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState([]);
+
+    // 添加拖拽分隔条的状态
+    const [leftPanelWidth, setLeftPanelWidth] = useState(60); // 左侧面板宽度百分比
+    const [isDragging, setIsDragging] = useState(false);
+    const containerRef = useRef(null);
+    const isDraggingRef = useRef(false);
+
+    // 处理拖拽事件
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+        isDraggingRef.current = true;
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        document.body.classList.add('dragging');
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDraggingRef.current || !containerRef.current) return;
+        
+        e.preventDefault();
+        
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const containerWidth = containerRect.width;
+        const mouseX = e.clientX - containerRect.left;
+        const newLeftPanelWidth = (mouseX / containerWidth) * 100;
+        
+        // 限制拖拽范围在20%到80%之间
+        if (newLeftPanelWidth >= 20 && newLeftPanelWidth <= 80) {
+            setLeftPanelWidth(newLeftPanelWidth);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+        isDraggingRef.current = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.body.classList.remove('dragging');
+    };
+
+    // 清理事件监听器
+    useEffect(() => {
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.body.classList.remove('dragging');
+        };
+    }, []);
 
     // Update handleSearch function
     const handleSearchedMolecules = async (response, select_first = false) => {
@@ -189,36 +238,64 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     return (
         // SEARCH PAGE CONTENT:
         <Sidebar>
-            <div className="search-umap-container" style={{ paddingLeft: '0', marginLeft: '0' }}>
+            <div 
+                className="search-umap-container" 
+                style={{ paddingLeft: '0', marginLeft: '0' }}
+                ref={containerRef}
+            >
                 {/* UMAP Visualization on the left */}
-                <div className="search-umap-section">
-                    <div className="graph-container search-graph">
-                        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            {data.length > 0 ? (
-                                <UMAPClusterPlotDeck
-                                    data={data}
-                                    highlightedData={highlightedMolecules}
-                                    highlightedSimilarData={highlightedSimilarMolecules}
-                                    userPermissions={userPermissions}
-                                    onClick={handlePointClick}
-                                />
-                            ) : (
-                                <div className="loading-message">
-                                    {loading ? t('search.loadingMap') : error ? t('search.errorLoadingData') : t('search.noDataAvailable')}
-                                </div>
-                            )}
-                        </div>
+                <div 
+                    className="search-umap-section"
+                    style={{
+                        width: `calc((100% - 120px) * ${leftPanelWidth} / 100)`,
+                        flex: 'none'
+                    }}
+                >
+                    <div style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        position: 'relative',
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center' 
+                    }}>
+                        {data.length > 0 ? (
+                            <UMAPClusterPlotDeck
+                                data={data}
+                                highlightedData={highlightedMolecules}
+                                highlightedSimilarData={highlightedSimilarMolecules}
+                                userPermissions={userPermissions}
+                                onClick={handlePointClick}
+                            />
+                        ) : (
+                            <div className="loading-message">
+                                {loading ? t('search.loadingMap') : error ? t('search.errorLoadingData') : t('search.noDataAvailable')}
+                            </div>
+                        )}
                     </div>
                 </div>
 
+                {/* 可拖拽的分隔条 */}
+                <div 
+                    className="resize-divider"
+                    onMouseDown={handleMouseDown}
+                    style={{
+                        transition: isDragging ? 'none' : 'background-color 0.2s ease'
+                    }}
+                />
+
                 {/* Search interface on the right */}
-                <div className="search-interface-section" style={{
-                    overflowY: 'auto',
-                    padding: '20px',
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '8px',
-                    flex: '0.8'
-                }}>
+                <div 
+                    className="search-interface-section" 
+                    style={{
+                        width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
+                        flex: 'none',
+                        overflowY: 'auto',
+                        padding: '20px',
+                        backgroundColor: '#f9f9f9',
+                        borderRadius: '8px'
+                    }}
+                >
                     {/* Search bar container */}
                     <SearchInput
                         onSearch={handleSearch}
