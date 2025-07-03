@@ -35,6 +35,7 @@ export default {
         combustion_enthalpy: "연소 엔탈피 (eV)",
         commercial_viability: "상용 가능성",
         functional_groups: "작용기",
-        umap_coordinates: "UMAP X/Y"
+        umap_coordinates: "UMAP X/Y",
+        chemical_formula: "화학식",
     }
 }; 

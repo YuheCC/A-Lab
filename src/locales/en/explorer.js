@@ -34,6 +34,6 @@ export default {
         commercial_viability: "Predicted Commercial Viability",
         functional_groups: "Functional Groups",
         umap_coordinates: "UMAP X/Y",
-
+        chemical_formula: "Chemical Formula",
     }
 }; 

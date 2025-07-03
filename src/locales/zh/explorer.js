@@ -33,6 +33,7 @@ export default {
         combustion_enthalpy: "Predicted Combustion Enthalpy (eV)",
         commercial_viability: "Predicted Commercial Viability",
         functional_groups: "Functional Groups",
-        umap_coordinates: "UMAP X/Y"
+        umap_coordinates: "UMAP X/Y",
+        chemical_formula: "Chemical Formula",
     }
 }; 

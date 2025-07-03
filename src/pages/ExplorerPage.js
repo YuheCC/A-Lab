@@ -149,12 +149,14 @@ const ExplorerPage = ({ handlePointClick }) => {
             const updatedRanges = {};
             // Only include properties that are in filterLabels
             for (const key in filterLabels) {
+                if(key === 'chemical_formula' || key === 'functional_groups') continue;
                 const values = data
                     .map(node => node.properties[key])
                     .filter(v => v !== undefined && v !== null);
                 if (values.length > 0) {
-                    const min = Math.min(...values);
-                    const max = Math.max(...values);
+                    // Use reduce to avoid stack overflow with large arrays
+                    const min = values.reduce((a, b) => Math.min(a, b));
+                    const max = values.reduce((a, b) => Math.max(a, b));
                     updatedRanges[key] = {
                         min: min,
                         max: max,
