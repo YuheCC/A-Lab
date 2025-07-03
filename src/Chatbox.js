@@ -1028,16 +1028,16 @@ const handleFindSimilarMolecules = async (details) => {
                     loadingText={"Saving ..."}
                     successMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.success}
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
-                    Add To Favorites
+                    { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                     fullWidth
                     loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
                     loadingText={"Searching for friends"}
                     size="small">
-                    Find Similar Molecules
+                    {t('chatbox.buttons.findSimilarMolecules')}
                   </CustomButton>
-                  {selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                  {false && selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
                       View in MolPort
