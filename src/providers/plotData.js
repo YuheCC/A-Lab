@@ -3,14 +3,14 @@ import { authFetch, getAPIUrl } from "../utils";
 
 const API_URL = getAPIUrl();
 
-const MAX_NODES = 100000;
+const MAX_NODES = 200000;
 
 /**
  * Zustand Datastore for Plot Data
  * - Indicates if the plot data is loading/errored
  * - Can be used across the app in all components
  */
-export const usePlotDataStore = create((set) => ({
+export const usePlotDataStore = create((set, get) => ({
 
     loading: false,
     error: null,
@@ -51,14 +51,14 @@ export const usePlotDataStore = create((set) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: row.CLUSTER
+                        CLUSTER: row.CLUSTER.toString()
                     },
                     rawData: row
                 }));
 
             set({
                 data: nodes,
-                // loading: false,
+                loading: false,
             })
             return nodes;
 
@@ -74,6 +74,9 @@ export const usePlotDataStore = create((set) => ({
             set({ loading: true });
             const response = await authFetch(`/map-init.js`);
 
+            if(!get().loading) {
+                return;
+            }
             if (!response.ok) {
                 set({ loading: false });
                 throw new Error(`Failed to fetch data: ${response.statusText}`);
@@ -104,7 +107,7 @@ export const usePlotDataStore = create((set) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: row.CLUSTER
+                        CLUSTER: row.CLUSTER.toString()
                     },
                     rawData: row
                 }));
