@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../../utils.js';
-import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ThumbsDown, ThumbsUp, X } from 'lucide-react';
 
 import './MoleculeFeedbackBox.css';
 
@@ -65,6 +65,15 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     setFeedbackType(null);
   };
 
+  const handleClose = () => {
+    setFeedbackText('');
+    setFeedbackType(null);
+    setStatusMessage('');
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div className={`molecule-feedback-buttons ${fullWidth ? 'full-width' : ''}`}>
       <div className='feedback-buttons'>
@@ -75,6 +84,13 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
 
       {feedbackType && (
         <div className="feedback-form">
+          <button
+            onClick={handleClose}
+            className="feedback-close-button"
+            disabled={submitting}
+          >
+            <X size={16} />
+          </button>
           <p className="feedback-question">
             {feedbackType === 'up'
               ? t('chatbox.feedback.goodMatch')

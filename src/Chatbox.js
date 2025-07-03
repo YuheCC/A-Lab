@@ -18,8 +18,29 @@ import CustomButton from './components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 import { useTranslation } from 'react-i18next';
+import { InlineMoleculeRenderer } from './components/InlineMoleculeRenderer.js';
 
 const API_URL = getAPIUrl();
+
+// Helper function to check if content contains inline molecules
+const hasInlineMolecules = (content) => {
+  return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
+};
+
+// Custom message content renderer that handles both markdown and inline molecules
+const MessageContentRenderer = ({ content, onMoleculeClick }) => {
+  if (hasInlineMolecules(content)) {
+    // If content has inline molecules, render them with click capability
+    return <InlineMoleculeRenderer content={content} onMoleculeClick={onMoleculeClick} />;
+  } else {
+    // Otherwise, render as normal markdown
+    return (
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {content}
+      </ReactMarkdown>
+    );
+  }
+};
 
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
@@ -207,6 +228,10 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
   
+  // State for selected molecule functionality
+  const [selectedMolecule, setSelectedMolecule] = useState(null);
+  const [showSelectedMolecule, setShowSelectedMolecule] = useState(false);
+  
   // Add new state for molecule feedback functionality
   const [activeFindMessage, setActiveFindMessage] = useState(null);
   const [contextObject, setContextObject] = useState({
@@ -255,6 +280,15 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const handleThumbsDown = (inputContent, responseContent, contextContent1) => {
     setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
+  };
+
+  // Handler for when an inline molecule is clicked
+  const handleMoleculeClick = (molecule) => {
+    setSelectedMolecule(molecule);
+    setShowSelectedMolecule(true);
+    // Hide other molecule panels
+    setShowFoundMolecules(false);
+    setShowSimilarMolecules(false);
   };
 
   
@@ -404,6 +438,12 @@ const handleFindSimilarMolecules = async (details) => {
       loadHistory();
     }
   }, [isSynced, loadHistory]);
+
+  // Clear selected molecule state when switching chats
+  useEffect(() => {
+    setSelectedMolecule(null);
+    setShowSelectedMolecule(false);
+  }, [activeChat]);
 
   const handleSend = useCallback(
     async (input) => {
@@ -757,33 +797,9 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.content}
-                  </ReactMarkdown>
-                  {msg.molText && msg.molecules && msg.molecules.length > 0 && (
-                                          <>
-                        <div>
-                          <br></br>
-                          <strong>{t('chatbox.molecules.detectedChemicalKeywords')}</strong>
-                          <br></br>
-                        </div>
-                        <div translate='no'>{msg.molText}</div>
-                      </>
-                  )}
+                  <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
                 </div>
-                {msg.role === "assistant" && msg.molecules && msg.molecules.length > 0 && (
-                  <div className="find-molecules-wrapper">
-                    <CustomButton Icon={Search} onClick={() => handleFindMolecules(msg, index)} size="small" 
-                      loading={foundMoleculesMessageIndex === index ? moleculesLoading : false} loadingText={t('chatbox.status.searchingDatabase')}
-                      errorMessage={foundMoleculesMessageIndex === index ? foundMoleculesError : null}
-                      sideError
-                      hideTime={10000} // 10 seconds
-                      disabled={moleculesLoading && foundMoleculesMessageIndex !== index}
-                      style={{ marginRight: 10 }}>
-                      {t('chatbox.buttons.findMolecules')}
-                    </CustomButton>
-                  </div>
-                )}
+
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
@@ -956,6 +972,78 @@ const handleFindSimilarMolecules = async (details) => {
                 </MolCard>
               })
             }
+          </div>
+        )}
+        {selectedMolecule && showSelectedMolecule && (
+          <div className="found-molecules-container">
+            <div className="molecules-header">
+              <h3>Selected Molecule</h3>
+              <button 
+                className="close-molecules-button"
+                onClick={() => {
+                  setShowSelectedMolecule(false);
+                  setSelectedMolecule(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <MolCard
+              vertical={true}
+              name={selectedMolecule.name}
+              large={true}
+              style={{ margin: 5 }}
+              propGroups={[
+                { label: 'SMILES', value: selectedMolecule.SMILES, span: 2 },
+                { label: 'Molecular Weight', value: selectedMolecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                { label: 'Predicted Melting Point', value: selectedMolecule.predicted_MP_celsius, span: 2, suffix: ' °C',
+                  show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                 },
+                { label: 'Predicted Boiling Point', value: selectedMolecule.predicted_BP_celsius, span: 2, suffix: ' °C',
+                  show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                 },
+                {
+                  label: 'Predicted Flash Point', value: selectedMolecule.predicted_FP_celsius, span: 2, suffix: ' °C',
+                  show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                },
+                {
+                  label: 'Combustion Enthalpy', value: selectedMolecule.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                  show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
+                },
+                { label: 'HOMO', value: selectedMolecule.HOMO_eV, span: 1, suffix: ' eV' },
+                { label: 'LUMO', value: selectedMolecule.LUMO_eV, span: 1, suffix: ' eV' },
+                { label: 'ESP Max', value: selectedMolecule.ESP_max_eV, span: 1, suffix: ' eV' },
+                { label: 'ESP Min', value: selectedMolecule.ESP_min_eV, span: 1, suffix: ' eV' },
+                {
+                  label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[selectedMolecule.COMMERCIAL_SCORE], span: 4, wrap: true
+                }
+              ]} foldPropGroups={[
+                { label: 'Functional Groups', value: JSON.parse(selectedMolecule.functional_groups ?? "[]"), span: 4 },
+              ]}>
+                <div className="molecule-actions">
+                  {/* Add to Favorites button */}
+                  <CustomButton Icon={Star} onClick={() => handleAddToFavorites(selectedMolecule)}
+                    fullWidth
+                    loading={moleculeFavoriteStatus[selectedMolecule.SMILES]?.loading}
+                    loadingText={"Saving ..."}
+                    successMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.success}
+                    errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
+                    Add To Favorites
+                  </CustomButton>
+                  <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
+                    fullWidth
+                    loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
+                    loadingText={"Searching for friends"}
+                    size="small">
+                    Find Similar Molecules
+                  </CustomButton>
+                  {selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
+                      window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                  }}>
+                      View in MolPort
+                  </CustomButton>}
+                </div>
+              </MolCard>
           </div>
         )}
         {similarMolecules && similarMolecules.length > 0 && showSimilarMolecules && (
