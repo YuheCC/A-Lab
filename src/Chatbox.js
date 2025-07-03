@@ -974,7 +974,7 @@ const handleFindSimilarMolecules = async (details) => {
         {selectedMolecule && showSelectedMolecule && (
           <div className="found-molecules-container">
             <div className="molecules-header">
-              <h3>Selected Molecule</h3>
+              <h3>Selected molecule</h3>
               <button 
                 className="close-molecules-button"
                 onClick={() => {
