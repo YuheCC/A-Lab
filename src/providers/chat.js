@@ -447,6 +447,7 @@ export const useChatStore = create(persist((set, get) => ({
 
 export const useActiveChatData = () => {
     return useChatStore((state) => state.chatMap[state.activeChat], (oldData, newData) => {
+        console.log("active chat data changed", oldData, newData)
         // Deep comparison of the relevant data to prevent unnecessary re-renders
         return (
             oldData.foundMolecules === newData.foundMolecules &&

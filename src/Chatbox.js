@@ -215,6 +215,9 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     setIsInClarifyFlow: state.setIsInClarifyFlow,
   })));
 
+  useEffect(() => {
+    console.log(foundMolecules)
+  }, [foundMolecules])
   const userPermissions = useAuthStore(state => state.userPermissions);
 
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
@@ -226,7 +229,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
-  const [showSimilarMolecules, setShowSimilarMolecules] = useState(true);
+  const [showSimilarMolecules, setShowSimilarMolecules] = useState(false);
   
   // State for selected molecule functionality
   const [selectedMolecule, setSelectedMolecule] = useState(null);
@@ -895,7 +898,7 @@ const handleFindSimilarMolecules = async (details) => {
             onUseMultiAgentChange={setUseMultiAgent}
           />
         </div>
-        {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
+        {false && foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
           <div className="found-molecules-container">
             <div className="molecules-header">
               <h3>{t('chatbox.molecules.llmFoundMolecules')}</h3>
@@ -974,6 +977,9 @@ const handleFindSimilarMolecules = async (details) => {
             }
           </div>
         )}
+        {
+          console.log(selectedMolecule, showSelectedMolecule)
+        }
         {selectedMolecule && showSelectedMolecule && (
           <div className="found-molecules-container">
             <div className="molecules-header">
