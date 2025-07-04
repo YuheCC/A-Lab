@@ -747,6 +747,206 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       });
       
       return <h6 {...props}>{processedChildren}</h6>;
+    },
+    
+    // Process emphasis (italic) text content which might contain molecule placeholders
+    em: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `em${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <em {...props}>{processedChildren}</em>;
+    },
+    
+    // Process deleted (strikethrough) text content which might contain molecule placeholders
+    del: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `del${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <del {...props}>{processedChildren}</del>;
+    },
+    
+    // Process blockquote content which might contain molecule placeholders
+    blockquote: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `blockquote${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <blockquote {...props}>{processedChildren}</blockquote>;
+    },
+    
+    // Process preformatted text content which might contain molecule placeholders
+    pre: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `pre${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <pre {...props}>{processedChildren}</pre>;
+    },
+    
+    // Process div content which might contain molecule placeholders
+    div: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `div${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <div {...props}>{processedChildren}</div>;
     }
   };
 
