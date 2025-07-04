@@ -5,6 +5,7 @@ const API_URL = getAPIUrl();
 
 const MAX_NODES = 200000;
 
+let initialData = false;
 /**
  * Zustand Datastore for Plot Data
  * - Indicates if the plot data is loading/errored
@@ -27,6 +28,7 @@ export const usePlotDataStore = create((set, get) => ({
             }
 
             const data = await response.json();
+            initialData = true;
 
             // Map the data to our node structure with updated property names
             const nodes = data.data
@@ -74,7 +76,7 @@ export const usePlotDataStore = create((set, get) => ({
             set({ loading: true });
             const response = await authFetch(`/map-init.js`);
 
-            if(!get().loading) {
+            if(initialData) {
                 return;
             }
             if (!response.ok) {
