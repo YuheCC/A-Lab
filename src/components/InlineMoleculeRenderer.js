@@ -203,7 +203,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
                          processedText.slice(currentMatch.endIndex);
         }
       } catch (error) {
-        console.error('Error parsing inline molecule data:', error);
         // Try to extract just the text field as fallback
         try {
           const textMatch = currentMatch.dataString.match(/text:"([^"]+)"/);
@@ -233,7 +232,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
   const components = {
     // Handle all text rendering to find and replace molecule placeholders
     text: ({ node, children, ...props }) => {
-      console.log('TEXT COMPONENT CALLED with:', children);
       const text = children;
       if (typeof text !== 'string') {
         return text;
@@ -244,7 +242,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         return text;
       }
 
-      console.log('Found text with placeholders:', text);
 
       // Split text by molecule placeholders (new format)
       const parts = text.split(/({{MOLECULE_\d+}})/);
@@ -260,7 +257,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
               const moleculeInfo = moleculeMap.get(part);
               
               if (moleculeInfo) {
-                console.log(`Replacing ${part} with ${moleculeInfo.text}`);
                 return (
                   <MoleculeLink
                     key={`mol-${index}`}
@@ -271,7 +267,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
                 );
               }
               // If molecule not found, return the placeholder for debugging
-              console.log(`Molecule not found for ${part}`);
               return <span key={`missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
             }
             return part;
@@ -282,7 +277,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process paragraph content which might be mixed arrays
     p: ({ node, children, ...props }) => {
-      console.log('P COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -295,7 +289,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -324,7 +317,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process list item content which might be mixed arrays
     li: ({ node, children, ...props }) => {
-      console.log('LI COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -337,7 +329,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -366,7 +357,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process table cell content (td and th) which might contain molecule placeholders
     td: ({ node, children, ...props }) => {
-      console.log('TD COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -379,7 +369,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -408,7 +397,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process table header content which might contain molecule placeholders
     th: ({ node, children, ...props }) => {
-      console.log('TH COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -421,7 +409,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -450,7 +437,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process strong (bold) text content which might contain molecule placeholders
     strong: ({ node, children, ...props }) => {
-      console.log('STRONG COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -463,7 +449,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -492,7 +477,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     // Process heading content which might contain molecule placeholders
     h1: ({ node, children, ...props }) => {
-      console.log('H1 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -505,7 +489,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -533,7 +516,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     },
     
     h2: ({ node, children, ...props }) => {
-      console.log('H2 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -546,7 +528,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -574,7 +555,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     },
     
     h3: ({ node, children, ...props }) => {
-      console.log('H3 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -587,7 +567,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -615,7 +594,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     },
     
     h4: ({ node, children, ...props }) => {
-      console.log('H4 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -628,7 +606,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -656,7 +633,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     },
     
     h5: ({ node, children, ...props }) => {
-      console.log('H5 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -669,7 +645,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -697,7 +672,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     },
     
     h6: ({ node, children, ...props }) => {
-      console.log('H6 COMPONENT CALLED with:', children);
       
       // Helper function to process a single string for placeholders
       const processString = (str, keyPrefix = '') => {
@@ -710,7 +684,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           if (part.match(/^{{MOLECULE_\d+}}$/)) {
             const moleculeInfo = moleculeMap.get(part);
             if (moleculeInfo) {
-              console.log(`Replacing ${part} with ${moleculeInfo.text}`);
               return (
                 <MoleculeLink
                   key={`${keyPrefix}mol-${index}`}
@@ -737,9 +710,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       return <h6 {...props}>{processedChildren}</h6>;
     }
   };
-
-  console.log('Rendering ReactMarkdown with components:', components);
-  console.log('Content to render:', processedContent);
 
   return (
     <ReactMarkdown 
