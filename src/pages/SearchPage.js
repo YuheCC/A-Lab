@@ -499,40 +499,23 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                             });
                                                         }}
                                                         loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        loadingText="Saving..."
+                                                        loadingText={t('chatbox.buttons.addToFavoritesLoading')}
                                                         successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
                                                         errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
                                                     >
-                                                        {moleculeFavoriteStatus[molecule.SMILES]?.loading ? 'Saving...' : 'Add to Favorites ★'}
+                                                        {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
-
-                                                    {moleculeFavoriteStatus[molecule.SMILES]?.success && (
-                                                        <div className="success-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'green',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.SMILES].success}
-                                                        </div>
-                                                    )}
-
-                                                    {moleculeFavoriteStatus[molecule.SMILES]?.error && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.SMILES].error}
-                                                        </div>
-                                                    )}
+                                                    <MoleculeFeedbackBox
+                                                        molecule={molecule}
+                                                        lastSearch={lastSearch}
+                                                        onClose={() => { }}
+                                                    />
+                                                    {molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                        window.open(molecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
+                                                    }}>
+                                                        View in MolPort
+                                                    </CustomButton>}
                                                 </div>
-                                                <MoleculeFeedbackBox
-                                                    molecule={molecule}
-                                                    lastSearch={lastSearch}
-                                                    onClose={() => { }}
-                                                />
                                             </MolCard>
                                         ))}
                                     </div>
