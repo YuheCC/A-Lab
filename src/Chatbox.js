@@ -1025,7 +1025,7 @@ const handleFindSimilarMolecules = async (details) => {
                   <CustomButton Icon={Star} onClick={() => handleAddToFavorites(selectedMolecule)}
                     fullWidth
                     loading={moleculeFavoriteStatus[selectedMolecule.SMILES]?.loading}
-                    loadingText={"Saving ..."}
+                    loadingText={t('chatbox.buttons.addToFavoritesLoading')}
                     successMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.success}
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     { t('chatbox.buttons.addToFavorites')}
@@ -1033,7 +1033,7 @@ const handleFindSimilarMolecules = async (details) => {
                   <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                     fullWidth
                     loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
-                    loadingText={"Searching for friends"}
+                    loadingText={t('chatbox.buttons.findSimilarMoleculesLoading')}
                     size="small">
                     {t('chatbox.buttons.findSimilarMolecules')}
                   </CustomButton>

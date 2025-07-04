@@ -34,7 +34,9 @@ export default {
         copy: "Copy",
         cancel: "Cancel",
         submit: "Submit",
-        viewInMolPort: "View in MolPort"
+        viewInMolPort: "View in MolPort",
+        findSimilarMoleculesLoading: "Searching for friends",
+        addToFavoritesLoading: "Saving..."
     },
     molecules: {
         llmFoundMolecules: "LLM Found Molecules",
