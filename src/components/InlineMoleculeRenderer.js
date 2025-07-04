@@ -314,6 +314,45 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       
       return <p {...props}>{processedChildren}</p>;
     },
+
+    code: ({ node, children, ...props }) => {
+      
+      // Helper function to process a single string for placeholders
+      const processString = (str, keyPrefix = '') => {
+        if (!str.includes('{{MOLECULE_')) {
+          return str;
+        }
+        
+        const parts = str.split(/({{MOLECULE_\d+}})/);
+        return parts.map((part, index) => {
+          if (part.match(/^{{MOLECULE_\d+}}$/)) {
+            const moleculeInfo = moleculeMap.get(part);
+            if (moleculeInfo) {
+              return (
+                <MoleculeLink
+                  key={`${keyPrefix}mol-${index}`}
+                  text={moleculeInfo.text}
+                  data={moleculeInfo.data}
+                  onMoleculeClick={onMoleculeClick}
+                />
+              );
+            }
+            return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
+          }
+          return part;
+        });
+      };
+      
+      // Process children based on their type
+      const processedChildren = React.Children.map(children, (child, childIndex) => {
+        if (typeof child === 'string') {
+          return processString(child, `p${childIndex}-`);
+        }
+        return child;
+      });
+      
+      return <code {...props}>{processedChildren}</code>;
+    },
     
     // Process list item content which might be mixed arrays
     li: ({ node, children, ...props }) => {
