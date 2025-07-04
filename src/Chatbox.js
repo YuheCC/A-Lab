@@ -446,6 +446,8 @@ const handleFindSimilarMolecules = async (details) => {
   useEffect(() => {
     setSelectedMolecule(null);
     setShowSelectedMolecule(false);
+    setSimilarMolecules([]);
+    setShowSimilarMolecules(false);
   }, [activeChat]);
 
   const handleSend = useCallback(
@@ -977,9 +979,6 @@ const handleFindSimilarMolecules = async (details) => {
             }
           </div>
         )}
-        {
-          console.log(selectedMolecule, showSelectedMolecule)
-        }
         {selectedMolecule && showSelectedMolecule && (
           <div className="found-molecules-container">
             <div className="molecules-header">

@@ -1291,10 +1291,14 @@ const FavoritesGrid = () => {
                     {t('favorites.tableHeaders.addedDate')} {getSortIndicator('created_at')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'addedDate')}></div>
                   </th>
-                  <th className="resizable-header" style={{ width: columnWidths.commercialLink }}>
-                    {t('favorites.tableHeaders.commercialLink')}
-                    <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercialLink')}></div>
-                  </th>
+                  {
+                    false && (
+                      <th className="resizable-header" style={{ width: columnWidths.commercialLink }}>
+                        {t('favorites.tableHeaders.commercialLink')}
+                        <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'commercialLink')}></div>
+                      </th>
+                    )
+                  }
                   <th className="resizable-header" style={{ width: columnWidths.actions }}>
                     {t('favorites.tableHeaders.actions')}
                     <div className="resize-handle" onMouseDown={(e) => handleMouseDown(e, 'actions')}></div>
@@ -1346,7 +1350,7 @@ const FavoritesGrid = () => {
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
                     <td>
-                      {favorite.commercial_link ? (
+                      {false && favorite.commercial_link ? (
                         <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">{t('favorites.viewLink')}</a>
                       ) : t('favorites.notAvailable')}
                     </td>
