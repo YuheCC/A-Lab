@@ -74,9 +74,14 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
 
     // Use actual container dimensions for better fitting
     const minContainerDimension = Math.min(containerDimensions.width, containerDimensions.height);
-    const targetFillRatio = 0.7; // Use 80% of container space
-
-    const zoom = Math.max(0, Math.min(20, Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1))));
+    const targetFillRatio = 0.7; // Use 70% of container space
+    
+    // Calculate base zoom level
+    const baseZoom = Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1));
+    
+    // Add zoom offset for more detailed view (increase this value for more zoom)
+    const zoomOffset = 0.3; // 增加1.5个缩放级别
+    const zoom = Math.max(0, Math.min(20, baseZoom + zoomOffset));
 
     if (prevViewState) {
         // Fractional position in previous bounds
@@ -422,14 +427,14 @@ const UMAPClusterPlotDeck = ({
         setIsManipulated(true);
         setViewState(prev => ({
             ...prev,
-            zoom: Math.min(20, prev.zoom + 0.5)
+            zoom: Math.min(20, prev.zoom + 0.3) // 减小步长，让缩放更精细
         }));
     }
     const handleZoomOut = () => {
         setIsManipulated(true);
         setViewState(prev => ({
             ...prev,
-            zoom: Math.max(2, prev.zoom - 0.5)
+            zoom: Math.max(2, prev.zoom - 0.3) // 减小步长，让缩放更精细
         }));
     }
 
