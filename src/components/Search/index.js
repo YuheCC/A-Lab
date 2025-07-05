@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 // SearchInput now maintains its own internal input state.
 const SearchInput = React.memo(({ onSearch, disabled }) => {
   const { t } = useTranslation();
-  const [showMolEditor, setShowMolEditor] = useState(false);
+  const [showMolEditor, setShowMolEditor] = useState(true);
   const [inputValue, setInputValue] = useState("");
 
   const handleChange = (e) => {
@@ -64,7 +64,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
             className='control-icon' 
             style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
             onClick={() => {
-              setShowMolEditor(!showMolEditor);
+              // setShowMolEditor(!showMolEditor);
             }}
           >
             <NewPenIcon />

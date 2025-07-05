@@ -31,7 +31,7 @@ export default {
     lumo: 'LUMO (eV)',
     meltingPoint: 'MP (°C)',
     boilingPoint: 'BP (°C)',
-    flashPoint: 'Predicted Flash Point (°C)',
+    flashPoint: 'FP(°C)',
     combustionEnthalpy: 'Combustion Enthalpy (eV)',
     commercialViability: 'Commercial Viability',
     espMin: 'ESP Min (eV)',
