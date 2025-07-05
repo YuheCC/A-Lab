@@ -60,18 +60,18 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (inputValue.trim()) {
-        onSend(inputValue);
-        setInputValue("");
+    // if (e.key === 'Enter' && !e.shiftKey) {
+    //   e.preventDefault();
+    //   if (inputValue.trim()) {
+    //     onSend(inputValue);
+    //     setInputValue("");
 
-        // Reset height after sending
-        if (textareaRef.current) {
-          textareaRef.current.style.height = 'auto';
-        }
-      }
-    }
+    //     // Reset height after sending
+    //     if (textareaRef.current) {
+    //       textareaRef.current.style.height = 'auto';
+    //     }
+    //   }
+    // }
   };
 
   const handleClickSend = () => {
