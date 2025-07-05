@@ -74,13 +74,13 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
           </table>
           <div style={{ marginTop: '20px', textAlign: 'center' }}>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '10px' }}>
-              <button
+              {/* <button
                 className="copy-button"
                 onClick={copyToClipboard}
                 style={{ flex: '1', maxWidth: '140px' }}
               >
                 {t('molecular.nodePopup.copyAllData')}
-              </button>
+              </button> */}
               <button
                 className="favorites-button"
                 onClick={() => {

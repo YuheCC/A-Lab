@@ -6,9 +6,9 @@ export default {
   },
   about: {
     title: 'About Molecular Universe',
-    description1: 'Molecular Universe MU-0 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that\'s like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.',
+    description1: 'Molecular Universe MU-0.5 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that\'s like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.',
     description2: 'This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It\'s the world\'s largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.',
-    description3: 'In MU-0, the map consists of 25 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.',
+    description3: 'In MU-0.5, the map consists of 25 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.',
     clusterTitle: 'Cluster Descriptions'
   },
   clusters: {
