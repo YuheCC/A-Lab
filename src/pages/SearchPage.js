@@ -510,7 +510,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         lastSearch={lastSearch}
                                                         onClose={() => { }}
                                                     />
-                                                    {molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                    {false && molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
                                                         window.open(molecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                                                     }}>
                                                         View in MolPort
