@@ -90,7 +90,7 @@ export default {
   
   newsfeed: {
     title: "뉴스 피드",
-    newsLink: "뉴스 링크:",
+    newsLink: "뉴스 링크",
     release1: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다",
     releaseAbout1: "Molecular Universe는 리튬 금속(Li-Metal), 리튬 이온(Li-ion), 나트륨(Sodium)을 포함한 모든 배터리 화학 조성과 관련된 가능한 모든 저분자 분자 구조를 매핑하기 위해 설계된 고급 툴킷입니다.플랫폼은 다섯 가지 요금제로 제공됩니다:Research(연구자용): .edu 이메일을 가진 사용자는 누구나 무료Explorer(탐색자용): 사용자당 월 $150Team(팀용): 월 $1000이 세 가지 요금제는 100만 개의 분자에 접근할 수 있으며,Enterprise 및 Joint Development 요금제는 1억 개의 분자에 접근할 수 있습니다.",
     release2: "2025년 7월 7일: Molecular Universe MU-0.5가 공개되었습니다",

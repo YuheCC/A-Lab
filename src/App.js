@@ -158,6 +158,7 @@ const App = () => {
   // Add state for query limits
   // Query limits are now managed on the server side
   const [remainingQueries, setRemainingQueries] = useState(0);
+  const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
 
   // Function to handle adding molecule to favorites
   const handleAddToFavorites = async (molecule) => {
@@ -288,6 +289,8 @@ const App = () => {
                 <ChatbotInterface
                   remainingQueries={remainingQueries}
                   setRemainingQueries={setRemainingQueries}
+                  remainingDeepSpaceQueries={remainingDeepSpaceQueries}
+                  setRemainingDeepSpaceQueries={setRemainingDeepSpaceQueries}
                 />
               </Suspense>
             </ProtectedRoute>

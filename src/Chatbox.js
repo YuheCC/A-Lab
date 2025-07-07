@@ -181,7 +181,7 @@ const formatThinkingTime = (seconds) => {
 }
 
 // Chatbot component
-const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
+const ChatbotInterface = ({ remainingQueries, setRemainingQueries, remainingDeepSpaceQueries, setRemainingDeepSpaceQueries }) => {
   const { t } = useTranslation();
   const { 
     messages, 
@@ -409,31 +409,32 @@ const handleFindSimilarMolecules = async (details) => {
   };
 
   // Fetch query limit from API
-  useEffect(() => {
-    const fetchQueryLimit = async () => {
-      if (userPermissions === 'research') {
-        try {
-          const response = await authFetch(`${API_URL}/query_limit`, {
-            method: "GET",
-            headers: { 
-              "Content-Type": "application/json"
-            }
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            setRemainingQueries(data.query_limit);
-          } else {
-            console.error("Failed to fetch query limit");
+  const fetchQueryLimit = async () => {
+    if (userPermissions === 'research' || true) {
+      try {
+        const response = await authFetch(`${API_URL}/query_limit`, {
+          method: "GET",
+          headers: { 
+            "Content-Type": "application/json"
           }
-        } catch (error) {
-          console.error("Error fetching query limit:", error);
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setRemainingQueries(data.query_limit);
+          setRemainingDeepSpaceQueries(data.ds_limit);
+        } else {
+          console.error("Failed to fetch query limit");
         }
+      } catch (error) {
+        console.error("Error fetching query limit:", error);
       }
-    };
-
+    }
+  };
+  // Fetch query limit from API
+  useEffect(() => {
     fetchQueryLimit();
-  }, [userPermissions, setRemainingQueries]);
+  }, [userPermissions, setRemainingQueries, setRemainingDeepSpaceQueries]);
 
   useEffect(() => {
     // Load chat history
@@ -502,7 +503,10 @@ const handleFindSimilarMolecules = async (details) => {
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
               body   : JSON.stringify(({ messages: updatedHistory, chat_id: currentChatId })),
             });
-            if (!res.ok) throw new Error(await res.text());
+            if (!res.ok) {
+              fetchQueryLimit();
+              throw new Error(await res.text());
+            }
 
             for await (const evt of streamSSE(res)) {
               if (evt.answer || evt.error) {
@@ -523,7 +527,10 @@ const handleFindSimilarMolecules = async (details) => {
               headers: { "Content-Type": "application/json" },
               body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
             });
-            if (!clarRes.ok) throw new Error(await clarRes.text());
+            if (!clarRes.ok) {
+              fetchQueryLimit();
+              throw new Error(await clarRes.text());
+            }
             const clarData = await clarRes.json();
 
             // Update chat ID for new chat
@@ -539,6 +546,7 @@ const handleFindSimilarMolecules = async (details) => {
               }, effectiveChatId);
               setAwaitingClarify(true, effectiveChatId);
               setIsThinking(false, effectiveChatId);
+              fetchQueryLimit();
               return;                 // wait for user reply
             }
 
@@ -550,7 +558,10 @@ const handleFindSimilarMolecules = async (details) => {
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
               body   : JSON.stringify({ messages: messagesToSend, chat_id: effectiveChatId }),
             });
-            if (!res.ok) throw new Error(await res.text());
+            if (!res.ok) {
+              fetchQueryLimit();
+              throw new Error(await res.text());
+            }
 
             for await (const evt of streamSSE(res)) {
               if (evt.answer || evt.error) {
@@ -559,7 +570,8 @@ const handleFindSimilarMolecules = async (details) => {
               }
             }
           }
-
+          // Refresh query limit
+          fetchQueryLimit();
         /* ---------------------------------------------------------- */
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
@@ -785,12 +797,19 @@ const handleFindSimilarMolecules = async (details) => {
       <div className="chat-and-molecules">
         <ChatHistorySidebar compressed={foundMolecules?.length > 0 && similarMolecules?.length > 0}/>
         <div className={`chatbot-content ${!showFoundMolecules && !showSimilarMolecules ? 'full-width' : 'with-molecules'}`}>
-          {userPermissions === 'research' && (
+          {(
             <div className="chatbot-header">
               <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
                 <MessageCircle size={18} className='query-limit-icon'></MessageCircle>
-                <span>
-                  {t('chatbox.queryLimit.queriesRemaining')} <span className="query-limit-count">{remainingQueries}</span>
+                {
+                  userPermissions === 'research' && (
+                    <span>
+                      {t('chatbox.queryLimit.queriesRemaining')} <span className="query-limit-count">{remainingQueries}</span>
+                    </span>
+                  )
+                }
+                <span style={{ marginLeft: 10 }}>
+                  {t('chatbox.queryLimit.deepSpaceQueriesRemaining')} <span className="query-limit-count">{remainingDeepSpaceQueries}</span>
                 </span>
               </div>
             </div>

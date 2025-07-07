@@ -90,7 +90,7 @@ export default {
   
   newsfeed: {
     title: "新闻动态",
-    newsLink: "新闻稿链接：",
+    newsLink: "新闻稿链接",
     release1: "2025年4月29日：分子宇宙MU-0向公众发布。",
     releaseAbout1: "分子宇宙 被设计为一个先进工具包，用于绘制与所有电池相关化学体系相关的潜在小分子地图，涵盖锂金属（Li-Metal）、锂离子（Li-ion）和钠（Sodium）等电池。该平台分为五个等级：Research（研究者版，任何拥有 edu 邮箱的人均可免费使用）、Explorer（探索者版，每位用户每月 150 美元）、Team（团队版，每月 1000 美元）——这三个等级可访问 100 万个分子数据库；Enterprise 和 Joint Development 等级可访问 1 亿个分子。",
     release2: "2025年7月7日：分子宇宙MU-0.5向公众发布。",

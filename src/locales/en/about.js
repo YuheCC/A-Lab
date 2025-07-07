@@ -90,7 +90,7 @@ export default {
   
   newsfeed: {
     title: "Newsfeed",
-    newsLink: "News link:",
+    newsLink: "News link",
     release1: "April 29, 2025: Molecular Universe MU-0 is released to public.",
     releaseAbout1: "Molecular Universe MU-0 is released to public. Molecular Universe is designed as an advanced toolkit to map the entire realm of possible small molecules relevant to all battery chemistries, including Li-Metal, Li-ion, and sodium. There are five tiers, Research (free for anyone with an edu email), Explorer ($150 per month per user), Team ($1000 per month), all accessing 1 million molecules; Enterprise and Joint Development both accessing 100 million molecules .",
     release2: "July 7, 2025: Molecular Universe MU-0.5 is released to public. ",

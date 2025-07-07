@@ -15,6 +15,7 @@ export default {
     },
     queryLimit: {
         queriesRemaining: "Queries remaining this month:",
+        deepSpaceQueriesRemaining: "Deep Space queries remaining this month:",
         reachedLimit: "You have reached your monthly query limit. Please contact an administrator for assistance."
     },
     status: {
