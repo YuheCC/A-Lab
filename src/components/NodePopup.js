@@ -1,10 +1,26 @@
 import MolViewer2D from "./MolViewer2D";
 import { COMMERCIAL_SCORE_MAP } from "../utils";
 import { useTranslation } from 'react-i18next';
+import { useEffect } from "react";
 
 // NodePopup component for displaying molecule information
 const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, moleculeFavoriteStatus, userPermissions, isAuthenticated }) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    // 添加右键禁用事件监听器
+    document.addEventListener('contextmenu', handleContextMenu);
+    
+    // 清理事件监听器
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [])
+  
   if (!node) return null;
 
   // Check if user has permission to see predicted properties
@@ -22,7 +38,7 @@ const NodePopup = ({ node, onClose, filterLabels, handleAddToFavorites, molecule
   };
 
   return (
-    <div className="popup-overlay" onClick={onClose}>
+    <div className="popup-overlay" onClick={onClose} style={{ userSelect: 'none' }}>
       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
         <button className="close-button white-text" onClick={onClose}>×</button>
         <h2 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.title')}</h2>
