@@ -9,7 +9,7 @@ const Sidebar = ({ children, style }) => {
 
     return (
         <div style={{ display: 'flex', width: '100%', flexDirection: 'row', paddingTop: 20, height: 'calc(100vh - 170px)' }}>
-            <div className="about-text-section left-text" style={{ width: '7%', minWidth: 100, overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '20px' }}>
+            <div className="about-text-section left-text" style={{ width: '7%', minWidth: 100, overflowY: 'auto', padding: '20px', backgroundColor: '#f1f1f1', borderRadius: '0 8px 8px 0', marginLeft: '0', marginRight: '0px' }}>
                 <h1
                     style={{
                         textDecoration: 'none',
