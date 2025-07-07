@@ -44,7 +44,8 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
     disableLiteratureSearch, onDisableLiteratureSearchChange,
-    userPermissions, useMultiAgent, onUseMultiAgentChange }) => {
+    userPermissions, useMultiAgent, onUseMultiAgentChange,
+    fullDeepSpace, onFullDeepSpaceChange }) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
 
@@ -158,6 +159,17 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 Disable literature search
               </label>
             </div>
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="fullDeepSpace"
+                checked={fullDeepSpace}
+                onChange={e => onFullDeepSpaceChange(e.target.checked)}
+              />
+              <label htmlFor="fullDeepSpace">
+                Full Deep Space
+              </label>
+            </div>
           </div>
         )}
       </div>
@@ -220,6 +232,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   const [thinkingTime, setThinkingTime] = useState(0);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
+  const [fullDeepSpace, setFullDeepSpace] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
@@ -488,11 +501,13 @@ const handleFindSimilarMolecules = async (details) => {
             ];
             
             setIsInClarifyFlow(false, effectiveChatId);
+            const multiAgentPayload = { messages: updatedHistory, chat_id: currentChatId };
+            if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(({ messages: updatedHistory, chat_id: currentChatId })),
+              body   : JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) throw new Error(await res.text());
 
@@ -509,6 +524,9 @@ const handleFindSimilarMolecules = async (details) => {
           } else {
             // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
+
+            const multiAgentPayload = { messages: messagesToSend, chat_id: effectiveChatId };
+            if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
               method : "POST",
@@ -540,7 +558,7 @@ const handleFindSimilarMolecules = async (details) => {
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify({ messages: messagesToSend, chat_id: effectiveChatId }),
+              body   : JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) throw new Error(await res.text());
 
@@ -632,6 +650,7 @@ const handleFindSimilarMolecules = async (details) => {
       useMultiAgent,
       awaitingClarify,
       setAwaitingClarify,
+      fullDeepSpace,
     ]
   );
 
@@ -890,6 +909,8 @@ const handleFindSimilarMolecules = async (details) => {
             userPermissions={userPermissions}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
+            fullDeepSpace={fullDeepSpace}
+            onFullDeepSpaceChange={setFullDeepSpace}
           />
         </div>
         {foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
