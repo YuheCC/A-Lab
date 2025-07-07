@@ -402,16 +402,91 @@ const UMAPClusterPlotDeck = ({
         if (!hoveredObject) return {};
         if (!containerRef.current) return {};
 
-        const boundingRect = containerRef.current.getBoundingClientRect()
-        return {
-            top: Math.min(
-                hoveredObject.y + boundingRect.top,
-                boundingRect.top + containerRef.current.offsetHeight - (hoverRef.current ? hoverRef.current.offsetHeight : 200)),
-            left: Math.min(
-                hoveredObject.x + boundingRect.left,
-                boundingRect.left + containerRef.current.offsetWidth),
-            position: 'fixed'
+        const boundingRect = containerRef.current.getBoundingClientRect();
+        const mouseX = hoveredObject.x + boundingRect.left;
+        const mouseY = hoveredObject.y + boundingRect.top;
+        
+        // MolCard 尺寸（使用实际尺寸或默认值）
+        const molCardWidth = hoverRef.current ? hoverRef.current.offsetWidth : 320;
+        const molCardHeight = hoverRef.current ? hoverRef.current.offsetHeight : 200;
+        
+        // 容器边界
+        const containerLeft = boundingRect.left;
+        const containerRight = boundingRect.left + containerRef.current.offsetWidth;
+        const containerTop = boundingRect.top;
+        const containerBottom = boundingRect.top + containerRef.current.offsetHeight;
+        
+        // 2px 偏移量
+        const offset = 2;
+        
+        // 尝试四个方向的位置，确保卡片边缘距离鼠标点精确2px
+        const positions = [
+            // 右下方：卡片左上角距离鼠标点右下2px
+            {
+                left: mouseX + offset,
+                top: mouseY + offset,
+                priority: 1
+            },
+            // 右上方：卡片左下角距离鼠标点右上2px
+            {
+                left: mouseX + offset,
+                top: mouseY - offset - molCardHeight,
+                priority: 2
+            },
+            // 左下方：卡片右上角距离鼠标点左下2px  
+            {
+                left: mouseX - offset - molCardWidth,
+                top: mouseY + offset,
+                priority: 3
+            },
+            // 左上方：卡片右下角距离鼠标点左上2px
+            {
+                left: mouseX - offset - molCardWidth,
+                top: mouseY - offset - molCardHeight,
+                priority: 4
+            }
+        ];
+        
+        // 检查位置是否在容器内（添加小的边界缓冲）
+        const bufferZone = 5; // 5px缓冲区避免边界闪烁
+        const isPositionValid = (pos) => {
+            return pos.left >= containerLeft + bufferZone && 
+                   pos.left + molCardWidth <= containerRight - bufferZone &&
+                   pos.top >= containerTop + bufferZone && 
+                   pos.top + molCardHeight <= containerBottom - bufferZone;
+        };
+        
+        // 找到第一个有效位置
+        let bestPosition = positions.find(pos => isPositionValid(pos));
+        
+        // 如果没有完全有效的位置，选择最少溢出的位置
+        if (!bestPosition) {
+            bestPosition = positions.reduce((best, current) => {
+                const currentOverflow = Math.max(0, current.left + molCardWidth - containerRight) +
+                                      Math.max(0, containerLeft - current.left) +
+                                      Math.max(0, current.top + molCardHeight - containerBottom) +
+                                      Math.max(0, containerTop - current.top);
+                
+                const bestOverflow = Math.max(0, best.left + molCardWidth - containerRight) +
+                                   Math.max(0, containerLeft - best.left) +
+                                   Math.max(0, best.top + molCardHeight - containerBottom) +
+                                   Math.max(0, containerTop - best.top);
+                
+                return currentOverflow < bestOverflow ? current : best;
+            });
+            
+            // 调整位置以确保在容器内（考虑缓冲区）
+            bestPosition = {
+                left: Math.max(containerLeft + bufferZone, Math.min(containerRight - molCardWidth - bufferZone, bestPosition.left)),
+                top: Math.max(containerTop + bufferZone, Math.min(containerBottom - molCardHeight - bufferZone, bestPosition.top))
+            };
         }
+        
+        return {
+            left: bestPosition.left,
+            top: bestPosition.top,
+            position: 'fixed'
+        };
     }, [hoveredObject, containerRef]);
 
 
