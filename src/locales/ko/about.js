@@ -90,7 +90,9 @@ export default {
   
   newsfeed: {
     title: "뉴스 피드",
-    release: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다"
+    release1: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다",
+    release2: "2025년 7월 7일: Molecular Universe MU-0.5가 공개되었습니다",
+    releaseAbout2: "Molecular Universe MU-0.5가 공개되었습니다. 가장 흥미로운 새로운 기능은 Deep Space입니다. 이는 고급 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기능입니다. Deep Space는 Molecular Universe의 인기 있는 Ask 기능을 기반으로 하며, 다중 에이전트 LLM으로 지원됩니다. 성능, 혁신성, 비용 또는 사용자가 원하는 방식으로 다른 세포 화학에 대한 전해질 혼합물을 추천할 수 있습니다. 또한 시행착오 시간을 줄이고 일반적으로 고급 과학자가 수개월 또는 수년이 걸리는 작업을 한 시간 미만으로 완료합니다. Deep Space는 기업 및 공동 개발 사용자에게 제공되며, 팀 및 탐험가 사용자는 월 10개, 연구 사용자는 월 5개로 제한됩니다. 기타 개선 사항으로는 사용자가 직관적으로 “친구”를 찾을 수 있도록 하는 분자 스케치패드와 영어 외에 중국어와 한국어도 지원됩니다."
   },
   commercial_viability: {
     requires_rd: "상용 가능성 평가를 위해 R&D 필요",

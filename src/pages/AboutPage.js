@@ -143,7 +143,12 @@ const AboutPage = () => {
 
           <div id="newsfeed">
             <h3>{t('about.newsfeed.title')}</h3>
-            <p>{t('about.newsfeed.release')}</p>
+            <p>{t('about.newsfeed.release1')}</p>
+            <p>
+              {t('about.newsfeed.release2')}
+              <br />
+              {t('about.newsfeed.releaseAbout2')}
+            </p>
           </div>
         </div>
       </div>

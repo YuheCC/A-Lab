@@ -90,7 +90,9 @@ export default {
   
   newsfeed: {
     title: "Newsfeed",
-    release: "April 29, 2025: Molecular Universe MU-0 is released to public"
+    release1: "April 29, 2025: Molecular Universe MU-0 is released to public.",
+    release2: "July 7, 2025: Molecular Universe MU-0.5 is released to public. ",
+    releaseAbout2: "Molecular Universe MU-0.5 is released to public. The most exciting new feature is Deep Space, which is an agentic capability to conduct senior scientist level battery research. Deep Space is built off of Molecular Universe’s popular Ask feature and is powered by a multi-agent LLM. It can recommend electrolyte formulations for different cell chemistries ranked by performance, novelty, cost, or whatever the user desires. It also reduces time in trial and error and accomplishes in less than one hour what would normally take a human senior scientist months or even years. Deep Space is available to Enterprise and Joint Development users and limited to 10 per month for Team and Explorer users, and 5 per month for Research users. Other improvements include a molecule sketch pad to help users intuitively “find friends” and language support for Chinese and Korean in addition to English."
   },
   commercial_viability: {
     requires_rd: "Requires R&D to assess viability",
