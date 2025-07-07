@@ -505,11 +505,15 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     >
                                                         {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
-                                                    <MoleculeFeedbackBox
-                                                        molecule={molecule}
-                                                        lastSearch={lastSearch}
-                                                        onClose={() => { }}
-                                                    />
+                                                    {
+                                                        false && (
+                                                            <MoleculeFeedbackBox
+                                                                molecule={molecule}
+                                                                lastSearch={lastSearch}
+                                                                onClose={() => { }}
+                                                            />
+                                                        )
+                                                    }
                                                     {false && molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
                                                         window.open(molecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                                                     }}>

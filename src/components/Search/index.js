@@ -64,7 +64,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
             className='control-icon' 
             style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
             onClick={() => {
-              // setShowMolEditor(!showMolEditor);
+              setShowMolEditor(!showMolEditor);
             }}
           >
             <NewPenIcon />

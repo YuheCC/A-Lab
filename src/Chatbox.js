@@ -808,7 +808,7 @@ const handleFindSimilarMolecules = async (details) => {
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
-                    <IconButton
+                    {/* <IconButton
                       onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
                       size="small"
                       style={{ marginRight: 5 }} variant="contained">
@@ -819,7 +819,7 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small"
                       style={{ marginRight: 5 }} variant="contained">
                         <ThumbsDown size={18} style={{ margin: 4}} />
-                      </IconButton>
+                      </IconButton> */}
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -1128,15 +1128,19 @@ const handleFindSimilarMolecules = async (details) => {
                     {t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
-                  <MoleculeFeedbackBox
-                    fullWidth={true}
-                    molecule={details}
-                    lastSearch={activeMolecule}
-                    contextContent1={contextObject.contextContent1}
-                    contextContent2={contextObject.contextContent2}
-                    contextContent3={contextObject.contextContent3}
-                    onClose={() => { }}
-                  />
+                  {
+                    false && (
+                      <MoleculeFeedbackBox
+                        fullWidth={true}
+                        molecule={details}
+                        lastSearch={activeMolecule}
+                        contextContent1={contextObject.contextContent1}
+                        contextContent2={contextObject.contextContent2}
+                        contextContent3={contextObject.contextContent3}
+                        onClose={() => { }}
+                      />
+                    )
+                  }
                   {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                     window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
@@ -1149,7 +1153,7 @@ const handleFindSimilarMolecules = async (details) => {
         )}
       </div>
       {/* Render the FeedbackBox if needed */}
-      {showFeedbackBox && feedbackData && (
+      {false && showFeedbackBox && feedbackData && (
         <FeedbackBox 
           isPositive={feedbackData.isPositive}
           inputContent={feedbackData.inputContent}
