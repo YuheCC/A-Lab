@@ -126,7 +126,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             {t('chatbox.checkboxes.ignoreChatHistory')}
           </label>
         </div>
-        {['research', 'enterprise', 'admin', 'joint'].includes(userPermissions) && (
+        {(
           <div className='checkbox-item'>
             <input
               type="checkbox"
