@@ -634,6 +634,7 @@ const handleFindSimilarMolecules = async (details) => {
         setIsThinking(false, effectiveChatId);
       } finally {
         if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        fetchQueryLimit();
       }
     },
 
