@@ -3421,6 +3421,12 @@ body.no-select {
   word-break: break-word;
 }
 
+.favorites-table td:nth-child(8) { /* Commercial Viability column */
+  white-space: normal;
+  word-break: break-word;
+  min-width: 120px;
+}
+
 .favorites-table td:nth-child(11) { /* Commercial Viability column */
   white-space: normal;
   word-break: break-word;
