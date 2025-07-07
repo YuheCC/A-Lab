@@ -14,7 +14,7 @@ export default {
         admin: "管理员"
     },
     queryLimit: {
-        queriesRemaining: "本月剩余查询次数：",
+        queriesRemaining: "今日剩余查询次数：",
         deepSpaceQueriesRemaining: "本月剩余深度搜索查询次数：",
         reachedLimit: "您已达到本月查询限制。请联系管理员寻求帮助。"
     },

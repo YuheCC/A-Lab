@@ -14,7 +14,7 @@ export default {
         admin: "ADMIN"
     },
     queryLimit: {
-        queriesRemaining: "Queries remaining this month:",
+        queriesRemaining: "Queries remaining today:",
         deepSpaceQueriesRemaining: "Deep Space queries remaining this month:",
         reachedLimit: "You have reached your monthly query limit. Please contact an administrator for assistance."
     },

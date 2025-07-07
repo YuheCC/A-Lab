@@ -14,7 +14,7 @@ export default {
         admin: "관리자"
     },
     queryLimit: {
-        queriesRemaining: "이번 달 남은 쿼리:",
+        queriesRemaining: "오늘 조회 횟수:",
         deepSpaceQueriesRemaining: "이번 달 남은 딥 스페이스 쿼리:",
         reachedLimit: "월간 쿼리 한도에 도달했습니다. 도움이 필요하시면 관리자에게 문의하세요."
     },
