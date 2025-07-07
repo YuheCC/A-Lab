@@ -90,9 +90,11 @@ export default {
   
   newsfeed: {
     title: "뉴스 피드",
+    newsLink: "뉴스 링크:",
     release1: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다",
+    releaseAbout1: "Molecular Universe는 리튬 금속(Li-Metal), 리튬 이온(Li-ion), 나트륨(Sodium)을 포함한 모든 배터리 화학 조성과 관련된 가능한 모든 저분자 분자 구조를 매핑하기 위해 설계된 고급 툴킷입니다.플랫폼은 다섯 가지 요금제로 제공됩니다:Research(연구자용): .edu 이메일을 가진 사용자는 누구나 무료Explorer(탐색자용): 사용자당 월 $150Team(팀용): 월 $1000이 세 가지 요금제는 100만 개의 분자에 접근할 수 있으며,Enterprise 및 Joint Development 요금제는 1억 개의 분자에 접근할 수 있습니다.",
     release2: "2025년 7월 7일: Molecular Universe MU-0.5가 공개되었습니다",
-    releaseAbout2: "Molecular Universe MU-0.5가 공개되었습니다. 가장 흥미로운 새로운 기능은 Deep Space입니다. 이는 고급 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기능입니다. Deep Space는 Molecular Universe의 인기 있는 Ask 기능을 기반으로 하며, 다중 에이전트 LLM으로 지원됩니다. 성능, 혁신성, 비용 또는 사용자가 원하는 방식으로 다른 세포 화학에 대한 전해질 혼합물을 추천할 수 있습니다. 또한 시행착오 시간을 줄이고 일반적으로 고급 과학자가 수개월 또는 수년이 걸리는 작업을 한 시간 미만으로 완료합니다. Deep Space는 기업 및 공동 개발 사용자에게 제공되며, 팀 및 탐험가 사용자는 월 10개, 연구 사용자는 월 5개로 제한됩니다. 기타 개선 사항으로는 사용자가 직관적으로 “친구”를 찾을 수 있도록 하는 분자 스케치패드와 영어 외에 중국어와 한국어도 지원됩니다."
+    releaseAbout2: "가장 흥미로운 새로운 기능은 “Deep Space(딥 스페이스)”로, 선임 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기반 능력입니다. Deep Space는 Molecular Universe의 인기 기능인 Ask를 기반으로 하며, 다중 에이전트 대형 언어 모델(LLM)에 의해 구동됩니다. 이 기능은 다양한 배터리 화학 조성에 대한 전해질 조합을 추천할 수 있으며, 성능, 참신성, 비용 또는 사용자가 원하는 기준에 따라 순위를 매길 수 있습니다.Deep Space는 시행착오 시간을 크게 줄여 선임 과학자가 수개월, 수년이 걸리는 작업을 단 한 시간 안에 마칠 수 있게 합니다.Deep Space는 Enterprise 및 Joint Development 사용자에게 제공되며, Team 및 Explorer 사용자는 월 10회, Research 사용자는 월 5회로 제한됩니다.기타 개선 사항으로는 “친구 찾기” 기능을 직관적으로 돕는 분자 스케치 패드가 도입되었고, 영어 외에 중국어 및 한국어 지원이 추가되었습니다."
   },
   commercial_viability: {
     requires_rd: "상용 가능성 평가를 위해 R&D 필요",

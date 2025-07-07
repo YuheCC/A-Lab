@@ -143,9 +143,16 @@ const AboutPage = () => {
 
           <div id="newsfeed">
             <h3>{t('about.newsfeed.title')}</h3>
-            <p>{t('about.newsfeed.release1')}</p>
             <p>
-              {t('about.newsfeed.release2')}
+              <strong>{t('about.newsfeed.release1')}</strong>
+              <br />
+              {t('about.newsfeed.releaseAbout1')}
+              <br />
+              {t('about.newsfeed.newsLink')}: <a href="https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest" target="_blank" rel="noopener noreferrer">https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest</a>
+            </p>
+            
+            <p>
+              <strong>{t('about.newsfeed.release2')}</strong>
               <br />
               {t('about.newsfeed.releaseAbout2')}
             </p>

@@ -90,7 +90,9 @@ export default {
   
   newsfeed: {
     title: "Newsfeed",
+    newsLink: "News link:",
     release1: "April 29, 2025: Molecular Universe MU-0 is released to public.",
+    releaseAbout1: "Molecular Universe MU-0 is released to public. Molecular Universe is designed as an advanced toolkit to map the entire realm of possible small molecules relevant to all battery chemistries, including Li-Metal, Li-ion, and sodium. There are five tiers, Research (free for anyone with an edu email), Explorer ($150 per month per user), Team ($1000 per month), all accessing 1 million molecules; Enterprise and Joint Development both accessing 100 million molecules .",
     release2: "July 7, 2025: Molecular Universe MU-0.5 is released to public. ",
     releaseAbout2: "Molecular Universe MU-0.5 is released to public. The most exciting new feature is Deep Space, which is an agentic capability to conduct senior scientist level battery research. Deep Space is built off of Molecular Universe’s popular Ask feature and is powered by a multi-agent LLM. It can recommend electrolyte formulations for different cell chemistries ranked by performance, novelty, cost, or whatever the user desires. It also reduces time in trial and error and accomplishes in less than one hour what would normally take a human senior scientist months or even years. Deep Space is available to Enterprise and Joint Development users and limited to 10 per month for Team and Explorer users, and 5 per month for Research users. Other improvements include a molecule sketch pad to help users intuitively “find friends” and language support for Chinese and Korean in addition to English."
   },
