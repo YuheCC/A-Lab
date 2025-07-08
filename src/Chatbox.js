@@ -15,7 +15,7 @@ import { useChatStore, useActiveChatData } from './providers/chat.js';
 import { useShallow } from 'zustand/react/shallow';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
-import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 import { InlineMoleculeRenderer } from './components/InlineMoleculeRenderer.js';
 
@@ -39,6 +39,25 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
       </ReactMarkdown>
     );
   }
+};
+
+// Dropdown section for displaying supplemental information
+const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="extra-data-section">
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{title}</span>
+      </div>
+      {open && (
+        <div className="extra-data-content">
+          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 // New ChatInput component added for memoized chat input rendering
@@ -618,6 +637,7 @@ const handleFindSimilarMolecules = async (details) => {
           sources  : data.source_html,
           molText  : data.molecule_text,
           molecules: data.molecules,
+          extraData: data.extra_data || null,
         };
 
         addMessage(llmMessage, effectiveChatId);
@@ -814,6 +834,18 @@ const handleFindSimilarMolecules = async (details) => {
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
+                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
+                    <div className="extra-data-wrapper">
+                      {Object.entries(msg.extraData).map(([key, value]) => (
+                        <ExtraDataSection
+                          key={key}
+                          title={key}
+                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                          onMoleculeClick={handleMoleculeClick}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Add thumbs buttons for feedback */}

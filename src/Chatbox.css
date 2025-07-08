@@ -514,3 +514,34 @@
     margin-block-start: 0;
     margin-block-end: 0;
 }
+
+/* Supplemental Extra Data */
+.extra-data-section {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 8px;
+  background-color: #f9f9f9;
+}
+
+.extra-data-wrapper {
+  margin-top: 8px;
+}
+
+.extra-data-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 8px;
+  user-select: none;
+}
+
+.extra-data-header span {
+  margin-left: 6px;
+  font-weight: bold;
+}
+
+.extra-data-content {
+  padding: 8px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+  white-space: pre-wrap;}
