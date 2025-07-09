@@ -3,7 +3,8 @@ export default  [
     { path: "/docs", component: "docs" },
     {
         path: "/about",
-        component: "About"
+        component: "About",
+        layout: false,
     },
     {
         path: "/pricing",
