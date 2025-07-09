@@ -45,7 +45,8 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
     disableLiteratureSearch, onDisableLiteratureSearchChange,
-    userPermissions, useMultiAgent, onUseMultiAgentChange }) => {
+    userPermissions, useMultiAgent, onUseMultiAgentChange,
+    fullDeepSpace, onFullDeepSpaceChange}) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
@@ -160,6 +161,18 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 {t('chatbox.checkboxes.disableLiteratureSearch')}
               </label>
             </div>
+
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="fullDeepSpace"
+                checked={fullDeepSpace}
+                onChange={e => onFullDeepSpaceChange(e.target.checked)}
+              />
+              <label htmlFor="fullDeepSpace">
+                {t('chatbox.checkboxes.fullDeepSpace')}
+              </label>
+            </div>
           </div>
         )}
       </div>
@@ -226,6 +239,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries, remainingDeep
   const [thinkingTime, setThinkingTime] = useState(0);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
+  const [fullDeepSpace, setFullDeepSpace] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
@@ -356,26 +370,41 @@ const handleFindSimilarMolecules = async (details) => {
       const token = localStorage.getItem('token');
       // Determine if user is high-tier
       const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
-      // Extract original user query and LLM response
-      const originalQuery = isHighTier
-        ? (Array.isArray(activeFindMessage?.inputs)
-            ? (activeFindMessage.inputs.filter(m => m.role === "user").pop() || {}).content
-            : activeFindMessage?.inputs)
-        : undefined;
-      const llmResponse = isHighTier ? activeFindMessage?.content : undefined;
+           
+      // Extract original user query and LLM response from message history
+      let originalQuery = undefined;
+      let llmResponse = undefined;
+      
+      if (isHighTier && activeFindMessage) {
+        // Find the index of the message containing molecules
+        const messageIndex = messages.findIndex(msg => msg === activeFindMessage);
+        
+        // Get the user query that led to this response
+        // Look backwards for the most recent user message
+        for (let i = messageIndex - 1; i >= 0; i--) {
+          if (messages[i].role === 'user') {
+            originalQuery = messages[i].content;
+            break;
+          }
+        }
+        
+        // Get the assistant's response content
+        llmResponse = activeFindMessage.content;
+      }
+      
       // Build selected molecule string if high-tier
       const selectedMoleculeStr = isHighTier
         ? [
-            `Name: ${details.name}`,
+            `Name: ${details.name || 'N/A'}`,
             `SMILES: ${details.SMILES}`,
-            `Molecular weight: ${details.MOLECULAR_WEIGHT}`,
-            `HOMO eV: ${details.HOMO}`,
-            `LUMO eV: ${details.LUMO}`,
-            `ESP Max: ${details.ESP_MAX}`,
-            `ESP Min: ${details.ESP_MIN}`,
-            `Functional groups: ${JSON.stringify(details.FUNCTIONAL_GROUPS)}`,
-            `Predicted MP: ${details.PREDICTED_MP} °C`,
-            `Predicted BP: ${details.PREDICTED_BP} °C`
+            `Molecular weight: ${details.molecular_weight || 'N/A'}`,
+            `HOMO eV: ${details.HOMO_eV || 'N/A'}`,
+            `LUMO eV: ${details.LUMO_eV || 'N/A'}`,
+            `ESP Max: ${details.ESP_max_eV || 'N/A'}`,
+            `ESP Min: ${details.ESP_min_eV || 'N/A'}`,
+            `Functional groups: ${JSON.stringify(details.functional_groups || [])}`,
+            `Predicted MP: ${details.predicted_MP_celsius || 'N/A'} °C`,
+            `Predicted BP: ${details.predicted_BP_celsius || 'N/A'} °C`
           ].join("\n")
         : undefined;
       // Construct request payload
@@ -498,10 +527,13 @@ const handleFindSimilarMolecules = async (details) => {
             
             setIsInClarifyFlow(false, effectiveChatId);
 
+            const multiAgentPayload = { messages: updatedHistory, chat_id: currentChatId };
+            if (fullDeepSpace) multiAgentPayload.dump_state = true;
+
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(({ messages: updatedHistory, chat_id: currentChatId })),
+              body   : JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -522,10 +554,13 @@ const handleFindSimilarMolecules = async (details) => {
             // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
 
+            const multiAgentPayload = { messages: messagesToSend, chat_id: currentChatId };
+            if (fullDeepSpace) multiAgentPayload.dump_state = true;
+
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
               method : "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
+              body   : JSON.stringify(multiAgentPayload),
             });
             if (!clarRes.ok) {
               fetchQueryLimit();
@@ -556,7 +591,7 @@ const handleFindSimilarMolecules = async (details) => {
             const res = await authFetch(`${API_URL}/multi-agent`, {
               method : "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify({ messages: messagesToSend, chat_id: effectiveChatId }),
+              body   : JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -653,6 +688,7 @@ const handleFindSimilarMolecules = async (details) => {
       useMultiAgent,
       awaitingClarify,
       setAwaitingClarify,
+      fullDeepSpace
     ]
   );
 
@@ -918,6 +954,8 @@ const handleFindSimilarMolecules = async (details) => {
             userPermissions={userPermissions}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
+            fullDeepSpace={fullDeepSpace}
+            onFullDeepSpaceChange={setFullDeepSpace}
           />
         </div>
         {false && foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
