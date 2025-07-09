@@ -13,12 +13,12 @@ A molecular visualization and exploration tool with user authentication.
 1. Node.js version v22.14.0 is recommended for frontend compatibility
 2. Install Node.js dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 3. Start the development server:
 ```bash
-npm start
+pnpm start
 ```
 
 The React application will run on http://localhost:3000
@@ -28,7 +28,7 @@ The React application will run on http://localhost:3000
 ### Building for Production
 1. Create a production build:
 ```bash
-npm run build
+pnpm run build
 ```
 
 ## Features
