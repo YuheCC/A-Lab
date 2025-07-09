@@ -8,7 +8,8 @@ import { useAuthStore } from "../providers/auth";
 import UMAPClusterPlotDeck from "../components/UMAPClusterPlotDeck";
 import { MolCard } from "../components/MolCard";
 import CustomButton from "../components/CustomButton";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink, Star, Info } from "lucide-react";
+import { Tooltip } from "@mui/material";
 
 const API_URL = getAPIUrl();
 
@@ -27,6 +28,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
+    const [selectedMolType, setSelectedMolType] = useState("");
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState(null);
@@ -136,7 +138,8 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
 
                     const payload = {
                         smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier
+                        use_35m: isHighTier,
+                        ...(selectedMolType && { mol_type: selectedMolType })
                     };
 
                     try {
@@ -224,7 +227,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         disabled={searchLoading}
                     />
 
-                    {/* Add "Find closest friends" checkbox */}
+                    {/* Add "Find closest friends" checkbox and mol type selector */}
                     <div className="search-options">
                         <label className="search-option">
                             <div style={{
@@ -237,7 +240,22 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                         checked={findClosestFriends}
                                         onChange={(e) => setFindClosestFriends(e.target.checked)}
                                     />
-                                    <div>Find "friends"</div>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span>Find "friends"</span>
+                                        <Tooltip title="Select what type of molecule it is for best results" placement="top">
+                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
+                                        </Tooltip>
+                                    </div>
+                                    <select
+                                        value={selectedMolType}
+                                        onChange={e => setSelectedMolType(e.target.value)}
+                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                    >
+                                        <option value="" disabled hidden>Molecule Type</option>
+                                        <option value="solvent">Solvent</option>
+                                        <option value="diluent">Diluent</option>
+                                        <option value="additive">Additive</option>
+                                    </select>
                                 </div>
                                 <div style={{
                                     color: '#555',
