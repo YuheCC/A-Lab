@@ -253,7 +253,7 @@
 /* Molecules Display */
 .found-molecules-container,
 .similar-molecules-container {
-  width: 320px;
+  width: 365px;
   margin: 10px 2px;
   overflow-y: auto;
   overflow-x: hidden;
