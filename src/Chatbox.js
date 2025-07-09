@@ -272,6 +272,7 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   
   // Add favorites state - remove unused states
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
+  const [molTypeSelections, setMolTypeSelections] = useState({});
 
   useEffect(() => {
     // If awaitingClarify is true, set useMultiAgent to true
@@ -408,7 +409,8 @@ const handleFindSimilarMolecules = async (details) => {
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
+        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
       };
       // Perform POST request
       const response = await authFetch(
@@ -676,6 +678,10 @@ const handleFindSimilarMolecules = async (details) => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleMolTypeChange = (smiles, type) => {
+    setMolTypeSelections(prev => ({ ...prev, [smiles]: type }));
   };
 
   // Function to handle adding molecule to favorites
@@ -1006,13 +1012,25 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       Add To Favorites
                     </CustomButton>
-                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
-                      fullWidth
-                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
-                      loadingText={"Searching for friends"}
-                      size="small">
-                      Find Similar Molecules
-                    </CustomButton>
+                    <div style={{ display: 'flex', width: '100%' }}>
+                      <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
+                        fullWidth
+                        loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
+                        loadingText={"Searching for friends"}
+                        size="small" style={{ flexGrow: 1 }}>
+                        Find Similar Molecules
+                      </CustomButton>
+                      <select
+                        value={molTypeSelections[details.SMILES] || ""}
+                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                      >
+                        <option value="" disabled hidden>Molecule Type</option>
+                        <option value="solvent">Solvent</option>
+                        <option value="diluent">Diluent</option>
+                        <option value="additive">Additive</option>
+                      </select>
+                    </div>
                     {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
@@ -1080,13 +1098,25 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     Add To Favorites
                   </CustomButton>
-                  <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
-                    fullWidth
-                    loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
-                    loadingText={"Searching for friends"}
-                    size="small">
-                    Find Similar Molecules
-                  </CustomButton>
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
+                      fullWidth
+                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
+                      loadingText={"Searching for friends"}
+                      size="small" style={{ flexGrow: 1 }}>
+                      Find Similar Molecules
+                    </CustomButton>
+                    <select
+                      value={molTypeSelections[selectedMolecule.SMILES] || ""}
+                      onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
+                      style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                    >
+                      <option value="" disabled hidden>Molecule Type</option>
+                      <option value="solvent">Solvent</option>
+                      <option value="diluent">Diluent</option>
+                      <option value="additive">Additive</option>
+                    </select>
+                  </div>
                   {selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
