@@ -2,7 +2,7 @@
   "private": true,
   "author": "feiran.wang <feiran.wang@ses.ai>",
   "scripts": {
-    "dev": "umi dev",
+    "dev": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai umi dev",
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",

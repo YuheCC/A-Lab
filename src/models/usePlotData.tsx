@@ -55,7 +55,7 @@ export const usePlotDataStore = create<PlotDataStore>((set, get) => ({
 
     fetchData: async () => {
         // 如果正在获取数据，则跳过
-        if (isFetching) {
+        if (isFetching || fetchDataCompleted) {
             return;
         }
         

@@ -54,7 +54,7 @@ const Map = () => {
                 </div>
 
                 {/* Right text content */}
-                <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', height: 'calc(100vh - 250px)', overflow: 'scroll' }}>
+                <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', height: 'calc(100vh - 140px)', overflow: 'scroll' }}>
                     <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>{t('map.about.title')}</h2>
                     <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
                         {t('map.about.description1')}
@@ -77,9 +77,7 @@ const Map = () => {
                                 alt={t('map.imageAlt')}
                                 style={{
                                     maxWidth: '100%',
-                                    height: 'auto',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                                    height: 'auto'
                                 }}
                             />
                         </picture>
@@ -91,7 +89,7 @@ const Map = () => {
                     </div>
                 </div>
             </div>
-            {showMapFooter && (
+            {false && showMapFooter && (
                 <div style={{
                     position: 'fixed',
                     bottom: 0,

@@ -27,7 +27,7 @@ const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
 
   useEffect(() => {
     const handleContextMenu = (e: any) => {
-      e.preventDefault();
+      if(show)e.preventDefault();
     };
 
     // 添加右键禁用事件监听器
@@ -37,7 +37,7 @@ const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
     };
-  }, [])
+  }, [show])
   
   if (!node) return null;
 
@@ -156,7 +156,7 @@ const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
   };
 
   return (
-    <div className="popup-overlay" onClick={() => setShow(false)} style={{ userSelect: 'none' }}>
+    show && <div className="popup-overlay" onClick={() => setShow(false)} style={{ userSelect: 'none' }}>
       <div className="popup-content black-bg" onClick={e => e.stopPropagation()}>
         <button className="close-button white-text" onClick={() => setShow(false)}>×</button>
         <h2 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.title')}</h2>
