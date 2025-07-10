@@ -27,6 +27,10 @@ export default  [
         component: "Favorites"
     },
     {
+        path: "/ask",
+        component: "Ask"
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,

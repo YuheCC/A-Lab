@@ -2,7 +2,7 @@ import { Outlet } from "umi";
 import Header from "@/components/Header";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useEffect, useState, createContext } from "react";
-import "./index.less";
+// import "./index.less";
 import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";

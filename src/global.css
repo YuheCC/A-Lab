@@ -135,6 +135,7 @@
 }
 
 .main-container {
+  padding: 20px;
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -789,7 +790,7 @@
 .search-umap-container {
   display: flex;
   flex-direction: row;
-  height: calc((100vh - 180px));
+  height: calc((100vh - 100px));
   width: 100%;
   gap: 20px;
 }
@@ -803,8 +804,9 @@
   background-color: white;
   box-shadow: none;
   border: none;
-  margin-right: 20px;
-  height: calc((100vh - 180px)* 0.95);
+  border-radius: 8px;
+  margin-right: 0;
+  height: 100%;
   width: calc((100vh - 180px)* 0.86);
 }
 
