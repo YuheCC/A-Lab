@@ -23,7 +23,7 @@ export default {
       description: "분자 지도와 내비게이션 시스템을 직관적으로 연결한 사용자 인터페이스로, 배터리 소재 탐색을 쉽고 명확하게 만들어줍니다."
     },
     
-    current: "10^8개의 소분자로 구성된 Molecular Universe는 아직 초기 단계지만, 목표 수치인 1000억개에 도달하기 위해 빠르게 확장되고 있습니다.내비게이션 시스템은 계속해서 검증과 개선이 이루어지고 있어, 당신이 원하는 이상적인 분자를 더욱 정확하게 찾아주는 든든한 파트너가 되어가고 있습니다.",
+    current: "현재 10⁸개의 소분자를 보유한 Molecular Universe는 아직 초기 단계에 있지만, 목표인 10¹¹개 규모를 향해 빠르게 확장되고 있습니다. 내비게이션 시스템은 계속해서 검증과 개선이 이루어지고 있어, 당신이 원하는 이상적인 분자를 더욱 정확하게 찾아주는 든든한 파트너가 되어가고 있습니다.",
     improvement: "모든 AI 기반 기술이 그러하듯, 여러분의 참여가 더해진다면 Molecular Universe는 더욱 빠르고 효율적으로 진화할 수 있습니다."
   },
   
@@ -39,7 +39,7 @@ export default {
     question: "LFP, 고함량 실리콘 음극 기반 리튬이온, 리튬 금속 배터리 등의 수명을 2~4배 향상시킬 수 있는 새로운 분자가 존재할 가능성이 있다면,그 가능성을 탐색하지 않을 이유가 있을까요?",
     
     targetTitle: "타겟 소분자 수: 10¹¹개",
-    targetMission: "우리의 미션은 명확합니다: 10^11 개의 분자 데이터베이스에 담긴 물리적·화학적 특성을 지도화하는 것입니다.",
+    targetMission: "우리의 미션은 명확합니다: 10¹¹개의 분자 데이터베이스에 담긴 물리적·화학적 특성을 지도화하는 것입니다.",
     computation: "이 목표를 달성하기 위해선 고도화된 계산 성능이 요구되었습니다.초기에 우리는 공공 계산 자원 크라우드소싱 및 데이터베이스의 오픈소스화를 목표로 비영리 조직인 Molecular Universe의 설립을 검토했습니다. 하지만 우리는 더 나은 해결책을 찾았습니다.",
     solution: "GPU를 상업적으로 조달하고 Nvidia와 협력하여 GPU 가속 계산 화학 소프트웨어를 개발하는 것이 훨씬 더 효율적인 접근임을 확인하였습니다. 당사의 독점 데이터베이스를 오픈 소스화하지는 않겠지만, Molecular Universe는 학술 연구 목적에 한해 무료로 제공될 예정이며, 모델의 일부 구성 요소는 적절한 범위 내에서 오픈소스로 공개할 계획입니다.",
     
@@ -81,15 +81,25 @@ export default {
     filter: {
       title: "필터",
       description: "본 시스템은 탐색(Exploration)과 최적 활용(Exploitation) 사이의 균형을 유지하며, 이미 입증된 영역을 기반으로 새로운 가능성을 효율적으로 탐색할 수 있도록 설계되었습니다.",
-      homo: "HOMO / LUMO: 이 양자 준위(quantum levels)는 분자가 전자를 얼마나 쉽게 주거나 받을 수 있는지를 나타내며, 분자의 전기화학적 안정성 평가에 핵심적인 역할을 합니다.",
-      esp: "ESP 최소/최대값: 전기 포텐셜 분포의 극대/극소값은, 분자가 Li-ion 또는 Li-metal 시스템에서 효과적인 용매 역할을 수행할 수 있는지를 평가하는 데 활용됩니다.",
-      functional: "작용기:플루오린화 사슬(fluorinated chain)부터 설폰일(sulfonyl) 작용기까지, 서브구조 필터(substructure filter)를 활용해 특정 화학 구조를 타겟팅하여 탐색할 수 있습니다.",
+      homo: "이 양자 준위(quantum levels)는 분자가 전자를 얼마나 쉽게 주거나 받을 수 있는지를 나타내며, 분자의 전기화학적 안정성 평가에 핵심적인 역할을 합니다.",
+      esp: " 전기 포텐셜 분포의 극대/극소값은, 분자가 Li-ion 또는 Li-metal 시스템에서 효과적인 용매 역할을 수행할 수 있는지를 평가하는 데 활용됩니다.",
+      functional: "플루오린화된 사슬 (fluorinated chain)부터 설포닐(sulfonyl) 작용기까지, 서브구조 필터(substructure filter)를 활용해 특정 화학 구조를 타겟팅하여 탐색할 수 있습니다.",
       overlay: "필터로 선별한 분자들을 UMAP 위에 바로 표시할 수 있어서, 해당 조건을 만족하는 화학적 영역(분자군 분포)을 직관적으로 탐색할 수 있습니다."
     }
   },
   
   newsfeed: {
     title: "뉴스 피드",
-    release: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다"
+    newsLink: "뉴스 링크",
+    release1: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다",
+    releaseAbout1: "Molecular Universe는 리튬 금속(Li-Metal), 리튬 이온(Li-ion), 나트륨(Sodium)을 포함한 모든 배터리 화학 조성과 관련된 가능한 모든 저분자 분자 구조를 매핑하기 위해 설계된 고급 툴킷입니다.플랫폼은 다섯 가지 요금제로 제공됩니다:Research(연구자용): .edu 이메일을 가진 사용자는 누구나 무료Explorer(탐색자용): 사용자당 월 $150Team(팀용): 월 $1000이 세 가지 요금제는 100만 개의 분자에 접근할 수 있으며,Enterprise 및 Joint Development 요금제는 1억 개의 분자에 접근할 수 있습니다.",
+    release2: "2025년 7월 7일: Molecular Universe MU-0.5가 공개되었습니다",
+    releaseAbout2: "가장 흥미로운 새로운 기능은 “Deep Space(딥 스페이스)”로, 선임 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기반 능력입니다. Deep Space는 Molecular Universe의 인기 기능인 Ask를 기반으로 하며, 다중 에이전트 대형 언어 모델(LLM)에 의해 구동됩니다. 이 기능은 다양한 배터리 화학 조성에 대한 전해질 조합을 추천할 수 있으며, 성능, 참신성, 비용 또는 사용자가 원하는 기준에 따라 순위를 매길 수 있습니다.Deep Space는 시행착오 시간을 크게 줄여 선임 과학자가 수개월, 수년이 걸리는 작업을 단 한 시간 안에 마칠 수 있게 합니다.Deep Space는 Enterprise 및 Joint Development 사용자에게 제공되며, Team 및 Explorer 사용자는 월 10회, Research 사용자는 월 5회로 제한됩니다.기타 개선 사항으로는 “친구 찾기” 기능을 직관적으로 돕는 분자 스케치 패드가 도입되었고, 영어 외에 중국어 및 한국어 지원이 추가되었습니다."
+  },
+  commercial_viability: {
+    requires_rd: "상용 가능성 평가를 위해 R&D 필요",
+    likely_synthesizable_but_not_commercially_available: "상용 가능성이 높지만 상용 가능성이 낮음",
+    likely_synthesizable_may_be_commercially_available: "상용 가능성이 높지만 상용 가능성이 높음",
+    likely_commercially_available: "상용 가능성이 높음"
   }
 }; 

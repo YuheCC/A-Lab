@@ -13,7 +13,8 @@ export default {
     functionalGroupFilter: {
         title: "기능기 필터",
         tooltip: "기능기: 플루오르화 체인부터 설포닐 그룹까지 부구조 필터로 특정 화학물질을 타겟팅합니다.",
-        selectPlaceholder: "기능기를 선택하세요"
+        selectPlaceholder: "기능기를 선택하세요",
+        searchLabel: "작용기를 검색하거나 선택하세요."
     },
     
     // Filter Labels (Professional terms - kept in English as per rules)
@@ -24,6 +25,17 @@ export default {
         esp_max_eV: "Max ESP (eV)",
         esp_min_eV: "Min ESP (eV)",
         predicted_mp: "예측 융점 (°C)",
-        predicted_bp: "예측 비점 (°C)"
+        predicted_bp: "예측 비점 (°C)", 
+        flash_point: "예측 인화점 (°C)",
+        commercial_score: "상용 가능성",
+        CLUSTER: "Cluster",
+        predicted_mp: "예측 융점 (°C)",
+        predicted_bp: "예측 비점 (°C)",
+        flash_point: "예측 인화점 (°C)",
+        combustion_enthalpy: "연소 엔탈피 (eV)",
+        commercial_viability: "상용 가능성",
+        functional_groups: "작용기",
+        umap_coordinates: "UMAP X/Y",
+        chemical_formula: "화학식",
     }
 }; 

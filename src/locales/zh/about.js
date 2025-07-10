@@ -81,15 +81,25 @@ export default {
     filter: {
       title: "过滤器",
       description: "需要具有特定特征的分子？我们的特性过滤器让您锁定具有理想特征的候选分子。所有特性值都已在实验室中测量或使用传统方法计算或使用AI/ML预测。",
-      homo: "HOMO / LUMO：这些量子能级表明分子放弃或接受电子的容易程度——对评估电化学稳定性至关重要。",
-      esp: "ESP最小值/最大值：静电势极值有助于确定分子是否可以作为锂离子或锂金属系统的良好溶剂。",
-      functional: "官能团：通过子结构过滤器针对特定化学，从氟化链到磺酰基团。",
+      homo: "这些量子能级表明分子放弃或接受电子的容易程度——对评估电化学稳定性至关重要。",
+      esp: "静电势极值有助于确定分子是否可以作为锂离子或锂金属系统的良好溶剂。",
+      functional: "通过子结构过滤器针对特定化学，从氟化链到磺酰基团。",
       overlay: "您甚至可以直接在UMAP上叠加您过滤的分子，以可视化探索满足您标准的化学区域（分子）。"
     }
   },
   
   newsfeed: {
     title: "新闻动态",
-    release: "2025年4月29日：分子宇宙MU-0向公众发布"
+    newsLink: "新闻稿链接",
+    release1: "2025年4月29日：分子宇宙MU-0向公众发布。",
+    releaseAbout1: "分子宇宙 被设计为一个先进工具包，用于绘制与所有电池相关化学体系相关的潜在小分子地图，涵盖锂金属（Li-Metal）、锂离子（Li-ion）和钠（Sodium）等电池。该平台分为五个等级：Research（研究者版，任何拥有 edu 邮箱的人均可免费使用）、Explorer（探索者版，每位用户每月 150 美元）、Team（团队版，每月 1000 美元）——这三个等级可访问 100 万个分子数据库；Enterprise 和 Joint Development 等级可访问 1 亿个分子。",
+    release2: "2025年7月7日：分子宇宙MU-0.5向公众发布。",
+    releaseAbout2: "最令人兴奋的新功能是 Deep Space，这是一种具备资深科学家级别电池研究能力的智能代理功能。Deep Space 是在分子宇宙广受欢迎的 Ask 功能基础上构建的，由多智能体大语言模型（LLM）提供支持。它能够为不同的电池化学体系推荐电解质配方，并可按照性能、新颖性、成本或用户指定的其他标准进行排序。该功能显著降低试错成本，将人类高级科学家通常需要数月甚至数年完成的研究压缩至一小时内完成。Deep Space 面向 Enterprise 和 Joint Development 用户开放；Team 和 Explorer 用户每月限用 10 次，Research 用户每月限用 5 次。其它新增功能包括分子草图板，帮助用户直观地“找到朋友”（寻找相似分子）；语言支持方面新增中文和韩文，除了原有英文支持外。"
+  },
+  commercial_viability: {
+    requires_rd: "需要R&D来评估商业可行性",
+    likely_synthesizable_but_not_commercially_available: "可能可合成，但可能不商业化",
+    likely_synthesizable_may_be_commercially_available: "可能可合成，可能商业化",
+    likely_commercially_available: "可能商业化"
   }
 }; 

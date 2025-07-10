@@ -5,7 +5,8 @@ export default {
     ask: "智能问答",
     search: "搜索",
     filter: "筛选",
-    favorites: "收藏"
+    favorites: "收藏",
+    about: "关于"
   },
   
   // Navbar links

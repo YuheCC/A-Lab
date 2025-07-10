@@ -7,7 +7,7 @@ export default {
     
     // Search Options
     findFriendsLabel: '"친구들" 찾기',
-    findFriendsDescription: '유사한 물리화학적 속성을 가진 분자들. "친구들"에는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들이 포함됩니다. 목록은 쿼리 분자와 물리화학적 속성이 얼마나 유사한지에 따라 정렬됩니다.',
+    findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들."친구들"에는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들이 포함됩니다. 목록은 질의한 분자와 물리화학적 속성이 얼마나 유사한지에 따라 정렬됩니다.',
     
     // Loading and Status Messages
     searching: "검색 중...",
@@ -26,14 +26,14 @@ export default {
     properties: {
         smiles: "SMILES",
         chemicalFormula: "Chemical Formula",
-        molecularWeight: "Molecular Weight",
+        molecularWeight: "분자량",
         homo: "HOMO",
         lumo: "LUMO",
-        espMin: "ESP Min",
-        espMax: "ESP Max",
-        predictedMp: "Predicted Melting Point",
-        predictedBp: "Predicted Boiling Point",
-        functionalGroups: "Functional Groups",
+        espMin: "ESP 최소값:",
+        espMax: "ESP 최대값:",
+        predictedMp: "예상 녹는점:",
+        predictedBp: "예상 끓는점:",
+        functionalGroups: "작용기",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },

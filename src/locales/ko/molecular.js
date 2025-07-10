@@ -29,12 +29,12 @@ export default {
     properties: {
       cluster: "클러스터",
       molWeight: "분자량",
-      espMax: "ESP Max",
-      espMin: "ESP Min",
+      espMax: "ESP 최대값:",
+      espMin: "ESP 최소값:",
       homo: "HOMO",
       lumo: "LUMO",
-      predictedMp: "예측 MP",
-      predictedBp: "예측 BP"
+      predictedMp: "예상 녹는점",
+      predictedBp: "예상 끓는점"
     },
     units: {
       gPerMol: " g/mol",

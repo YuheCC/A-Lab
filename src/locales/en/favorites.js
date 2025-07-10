@@ -31,13 +31,25 @@ export default {
     lumo: 'LUMO (eV)',
     meltingPoint: 'MP (°C)',
     boilingPoint: 'BP (°C)',
+    flashPoint: 'FP(°C)',
+    combustionEnthalpy: 'Combustion Enthalpy (eV)',
+    commercialViability: 'Commercial Viability',
     espMin: 'ESP Min (eV)',
     espMax: 'ESP Max (eV)',
     functionalGroups: 'Functional Groups',
     umapCoordinates: 'UMAP X/Y',
     addedDate: 'Added Date',
+    commercialLink: 'Commercial Link',
     actions: 'Actions'
   },
+  
+  // Bulk Operations
+  bulkDelete: 'Delete Selected',
+  bulkDeleting: 'Deleting...',
+  bulkDeleteConfirm: 'Are you sure you want to remove {{count}} molecules from your favorites? This action cannot be undone.',
+  bulkDeleteSuccess: 'Successfully removed {{count}} molecules from favorites',
+  bulkDeletePartialError: 'Failed to remove {{failed}} out of {{total}} molecules. Please try again.',
+  bulkDeleteError: 'Failed to remove molecules from favorites. Please try again.',
   
   // Analysis View
   radarAnalysis: 'Radar Analysis',
@@ -64,6 +76,17 @@ export default {
     espMax: 'esp_max (eV)'
   },
   
+  // Chart Labels
+  chartLabels: {
+    selectedMolecules: 'Selected Molecules',
+    reference: 'Reference',
+    highSolubility: 'high solubility',
+    mediumSolubility: 'medium solubility',
+    lowSolubility: 'low solubility',
+    diluent: 'diluent',
+    solubilityRegion: 'region'
+  },
+  
   // Confirmation and Messages
   confirmRemove: 'Are you sure you want to remove this molecule from your favorites?',
   moleculeRemoved: 'Molecule removed from favorites',
@@ -71,15 +94,20 @@ export default {
   removeFromFavorites: 'Remove from favorites',
   alreadyInFavorites: 'This molecule is already in your favorites!',
   
-  // Molecule structure alt text
-  moleculeStructure: 'Molecule structure',
-  
   // Data Values
   notAvailable: 'N/A',
+  viewLink: 'View Link',
   
   // Buttons
   buttons: {
     showAnalysis: 'Analyze Selected',
     closeButton: '×'
+  },
+  
+  // Tooltips
+  tooltips: {
+    removeFromFavorites: 'Remove from favorites',
+    selectAll: 'Select all molecules',
+    viewCommercialLink: 'View commercial link'
   }
 }; 

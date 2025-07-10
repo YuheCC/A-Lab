@@ -16,7 +16,7 @@ export default {
     noMoleculeData: "无可用分子数据。",
     loading: "加载中...",
     clickForDetails: "点击分子查看更多详情。",
-    notAvailable: "不可用",
+    notAvailable: "N/A",
     clickToCollapse: "点击收起",
     clickToExpand: "点击展开查看更多详情"
   },

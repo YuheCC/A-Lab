@@ -5,7 +5,8 @@ export default {
     ask: "Ask",
     search: "Search",
     filter: "Filter",
-    favorites: "Favorites"
+    favorites: "Favorites",
+    about: "About",
   },
   
   // Navbar links

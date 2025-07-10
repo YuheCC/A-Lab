@@ -5,7 +5,8 @@ export default {
     ask: "질문하기",
     search: "검색하기",
     filter: "조건별 검색",
-    favorites: "즐겨찾기"
+    favorites: "즐겨찾기",
+    about: "소개"
   },
   
   // Navbar links
