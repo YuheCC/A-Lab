@@ -19,6 +19,10 @@ export default  [
         component: "Search"
     },
     {
+        path: "/filter",
+        component: "Filter"
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,
