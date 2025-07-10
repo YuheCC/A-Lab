@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "umi";
 import { useTranslation } from 'react-i18next';
 import Sidebar from "@/components/Sidebar";
 

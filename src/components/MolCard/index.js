@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import MolViewer2D from '../MolViewer2D';
+import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -59,7 +59,7 @@ export const PropItem = ({ prop }) => {
     ) : null;
 };
 
-export const MolCard = (props) => {
+const MolCard = (props) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const { showMoreDetails = false, large = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
@@ -131,3 +131,5 @@ export const MolCard = (props) => {
         </div>
     )
 }
+
+export default MolCard;

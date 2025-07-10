@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, useLocation } from 'umi';
 import { useEffect } from 'react';
 import { login as loginService, register as registerService, verify as verifyService } from '@/services/auth';
 
@@ -12,7 +12,7 @@ interface AuthState {
     token: string | null;
     error: string | null;
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined }>;
-    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string }) => Promise<void>;
+    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string }) => Promise<{ success: boolean, message?: any, error?: string }>;
     logout: () => Promise<void>;
     verifyAuth: () => Promise<void>;
     hasPermission: (permissionsList?: string[]) => boolean;

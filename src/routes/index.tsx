@@ -11,6 +11,10 @@ export default  [
         component: "Pricing"
     },
     {
+        path: "/map",
+        component: "Map",
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,
