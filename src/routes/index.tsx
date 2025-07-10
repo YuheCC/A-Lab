@@ -15,6 +15,10 @@ export default  [
         component: "Map",
     },
     {
+        path: "/search",
+        component: "Search"
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,

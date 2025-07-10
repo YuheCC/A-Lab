@@ -1,7 +1,7 @@
 import { extend } from 'umi-request';
 
 // 直接使用定义的 BASE_URL，如果未定义则使用默认值
-const baseURL = 'https://api.ses.ai';
+const baseURL = 'https://api-sh.ses.ai';
 console.log(baseURL)
 const request = extend({
     prefix: baseURL,
