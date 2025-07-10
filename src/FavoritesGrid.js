@@ -1325,7 +1325,7 @@ const FavoritesGrid = () => {
                     {canSeePredictedProperties && (
                       <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : 'N/A'}</td>
                     )}
-                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : 'N/A'}</td>
+                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : '0.00'}</td>
                     <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : 'N/A'}</td>
                     <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : 'N/A'}</td>
                     <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : 'N/A'}</td>

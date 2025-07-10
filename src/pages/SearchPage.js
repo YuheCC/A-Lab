@@ -309,7 +309,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     },
                                                     {
                                                         label: 'Combustion Enthalpy',
-                                                        value: molecule.properties?.combustion_enthalpy_ev,
+                                                        value: molecule.properties?.combustion_enthalpy_ev || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -386,7 +386,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
                                                     { label: 'Combustion Enthalpy',
-                                                        value: molecule.COMBUSTION_ENTHALPY_EV,
+                                                        value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions

@@ -989,7 +989,7 @@ const handleFindSimilarMolecules = async (details) => {
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   {
-                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
@@ -1075,7 +1075,7 @@ const handleFindSimilarMolecules = async (details) => {
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                 },
                 {
-                  label: 'Combustion Enthalpy', value: selectedMolecule.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                  label: 'Combustion Enthalpy', value: selectedMolecule.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                 },
                 { label: 'HOMO', value: selectedMolecule.HOMO_eV, span: 1, suffix: ' eV' },
@@ -1179,7 +1179,7 @@ const handleFindSimilarMolecules = async (details) => {
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   {
-                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
