@@ -129,6 +129,9 @@ importers:
         specifier: ^5.0.5
         version: 5.0.6(@types/react@18.3.23)(immer@9.0.21)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     devDependencies:
+      '@types/plotly.js':
+        specifier: ^3.0.2
+        version: 3.0.2
       '@types/react':
         specifier: ^18.0.33
         version: 18.3.23
@@ -2956,6 +2959,9 @@ packages:
 
   '@types/pbf@3.0.5':
     resolution: {integrity: sha512-j3pOPiEcWZ34R6a6mN07mUkM4o4Lwf6hPNt8eilOeZhTFbxFXmKhvXl9Y28jotFPaI1bpPDJsbCprUoNke6OrA==}
+
+  '@types/plotly.js@3.0.2':
+    resolution: {integrity: sha512-84eSnXD5gTM36iaOv3/4cduF2X0eptMnK9CcghH56A4uhSiFjAIgqhFGmdq+0yDh2jLQzL1s34CsBU5KD3MvPA==}
 
   '@types/prettier@2.7.3':
     resolution: {integrity: sha512-+68kP9yzs4LMp7VNh8gdzMSPZFL44MLGqiHWvttYJe+6qnuVr4Ek9wSBQoveqY/r+LwjCcU29kNVkidwim+kYA==}
@@ -14622,7 +14628,7 @@ snapshots:
 
   '@types/history@5.0.0':
     dependencies:
-      history: 4.10.1
+      history: 5.3.0
 
   '@types/hoist-non-react-statics@3.3.6':
     dependencies:
@@ -14704,6 +14710,8 @@ snapshots:
 
   '@types/pbf@3.0.5': {}
 
+  '@types/plotly.js@3.0.2': {}
+
   '@types/prettier@2.7.3': {}
 
   '@types/prop-types@15.7.15': {}
@@ -14729,7 +14737,7 @@ snapshots:
       '@types/history': 4.7.11
       '@types/react': 18.3.23
       '@types/react-router': 5.1.20
-      redux: 3.7.2
+      redux: 4.2.1
 
   '@types/react-router@5.1.20':
     dependencies:

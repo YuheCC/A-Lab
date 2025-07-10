@@ -23,6 +23,10 @@ export default  [
         component: "Filter"
     },
     {
+        path: "/favorites",
+        component: "Favorites"
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,

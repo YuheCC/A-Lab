@@ -2579,17 +2579,25 @@ body.dragging {
   align-items: center;
   justify-content: center;
   min-height: 400px;
+  height: 100vh;
   text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 1000;
 }
 
 .favorites-loading .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top: 4px solid #0080ff;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  border: 4px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 50% !important;
+  border-top: 4px solid #0080ff !important;
+  width: 50px !important;
+  height: 50px !important;
+  animation: spin 1s linear infinite !important;
+  margin-bottom: 20px !important;
 }
 
 .favorites-loading p {
@@ -3527,4 +3535,10 @@ body.no-select {
 .favorites-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+}
+
+.favorites-container .plot-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

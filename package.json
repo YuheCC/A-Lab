@@ -51,6 +51,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@types/plotly.js": "^3.0.2",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "typescript": "^5.0.3"
