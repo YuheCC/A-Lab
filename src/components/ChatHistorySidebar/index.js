@@ -97,6 +97,20 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
                     ): <PanelLeftClose size={21} />}
                 </IconButton>
             </div>
+            {collapsed && (
+                <div className="collapsed-actions">
+                    <Tooltip title={t('chatbox.history.createNewChat')} placement="right" enterNextDelay={5000} enterDelay={500}>
+                        <IconButton 
+                            style={{marginLeft: '23px'}}
+                            className="collapsed-new-chat-button" 
+                            size="small" 
+                            onClick={() => createChat(t('chatbox.history.newChat'))}
+                        >
+                            <MessageCirclePlus size={21}/>
+                        </IconButton>
+                    </Tooltip>
+                </div>
+            )}
             <div className="chat-history">
                 {chatItemsSortedByDate.map(([chatId, chat]) => {
                    return <ChatItem

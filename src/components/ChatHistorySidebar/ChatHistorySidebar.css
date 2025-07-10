@@ -141,6 +141,7 @@
     border-bottom: none;
     justify-content: center;
     padding: 15px 10px;
+    min-height: 60px;
 }
 
 .collapsed .chat-history {
@@ -170,10 +171,36 @@
 
 .collapsed .close-sidebar-button {
     margin-left: 0 !important;
+    width: 40px;
+    height: 40px;
 }
 
 .collapsed .open-sidebar-text {
     display: none;
+}
+
+.collapsed-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+    margin-top: -15px;
+}
+
+.collapsed-new-chat-button {
+    margin: 0;
+    color: #4a5568;
+    transition: background-color 0.2s, color 0.2s;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapsed-new-chat-button:hover {
+    background-color: #f1f5f9;
+    color: #2563eb;
 }
 
 /* Chat Confirm Delete Modal */
