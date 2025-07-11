@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "umi";
 import { useTranslation } from "react-i18next";
 import { verifyEducationCode } from "@/services/auth";
-import { useMessage } from "@/components/MessageProvider";
 
 const VerifyEducationPage = () => {
   const { t } = useTranslation();
@@ -10,17 +9,16 @@ const VerifyEducationPage = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [email, setEmail] = useState('');
+  const [id, setId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
-  const { success: successMessage, error: errorMessage } = useMessage();
 
   // 从URL获取email参数
   useEffect(() => {
-    const emailParam = searchParams.get('email');
-    if (emailParam) {
-      setEmail(decodeURIComponent(emailParam));
+    const idParam = searchParams.get('id');
+    if (idParam) {
+      setId(decodeURIComponent(idParam));
     } else {
       setError(t('auth.verifyEducation.messages.invalidLink'));
     }
@@ -41,7 +39,7 @@ const VerifyEducationPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) {
+    if (!id) {
       setError(t('auth.verifyEducation.messages.invalidLink'));
       return;
     }
@@ -61,13 +59,12 @@ const VerifyEducationPage = () => {
 
     try {
       const response: any = await verifyEducationCode({ 
-        email: email, 
+        verify_id: id, 
         code: code 
       });
       
       if (response.ok !== false) {
         setSuccess(true);
-        successMessage(t('auth.verifyEducation.messages.success'));
         setTimeout(() => {
           navigate('/');
         }, 2000);
@@ -109,11 +106,6 @@ const VerifyEducationPage = () => {
           <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
           <h2>{t('auth.verifyEducation.header.title')}</h2>
           <p>{t('auth.verifyEducation.header.subtitle')}</p>
-          {email && (
-            <p style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
-              {email}
-            </p>
-          )}
         </div>
 
         {error && <div className="auth-error">{error}</div>}
