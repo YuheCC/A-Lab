@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     userName: null,
     token: null,
     error: null,
-    userInfo: null,
+    userInfo: {},
     verifyAuth: async () => {
         const token = localStorage.getItem('token');
         const permissions = localStorage.getItem('permissions') || '';

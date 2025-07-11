@@ -7,7 +7,7 @@ const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const [activeTab, setActiveTab] = useState('account');
     const { userName, userPermissions: permissions, userInfo } = useAuthStore();
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
 
     const languageChange = (language: string) => {
@@ -24,9 +24,9 @@ const SettingModal = forwardRef((props, ref) => {
         <div className={`settings-modal modal ${show ? 'show' : ''}`} id="settingsModal">
               <div className="settings-modal-content">
                 <div className="settings-modal-sidebar">
-                  <button className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`} data-tab="account" onClick={() => setActiveTab('account')}>账号管理</button>
-                  <button className={`settings-tab ${activeTab === 'subscription' ? 'active' : ''}`} data-tab="subscription" onClick={() => setActiveTab('subscription')}>订阅管理</button>
-                  <button className={`settings-tab ${activeTab === 'preference' ? 'active' : ''}`} data-tab="preference" onClick={() => setActiveTab('preference')}>偏好设置</button>
+                  <button className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`} data-tab="account" onClick={() => setActiveTab('account')}>{t('settings.tabs.account')}</button>
+                  <button className={`settings-tab ${activeTab === 'subscription' ? 'active' : ''}`} data-tab="subscription" onClick={() => setActiveTab('subscription')}>{t('settings.tabs.subscription')}</button>
+                  <button className={`settings-tab ${activeTab === 'preference' ? 'active' : ''}`} data-tab="preference" onClick={() => setActiveTab('preference')}>{t('settings.tabs.preference')}</button>
                 </div>
                 <div className="settings-modal-main">
                   <div className={`settings-panel ${activeTab === 'account' ? 'active' : ''}`} data-panel="account">
@@ -37,78 +37,85 @@ const SettingModal = forwardRef((props, ref) => {
                             <div className="user-info-name">{userName}</div>
                             <span className="subscription-badge">{permissions}</span>
                           </div>
-                            <div className="user-info-registered">注册时间: {userInfo.created_at}</div>
+                            <div className="user-info-registered">{t('settings.account.registrationTime')}: {userInfo.created_at}</div>
                         </div>
                       </div>
                     </div>
                     <div className="settings-card">
-                      <div className="settings-group-title">账号信息</div>
+                      <div className="settings-group-title">{t('settings.account.accountInfo')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">姓名</div>
+                          <div className="settings-item-title">{t('settings.account.name')}</div>
                         </div>
-                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">修改</a></div>
+                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">注册邮箱</div>
+                          <div className="settings-item-title">{t('settings.account.email')}</div>
                         </div>
-                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">修改</a></div>
+                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">修改密码</div>
+                          <div className="settings-item-title">{t('settings.account.password')}</div>
                         </div>
-                        <div className="settings-item-action"><a href="#" className="settings-link">修改</a></div>
+                        <div className="settings-item-action"><a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
                       </div>
                     </div>
                   </div>
                   <div className={`settings-panel ${activeTab === 'subscription' ? 'active' : ''}`} data-panel="subscription" style={{display: 'none'}}>
                     <div className="settings-card">
-                      <div className="settings-group-title">订阅状态</div>
+                      <div className="settings-group-title">{t('settings.subscription.status')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">当前套餐</div>
+                          <div className="settings-item-title">{t('settings.subscription.currentPlan')}</div>
                         </div>
-                        <div className="settings-item-action"><span className="subscription-badge">Explorer</span></div>
+                        <div className="settings-item-action">
+                          <a href="#" className="redeem-team-code-link">{t('settings.subscription.redeemTeamCode')}</a>
+                          <span className="subscription-badge">{permissions}</span>
+                        </div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">有效期</div>
+                          <div className="settings-item-title">{t('settings.subscription.validUntil')}</div>
                         </div>
                         <div className="settings-item-action">2025-12-31</div>
                       </div>
                     </div>
-                    <div className="settings-card">
-                      <div className="settings-group-title">教育验证</div>
-                      <div className="settings-item">
-                        <div className="settings-item-main">
-                          <div className="settings-item-title">是否教育账号</div>
+                    {
+                      permissions === 'common' && (
+                        <div className="settings-card">
+                          <div className="settings-group-title">{t('settings.subscription.educationVerification')}</div>
+                          <div className="settings-item">
+                            <div className="settings-item-main">
+                              <div className="settings-item-title">{t('settings.subscription.isEducationAccount')}</div>
+                            </div>
+                            <div className="settings-item-action">{t('settings.subscription.no')} <a href="#" id="verifyEduBtn" className="btn btn-secondary" style={{marginLeft: '12px'}}>{t('settings.subscription.verifyEducation')}</a></div>
+                          </div>
                         </div>
-                        <div className="settings-item-action">否 <a href="#" id="verifyEduBtn" className="btn btn-secondary" style={{marginLeft: '12px'}}>验证教育身份</a></div>
-                      </div>
-                    </div>
+                      )
+                    }
                   </div>
                   <div className={`settings-panel ${activeTab === 'preference' ? 'active' : ''}`} data-panel="preference" style={{display: 'none'}}>
                     <div className="settings-card">
-                      <div className="settings-group-title">界面与语言</div>
+                      <div className="settings-group-title">{t('settings.preference.interfaceAndLanguage')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">语言</div>
-                          <div className="settings-item-desc">更改用户界面的语言。</div>
+                          <div className="settings-item-title">{t('settings.preference.language')}</div>
+                          <div className="settings-item-desc">{t('settings.preference.languageDescription')}</div>
                         </div>
                         <div className="settings-item-action">
                           <select className="lang-select" value={currentLanguage} onChange={(e) => languageChange(e.target.value)}>
-                            <option value="zh">中文</option>
-                            <option value="en">English (US)</option>
-                            <option value="ko">한국어</option>
+                            <option value="zh">{t('settings.preference.languages.zh')}</option>
+                            <option value="en">{t('settings.preference.languages.en')}</option>
+                            <option value="ko">{t('settings.preference.languages.ko')}</option>
                           </select>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <span onClick={() => setShow(false)} className="settings-modal-close close-btn" aria-label="关闭" tabIndex={0} style={{background: 'none', border: 'none', boxShadow: 'none', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0}}>
+                <span onClick={() => setShow(false)} className="settings-modal-close close-btn" aria-label={t('settings.common.close')} tabIndex={0} style={{background: 'none', border: 'none', boxShadow: 'none', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0}}>
                   <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <line x1="6" y1="6" x2="18" y2="18" stroke="#bbb" strokeWidth="2" strokeLinecap="round"/>
                     <line x1="18" y1="6" x2="6" y2="18" stroke="#bbb" strokeWidth="2" strokeLinecap="round"/>

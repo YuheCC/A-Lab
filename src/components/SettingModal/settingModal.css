@@ -71,6 +71,11 @@
     border-bottom: 1px solid #ececec;
     padding: 18px 0;
   }
+  .settings-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .settings-group .settings-item:last-child {
     border-bottom: none;
   }
@@ -95,6 +100,25 @@
   .settings-link:hover {
     background: #f3f3f3;
     color: #1c7c54;
+    text-decoration: none;
+  }
+  .redeem-team-code-link {
+    color: #007bff;
+    font-size: 12px;
+    text-decoration: none;
+    margin-top: 0;
+    margin-left: 0;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background 0.18s, color 0.18s;
+    font-weight: 500;
+    display: block;
+    width: fit-content;
+    align-self: flex-start;
+  }
+  .redeem-team-code-link:hover {
+    background: #e3f2fd;
+    color: #0056b3;
     text-decoration: none;
   }
   .user-info-card {

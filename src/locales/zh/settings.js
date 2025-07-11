@@ -1,0 +1,38 @@
+export default {
+    tabs: {
+        account: '账号管理',
+        subscription: '订阅管理',
+        preference: '偏好设置'
+    },
+    account: {
+        registrationTime: '注册时间',
+        accountInfo: '账号信息',
+        name: '姓名',
+        email: '注册邮箱',
+        password: '修改密码',
+        modify: '修改'
+    },
+    subscription: {
+        status: '订阅状态',
+        currentPlan: '当前套餐',
+        validUntil: '有效期',
+        redeemTeamCode: '兑换团队码',
+        educationVerification: '教育验证',
+        isEducationAccount: '是否教育账号',
+        no: '否',
+        verifyEducation: '验证教育身份'
+    },
+    preference: {
+        interfaceAndLanguage: '界面与语言',
+        language: '语言',
+        languageDescription: '更改用户界面的语言。',
+        languages: {
+            zh: '中文',
+            en: 'English (US)',
+            ko: '한국어'
+        }
+    },
+    common: {
+        close: '关闭'
+    }
+}; 

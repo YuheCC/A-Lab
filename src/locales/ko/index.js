@@ -9,6 +9,7 @@ import explorer from './explorer';
 import feedback from './feedback';
 import chatbox from './chatbox';
 import favorites from './favorites';
+import settings from './settings';
 
 export default {
     map,
@@ -21,5 +22,6 @@ export default {
     explorer,
     feedback,
     chatbox,
-    favorites
+    favorites,
+    settings
 } 
