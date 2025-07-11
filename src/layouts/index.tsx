@@ -6,6 +6,7 @@ import { useEffect, useState, createContext } from "react";
 import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
+import { useAuthStore } from "@/models/useAuth";
 
 const API_URL = getAPIUrl();
 
@@ -15,7 +16,12 @@ const FullNavLayout = () => {
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
-    
+    const { verifyAuth } = useAuthStore();
+
+    useEffect(() => {
+        verifyAuth();
+    }, []);
+
     const handleAddToFavorites = async (molecule: any) => {
         // Use SMILES as unique identifier for the molecule
         const smiles = molecule.smiles;

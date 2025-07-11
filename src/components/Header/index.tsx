@@ -14,7 +14,7 @@ const Header = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
-    const { logout } = useAuthStore();
+    const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
 
     useEffect(() => {
@@ -86,8 +86,8 @@ const Header = () => {
                             </div>
                             <div className="user-details">
                                 <div className="user-name-container">
-                                    <div className="user-email">Yuhe.Chen@ses.ai</div>
-                                    <span className="subscription-badge">Explorer</span>
+                                    <div className="user-email">{userName}</div>
+                                    <span className="subscription-badge">{permissions}</span>
                                 </div>
                             </div>
                         </div>

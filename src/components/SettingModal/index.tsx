@@ -1,10 +1,20 @@
 import { useState, useImperativeHandle, forwardRef } from "react";
+import { useAuthStore } from "@/models/useAuth";
 import './settingModal.css';
+import { useTranslation } from "react-i18next";
 
 const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const [activeTab, setActiveTab] = useState('account');
-    
+    const { userName, userPermissions: permissions, userInfo } = useAuthStore();
+    const { i18n } = useTranslation();
+    const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+
+    const languageChange = (language: string) => {
+        i18n.changeLanguage(language);
+        setCurrentLanguage(language);
+    }
+
     useImperativeHandle(ref, () => ({
         show: () => setShow(true),
         hide: () => setShow(false),
@@ -24,10 +34,10 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="user-info-left">
                         <div className="user-info-meta">
                           <div className="user-info-name-wrapper">
-                            <div className="user-info-name">Yuhe.Chen</div>
-                            <span className="subscription-badge">Explorer</span>
+                            <div className="user-info-name">{userName}</div>
+                            <span className="subscription-badge">{permissions}</span>
                           </div>
-                          <div className="user-info-registered">注册时间: 2025-05-01</div>
+                            <div className="user-info-registered">注册时间: {userInfo.created_at}</div>
                         </div>
                       </div>
                     </div>
@@ -37,13 +47,13 @@ const SettingModal = forwardRef((props, ref) => {
                         <div className="settings-item-main">
                           <div className="settings-item-title">姓名</div>
                         </div>
-                        <div className="settings-item-action">Yuhe.Chen <a href="#" className="settings-link">修改</a></div>
+                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">修改</a></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
                           <div className="settings-item-title">注册邮箱</div>
                         </div>
-                        <div className="settings-item-action">Yuhe.Chen@ses.ai <a href="#" className="settings-link">修改</a></div>
+                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">修改</a></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
@@ -88,10 +98,10 @@ const SettingModal = forwardRef((props, ref) => {
                           <div className="settings-item-desc">更改用户界面的语言。</div>
                         </div>
                         <div className="settings-item-action">
-                          <select className="lang-select">
-                            <option>中文</option>
-                            <option>English (US)</option>
-                            <option>한국어</option>
+                          <select className="lang-select" value={currentLanguage} onChange={(e) => languageChange(e.target.value)}>
+                            <option value="zh">中文</option>
+                            <option value="en">English (US)</option>
+                            <option value="ko">한국어</option>
                           </select>
                         </div>
                       </div>

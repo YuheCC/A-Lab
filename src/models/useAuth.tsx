@@ -11,6 +11,7 @@ interface AuthState {
     userName: string | null;
     token: string | null;
     error: string | null;
+    userInfo: any | null;
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
@@ -28,10 +29,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     userName: null,
     token: null,
     error: null,
-
+    userInfo: null,
     verifyAuth: async () => {
         const token = localStorage.getItem('token');
-        const permissions = localStorage.getItem('permissions') || 'research';
+        const permissions = localStorage.getItem('permissions') || '';
         set({ userPermissions: permissions, isLoading: true });
 
         if (!token) {
@@ -40,11 +41,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isAuthenticated: false,
                 initialAuthLoaded: true,
             });
+            window.location.href = '/login';
             return;
         }
 
         try {
-            const data: any = await verifyService();
+            const response: any = await verifyService();
+            const data = response.data;
 
             localStorage.setItem('username', data.username);
             localStorage.setItem('permissions', data.permissions || 'research');
@@ -54,7 +57,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 userName: data.username,
                 userPermissions: data.permissions || 'research',
                 isLoading: false,
-                initialAuthLoaded: true
+                initialAuthLoaded: true,
+                userInfo: data
             });
         } catch (err) {
             console.error('Auth verification error:', err);
@@ -82,7 +86,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isLoading: false,
                 token: data.access_token,
                 userName: data.username,
-                userPermissions: data.permissions || 'research',
+                userPermissions: data.permissions || '',
+                userInfo: data
             });
 
             localStorage.setItem('token', data.access_token);
@@ -110,7 +115,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             isLoading: false,
             error: null
         });
-        window.location.href = '/'; // Redirect to login page
+        window.location.href = '/login'; // Redirect to login page
     },
 
     register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {
