@@ -2,6 +2,8 @@ import { useState, useImperativeHandle, forwardRef } from "react";
 import { useAuthStore } from "@/models/useAuth";
 import './settingModal.css';
 import { useTranslation } from "react-i18next";
+import { verifyRedeemCode } from "@/services/auth";
+import { useMessage } from "@/components/MessageProvider";
 
 const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
@@ -9,10 +11,64 @@ const SettingModal = forwardRef((props, ref) => {
     const { userName, userPermissions: permissions, userInfo } = useAuthStore();
     const { i18n, t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+    const [showRedeemModal, setShowRedeemModal] = useState(false);
+    const [redeemCode, setRedeemCode] = useState('');
+    const [redeemError, setRedeemError] = useState('');
+    const [isRedeeming, setIsRedeeming] = useState(false);
+    const { success, error, warning, info } = useMessage();
 
     const languageChange = (language: string) => {
         i18n.changeLanguage(language);
         setCurrentLanguage(language);
+    }
+
+    const handleRedeemClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setShowRedeemModal(true);
+        setRedeemCode('');
+        setRedeemError('');
+    }
+
+    const handleRedeemSubmit = async () => {
+        if (!redeemCode.trim()) {
+            setRedeemError(t('settings.redeem.empty'));
+            return;
+        }
+
+        // 简单的格式验证（假设团队码格式为 8-16 位字母数字）
+        // if (!/^[A-Za-z0-9]{8,16}$/.test(redeemCode.trim())) {
+        //     setRedeemError(t('settings.redeem.invalid'));
+        //     return;
+        // }
+
+        setIsRedeeming(true);
+        setRedeemError('');
+
+        try {
+            const response: any = await verifyRedeemCode({
+                voucher: redeemCode,
+            });
+            const { data } = response;
+            if(response.ok === false) {
+                error(data.detail || t('settings.redeem.error'));
+                return;
+            }
+            setShowRedeemModal(false);
+            setRedeemCode('');
+            success(t('settings.redeem.success'));
+            window.location.reload();
+
+        } catch (err: any) {
+            error(err.detail || t('settings.redeem.error'));
+        } finally {
+            setIsRedeeming(false);
+        }
+    }
+
+    const handleRedeemCancel = () => {
+        setShowRedeemModal(false);
+        setRedeemCode('');
+        setRedeemError('');
     }
 
     useImperativeHandle(ref, () => ({
@@ -71,7 +127,7 @@ const SettingModal = forwardRef((props, ref) => {
                           <div className="settings-item-title">{t('settings.subscription.currentPlan')}</div>
                         </div>
                         <div className="settings-item-action">
-                          <a href="#" className="redeem-team-code-link">{t('settings.subscription.redeemTeamCode')}</a>
+                          <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
                           <span className="subscription-badge">{permissions}</span>
                         </div>
                       </div>
@@ -122,6 +178,54 @@ const SettingModal = forwardRef((props, ref) => {
                   </svg>
                 </span>
               </div>
+              
+              {/* Redeem Code Modal */}
+              {showRedeemModal && (
+                <div className="redeem-modal-overlay">
+                  <div className="redeem-modal-content">
+                    <div className="redeem-modal-header">
+                      <h3 className="redeem-modal-title">{t('settings.redeem.title')}</h3>
+                      <button className="redeem-modal-close" onClick={handleRedeemCancel}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <line x1="18" y1="6" x2="6" y2="18" stroke="#999" strokeWidth="2"/>
+                          <line x1="6" y1="6" x2="18" y2="18" stroke="#999" strokeWidth="2"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="redeem-modal-body">
+                      <p className="redeem-modal-description">{t('settings.redeem.description')}</p>
+                      <div className="redeem-input-group">
+                        <input
+                          type="text"
+                          className="redeem-input"
+                          placeholder={t('settings.redeem.placeholder')}
+                          value={redeemCode}
+                          onChange={(e) => setRedeemCode(e.target.value)}
+                          maxLength={16}
+                          disabled={isRedeeming}
+                        />
+                        {redeemError && <div className="redeem-error">{redeemError}</div>}
+                      </div>
+                      <div className="redeem-actions">
+                        <button 
+                          className="redeem-btn redeem-btn-cancel" 
+                          onClick={handleRedeemCancel}
+                          disabled={isRedeeming}
+                        >
+                          {t('settings.redeem.cancel')}
+                        </button>
+                        <button 
+                          className="redeem-btn redeem-btn-confirm" 
+                          onClick={handleRedeemSubmit}
+                          disabled={isRedeeming || !redeemCode.trim()}
+                        >
+                          {isRedeeming ? '...' : t('settings.redeem.confirm')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
     );
 });

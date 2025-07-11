@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
-import { forgotPassword } from '@/services/auth';
+import { sendForgotPasswordCode as forgotPassword } from '@/services/auth';
 
 // Forgot Password component for password reset
 const ForgotPasswordPage = () => {

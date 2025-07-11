@@ -34,5 +34,16 @@ export default {
     },
     common: {
         close: '닫기'
+    },
+    redeem: {
+        title: '팀 코드 사용',
+        description: '구독을 사용하려면 팀 코드를 입력하세요',
+        placeholder: '팀 코드 입력',
+        confirm: '사용 확인',
+        cancel: '취소',
+        success: '사용 성공!',
+        error: '사용 실패, 팀 코드를 확인해주세요',
+        empty: '팀 코드를 입력하세요',
+        invalid: '잘못된 팀 코드 형식'
     }
 }; 

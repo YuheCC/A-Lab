@@ -173,3 +173,151 @@
   .settings-panel {
     display: none !important;
   }
+
+  /* Redeem Code Modal Styles */
+  .redeem-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+  }
+
+  .redeem-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .redeem-modal-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .redeem-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .redeem-modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .redeem-modal-close:hover {
+    background: #f5f5f5;
+  }
+
+  .redeem-modal-body {
+    padding: 24px;
+  }
+
+  .redeem-modal-description {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .redeem-input-group {
+    margin-bottom: 24px;
+  }
+
+  .redeem-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .redeem-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  .redeem-input:disabled {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+    color: #6c757d;
+  }
+
+  .redeem-error {
+    margin-top: 8px;
+    color: #dc3545;
+    font-size: 14px;
+  }
+
+  .redeem-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  .redeem-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+  }
+
+  .redeem-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .redeem-btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+  }
+
+  .redeem-btn-cancel:hover:not(:disabled) {
+    background: #e9ecef;
+    border-color: #adb5bd;
+  }
+
+  .redeem-btn-confirm {
+    background: #007bff;
+    color: white;
+  }
+
+  .redeem-btn-confirm:hover:not(:disabled) {
+    background: #0056b3;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  }
+
+  .redeem-btn-confirm:disabled {
+    background: #6c757d;
+  }

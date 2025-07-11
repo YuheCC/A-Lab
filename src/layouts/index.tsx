@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
+import { MessageProvider } from "@/components/MessageProvider";
 
 const API_URL = getAPIUrl();
 
@@ -126,12 +127,14 @@ const FullNavLayout = () => {
         fetchData();
     }, []);
     return (
-        <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
-            <Header />
-            <div className='main-container'>
-                <Outlet />
-            </div>
-        </FavoriteContext.Provider>
+        <MessageProvider>
+            <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
+                <Header />
+                <div className='main-container'>
+                    <Outlet />
+                </div>
+            </FavoriteContext.Provider>
+        </MessageProvider>
     );
 }
 

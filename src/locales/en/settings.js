@@ -34,5 +34,16 @@ export default {
     },
     common: {
         close: 'Close'
+    },
+    redeem: {
+        title: 'Redeem Team Code',
+        description: 'Please enter your team code to redeem subscription',
+        placeholder: 'Enter team code',
+        confirm: 'Confirm Redeem',
+        cancel: 'Cancel',
+        success: 'Redeem successful!',
+        error: 'Redeem failed, please check your team code',
+        empty: 'Please enter team code',
+        invalid: 'Invalid team code format'
     }
 }; 

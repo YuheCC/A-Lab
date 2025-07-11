@@ -34,5 +34,16 @@ export default {
     },
     common: {
         close: '关闭'
+    },
+    redeem: {
+        title: '兑换团队码',
+        description: '请输入您的团队码以兑换订阅',
+        placeholder: '请输入团队码',
+        confirm: '确认兑换',
+        cancel: '取消',
+        success: '兑换成功！',
+        error: '兑换失败，请检查您的团队码',
+        empty: '请输入团队码',
+        invalid: '团队码格式不正确'
     }
 }; 
