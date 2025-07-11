@@ -98,7 +98,9 @@ export default {
       email: '이메일 주소',
       emailPlaceholder: '이메일 주소',
       processing: '처리 중...',
-      resetPassword: '비밀번호 재설정'
+      sendResetPassword: '비밀번호 재설정 이메일 발송',
+      newPassword: '새 비밀번호',
+      newPasswordPlaceholder: '새 비밀번호'
     },
     messages: {
       defaultSuccess: '입력하신 정보가 저희 기록과 일치하면 비밀번호 재설정 이메일이 발송됩니다.',
@@ -152,6 +154,29 @@ export default {
     },
     switch: {
       backToSettings: '설정으로 돌아가기'
+    }
+  },
+  verifyForgotPassword: {
+    header: {
+      title: '비밀번호 찾기 인증',
+      subtitle: '비밀번호를 재설정하기 위해 받으신 인증 코드를 입력해주세요'
+    },
+    form: {
+      code: '인증 코드',
+      codePlaceholder: '6자리 코드를 입력하세요',
+      verify: '확인',
+      processing: '확인 중...'
+    },
+    messages: {
+      success: '인증 성공!',
+      failed: '확인 실패, 코드가 올바른지 확인해주세요',
+      expired: '인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요',
+      invalidCode: '잘못된 코드 형식입니다. 6자리 숫자를 입력해주세요',
+      invalidLink: '유효하지 않은 인증 링크',
+      redirecting: '로그인 페이지로 이동 중...'
+    },
+    switch: {
+      backToLogin: '로그인으로 돌아가기'
     }
   }
 }; 

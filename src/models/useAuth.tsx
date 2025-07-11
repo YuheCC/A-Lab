@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Navigate, useLocation } from 'umi';
 import { useEffect } from 'react';
-import { login as loginService, register as registerService, verify as verifyService, verifyCode as verifyCodeService } from '@/services/auth';
+import { login as loginService, register as registerService, verify as verifyService, verifyCode as verifyCodeService, verifyForgotPasswordCode as verifyForgotPasswordCodeService } from '@/services/auth';
 
 interface AuthState {
     initialAuthLoaded: boolean;
@@ -15,6 +15,7 @@ interface AuthState {
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
+    verifyForgotPassword: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     logout: () => Promise<void>;
     verifyAuth: () => Promise<void>;
     hasPermission: (permissionsList?: string[]) => boolean;
@@ -145,6 +146,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const response: any = await verifyCodeService({ verify_id, code });
+            const data = response.data;
+
+            set({
+                isLoading: false,
+                error: null,
+            })
+
+            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+
+        } catch (error) {
+            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            set({
+                error: errorMessage,
+                isLoading: false
+            });
+            return { success: false, error: errorMessage }
+        }
+    },
+
+    verifyForgotPassword: async ({ verify_id, code }: { verify_id: string, code: string }) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response: any = await verifyForgotPasswordCodeService({ verify_id, code });
             const data = response.data;
 
             set({

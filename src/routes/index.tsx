@@ -63,4 +63,9 @@ export default  [
         component: "Login/verifyEducation",
         layout: false,
     },
+    {
+        path: "/verify-forgot-password",
+        component: "Login/verifyForgotPassword",
+        layout: false,
+    },
 ]

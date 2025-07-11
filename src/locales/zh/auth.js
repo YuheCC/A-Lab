@@ -98,7 +98,9 @@ export default {
       email: '邮箱地址',
       emailPlaceholder: '邮箱地址',
       processing: '处理中...',
-      resetPassword: '重置密码'
+      sendResetPassword: '发送重置密码邮件',
+      newPassword: '新密码',
+      newPasswordPlaceholder: '新密码'
     },
     messages: {
       defaultSuccess: '如果您的信息与我们的记录匹配，将发送密码重置邮件。',
@@ -152,6 +154,29 @@ export default {
     },
     switch: {
       backToSettings: '返回设置'
+    }
+  },
+  verifyForgotPassword: {
+    header: {
+      title: '验证忘记密码',
+      subtitle: '请输入您收到的验证码以重置密码'
+    },
+    form: {
+      code: '验证码',
+      codePlaceholder: '请输入6位验证码',
+      verify: '验证',
+      processing: '验证中...'
+    },
+    messages: {
+      success: '验证成功！',
+      failed: '验证失败，请检查验证码是否正确',
+      expired: '验证码已过期，请重新获取',
+      invalidCode: '验证码格式不正确，请输入6位数字',
+      invalidLink: '无效的验证链接',
+      redirecting: '正在跳转到登录页面...'
+    },
+    switch: {
+      backToLogin: '返回登录'
     }
   }
 }; 

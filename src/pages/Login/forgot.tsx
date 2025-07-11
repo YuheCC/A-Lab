@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
-import { sendForgotPasswordCode as forgotPassword } from '@/services/auth';
+import { sendForgotPasswordCode } from '@/services/auth';
 
 // Forgot Password component for password reset
 const ForgotPasswordPage = () => {
@@ -9,6 +9,7 @@ const ForgotPasswordPage = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,17 +18,6 @@ const ForgotPasswordPage = () => {
   // Use logo from public folder
   const logo = '/logo-ses-ai.svg';
 
-  // Add useEffect to redirect after successful password reset request
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        navigate('/login');
-      }, 5000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [success, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -35,18 +25,22 @@ const ForgotPasswordPage = () => {
     setSuccess('');
 
     try {
-      const response: any = await forgotPassword({
-        first_name: firstName,
-        last_name: lastName,
+      const response: any = await sendForgotPasswordCode({
         email: email,
+        password: newPassword,
       });
 
-      setSuccess(response.message || t('auth.forgotPassword.messages.defaultSuccess'));
+      if(response.ok === false) {
+        setError(response?.data?.detail || t('auth.forgotPassword.messages.defaultError'));
+        return;
+      }
 
       // Clear form after successful submission
       setFirstName('');
       setLastName('');
       setEmail('');
+
+      navigate(`/verify-forgot-password?id=${response?.data?.verify_id}`);
     }
     catch (err: any) {
       console.error('Password reset request error:', err);
@@ -62,37 +56,12 @@ const ForgotPasswordPage = () => {
         <div className="auth-header">
           <img src={logo} alt={t('auth.logo.alt')} className="auth-logo" />
           <h2>{t('auth.forgotPassword.header.title')}</h2>
-          <p>{t('auth.forgotPassword.header.subtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="firstName">{t('auth.forgotPassword.form.firstName')}</label>
-            <input
-              type="text"
-              id="firstName"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder={t('auth.forgotPassword.form.firstName')}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="lastName">{t('auth.forgotPassword.form.lastName')}</label>
-            <input
-              type="text"
-              id="lastName"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder={t('auth.forgotPassword.form.lastName')}
-              required
-            />
-          </div>
-
           <div className="form-group">
             <label htmlFor="email">{t('auth.forgotPassword.form.email')}</label>
             <input
@@ -105,12 +74,24 @@ const ForgotPasswordPage = () => {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="email">{t('auth.forgotPassword.form.newPassword')}</label>
+            <input
+              type="password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder={t('auth.forgotPassword.form.newPasswordPlaceholder')}
+              required
+            />
+          </div>
+
           <button
             type="submit"
             className="auth-button"
             disabled={loading}
           >
-            {loading ? t('auth.forgotPassword.form.processing') : t('auth.forgotPassword.form.resetPassword')}
+            {loading ? t('auth.forgotPassword.form.processing') : t('auth.forgotPassword.form.sendResetPassword')}
           </button>
         </form>
 

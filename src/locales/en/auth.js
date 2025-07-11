@@ -98,7 +98,9 @@ export default {
       email: 'Email Address',
       emailPlaceholder: 'Email address',
       processing: 'Processing...',
-      resetPassword: 'Reset Password'
+      sendResetPassword: 'Send Reset Password Email',
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'New password'
     },
     messages: {
       defaultSuccess: 'If your information matches our records, a password reset email will be sent.',
@@ -152,6 +154,29 @@ export default {
     },
     switch: {
       backToSettings: 'Back to Settings'
+    }
+  },
+  verifyForgotPassword: {
+    header: {
+      title: 'Verify Forgot Password',
+      subtitle: 'Please enter the verification code you received to reset your password'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to login page...'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
     }
   }
 }; 
