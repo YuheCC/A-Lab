@@ -15,7 +15,7 @@ import { useChatStore, useActiveChatData } from './providers/chat.js';
 import { useShallow } from 'zustand/react/shallow';
 import MoleculeFeedbackBox from './components/MoleculeFeedbackBox/index.js';
 import CustomButton from './components/CustomButton/index.js';
-import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { ChatHistorySidebar } from './components/ChatHistorySidebar/index.js';
 import { InlineMoleculeRenderer } from './components/InlineMoleculeRenderer.js';
 
@@ -39,25 +39,6 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
       </ReactMarkdown>
     );
   }
-};
-
-// Dropdown section for displaying supplemental information
-const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="extra-data-section">
-      <div className="extra-data-header" onClick={() => setOpen(!open)}>
-        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        <span>{title}</span>
-      </div>
-      {open && (
-        <div className="extra-data-content">
-          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
-        </div>
-      )}
-    </div>
-  );
 };
 
 // New ChatInput component added for memoized chat input rendering
@@ -272,7 +253,6 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
   
   // Add favorites state - remove unused states
   const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
-  const [molTypeSelections, setMolTypeSelections] = useState({});
 
   useEffect(() => {
     // If awaitingClarify is true, set useMultiAgent to true
@@ -303,24 +283,12 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
 
   // Define handlers for llm response thumbs feedback
   const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
-    setFeedbackData({ 
-      isPositive: true, 
-      inputContent: inputContent, 
-      responseContent: responseContent, 
-      contextContent1,
-      queryType: useMultiAgent ? "deep_space" : "normal_ask"
-    });
+    setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
   };
 
   const handleThumbsDown = (inputContent, responseContent, contextContent1) => {
-    setFeedbackData({ 
-      isPositive: false, 
-      inputContent: inputContent, 
-      responseContent: responseContent, 
-      contextContent1,
-      queryType: useMultiAgent ? "deep_space" : "normal_ask"
-    });
+    setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, contextContent1 });
     setShowFeedbackBox(true);
   };
 
@@ -395,34 +363,49 @@ const handleFindSimilarMolecules = async (details) => {
       const token = localStorage.getItem('token');
       // Determine if user is high-tier
       const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
-      // Extract original user query and LLM response
-      const originalQuery = isHighTier
-        ? (Array.isArray(activeFindMessage?.inputs)
-            ? (activeFindMessage.inputs.filter(m => m.role === "user").pop() || {}).content
-            : activeFindMessage?.inputs)
-        : undefined;
-      const llmResponse = isHighTier ? activeFindMessage?.content : undefined;
+      
+      // Extract original user query and LLM response from message history
+      let originalQuery = undefined;
+      let llmResponse = undefined;
+      
+      if (isHighTier && activeFindMessage) {
+        // Find the index of the message containing molecules
+        const messageIndex = messages.findIndex(msg => msg === activeFindMessage);
+        
+        // Get the user query that led to this response
+        // Look backwards for the most recent user message
+        for (let i = messageIndex - 1; i >= 0; i--) {
+          if (messages[i].role === 'user') {
+            originalQuery = messages[i].content;
+            break;
+          }
+        }
+        
+        // Get the assistant's response content
+        llmResponse = activeFindMessage.content;
+      }
+      
       // Build selected molecule string if high-tier
       const selectedMoleculeStr = isHighTier
         ? [
-            `Name: ${details.name}`,
+            `Name: ${details.name || 'N/A'}`,
             `SMILES: ${details.SMILES}`,
-            `Molecular weight: ${details.MOLECULAR_WEIGHT}`,
-            `HOMO eV: ${details.HOMO}`,
-            `LUMO eV: ${details.LUMO}`,
-            `ESP Max: ${details.ESP_MAX}`,
-            `ESP Min: ${details.ESP_MIN}`,
-            `Functional groups: ${JSON.stringify(details.FUNCTIONAL_GROUPS)}`,
-            `Predicted MP: ${details.PREDICTED_MP} °C`,
-            `Predicted BP: ${details.PREDICTED_BP} °C`
+            `Molecular weight: ${details.molecular_weight || 'N/A'}`,
+            `HOMO eV: ${details.HOMO_eV || 'N/A'}`,
+            `LUMO eV: ${details.LUMO_eV || 'N/A'}`,
+            `ESP Max: ${details.ESP_max_eV || 'N/A'}`,
+            `ESP Min: ${details.ESP_min_eV || 'N/A'}`,
+            `Functional groups: ${JSON.stringify(details.functional_groups || [])}`,
+            `Predicted MP: ${details.predicted_MP_celsius || 'N/A'} °C`,
+            `Predicted BP: ${details.predicted_BP_celsius || 'N/A'} °C`
           ].join("\n")
         : undefined;
+      
       // Construct request payload
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
-        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
       const response = await authFetch(
@@ -651,7 +634,6 @@ const handleFindSimilarMolecules = async (details) => {
           sources  : data.source_html,
           molText  : data.molecule_text,
           molecules: data.molecules,
-          extraData: data.extra_data || null,
         };
 
         addMessage(llmMessage, effectiveChatId);
@@ -690,10 +672,6 @@ const handleFindSimilarMolecules = async (details) => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleMolTypeChange = (smiles, type) => {
-    setMolTypeSelections(prev => ({ ...prev, [smiles]: type }));
   };
 
   // Function to handle adding molecule to favorites
@@ -852,18 +830,6 @@ const handleFindSimilarMolecules = async (details) => {
                 style={{ whiteSpace: 'pre-wrap' }}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
-                    <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData).map(([key, value]) => (
-                        <ExtraDataSection
-                          key={key}
-                          title={key}
-                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                          onMoleculeClick={handleMoleculeClick}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 {/* Add thumbs buttons for feedback */}
@@ -1001,7 +967,7 @@ const handleFindSimilarMolecules = async (details) => {
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   {
-                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
@@ -1024,25 +990,13 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       Add To Favorites
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%' }}>
-                      <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
-                        fullWidth
-                        loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
-                        loadingText={"Searching for friends"}
-                        size="small" style={{ flexGrow: 1 }}>
-                        Find Similar Molecules
-                      </CustomButton>
-                      <select
-                        value={molTypeSelections[details.SMILES] || ""}
-                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                      >
-                        <option value="" disabled hidden>Molecule Type</option>
-                        <option value="solvent">Solvent</option>
-                        <option value="diluent">Diluent</option>
-                        <option value="additive">Additive</option>
-                      </select>
-                    </div>
+                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
+                      fullWidth
+                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
+                      loadingText={"Searching for friends"}
+                      size="small">
+                      Find Similar Molecules
+                    </CustomButton>
                     {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
@@ -1087,7 +1041,7 @@ const handleFindSimilarMolecules = async (details) => {
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                 },
                 {
-                  label: 'Combustion Enthalpy', value: selectedMolecule.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
+                  label: 'Combustion Enthalpy', value: selectedMolecule.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                 },
                 { label: 'HOMO', value: selectedMolecule.HOMO_eV, span: 1, suffix: ' eV' },
@@ -1110,25 +1064,13 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     Add To Favorites
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%' }}>
-                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
-                      fullWidth
-                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
-                      loadingText={"Searching for friends"}
-                      size="small" style={{ flexGrow: 1 }}>
-                      Find Similar Molecules
-                    </CustomButton>
-                    <select
-                      value={molTypeSelections[selectedMolecule.SMILES] || ""}
-                      onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
-                      style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                    >
-                      <option value="" disabled hidden>Molecule Type</option>
-                      <option value="solvent">Solvent</option>
-                      <option value="diluent">Diluent</option>
-                      <option value="additive">Additive</option>
-                    </select>
-                  </div>
+                  <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
+                    fullWidth
+                    loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
+                    loadingText={"Searching for friends"}
+                    size="small">
+                    Find Similar Molecules
+                  </CustomButton>
                   {selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
@@ -1191,7 +1133,7 @@ const handleFindSimilarMolecules = async (details) => {
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   {
-                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV || '0.00', span: 2, suffix: ' eV',
+                    label: 'Combustion Enthalpy', value: details.COMBUSTION_ENTHALPY_EV, span: 2, suffix: ' eV',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                   },
                   { label: 'HOMO', value: details.HOMO_eV, span: 1, suffix: ' eV' },
@@ -1222,7 +1164,6 @@ const handleFindSimilarMolecules = async (details) => {
                     contextContent1={contextObject.contextContent1}
                     contextContent2={contextObject.contextContent2}
                     contextContent3={contextObject.contextContent3}
-                    queryType={useMultiAgent ? "deep_space" : "normal_ask"}
                     onClose={() => { }}
                   />
                   {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
@@ -1243,7 +1184,6 @@ const handleFindSimilarMolecules = async (details) => {
           inputContent={feedbackData.inputContent}
           responseContent={feedbackData.responseContent}
           contextContent1={feedbackData.contextContent1}
-          queryType={feedbackData.queryType}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}
