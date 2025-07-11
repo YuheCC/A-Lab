@@ -448,6 +448,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                                                     <MoleculeFeedbackBox
                                                         molecule={molecule}
                                                         lastSearch={lastSearch}
+                                                        queryType="normal_ask"
                                                         onClose={() => { }}
                                                     />
                                                     {molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {

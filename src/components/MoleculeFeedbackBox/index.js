@@ -6,7 +6,7 @@ import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3 }) => {
+export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [submitting, setSubmitting] = useState(false);
@@ -45,6 +45,7 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
           contextContent3,
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
+          queryType: queryType || 'normal_ask',
         }),
       });
 

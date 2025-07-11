@@ -303,12 +303,24 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
 
   // Define handlers for llm response thumbs feedback
   const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
-    setFeedbackData({ isPositive: true, inputContent: inputContent, responseContent: responseContent, contextContent1 });
+    setFeedbackData({ 
+      isPositive: true, 
+      inputContent: inputContent, 
+      responseContent: responseContent, 
+      contextContent1,
+      queryType: useMultiAgent ? "deep_space" : "normal_ask"
+    });
     setShowFeedbackBox(true);
   };
 
   const handleThumbsDown = (inputContent, responseContent, contextContent1) => {
-    setFeedbackData({ isPositive: false, inputContent: inputContent, responseContent: responseContent, contextContent1 });
+    setFeedbackData({ 
+      isPositive: false, 
+      inputContent: inputContent, 
+      responseContent: responseContent, 
+      contextContent1,
+      queryType: useMultiAgent ? "deep_space" : "normal_ask"
+    });
     setShowFeedbackBox(true);
   };
 
@@ -1210,6 +1222,7 @@ const handleFindSimilarMolecules = async (details) => {
                     contextContent1={contextObject.contextContent1}
                     contextContent2={contextObject.contextContent2}
                     contextContent3={contextObject.contextContent3}
+                    queryType={useMultiAgent ? "deep_space" : "normal_ask"}
                     onClose={() => { }}
                   />
                   {details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
@@ -1230,6 +1243,7 @@ const handleFindSimilarMolecules = async (details) => {
           inputContent={feedbackData.inputContent}
           responseContent={feedbackData.responseContent}
           contextContent1={feedbackData.contextContent1}
+          queryType={feedbackData.queryType}
           onClose={() => setShowFeedbackBox(false)}
         />
       )}
