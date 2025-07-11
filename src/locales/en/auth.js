@@ -130,5 +130,28 @@ export default {
       defaultError: 'Password reset failed',
       defaultSuccess: 'Password reset successfully'
     }
+  },
+  verifyEducation: {
+    header: {
+      title: 'Verify Education Identity',
+      subtitle: 'Please enter the verification code you received to verify your education identity'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Education identity verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to settings page...'
+    },
+    switch: {
+      backToSettings: 'Back to Settings'
+    }
   }
 }; 

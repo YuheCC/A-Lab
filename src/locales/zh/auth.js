@@ -130,5 +130,28 @@ export default {
       defaultError: '密码重置失败',
       defaultSuccess: '密码重置成功'
     }
+  },
+  verifyEducation: {
+    header: {
+      title: '验证教育身份',
+      subtitle: '请输入您收到的验证码以验证您的教育身份'
+    },
+    form: {
+      code: '验证码',
+      codePlaceholder: '请输入6位验证码',
+      verify: '验证',
+      processing: '验证中...'
+    },
+    messages: {
+      success: '教育身份验证成功！',
+      failed: '验证失败，请检查验证码是否正确',
+      expired: '验证码已过期，请重新获取',
+      invalidCode: '验证码格式不正确，请输入6位数字',
+      invalidLink: '无效的验证链接',
+      redirecting: '正在跳转到设置页面...'
+    },
+    switch: {
+      backToSettings: '返回设置'
+    }
   }
 }; 

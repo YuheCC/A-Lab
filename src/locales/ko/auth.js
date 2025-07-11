@@ -130,5 +130,28 @@ export default {
       defaultError: '비밀번호 재설정에 실패했습니다',
       defaultSuccess: '비밀번호가 성공적으로 재설정되었습니다'
     }
+  },
+  verifyEducation: {
+    header: {
+      title: '교육 신원 확인',
+      subtitle: '교육 신원을 확인하기 위해 받으신 인증 코드를 입력해주세요'
+    },
+    form: {
+      code: '인증 코드',
+      codePlaceholder: '6자리 코드를 입력하세요',
+      verify: '확인',
+      processing: '확인 중...'
+    },
+    messages: {
+      success: '교육 신원 확인 성공!',
+      failed: '확인 실패, 코드가 올바른지 확인해주세요',
+      expired: '인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요',
+      invalidCode: '잘못된 코드 형식입니다. 6자리 숫자를 입력해주세요',
+      invalidLink: '유효하지 않은 인증 링크',
+      redirecting: '설정 페이지로 이동 중...'
+    },
+    switch: {
+      backToSettings: '설정으로 돌아가기'
+    }
   }
 }; 

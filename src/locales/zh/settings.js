@@ -45,5 +45,17 @@ export default {
         error: '兑换失败，请检查您的团队码',
         empty: '请输入团队码',
         invalid: '团队码格式不正确'
+    },
+    education: {
+        title: '验证教育身份',
+        description: '请输入您的教育邮箱地址，我们将发送验证码以验证您的教育身份',
+        placeholder: '请输入您的教育邮箱',
+        confirm: '发送验证码',
+        cancel: '取消',
+        success: '验证码已发送，请查收邮件',
+        error: '发送失败，请检查您的邮箱地址',
+        empty: '请输入邮箱地址',
+        invalid: '请输入有效的邮箱地址',
+        sending: '发送中...'
     }
 }; 

@@ -45,5 +45,17 @@ export default {
         error: 'Redeem failed, please check your team code',
         empty: 'Please enter team code',
         invalid: 'Invalid team code format'
+    },
+    education: {
+        title: 'Verify Education Identity',
+        description: 'Please enter your education email address, we will send a verification code to verify your education identity',
+        placeholder: 'Enter your education email',
+        confirm: 'Send Verification Code',
+        cancel: 'Cancel',
+        success: 'Verification code sent, please check your email',
+        error: 'Send failed, please check your email address',
+        empty: 'Please enter email address',
+        invalid: 'Please enter a valid email address',
+        sending: 'Sending...'
     }
 }; 

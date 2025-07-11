@@ -45,5 +45,17 @@ export default {
         error: '사용 실패, 팀 코드를 확인해주세요',
         empty: '팀 코드를 입력하세요',
         invalid: '잘못된 팀 코드 형식'
+    },
+    education: {
+        title: '교육 신원 확인',
+        description: '교육 신원을 확인하기 위해 교육 이메일 주소를 입력하세요. 인증 코드를 전송해 드립니다',
+        placeholder: '교육 이메일 주소 입력',
+        confirm: '인증 코드 전송',
+        cancel: '취소',
+        success: '인증 코드가 전송되었습니다. 이메일을 확인하세요',
+        error: '전송 실패, 이메일 주소를 확인해주세요',
+        empty: '이메일 주소를 입력하세요',
+        invalid: '유효한 이메일 주소를 입력하세요',
+        sending: '전송 중...'
     }
 }; 

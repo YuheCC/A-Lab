@@ -58,4 +58,9 @@ export default  [
         component: "Login/verifyCode",
         layout: false,
     },
+    {
+        path: "/verify-education",
+        component: "Login/verifyEducation",
+        layout: false,
+    },
 ]
