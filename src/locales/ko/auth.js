@@ -36,6 +36,29 @@ export default {
     verificationSent: '인증 이메일이 발송되었습니다.',
     emailAddressDenied: "Molecular Universe 서비스를 제공할 수 없습니다. 이유: 당신 또는 관련 조직이 미국 무역 부, 국무부 또는 재무부의（U.S. Department of Commerce,U.S. Department of State,U.S. Department of the Treasury） 일부 목록（Entity List）에 포함되어 있습니다."
   },
+  verifyCode: {
+    header: {
+      title: '인증 코드 확인',
+      subtitle: '받으신 인증 코드를 입력해주세요'
+    },
+    form: {
+      code: '인증 코드',
+      codePlaceholder: '6자리 코드를 입력하세요',
+      verify: '확인',
+      processing: '확인 중...'
+    },
+    messages: {
+      success: '인증 성공!',
+      failed: '인증 실패, 코드가 올바른지 확인해주세요',
+      expired: '인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요',
+      invalidCode: '잘못된 코드 형식입니다. 6자리 숫자를 입력해주세요',
+      invalidLink: '유효하지 않은 인증 링크',
+      redirecting: '로그인 페이지로 이동 중...'
+    },
+    switch: {
+      backToLogin: '로그인으로 돌아가기'
+    }
+  },
   logo: {
     alt: 'SES AI 로고'
   },

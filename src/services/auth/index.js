@@ -65,3 +65,10 @@ export async function verify() {
         method: "GET",
     });
 }
+
+export async function verifyCode(params) {
+    return request('/verify-register-code', {
+        method: "GET",
+        params,
+    });
+}

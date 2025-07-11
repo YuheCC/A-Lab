@@ -37,12 +37,8 @@ const RegisterPage = () => {
       last_name: lastName,
       password,
       organization_name: organizationName
-    }).catch((error) => {
-      console.log(error)
-      setError(error.message)
-      return;
-    });
-    console.log(response)
+    })
+
     if (!response.success) {
       const errorMessage = response.message?.toString() || '';
       const showMessage = errorMessage.includes('denied entity list') ? t('auth.messages.emailAddressDenied') : errorMessage;
@@ -52,7 +48,7 @@ const RegisterPage = () => {
     }
 
     alert(response.message || t('auth.messages.verificationSent'));
-    navigate('/login');
+    navigate('/verify-code?id=' + response.data.verify_id);
   };
 
   return (

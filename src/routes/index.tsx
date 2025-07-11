@@ -53,4 +53,9 @@ export default  [
         component: "Login/forgot",
         layout: false,
     },
+    {
+        path: "/verify-code",
+        component: "Login/verifyCode",
+        layout: false,
+    },
 ]

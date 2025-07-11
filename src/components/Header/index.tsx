@@ -93,11 +93,11 @@ const Header = () => {
                         </div>
                         <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
                             <img src={settingSvg} alt="Setting" className="item-icon" />
-                            账号设置
+                            {t('navigation.userDropdown.accountSettings')}
                         </a>
                         <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
                             <img src={logoutSvg} alt="Logout" className="item-icon" />
-                            退出登录
+                            {t('navigation.userDropdown.logout')}
                         </a>
                     </div>
                 </div>

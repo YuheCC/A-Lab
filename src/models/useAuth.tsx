@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { Navigate, useLocation } from 'umi';
 import { useEffect } from 'react';
-import { login as loginService, register as registerService, verify as verifyService } from '@/services/auth';
-console.log(loginService, registerService, verifyService)
+import { login as loginService, register as registerService, verify as verifyService, verifyCode as verifyCodeService } from '@/services/auth';
+
 interface AuthState {
     initialAuthLoaded: boolean;
     isLoading: boolean;
@@ -11,8 +11,9 @@ interface AuthState {
     userName: string | null;
     token: string | null;
     error: string | null;
-    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined }>;
-    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string }>;
+    login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
+    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
+    verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     logout: () => Promise<void>;
     verifyAuth: () => Promise<void>;
     hasPermission: (permissionsList?: string[]) => boolean;
@@ -73,8 +74,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ isLoading: true });
         try {   
 
-            const data: any = await loginService({ username, password });
-            console.log(data)
+            const response: any = await loginService({ username, password });
+            const data = response.data;
+
             set({
                 isAuthenticated: true,
                 isLoading: false,
@@ -114,15 +116,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {
         set({ isLoading: true, error: null });
         try {
-            const data: any = await registerService({ username, email, first_name, last_name, organization_name, password });
-            console.log('response', data);
+            const response: any = await registerService({ username, email, first_name, last_name, organization_name, password });
+            const data = response.data;
+            console.log(response)
+            set({
+                isLoading: false,
+                error: null,
+            })
+
+            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
+
+        } catch (error) {
+            const errorMessage = (error as any)?.detail || 'Network error occurred';
+            set({
+                error: errorMessage,
+                isLoading: false
+            });
+            return { success: false, error: errorMessage }
+        }
+    },
+
+    verifyCode: async ({ verify_id, code }: { verify_id: string, code: string }) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response: any = await verifyCodeService({ verify_id, code });
+            const data = response.data;
 
             set({
                 isLoading: false,
                 error: null,
             })
 
-            return { success: true, message: data.message };
+            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
 
         } catch (error) {
             const errorMessage = (error as any)?.detail || 'Network error occurred';

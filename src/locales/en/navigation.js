@@ -29,5 +29,11 @@ export default {
     features: "Features",
     pricing: "Pricing",
     newsFeed: "News Feed"
+  },
+  
+  // User dropdown menu
+  userDropdown: {
+    accountSettings: "Account Settings",
+    logout: "Logout"
   }
 } 

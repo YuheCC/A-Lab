@@ -29,5 +29,11 @@ export default {
     features: "주요 기능",
     pricing: "이용 플랜",
     newsFeed: "뉴스 피드"
+  },
+  
+  // User dropdown menu
+  userDropdown: {
+    accountSettings: "계정 설정",
+    logout: "로그아웃"
   }
 } 

@@ -36,6 +36,29 @@ export default {
     verificationSent: 'Verification e‑mail sent.',
     emailAddressDenied: "Unfortunately we are unable to provide you with the Molecular Universe service as you or your affiliated entity falls under one or more of the US Department of Commerce, State and Treasury's screening lists."
   },
+  verifyCode: {
+    header: {
+      title: 'Verify Code',
+      subtitle: 'Please enter the verification code you received'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to login page...'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
+    }
+  },
   logo: {
     alt: 'SES AI Logo'
   },

@@ -29,5 +29,11 @@ export default {
     features: "功能",
     pricing: "定价",
     newsFeed: "新闻动态"
+  },
+  
+  // User dropdown menu
+  userDropdown: {
+    accountSettings: "账号设置",
+    logout: "退出登录"
   }
 } 

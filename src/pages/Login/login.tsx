@@ -34,9 +34,8 @@ const AuthPage = () => {
     const response: any = await login({
       username,
       password
-    });
+    })
 
-    console.log(response)
     if (response.success) {
       // Clear the stored redirect path since we're about to use it
       localStorage.removeItem('redirectAfterLogin');

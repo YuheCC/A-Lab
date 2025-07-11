@@ -1,50 +1,71 @@
-import { extend } from 'umi-request';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 直接使用定义的 BASE_URL，如果未定义则使用默认值
 const baseURL = 'https://api-sh.ses.ai';
-console.log(baseURL)
-const request = extend({
-    prefix: baseURL,
+console.log(baseURL);
+
+// 创建axios实例
+const axiosInstance: AxiosInstance = axios.create({
+    baseURL,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
-    },
+    }
 });
 
 // 请求拦截器
-request.interceptors.request.use((url, options) => {
-    console.log('Request URL:', url, 'Options:', options);
+axiosInstance.interceptors.request.use((config) => {
+    console.log('Request URL:', config.url, 'Options:', config);
     
     const token = localStorage.getItem("token");
     
     // 如果数据是 FormData，不要设置 Content-Type，让浏览器自动处理
-    if (options.data instanceof FormData) {
+    if (config.data instanceof FormData) {
         // 删除默认的 Content-Type，让浏览器自动设置 multipart/form-data 和 boundary
-        const headers = { ...(options.headers || {}) } as any;
-        delete headers['Content-Type'];
-        options.headers = headers;
+        delete config.headers['Content-Type'];
     }
     
     if (token) {
-        options.headers = {
-            ...(options.headers || {}),
-            Authorization: `Bearer ${token}`,
-        };
+        config.headers.Authorization = `Bearer ${token}`;
     }
     
-    return {
-        url,
-        options,
-    };
+    return config;
+}, (error) => {
+    return Promise.reject(error);
 });
 
 // 响应拦截器
-request.interceptors.response.use(async (response) => {
-    const body = await response.clone().json();
-    if(!response.ok && body.detail) {
-        throw new Error(body.detail);
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        return Promise.resolve({
+            ok: false,
+            ...error.response,
+        });
     }
-    return response;
-});
+);
+
+// 创建与umi-request兼容的请求函数
+interface RequestOptions {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    data?: any;
+    params?: any;
+    headers?: Record<string, string>;
+}
+
+const request = async (url: string, options: RequestOptions = {}) => {
+    const { method = 'GET', data, params, headers, ...restOptions } = options;
+    
+    const config: AxiosRequestConfig = {
+        url,
+        method,
+        data,
+        params,
+        headers,
+        ...restOptions,
+    };
+    
+    return axiosInstance(config);
+};
 
 export default request;

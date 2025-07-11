@@ -36,6 +36,29 @@ export default {
     verificationSent: '验证邮件已发送。',
     emailAddressDenied: "很抱歉，由于相关合规政策限制，您的邮箱暂无法注册或使用分子宇宙服务，感谢您的理解与支持。"
   },
+  verifyCode: {
+    header: {
+      title: '验证码验证',
+      subtitle: '请输入您收到的验证码'
+    },
+    form: {
+      code: '验证码',
+      codePlaceholder: '请输入6位验证码',
+      verify: '验证',
+      processing: '验证中...'
+    },
+    messages: {
+      success: '验证成功！',
+      failed: '验证失败，请检查验证码是否正确',
+      expired: '验证码已过期，请重新获取',
+      invalidCode: '验证码格式不正确，请输入6位数字',
+      invalidLink: '无效的验证链接',
+      redirecting: '正在跳转到登录页面...'
+    },
+    switch: {
+      backToLogin: '返回登录'
+    }
+  },
   logo: {
     alt: 'SES AI 标志'
   },
