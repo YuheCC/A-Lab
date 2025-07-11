@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'umi';
 import { forgotPassword } from '@/services/auth';
 
 // Forgot Password component for password reset
 const ForgotPasswordPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,15 +21,14 @@ const ForgotPasswordPage = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/login');
-        window.location.reload();
+        navigate('/login');
       }, 5000);
       
       return () => clearTimeout(timer);
     }
-  }, [success]);
+  }, [success, navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -114,7 +115,7 @@ const ForgotPasswordPage = () => {
         </form>
 
         <div className="auth-switch">
-          <p>{t('auth.forgotPassword.switch.rememberedPassword')} <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>{t('auth.forgotPassword.switch.signIn')}</a></p>
+          <p>{t('auth.forgotPassword.switch.rememberedPassword')} <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>{t('auth.forgotPassword.switch.signIn')}</a></p>
         </div>
       </div>
     </div>

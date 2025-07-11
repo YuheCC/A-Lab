@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'umi';
 import { redeemCode } from '@/services/auth';
 
 // Redeem Code component for team members
 const RedeemPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -15,21 +17,20 @@ const RedeemPage = () => {
   const [success, setSuccess] = useState('');
 
   // Use logo from public folder
-  const logo = process.env.PUBLIC_URL + '/logo-ses-ai.svg';
+  const logo = '/logo-ses-ai.svg';
 
   // Add useEffect to handle redirect after successful redemption
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.history.pushState({}, '', '/');
-        window.location.reload();
+        navigate('/');
       }, 5000);
       
       return () => clearTimeout(timer);
     }
-  }, [success]);
+  }, [success, navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -61,7 +62,7 @@ const RedeemPage = () => {
     }
     catch (err: any) {
         let errorMsg = err?.detail || t('auth.redeem.messages.defaultError');
-        throw new Error(errorMsg);
+        setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -150,7 +151,7 @@ const RedeemPage = () => {
         </form>
 
         <div className="auth-switch">
-          <p>{t('auth.redeem.switch.haveAccount')} <a href="#" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/login'); window.location.reload(); }}>{t('auth.redeem.switch.signIn')}</a></p>
+          <p>{t('auth.redeem.switch.haveAccount')} <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>{t('auth.redeem.switch.signIn')}</a></p>
         </div>
       </div>
     </div>

@@ -10,12 +10,16 @@ export default {
     lastName: '姓',
     organizationName: '组织名称',
     username: '用户名',
-    email: '邮箱地址（仅限学术机构）',
-    emailPlaceholder: '学术机构邮箱地址',
+    email: '邮箱地址',
+    emailPlaceholder: '邮箱地址',
     password: '密码',
     processing: '处理中...',
     signIn: '登录',
-    createAccount: '创建账户'
+    createAccount: '创建账户',
+    passwordPlaceholder: '密码',
+    confirmPassword: '确认密码',
+    confirmPasswordPlaceholder: '确认密码',
+    passwordsDoNotMatch: '密码不匹配'
   },
   switch: {
     noAccount: '还没有账户？',

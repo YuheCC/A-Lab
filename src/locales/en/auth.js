@@ -10,12 +10,16 @@ export default {
     lastName: 'Last Name',
     organizationName: 'Organization Name',
     username: 'Username',
-    email: 'Email Address (academia only)',
-    emailPlaceholder: 'Academic email address',
+    email: 'Email Address',
+    emailPlaceholder: 'Email address',
     password: 'Password',
+    passwordPlaceholder: 'Password',
+    confirmPassword: 'Confirm Password',
+    confirmPasswordPlaceholder: 'Confirm password',
     processing: 'Processing...',
     signIn: 'Sign In',
-    createAccount: 'Create Account'
+    createAccount: 'Create Account',
+    passwordsDoNotMatch: 'Passwords do not match'
   },
   switch: {
     noAccount: "Don't have an account?",

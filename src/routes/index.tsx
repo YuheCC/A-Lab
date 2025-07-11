@@ -1,10 +1,13 @@
 export default  [
-    { path: "/", component: "index" },
-    { path: "/docs", component: "docs" },
+    { path: "/", redirect: "/map" },
     {
         path: "/about",
         component: "About",
         layout: false,
+    },
+    {
+        path: "/terms",
+        component: "About/terms",
     },
     {
         path: "/pricing",
@@ -33,6 +36,11 @@ export default  [
     {
         path: "/login",
         component: "Login/login",
+        layout: false,
+    },
+    {
+        path: "/register",
+        component: "Login/register",
         layout: false,
     },
     {

@@ -17,9 +17,8 @@ export async function register(data) {
     Object.keys(data).forEach(key => {
         formData.append(key, data[key]);
     });
-
-    return request({
-        url: "/register",
+    console.log(formData)
+    return request('/register', {
         method: "POST",
         data: formData,
     });
@@ -31,8 +30,7 @@ export async function resetPassword(data) {
         formData.append(key, data[key]);
     });
 
-    return request({
-        url: "/reset-password",
+    return request('/reset-password', {
         method: "POST",
         data: formData,
     });
@@ -44,8 +42,7 @@ export async function forgotPassword(data) {
         formData.append(key, data[key]);
     });
 
-    return request({
-        url: "/forgot-password",
+    return request('/forgot-password', {
         method: "POST",
         data: formData,
     });
@@ -57,16 +54,14 @@ export async function redeemCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request({
-        url: "/redeem-code",
+    return request('/redeem-code', {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verify() {    
-    return request({
-        url: "/verify-token",
+    return request('/verify-token', {
         method: "GET",
     });
 }

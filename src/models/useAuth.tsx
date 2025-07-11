@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { Navigate, useLocation } from 'umi';
 import { useEffect } from 'react';
 import { login as loginService, register as registerService, verify as verifyService } from '@/services/auth';
-
+console.log(loginService, registerService, verifyService)
 interface AuthState {
     initialAuthLoaded: boolean;
     isLoading: boolean;
@@ -12,7 +12,7 @@ interface AuthState {
     token: string | null;
     error: string | null;
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined }>;
-    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string }) => Promise<{ success: boolean, message?: any, error?: string }>;
+    register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string }>;
     logout: () => Promise<void>;
     verifyAuth: () => Promise<void>;
     hasPermission: (permissionsList?: string[]) => boolean;
@@ -111,10 +111,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         window.location.href = '/'; // Redirect to login page
     },
 
-    register: async ({ username, email, first_name, last_name, organization_name }: { username: string, email: string, first_name: string, last_name: string, organization_name: string }) => {
+    register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {
         set({ isLoading: true, error: null });
         try {
-            const data: any = await registerService({ username, email, first_name, last_name, organization_name });
+            const data: any = await registerService({ username, email, first_name, last_name, organization_name, password });
             console.log('response', data);
 
             set({

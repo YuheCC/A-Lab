@@ -10,12 +10,16 @@ export default {
     lastName: '성',
     organizationName: '조직명',
     username: '아이디',
-    email: '이메일 주소 (학술기관 전용)',
-    emailPlaceholder: '학교/연구기관 이메일 주소',
+    email: '이메일 주소',
+    emailPlaceholder: '이메일 주소',
     password: '비밀번호',
+    passwordPlaceholder: '비밀번호',
+    confirmPassword: '비밀번호 확인',
+    confirmPasswordPlaceholder: '비밀번호 확인',
     processing: '처리 중...',
     signIn: '로그인',
-    createAccount: '새 계정 등록'
+    createAccount: '새 계정 등록',
+    passwordsDoNotMatch: '비밀번호가 일치하지 않습니다'
   },
   switch: {
     noAccount: "아직 계정이 없으신가요?",
