@@ -38,5 +38,10 @@ export default {
   },
   
   // Upgrade prompt
-  upgradePrompt: "Please upgrade your plan"
+  upgradePrompt: "Please upgrade your plan",
+  
+  // Action buttons
+  actions: {
+    startNow: "start now"
+  }
 } 

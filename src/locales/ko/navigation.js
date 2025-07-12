@@ -38,5 +38,10 @@ export default {
   },
   
   // Upgrade prompt
-  upgradePrompt: "플랜을 업그레이드해주세요"
+  upgradePrompt: "플랜을 업그레이드해주세요",
+  
+  // Action buttons
+  actions: {
+    startNow: "지금 시작"
+  }
 } 

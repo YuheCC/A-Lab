@@ -56,7 +56,12 @@ const AboutPage = () => {
           </div>
           <div className="content-sections">
               <section id="newsfeed">
-                  <h2>{t('about.newsfeed.title')}</h2>
+                  <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
+                      <h2 style={{margin: 0}}>{t('about.newsfeed.title')}</h2>
+                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                          {t('navigation.actions.startNow')} ↗
+                      </a>
+                  </div>
                   <div className="news-feed">
                       <div className="news-item" style={{alignItems:'flex-start'}}>
                           <div className="news-date">{t('about.newsfeed.releaseDate2')}</div>
@@ -86,7 +91,12 @@ const AboutPage = () => {
                   </div>
               </section>
               <section id="motivation" className="prose-section">
-                  <h2>{t('about.navigation.motivation')}</h2>
+                  <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
+                      <h2 style={{margin: 0}}>{t('about.navigation.motivation')}</h2>
+                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                          {t('navigation.actions.startNow')} ↗
+                      </a>
+                  </div>
                   <h3>{t('about.whatIs.title')}</h3>
                   <p>{t('about.whatIs.intro1')}</p>
                   <p>{t('about.whatIs.intro2')}</p>
@@ -138,7 +148,12 @@ const AboutPage = () => {
               </section>
 
               <section id="features">
-                  <h2>{t('about.features.title')}</h2>
+                  <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
+                      <h2 style={{margin: 0}}>{t('about.features.title')}</h2>
+                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                          {t('navigation.actions.startNow')} ↗
+                      </a>
+                  </div>
                   <div className="features-flex">
                       <div className="features-list">
                           <div 

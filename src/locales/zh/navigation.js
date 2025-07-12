@@ -38,5 +38,10 @@ export default {
   },
   
   // Upgrade prompt
-  upgradePrompt: "请升级套餐使用"
+  upgradePrompt: "请升级套餐使用",
+  
+  // Action buttons
+  actions: {
+    startNow: "立即开始"
+  }
 } 
