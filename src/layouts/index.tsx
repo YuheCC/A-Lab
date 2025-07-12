@@ -13,6 +13,7 @@ import PricingOverlay from "@/components/PricingOverlay";
 const API_URL = getAPIUrl();
 
 export const FavoriteContext = createContext<any>(null);
+export const PricingContext = createContext<any>(null);
 
 const FullNavLayout = () => {
     const { fetchInitialData , fetchData} = usePlotDataStore();
@@ -133,6 +134,7 @@ const FullNavLayout = () => {
     }, []);
     return (
         <MessageProvider>
+          <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay }}>
             <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
                 <Header />
                 <div className='main-container'>
@@ -143,6 +145,7 @@ const FullNavLayout = () => {
                     onClose={() => setShowPricingOverlay(false)}
                 />
             </FavoriteContext.Provider>
+          </PricingContext.Provider>
         </MessageProvider>
     );
 }

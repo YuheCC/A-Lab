@@ -70,7 +70,7 @@ const Map = () => {
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                         <picture>
-                            <source srcSet="/MU05_Cluster_Numbered.webp" type="image/webp" />
+                            <source srcSet="/MU05_Cluster_Numbered.png" type="image/png" />
                             <img
                                 loading="lazy"
                                 src="/MU05_Cluster_Numbered.png"

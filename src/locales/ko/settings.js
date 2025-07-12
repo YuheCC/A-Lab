@@ -20,7 +20,8 @@ export default {
         educationVerification: '교육 인증',
         isEducationAccount: '교육 계정 여부',
         no: '아니오',
-        verifyEducation: '교육 신원 확인'
+        verifyEducation: '교육 신원 확인',
+        upgrade: '업그레이드'
     },
     preference: {
         interfaceAndLanguage: '인터페이스 및 언어',

@@ -20,7 +20,8 @@ export default {
         educationVerification: 'Education Verification',
         isEducationAccount: 'Is Education Account',
         no: 'No',
-        verifyEducation: 'Verify Education Identity'
+        verifyEducation: 'Verify Education Identity',
+        upgrade: 'Upgrade'
     },
     preference: {
         interfaceAndLanguage: 'Interface & Language',

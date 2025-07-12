@@ -20,7 +20,8 @@ export default {
         educationVerification: '教育验证',
         isEducationAccount: '是否教育账号',
         no: '否',
-        verifyEducation: '验证教育身份'
+        verifyEducation: '验证教育身份',
+        upgrade: '升级'
     },
     preference: {
         interfaceAndLanguage: '界面与语言',

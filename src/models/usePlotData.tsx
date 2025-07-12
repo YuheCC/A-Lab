@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { authFetch, getAPIUrl } from "@/utils";
+import { i } from "node_modules/react-router/dist/development/lib-B33EY9A0.mjs";
 
 const API_URL = getAPIUrl();
 
@@ -40,6 +41,20 @@ interface PlotDataStore {
     data: PlotDataNode[];
     fetchData: () => Promise<PlotDataNode[] | undefined>;
     fetchInitialData: () => Promise<PlotDataNode[] | undefined>;
+}
+
+const handleCluster = (cluster: any) => {
+    if(cluster === null || cluster === undefined || cluster === ''){
+        return null;
+    }
+    if(typeof cluster === 'string'){
+        return cluster;
+    }
+    if(typeof cluster === 'number'){
+        cluster += 1;
+        return cluster.toString();
+    }
+    return cluster;
 }
 
 /**
@@ -96,7 +111,7 @@ export const usePlotDataStore = create<PlotDataStore>((set, get) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: row.CLUSTER.toString()
+                        CLUSTER: handleCluster(row.CLUSTER)
                     },
                     rawData: row
                 }));
@@ -165,7 +180,7 @@ export const usePlotDataStore = create<PlotDataStore>((set, get) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: row.CLUSTER.toString()
+                        CLUSTER: handleCluster(row.CLUSTER)
                     },
                     rawData: row
                 }));

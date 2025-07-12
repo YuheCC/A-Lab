@@ -1,10 +1,11 @@
-import { useState, useImperativeHandle, forwardRef } from "react";
+import { useState, useImperativeHandle, forwardRef, useContext } from "react";
 import { useAuthStore } from "@/models/useAuth";
 import './settingModal.css';
 import { useTranslation } from "react-i18next";
 import { verifyRedeemCode, sendEducationCode } from "@/services/auth";
 import { useMessage } from "@/components/MessageProvider";
 import { useNavigate } from "umi";
+import { PricingContext } from "@/layouts/index";
 
 const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
@@ -22,6 +23,7 @@ const SettingModal = forwardRef((props, ref) => {
     const [isSendingEducation, setIsSendingEducation] = useState(false);
     const { success, error, warning, info } = useMessage();
     const navigate = useNavigate();
+    const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
 
     const languageChange = (language: string) => {
         i18n.changeLanguage(language);
@@ -130,6 +132,11 @@ const SettingModal = forwardRef((props, ref) => {
         setEducationError('');
     }
 
+    const handleUpgradeClick = () => {
+        setShow(false); // 关闭设置模态框
+        setShowPricingOverlay(true); // 显示定价浮层
+    }
+
     useImperativeHandle(ref, () => ({
         show: () => setShow(true),
         hide: () => setShow(false),
@@ -189,7 +196,9 @@ const SettingModal = forwardRef((props, ref) => {
                           </div>
                         </div>
                         <div className="settings-item-action">
-                          
+                          <button className="upgrade-btn" onClick={handleUpgradeClick}>
+                            {t('settings.subscription.upgrade')}
+                          </button>
                         </div>
                       </div>
                       {/* <div className="settings-item">
