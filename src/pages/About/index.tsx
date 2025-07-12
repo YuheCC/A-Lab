@@ -59,6 +59,18 @@ const AboutPage = () => {
                   <h2>{t('about.newsfeed.title')}</h2>
                   <div className="news-feed">
                       <div className="news-item" style={{alignItems:'flex-start'}}>
+                          <div className="news-date">{t('about.newsfeed.releaseDate2')}</div>
+                          <div className="news-content">
+                            <div className="news-title">
+                                {t('about.newsfeed.release2')}
+                            </div>
+                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
+                                {t('about.newsfeed.releaseAbout2')}<br/>
+                                <a href="https://www.businesswire.com/news/home/20250709499100/en/SES-AI-Launches-Agentic-Capability-in-Latest-Molecular-Universe-Release-to-Increase-Value-Proposition-for-RD-as-a-Service" target="_blank" style={{color:'#1c7c54',textDecoration:'underline'}}>{t('about.newsfeed.newsLink')}</a>
+                            </p>
+                          </div>
+                      </div>
+                      <div className="news-item" style={{alignItems:'flex-start'}}>
                           <div className="news-date">{t('about.newsfeed.releaseDate1')}</div>
                           <div className="news-content">
                             <div className="news-title">
@@ -71,17 +83,6 @@ const AboutPage = () => {
                           </div>
                       </div>
 
-                      <div className="news-item" style={{alignItems:'flex-start'}}>
-                          <div className="news-date">{t('about.newsfeed.releaseDate2')}</div>
-                          <div className="news-content">
-                            <div className="news-title">
-                                {t('about.newsfeed.release2')}
-                            </div>
-                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
-                                {t('about.newsfeed.releaseAbout2')}
-                            </p>
-                          </div>
-                      </div>
                   </div>
               </section>
               <section id="motivation" className="prose-section">
