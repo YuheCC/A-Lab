@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai umi dev",
     "build": "umi build",
+    "build:staging": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev"
