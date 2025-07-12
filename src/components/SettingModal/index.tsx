@@ -196,12 +196,16 @@ const SettingModal = forwardRef((props, ref) => {
                           <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
                           </div>
                         </div>
-                        <div className="settings-item-action">
-                          <button className="upgrade-btn" onClick={handleUpgradeClick}>
-                            {t('settings.subscription.upgrade')}
-                          </button>
+                        {
+                          (permissions === 'common' || permissions === 'research') && (
+                            <div className="settings-item-action">
+                              <button className="upgrade-btn" onClick={handleUpgradeClick}>
+                                {t('settings.subscription.upgrade')}
+                              </button>
+                            </div>
+                          )
+                        }
                         </div>
-                      </div>
                       {/* <div className="settings-item">
                         <div className="settings-item-main">
                           <div className="settings-item-title">{t('settings.subscription.validUntil')}</div>
@@ -215,9 +219,17 @@ const SettingModal = forwardRef((props, ref) => {
                           <div className="settings-group-title">{t('settings.subscription.educationVerification')}</div>
                           <div className="settings-item">
                             <div className="settings-item-main">
-                              <div className="settings-item-title">{t('settings.subscription.isEducationAccount')}</div>
+                              <div className="settings-item-title">
+                                {t('settings.subscription.isEducationAccount')}: {userInfo?.edu_email ? t('settings.subscription.yes') : t('settings.subscription.no')}
+                              </div>
                             </div>
-                            <div className="settings-item-action">{t('settings.subscription.no')} <a href="#" id="verifyEduBtn" className="btn btn-secondary" style={{marginLeft: '12px'}} onClick={handleEducationClick}>{t('settings.subscription.verifyEducation')}</a></div>
+                            <div className="settings-item-action">
+                              {
+                                permissions === 'common' && (
+                                  <a href="#" id="verifyEduBtn" className="btn btn-secondary" style={{marginLeft: '12px'}} onClick={handleEducationClick}>{t('settings.subscription.verifyEducation')}</a>
+                                )
+                              }
+                            </div>
                           </div>
                         </div>
                       )

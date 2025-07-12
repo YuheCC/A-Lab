@@ -117,7 +117,7 @@ const AuthPage = () => {
 
         <div className="auth-switch">
           <p>{t('auth.switch.noAccount')} <button onClick={() => navigate('/register')}>{t('auth.switch.signUp')}</button></p>
-          <p>{t('auth.switch.forgotPassword')} <a href="#" onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}><strong>{t('auth.switch.reset')}</strong></a></p>
+          <p>{t('auth.switch.forgotPassword')} <button onClick={() => navigate('/forgot-password')}>{t('auth.switch.reset')}</button></p>
         </div>
       </div>
     </div>

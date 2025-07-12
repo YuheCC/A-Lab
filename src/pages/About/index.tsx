@@ -40,7 +40,7 @@ const AboutPage = () => {
                 <a href="#newsfeed" className="about-nav-item">{t('about.navigation.newsfeed')}</a>
             </nav>
             <div className="about-header-actions">
-                <a target="_blank" href="/" className="try-mu-button">{t('about.navigation.enterMu')}</a>
+                <a target="_blank" href="/map" className="try-mu-button">{t('about.navigation.enterMu')}</a>
             </div>
         </div>
       </header>
@@ -48,7 +48,7 @@ const AboutPage = () => {
       <main>
           <div className="about-banner-padded">
               <img src="hero-banner.png" alt="Make Contact with the Molecular Universe" className="about-banner-padded-img" />
-              <a target="_blank" href="/login" className="try-mu-button banner-enter-mu-button">{t('about.navigation.enterMu')}</a>
+              <a target="_blank" href="/map" className="try-mu-button banner-enter-mu-button">{t('about.navigation.enterMu')}</a>
           </div>
           <div className="about-quote" style={{textAlign:'center',margin:'32px 0 24px 0',fontSize:'1.35rem',color:'#444',fontStyle:'italic'}}>
               "{t('about.quote')}"<br/>
@@ -58,7 +58,7 @@ const AboutPage = () => {
               <section id="newsfeed">
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.newsfeed.title')}</h2>
-                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                      <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
                           {t('navigation.actions.startNow')} ↗
                       </a>
                   </div>
@@ -93,7 +93,7 @@ const AboutPage = () => {
               <section id="motivation" className="prose-section">
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.navigation.motivation')}</h2>
-                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                      <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
                           {t('navigation.actions.startNow')} ↗
                       </a>
                   </div>
@@ -150,7 +150,7 @@ const AboutPage = () => {
               <section id="features">
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.features.title')}</h2>
-                      <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
+                      <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
                           {t('navigation.actions.startNow')} ↗
                       </a>
                   </div>
