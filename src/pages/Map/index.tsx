@@ -22,7 +22,7 @@ const Map = () => {
         for (let i = 0; i <= 24; i++) {
             clusters.push(
                 <p key={i} style={{ marginBottom: '10px' }}>
-                    <strong>Cluster {i}:</strong> {t(`map.clusters.cluster${i}`)}
+                    <strong>Cluster {i + 1}:</strong> {t(`map.clusters.cluster${i}`)}
                 </p>
             );
         }
