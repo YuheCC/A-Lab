@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Pricing.css';
 import { useNavigate } from 'umi';
@@ -11,13 +11,12 @@ interface PricingProps {
 }
 
 const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
-  console.log("showHeader", showHeader);
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'enterprise' | 'joint'>('enterprise');
   const navigate = useNavigate();
-  const { userPermissions: myPermission } = useAuthStore();
+  const { userPermissions: myPermission, userInfo } = useAuthStore();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
@@ -33,13 +32,13 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
     return index <= myIndex;
   }
 
-  const pricingUrlMpas = {
+  const pricingUrlMpas = useMemo(() => ({
     research: "/map?showPricing=true",
-    explorer: "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
-    team: "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02 ",
+    explorer: "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01?prefilled_email=" + userInfo?.email,
+    team: "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02?prefilled_email=" + userInfo?.email,
     enterprise: "",
     joint: "",
-  }
+  }), [userInfo]);
 
   const clickButtonHandler = (permission: string) => {
     if(showHeader){
