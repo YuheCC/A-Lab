@@ -1767,14 +1767,6 @@ body.dragging {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
-.pricing-section {
-  background-color: #f8f9fa;
-  padding: 40px 20px;
-  margin-top: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
 .pricing-content {
   max-width: 1200px;
   margin: 0 auto;
