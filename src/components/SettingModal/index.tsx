@@ -6,6 +6,7 @@ import { verifyRedeemCode, sendEducationCode } from "@/services/auth";
 import { useMessage } from "@/components/MessageProvider";
 import { useNavigate } from "umi";
 import { PricingContext } from "@/layouts/index";
+import RoleRender from "@/components/RoleRender";
 
 const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
@@ -157,7 +158,7 @@ const SettingModal = forwardRef((props, ref) => {
                         <div className="user-info-meta">
                           <div className="user-info-name-wrapper">
                             <div className="user-info-name">{userName}</div>
-                            <span className="subscription-badge">{permissions}</span>
+                            <RoleRender role={permissions} />
                           </div>
                             <div className="user-info-registered">{t('settings.account.registrationTime')}: {new Date(userInfo.created_at).toLocaleString()}</div>
                         </div>
@@ -190,7 +191,7 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="settings-group-title">{t('settings.subscription.status')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.subscription.currentPlan')} <span className="subscription-badge">{permissions}</span></div>
+                          <div className="settings-item-title">{t('settings.subscription.currentPlan')} <RoleRender role={permissions} /></div>
                           <div className="settings-item-desc">
                           <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
                           </div>

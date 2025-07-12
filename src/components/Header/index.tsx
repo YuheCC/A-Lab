@@ -7,6 +7,7 @@ import settingSvg from '@/assets/svg/setting.svg';
 import logoutSvg from '@/assets/svg/logout.svg';
 import { useAuthStore } from "@/models/useAuth";
 import SettingModal from "@/components/SettingModal";
+import RoleRender from "../RoleRender";
 
 const Header = () => {
     const { t } = useTranslation();
@@ -87,7 +88,7 @@ const Header = () => {
                             <div className="user-details">
                                 <div className="user-name-container">
                                     <div className="user-email">{userName}</div>
-                                    <span className="subscription-badge">{permissions}</span>
+                                    <RoleRender role={permissions} />
                                 </div>
                             </div>
                         </div>

@@ -10,6 +10,7 @@ import feedback from './feedback';
 import chatbox from './chatbox';
 import favorites from './favorites';
 import settings from './settings';
+import role from './role';
 
 export default {
     map,
@@ -23,5 +24,6 @@ export default {
     feedback,
     chatbox,
     favorites,
-    settings
+    settings,
+    role
 }
