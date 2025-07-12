@@ -7,7 +7,7 @@ export default defineConfig({
   favicons: ['https://cdn.prod.website-files.com/671b8da8cb402b2908cb39f0/671bb55d6ea8b4dc808e5cfa_fav-256.png'],
   outputPath: 'build',
   define: {
-    'BASE_URL': "https://api-sh.ses.ai",
+    'BASE_URL': "https://prod-api.ses.ai",
   },
   // 禁用 esbuild 来规避冲突问题
   esbuildMinifyIIFE: false,

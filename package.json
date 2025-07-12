@@ -2,12 +2,13 @@
   "private": true,
   "author": "feiran.wang <feiran.wang@ses.ai>",
   "scripts": {
-    "dev": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai umi dev",
+    "dev": "cross-env UMI_ENV=staging umi dev",
     "build": "umi build",
-    "build:staging": "cross-env REACT_APP_API_URL=https://api-sh.ses.ai umi build",
+    "build:staging": "cross-env UMI_ENV=staging umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "start:prod": "umi dev"
   },
   "dependencies": {
     "@deck.gl/layers": "^9.1.12",

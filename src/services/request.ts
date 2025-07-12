@@ -1,8 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 直接使用定义的 BASE_URL，如果未定义则使用默认值
-const baseURL = 'https://api-sh.ses.ai';
-console.log(baseURL);
+const baseURL = BASE_URL || 'https://prod-api.ses.ai';
 
 // 创建axios实例
 const axiosInstance: AxiosInstance = axios.create({
