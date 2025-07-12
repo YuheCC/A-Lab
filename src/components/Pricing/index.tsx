@@ -1,19 +1,63 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Pricing.css';
+import { useNavigate } from 'umi';
+import { useAuthStore } from '@/models/useAuth';
+import ContactSalesModal from '@/components/ContactSalesModal';
 
 interface PricingProps {
   showHeader?: boolean;
   className?: string;
 }
 
-const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) => {
+const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
+  console.log("showHeader", showHeader);
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'enterprise' | 'joint'>('enterprise');
+  const navigate = useNavigate();
+  const { userPermissions: myPermission } = useAuthStore();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
   };
+
+  const permissionList = ["common", "research", "explorer", "team", "enterprise", "joint"];
+  const hasPermission = (permission: string) => {
+    if(!myPermission){
+      return true;
+    }
+    const index = permissionList.indexOf(permission);
+    const myIndex = permissionList.indexOf(myPermission || "common");
+    return index <= myIndex;
+  }
+
+  const pricingUrlMpas = {
+    research: "/map?showPricing=true",
+    explorer: "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
+    team: "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02 ",
+    enterprise: "",
+    joint: "",
+  }
+
+  const clickButtonHandler = (permission: string) => {
+    if(showHeader){
+      navigate(`/map?showPricing=true`);
+      return;
+    }
+
+    // 处理 enterprise 和 joint 点击事件，显示联系销售浮层
+    if(permission === 'enterprise' || permission === 'joint'){
+      setSelectedPlan(permission);
+      setContactModalOpen(true);
+      return;
+    }
+
+    if(pricingUrlMpas[permission as keyof typeof pricingUrlMpas]){
+      window.open(pricingUrlMpas[permission as keyof typeof pricingUrlMpas], '_blank');
+    }
+  }
 
   return (
     <section id="pricing" className={`pricing-section ${className}`}>
@@ -42,7 +86,7 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
               <div className="pricing-access">{t('pricing.research.description')}</div>
               <div className="pricing-price">{t('pricing.research.price')}<span className="pricing-unit">{t('pricing.research.period')}</span></div>
             </div>
-            <button className="pricing-btn">{t('pricing.research.cta')}</button>
+            <button disabled={hasPermission('research')} onClick={() => clickButtonHandler('research')} className="pricing-btn">{t('pricing.research.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.research.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -56,7 +100,7 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
               <div className="pricing-access">{t('pricing.explorer.description')}</div>
               <div className="pricing-price">{t('pricing.explorer.price')}<span className="pricing-unit">{t('pricing.explorer.period')}</span></div>
             </div>
-            <button className="pricing-btn" style={{background:'#1c7c54'}}>{t('pricing.explorer.cta')}</button>
+            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" style={{background:'#1c7c54'}}>{t('pricing.explorer.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.explorer.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -70,7 +114,7 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
               <div className="pricing-access">{t('pricing.team.description')}</div>
               <div className="pricing-price">{t('pricing.team.price')}<span className="pricing-unit">{t('pricing.team.period')}</span></div>
             </div>
-            <button className="pricing-btn">{t('pricing.team.cta')}</button>
+            <button disabled={hasPermission('team')} onClick={() => clickButtonHandler('team')} className="pricing-btn">{t('pricing.team.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.team.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -87,7 +131,7 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
               <div className="pricing-title">{t('pricing.enterprise.title')}</div>
               <div className="pricing-access">{t('pricing.enterprise.description')}</div>
             </div>
-            <button className="pricing-btn secondary">{t('pricing.enterprise.cta')}</button>
+            <button disabled={hasPermission('enterprise')} onClick={() => clickButtonHandler('enterprise')} className="pricing-btn secondary">{t('pricing.enterprise.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.enterprise.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -100,7 +144,7 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
               <div className="pricing-title">{t('pricing.joint.title')}</div>
               <div className="pricing-access">{t('pricing.joint.description')}</div>
             </div>
-            <button className="pricing-btn secondary">{t('pricing.joint.cta')}</button>
+            <button disabled={hasPermission('joint')} onClick={() => clickButtonHandler('joint')} className="pricing-btn secondary">{t('pricing.joint.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.joint.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -113,6 +157,12 @@ const Pricing: React.FC<PricingProps> = ({ showHeader = true, className = '' }) 
       {/* <div className="pricing-footer-note">
         {t('pricing.footer.note')} <span className="pricing-verify-link">{t('pricing.footer.verify')}</span>
       </div> */}
+      
+      <ContactSalesModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        planType={selectedPlan}
+      />
     </section>
   );
 };

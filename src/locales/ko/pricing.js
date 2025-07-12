@@ -76,5 +76,31 @@ export default {
   footer: {
     note: "분자 우주는 학생과 교육자에게 무료입니다.",
     verify: "인증받기"
+  },
+  contactSales: {
+    title: "영업 문의",
+    enterprise: "기업용",
+    joint: "공동 개발",
+    form: {
+      name: "이름",
+      email: "이메일",
+      company: "회사/조직",
+      phone: "전화번호",
+      message: "메시지",
+      messagePlaceholder: "필요사항을 설명해주세요...",
+      nameRequired: "이름은 필수입니다",
+      emailRequired: "이메일은 필수입니다",
+      companyRequired: "회사/조직은 필수입니다",
+      emailInvalid: "유효한 이메일 주소를 입력해주세요"
+    },
+    buttons: {
+      cancel: "취소",
+      submit: "제출",
+      submitting: "제출 중..."
+    },
+    messages: {
+      success: "✅ 성공적으로 제출되었습니다! 영업팀에서 곧 연락드릴 예정입니다.",
+      error: "❌ 제출에 실패했습니다. 나중에 다시 시도해주세요."
+    }
   }
 }; 

@@ -110,3 +110,15 @@ export async function verifyForgotPasswordCode(params) {
         params,
     });
 }
+
+export async function contactSales(data) {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+        formData.append(key, data[key]);
+    });
+
+    return request('/contact-sales', {
+        method: "POST",
+        data: formData,
+    });
+}

@@ -76,5 +76,31 @@ export default {
   footer: {
     note: "分子宇宙对学生和教育工作者免费。",
     verify: "获取验证"
+  },
+  contactSales: {
+    title: "联系销售",
+    enterprise: "企业版",
+    joint: "联合开发",
+    form: {
+      name: "姓名",
+      email: "邮箱",
+      company: "公司/组织",
+      phone: "电话",
+      message: "留言",
+      messagePlaceholder: "请描述您的需求...",
+      nameRequired: "姓名为必填项",
+      emailRequired: "邮箱为必填项",
+      companyRequired: "公司/组织为必填项",
+      emailInvalid: "请输入有效的邮箱地址"
+    },
+    buttons: {
+      cancel: "取消",
+      submit: "提交",
+      submitting: "提交中..."
+    },
+    messages: {
+      success: "✅ 提交成功！我们的销售团队会尽快与您联系。",
+      error: "❌ 提交失败，请稍后重试。"
+    }
   }
 }; 

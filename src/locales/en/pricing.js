@@ -76,5 +76,31 @@ export default {
   footer: {
     note: "Molecular Universe is free for students and educators.",
     verify: "Get Verified"
+  },
+  contactSales: {
+    title: "Contact Sales",
+    enterprise: "Enterprise",
+    joint: "Joint Development",
+    form: {
+      name: "Name",
+      email: "Email",
+      company: "Company/Organization",
+      phone: "Phone",
+      message: "Message",
+      messagePlaceholder: "Please describe your needs...",
+      nameRequired: "Name is required",
+      emailRequired: "Email is required",
+      companyRequired: "Company/Organization is required",
+      emailInvalid: "Please enter a valid email address"
+    },
+    buttons: {
+      cancel: "Cancel",
+      submit: "Submit",
+      submitting: "Submitting..."
+    },
+    messages: {
+      success: "✅ Submitted successfully! Our sales team will contact you soon.",
+      error: "❌ Submission failed, please try again later."
+    }
   }
 }; 
