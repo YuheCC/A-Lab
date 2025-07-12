@@ -152,7 +152,7 @@ const SettingModal = forwardRef((props, ref) => {
                             <div className="user-info-name">{userName}</div>
                             <span className="subscription-badge">{permissions}</span>
                           </div>
-                            <div className="user-info-registered">{t('settings.account.registrationTime')}: {userInfo.created_at}</div>
+                            <div className="user-info-registered">{t('settings.account.registrationTime')}: {new Date(userInfo.created_at).toLocaleString()}</div>
                         </div>
                       </div>
                     </div>
@@ -160,22 +160,22 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="settings-group-title">{t('settings.account.accountInfo')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.account.name')}</div>
+                          <div className="settings-item-title">{t('settings.account.name')}: {userName}</div>
                         </div>
-                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
+                        <div className="settings-item-action"></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.account.email')}</div>
+                          <div className="settings-item-title">{t('settings.account.email')}: {userInfo.email}</div>
                         </div>
-                        <div className="settings-item-action">{userName} <a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
+                        <div className="settings-item-action"></div>
                       </div>
-                      <div className="settings-item">
+                      {/* <div className="settings-item">
                         <div className="settings-item-main">
                           <div className="settings-item-title">{t('settings.account.password')}</div>
                         </div>
                         <div className="settings-item-action"><a href="#" className="settings-link">{t('settings.account.modify')}</a></div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className={`settings-panel ${activeTab === 'subscription' ? 'active' : ''}`} data-panel="subscription" style={{display: 'none'}}>
@@ -183,19 +183,21 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="settings-group-title">{t('settings.subscription.status')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.subscription.currentPlan')}</div>
+                          <div className="settings-item-title">{t('settings.subscription.currentPlan')} <span className="subscription-badge">{permissions}</span></div>
+                          <div className="settings-item-desc">
+                          <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
+                          </div>
                         </div>
                         <div className="settings-item-action">
-                          <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
-                          <span className="subscription-badge">{permissions}</span>
+                          
                         </div>
                       </div>
-                      <div className="settings-item">
+                      {/* <div className="settings-item">
                         <div className="settings-item-main">
                           <div className="settings-item-title">{t('settings.subscription.validUntil')}</div>
                         </div>
                         <div className="settings-item-action">2025-12-31</div>
-                      </div>
+                      </div> */}
                     </div>
                     {
                       permissions === 'common' && (
