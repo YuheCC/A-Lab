@@ -8,4 +8,12 @@ export default defineConfig({
   define: {
     'BASE_URL': "https://api-sh.ses.ai",
   },
+  // 禁用 esbuild 来规避冲突问题
+  esbuildMinifyIIFE: false,
+  // 禁用 MFSU 来避免 esbuild 相关问题
+  mfsu: false,
+  // 禁用 esbuild 压缩，使用 terser 替代
+  jsMinifier: 'terser',
+  // 禁用 esbuild 转译，使用 babel 替代
+  jsMinifierOptions: {},
 });
