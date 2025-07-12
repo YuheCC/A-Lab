@@ -35,5 +35,8 @@ export default {
   userDropdown: {
     accountSettings: "계정 설정",
     logout: "로그아웃"
-  }
+  },
+  
+  // Upgrade prompt
+  upgradePrompt: "플랜을 업그레이드해주세요"
 } 

@@ -8,6 +8,7 @@ import logoutSvg from '@/assets/svg/logout.svg';
 import { useAuthStore } from "@/models/useAuth";
 import SettingModal from "@/components/SettingModal";
 import RoleRender from "../RoleRender";
+import { Tooltip } from '@mui/material';
 
 const Header = () => {
     const { t } = useTranslation();
@@ -17,6 +18,9 @@ const Header = () => {
     const avatarRef = useRef<HTMLAnchorElement>(null);
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
+
+    // 检查是否为common用户
+    const isCommonUser = permissions === 'common';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -37,6 +41,60 @@ const Header = () => {
         };
     }, []);
 
+    // 处理受限链接点击
+    const handleRestrictedClick = (e: React.MouseEvent) => {
+        if (isCommonUser) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    };
+
+    // 渲染导航链接，根据权限决定是否包装Tooltip
+    const renderNavLink = (to: string, text: string, isActive: boolean) => {
+        if (isCommonUser) {
+            return (
+                <Tooltip 
+                    title={t('navigation.upgradePrompt')} 
+                    arrow 
+                    placement="top"
+                    componentsProps={{
+                        tooltip: {
+                            sx: {
+                                marginBottom: '8px !important',
+                                fontSize: '12px',
+                                backgroundColor: '#374151',
+                                color: '#fff'
+                            }
+                        },
+                        arrow: {
+                            sx: {
+                                color: '#374151'
+                            }
+                        }
+                    }}
+                >
+                    <NavLink 
+                        to={to} 
+                        className={`nav-item ${isActive ? 'active' : ''} disabled`}
+                        onClick={handleRestrictedClick}
+                        style={{ display: 'inline-block' }}
+                    >
+                        {text}
+                    </NavLink>
+                </Tooltip>
+            );
+        }
+
+        return (
+            <NavLink 
+                to={to} 
+                className={`nav-item ${isActive ? 'active' : ''}`}
+            >
+                {text}
+            </NavLink>
+        );
+    };
+
     return (
             <header className="main-header">
             <div className="logo-container">
@@ -49,30 +107,10 @@ const Header = () => {
                 >
                     {t('navigation.header.map')}
                 </NavLink>
-                <NavLink 
-                    to="/ask" 
-                    className={`nav-item ${pathname === '/ask' ? 'active' : ''}`}
-                >
-                    {t('navigation.header.ask')}
-                </NavLink>
-                <NavLink 
-                    to="/search" 
-                    className={`nav-item ${pathname === '/search' ? 'active' : ''}`}
-                >
-                    {t('navigation.header.search')}
-                </NavLink>
-                <NavLink 
-                    to="/filter" 
-                    className={`nav-item ${pathname === '/filter' ? 'active' : ''}`}
-                >
-                    {t('navigation.header.filter')}
-                </NavLink>
-                <NavLink 
-                    to="/favorites" 
-                    className={`nav-item ${pathname === '/favorites' ? 'active' : ''}`}
-                >
-                    {t('navigation.header.favorites')}
-                </NavLink>
+                {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask')}
+                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search')}
+                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')}
+                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>

@@ -134,6 +134,14 @@ body.chat-page-body {
   background: #2563eb; /* Blue for active indicator */
   border-radius: 2px;
 }
+.nav-item.disabled {
+  color: #9ca3af !important; /* Gray-400 for disabled state */
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.nav-item.disabled:hover {
+  color: #9ca3af !important; /* Keep gray color on hover */
+}
 
 /* User Actions Styles */
 .user-actions {

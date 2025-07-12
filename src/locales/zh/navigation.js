@@ -35,5 +35,8 @@ export default {
   userDropdown: {
     accountSettings: "账号设置",
     logout: "退出登录"
-  }
+  },
+  
+  // Upgrade prompt
+  upgradePrompt: "请升级套餐使用"
 } 
