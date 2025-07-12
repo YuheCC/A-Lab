@@ -8,6 +8,7 @@ export default  [
     {
         path: "/terms",
         component: "About/terms",
+        layout: false,
     },
     {
         path: "/pricing",

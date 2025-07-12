@@ -19,7 +19,8 @@ export default {
     processing: '처리 중...',
     signIn: '로그인',
     createAccount: '새 계정 등록',
-    passwordsDoNotMatch: '비밀번호가 일치하지 않습니다'
+    passwordsDoNotMatch: '비밀번호가 일치하지 않습니다',
+    termsRequired: '로그인하기 전에 이용약관에 동의해야 합니다'
   },
   switch: {
     noAccount: "아직 계정이 없으신가요?",
@@ -30,7 +31,9 @@ export default {
     haveAccount: '이미 계정이 있으신가요?',
     signIn: '로그인',
     termsText: 'Molecular Universe를 사용함으로써, 귀하는 SES AI의 ',
-    termsLink: '이용 약관에 동의하는 것으로 간주됩니다'
+    termsLink: '이용 약관에 동의하는 것으로 간주됩니다',
+    loginTermsText: 'SES AI의 ',
+    loginTermsLink: '이용약관 및 개인정보 보호정책을 읽고 동의합니다'
   },
   messages: {
     verificationSent: '인증 이메일이 발송되었습니다.',

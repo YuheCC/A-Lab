@@ -9,6 +9,7 @@ const AuthPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   
   const navigate = useNavigate();
   const { isLoading, login } = useAuthStore();
@@ -30,6 +31,11 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!agreeToTerms) {
+      setError(t('auth.form.termsRequired'));
+      return;
+    }
 
     const response: any = await login({
       username,
@@ -84,6 +90,20 @@ const AuthPage = () => {
               placeholder={t('auth.form.password')}
               required
             />
+          </div>
+
+          <div className="form-group terms-checkbox">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={agreeToTerms}
+                onChange={(e) => setAgreeToTerms(e.target.checked)}
+                required
+              />
+              <span className="terms-text">
+                {t('auth.switch.loginTermsText')} <a href="#" onClick={(e) => { e.preventDefault(); navigate('/terms'); }} className="terms-link">{t('auth.switch.loginTermsLink')}</a>.
+              </span>
+            </label>
           </div>
 
           <button

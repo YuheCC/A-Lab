@@ -19,7 +19,8 @@ export default {
     processing: 'Processing...',
     signIn: 'Sign In',
     createAccount: 'Create Account',
-    passwordsDoNotMatch: 'Passwords do not match'
+    passwordsDoNotMatch: 'Passwords do not match',
+    termsRequired: 'You must agree to the Terms and Conditions before signing in'
   },
   switch: {
     noAccount: "Don't have an account?",
@@ -30,7 +31,9 @@ export default {
     haveAccount: 'Already have an account?',
     signIn: 'Sign In',
     termsText: 'By using Molecular Universe, you agree to SES AI\'s',
-    termsLink: 'Terms and Conditions'
+    termsLink: 'Terms and Conditions',
+    loginTermsText: 'I have read and agree to SES AI\'s',
+    loginTermsLink: 'Terms of Service and Privacy Policy'
   },
   messages: {
     verificationSent: 'Verification e‑mail sent.',

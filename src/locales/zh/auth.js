@@ -19,7 +19,8 @@ export default {
     passwordPlaceholder: '密码',
     confirmPassword: '确认密码',
     confirmPasswordPlaceholder: '确认密码',
-    passwordsDoNotMatch: '密码不匹配'
+    passwordsDoNotMatch: '密码不匹配',
+    termsRequired: '登录前必须同意条款和条件'
   },
   switch: {
     noAccount: '还没有账户？',
@@ -30,7 +31,9 @@ export default {
     haveAccount: '已有账户？',
     signIn: '登录',
     termsText: '使用分子宇宙即表示您同意SES AI的',
-    termsLink: '条款和条件'
+    termsLink: '条款和条件',
+    loginTermsText: '已阅读并同意SES AI的',
+    loginTermsLink: '使用协议和隐私政策'
   },
   messages: {
     verificationSent: '验证邮件已发送。',
