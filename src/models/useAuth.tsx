@@ -42,7 +42,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isAuthenticated: false,
                 initialAuthLoaded: true,
             });
-            window.location.href = '/login';
+            const current = window.location.pathname + window.location.search;
+            localStorage.setItem('redirectAfterLogin', current);
+            window.location.href = '/login?redirect=' + encodeURIComponent(current);
             return;
         }
 
@@ -116,7 +118,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             isLoading: false,
             error: null
         });
-        window.location.href = '/login'; // Redirect to login page
+        const current = window.location.pathname + window.location.search;
+        localStorage.setItem('redirectAfterLogin', current);
+        window.location.href = '/login?redirect=' + encodeURIComponent(current);
     },
 
     register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {

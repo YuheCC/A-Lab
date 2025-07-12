@@ -48,7 +48,7 @@ const AuthPage = () => {
       if (redirectPath) navigate(redirectPath);
       else {
         // Return to home page
-        navigate("/");
+        navigate("/map");
       }
     } else {
       console.error('Authentication error:', response.error);
