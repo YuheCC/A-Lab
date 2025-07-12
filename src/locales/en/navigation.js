@@ -40,6 +40,14 @@ export default {
   // Upgrade prompt
   upgradePrompt: "Please upgrade your plan",
   
+  // Upgrade confirmation dialog
+  upgradeConfirmation: {
+    title: "Upgrade Plan",
+    message: "Would you like to upgrade your plan to unlock more features?",
+    confirm: "Confirm",
+    cancel: "Cancel"
+  },
+  
   // Action buttons
   actions: {
     startNow: "start now"

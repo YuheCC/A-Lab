@@ -2,22 +2,24 @@ import { NavLink, useLocation } from "umi";
 import { useTranslation } from 'react-i18next';
 import userSvg from '@/assets/svg/user.svg';
 import userCircleSvg from '@/assets/svg/userCircle.svg';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import settingSvg from '@/assets/svg/setting.svg';
 import logoutSvg from '@/assets/svg/logout.svg';
 import { useAuthStore } from "@/models/useAuth";
 import SettingModal from "@/components/SettingModal";
 import RoleRender from "../RoleRender";
-import { Tooltip } from '@mui/material';
+import { PricingContext } from "@/layouts/index";
 
 const Header = () => {
     const { t } = useTranslation();
     const { pathname } = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
+    const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
 
     // 检查是否为common用户
     const isCommonUser = permissions === 'common';
@@ -41,47 +43,38 @@ const Header = () => {
         };
     }, []);
 
-    // 处理受限链接点击
+    // 处理受限链接点击，弹出升级确认框
     const handleRestrictedClick = (e: React.MouseEvent) => {
         if (isCommonUser) {
             e.preventDefault();
             e.stopPropagation();
+            setShowUpgradeModal(true);
         }
     };
 
-    // 渲染导航链接，根据权限决定是否包装Tooltip
+    // 处理升级确认
+    const handleUpgradeConfirm = () => {
+        setShowUpgradeModal(false);
+        setShowPricingOverlay(true);
+    };
+
+    // 处理升级取消
+    const handleUpgradeCancel = () => {
+        setShowUpgradeModal(false);
+    };
+
+    // 渲染导航链接
     const renderNavLink = (to: string, text: string, isActive: boolean) => {
         if (isCommonUser) {
             return (
-                <Tooltip 
-                    title={t('navigation.upgradePrompt')} 
-                    arrow 
-                    placement="top"
-                    componentsProps={{
-                        tooltip: {
-                            sx: {
-                                marginBottom: '8px !important',
-                                fontSize: '12px',
-                                backgroundColor: '#374151',
-                                color: '#fff'
-                            }
-                        },
-                        arrow: {
-                            sx: {
-                                color: '#374151'
-                            }
-                        }
-                    }}
+                <NavLink 
+                    to={to} 
+                    className={`nav-item ${isActive ? 'active' : ''}`}
+                    onClick={handleRestrictedClick}
+                    style={{ display: 'inline-block' }}
                 >
-                    <NavLink 
-                        to={to} 
-                        className={`nav-item ${isActive ? 'active' : ''} disabled`}
-                        onClick={handleRestrictedClick}
-                        style={{ display: 'inline-block' }}
-                    >
-                        {text}
-                    </NavLink>
-                </Tooltip>
+                    {text}
+                </NavLink>
             );
         }
 
@@ -142,6 +135,24 @@ const Header = () => {
                 </div>
             </div>
             <SettingModal ref={settingModalRef} />
+            
+            {/* 升级确认框 */}
+            {showUpgradeModal && (
+                <div className="upgrade-modal-overlay" onClick={handleUpgradeCancel}>
+                    <div className="upgrade-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>{t('navigation.upgradeConfirmation.title')}</h3>
+                        <p>{t('navigation.upgradeConfirmation.message')}</p>
+                        <div className="upgrade-modal-buttons">
+                            <button className="upgrade-btn-secondary" onClick={handleUpgradeCancel}>
+                                {t('navigation.upgradeConfirmation.cancel')}
+                            </button>
+                            <button className="upgrade-btn-primary" onClick={handleUpgradeConfirm}>
+                                {t('navigation.upgradeConfirmation.confirm')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     )
 }

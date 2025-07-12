@@ -3560,3 +3560,78 @@ body.no-select {
   justify-content: center;
   align-items: center;
 }
+
+/* 升级确认框样式 */
+.upgrade-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+}
+
+.upgrade-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.upgrade-modal-content h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.upgrade-modal-content p {
+  margin: 0 0 24px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.upgrade-modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.upgrade-btn-secondary {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #666;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.upgrade-btn-secondary:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.upgrade-btn-primary {
+  padding: 8px 16px;
+  border: none;
+  background-color: #0066cc;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.upgrade-btn-primary:hover {
+  background-color: #0052a3;
+}

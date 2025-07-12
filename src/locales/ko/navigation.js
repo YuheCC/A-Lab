@@ -40,6 +40,14 @@ export default {
   // Upgrade prompt
   upgradePrompt: "플랜을 업그레이드해주세요",
   
+  // Upgrade confirmation dialog
+  upgradeConfirmation: {
+    title: "플랜 업그레이드",
+    message: "더 많은 기능을 사용하려면 플랜을 업그레이드하시겠습니까?",
+    confirm: "확인",
+    cancel: "취소"
+  },
+  
   // Action buttons
   actions: {
     startNow: "지금 시작"

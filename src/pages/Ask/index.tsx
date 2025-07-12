@@ -178,8 +178,10 @@ const formatThinkingTime = (seconds) => {
 }
 
 // Chatbot component
-const ChatbotInterface = ({ remainingQueries, setRemainingQueries, remainingDeepSpaceQueries, setRemainingDeepSpaceQueries }) => {
+const ChatbotInterface = () => {
   const { t } = useTranslation();
+  const [remainingQueries, setRemainingQueries] = useState(0);
+  const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
   const { 
     messages, 
     activeMolecule,
