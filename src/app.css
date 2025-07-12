@@ -1039,21 +1039,40 @@ main.about-content {
 
 .about-banner-padded {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 2.5rem auto;
   padding-left: 0;
   padding-right: 0;
   box-sizing: border-box;
+  position: relative;
 }
 .about-banner-padded-img {
   width: 100%;
-  max-width: 1800px;
+  max-width: 1200px;
   margin: 0 auto;
   display: block;
   border-radius: 28px;
-  height: 400px;
-  object-fit: contain;
+  height: 500px;
+  object-fit: cover;
   background: #fdfdfa;
+}
+
+.banner-enter-mu-button {
+  position: absolute;
+  bottom: 32px;
+  left: 32px;
+  background-color: #1c1c1c;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  z-index: 10;
+}
+
+.banner-enter-mu-button:hover {
+  background-color: #333;
 }
 
 .pricing-grid {

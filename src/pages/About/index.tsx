@@ -32,7 +32,7 @@ const AboutPage = () => {
                 <a href="#newsfeed" className="about-nav-item">News Feed</a>
             </nav>
             <div className="about-header-actions">
-                <a href="login.html" className="try-mu-button">Try MU</a>
+                <a href="login.html" className="try-mu-button">Enter MU</a>
             </div>
         </div>
       </header>
@@ -40,6 +40,7 @@ const AboutPage = () => {
       <main>
           <div className="about-banner-padded">
               <img src="hero-banner.png" alt="Make Contact with the Molecular Universe" className="about-banner-padded-img" />
+              <a href="login.html" className="try-mu-button banner-enter-mu-button">Enter MU</a>
           </div>
           <div className="about-quote" style={{textAlign:'center',margin:'32px 0 24px 0',fontSize:'1.35rem',color:'#444',fontStyle:'italic'}}>
               "If it's just us, it seems like an awful waste of space."<br/>
