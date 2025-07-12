@@ -8,6 +8,7 @@ import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider } from "@/components/MessageProvider";
+import PricingOverlay from "@/components/PricingOverlay";
 
 const API_URL = getAPIUrl();
 
@@ -18,6 +19,10 @@ const FullNavLayout = () => {
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
     const { verifyAuth } = useAuthStore();
+    // 从query获取showPricing参数
+    const queryParams = new URLSearchParams(window.location.search);
+    const showPricingFromQuery = queryParams.get('showPricing') === 'true';
+    const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
 
     useEffect(() => {
         verifyAuth();
@@ -133,6 +138,10 @@ const FullNavLayout = () => {
                 <div className='main-container'>
                     <Outlet />
                 </div>
+                <PricingOverlay 
+                    visible={showPricingOverlay}
+                    onClose={() => setShowPricingOverlay(false)}
+                />
             </FavoriteContext.Provider>
         </MessageProvider>
     );
