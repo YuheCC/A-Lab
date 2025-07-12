@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Pricing from '../../components/Pricing';
 import './abou.css';
+import { MessageProvider } from '@/components/MessageProvider';
 
 // About Page component
 const AboutPage = () => {
@@ -268,4 +269,12 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+const AboutPageWithProvider = () => {
+  return (
+    <MessageProvider>
+      <AboutPage />
+    </MessageProvider>
+  );
+};
+
+export default AboutPageWithProvider;

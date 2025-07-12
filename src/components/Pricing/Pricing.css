@@ -170,6 +170,24 @@
   border: 1px solid #e5e7eb;
 }
 
+/* 禁用状态的按钮样式 */
+.pricing-btn:disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.pricing-btn:disabled:hover {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  transform: none !important;
+}
+
 .pricing-features {
   margin-top: 0 !important;
   width: 100% !important;

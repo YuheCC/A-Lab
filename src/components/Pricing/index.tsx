@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Pricing.css';
+import '@/components/SettingModal/settingModal.css';
 import { useNavigate } from 'umi';
 import { useAuthStore } from '@/models/useAuth';
 import ContactSalesModal from '@/components/ContactSalesModal';
+import { sendEducationCode } from '@/services/auth';
+import { useMessage } from '@/components/MessageProvider';
 
 interface PricingProps {
   showHeader?: boolean;
@@ -15,8 +18,13 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'enterprise' | 'joint'>('enterprise');
+  const [showEducationModal, setShowEducationModal] = useState(false);
+  const [educationEmail, setEducationEmail] = useState('');
+  const [educationError, setEducationError] = useState('');
+  const [isSendingEducation, setIsSendingEducation] = useState(false);
   const navigate = useNavigate();
   const { userPermissions: myPermission, userInfo } = useAuthStore();
+  const { success, error } = useMessage();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
@@ -40,9 +48,67 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
     joint: "",
   }), [userInfo]);
 
+  const handleEducationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowEducationModal(true);
+    setEducationEmail('');
+    setEducationError('');
+  };
+
+  const handleEducationSubmit = async () => {
+    if (!educationEmail.trim()) {
+      setEducationError(t('settings.education.empty'));
+      return;
+    }
+
+    // 邮箱格式验证
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(educationEmail.trim())) {
+      setEducationError(t('settings.education.invalid'));
+      return;
+    }
+
+    setIsSendingEducation(true);
+    setEducationError('');
+
+    try {
+      const response: any = await sendEducationCode({
+        edu_email: educationEmail.trim(),
+      });
+      const { data } = response;
+      if(response.ok === false) {
+        error(data.detail || t('settings.education.error'));
+        return;
+      }
+      setShowEducationModal(false);
+      setEducationEmail('');
+      success(t('settings.education.success'));
+      
+      // 跳转到验证页面
+      navigate(`/verify-education?id=${data.verify_id}`);
+
+    } catch (err: any) {
+      error(err.detail || t('settings.education.error'));
+    } finally {
+      setIsSendingEducation(false);
+    }
+  };
+
+  const handleEducationCancel = () => {
+    setShowEducationModal(false);
+    setEducationEmail('');
+    setEducationError('');
+  };
+
   const clickButtonHandler = (permission: string) => {
     if(showHeader){
       navigate(`/map?showPricing=true`);
+      return;
+    }
+
+    // 处理 research 点击事件，显示教育邮箱验证浮层
+    if(permission === 'research'){
+      handleEducationClick(new MouseEvent('click') as any);
       return;
     }
 
@@ -162,6 +228,53 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
         onClose={() => setContactModalOpen(false)}
         planType={selectedPlan}
       />
+      
+      {/* Education Verification Modal */}
+      {showEducationModal && (
+        <div className="redeem-modal-overlay">
+          <div className="redeem-modal-content">
+            <div className="redeem-modal-header">
+              <h3 className="redeem-modal-title">{t('settings.education.title')}</h3>
+              <button className="redeem-modal-close" onClick={handleEducationCancel}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18" stroke="#999" strokeWidth="2"/>
+                  <line x1="6" y1="6" x2="18" y2="18" stroke="#999" strokeWidth="2"/>
+                </svg>
+              </button>
+            </div>
+            <div className="redeem-modal-body">
+              <p className="redeem-modal-description">{t('settings.education.description')}</p>
+              <div className="redeem-input-group">
+                <input
+                  type="email"
+                  className="redeem-input"
+                  placeholder={t('settings.education.placeholder')}
+                  value={educationEmail}
+                  onChange={(e) => setEducationEmail(e.target.value)}
+                  disabled={isSendingEducation}
+                />
+                {educationError && <div className="redeem-error">{educationError}</div>}
+              </div>
+              <div className="redeem-actions">
+                <button 
+                  className="redeem-btn redeem-btn-cancel" 
+                  onClick={handleEducationCancel}
+                  disabled={isSendingEducation}
+                >
+                  {t('settings.education.cancel')}
+                </button>
+                <button 
+                  className="redeem-btn redeem-btn-confirm" 
+                  onClick={handleEducationSubmit}
+                  disabled={isSendingEducation || !educationEmail.trim()}
+                >
+                  {isSendingEducation ? t('settings.education.sending') : t('settings.education.confirm')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
