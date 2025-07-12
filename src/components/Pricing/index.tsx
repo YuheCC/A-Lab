@@ -26,7 +26,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
   const permissionList = ["common", "research", "explorer", "team", "enterprise", "joint"];
   const hasPermission = (permission: string) => {
     if(!myPermission){
-      return true;
+      return false;
     }
     const index = permissionList.indexOf(permission);
     const myIndex = permissionList.indexOf(myPermission || "common");
