@@ -5,7 +5,7 @@ export default {
     enterprise: "企业版"
   },
   research: {
-    title: "科研（仅限学术机构）",
+    title: "教育版",
     description: "访问部分分子宇宙（100万）",
     price: "$0",
     period: "/ 月",

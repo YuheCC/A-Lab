@@ -50,11 +50,11 @@ const handleCluster = (cluster: any) => {
     if(typeof cluster === 'string'){
         return cluster;
     }
-    if(typeof cluster === 'number'){
+    if(typeof cluster === 'number' && cluster >= 0){
         cluster += 1;
         return cluster.toString();
     }
-    return cluster;
+    return cluster.toString();
 }
 
 /**
