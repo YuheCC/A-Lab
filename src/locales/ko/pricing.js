@@ -1,5 +1,9 @@
 export default {
   title: "가격",
+  switcher: {
+    individual: "개인",
+    enterprise: "기업"
+  },
   research: {
     title: "연구용 (학계 전용)",
     description: "Molecular Universe 제한 접근 (1M)",
@@ -68,5 +72,9 @@ export default {
       "확장된 분자 특성 제공 (녹는점 및 끓는점 예측 포함)",
       "맞춤형 작업 제안서 제공 (분자 합성, 전해질 조성 개발, 셀 단위 성능 검증 포함)"
     ]
+  },
+  footer: {
+    note: "분자 우주는 학생과 교육자에게 무료입니다.",
+    verify: "인증받기"
   }
 }; 

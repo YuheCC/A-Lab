@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import Pricing from '../../components/Pricing';
 import './abou.css';
 
 // About Page component
@@ -146,97 +147,7 @@ const AboutPage = () => {
                       </div>
                   </div>
               </section>
-              <section id="pricing">
-                  <h2>Pricing</h2>
-                  <div className="pricing-switcher" style={{display:'flex',justifyContent:'center',gap:'24px',marginBottom:'32px'}}>
-                    <button className="pricing-switch-btn active" data-group="personal">Personal</button>
-                    <button className="pricing-switch-btn" data-group="business">Business</button>
-                  </div>
-                  <div className="pricing-group" data-group="personal">
-                    <div className="pricing-grid">
-                      <div className="pricing-card">
-                          <div className="pricing-card-top">
-                          <div className="pricing-title">Research <span className="pricing-sub">(academia only)</span></div>
-                          <div className="pricing-access">Access to Partial Molecular Universe (1M)</div>
-                          <div className="pricing-price">$0<span className="pricing-unit">/month</span></div>
-                          </div>
-                          <button className="pricing-btn">Get Started</button>
-                          <ul className="pricing-features">
-                              <li>Map</li>
-                              <li>Filter</li>
-                              <li>Search</li>
-                              <li>Ask (≤ 100 queries/month)</li>
-                          </ul>
-                      </div>
-                      <div className="pricing-card highlight">
-                          <div className="pricing-card-top">
-                          <div className="pricing-title">Explorer</div>
-                          <div className="pricing-access">Access to Partial Molecular Universe (1M)</div>
-                          <div className="pricing-price">$150<span className="pricing-unit">/month</span></div>
-                          </div>
-                          <button className="pricing-btn" style={{background:'#1c7c54'}}>Get Explorer</button>
-                          <ul className="pricing-features">
-                              <li>Map</li>
-                              <li>Filter</li>
-                              <li>Search</li>
-                              <li>Ask (no cap)</li>
-                          </ul>
-                      </div>
-                      <div className="pricing-card">
-                          <div className="pricing-card-top">
-                          <div className="pricing-title">Team</div>
-                          <div className="pricing-access">Access to Partial Molecular Universe (1M)</div>
-                          <div className="pricing-price">$1,000<span className="pricing-unit">/month</span></div>
-                          <div className="pricing-note">Up to 10 users</div>
-                          </div>
-                          <button className="pricing-btn">Get Team</button>
-                          <ul className="pricing-features">
-                              <li>Map</li>
-                              <li>Filter</li>
-                              <li>Search</li>
-                              <li>Ask (no cap)</li>
-                          </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pricing-group" data-group="business" style={{display:'none'}}>
-                    <div className="pricing-grid">
-                      <div className="pricing-card">
-                          <div className="pricing-card-top">
-                          <div className="pricing-title">Enterprise</div>
-                          <div className="pricing-access">Access to Whole Molecular Universe (100M)</div>
-                          </div>
-                          <button className="pricing-btn secondary">Contact Sales</button>
-                          <ul className="pricing-features">
-                              <li>Map</li>
-                              <li>Filter</li>
-                              <li>Search</li>
-                              <li>Ask (no cap, battery-specific LLM)</li>
-                              <li>More molecule properties (inc. melting and boiling point predictions)</li>
-                              <li>Expert consulting</li>
-                          </ul>
-                      </div>
-                      <div className="pricing-card">
-                          <div className="pricing-card-top">
-                          <div className="pricing-title">Joint Development</div>
-                          <div className="pricing-access">Access to Whole Molecular Universe (100M)</div>
-                          </div>
-                          <button className="pricing-btn secondary">Contact Sales</button>
-                          <ul className="pricing-features">
-                              <li>Map</li>
-                              <li>Filter</li>
-                              <li>Search</li>
-                              <li>Ask (no cap, battery-specific LLM)</li>
-                              <li>More molecule properties (inc. melting and boiling point predictions)</li>
-                              <li>Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)</li>
-                          </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{textAlign: 'center', marginTop: '32px', fontSize: '1.1rem', color: '#666', fontStyle: 'italic'}}>
-                      Molecular Universe is free for students and educators. <span style={{textDecoration: 'underline'}}>Get Verified</span>
-                  </div>
-              </section>
+              <Pricing />
               <section id="newsfeed">
                   <h2>News Feed</h2>
                   <div className="news-feed">

@@ -1,5 +1,9 @@
 export default {
   title: "Pricing",
+  switcher: {
+    individual: "Individual",
+    enterprise: "Enterprise"
+  },
   research: {
     title: "Research (academia only)",
     description: "Access to Partial Molecular Universe (1M)",
@@ -68,5 +72,9 @@ export default {
       "More molecule properties (inc. melting and boiling point predictions)",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]
+  },
+  footer: {
+    note: "Molecular Universe is free for students and educators.",
+    verify: "Get Verified"
   }
 }; 

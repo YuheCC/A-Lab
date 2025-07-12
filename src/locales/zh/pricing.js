@@ -1,5 +1,9 @@
 export default {
   title: "定价",
+  switcher: {
+    individual: "个人版",
+    enterprise: "企业版"
+  },
   research: {
     title: "科研（仅限学术机构）",
     description: "访问部分分子宇宙（100万）",
@@ -68,5 +72,9 @@ export default {
       "更多分子属性（含熔点和沸点预测）",
       "定制化工作内容（含分子合成、电解液配方开发与电池验证）"
     ]
+  },
+  footer: {
+    note: "分子宇宙对学生和教育工作者免费。",
+    verify: "获取验证"
   }
 }; 
