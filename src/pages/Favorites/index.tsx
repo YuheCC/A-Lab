@@ -1408,11 +1408,6 @@ const FavoritesGrid = () => {
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
                     <td>
-                      {false && favorite.commercial_link ? (
-                        <a href={favorite.commercial_link} target="_blank" rel="noopener noreferrer">{t('favorites.viewLink')}</a>
-                      ) : t('favorites.notAvailable')}
-                    </td>
-                    <td>
                       <button 
                         className="remove-favorite-table-button" 
                         onClick={(e) => handleRemoveFavorite(favorite.id, e)}
