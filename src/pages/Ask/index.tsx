@@ -802,7 +802,7 @@ const handleFindSimilarMolecules = async (details) => {
               <div className={`query-limit-display ${remainingQueries <= 3 ? 'warning' : ''} ${remainingQueries === 0 ? 'danger' : ''}`}>
                 <MessageCircle size={18} className='query-limit-icon'></MessageCircle>
                 {
-                  userPermissions === 'research' && (
+                  (userPermissions === 'research' || userPermissions === 'explorer' || userPermissions === 'team') && (
                     <span>
                       {t('chatbox.queryLimit.queriesRemaining')} <span className="query-limit-count">{remainingQueries}</span>
                     </span>
