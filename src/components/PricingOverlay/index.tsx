@@ -17,6 +17,21 @@ const PricingOverlay: React.FC<PricingOverlayProps> = ({ visible, onClose, permi
   useEffect(() => {
     if(!visible){
       verifyAuth();
+    // 清理掉query上的showPricing和permission参数，如果存在的话
+    const url = new URL(window.location.href);
+
+    let changed = false;
+    if (url.searchParams.has('showPricing')) {
+      url.searchParams.delete('showPricing');
+      changed = true;
+    }
+    if (url.searchParams.has('permission')) {
+      url.searchParams.delete('permission');
+      changed = true;
+    }
+    if (changed) {
+      window.history.replaceState({}, '', url.toString());
+    }
     }
   }, [visible, verifyAuth]);
 
