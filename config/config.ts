@@ -8,7 +8,7 @@ export default defineConfig({
   outputPath: 'build',
   define: {
     'BASE_URL': "https://prod-api.ses.ai",
-    'explorer_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
+    'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },
   // 禁用 esbuild 来规避冲突问题
