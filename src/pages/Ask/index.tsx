@@ -455,7 +455,7 @@ const handleFindSimilarMolecules = async (details) => {
       if (!input.trim()) return;
 
       /* enforce research-tier quota */
-      if (userPermissions === 'research' && remainingQueries <= 0) {
+      if (userPermissions === 'research' && (remainingQueries <= 0 || remainingDeepSpaceQueries <= 0)) {
         addMessage({
           role : "assistant",
           content : t('chatbox.queryLimit.reachedLimit')
@@ -909,7 +909,7 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
           <ChatInput 
             onSend={handleSend}
-            disabled={(userPermissions === 'research' && remainingQueries <= 0) || isThinking || isLoading || !isSynced}
+            disabled={(userPermissions === 'research' && (remainingQueries <= 0 || remainingDeepSpaceQueries <= 0)) || isThinking || isLoading || !isSynced}
             ignoreChatHistory={ignoreChatHistory}
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
             disableLiteratureSearch={disableLiteratureSearch}
