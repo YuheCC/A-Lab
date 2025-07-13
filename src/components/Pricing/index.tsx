@@ -189,7 +189,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
               <div className="pricing-access">{t('pricing.explorer.description')}</div>
               <div className="pricing-price">{t('pricing.explorer.price')}<span className="pricing-unit">{t('pricing.explorer.period')}</span></div>
             </div>
-            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" style={{background:'#1c7c54'}} data-permission="explorer">{t('pricing.explorer.cta')}</button>
+            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" data-permission="explorer">{t('pricing.explorer.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.explorer.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
