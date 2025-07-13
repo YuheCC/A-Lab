@@ -7,13 +7,16 @@ import { useAuthStore } from '@/models/useAuth';
 import ContactSalesModal from '@/components/ContactSalesModal';
 import { sendEducationCode } from '@/services/auth';
 import { useMessage } from '@/components/MessageProvider';
+import { useEffect } from 'react';
 
 interface PricingProps {
   showHeader?: boolean;
   className?: string;
+  permission?: string | null;
 }
 
-const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
+const Pricing = ({ showHeader = true, className = '', permission }: PricingProps) => {
+  console.log(permission);
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -29,6 +32,17 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
   };
+
+  useEffect(() => {
+    if(permission){
+      // 如果是enterprise或joint，需要先切换到business组
+      if(permission === 'enterprise' || permission === 'joint'){
+        setActiveGroup('business');
+      }
+      
+      clickButtonHandler(permission);
+    }
+  }, [permission]);
 
   const permissionList = ["common", "research", "explorer", "team", "enterprise", "joint"];
   const hasPermission = (permission: string) => {
@@ -102,7 +116,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
 
   const clickButtonHandler = (permission: string) => {
     if(showHeader){
-      navigate(`/map?showPricing=true`);
+      navigate(`/map?showPricing=true&permission=${permission}`);
       return;
     }
 
@@ -158,7 +172,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
               <div className="pricing-access">{t('pricing.research.description')}</div>
               <div className="pricing-price">{t('pricing.research.price')}<span className="pricing-unit">{t('pricing.research.period')}</span></div>
             </div>
-            <button disabled={hasPermission('research')} onClick={() => clickButtonHandler('research')} className="pricing-btn">{t('pricing.research.cta')}</button>
+            <button disabled={hasPermission('research')} onClick={() => clickButtonHandler('research')} className="pricing-btn" data-permission="research">{t('pricing.research.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.research.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -172,7 +186,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
               <div className="pricing-access">{t('pricing.explorer.description')}</div>
               <div className="pricing-price">{t('pricing.explorer.price')}<span className="pricing-unit">{t('pricing.explorer.period')}</span></div>
             </div>
-            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" style={{background:'#1c7c54'}}>{t('pricing.explorer.cta')}</button>
+            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" style={{background:'#1c7c54'}} data-permission="explorer">{t('pricing.explorer.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.explorer.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -186,7 +200,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
               <div className="pricing-access">{t('pricing.team.description')}</div>
               <div className="pricing-price">{t('pricing.team.price')}<span className="pricing-unit">{t('pricing.team.period')}</span></div>
             </div>
-            <button disabled={hasPermission('team')} onClick={() => clickButtonHandler('team')} className="pricing-btn">{t('pricing.team.cta')}</button>
+            <button disabled={hasPermission('team')} onClick={() => clickButtonHandler('team')} className="pricing-btn" data-permission="team">{t('pricing.team.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.team.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -203,7 +217,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
               <div className="pricing-title">{t('pricing.enterprise.title')}</div>
               <div className="pricing-access">{t('pricing.enterprise.description')}</div>
             </div>
-            <button disabled={hasPermission('enterprise')} onClick={() => clickButtonHandler('enterprise')} className="pricing-btn secondary">{t('pricing.enterprise.cta')}</button>
+            <button disabled={hasPermission('enterprise')} onClick={() => clickButtonHandler('enterprise')} className="pricing-btn secondary" data-permission="enterprise">{t('pricing.enterprise.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.enterprise.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>
@@ -216,7 +230,7 @@ const Pricing = ({ showHeader = true, className = '' }: PricingProps) => {
               <div className="pricing-title">{t('pricing.joint.title')}</div>
               <div className="pricing-access">{t('pricing.joint.description')}</div>
             </div>
-            <button disabled={hasPermission('joint')} onClick={() => clickButtonHandler('joint')} className="pricing-btn secondary">{t('pricing.joint.cta')}</button>
+            <button disabled={hasPermission('joint')} onClick={() => clickButtonHandler('joint')} className="pricing-btn secondary" data-permission="joint">{t('pricing.joint.cta')}</button>
             <ul className="pricing-features">
               {(t('pricing.joint.details', { returnObjects: true }) as string[]).map((detail, index) => (
                 <li key={index}>{detail}</li>

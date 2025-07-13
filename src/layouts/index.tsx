@@ -23,7 +23,9 @@ const FullNavLayout = () => {
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
     const showPricingFromQuery = queryParams.get('showPricing') === 'true';
+    const permissionFromQuery = queryParams.get('permission');
     const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
+    const [permission, setPermission] = useState(permissionFromQuery);
 
     useEffect(() => {
         verifyAuth();
@@ -134,7 +136,7 @@ const FullNavLayout = () => {
     }, []);
     return (
         <MessageProvider>
-          <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay }}>
+          <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
             <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
                 <Header />
                 <div className='main-container'>
@@ -142,7 +144,11 @@ const FullNavLayout = () => {
                 </div>
                 <PricingOverlay 
                     visible={showPricingOverlay}
-                    onClose={() => setShowPricingOverlay(false)}
+                    onClose={() => {
+                      setShowPricingOverlay(false)
+                      setPermission(null)
+                    }}
+                    permission={permission}
                 />
             </FavoriteContext.Provider>
           </PricingContext.Provider>

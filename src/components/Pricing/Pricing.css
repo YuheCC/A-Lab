@@ -65,7 +65,12 @@
 }
 
 .pricing-group[data-group="business"] .pricing-grid {
-  gap: 2.5rem !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 1.5rem !important;
+  max-width: 900px !important;
+  margin: 2rem auto 1.5rem auto !important;
 }
 
 .pricing-group[data-group="personal"] .pricing-grid {
@@ -228,6 +233,13 @@
     grid-template-columns: 1fr;
     gap: 1.2rem;
     margin: 1.5rem 0 1rem 0;
+  }
+  
+  .pricing-group[data-group="business"] .pricing-grid {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.2rem !important;
+    margin: 1.5rem 0 1rem 0 !important;
   }
   
   .pricing-card {

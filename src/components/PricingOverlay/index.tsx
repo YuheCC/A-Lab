@@ -6,9 +6,10 @@ import './PricingOverlay.css';
 interface PricingOverlayProps {
   visible: boolean;
   onClose: () => void;
+  permission: string | null;
 }
 
-const PricingOverlay: React.FC<PricingOverlayProps> = ({ visible, onClose }) => {
+const PricingOverlay: React.FC<PricingOverlayProps> = ({ visible, onClose, permission }: PricingOverlayProps) => {
   const { t } = useTranslation();
 
   // 监听ESC键关闭浮层
@@ -59,7 +60,7 @@ const PricingOverlay: React.FC<PricingOverlayProps> = ({ visible, onClose }) => 
           </button>
         </div>
         <div className="pricing-overlay-body">
-          <Pricing showHeader={false} className="pricing-overlay-pricing" />
+          <Pricing showHeader={false} className="pricing-overlay-pricing" permission={permission} />
         </div>
       </div>
     </div>
