@@ -13,3 +13,5 @@ declare module '*.svg' {
 
 // 添加全局变量声明
 declare const BASE_URL: string;
+declare const explorer_url: string;
+declare const team_url: string;

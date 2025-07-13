@@ -43,10 +43,11 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     return index <= myIndex;
   }
 
+  console.log(explorer_url, team_url);
   const pricingUrlMpas = useMemo(() => ({
     research: "/map?showPricing=true",
-    explorer: "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01?prefilled_email=" + userInfo?.email,
-    team: "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02?prefilled_email=" + userInfo?.email,
+    explorer: explorer_url + "?prefilled_email=" + userInfo?.email,
+    team: team_url + "?prefilled_email=" + userInfo?.email,
     enterprise: "",
     joint: "",
   }), [userInfo]);
