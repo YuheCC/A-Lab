@@ -179,8 +179,8 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 getPosition: d => [X_STRETCH * d[xKey], d[yKey]],
                 getIcon: d => iconName,
                 getSize: iconSize,
-                iconAtlas: process.env.PUBLIC_URL + '/atlas.png',
-                iconMapping: process.env.PUBLIC_URL + '/atlas_map.json',
+                iconAtlas: window.location.origin + '/atlas.png',
+                iconMapping: window.location.origin + '/atlas_map.json',
                 opacity
             }));
 
