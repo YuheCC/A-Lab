@@ -44,7 +44,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             });
             const current = window.location.pathname + window.location.search;
             localStorage.setItem('redirectAfterLogin', current);
-            window.location.href = '/login?redirect=' + encodeURIComponent(current);
+            if(window.location.pathname !== '/login' && window.location.pathname !== '/') {
+                window.location.href = '/login?redirect=' + encodeURIComponent(current);
+            }
             return;
         }
 
@@ -97,7 +99,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem('username', data.username);
             localStorage.setItem('permissions', data.permissions);
 
-            return { success: true };
+            return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
             
         } catch (error) {
             const errorMessage = (error as any)?.detail || 'Authentication failed';

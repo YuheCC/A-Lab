@@ -51,8 +51,8 @@ const AuthPage = () => {
         navigate("/map");
       }
     } else {
-      console.error('Authentication error:', response.error);
-      if(response.error) setError(response.error.toString());
+      console.error('Authentication error:', response.message);
+      if(response.message) setError(response.message.toString());
     }
   };
 
