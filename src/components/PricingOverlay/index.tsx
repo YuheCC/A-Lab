@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Pricing from '@/components/Pricing';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/models/useAuth';
 import './PricingOverlay.css';
 
 interface PricingOverlayProps {
@@ -11,6 +12,13 @@ interface PricingOverlayProps {
 
 const PricingOverlay: React.FC<PricingOverlayProps> = ({ visible, onClose, permission }: PricingOverlayProps) => {
   const { t } = useTranslation();
+  const { verifyAuth } = useAuthStore();
+
+  useEffect(() => {
+    if(!visible){
+      verifyAuth();
+    }
+  }, [visible, verifyAuth]);
 
   // 监听ESC键关闭浮层
   useEffect(() => {
