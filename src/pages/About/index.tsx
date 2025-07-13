@@ -34,10 +34,10 @@ const AboutPage = () => {
                 </a>
             </div>
             <nav className="about-nav">
+                <a href="#newsfeed" className="about-nav-item">{t('about.navigation.newsfeed')}</a>
                 <a href="#motivation" className="about-nav-item">{t('about.navigation.motivation')}</a>
                 <a href="#features" className="about-nav-item">{t('about.navigation.features')}</a>
-                <a href="#pricing" className="about-nav-item">{t('about.navigation.pricing')}</a>
-                <a href="#newsfeed" className="about-nav-item">{t('about.navigation.newsfeed')}</a>
+                <a href="#pricing" className="about-nav-item">{t('about.navigation.pricing')}</a>               
             </nav>
             <div className="about-header-actions">
                 <a target="_blank" href="/map" className="try-mu-button">{t('about.navigation.enterMu')}</a>
