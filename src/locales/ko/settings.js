@@ -19,6 +19,7 @@ export default {
         redeemTeamCode: '팀 코드 사용',
         educationVerification: '교육 인증',
         isEducationAccount: '교육 계정 여부',
+        yes: '예',
         no: '아니오',
         verifyEducation: '교육 신원 확인',
         upgrade: '업그레이드'

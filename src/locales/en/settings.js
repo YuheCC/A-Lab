@@ -19,6 +19,7 @@ export default {
         redeemTeamCode: 'Redeem Team Code',
         educationVerification: 'Education Verification',
         isEducationAccount: 'Is Education Account',
+        yes: 'Yes',
         no: 'No',
         verifyEducation: 'Verify Education Identity',
         upgrade: 'Upgrade'

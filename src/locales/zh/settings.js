@@ -19,6 +19,7 @@ export default {
         redeemTeamCode: '兑换团队码',
         educationVerification: '教育验证',
         isEducationAccount: '是否教育账号',
+        yes: '是',
         no: '否',
         verifyEducation: '验证教育身份',
         upgrade: '升级'

@@ -45,7 +45,7 @@ const AboutPage = () => {
         </div>
       </header>
 
-      <main>
+      <main style={{paddingBottom: '100px'}}>
           <div className="about-banner-padded">
               <img src="hero-banner.png" alt="Make Contact with the Molecular Universe" className="about-banner-padded-img" />
               <a target="_blank" href="/map" className="try-mu-button banner-enter-mu-button">{t('about.navigation.enterMu')}</a>
@@ -239,7 +239,7 @@ const AboutPage = () => {
           </div>
       </main>
 
-      <footer className="site-footer">
+      {/* <footer className="site-footer">
           <div className="footer-main">
               <div className="footer-logo-col">
                   <img src="logo.png" alt="SES Logo" className="footer-logo" />
@@ -280,7 +280,7 @@ const AboutPage = () => {
               <div className="footer-copyright">{t('about.footer.copyright')}</div>
               <a href="#" className="footer-policy">{t('about.footer.privacyPolicy')}</a>
           </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };
