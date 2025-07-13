@@ -57,6 +57,7 @@ export default {
       "Filter",
       "Search",
       "Ask (no cap, battery-specific LLM)",
+      "Deep Space",
       "More molecule properties (inc. melting and boiling point predictions)",
       "Expert consulting"
     ]
@@ -72,6 +73,7 @@ export default {
       "Filter",
       "Search",
       "Ask (no cap, battery-specific LLM)",
+      "Deep Space",
       "More molecule properties (inc. melting and boiling point predictions)",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]
