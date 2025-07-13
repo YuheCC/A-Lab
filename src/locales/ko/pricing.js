@@ -14,7 +14,8 @@ export default {
       "분자 지도",
       "조건별 검색",
       "검색하기",
-      "Ask 기능 (≤ 월 100회)"
+      "Ask 기능 (≤ 100회/일)",
+      "Deep Space 기능 (≤ 5회/월)"
     ]
   },
   explorer: {
@@ -27,7 +28,8 @@ export default {
       "분자 지도",
       "조건별 검색",
       "검색하기",
-      "Ask 기능 (무제한)"
+      "Ask 기능 (≤ 100회/일)",
+      "Deep Space 기능 (≤ 10회/월)"
     ]
   },
   team: {
@@ -40,7 +42,8 @@ export default {
       "분자 지도",
       "조건별 검색",
       "검색하기",
-      "Ask 기능 (무제한)"
+      "Ask 기능 (≤ 100회/인/일)",
+      "Deep Space 기능 (≤ 10회/인/월)"
     ]
   },
   enterprise: {

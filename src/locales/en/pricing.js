@@ -14,7 +14,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (≤ 100 queries/month)"
+      "Ask (≤ 100 queries/day)",
+      "Deep Space (≤ 5 queries/month)"
     ]
   },
   explorer: {
@@ -27,7 +28,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)"
+      "Ask (≤ 100 queries/day)",
+      "Deep Space (≤ 10 queries/month)"
     ]
   },
   team: {
@@ -40,7 +42,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)"
+      "Ask (≤ 100 queries/person/day)",
+      "Deep Space (≤ 10 queries/person/month)"
     ]
   },
   enterprise: {
