@@ -100,7 +100,7 @@
   
   .chatbot-content.full-width {
     width: 80%;
-    max-width: calc(100vw - 160px);
+    max-width: calc(100vw - 200px);
     min-width: 60vw;
     height: calc(100vh - 104px);
     max-height: calc(100vh - 104px);
@@ -108,7 +108,7 @@
   
   .chatbot-content.with-molecules {
     width: calc(100vw - 650px);
-    min-width: 50vw;
+    min-width: 45vw;
     max-width: calc(100vw - 650px);
     height: calc(100vh - 104px);
     max-height: calc(100vh - 104px);
