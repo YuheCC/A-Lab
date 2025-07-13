@@ -148,7 +148,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
           <h2 style={{margin: 0}}>{t('pricing.title')}</h2>
           <a href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
-            {t('navigation.actions.startNow')} ↗
+            {t('about.navigation.enterMu')} ↗
           </a>
         </div>
       )}

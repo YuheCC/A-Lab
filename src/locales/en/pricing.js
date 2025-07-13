@@ -28,7 +28,7 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (≤ 100 queries/day)",
+      "Ask (no cap)",
       "Deep Space (≤ 10 queries/month)"
     ]
   },
@@ -42,7 +42,7 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (≤ 100 queries/person/day)",
+      "Ask (no cap)",
       "Deep Space (≤ 10 queries/person/month)"
     ]
   },
@@ -58,7 +58,7 @@ export default {
       "Search",
       "Ask (no cap, battery-specific LLM)",
       "Deep Space",
-      "More molecule properties (inc. melting and boiling point predictions)",
+      "More molecule properties",
       "Expert consulting"
     ]
   },
@@ -74,7 +74,7 @@ export default {
       "Search",
       "Ask (no cap, battery-specific LLM)",
       "Deep Space",
-      "More molecule properties (inc. melting and boiling point predictions)",
+      "More molecule properties",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]
   },

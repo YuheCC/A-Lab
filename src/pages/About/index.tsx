@@ -59,7 +59,7 @@ const AboutPage = () => {
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.newsfeed.title')}</h2>
                       <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
-                          {t('navigation.actions.startNow')} ↗
+                          {t('about.navigation.enterMu')} ↗
                       </a>
                   </div>
                   <div className="news-feed">
@@ -94,7 +94,7 @@ const AboutPage = () => {
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.navigation.motivation')}</h2>
                       <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
-                          {t('navigation.actions.startNow')} ↗
+                          {t('about.navigation.enterMu')} ↗
                       </a>
                   </div>
                   <h3>{t('about.whatIs.title')}</h3>
@@ -151,7 +151,7 @@ const AboutPage = () => {
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.features.title')}</h2>
                       <a target="_blank" href="/map" style={{color: '#1c7c54', textDecoration: 'none', fontSize: '14px', fontWeight: '500', marginLeft: '20px'}}>
-                          {t('navigation.actions.startNow')} ↗
+                        {t('about.navigation.enterMu')} ↗
                       </a>
                   </div>
                   <div className="features-flex">
