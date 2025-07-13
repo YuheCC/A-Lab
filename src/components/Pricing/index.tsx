@@ -33,17 +33,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     setActiveGroup(group);
   };
 
-  useEffect(() => {
-    if(permission){
-      // 如果是enterprise或joint，需要先切换到business组
-      if(permission === 'enterprise' || permission === 'joint'){
-        setActiveGroup('business');
-      }
-      
-      clickButtonHandler(permission);
-    }
-  }, [permission]);
-
   const permissionList = ["common", "research", "explorer", "team", "enterprise", "joint"];
   const hasPermission = (permission: string) => {
     if(!myPermission){
@@ -137,6 +126,20 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       window.open(pricingUrlMpas[permission as keyof typeof pricingUrlMpas], '_blank');
     }
   }
+
+  useEffect(() => {
+    if(permission && myPermission){
+      if(hasPermission(permission)){
+        return;
+      }
+      // 如果是enterprise或joint，需要先切换到business组
+      if(permission === 'enterprise' || permission === 'joint'){
+        setActiveGroup('business');
+      }
+      
+      clickButtonHandler(permission);
+    }
+  }, [permission, myPermission]);
 
   return (
     <section id="pricing" className={`pricing-section ${className}`}>
