@@ -1069,11 +1069,11 @@ main.about-content {
 
 .banner-enter-mu-button {
   position: absolute;
-  bottom: 32px;
-  left: 32px;
+  bottom: 50px;
+  left: 80px;
   background-color: #1c1c1c;
   color: white;
-  padding: 0.6rem 1.2rem;
+  padding: 0.9rem 1.5rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
