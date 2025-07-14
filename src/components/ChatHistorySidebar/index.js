@@ -86,9 +86,15 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
                 </span>
                 <IconButton className="close-sidebar-button" style={{ marginLeft: 'auto' }} onClick={() => setCollapsed(!collapsed)} size="small">
                     {collapsed ? (
-                        <div className="open-sidebar-button">
-                            <PanelLeftOpen size={21} />
-                            {(compressed === false) &&<span className="open-sidebar-text">Your Chats</span>}
+                        <div className="open-sidebar-button-wrapper">
+                            <div className="open-sidebar-icon" onClick={() => setCollapsed(!collapsed)}>
+                                <PanelLeftOpen size={21} />
+                            </div>
+                            {(compressed === false) && (
+                                <div className="open-sidebar-text" onClick={() => setCollapsed(!collapsed)}>
+                                    <span>Your Chats</span>
+                                </div>
+                            )}
                         </div>
                     ): <PanelLeftClose size={21} />}
                 </IconButton>
