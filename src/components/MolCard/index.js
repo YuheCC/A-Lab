@@ -50,7 +50,7 @@ export const PropItem = ({ prop }) => {
                         </div>
                     } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
                       enterDelay={500} enterNextDelay={500}>
-                        <code ref={codeRef} style={(prop.wrap ? { whiteSpace: 'wrap', textOverflow: 'initial'} : { whiteSpace: 'nowrap' })}>{prop.hasOwnProperty('value') && valueString}{prop?.action && (
+                        <code ref={codeRef} style={(prop.wrap ? { whiteSpace: 'normal', wordBreak: 'break-word', textOverflow: 'initial'} : { whiteSpace: 'nowrap' })}>{prop.hasOwnProperty('value') && valueString}{prop?.action && (
                             prop?.action
                         )}</code>
                     </Tooltip>
