@@ -107,3 +107,4 @@ export const MolCard = (props) => {
         </div>
     )
 }
+
