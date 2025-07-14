@@ -954,7 +954,7 @@ const handleFindSimilarMolecules = async (details) => {
                 large={true}
                 style={{ margin: 5 }}
                 propGroups={[
-                  { label: 'SMILES', value: details.SMILES, span: 2 },
+                  { label: 'SMILES', value: details.SMILES, span: 2, wrap: true },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
                   { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
                     show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
@@ -1027,9 +1027,9 @@ const handleFindSimilarMolecules = async (details) => {
               name={selectedMolecule.name}
               large={true}
               style={{ margin: 5 }}
-              propGroups={[
-                { label: 'SMILES', value: selectedMolecule.SMILES, span: 2 },
-                { label: 'Molecular Weight', value: selectedMolecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                            propGroups={[
+                  { label: 'SMILES', value: selectedMolecule.SMILES, span: 2, wrap: true },
+                  { label: 'Molecular Weight', value: selectedMolecule.molecular_weight, span: 2, suffix: ' g/mol' },
                 { label: 'Predicted Melting Point', value: selectedMolecule.predicted_MP_celsius, span: 2, suffix: ' °C',
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                  },
@@ -1118,7 +1118,7 @@ const handleFindSimilarMolecules = async (details) => {
                       </IconButton> : null
                     ), show: details.grade !== null && details.grade !== undefined
                   },
-                  { label: 'SMILES', value: details.SMILES, span: 2 },
+                  { label: 'SMILES', value: details.SMILES, span: 2, wrap: true },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
                   {
                     label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',

@@ -30,6 +30,11 @@
 .close-sidebar-button {
     padding: 5px;
     border-radius: 4px !important;
+    --IconButton-hoverBg: transparent !important;
+}
+
+.close-sidebar-button:hover {
+    background-color: transparent !important;
 }
 
 .sidebar-header-content {
