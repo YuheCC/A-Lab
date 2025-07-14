@@ -19,7 +19,7 @@ const AuthPage = () => {
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
-    const redirectPath = searchParams.get('redirect') ?? localStorage.getItem('redirectAfterLogin');
+    const redirectPath = searchParams.get('redirect') ?? "/map";
     if (redirectPath) {
       setRedirectPath(redirectPath);
     }
@@ -44,7 +44,6 @@ const AuthPage = () => {
 
     if (response.success) {
       // Clear the stored redirect path since we're about to use it
-      localStorage.removeItem('redirectAfterLogin');
       if (redirectPath) navigate(redirectPath);
       else {
         // Return to home page
