@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
 import { sendForgotPasswordCode } from '@/services/auth';
@@ -7,9 +7,6 @@ import { sendForgotPasswordCode } from '@/services/auth';
 const ForgotPasswordPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +24,6 @@ const ForgotPasswordPage = () => {
     try {
       const response: any = await sendForgotPasswordCode({
         email: email,
-        password: newPassword,
       });
 
       if(response.ok === false) {
@@ -36,11 +32,10 @@ const ForgotPasswordPage = () => {
       }
 
       // Clear form after successful submission
-      setFirstName('');
-      setLastName('');
       setEmail('');
-
-      navigate(`/verify-forgot-password?id=${response?.data?.verify_id}`);
+      
+      // Show success message with instructions
+      setSuccess(t('auth.forgotPassword.messages.resetLinkSent'));
     }
     catch (err: any) {
       console.error('Password reset request error:', err);
@@ -70,18 +65,6 @@ const ForgotPasswordPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('auth.forgotPassword.form.emailPlaceholder')}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">{t('auth.forgotPassword.form.newPassword')}</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder={t('auth.forgotPassword.form.newPasswordPlaceholder')}
               required
             />
           </div>

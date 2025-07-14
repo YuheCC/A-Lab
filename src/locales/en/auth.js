@@ -107,7 +107,8 @@ export default {
     },
     messages: {
       defaultSuccess: 'If your information matches our records, a password reset email will be sent.',
-      defaultError: 'Password reset request failed'
+      defaultError: 'Password reset request failed',
+      resetLinkSent: 'Reset link has been sent to your email, please check your email for verification'
     },
     switch: {
       rememberedPassword: 'Remembered your password?',
@@ -134,6 +135,30 @@ export default {
       passwordTooShort: 'New password must be at least 6 characters long',
       defaultError: 'Password reset failed',
       defaultSuccess: 'Password reset successfully'
+    }
+  },
+  resetPassword: {
+    header: {
+      title: 'Reset Password',
+      subtitle: 'Please enter your new password'
+    },
+    form: {
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'Enter new password',
+      confirmPassword: 'Confirm New Password',
+      confirmPasswordPlaceholder: 'Confirm new password',
+      processing: 'Resetting...',
+      resetPassword: 'Reset Password'
+    },
+    messages: {
+      passwordsNotMatch: 'Passwords do not match',
+      passwordTooShort: 'Password must be at least 6 characters long',
+      defaultError: 'Password reset failed',
+      defaultSuccess: 'Password reset successfully! Redirecting to login...',
+      invalidLink: 'Invalid reset link'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
     }
   },
   verifyEducation: {

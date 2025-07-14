@@ -36,6 +36,18 @@ export async function resetPassword(data) {
     });
 }
 
+export async function resetPasswordByToken(data) {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+        formData.append(key, data[key]);
+    });
+
+    return request('/reset-password-token', {
+        method: "POST",
+        data: formData,
+    });
+}
+
 export async function redeemCode(data) {
     const formData = new FormData();
     Object.keys(data).forEach(key => {
