@@ -132,24 +132,17 @@
     opacity: 0;
     transition: opacity 0.1s ease, visibility 0.1s ease;
 }
-.open-sidebar-button-wrapper {
+.open-sidebar-button {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    position: absolute;
-    /* right: 0px; */
-    top: -15px;
-    /* object-fit: scale-down; */
+    position: relative;
+    right: 26px;
 }
-.open-sidebar-icon {
-    cursor: pointer;
-}
-
 .open-sidebar-text {
     font-size: 14px;
     color: #777;
-    cursor: pointer;
+    margin-top: 5px;
 }
 
 /* Chat Confirm Delete Modal */

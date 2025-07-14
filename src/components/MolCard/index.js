@@ -97,7 +97,7 @@ export const MolCard = (props) => {
                     }}>Loading...</div>}
                 </div>
                 <div className='molcard-info-panel'>
-                    <div className='deck-info-title'><span></span></div>
+                    <div className='deck-info-title'><span>{name ?? "Molecule Information"}</span></div>
                     <div className='molcard-info-content'>
                         {propGroups && propGroups.length > 0 ? (
                                 propGroups.map((prop, index) => (
