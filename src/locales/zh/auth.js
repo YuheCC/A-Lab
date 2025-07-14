@@ -107,7 +107,8 @@ export default {
     },
     messages: {
       defaultSuccess: '如果您的信息与我们的记录匹配，将发送密码重置邮件。',
-      defaultError: '密码重置请求失败'
+      defaultError: '密码重置请求失败',
+      resetLinkSent: '重置链接已发送至邮箱，请去邮箱验证'
     },
     switch: {
       rememberedPassword: '想起密码了？',
@@ -134,6 +135,30 @@ export default {
       passwordTooShort: '新密码必须至少6个字符',
       defaultError: '密码重置失败',
       defaultSuccess: '密码重置成功'
+    }
+  },
+  resetPassword: {
+    header: {
+      title: '重置密码',
+      subtitle: '请输入您的新密码'
+    },
+    form: {
+      newPassword: '新密码',
+      newPasswordPlaceholder: '请输入新密码',
+      confirmPassword: '确认新密码',
+      confirmPasswordPlaceholder: '请再次输入新密码',
+      processing: '重置中...',
+      resetPassword: '重置密码'
+    },
+    messages: {
+      passwordsNotMatch: '两次输入的密码不一致',
+      passwordTooShort: '密码至少需要6个字符',
+      defaultError: '密码重置失败',
+      defaultSuccess: '密码重置成功！即将跳转到登录页面...',
+      invalidLink: '无效的重置链接'
+    },
+    switch: {
+      backToLogin: '返回登录'
     }
   },
   verifyEducation: {

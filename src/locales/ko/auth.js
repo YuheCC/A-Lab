@@ -107,7 +107,8 @@ export default {
     },
     messages: {
       defaultSuccess: '입력하신 정보가 저희 기록과 일치하면 비밀번호 재설정 이메일이 발송됩니다.',
-      defaultError: '비밀번호 재설정 요청에 실패했습니다'
+      defaultError: '비밀번호 재설정 요청에 실패했습니다',
+      resetLinkSent: '재설정 링크가 이메일로 발송되었습니다. 이메일을 확인하여 인증해주세요'
     },
     switch: {
       rememberedPassword: '비밀번호가 기억나셨나요?',
@@ -134,6 +135,30 @@ export default {
       passwordTooShort: '새 비밀번호는 최소 6자 이상이어야 합니다',
       defaultError: '비밀번호 재설정에 실패했습니다',
       defaultSuccess: '비밀번호가 성공적으로 재설정되었습니다'
+    }
+  },
+  resetPassword: {
+    header: {
+      title: '비밀번호 재설정',
+      subtitle: '새 비밀번호를 입력해 주세요'
+    },
+    form: {
+      newPassword: '새 비밀번호',
+      newPasswordPlaceholder: '새 비밀번호 입력',
+      confirmPassword: '새 비밀번호 확인',
+      confirmPasswordPlaceholder: '새 비밀번호 확인',
+      processing: '재설정 중...',
+      resetPassword: '비밀번호 재설정'
+    },
+    messages: {
+      passwordsNotMatch: '비밀번호가 일치하지 않습니다',
+      passwordTooShort: '비밀번호는 최소 6자 이상이어야 합니다',
+      defaultError: '비밀번호 재설정에 실패했습니다',
+      defaultSuccess: '비밀번호가 성공적으로 재설정되었습니다! 로그인 페이지로 이동 중...',
+      invalidLink: '유효하지 않은 재설정 링크'
+    },
+    switch: {
+      backToLogin: '로그인으로 돌아가기'
     }
   },
   verifyEducation: {

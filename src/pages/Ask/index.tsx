@@ -42,7 +42,7 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
     disableLiteratureSearch, onDisableLiteratureSearchChange,
-    userPermissions, useMultiAgent, onUseMultiAgentChange }) => {
+    userPermissions, useMultiAgent, onUseMultiAgentChange, remainingDeepSpaceQueries }) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
@@ -82,6 +82,14 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
       }
     }
   };
+
+  // Disable multi-agent and literature search if remaining deep space queries are less than 0
+  useEffect(() => {
+    if (remainingDeepSpaceQueries < 0) {
+      onUseMultiAgentChange(false);
+      onDisableLiteratureSearchChange(true);
+    }
+  }, [remainingDeepSpaceQueries])
 
   return (
     <div className="chat-input-group">
@@ -126,6 +134,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
         {(
           <div className='checkbox-item'>
             <input
+              disabled={ remainingDeepSpaceQueries <= 0}
               type="checkbox"
               id="useMultiAgent"
               checked={useMultiAgent}
@@ -182,6 +191,7 @@ const ChatbotInterface = () => {
   const { t } = useTranslation();
   const [remainingQueries, setRemainingQueries] = useState(0);
   const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+
   const { 
     messages, 
     activeMolecule,
@@ -917,6 +927,7 @@ const handleFindSimilarMolecules = async (details) => {
             userPermissions={userPermissions}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
+            remainingDeepSpaceQueries={remainingDeepSpaceQueries}
           />
         </div>
         {false && foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (

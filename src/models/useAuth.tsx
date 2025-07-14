@@ -43,7 +43,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 initialAuthLoaded: true,
             });
             const current = window.location.pathname + window.location.search;
-            localStorage.setItem('redirectAfterLogin', current);
             if(window.location.pathname !== '/login' && window.location.pathname !== '/') {
                 window.location.href = '/login?redirect=' + encodeURIComponent(current);
             }
@@ -121,7 +120,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             error: null
         });
         const current = window.location.pathname + window.location.search;
-        localStorage.setItem('redirectAfterLogin', current);
         window.location.href = '/login?redirect=' + encodeURIComponent(current);
     },
 

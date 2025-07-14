@@ -69,4 +69,9 @@ export default  [
         component: "Login/verifyForgotPassword",
         layout: false,
     },
+    {
+        path: "/reset-password",
+        component: "Login/resetPassword",
+        layout: false,
+    },
 ]
