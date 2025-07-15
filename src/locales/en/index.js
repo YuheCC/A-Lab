@@ -9,6 +9,8 @@ import explorer from './explorer';
 import feedback from './feedback';
 import chatbox from './chatbox';
 import favorites from './favorites';
+import settings from './settings';
+import role from './role';
 
 export default {
     map,
@@ -21,5 +23,7 @@ export default {
     explorer,
     feedback,
     chatbox,
-    favorites
+    favorites,
+    settings,
+    role
 }

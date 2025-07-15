@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useChatStore } from '../../providers/chat';
 import './LanguageSwitcher.css';
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const updateWelcomeMessages = useChatStore(state => state.updateWelcomeMessages);
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -23,11 +21,6 @@ const LanguageSwitcher = () => {
       // 使用i18n.changeLanguage会自动存储到localStorage
       await i18n.changeLanguage(lng);
       setIsOpen(false);
-      
-      // 更新所有聊天中的系统欢迎消息
-      setTimeout(() => {
-        updateWelcomeMessages();
-      }, 100); // 稍微延迟以确保翻译已经加载
     } catch (error) {
       console.error('语言切换失败:', error);
     }

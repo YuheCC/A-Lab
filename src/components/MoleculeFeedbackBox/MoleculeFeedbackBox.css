@@ -2,8 +2,6 @@
     position: relative;
     display: flex;
     flex-direction: column;
-}
-.molecule-feedback-buttons.fullwidth {
     width: 100%;
 }
 
@@ -27,8 +25,8 @@
     flex-flow: row;
     justify-content: center;
     align-items: center;
-    padding: 4px 10px;
-    margin: 0px;
+    padding: 4px;
+    margin-left: 4px;
     border-radius: 4px;
     border: solid 1px #ccc;
 }
@@ -41,13 +39,12 @@
 }
 
 .feedback-form {
-    z-index: 9999;
-    position: fixed;
+    position: absolute;
     bottom: 0px;
     right: 0px;
     min-width: 250px;
     margin-top: 0px;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #f9f9f9;
@@ -56,32 +53,6 @@
     width: 100%;
     display: flex;
     flex-flow: column;
-}
-
-.feedback-close-button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.feedback-close-button:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: #333;
-}
-
-.feedback-close-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 .feedback-question {
@@ -120,9 +91,6 @@
     border-radius: 4px;
     cursor: pointer;
     font-family: Arial, sans-serif;
-}
-.submit-button.error {
-    background-color: #ff4d4d;
 }
 
 .cancel-button:disabled,

@@ -5,7 +5,8 @@ export default {
     ask: "Ask",
     search: "Search",
     filter: "Filter",
-    favorites: "Favorites"
+    favorites: "Favorites",
+    about: "About",
   },
   
   // Navbar links
@@ -28,5 +29,27 @@ export default {
     features: "Features",
     pricing: "Pricing",
     newsFeed: "News Feed"
+  },
+  
+  // User dropdown menu
+  userDropdown: {
+    accountSettings: "Account Settings",
+    logout: "Logout"
+  },
+  
+  // Upgrade prompt
+  upgradePrompt: "Please upgrade your plan",
+  
+  // Upgrade confirmation dialog
+  upgradeConfirmation: {
+    title: "Upgrade Plan",
+    message: "Would you like to upgrade your plan to unlock more features?",
+    confirm: "Confirm",
+    cancel: "Cancel"
+  },
+  
+  // Action buttons
+  actions: {
+    startNow: "start now"
   }
 } 

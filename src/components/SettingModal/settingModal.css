@@ -1,0 +1,348 @@
+/* 设置弹窗相关样式 */
+.settings-modal.modal.show {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 2000 !important;
+    background: rgba(0,0,0,0.35) !important;
+  }
+  .settings-modal-content {
+    width: 800px !important;
+    min-width: 800px !important;
+    max-width: 90vw !important;
+    height: 540px !important;
+    min-height: 540px !important;
+    max-height: 90vh !important;
+    background: #fff !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 32px rgba(60,60,60,0.13) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow: hidden !important;
+    position: relative !important;
+    padding: 0 !important;
+  }
+  .settings-modal-sidebar {
+    background: #fafbfc !important;
+    border-right: 1px solid #ececec !important;
+    padding: 40px 0 40px 0 !important;
+    min-width: 160px !important;
+    max-width: 180px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+  .settings-tab {
+    font-size: 16px !important;
+    color: #37352f !important;
+    font-weight: 400 !important;
+    border-radius: 8px !important;
+    padding: 12px 0 12px 36px !important;
+    background: none !important;
+    border: none !important;
+    text-align: left !important;
+    transition: background 0.18s, color 0.18s !important;
+    margin: 0 12px 2px 12px !important;
+  }
+  .settings-tab.active {
+    background: #f3f3f3 !important;
+    color: #222 !important;
+    font-weight: 600 !important;
+  }
+  .settings-tab:hover:not(.active) {
+    background: #f7f7f7 !important;
+  }
+  .settings-modal-main {
+    background: #fff !important;
+    padding: 40px 48px 40px 48px !important;
+    border-radius: 0 18px 18px 0 !important;
+    flex: 1 1 0%;
+    overflow-y: auto !important;
+  }
+  .settings-group-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #37352f;
+    margin-bottom: 16px;
+    letter-spacing: 0.01em;
+  }
+  .settings-item {
+    border-bottom: 1px solid #ececec;
+    padding: 18px 0;
+  }
+  .settings-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .settings-group .settings-item:last-child {
+    border-bottom: none;
+  }
+  .settings-item-title {
+    font-size: 15px;
+    color: #37352f;
+    font-weight: 400;
+  }
+  .settings-item-action {
+    font-size: 15px;
+    color: #6e6e6e;
+  }
+  .settings-link {
+    color: #56B26A;
+    font-size: 14px;
+    text-decoration: none;
+    margin-left: 6px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background 0.18s, color 0.18s;
+  }
+  .settings-link:hover {
+    background: #f3f3f3;
+    color: #1c7c54;
+    text-decoration: none;
+  }
+  .redeem-team-code-link {
+    color: #007bff;
+    font-size: 12px;
+    text-decoration: none;
+    margin-top: 0;
+    margin-left: 0;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background 0.18s, color 0.18s;
+    font-weight: 500;
+    display: block;
+    width: fit-content;
+    align-self: flex-start;
+  }
+  .redeem-team-code-link:hover {
+    background: #e3f2fd;
+    color: #0056b3;
+    text-decoration: none;
+  }
+  .user-info-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.06);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .user-info-card .user-info-left {
+    margin-left: -30px;
+  }
+  .settings-modal-close.close-btn {
+    position: absolute !important;
+    top: 24px !important;
+    right: 24px !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    padding: 0 !important;
+    transition: background 0.18s;
+  }
+  .settings-modal-close.close-btn svg line {
+    stroke: #bbb;
+    transition: stroke 0.2s;
+  }
+  .settings-modal-close.close-btn:hover svg line {
+    stroke: #37352f;
+  }
+  .settings-card {
+    margin-bottom: 32px;
+    margin-top: -20px;
+  }
+  .settings-panel[data-panel="subscription"] .settings-card,
+  .settings-panel[data-panel="preference"] .settings-card {
+    margin-top: 10px;
+  } 
+  .settings-panel.active {
+    display: block !important;
+  }
+  .settings-panel {
+    display: none !important;
+  }
+
+  /* Upgrade Button Styles */
+  .upgrade-btn {
+    background: #56B26A !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease !important;
+    box-shadow: 0 1px 3px rgba(86, 178, 106, 0.2) !important;
+  }
+
+  .upgrade-btn:hover {
+    background: #4a9d5e !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 6px rgba(86, 178, 106, 0.25) !important;
+  }
+
+  .upgrade-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 3px rgba(86, 178, 106, 0.2) !important;
+  }
+
+  /* Redeem Code Modal Styles */
+  .redeem-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+  }
+
+  .redeem-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .redeem-modal-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .redeem-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .redeem-modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .redeem-modal-close:hover {
+    background: #f5f5f5;
+  }
+
+  .redeem-modal-body {
+    padding: 24px;
+  }
+
+  .redeem-modal-description {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .redeem-input-group {
+    margin-bottom: 24px;
+  }
+
+  .redeem-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .redeem-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  .redeem-input:disabled {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+    color: #6c757d;
+  }
+
+  .redeem-error {
+    margin-top: 8px;
+    color: #dc3545;
+    font-size: 14px;
+  }
+
+  .redeem-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  .redeem-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+  }
+
+  .redeem-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .redeem-btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+  }
+
+  .redeem-btn-cancel:hover:not(:disabled) {
+    background: #e9ecef;
+    border-color: #adb5bd;
+  }
+
+  .redeem-btn-confirm {
+    background: #007bff;
+    color: white;
+  }
+
+  .redeem-btn-confirm:hover:not(:disabled) {
+    background: #0056b3;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  }
+
+  .redeem-btn-confirm:disabled {
+    background: #6c757d;
+  }

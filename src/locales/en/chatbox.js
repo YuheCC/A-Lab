@@ -11,8 +11,7 @@ export default {
         disableLiteratureSearch: "Disable literature search",
         enterDeepSpace: "Enter Deep Space (BETA)",
         deepSpaceTooltip: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
-        admin: "ADMIN",
-        fullDeepSpace: "Full Deep Space"
+        admin: "ADMIN"
     },
     queryLimit: {
         queriesRemaining: "Queries remaining today:",

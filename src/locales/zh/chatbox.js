@@ -11,8 +11,7 @@ export default {
         disableLiteratureSearch: "禁用文献搜索",
         enterDeepSpace: "进入深度搜索 (BETA)",
         deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
-        admin: "管理员",
-        fullDeepSpace: "全深度搜索"
+        admin: "管理员"
     },
     queryLimit: {
         queriesRemaining: "今日剩余查询次数：",

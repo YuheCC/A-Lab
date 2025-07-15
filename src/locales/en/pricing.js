@@ -1,5 +1,9 @@
 export default {
   title: "Pricing",
+  switcher: {
+    individual: "Individual",
+    enterprise: "Enterprise"
+  },
   research: {
     title: "Research (academia only)",
     description: "Access to Partial Molecular Universe (1M)",
@@ -10,7 +14,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (≤ 100 queries/month)"
+      "Ask (≤ 100 queries/day)",
+      "Deep Space (≤ 5 queries/month)"
     ]
   },
   explorer: {
@@ -23,7 +28,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)"
+      "Ask (no cap)",
+      "Deep Space (≤ 10 queries/month)"
     ]
   },
   team: {
@@ -36,7 +42,8 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)"
+      "Ask (no cap)",
+      "Deep Space (≤ 10 queries/person/month)"
     ]
   },
   enterprise: {
@@ -50,7 +57,8 @@ export default {
       "Filter",
       "Search",
       "Ask (no cap, battery-specific LLM)",
-      "More molecule properties (inc. melting and boiling point predictions)",
+      "Deep Space",
+      "More molecule properties",
       "Expert consulting"
     ]
   },
@@ -65,8 +73,39 @@ export default {
       "Filter",
       "Search",
       "Ask (no cap, battery-specific LLM)",
-      "More molecule properties (inc. melting and boiling point predictions)",
+      "Deep Space",
+      "More molecule properties",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]
+  },
+  footer: {
+    note: "Molecular Universe is free for students and educators.",
+    verify: "Get Verified"
+  },
+  contactSales: {
+    title: "Contact Sales",
+    enterprise: "Enterprise",
+    joint: "Joint Development",
+    form: {
+      name: "Name",
+      email: "Email",
+      company: "Company/Organization",
+      phone: "Phone",
+      message: "Message",
+      messagePlaceholder: "Please describe your needs...",
+      nameRequired: "Name is required",
+      emailRequired: "Email is required",
+      companyRequired: "Company/Organization is required",
+      emailInvalid: "Please enter a valid email address"
+    },
+    buttons: {
+      cancel: "Cancel",
+      submit: "Submit",
+      submitting: "Submitting..."
+    },
+    messages: {
+      success: "✅ Submitted successfully! Our sales team will contact you soon.",
+      error: "❌ Submission failed, please try again later."
+    }
   }
 }; 

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../../utils.js';
-import { ThumbsDown, ThumbsUp, X } from 'lucide-react';
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
 
 import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3 }) => {
+export const MoleculeFeedbackBox = ({ molecule, lastSearch, onClose }) => {
   const { t } = useTranslation();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
@@ -42,9 +42,9 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
           feedbackText: feedbackText.trim(),
           inputContent: lastSearch || '',
           responseContent: molecule.SMILES || molecule.smiles || '',
-          contextContent1,
-          contextContent2,
-          contextContent3,
+          contextContent1: '',
+          contextContent2: '',
+          contextContent3: '',
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
         }),
@@ -65,17 +65,8 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     setFeedbackType(null);
   };
 
-  const handleClose = () => {
-    setFeedbackText('');
-    setFeedbackType(null);
-    setStatusMessage('');
-    if (onClose) {
-      onClose();
-    }
-  };
-
   return (
-    <div className={`molecule-feedback-buttons ${fullWidth ? 'full-width' : ''}`}>
+    <div className="molecule-feedback-buttons">
       <div className='feedback-buttons'>
         <span className="rate-text">{t('chatbox.molecules.rateMatch')}</span>
         <ThumbsUp className={`feedback-icon ${feedbackType === 'up' ? 'active' : ''}`} size={18} onClick={handleThumbsUp} />
@@ -84,13 +75,6 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
 
       {feedbackType && (
         <div className="feedback-form">
-          <button
-            onClick={handleClose}
-            className="feedback-close-button"
-            disabled={submitting}
-          >
-            <X size={16} />
-          </button>
           <p className="feedback-question">
             {feedbackType === 'up'
               ? t('chatbox.feedback.goodMatch')
@@ -113,7 +97,7 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
             </button>
             <button
               onClick={handleFeedbackSubmit}
-              className={`submit-button ${feedbackType === 'up' ? 'sucess' : 'error'}`}
+              className="submit-button"
               disabled={submitting}
             >
               {submitting ? t('chatbox.feedback.submitting') : t('chatbox.buttons.submit')}

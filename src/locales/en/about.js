@@ -1,4 +1,13 @@
 export default {
+  // Header navigation
+  navigation: {
+    motivation: "Motivation",
+    features: "Features", 
+    pricing: "Pricing",
+    newsfeed: "News Feed",
+    enterMu: "Enter MU"
+  },
+
   quote: "If it's just us, it seems like an awful waste of space.",
   quoteSource: "Contact, 1997",
   
@@ -11,15 +20,15 @@ export default {
     
     advantages: "The unique and fundamental advantages of Molecular Universe include:",
     advantage1: {
-      title: "The Map:",
+      title: "The Map",
       description: "A vast and constantly growing database of small molecules suitable for battery applications and their properties, both experimentally measured and computationally predicted."
     },
     advantage2: {
-      title: "The Navigation System:",
+      title: "The Navigation System",
       description: "A proprietary, battery-specific LLM, carefully trained on thoroughly curated battery literature and teachings from world-class battery experts."
     },
     advantage3: {
-      title: "The Interface:",
+      title: "The Interface",
       description: "An intuitive user interface linking the Map and Navigation System, making battery material discovery straightforward and simple."
     },
     
@@ -43,7 +52,7 @@ export default {
     computation: "Arriving at this goal required intense computational power. Originally, we considered establishing a non-profit organization Molecular Universe to crowdsource public computing resources and eventually open-source the database. However, we found a better solution.",
     solution: "It was far more efficient to commercially procure GPUs and collaborate with Nvidia on GPU-accelerated computation chemistry software. While we will not open-source our proprietary database, we will make Molecular Universe free to academic researchers and open-source certain aspects of our models wherever appropriate.",
     
-    aboutMU0Title: "More About Molecular Universe, MU-0",
+    aboutMU0Title: "More About Molecular Universe, MU-0.5",
     aboutMU0Desc: "In our launch version of Molecular Universe, the Map consists of 10⁸ molecules and their molecular properties, including both actual experimental data and computational prediction based on Density Function Theory and Molecular Dynamics simulations.",
     largestDb: "This is the world's largest database of small molecule properties. And it will continue to grow to include more organic and inorganic molecules and more bulk and interphasial properties, suitable for additives, or salts, or solvents.",
     umap: "The molecules are represented on a map through a dimension-reduction data visualization technique called UMAP (Uniform Manifold Approximation and Projection). AI sees each molecule in 512 dimensions, but for us mere mortals, UMAP reduces them to a more navigable 2 Dimensions.",
@@ -53,11 +62,11 @@ export default {
   },
   
   features: {
-    title: "Features of Molecular Universe",
+    title: "Features",
     
     map: {
       title: "Map",
-      description: "Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into \"neighborhoods\" of similar molecules and uncover hidden gems. The MU-0 map features 23 molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties."
+      description: "Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into \"neighborhoods\" of similar molecules and uncover hidden gems. The MU-0.5 map features 25 molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties."
     },
     
     ask: {
@@ -66,12 +75,18 @@ export default {
       description2: "It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence."
     },
     
+    deepspace: {
+      title: "Ask - Deep Space",
+      description: "If regular Ask provides accurate answers to domain specific questions, Deep Space provides a practical solution to an actual challenge. Deep Space is one step closer to an agentic capability that delivers senior scientist level solutions and turbocharges battery R&D and product development from years to just tens of minutes. Deep Space does take much longer than regular Ask and asks a few questions about the query first to get a deeper understanding of the context before providing the final solution."
+    },
+    
     search: {
       title: "Search",
       description: "You can enter a \"molecules-of-interest\", it finds its location on the map, and recommends its \"friends\", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in three powerful ways:",
-      way1: "By SMILES – Input a canonical SMILES string and instantly retrieve all key info.",
-      way2: "By molecule's name – input a molecule name such as \"ethylene carbonate\".",
-      way3: "By natural language – Ask questions like: \"Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV.\"",
+      way1: "By structure - draw a molecule structure using the sketch pad",
+      way2: "By SMILES – Input a canonical SMILES string and instantly retrieve all key info.",
+      way3: "By molecule's name – input a molecule name such as \"ethylene carbonate\".",
+      way4: "By natural language – Ask questions like: \"Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV.\"",
       resultInfo: "Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the \"Find Friends\" box:",
       discover1: "Discover molecules that are structurally similar with similar properties (great for refinement),",
       discover2: "Or find structurally diverse options that still have similar properties (great for exploration).",
@@ -81,21 +96,55 @@ export default {
     filter: {
       title: "Filter",
       description: "Need molecules with specific traits? Our property filters let you zero in on candidates with desirable features. All property values have been either measured in the lab or computed using traditional methods or predicted using AI/ML.",
-      homo: "These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.",
-      esp: "Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.",
-      functional: "Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
+      homo: "HOMO / LUMO: These quantum levels indicate how easily a molecule can give up or accept electrons—critical for assessing electrochemical stability.",
+      esp: "ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.",
+      functional: "Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
       overlay: "You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular) that meet your criteria."
     }
   },
   
   newsfeed: {
-    title: "Newsfeed",
+    title: "News Feed",
     newsLink: "News link",
-    release1: "April 29, 2025: Molecular Universe MU-0 is released to public.",
-    releaseAbout1: "Molecular Universe MU-0 is released to public. Molecular Universe is designed as an advanced toolkit to map the entire realm of possible small molecules relevant to all battery chemistries, including Li-Metal, Li-ion, and sodium. There are five tiers, Research (free for anyone with an edu email), Explorer ($150 per month per user), Team ($1000 per month), all accessing 1 million molecules; Enterprise and Joint Development both accessing 100 million molecules .",
-    release2: "July 7, 2025: Molecular Universe MU-0.5 is released to public. ",
-    releaseAbout2: "Molecular Universe MU-0.5 is released to public. The most exciting new feature is Deep Space, which is an agentic capability to conduct senior scientist level battery research. Deep Space is built off of Molecular Universe’s popular Ask feature and is powered by a multi-agent LLM. It can recommend electrolyte formulations for different cell chemistries ranked by performance, novelty, cost, or whatever the user desires. It also reduces time in trial and error and accomplishes in less than one hour what would normally take a human senior scientist months or even years. Deep Space is available to Enterprise and Joint Development users and limited to 10 per month for Team and Explorer users, and 5 per month for Research users. Other improvements include a molecule sketch pad to help users intuitively “find friends” and language support for Chinese and Korean in addition to English."
+    release1: "Molecular Universe MU-0 is released to public",
+    releaseDate1: "April 29, 2025",
+    releaseAbout1: "Molecular Universe MU-0 is released to public. Molecular Universe is designed as an advanced toolkit to map the entire realm of possible small molecules relevant to all battery chemistries, including Li-Metal, Li-ion, and sodium. There are five tiers, Research (free for anyone with an edu email), Explorer ($150 per month per user), Team ($1000 per month), all accessing 1 million molecules; Enterprise and Joint Development both accessing 100 million molecules.",
+    release2: "Molecular Universe MU-0.5 is released to public",
+    releaseDate2: "July 7, 2025",
+    releaseAbout2: "Molecular Universe MU-0.5 is released to public. The most exciting new feature is Deep Space, which is an agentic capability to conduct senior scientist level battery research. Deep Space is built off of Molecular Universe's popular Ask feature and is powered by a multi-agent LLM. It can recommend electrolyte formulations for different cell chemistries ranked by performance, novelty, cost, or whatever the user desires. It also reduces time in trial and error and accomplishes in less than one hour what would normally take a human senior scientist months or even years. Deep Space is available to Enterprise and Joint Development users and limited to 10 per month for Team and Explorer users, and 5 per month for Research users. Other improvements include a molecule sketch pad to help users intuitively \"find friends\" and language support for Chinese and Korean in addition to English."
   },
+
+  // Footer
+  footer: {
+    products: "Our products",
+    technology: "Technology",
+    company: "Company",
+    copyright: "Copyright © 2025 SES AI Corporation. All rights reserved.",
+    privacyPolicy: "Privacy Policy",
+    productList: {
+      ev: "EV",
+      uam: "UAM", 
+      drone: "Drone",
+      molecularUniverse: "Molecular Universe",
+      avatar: "Avatar"
+    },
+    technologyList: {
+      liMetal: "Li-Metal",
+      insights: "Insights",
+      batteryWorld: "Battery world",
+      demoDay: "Demo Day"
+    },
+    companyList: {
+      aboutUs: "About Us",
+      ourTeam: "Our Team",
+      media: "Media",
+      careers: "Careers",
+      investors: "Investors",
+      sustainability: "Sustainability",
+      contactUs: "Contact Us"
+    }
+  },
+  
   commercial_viability: {
     requires_rd: "Requires R&D to assess viability",
     likely_synthesizable_but_not_commercially_available: "Likely synthesizable but probably not commercially available",

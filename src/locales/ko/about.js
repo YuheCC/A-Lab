@@ -1,4 +1,13 @@
 export default {
+  // Header navigation
+  navigation: {
+    motivation: "동기",
+    features: "기능", 
+    pricing: "가격",
+    newsfeed: "뉴스 피드",
+    enterMu: "MU 입장"
+  },
+
   quote: "우주에 우리만 존재한다면, 이 방대한 공간은 큰 낭비일지도 몰라요.",
   quoteSource: "콘택트, 1997",
   
@@ -7,7 +16,7 @@ export default {
     intro1: "마젤란이 처음으로 별을 항해 네비게이션 도구로 활용했던 것처럼;",
     intro2: "또는 허블 망원경이 머나먼 은하들을 처음 포착했듯이;",
     intro3: "또는 인간 게놈 프로젝트가 DNA를 분석을 통해 유전 암호를 이루는 모든 아미노산을 밝혀냈듯이;",
-    intro4: "SES AI는 512차원의 소분자 공간을 2차원으로 시각화해 검색 가능한 도구 ‘Molecular Universe’로 구현했습니다. 이는 배터리 연구자들이 새로운 소재를 보다 빠르게 발견하고 혁신적인 아이디어를 실현할 수 있도록 도와줍니다. ",
+    intro4: "SES AI는 512차원의 소분자 공간을 2차원으로 시각화해 검색 가능한 도구 'Molecular Universe'로 구현했습니다. 이는 배터리 연구자들이 새로운 소재를 보다 빠르게 발견하고 혁신적인 아이디어를 실현할 수 있도록 도와줍니다.",
     
     advantages: "Molecular Universe가 제공하는 고유하고 핵심적인 강점은 다음과 같습니다.",
     advantage1: {
@@ -23,7 +32,7 @@ export default {
       description: "분자 지도와 내비게이션 시스템을 직관적으로 연결한 사용자 인터페이스로, 배터리 소재 탐색을 쉽고 명확하게 만들어줍니다."
     },
     
-    current: "현재 10⁸개의 소분자를 보유한 Molecular Universe는 아직 초기 단계에 있지만, 목표인 10¹¹개 규모를 향해 빠르게 확장되고 있습니다. 내비게이션 시스템은 계속해서 검증과 개선이 이루어지고 있어, 당신이 원하는 이상적인 분자를 더욱 정확하게 찾아주는 든든한 파트너가 되어가고 있습니다.",
+    current: "현재 10^8개의 소분자를 보유한 Molecular Universe는 아직 초기 단계에 있지만, 목표인 10^11개 규모를 향해 빠르게 확장되고 있습니다. 내비게이션 시스템은 계속해서 검증과 개선이 이루어지고 있어, 당신이 원하는 이상적인 분자를 더욱 정확하게 찾아주는 든든한 파트너가 되어가고 있습니다.",
     improvement: "모든 AI 기반 기술이 그러하듯, 여러분의 참여가 더해진다면 Molecular Universe는 더욱 빠르고 효율적으로 진화할 수 있습니다."
   },
   
@@ -57,25 +66,31 @@ export default {
     
     map: {
       title: "지도",
-      description: "UMAP(Uniform Manifold Approximation and Projection)이라는 머신러닝 기반의 차원 축소 알고리즘을 통해, 고차원의 화학 구조 데이터를 직관적이고 탐색 가능한 2D 지도로 변환했습니다.이 지도에서 각 점은 하나의 분자를 의미하며, 분자의 구조에 따라 임베딩되어 위치가 결정됩니다.지도 위에 나타나는 클러스터는 유사한 화학적 특성을 가진 분자 그룹, 즉  화학 계열(families)을 나타냅니다.이 지도는 마치 화학계의 구글 지도(Google Maps)와도 같습니다.비슷한 분자들이 모여 있는 이웃(neighborhood)을 자유롭게 탐색하고, 그 속에 숨겨진 새로운 가능성의 분자들을 발견해보세요."
+      description: "UMAP(Uniform Manifold Approximation and Projection)이라는 머신러닝 기반의 차원 축소 알고리즘을 통해, 고차원의 화학 구조 데이터를 직관적이고 탐색 가능한 2D 지도로 변환했습니다. 이 지도에서 각 점은 하나의 분자를 의미하며, 분자의 구조에 따라 임베딩되어 위치가 결정됩니다. 지도 위에 나타나는 클러스터는 유사한 화학적 특성을 가진 분자 그룹, 즉 화학 계열(families)을 나타냅니다. 이 지도는 마치 화학계의 구글 지도(Google Maps)와도 같습니다. 비슷한 분자들이 모여 있는 이웃(neighborhood)을 자유롭게 탐색하고, 그 속에 숨겨진 새로운 가능성의 분자들을 발견해보세요. MU-0.5 지도는 25개의 분자 클러스터를 포함하며, 세계 최대 규모의 소분자 및 배터리 관련 특성 데이터베이스입니다."
     },
     
     ask: {
       title: "질문",
-      description1: "이제 지도가 있으니, 필요한 것은 내비게이션 시스템입니다. Ask는 자연어로 질문할 수 있는 Molecular Universe의 내비게이션 도구입니다. 예를 들어, “LiFePO₄와 흑연 전지에 적합한 전해질을 추천해줘”**와 같이 일반적인 질문도 가능하고, “NCM811 양극과 실리콘 음극을 사용하는 리튬이온 전지에서, 비가연성이며 4.55V 고전압에서도 안정적이고 6C 속도로 급속 충전이 가능한 전해질을 추천해줘”**처럼 아주 구체적인 질문도 할 수 있습니다.",
-      description2: "이는 사용자의 질의에 대해 기존 방식과 차별화된 새로운 솔루션을 제안하며, 전해질 조성 및 해당 조성에 포함될 수 있는 용매, 첨가제, 염 등의 구체적인 분자 목록을 포함한 답변을 제공합니다.또한 추천된 분자들을 Molecular Universe의 2D 지도에서 검색하고, 물리화학적 특성이 유사한 분자들을 함께 탐색함으로써,분자 수준에서 셀 수준까지의 통합적 인사이트를 제공합니다."
+      description1: "이제 지도가 있으니, 필요한 것은 내비게이션 시스템입니다. Ask는 자연어로 질문할 수 있는 Molecular Universe의 내비게이션 도구입니다. 예를 들어, \"LiFePO4와 흑연 전지에 적합한 전해질을 추천해줘\"와 같이 일반적인 질문도 가능하고, \"NCM811 양극과 실리콘 음극을 사용하는 리튬이온 전지에서, 비가연성이며 4.55V 고전압에서도 안정적이고 6C 속도로 급속 충전이 가능한 전해질을 추천해줘\"처럼 아주 구체적인 질문도 할 수 있습니다.",
+      description2: "이는 사용자의 질의에 대해 기존 방식과 차별화된 새로운 솔루션을 제안하며, 전해질 조성 및 해당 조성에 포함될 수 있는 용매, 첨가제, 염 등의 구체적인 분자 목록을 포함한 답변을 제공합니다. 또한 추천된 분자들을 Molecular Universe의 2D 지도에서 검색하고, 물리화학적 특성이 유사한 분자들을 함께 탐색함으로써, 분자 수준에서 셀 수준까지의 통합적 인사이트를 제공합니다."
+    },
+    
+    deepspace: {
+      title: "질문 - 딥 스페이스",
+      description: "일반적인 질문 기능이 도메인 특정 질문에 정확한 답변을 제공한다면, 딥 스페이스는 실제 도전 과제에 대한 실용적인 솔루션을 제공합니다. 딥 스페이스는 고급 과학자 수준의 솔루션을 제공하는 에이전트 기능에 한 걸음 더 가까워진 것으로, 배터리 R&D 및 제품 개발을 수년에서 수십 분으로 단축시킵니다. 딥 스페이스는 일반적인 질문보다 훨씬 오래 걸리며, 최종 솔루션을 제공하기 전에 쿼리에 대한 더 깊은 이해를 위해 몇 가지 질문을 먼저 합니다."
     },
     
     search: {
       title: "검색",
-      description: "관심 있는 분자(‘molecules-of-interest’)를 입력하면, 그 분자의 위치를 지도에서 찾아내고, 유사한 특성을 가진 ‘친구 분자들’을 추천해줍니다.이 분자들은 지도에서 가까이 있을 수도, 멀리 떨어져 있을 수도 있지만, 특성상 서로 연결되어 있는 분자들입니다. 이를 통해 사용자는 유사 특성 기반의 새로운 분자 후보를 발굴할 수 있습니다. 분자 탐색은 다음의 세 가지 주요 방식으로 지원됩니다:",
-      way1: "SMILES 기반 검색 – 표준화된 SMILES 문자열을 입력하면, 해당 분자의 모든 핵심 정보를 즉시 확인할 수 있습니다.",
-      way2: "분자명 기반 검색 – “ethylene carbonate”와 같은 분자 이름을 입력하면 됩니다.",
-      way3: "자연어 기반 검색 – \"LUMO가 -1 eV 이상이고 HOMO가 -7 eV 이하인 분자 5개를 찾아줘\"와 같은 질문을 합니다.",
-      resultInfo: "검색 결과마다 분자의 특성 정보를 담은 카드가 제공되며,\"친구 찾기\" 옵션을 체크하면, 비슷한 성질을 가진 다른 분자들도 함께 확인할 수 있습니다.",
+      description: "관심 있는 분자를 입력하면, 그 분자의 위치를 지도에서 찾아내고, 유사한 특성을 가진 친구 분자들을 추천해줍니다. 이 분자들은 지도에서 가까이 있을 수도, 멀리 떨어져 있을 수도 있지만, 특성상 서로 연결되어 있는 분자들입니다. 이를 통해 사용자는 유사 특성 기반의 새로운 분자 후보를 발굴할 수 있습니다. 분자 탐색은 다음의 네 가지 주요 방식으로 지원됩니다:",
+      way1: "구조로 검색 - 스케치 패드를 사용하여 분자 구조를 그리기",
+      way2: "SMILES 기반 검색 - 표준화된 SMILES 문자열을 입력하면, 해당 분자의 모든 핵심 정보를 즉시 확인할 수 있습니다.",
+      way3: "분자명 기반 검색 - ethylene carbonate와 같은 분자 이름을 입력하면 됩니다.",
+      way4: "자연어 기반 검색 - LUMO가 -1 eV 이상이고 HOMO가 -7 eV 이하인 분자 5개를 찾아줘와 같은 질문을 합니다.",
+      resultInfo: "검색 결과마다 분자의 특성 정보를 담은 카드가 제공되며, 친구 찾기 옵션을 체크하면, 비슷한 성질을 가진 다른 분자들도 함께 확인할 수 있습니다:",
       discover1: "구조적 또는 물리·화학적 특성이 유사한 분자들을 탐색할 수 있으며, 이는 전해질 설계나 후보군 정제 과정에서 매우 효과적입니다.",
       discover2: "또는 구조적 다양성을 가지면서도 유사한 물리·화학적 특성을 갖는 분자 후보를 탐색할 수 있으며, 이는 초기 스크리닝이나 분자탐색에서 효과적인 전략입니다.",
-      similarity: "‘친구’ 분자는 해당 분자의 화학적·물리적 특성을 기반으로 계산된 유사도 순으로 배열되며, 가장 유사한 분자부터 가장 유사도가 낮은 분자까지 순서대로 제공됩니다."
+      similarity: "친구 분자는 해당 분자의 화학적·물리적 특성을 기반으로 계산된 유사도 순으로 배열되며, 가장 유사한 분자부터 가장 유사도가 낮은 분자까지 순서대로 제공됩니다."
     },
     
     filter: {
@@ -91,15 +106,49 @@ export default {
   newsfeed: {
     title: "뉴스 피드",
     newsLink: "뉴스 링크",
-    release1: "2025년 4월 29일: Molecular Universe MU-0가 공개되었습니다",
-    releaseAbout1: "Molecular Universe는 리튬 금속(Li-Metal), 리튬 이온(Li-ion), 나트륨(Sodium)을 포함한 모든 배터리 화학 조성과 관련된 가능한 모든 저분자 분자 구조를 매핑하기 위해 설계된 고급 툴킷입니다.플랫폼은 다섯 가지 요금제로 제공됩니다:Research(연구자용): .edu 이메일을 가진 사용자는 누구나 무료Explorer(탐색자용): 사용자당 월 $150Team(팀용): 월 $1000이 세 가지 요금제는 100만 개의 분자에 접근할 수 있으며,Enterprise 및 Joint Development 요금제는 1억 개의 분자에 접근할 수 있습니다.",
-    release2: "2025년 7월 7일: Molecular Universe MU-0.5가 공개되었습니다",
-    releaseAbout2: "가장 흥미로운 새로운 기능은 “Deep Space(딥 스페이스)”로, 선임 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기반 능력입니다. Deep Space는 Molecular Universe의 인기 기능인 Ask를 기반으로 하며, 다중 에이전트 대형 언어 모델(LLM)에 의해 구동됩니다. 이 기능은 다양한 배터리 화학 조성에 대한 전해질 조합을 추천할 수 있으며, 성능, 참신성, 비용 또는 사용자가 원하는 기준에 따라 순위를 매길 수 있습니다.Deep Space는 시행착오 시간을 크게 줄여 선임 과학자가 수개월, 수년이 걸리는 작업을 단 한 시간 안에 마칠 수 있게 합니다.Deep Space는 Enterprise 및 Joint Development 사용자에게 제공되며, Team 및 Explorer 사용자는 월 10회, Research 사용자는 월 5회로 제한됩니다.기타 개선 사항으로는 “친구 찾기” 기능을 직관적으로 돕는 분자 스케치 패드가 도입되었고, 영어 외에 중국어 및 한국어 지원이 추가되었습니다."
+    release1: "Molecular Universe MU-0가 공개되었습니다",
+    releaseDate1: "2025년 4월 29일",
+    releaseAbout1: "Molecular Universe MU-0가 공개되었습니다. Molecular Universe는 리튬 금속(Li-Metal), 리튬 이온(Li-ion), 나트륨(Sodium)을 포함한 모든 배터리 화학 조성과 관련된 가능한 모든 저분자 분자 구조를 매핑하기 위해 설계된 고급 툴킷입니다. 플랫폼은 다섯 가지 요금제로 제공됩니다: Research(연구자용): .edu 이메일을 가진 사용자는 누구나 무료, Explorer(탐색자용): 사용자당 월 $150, Team(팀용): 월 $1000 - 이 세 가지 요금제는 100만 개의 분자에 접근할 수 있으며, Enterprise 및 Joint Development 요금제는 1억 개의 분자에 접근할 수 있습니다.",
+    release2: "Molecular Universe MU-0.5가 공개되었습니다",
+    releaseDate2: "2025년 7월 7일",
+    releaseAbout2: "Molecular Universe MU-0.5가 공개되었습니다. 가장 흥미로운 새로운 기능은 Deep Space로, 선임 과학자 수준의 배터리 연구를 수행할 수 있는 에이전트 기반 능력입니다. Deep Space는 Molecular Universe의 인기 기능인 Ask를 기반으로 하며, 다중 에이전트 대형 언어 모델(LLM)에 의해 구동됩니다. 이 기능은 다양한 배터리 화학 조성에 대한 전해질 조합을 추천할 수 있으며, 성능, 참신성, 비용 또는 사용자가 원하는 기준에 따라 순위를 매길 수 있습니다. Deep Space는 시행착오 시간을 크게 줄여 선임 과학자가 수개월, 수년이 걸리는 작업을 단 한 시간 안에 마칠 수 있게 합니다. Deep Space는 Enterprise 및 Joint Development 사용자에게 제공되며, Team 및 Explorer 사용자는 월 10회, Research 사용자는 월 5회로 제한됩니다. 기타 개선 사항으로는 친구 찾기 기능을 직관적으로 돕는 분자 스케치 패드가 도입되었고, 영어 외에 중국어 및 한국어 지원이 추가되었습니다."
   },
+
+  // Footer
+  footer: {
+    products: "우리의 제품",
+    technology: "기술",
+    company: "회사",
+    copyright: "Copyright © 2025 SES AI Corporation. 모든 권리 보유.",
+    privacyPolicy: "개인정보 보호정책",
+    productList: {
+      ev: "전기차",
+      uam: "도심항공모빌리티", 
+      drone: "드론",
+      molecularUniverse: "분자 우주",
+      avatar: "아바타"
+    },
+    technologyList: {
+      liMetal: "리튬 금속",
+      insights: "인사이트",
+      batteryWorld: "배터리 세계",
+      demoDay: "데모 데이"
+    },
+    companyList: {
+      aboutUs: "회사 소개",
+      ourTeam: "우리 팀",
+      media: "미디어",
+      careers: "채용",
+      investors: "투자자",
+      sustainability: "지속가능성",
+      contactUs: "연락처"
+    }
+  },
+  
   commercial_viability: {
     requires_rd: "상용 가능성 평가를 위해 R&D 필요",
-    likely_synthesizable_but_not_commercially_available: "상용 가능성이 높지만 상용 가능성이 낮음",
-    likely_synthesizable_may_be_commercially_available: "상용 가능성이 높지만 상용 가능성이 높음",
-    likely_commercially_available: "상용 가능성이 높음"
+    likely_synthesizable_but_not_commercially_available: "합성 가능하지만 상용 불가능",
+    likely_synthesizable_may_be_commercially_available: "합성 가능하며 상용 가능",
+    likely_commercially_available: "상용 가능"
   }
 }; 

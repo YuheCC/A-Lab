@@ -1,0 +1,53 @@
+/* about页面专属样式 */ 
+.mu-feature-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px 0 32px 0;
+  }
+  .mu-feature-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px 0 rgba(60,60,60,0.06);
+    padding: 32px 28px 28px 28px;
+    max-width: 340px;
+    min-width: 260px;
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: box-shadow 0.2s;
+  }
+  .mu-feature-card:hover {
+    box-shadow: 0 6px 24px 0 rgba(86,178,106,0.13), 0 2px 12px 0 rgba(60,60,60,0.10);
+  }
+  .mu-feature-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 18px;
+  }
+  .mu-feature-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  .mu-feature-desc {
+    font-size: 1.08rem;
+    color: #444;
+    line-height: 1.7;
+  }
+  @media (max-width: 900px) {
+    .mu-feature-cards {
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+    }
+    .mu-feature-card {
+      max-width: 100%;
+      min-width: 0;
+      width: 100%;
+    }
+  } 

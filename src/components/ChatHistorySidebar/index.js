@@ -2,9 +2,9 @@ import { IconButton, Tooltip } from "@mui/material";
 import { LoaderCircle, MessageCirclePlus, PanelLeftClose, PanelLeftOpen, Trash, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useChatStore } from "../../providers/chat";
+import { useChatStore } from "@/models/useChat";
 import { useShallow } from "zustand/react/shallow";
-import CustomButton from "../CustomButton";
+import CustomButton from "@/components/CustomButton/index.js";
 
 import './ChatHistorySidebar.css'; 
 
@@ -97,6 +97,20 @@ export const ChatHistorySidebar = ({ compressed = false }) => {
                     ): <PanelLeftClose size={21} />}
                 </IconButton>
             </div>
+            {collapsed && (
+                <div className="collapsed-actions">
+                    <Tooltip title={t('chatbox.history.createNewChat')} placement="right" enterNextDelay={5000} enterDelay={500}>
+                        <IconButton 
+                            style={{marginLeft: '23px'}}
+                            className="collapsed-new-chat-button" 
+                            size="small" 
+                            onClick={() => createChat(t('chatbox.history.newChat'))}
+                        >
+                            <MessageCirclePlus size={21}/>
+                        </IconButton>
+                    </Tooltip>
+                </div>
+            )}
             <div className="chat-history">
                 {chatItemsSortedByDate.map(([chatId, chat]) => {
                    return <ChatItem

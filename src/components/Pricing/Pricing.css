@@ -1,0 +1,249 @@
+/* Pricing组件样式 */
+.pricing-section {
+  scroll-margin-top: 80px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 0;
+}
+
+.pricing-section h2 {
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+  color: #111827;
+  text-align: left;
+  font-weight: 700;
+}
+
+/* 定价切换器样式 */
+.pricing-switcher {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0 !important;
+  margin-bottom: 32px !important;
+  background: none !important;
+}
+
+.pricing-switch-btn {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1.5px solid #222 !important;
+  border-right: none !important;
+  border-radius: 8px 0 0 8px !important;
+  padding: 7px 32px !important;
+  font-size: 1.08rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background 0.18s, color 0.18s, border 0.18s !important;
+  outline: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+  min-width: 120px !important;
+}
+
+.pricing-switch-btn:last-child {
+  border-radius: 0 8px 8px 0 !important;
+  border-right: 1.5px solid #222 !important;
+}
+
+.pricing-switch-btn.active {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #222 !important;
+  z-index: 2 !important;
+}
+
+/* 定价分组样式 */
+.pricing-group {
+  display: none;
+}
+
+.pricing-group.active {
+  display: block;
+}
+
+.pricing-group[data-group="business"] .pricing-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 1.5rem !important;
+  max-width: 900px !important;
+  margin: 2rem auto 1.5rem auto !important;
+}
+
+.pricing-group[data-group="personal"] .pricing-grid {
+  gap: 2.5rem !important;
+}
+
+/* 定价网格样式 */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 2.5rem !important;
+  margin: 2rem 0 1.5rem 0;
+  justify-items: center !important;
+  align-items: stretch !important;
+}
+
+/* 定价卡片样式 */
+.pricing-card {
+  min-width: 340px !important;
+  max-width: 400px !important;
+  min-height: 420px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  padding: 2rem 1.5rem 1.5rem 1.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  border: 1.5px solid #f2f2f2 !important;
+  background: #fff !important;
+}
+
+.pricing-card.highlight {
+  border-color: #56B26A;
+  box-shadow: 0 4px 16px rgba(86,178,106,0.15);
+}
+
+.pricing-card-top {
+  width: 100%;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.pricing-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #22223b !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.pricing-sub {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #888;
+}
+
+.pricing-access {
+  font-size: 1rem !important;
+  color: #555 !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.pricing-price {
+  font-size: 2.1rem !important;
+  font-weight: 700 !important;
+  color: #1c7c54 !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.pricing-unit {
+  font-size: 1.1rem !important;
+  font-weight: 400 !important;
+  color: #888 !important;
+  margin-left: 0.2em !important;
+}
+
+.pricing-note {
+  font-size: 0.98rem !important;
+  color: #888 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.pricing-btn {
+  width: 100% !important;
+  min-height: 48px !important;
+  font-size: 1.08rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 1.5rem 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: #56B26A;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pricing-btn.secondary {
+  background: #56B26A;
+  color: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+/* 禁用状态的按钮样式 */
+.pricing-btn:disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.pricing-btn:disabled:hover {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  transform: none !important;
+}
+
+.pricing-features {
+  margin-top: 0 !important;
+  width: 100% !important;
+  border-top: 1px solid #ececec !important;
+  list-style: none;
+  padding: 0;
+}
+
+.pricing-features li {
+  font-size: 1.05rem !important;
+  color: #444 !important;
+  padding: 0.8rem 0 0.8rem 0 !important;
+  border-bottom: 1px solid #f6f6f6 !important;
+  line-height: 1.6 !important;
+}
+
+.pricing-features li:last-child {
+  border-bottom: none !important;
+}
+
+.pricing-footer-note {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 1.1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.pricing-verify-link {
+  text-decoration: underline;
+  color: #56B26A;
+  cursor: pointer;
+}
+
+/* 响应式设计 */
+@media (max-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin: 1.5rem 0 1rem 0;
+  }
+  
+  .pricing-group[data-group="business"] .pricing-grid {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.2rem !important;
+    margin: 1.5rem 0 1rem 0 !important;
+  }
+  
+  .pricing-card {
+    padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    min-height: unset;
+  }
+} 

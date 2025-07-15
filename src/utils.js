@@ -1,6 +1,4 @@
-import i18n from "./locales/i18n";
-
-export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://prod-api.ses.ai';
+export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
@@ -78,4 +76,22 @@ export const redirectToLogin = () => {
     `/login?redirect=${encodeURIComponent(current)}`,
   );
   window.location.reload();
+};
+
+
+// Labels for filters
+export const filterLabels = {
+    molwt: "Molecular Weight",
+    homo_eV: "HOMO (eV)",
+    lumo_eV: "LUMO (eV)",
+    esp_max_eV: "Max ESP (eV)",
+    esp_min_eV: "Min ESP (eV)",
+    predicted_mp: "Predicted Melting Point (°C)",
+    predicted_bp: "Predicted Boiling Point (°C)",
+    predicted_fp: "Predicted Flash Point (°C)",
+    combustion_enthalpy: "Combustion Enthalpy (eV)",
+    commercial_score: "Commercial Viability",
+    CLUSTER: "Cluster",
+    functional_groups: "Functional Groups",
+    chemical_formula: "Chemical Formula"
 };

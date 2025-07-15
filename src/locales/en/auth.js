@@ -10,12 +10,17 @@ export default {
     lastName: 'Last Name',
     organizationName: 'Organization Name',
     username: 'Username',
-    email: 'Email Address (academia only)',
-    emailPlaceholder: 'Academic email address',
+    email: 'Email Address',
+    emailPlaceholder: 'Email address',
     password: 'Password',
+    passwordPlaceholder: 'Password',
+    confirmPassword: 'Confirm Password',
+    confirmPasswordPlaceholder: 'Confirm password',
     processing: 'Processing...',
     signIn: 'Sign In',
-    createAccount: 'Create Account'
+    createAccount: 'Create Account',
+    passwordsDoNotMatch: 'Passwords do not match',
+    termsRequired: 'You must agree to the Terms and Conditions before signing in'
   },
   switch: {
     noAccount: "Don't have an account?",
@@ -26,11 +31,36 @@ export default {
     haveAccount: 'Already have an account?',
     signIn: 'Sign In',
     termsText: 'By using Molecular Universe, you agree to SES AI\'s',
-    termsLink: 'Terms and Conditions'
+    termsLink: 'Terms and Conditions',
+    loginTermsText: 'I have read and agree to SES AI\'s',
+    loginTermsLink: 'Terms of Service and Privacy Policy'
   },
   messages: {
     verificationSent: 'Verification e‑mail sent.',
     emailAddressDenied: "Unfortunately we are unable to provide you with the Molecular Universe service as you or your affiliated entity falls under one or more of the US Department of Commerce, State and Treasury's screening lists."
+  },
+  verifyCode: {
+    header: {
+      title: 'Verify Code',
+      subtitle: 'Please enter the verification code you received'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to login page...'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
+    }
   },
   logo: {
     alt: 'SES AI Logo'
@@ -71,11 +101,14 @@ export default {
       email: 'Email Address',
       emailPlaceholder: 'Email address',
       processing: 'Processing...',
-      resetPassword: 'Reset Password'
+      sendResetPassword: 'Send Reset Password Email',
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'New password'
     },
     messages: {
       defaultSuccess: 'If your information matches our records, a password reset email will be sent.',
-      defaultError: 'Password reset request failed'
+      defaultError: 'Password reset request failed',
+      resetLinkSent: 'Reset link has been sent to your email, please check your email for verification'
     },
     switch: {
       rememberedPassword: 'Remembered your password?',
@@ -102,6 +135,76 @@ export default {
       passwordTooShort: 'New password must be at least 6 characters long',
       defaultError: 'Password reset failed',
       defaultSuccess: 'Password reset successfully'
+    }
+  },
+  resetPassword: {
+    header: {
+      title: 'Reset Password',
+      subtitle: 'Please enter your new password'
+    },
+    form: {
+      newPassword: 'New Password',
+      newPasswordPlaceholder: 'Enter new password',
+      confirmPassword: 'Confirm New Password',
+      confirmPasswordPlaceholder: 'Confirm new password',
+      processing: 'Resetting...',
+      resetPassword: 'Reset Password'
+    },
+    messages: {
+      passwordsNotMatch: 'Passwords do not match',
+      passwordTooShort: 'Password must be at least 6 characters long',
+      defaultError: 'Password reset failed',
+      defaultSuccess: 'Password reset successfully! Redirecting to login...',
+      invalidLink: 'Invalid reset link'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
+    }
+  },
+  verifyEducation: {
+    header: {
+      title: 'Verify Education Identity',
+      subtitle: 'Please enter the verification code you received to verify your education identity'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Education identity verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to settings page...'
+    },
+    switch: {
+      backToSettings: 'Back to Settings'
+    }
+  },
+  verifyForgotPassword: {
+    header: {
+      title: 'Verify Forgot Password',
+      subtitle: 'Please enter the verification code you received to reset your password'
+    },
+    form: {
+      code: 'Verification Code',
+      codePlaceholder: 'Enter 6-digit code',
+      verify: 'Verify',
+      processing: 'Verifying...'
+    },
+    messages: {
+      success: 'Verification successful!',
+      failed: 'Verification failed, please check if the code is correct',
+      expired: 'Verification code has expired, please request a new one',
+      invalidCode: 'Invalid code format, please enter 6 digits',
+      invalidLink: 'Invalid verification link',
+      redirecting: 'Redirecting to login page...'
+    },
+    switch: {
+      backToLogin: 'Back to Login'
     }
   }
 }; 
