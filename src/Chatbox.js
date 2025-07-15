@@ -388,21 +388,38 @@ const handleFindSimilarMolecules = async (details) => {
       let originalQuery = undefined;
       let llmResponse = undefined;
       
-      if (isHighTier && activeFindMessage) {
-        // Find the index of the message containing molecules
-        const messageIndex = messages.findIndex(msg => msg === activeFindMessage);
-        
-        // Get the user query that led to this response
-        // Look backwards for the most recent user message
-        for (let i = messageIndex - 1; i >= 0; i--) {
-          if (messages[i].role === 'user') {
-            originalQuery = messages[i].content;
-            break;
+      if (isHighTier) {
+        if (activeFindMessage) {
+          // Find the index of the message containing molecules
+          const messageIndex = messages.findIndex(msg => msg === activeFindMessage);
+          
+          // Get the user query that led to this response
+          // Look backwards for the most recent user message
+          for (let i = messageIndex - 1; i >= 0; i--) {
+            if (messages[i].role === 'user') {
+              originalQuery = messages[i].content;
+              break;
+            }
+          }
+          
+          // Get the assistant's response content
+          llmResponse = activeFindMessage.content;
+        } else {
+          // Fallback: extract from current conversation context
+          // Get the most recent user message and assistant response
+          for (let i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].role === 'assistant' && !llmResponse) {
+              llmResponse = messages[i].content;
+            } else if (messages[i].role === 'user' && !originalQuery) {
+              originalQuery = messages[i].content;
+            }
+            
+            // Stop once we have both
+            if (originalQuery && llmResponse) {
+              break;
+            }
           }
         }
-        
-        // Get the assistant's response content
-        llmResponse = activeFindMessage.content;
       }
       
       // Build selected molecule string if high-tier
