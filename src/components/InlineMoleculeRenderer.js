@@ -182,7 +182,10 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       try {
         const outerData = JSON.parse(currentMatch.dataString);
         const moleculeText = outerData.text;
-        const dataArray = outerData.data;
+        let dataArray = outerData.data ?? [];
+        if (dataArray && !Array.isArray(dataArray)) {
+          dataArray = [dataArray];        // normalise to array
+        }
         
         if (dataArray && dataArray.length > 0) {
           const placeholderId = `{{MOLECULE_${index}}}`;
