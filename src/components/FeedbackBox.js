@@ -5,7 +5,7 @@ import { getAPIUrl } from '../utils';
 
 const API_URL = getAPIUrl();
 
-const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, onClose }) => {
+const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, queryType, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const feedbackBoxRef = useRef(null);
@@ -42,6 +42,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
         contextContent2: "",
         contextContent3: "",
         timestamp: new Date().toISOString(),
+        queryType: queryType || "normal_ask",
       };
       const token = localStorage.getItem('token');
       const response = await axios.post(
