@@ -248,6 +248,7 @@ const SettingModal = forwardRef((props, ref) => {
                             <option value="zh">{t('settings.preference.languages.zh')}</option>
                             <option value="en">{t('settings.preference.languages.en')}</option>
                             <option value="ko">{t('settings.preference.languages.ko')}</option>
+                            <option value="ja">{t('settings.preference.languages.ja')}</option>
                           </select>
                         </div>
                       </div>

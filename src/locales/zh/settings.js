@@ -31,7 +31,8 @@ export default {
         languages: {
             zh: '中文',
             en: 'English (US)',
-            ko: '한국어'
+            ko: '한국어',
+            ja: '日本語'
         }
     },
     common: {
