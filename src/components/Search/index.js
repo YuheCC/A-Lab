@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import MolEditor from '../MolEditor';
 import './Search.css';
 import { useTranslation } from 'react-i18next';
+import benPenSvg from '@/assets/svg/benPen.svg';
 
 
 // SearchInput now maintains its own internal input state.
@@ -39,21 +40,14 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
     window.open(pubChemUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // 定义一个React组件来渲染SVG
+  // 使用外部 SVG 资源替代内联 SVG
   const NewPenIcon = () => (
-    <svg 
-      className="icon" 
-      viewBox="0 0 1024 1024" 
-      version="1.1" 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="18" 
-      height="18"
-    >
-              <path 
-          d="M264.192 785.521778c18.147556 0 36.238222-6.257778 54.385778-18.830222h6.030222L155.363556 590.506667v6.257777c-12.060444 18.887111-18.090667 37.774222-18.090667 56.604445L76.8 848.440889l187.392-62.919111zM868.636444 81.066667l-54.442666-56.661334a74.524444 74.524444 0 0 0-108.771556 0l-54.385778 56.661334 163.157334 169.813333 54.442666-56.604444a82.033778 82.033778 0 0 0 0-113.208889z m-108.828444 226.417777L596.650667 137.671111 215.836444 533.902222l163.157334 169.870222 380.814222-396.288zM28.444444 905.045333h967.111112v62.919111H28.444444v-62.919111z" 
-          fill="#FFD700"
-        />
-    </svg>
+    <img
+      src={benPenSvg}
+      alt={t('search.drawMolecule', 'Draw molecule')}
+      className="icon"
+      style={{ width: 32, height: 32 }}
+    />
   );
 
   return (
@@ -61,7 +55,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
       <div className='search-input-container'>
         <Tooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
           <div 
-            className='control-icon' 
+            className='control-icon pen-icon' 
             style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
             onClick={() => {
               setShowMolEditor(!showMolEditor);

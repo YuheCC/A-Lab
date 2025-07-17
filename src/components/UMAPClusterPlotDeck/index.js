@@ -157,7 +157,9 @@ class MarkerWithLabelLayer extends CompositeLayer {
     renderLayers() {
         const { data, iconName = 'marker', iconSize = 30, xKey = 'x', yKey = 'y', opacity = 1 } = this.props;
         const layers = [];
-
+        if(data.length === 0) {
+            return layers;
+        }
         // Only render points with valid x and y umap coordinates
         data.filter(d => d[xKey] !== null && d[yKey] !== null)
             .forEach((point, index) => {
@@ -172,7 +174,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                 radiusScale: 2,
                 pickable: false
             }));
-
+            console.log(`${this.id}-icon-${index}`)
             layers.push(new IconLayer({
                 id: `${this.id}-icon-${index}`,
                 data: [point],
@@ -197,7 +199,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                     sdf: true,
                 },
                 fontFamily: 'Consolas, monospace',
-                getColor: [0, 0, 0],
+                getColor: iconName === 'marker-search' ? [0, 0, 0] : [255, 255, 255],
                 getTextAnchor: 'middle',
                 fontWeight: 'normal',
                 pickable: false,
