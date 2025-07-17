@@ -199,7 +199,7 @@ class MarkerWithLabelLayer extends CompositeLayer {
                     sdf: true,
                 },
                 fontFamily: 'Consolas, monospace',
-                getColor: [0, 0, 0],
+                getColor: iconName === 'marker-search' ? [0, 0, 0] : [255, 255, 255],
                 getTextAnchor: 'middle',
                 fontWeight: 'normal',
                 pickable: false,
