@@ -7,7 +7,7 @@ export default {
   research: {
     title: "リサーチ（学術機関のみ）",
     description: "部分的なMolecular Universe（1M）へのアクセス",
-    price: "¥0",
+    price: "$0",
     period: "/ 月",
     cta: "始める",
     details: [
@@ -21,7 +21,7 @@ export default {
   explorer: {
     title: "エクスプローラー",
     description: "部分的なMolecular Universe（1M）へのアクセス",
-    price: "¥150",
+    price: "$150",
     period: "/ 月",
     cta: "始める",
     details: [
@@ -35,7 +35,7 @@ export default {
   team: {
     title: "チーム",
     description: "部分的なMolecular Universe（1M）へのアクセス",
-    price: "¥1,000",
+    price: "$1,000",
     period: "/ 月（最大10ユーザー）",
     cta: "始める",
     details: [
