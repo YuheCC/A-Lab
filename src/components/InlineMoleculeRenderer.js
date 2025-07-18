@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { MolCard } from './MolCard';
 import { useAuthStore } from '../providers/auth';
 import { COMMERCIAL_SCORE_MAP } from '../utils';
@@ -244,17 +245,20 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
 
 // Main component for parsing and rendering inline molecules
 export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
+  // Trim leading and trailing whitespace to prevent formatting issues
+  const trimmedContent = content?.trim() || '';
+  
   // Parse and prepare the content for rendering
   const { processedContent, moleculeMap, referencesIndex } = useMemo(() => {
     const inlineMoleculeRegex = /<inline_molecule>(\{.*?\})<\/inline_molecule>/g;
     const molecules = new Map();
-    let processedText = content;
+    let processedText = trimmedContent;
     let index = 0;
 
     // Find all matches first to avoid replacement issues
     const matches = [];
     let match;
-    while ((match = inlineMoleculeRegex.exec(content)) !== null) {
+    while ((match = inlineMoleculeRegex.exec(processedText)) !== null) {
       matches.push({
         fullMatch: match[0],
         dataString: match[1],
@@ -358,7 +362,7 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       moleculeMap: molecules,
       referencesIndex: refIndex
     };
-  }, [content]);
+  }, [trimmedContent]);
 
   // Helper function to create molecule and citation processing function
   const createProcessString = (isAfterReferences) => {
@@ -893,6 +897,7 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         <ReactMarkdown 
           key={index}
           remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
           components={createComponents(part.isAfterReferences)}
         >
           {part.content}
