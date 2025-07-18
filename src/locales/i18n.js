@@ -5,6 +5,7 @@ import Backend from 'i18next-http-backend';
 import en from './en';
 import zh from './zh';
 import ko from './ko';
+import ja from './ja';
 
 i18n
   .use(Backend)
@@ -26,11 +27,12 @@ i18n
         if (lng.startsWith('zh')) return 'zh';
         if (lng.startsWith('en')) return 'en';
         if (lng.startsWith('ko')) return 'ko';
+        if (lng.startsWith('ja')) return 'ja';
         return lng;
       }
     },
 
-    supportedLngs: ['en', 'zh', 'ko'],
+    supportedLngs: ['en', 'zh', 'ko', 'ja'],
     load: 'languageOnly',
 
     backend: {
@@ -46,6 +48,9 @@ i18n
       },
       ko: {
         translation: ko,
+      },
+      ja: {
+        translation: ja,
       }
     }
   });
