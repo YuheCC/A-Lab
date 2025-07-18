@@ -6,6 +6,93 @@ import { useAuthStore } from '../providers/auth';
 import { COMMERCIAL_SCORE_MAP } from '../utils';
 import './InlineMoleculeRenderer.css';
 
+// Component for individual clickable citation numbers
+const IndividualCitationLink = ({ number, style }) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log(`Clicked citation ${number}, looking for ref-${number}`);
+    
+    // Find the target reference element
+    const targetElement = document.getElementById(`ref-${number}`);
+    
+    if (targetElement) {
+      console.log(`Found target element for ref-${number}`, targetElement);
+      targetElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+      
+      // Add a temporary highlight effect
+      targetElement.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+      setTimeout(() => {
+        targetElement.style.backgroundColor = '';
+      }, 2000);
+    } else {
+      console.log(`Could not find target element for ref-${number}`);
+      console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+      
+      // Fallback: try to find any reference section and scroll to it
+      const referencesHeadings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter(heading => 
+        heading.textContent?.toLowerCase().includes('references')
+      );
+      
+      if (referencesHeadings.length > 0) {
+        console.log('Found references heading, scrolling to it');
+        referencesHeadings[0].scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.log('No references heading found either');
+        // Last fallback: look for any element containing the reference number
+        const allElements = Array.from(document.querySelectorAll('*')).filter(el => 
+          el.textContent?.includes(`[${number}]`)
+        );
+        if (allElements.length > 0) {
+          console.log('Found element containing reference number, scrolling to it');
+          allElements[0].scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  };
+
+  return (
+    <span
+      className="citation-link"
+      style={{ 
+        ...style, 
+        cursor: 'pointer',
+        color: '#0066cc',
+        textDecoration: 'underline',
+        fontSize: '0.9em'
+      }}
+      onClick={handleClick}
+      title={`Click to go to reference ${number}`}
+    >
+      {number}
+    </span>
+  );
+};
+
+// Component for a group of citations like [1,2,3]
+const CitationGroup = ({ citationNumbers, style }) => {
+  // Parse citation numbers from the format "1,2,3"
+  const numbers = citationNumbers.split(',').map(num => num.trim());
+  
+  return (
+    <span style={style}>
+      [
+      {numbers.map((number, index) => (
+        <React.Fragment key={number}>
+          <IndividualCitationLink number={number} />
+          {index < numbers.length - 1 && ','}
+        </React.Fragment>
+      ))}
+      ]
+    </span>
+  );
+};
+
 // Component for individual clickable and hoverable molecule links
 const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
   const [hoveredObject, setHoveredObject] = useState(null);
@@ -273,15 +360,59 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     };
   }, [content]);
 
-  // Helper function to create molecule processing function
+  // Helper function to create molecule and citation processing function
   const createProcessString = (isAfterReferences) => {
     return (str, keyPrefix = '') => {
-      if (!str.includes('{{MOLECULE_')) {
+      if (typeof str !== 'string') {
         return str;
       }
       
-      const parts = str.split(/({{MOLECULE_\d+}})/);
+      // Check if we need to process anything
+      const hasMolecules = str.includes('{{MOLECULE_');
+      const hasCitations = /\[\d+(?:,\s*\d+)*\]/.test(str);
+      
+      if (!hasMolecules && !hasCitations) {
+        return str;
+      }
+      
+      // Split text by both molecule placeholders and citations
+      let parts = [str];
+      
+      // Process molecule placeholders
+      if (hasMolecules) {
+        const newParts = [];
+        parts.forEach(part => {
+          if (typeof part === 'string') {
+            const moleculeParts = part.split(/({{MOLECULE_\d+}})/);
+            newParts.push(...moleculeParts);
+          } else {
+            newParts.push(part);
+          }
+        });
+        parts = newParts;
+      }
+      
+      // Process citations (only in text parts, not in already processed components)
+      if (hasCitations && !isAfterReferences) {
+        const newParts = [];
+        parts.forEach(part => {
+          if (typeof part === 'string') {
+            // Split by citation pattern: [1], [1,2], [1,2,3], etc.
+            const citationParts = part.split(/(\[\d+(?:,\s*\d+)*\])/);
+            newParts.push(...citationParts);
+          } else {
+            newParts.push(part);
+          }
+        });
+        parts = newParts;
+      }
+      
       return parts.map((part, index) => {
+        if (typeof part !== 'string') {
+          return part; // Already processed component
+        }
+        
+        // Handle molecule placeholders
         if (part.match(/^{{MOLECULE_\d+}}$/)) {
           const moleculeInfo = moleculeMap.get(part);
           if (moleculeInfo) {
@@ -306,7 +437,20 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           }
           return <span key={`${keyPrefix}missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
         }
-        return part;
+        
+        // Handle citations (only before References section)
+        const citationMatch = part.match(/^\[(\d+(?:,\s*\d+)*)\]$/);
+        if (citationMatch && !isAfterReferences) {
+          const citationNumbers = citationMatch[1];
+          return (
+            <CitationGroup
+              key={`${keyPrefix}cite-${index}`}
+              citationNumbers={citationNumbers}
+            />
+          );
+        }
+        
+        return part; // Regular text
       });
     };
   };
@@ -335,28 +479,66 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     const processString = createProcessString(isAfterReferences);
     
     return {
-      // Handle all text rendering to find and replace molecule placeholders
+      // Handle all text rendering to find and replace molecule placeholders and citations
       text: ({ node, children, ...props }) => {
         const text = children;
         if (typeof text !== 'string') {
           return text;
         }
 
-        // Check for new placeholder format: {{MOLECULE_X}}
-        if (!text.includes('{{MOLECULE_')) {
+        // Check if we need to process anything
+        const hasMolecules = text.includes('{{MOLECULE_');
+        const hasCitations = /\[\d+(?:,\s*\d+)*\]/.test(text);
+        
+        if (!hasMolecules && !hasCitations) {
           return text;
         }
 
-        // Split text by molecule placeholders (new format)
-        const parts = text.split(/({{MOLECULE_\d+}})/);
-        if (parts.length === 1) {
-          return text; // No placeholders found
+        // Split text by both molecule placeholders and citations
+        // First handle molecules, then citations
+        let parts = [text];
+        
+        // Process molecule placeholders
+        if (hasMolecules) {
+          const newParts = [];
+          parts.forEach(part => {
+            if (typeof part === 'string') {
+              const moleculeParts = part.split(/({{MOLECULE_\d+}})/);
+              newParts.push(...moleculeParts);
+            } else {
+              newParts.push(part);
+            }
+          });
+          parts = newParts;
+        }
+        
+        // Process citations (only in text parts, not in already processed components)
+        if (hasCitations && !isAfterReferences) {
+          const newParts = [];
+          parts.forEach(part => {
+            if (typeof part === 'string') {
+              // Split by citation pattern: [1], [1,2], [1,2,3], etc.
+              const citationParts = part.split(/(\[\d+(?:,\s*\d+)*\])/);
+              newParts.push(...citationParts);
+            } else {
+              newParts.push(part);
+            }
+          });
+          parts = newParts;
+        }
+
+        if (parts.length === 1 && typeof parts[0] === 'string') {
+          return text; // No special content found
         }
 
         return (
           <>
             {parts.map((part, index) => {
-              // Handle new format: {{MOLECULE_X}}
+              if (typeof part !== 'string') {
+                return part; // Already processed component
+              }
+              
+              // Handle molecule placeholders
               if (part.match(/^{{MOLECULE_\d+}}$/)) {
                 const moleculeInfo = moleculeMap.get(part);
                 
@@ -383,7 +565,20 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
                 // If molecule not found, return the placeholder for debugging
                 return <span key={`missing-${index}`} style={{backgroundColor: 'yellow'}}>{part}</span>;
               }
-              return part;
+              
+              // Handle citations (only before References section)
+              const citationMatch = part.match(/^\[(\d+(?:,\s*\d+)*)\]$/);
+              if (citationMatch && !isAfterReferences) {
+                const citationNumbers = citationMatch[1];
+                return (
+                  <CitationGroup
+                    key={`cite-${index}`}
+                    citationNumbers={citationNumbers}
+                  />
+                );
+              }
+              
+              return part; // Regular text
             })}
           </>
         );
@@ -564,6 +759,130 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         });
         
         return <pre {...props}>{processedChildren}</pre>;
+      },
+      
+      // Process ordered lists and add anchor IDs for references
+      ol: ({ node, children, ...props }) => {
+        console.log('Processing ordered list, isAfterReferences:', isAfterReferences);
+        
+        // Check if this is in the References section by looking for reference pattern
+        const childrenArray = React.Children.toArray(children);
+        const isReferencesList = isAfterReferences && childrenArray.some(child => {
+          if (child && child.props && child.props.children) {
+            const childrenText = React.Children.toArray(child.props.children);
+            const text = childrenText.map(c => typeof c === 'string' ? c : '').join('');
+            const hasRefPattern = /^\[\d+\]/.test(text.trim());
+            console.log('Checking child text:', text.trim(), 'has ref pattern:', hasRefPattern);
+            return hasRefPattern;
+          }
+          return false;
+        });
+        
+        console.log('Is references list:', isReferencesList);
+        
+        // If this is a references list, add special handling to list items
+        if (isReferencesList) {
+          const processedChildren = React.Children.map(children, (child, childIndex) => {
+            if (child && child.type === 'li') {
+              // Extract reference number from the first text content
+              const childrenText = React.Children.toArray(child.props.children);
+              const textContent = childrenText.map(c => typeof c === 'string' ? c : '').join('');
+              const refMatch = textContent.match(/^\[(\d+)\]/);
+              
+              console.log('Processing li child, text:', textContent.trim(), 'refMatch:', refMatch);
+              
+              if (refMatch) {
+                const refNumber = refMatch[1];
+                console.log(`Creating anchor for reference ${refNumber}`);
+                return React.cloneElement(child, {
+                  ...child.props,
+                  id: `ref-${refNumber}`,
+                  key: `ref-${refNumber}`,
+                  style: { 
+                    ...child.props.style, 
+                    scrollMarginTop: '80px',
+                    position: 'relative'
+                  }
+                });
+              }
+            }
+            return child;
+          });
+          
+          return <ol {...props}>{processedChildren}</ol>;
+        }
+        
+        // For non-reference lists, process normally
+        const processedChildren = React.Children.map(children, (child, childIndex) => {
+          if (typeof child === 'string') {
+            return processString(child, `ol${childIndex}-`);
+          }
+          return child;
+        });
+        
+        return <ol {...props}>{processedChildren}</ol>;
+      },
+      
+      // Also handle unordered lists in case references are in ul format
+      ul: ({ node, children, ...props }) => {
+        console.log('Processing unordered list, isAfterReferences:', isAfterReferences);
+        
+        // Check if this is in the References section by looking for reference pattern
+        const childrenArray = React.Children.toArray(children);
+        const isReferencesList = isAfterReferences && childrenArray.some(child => {
+          if (child && child.props && child.props.children) {
+            const childrenText = React.Children.toArray(child.props.children);
+            const text = childrenText.map(c => typeof c === 'string' ? c : '').join('');
+            const hasRefPattern = /^\[\d+\]/.test(text.trim());
+            console.log('Checking ul child text:', text.trim(), 'has ref pattern:', hasRefPattern);
+            return hasRefPattern;
+          }
+          return false;
+        });
+        
+        console.log('Is ul references list:', isReferencesList);
+        
+        // If this is a references list, add special handling to list items
+        if (isReferencesList) {
+          const processedChildren = React.Children.map(children, (child, childIndex) => {
+            if (child && child.type === 'li') {
+              // Extract reference number from the first text content
+              const childrenText = React.Children.toArray(child.props.children);
+              const textContent = childrenText.map(c => typeof c === 'string' ? c : '').join('');
+              const refMatch = textContent.match(/^\[(\d+)\]/);
+              
+              console.log('Processing ul li child, text:', textContent.trim(), 'refMatch:', refMatch);
+              
+              if (refMatch) {
+                const refNumber = refMatch[1];
+                console.log(`Creating anchor for ul reference ${refNumber}`);
+                return React.cloneElement(child, {
+                  ...child.props,
+                  id: `ref-${refNumber}`,
+                  key: `ref-${refNumber}`,
+                  style: { 
+                    ...child.props.style, 
+                    scrollMarginTop: '80px',
+                    position: 'relative'
+                  }
+                });
+              }
+            }
+            return child;
+          });
+          
+          return <ul {...props}>{processedChildren}</ul>;
+        }
+        
+        // For non-reference lists, process normally
+        const processedChildren = React.Children.map(children, (child, childIndex) => {
+          if (typeof child === 'string') {
+            return processString(child, `ul${childIndex}-`);
+          }
+          return child;
+        });
+        
+        return <ul {...props}>{processedChildren}</ul>;
       }
     };
   };
