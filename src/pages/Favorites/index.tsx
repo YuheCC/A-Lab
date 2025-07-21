@@ -682,7 +682,14 @@ const FavoritesGrid = () => {
 
     // Create traces for each solubility type
     const traces: any[] = [];
-    const legendOrder = ['high solubility', 'medium solubility', 'low solubility', 'diluent', 'Selected Molecules'];
+    // Use translation function instead of hardcoded strings
+    const legendOrder = [
+      'high solubility', 
+      'medium solubility', 
+      'low solubility', 
+      'diluent', 
+      t('favorites.chartLabels.selectedMolecules')
+    ];
     
     legendOrder.forEach(solubilityType => {
       if (groupedData[solubilityType]) {
@@ -910,7 +917,7 @@ const FavoritesGrid = () => {
     
     // First add reference points (smaller, semi-transparent)
     legendOrder.forEach(solubilityType => {
-      const refKey = `${solubilityType} (Reference)`;
+      const refKey = `${solubilityType} (${t('favorites.chartLabels.reference')})`;
       if (groupedData[refKey]) {
         const typeData = groupedData[refKey];
         const color = colorMap[solubilityType] || 'gray';
