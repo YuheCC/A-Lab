@@ -32,6 +32,11 @@
 .close-sidebar-button {
     padding: 5px;
     border-radius: 4px !important;
+    --IconButton-hoverBg: transparent !important;
+}
+
+.close-sidebar-button:hover {
+    background-color: transparent !important;
 }
 
 .sidebar-header-content {
@@ -157,16 +162,20 @@
     opacity: 0;
     transition: opacity 0.1s ease, visibility 0.1s ease;
 }
-.open-sidebar-button {
+.open-sidebar-button-wrapper {
     display: flex;
     align-items: center;
     white-space: nowrap;
     overflow: hidden;
 }
+.open-sidebar-icon {
+    cursor: pointer;
+}
+
 .open-sidebar-text {
     font-size: 14px;
     color: #777;
-    margin-left: 10px;
+    cursor: pointer;
 }
 
 .collapsed .close-sidebar-button {

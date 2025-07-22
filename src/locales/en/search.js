@@ -21,6 +21,7 @@ export default {
     moleculeNumber: "Molecule {{number}}",
     similarMolecules: "Similar Molecules",
     similarMoleculeNumber: "Similar Molecule #{{number}}",
+    selectMolType: "Select what type of molecule it is for best results",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
@@ -33,6 +34,9 @@ export default {
         espMax: "ESP Max",
         predictedMp: "Predicted Melting Point",
         predictedBp: "Predicted Boiling Point",
+        predictedFp: "Predicted Flash Point",
+        combustionEnthalpy: "Combustion Enthalpy",
+        commercialScore: "Commercial Score",
         functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"

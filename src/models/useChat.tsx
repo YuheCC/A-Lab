@@ -171,6 +171,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 content: item.content || '',
                                 molText: item.molecules.join(", ") || [],
                                 molecules: item.molecules || [],
+                                extraData: item.extra_data || {},
                             })) || [],
                             activeMolecule: chat.meta_active_molecule || null,
                             foundMolecules: chat.meta_molecules || [],
