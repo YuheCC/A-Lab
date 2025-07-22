@@ -1404,10 +1404,10 @@ const FavoritesGrid = () => {
                     {canSeePredictedProperties && (
                       <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : t('favorites.notAvailable')}</td>
                     )}
-                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : t('favorites.notAvailable')}</td>
+                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : '0.00'}</td>
                     <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : t('favorites.notAvailable')}</td>
                     <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.not  Available')}</td>
                     <td>{favorite.functional_groups || t('favorites.notAvailable')}</td>
                     <td>
                       {favorite.umap_x ? favorite.umap_x.toFixed(2) : t('favorites.notAvailable')} / 

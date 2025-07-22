@@ -21,6 +21,7 @@ export default {
     moleculeNumber: "分子 {{number}}",
     similarMolecules: "類似の分子",
     similarMoleculeNumber: "類似分子 #{{number}}",
+    selectMolType: "最適な結果を得るために、分子のタイプを選択してください",
 
     // Property Names (Professional terms - not translated according to rules)
     properties: {
@@ -33,9 +34,19 @@ export default {
         espMax: "ESP 最大",
         predictedMp: "予測融点",
         predictedBp: "予測沸点",
+        predictedFp: "予測着火点",
+        combustionEnthalpy: "燃焼エンタルピー",
+        commercialScore: "商業価値",
         functionalGroups: "官能基",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
+    },
+
+    moleculeTypes: {
+        selectMolType: "分子タイプ",
+        solvent: "溶媒",
+        diluent: "希釈剤",
+        additive: "添加剤"
     },
 
     // Buttons and Actions

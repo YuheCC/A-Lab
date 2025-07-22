@@ -11,7 +11,8 @@ export default {
         disableLiteratureSearch: "文献検索を無効にする",
         enterDeepSpace: "ディープスペースに入る (ベータ版)",
         deepSpaceTooltip: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
-        admin: "管理者"
+        admin: "管理者",
+        fullDeepSpace: "フルディープスペース"
     },
     queryLimit: {
         queriesRemaining: "今日の残りクエリ数：",

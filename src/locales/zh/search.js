@@ -21,6 +21,7 @@ export default {
     moleculeNumber: "分子 {{number}}",
     similarMolecules: "相似分子",
     similarMoleculeNumber: "相似分子 #{{number}}",
+    selectMolType: "选择最适合的分子类型以获得最佳结果",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
@@ -33,9 +34,19 @@ export default {
         espMax: "ESP Max",
         predictedMp: "Predicted Melting Point",
         predictedBp: "Predicted Boiling Point",
+        predictedFp: "Predicted Flash Point",
+        combustionEnthalpy: "Combustion Enthalpy",
+        commercialScore: "Commercial Score",
         functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
+    },
+
+    moleculeTypes: {
+        selectMolType: "分子类型",
+        solvent: "溶剂",
+        diluent: "稀释剂",
+        additive: "添加剂"
     },
     
     // Buttons and Actions

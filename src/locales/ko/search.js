@@ -21,6 +21,7 @@ export default {
     moleculeNumber: "분자 {{number}}",
     similarMolecules: "유사 분자",
     similarMoleculeNumber: "유사 분자 번호 #{{number}}",
+    selectMolType: "최적의 결과를 얻기 위해 분자 유형을 선택하세요",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
@@ -33,9 +34,19 @@ export default {
         espMax: "ESP 최대값:",
         predictedMp: "예상 녹는점:",
         predictedBp: "예상 끓는점:",
+        predictedFp: "예상 화재점:",
+        combustionEnthalpy: "연소 엔탈피:",
+        commercialScore: "상업적 가치:",
         functionalGroups: "작용기",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
+    },
+
+    moleculeTypes: {
+        selectMolType: "분자 유형",
+        solvent: "용매",
+        diluent: "희석제",
+        additive: "첨가제"
     },
     
     // Buttons and Actions

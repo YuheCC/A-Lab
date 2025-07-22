@@ -6,10 +6,11 @@ import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink, Info, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
+import { Tooltip } from "@mui/material";
 
 const API_URL = getAPIUrl();
 
@@ -73,6 +74,7 @@ const SearchPage = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
+    const [selectedMolType, setSelectedMolType] = useState("");
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -232,7 +234,8 @@ const SearchPage = () => {
 
                     const payload = {
                         smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier
+                        use_35m: isHighTier,
+                        ...(selectedMolType && { mol_type: selectedMolType })
                     };
 
                     try {
@@ -351,7 +354,7 @@ const SearchPage = () => {
                         disabled={searchLoading}
                     />
 
-                    {/* Add "Find closest friends" checkbox */}
+                    {/* Add "Find closest friends" checkbox and mol type selector */}
                     <div className="search-options">
                         <label className="search-option">
                             <div style={{
@@ -364,7 +367,22 @@ const SearchPage = () => {
                                         checked={findClosestFriends}
                                         onChange={(e) => setFindClosestFriends(e.target.checked)}
                                     />
-                                    <div>{t('search.findFriendsLabel')}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span>{t('search.findFriendsLabel')}</span>
+                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
+                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
+                                        </Tooltip>
+                                    </div>
+                                    <select
+                                        value={selectedMolType}
+                                        onChange={e => setSelectedMolType(e.target.value)}
+                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                    >
+                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                                    </select>
                                 </div>
                                 <div style={{
                                     color: '#555',
@@ -415,6 +433,16 @@ const SearchPage = () => {
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
+                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                    },
+                                                    {
+                                                        label: t('search.properties.combustionEnthalpy'),
+                                                        value: molecule.properties?.combustion_enthalpy_ev || '0.00',
+                                                        span: 2,
+                                                        suffix: ' eV',
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                    },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
@@ -498,6 +526,15 @@ const SearchPage = () => {
                                                     { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
+                                                    { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                     },
+                                                    { label: t('search.properties.combustionEnthalpy'),
+                                                        value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
+                                                        span: 2,
+                                                        suffix: ' eV',
+                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
+                                                    },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
@@ -554,11 +591,6 @@ const SearchPage = () => {
                                                     >
                                                         {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
-                                                    {false && molecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
-                                                        window.open(molecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
-                                                    }}>
-                                                        View in MolPort
-                                                    </CustomButton>}
                                                 </div>
                                             </MolCard>
                                         ))}
