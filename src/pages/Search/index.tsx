@@ -378,10 +378,10 @@ const SearchPage = () => {
                                         onChange={e => setSelectedMolType(e.target.value)}
                                         style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
                                     >
-                                        <option value="" disabled hidden>Molecule Type</option>
-                                        <option value="solvent">Solvent</option>
-                                        <option value="diluent">Diluent</option>
-                                        <option value="additive">Additive</option>
+                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
                                     </select>
                                 </div>
                                 <div style={{

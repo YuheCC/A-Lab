@@ -41,6 +41,13 @@ export default {
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },
+
+    moleculeTypes: {
+        selectMolType: "분자 유형",
+        solvent: "용매",
+        diluent: "희석제",
+        additive: "첨가제"
+    },
     
     // Buttons and Actions
     addToFavorites: "즐겨찾기에 추가 ★",

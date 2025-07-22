@@ -41,6 +41,13 @@ export default {
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },
+
+    moleculeTypes: {
+        selectMolType: "分子类型",
+        solvent: "溶剂",
+        diluent: "稀释剂",
+        additive: "添加剂"
+    },
     
     // Buttons and Actions
     addToFavorites: "添加到收藏 ★",

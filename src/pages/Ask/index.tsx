@@ -194,7 +194,7 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 onChange={e => onFullDeepSpaceChange(e.target.checked)}
               />
               <label htmlFor="fullDeepSpace">
-                Full Deep Space
+                {t('chatbox.checkboxes.fullDeepSpace')}
               </label>
             </div>
           </div>
@@ -1096,10 +1096,10 @@ const handleFindSimilarMolecules = async (details) => {
                         onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
                         style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
                       >
-                        <option value="" disabled hidden>Molecule Type</option>
-                        <option value="solvent">Solvent</option>
-                        <option value="diluent">Diluent</option>
-                        <option value="additive">Additive</option>
+                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
                       </select>
                     </div>
                     {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
@@ -1182,10 +1182,10 @@ const handleFindSimilarMolecules = async (details) => {
                       onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
                       style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
                     >
-                      <option value="" disabled hidden>Molecule Type</option>
-                      <option value="solvent">Solvent</option>
-                      <option value="diluent">Diluent</option>
-                      <option value="additive">Additive</option>
+                      <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                      <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                      <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                      <option value="additive">{t('search.moleculeTypes.additive')}</option>
                     </select>
                   </div>
                   {false && selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {

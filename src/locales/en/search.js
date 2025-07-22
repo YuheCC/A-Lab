@@ -41,6 +41,13 @@ export default {
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },
+
+    moleculeTypes: {
+        selectMolType: "Molecule Type",
+        solvent: "Solvent",
+        diluent: "Diluent",
+        additive: "Additive"
+    },
     
     // Buttons and Actions
     addToFavorites: "Add to Favorites ★",

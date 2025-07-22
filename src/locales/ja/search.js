@@ -42,6 +42,13 @@ export default {
         umapY: "UMAP_Y"
     },
 
+    moleculeTypes: {
+        selectMolType: "分子タイプ",
+        solvent: "溶媒",
+        diluent: "希釈剤",
+        additive: "添加剤"
+    },
+
     // Buttons and Actions
     addToFavorites: "お気に入りに追加 ★",
     saving: "保存中...",
