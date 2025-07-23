@@ -267,6 +267,13 @@ const ChatbotInterface = ({ remainingQueries, setRemainingQueries }) => {
     useMultiAgent
   } = useActiveChatData();
 
+  // Debug: Log the current active chat data
+  console.log("Debug - Active chat data:", { 
+    messages: messages,
+    messagesLength: messages ? messages.length : 'undefined',
+    activeChat: useChatStore.getState().activeChat 
+  });
+
   const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,

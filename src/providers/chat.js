@@ -101,7 +101,7 @@ export const useChatStore = create(persist((set, get) => ({
                             messages: chat.content.map(item => ({
                                 role: item.role,
                                 content: item.content || '',
-                                molText: item.molecules.join(", ") || [],
+                                molText: (item.molecules || []).join(", "),
                                 molecules: item.molecules || [],
                                 extraData: item.extra_data || {},
                             })) || [],
@@ -418,7 +418,17 @@ export const useChatStore = create(persist((set, get) => ({
 }));
 
 export const useActiveChatData = () => {
-    return useChatStore((state) => state.chatMap[state.activeChat], (oldData, newData) => {
+    const result = useChatStore((state) => {
+        const activeChat = state.chatMap[state.activeChat];
+        console.log("Debug - useActiveChatData:", {
+            activeChatId: state.activeChat,
+            activeChatExists: !!activeChat,
+            messages: activeChat?.messages,
+            messagesLength: activeChat?.messages?.length,
+            chatMapKeys: Object.keys(state.chatMap)
+        });
+        return activeChat;
+    }, (oldData, newData) => {
         // Deep comparison of the relevant data to prevent unnecessary re-renders
         return (
             oldData.foundMolecules === newData.foundMolecules &&
@@ -431,4 +441,5 @@ export const useActiveChatData = () => {
             oldData.awaitingClarify === newData.awaitingClarify
         );
     });
+    return result;
 };
