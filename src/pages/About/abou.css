@@ -1139,7 +1139,7 @@
   }
 
   /* 窄屏幕隐藏Banner按钮 */
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .banner-enter-mu-button {
       display: none !important;
     }
