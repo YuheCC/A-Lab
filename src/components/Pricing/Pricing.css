@@ -227,6 +227,114 @@
   cursor: pointer;
 }
 
+/* iPad Pro适配 (1024px - 1200px) */
+@media (min-width: 1024px) and (max-width: 1200px) {
+  .pricing-section {
+    scroll-margin-top: 70px;
+    padding: 0 2rem;
+  }
+  
+  .pricing-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1.3rem;
+    text-align: center;
+  }
+  
+  /* 切换器iPad Pro优化 */
+  .pricing-switcher {
+    margin-bottom: 28px !important;
+  }
+  
+  .pricing-switch-btn {
+    padding: 8px 28px !important;
+    font-size: 1rem !important;
+    min-width: 110px !important;
+  }
+  
+  /* 网格布局iPad Pro优化 */
+  .pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 1.8rem 0 1.3rem 0;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .pricing-group[data-group="business"] .pricing-grid {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 2rem !important;
+    max-width: 800px !important;
+    margin: 1.8rem auto 1.3rem auto !important;
+  }
+  
+  /* 卡片iPad Pro优化 */
+  .pricing-card {
+    min-width: 300px !important;
+    max-width: 320px !important;
+    min-height: 400px !important;
+    padding: 1.8rem 1.4rem 1.4rem 1.4rem !important;
+    border-radius: 14px !important;
+  }
+  
+  .pricing-card-top {
+    min-height: 90px;
+    margin-bottom: 0.9rem;
+  }
+  
+  .pricing-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .pricing-access {
+    font-size: 0.95rem !important;
+    margin-bottom: 1.1rem !important;
+  }
+  
+  .pricing-price {
+    font-size: 2rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .pricing-unit {
+    font-size: 1.05rem !important;
+  }
+  
+  /* 按钮iPad Pro优化 */
+  .pricing-btn {
+    min-height: 46px !important;
+    font-size: 1.05rem !important;
+    margin: 0.9rem 0 1.3rem 0 !important;
+    border-radius: 10px !important;
+  }
+  
+  /* 功能列表iPad Pro优化 */
+  .pricing-features li {
+    font-size: 1rem !important;
+    padding: 0.7rem 0 0.7rem 0 !important;
+    line-height: 1.55 !important;
+  }
+  
+  /* Section标题区域 */
+  .pricing-section > div:first-child {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .pricing-section > div:first-child h2 {
+    margin: 0;
+  }
+  
+  .pricing-section > div:first-child a {
+    font-size: 0.9rem !important;
+    margin-left: 0 !important;
+  }
+}
+
 /* 响应式设计 */
 @media (max-width: 900px) {
   .pricing-grid {
@@ -245,5 +353,262 @@
   .pricing-card {
     padding: 1.5rem 1.2rem 1.2rem 1.2rem;
     min-height: unset;
+  }
+}
+
+/* H5移动端适配 (768px以下) */
+@media (max-width: 768px) {
+  .pricing-section {
+    scroll-margin-top: 60px;
+    padding: 0 1rem;
+  }
+  
+  .pricing-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  /* 切换器移动端优化 */
+  .pricing-switcher {
+    margin-bottom: 24px !important;
+    padding: 0 1rem;
+  }
+  
+  .pricing-switch-btn {
+    padding: 8px 20px !important;
+    font-size: 0.95rem !important;
+    min-width: 100px !important;
+  }
+  
+  /* 网格布局移动端优化 */
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0;
+  }
+  
+  .pricing-group[data-group="business"] .pricing-grid {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin: 1rem 0 !important;
+  }
+  
+  /* 卡片移动端优化 */
+  .pricing-card {
+    min-width: unset !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: unset !important;
+    padding: 1.5rem 1rem 1rem 1rem !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+  }
+  
+  .pricing-card-top {
+    min-height: 80px;
+    margin-bottom: 0.8rem;
+  }
+  
+  .pricing-title {
+    font-size: 1.15rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+  
+  .pricing-access {
+    font-size: 0.9rem !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.4;
+  }
+  
+  .pricing-price {
+    font-size: 1.8rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+  
+  .pricing-unit {
+    font-size: 1rem !important;
+  }
+  
+  /* 按钮移动端优化 */
+  .pricing-btn {
+    min-height: 44px !important;
+    font-size: 1rem !important;
+    margin: 0.8rem 0 1rem 0 !important;
+    border-radius: 22px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+  }
+  
+  /* 功能列表移动端优化 */
+  .pricing-features li {
+    font-size: 0.9rem !important;
+    padding: 0.6rem 0 0.6rem 0 !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Section标题区域 */
+  .pricing-section > div:first-child {
+    flex-direction: row !important;
+    align-items: center !important;
+    text-align: left;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pricing-section > div:first-child h2 {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  
+  .pricing-section > div:first-child a {
+    font-size: 0.85rem !important;
+    margin-left: 0 !important;
+    white-space: nowrap;
+  }
+}
+
+/* 小屏手机适配 (480px以下) */
+@media (max-width: 480px) {
+  .pricing-section {
+    padding: 0 0.8rem;
+  }
+  
+  .pricing-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .pricing-switcher {
+    margin-bottom: 20px !important;
+    padding: 0 0.5rem;
+  }
+  
+  .pricing-switch-btn {
+    padding: 6px 16px !important;
+    font-size: 0.9rem !important;
+    min-width: 90px !important;
+  }
+  
+  .pricing-card {
+    padding: 1.2rem 0.8rem 0.8rem 0.8rem !important;
+    border-radius: 10px !important;
+  }
+  
+  .pricing-card-top {
+    min-height: 70px;
+    margin-bottom: 0.6rem;
+  }
+  
+  .pricing-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .pricing-access {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.8rem !important;
+  }
+  
+  .pricing-price {
+    font-size: 1.6rem !important;
+  }
+  
+  .pricing-unit {
+    font-size: 0.9rem !important;
+  }
+  
+  .pricing-btn {
+    min-height: 42px !important;
+    font-size: 0.95rem !important;
+    margin: 0.6rem 0 0.8rem 0 !important;
+  }
+  
+  .pricing-features li {
+    font-size: 0.85rem !important;
+    padding: 0.5rem 0 0.5rem 0 !important;
+  }
+  
+  .pricing-footer-note {
+    font-size: 1rem;
+    margin-top: 20px;
+    padding: 0 0.5rem;
+  }
+}
+
+/* 超小屏设备适配 (320px以下) */
+@media (max-width: 320px) {
+  .pricing-section {
+    padding: 0 0.6rem;
+  }
+  
+  .pricing-section h2 {
+    font-size: 1.4rem;
+  }
+  
+  .pricing-switch-btn {
+    padding: 5px 12px !important;
+    font-size: 0.85rem !important;
+    min-width: 80px !important;
+  }
+  
+  .pricing-card {
+    padding: 1rem 0.6rem 0.6rem 0.6rem !important;
+  }
+  
+  .pricing-title {
+    font-size: 1rem !important;
+  }
+  
+  .pricing-access {
+    font-size: 0.8rem !important;
+  }
+  
+  .pricing-price {
+    font-size: 1.4rem !important;
+  }
+  
+  .pricing-unit {
+    font-size: 0.85rem !important;
+  }
+  
+  .pricing-btn {
+    min-height: 40px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .pricing-features li {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0 0.4rem 0 !important;
+  }
+}
+
+/* 横屏手机适配 */
+@media (max-width: 900px) and (orientation: landscape) {
+  .pricing-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .pricing-switcher {
+    margin-bottom: 20px !important;
+  }
+  
+  .pricing-grid {
+    margin: 0.8rem 0;
+  }
+  
+  .pricing-card {
+    padding: 1.2rem 1rem 0.8rem 1rem !important;
+  }
+  
+  .pricing-card-top {
+    min-height: 60px;
+    margin-bottom: 0.6rem;
+  }
+  
+  .pricing-features li {
+    padding: 0.4rem 0 0.4rem 0 !important;
   }
 } 
