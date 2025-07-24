@@ -737,6 +737,15 @@
     width: 100% !important;
     box-sizing: border-box !important;
   }
+
+  /* 动机模块开始的内容区域边距对齐 */
+  .about-page-body .content-sections section[id="motivation"] > *:not(:first-child),
+  .about-page-body .content-sections section[id="features"] > *:not(:first-child),
+  .about-page-body .content-sections section[id="pricing"] > *:not(:first-child) {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
   
   .about-header {
     width: 100%;

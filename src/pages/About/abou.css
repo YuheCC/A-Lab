@@ -36,6 +36,15 @@
   box-sizing: border-box !important;
 }
 
+/* 动机模块开始的内容区域边距对齐 */
+.content-sections section[id="motivation"] > *:not(:first-child),
+.content-sections section[id="features"] > *:not(:first-child),
+.content-sections section[id="pricing"] > *:not(:first-child) {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  box-sizing: border-box !important;
+}
+
 .about-banner-padded {
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -257,6 +266,15 @@
       max-width: 1000px;
       margin: 3rem auto;
       padding: 0 2rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - iPad Pro */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+      box-sizing: border-box !important;
     }
     
     .content-sections h2 {
@@ -686,6 +704,15 @@
       padding: 0 1rem;
     }
     
+    /* 动机模块开始的内容区域边距对齐 - 移动端 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.8rem !important;
+      padding-right: 0.8rem !important;
+      box-sizing: border-box !important;
+    }
+    
     .content-sections h2 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
@@ -973,6 +1000,15 @@
       padding: 0 0.8rem;
     }
     
+    /* 动机模块开始的内容区域边距对齐 - 小屏手机 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.6rem !important;
+      padding-right: 0.6rem !important;
+      box-sizing: border-box !important;
+    }
+    
     .content-sections h2 {
       font-size: 1.6rem;
     }
@@ -1183,6 +1219,15 @@
     
     .content-sections {
       padding: 0 0.6rem;
+    }
+    
+    /* 动机模块开始的内容区域边距对齐 - 超小屏 */
+    .content-sections section[id="motivation"] > *:not(:first-child),
+    .content-sections section[id="features"] > *:not(:first-child),
+    .content-sections section[id="pricing"] > *:not(:first-child) {
+      padding-left: 0.4rem !important;
+      padding-right: 0.4rem !important;
+      box-sizing: border-box !important;
     }
     
     .content-sections h2 {
