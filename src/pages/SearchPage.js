@@ -479,7 +479,7 @@ const SearchPage = ({ handlePointClick, moleculeFavoriteStatus, handleAddToFavor
                         {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
                             ambiguousOptions ? (
                                 <div className="molecule-not-found">
-                                    <p>Your query is ambiguous. The abbreviation {lastSearch} can correspond to any of the following SMILES strings: {ambiguousOptions}. Please refine your query.</p>
+                                    <p>Your query is ambiguous. The abbreviation {lastSearch} can correspond to any of the following molecules: {ambiguousOptions}. Please refine your query.</p>
                                 </div>
                             ) : (
                                 <div className="molecule-not-found">
