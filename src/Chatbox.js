@@ -732,10 +732,10 @@ const handleFindSimilarMolecules = async (details) => {
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        addMessage({ role: "assistant", content: "Error: " + err.message });
+        setIsThinking(false);
       } finally {
-        if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        setIsThinking(false);
       }
     },
 
@@ -921,18 +921,6 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
-                    <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData).map(([key, value]) => (
-                        <ExtraDataSection
-                          key={key}
-                          title={key}
-                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                          onMoleculeClick={handleMoleculeClick}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 {/* Add thumbs buttons for feedback */}

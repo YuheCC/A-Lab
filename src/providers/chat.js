@@ -62,19 +62,42 @@ export const useChatStore = create(persist((set, get) => ({
                 messages: chatData.messages?.map(m => ({ role: m.role, contentPreview: (m.content || '').substring(0, 50) + '...' }))
             });
             
-            // Check if the target chat already exists to prevent overwriting
-            if (state.chatMap[chatId]) {
-                console.warn(`❌ Chat with id ${chatId} already exists, skipping update.`);
-                return;
-            }
-
             if (chatId === null) {
                 console.warn("❌ Chat ID is null, not updating.");
                 return;
             }
             
-            // Add chat with new ID
-            state.chatMap[chatId] = chatData;
+            // Check if the target chat already exists
+            if (state.chatMap[chatId]) {
+                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing -1 chat`);
+                // If target chat exists (from history loading), merge the -1 chat messages into it
+                // and ensure we don't lose any messages that were added locally
+                const existingChat = state.chatMap[chatId];
+                const localMessages = chatData.messages || [];
+                
+                // Merge messages, avoiding duplicates by content comparison
+                const mergedMessages = [...existingChat.messages];
+                localMessages.forEach(localMsg => {
+                    const isDuplicate = mergedMessages.some(existingMsg => 
+                        existingMsg.role === localMsg.role && 
+                        existingMsg.content === localMsg.content
+                    );
+                    if (!isDuplicate) {
+                        mergedMessages.push(localMsg);
+                    }
+                });
+                
+                state.chatMap[chatId] = {
+                    ...existingChat,
+                    messages: mergedMessages,
+                    name: chatData.name || existingChat.name // Prefer the local name if it was set
+                };
+            } else {
+                // Add chat with new ID
+                state.chatMap[chatId] = chatData;
+            }
+            
+            // Always remove the -1 chat and set active chat
             delete state.chatMap['-1'];
             state.activeChat = chatId;
             
@@ -234,16 +257,22 @@ export const useChatStore = create(persist((set, get) => ({
     setIsThinking: (isThinking, chatId = null) => set(produce((state) => {
         console.log("Setting isThinking for chat:", chatId || state.activeChat, isThinking);
 
+        const targetChatId = chatId || state.activeChat;
+        const chat = state.chatMap[targetChatId];
+        
+        if (!chat) {
+            console.warn("⚠️ Cannot set isThinking - chat not found:", targetChatId);
+            return;
+        }
+
         if (isThinking) {
             // If thinking starts, set the timestamp
-            state.chatMap[chatId || state.activeChat].thinkingStartedAt = new Date().toISOString();
+            chat.thinkingStartedAt = new Date().toISOString();
         } else {
             // If thinking ends, clear the timestamp
-            state.chatMap[chatId || state.activeChat].thinkingStartedAt = null;
+            chat.thinkingStartedAt = null;
         }
         
-        const chat = state.chatMap[chatId || state.activeChat];
-        if (!chat) return;
         chat.isThinking = isThinking;
     })),
 
