@@ -41,6 +41,7 @@ export const useChatStore = create(persist((set, get) => ({
     chatMap: {
         "-1": generateNewChat()
     },
+    pendingSessionCreation: {}, // Track pending session creations to prevent duplicates
 
     /**
      * Method to update new chat ID after receiving it from the server.
@@ -116,12 +117,24 @@ export const useChatStore = create(persist((set, get) => ({
      */
     loadHistory: async () => {
         console.log("📥 LOADING CHAT HISTORY FROM SERVER...");
+        
+        // Prevent multiple simultaneous loads
+        if (get().isLoading) {
+            console.log("📥 CHAT HISTORY ALREADY LOADING, SKIPPING...");
+            return;
+        }
+        
+        set(produce((draft) => {
+            draft.isLoading = true;
+        }));
+        
         try {
             const historyData = await authFetch(`${API_URL}/chat-history`).then(res => res.json());
             console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyData.length, "sessions");
             
             set(produce((draft) => {
                 draft.isSynced = true;
+                draft.isLoading = false;
 
                 // Delete all existing chats except the default one
                 draft.chatMap = {
@@ -129,8 +142,23 @@ export const useChatStore = create(persist((set, get) => ({
                 };
 
                 if (historyData.length > 0) {
-                    historyData.forEach((chat, index) => {
-                        console.log(`📥 LOADING SESSION ${index + 1}/${historyData.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
+                    // Filter out chats with duplicate names and empty content to prevent UI duplicates
+                    const seenNames = new Set();
+                    const filteredChats = historyData.filter((chat) => {
+                        const hasContent = chat.content && chat.content.length > 0;
+                        const nameKey = `${chat.chat_name}_${hasContent}`;
+                        
+                        if (seenNames.has(nameKey)) {
+                            console.log(`📥 SKIPPING DUPLICATE CHAT: ID=${chat.id}, Name="${chat.chat_name}", HasContent=${hasContent}`);
+                            return false;
+                        }
+                        
+                        seenNames.add(nameKey);
+                        return true;
+                    });
+                    
+                    filteredChats.forEach((chat, index) => {
+                        console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
                         
                         draft.chatMap[chat.id] = {
                             createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
@@ -170,6 +198,9 @@ export const useChatStore = create(persist((set, get) => ({
 
         } catch (error) {
             console.error("❌ ERROR LOADING CHAT HISTORY:", error);
+            set(produce((draft) => {
+                draft.isLoading = false;
+            }));
         }
     },
 
@@ -319,7 +350,20 @@ export const useChatStore = create(persist((set, get) => ({
             // For new chats (-1), we need to create a session first if it's a user message
             if (targetChatId === '-1' || parseInt(targetChatId) === -1) {
                 if (message.role === 'user') {
+                    // Prevent duplicate session creation for the same message
+                    const messageKey = `${message.role}:${message.content}`;
+                    if (get().pendingSessionCreation[messageKey]) {
+                        console.log("🚫 SESSION CREATION ALREADY PENDING FOR THIS MESSAGE, SKIPPING...");
+                        return;
+                    }
+                    
                     console.log("🔄 NEW CHAT USER MESSAGE - Creating session and syncing...");
+                    
+                    // Mark this message as having a pending session creation
+                    set(produce((state) => {
+                        state.pendingSessionCreation[messageKey] = true;
+                    }));
+                    
                     try {
                         // Call backend to create session and save user message
                         const response = await authFetch(`${API_URL}/chat-history/create-and-sync`, {
@@ -370,8 +414,18 @@ export const useChatStore = create(persist((set, get) => ({
                             });
                         }
                         
+                        // Clean up pending session creation tracking
+                        set(produce((state) => {
+                            delete state.pendingSessionCreation[messageKey];
+                        }));
+                        
                     } catch (error) {
                         console.error("❌ FAILED TO CREATE SESSION AND SYNC MESSAGE:", error);
+                        
+                        // Clean up pending session creation tracking on error
+                        set(produce((state) => {
+                            delete state.pendingSessionCreation[messageKey];
+                        }));
                     }
                 } else {
                     console.log("🚫 SKIPPING DATABASE SYNC - New chat, non-user message");
