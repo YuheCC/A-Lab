@@ -8,4 +8,5 @@
 /src/.umi-test
 /dist
 /build
+config/config.staging.ts
 .swc

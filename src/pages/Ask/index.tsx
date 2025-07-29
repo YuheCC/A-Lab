@@ -16,6 +16,7 @@ import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, Thum
 import { ChatHistorySidebar } from '@/components/ChatHistorySidebar/index.js';
 import { useTranslation } from 'react-i18next';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
+import rehypeRaw from 'rehype-raw';
 
 const API_URL = getAPIUrl();
 
