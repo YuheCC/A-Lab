@@ -960,7 +960,9 @@ const handleFindSimilarMolecules = async (details) => {
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
                   {msg.extraData && Object.keys(msg.extraData).length > 0 && (
                     <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData).map(([key, value]) => (
+                      {Object.entries(msg.extraData)
+                        .filter(([key, value]) => key !== 'auto_synced' && key !== 'timestamp')
+                        .map(([key, value]) => (
                         <ExtraDataSection
                           key={key}
                           title={key}
