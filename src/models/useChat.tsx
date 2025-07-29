@@ -84,6 +84,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     chatMap: {
         "-1": generateNewChat()
     },
+    pendingSessionCreation: {}, // Track pending session creations to prevent duplicates
 
     /**
      * 更新所有聊天中的系统欢迎消息（用于语言切换时）
@@ -115,30 +116,65 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
      * @param {*} chatId 
      */
     updateNewChatId: (chatId: string) => {
-        set(produce((state: ChatState) => {
-            console.log("Updating new chat ID to:", chatId);
+        set(produce((state) => {
+            console.log("🔄 UPDATING NEW CHAT ID TO:", chatId);
             // Get the chat data
             const chatData = state.chatMap['-1'];
             if (!chatData) {
-                console.warn(`Chat with id -1 does not exist.`);
+                console.warn(`❌ Chat with id -1 does not exist.`);
                 return;
             }
             
-            // Check if the target chat already exists to prevent overwriting
-            if (state.chatMap[chatId]) {
-                console.warn(`Chat with id ${chatId} already exists, skipping update.`);
-                return;
-            }
-
+            console.log("🔍 DEBUG - Chat data being moved:", {
+                messagesLength: chatData.messages?.length,
+                chatName: chatData.name,
+                messages: chatData.messages?.map(m => ({ role: m.role, contentPreview: (m.content || '').substring(0, 50) + '...' }))
+            });
+            
             if (chatId === null) {
-                console.warn("Chat ID is null, not updating.");
+                console.warn("❌ Chat ID is null, not updating.");
                 return;
             }
             
-            // Add chat with new ID
-            state.chatMap[chatId] = chatData;
+            // Check if the target chat already exists
+            if (state.chatMap[chatId]) {
+                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing -1 chat`);
+                // If target chat exists (from history loading), merge the -1 chat messages into it
+                // and ensure we don't lose any messages that were added locally
+                const existingChat = state.chatMap[chatId];
+                const localMessages = chatData.messages || [];
+                
+                // Merge messages, avoiding duplicates by content comparison
+                const mergedMessages = [...existingChat.messages];
+                localMessages.forEach(localMsg => {
+                    const isDuplicate = mergedMessages.some(existingMsg => 
+                        existingMsg.role === localMsg.role && 
+                        existingMsg.content === localMsg.content
+                    );
+                    if (!isDuplicate) {
+                        mergedMessages.push(localMsg);
+                    }
+                });
+                
+                state.chatMap[chatId] = {
+                    ...existingChat,
+                    messages: mergedMessages,
+                    name: chatData.name || existingChat.name // Prefer the local name if it was set
+                };
+            } else {
+                // Add chat with new ID
+                state.chatMap[chatId] = chatData;
+            }
+            
+            // Always remove the -1 chat and set active chat
             delete state.chatMap['-1'];
             state.activeChat = chatId;
+            
+            console.log("✅ CHAT ID UPDATED SUCCESSFULLY:", {
+                newActiveChat: state.activeChat,
+                newChatExists: !!state.chatMap[chatId],
+                messagesInNewChat: state.chatMap[chatId]?.messages?.length
+            });
         }));
     },
 
@@ -148,12 +184,25 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
      * - If you want to sync chat history, this method needs to be called on page load
      */
     loadHistory: async () => {
-        console.log("Loading chat history from server...");
+        console.log("📥 LOADING CHAT HISTORY FROM SERVER...");
+        
+        // Prevent multiple simultaneous loads
+        if (get().isLoading) {
+            console.log("📥 CHAT HISTORY ALREADY LOADING, SKIPPING...");
+            return;
+        }
+        
+        set(produce((draft) => {
+            draft.isLoading = true;
+        }));
+        
         try {
             const historyData = await authFetch(`${API_URL}/chat-history`).then(res => res.json());
-            console.log("Chat history loaded:", historyData);
+            console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyData.length, "sessions");
+            
             set(produce((draft: ChatState) => {
                 draft.isSynced = true;
+                draft.isLoading = false;
 
                 // Delete all existing chats except the default one
                 draft.chatMap = {
@@ -161,7 +210,24 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                 };
 
                 if (historyData.length > 0) {
-                    historyData.forEach((chat: any) => {
+                    // Filter out chats with duplicate names and empty content to prevent UI duplicates
+                    const seenNames = new Set();
+                    const filteredChats = historyData.filter((chat) => {
+                        const hasContent = chat.content && chat.content.length > 0;
+                        const nameKey = `${chat.chat_name}_${hasContent}`;
+                        
+                        if (seenNames.has(nameKey)) {
+                            console.log(`📥 SKIPPING DUPLICATE CHAT: ID=${chat.id}, Name="${chat.chat_name}", HasContent=${hasContent}`);
+                            return false;
+                        }
+                        
+                        seenNames.add(nameKey);
+                        return true;
+                    });
+                    
+                    filteredChats.forEach((chat, index) => {
+                        console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
+                        
                         draft.chatMap[chat.id] = {
                             createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
                             useMultiAgent: false,
@@ -169,7 +235,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                             messages: chat.content.map((item: any) => ({
                                 role: item.role,
                                 content: item.content || '',
-                                molText: item.molecules.join(", ") || [],
+                                molText: (item.molecules || []).join(", "),
                                 molecules: item.molecules || [],
                                 extraData: item.extra_data || {},
                             })) || [],
@@ -183,6 +249,11 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                             moleculesLoading: false,
                             similarMoleculesLoading: false,
                         };
+                        
+                        // Log message details for debugging
+                        if (chat.content && chat.content.length > 0) {
+                            console.log(`📥 SESSION ${chat.id} MESSAGES:`, chat.content.map(msg => `${msg.role}: ${(msg.content || '').substring(0, 50)}...`));
+                        }
                     });
                 }
 
@@ -193,12 +264,15 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                     draft.activeChat = chatIds[0];
                 }
 
-                console.log("Chat map after loading history:", draft.activeChat);
+                console.log("✅ CHAT MAP UPDATED - Active chat:", draft.activeChat, "Total sessions:", Object.keys(draft.chatMap).length);
 
             }));
 
         } catch (error) {
-            console.error("Error loading chat history:", error);
+            console.error("❌ ERROR LOADING CHAT HISTORY:", error);
+            set(produce((draft) => {
+                draft.isLoading = false;
+            }));
         }
     },
 
@@ -262,7 +336,22 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     },
 
     setActiveChat: (chatId: string) => {
-        console.log("Setting active chat to:", chatId);
+        const currentState = get();
+        console.log("🔄 SWITCHING ACTIVE CHAT:", currentState.activeChat, "→", chatId);
+        
+        // Log details about the chat being switched to
+        const targetChat = currentState.chatMap[chatId];
+        if (targetChat) {
+            console.log("🔄 TARGET CHAT DETAILS:", {
+                id: chatId,
+                name: targetChat.name,
+                messages: targetChat.messages?.length || 0,
+                createdAt: targetChat.createdAt
+            });
+        } else {
+            console.warn("⚠️ TARGET CHAT NOT FOUND IN CHAT MAP:", chatId);
+        }
+        
         set({ activeChat: chatId });
     },
 
@@ -271,16 +360,22 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     setIsThinking: (isThinking: boolean, chatId = null) => set(produce((state: ChatState) => {
         console.log("Setting isThinking for chat:", chatId || state.activeChat, isThinking);
 
+        const targetChatId = chatId || state.activeChat;
+        const chat = state.chatMap[targetChatId];
+        
+        if (!chat) {
+            console.warn("⚠️ Cannot set isThinking - chat not found:", targetChatId);
+            return;
+        }
+
         if (isThinking) {
             // If thinking starts, set the timestamp
-            state.chatMap[chatId || state.activeChat].thinkingStartedAt = new Date().toISOString();
+            chat.thinkingStartedAt = new Date().toISOString();
         } else {
             // If thinking ends, clear the timestamp
-            state.chatMap[chatId || state.activeChat].thinkingStartedAt = null;
+            chat.thinkingStartedAt = null;
         }
         
-        const chat = state.chatMap[chatId || state.activeChat];
-        if (!chat) return;
         chat.isThinking = isThinking;
     })),
 
@@ -294,16 +389,162 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             ? messagesOrUpdater(chat.messages)
             : [...messagesOrUpdater];
     })),
-    addMessage: (message: any, chatId = null) => set(produce((state: ChatState) => {
-        if (message.role === 'user' && state.activeChat === '-1') {
-            state.chatMap[state.activeChat].name = message.content;
-        }
-        console.log("Adding message to chat:", chatId || state.activeChat, message);
-        const chat = state.chatMap[chatId || state.activeChat];
-        if (!chat) return;
-        chat.messages.push(message);
-    })),
-    clearMessages: () => set(produce((state: ChatState) => {
+    addMessage: (message: any, chatId = null) => {
+        const targetChatId = chatId || get().activeChat;
+        
+        // Add to local state first
+        set(produce((state) => {
+            if (message.role === 'user' && state.activeChat === '-1') {
+                state.chatMap[state.activeChat].name = message.content;
+            }
+            console.log("📝 ADDING MESSAGE TO LOCAL STATE:", targetChatId, message);
+            const chat = state.chatMap[targetChatId];
+            if (!chat) return;
+            chat.messages.push(message);
+        }));
+        
+        console.log("🔍 DEBUG - Current state after adding message:", {
+            targetChatId,
+            messageRole: message.role,
+            chatExists: !!get().chatMap[targetChatId],
+            messagesLength: get().chatMap[targetChatId]?.messages?.length,
+            activeChat: get().activeChat
+        });
+        
+        // Auto-sync to database (async, don't block UI)
+        const syncToDatabase = async () => {
+            console.log("🔍 DEBUG - Auto-sync starting:", {
+                targetChatId,
+                messageRole: message.role,
+                isNewChat: targetChatId === '-1' || parseInt(targetChatId) === -1
+            });
+            
+            // For new chats (-1), we need to create a session first if it's a user message
+            if (targetChatId === '-1' || parseInt(targetChatId) === -1) {
+                if (message.role === 'user') {
+                    // Prevent duplicate session creation for the same message
+                    const messageKey = `${message.role}:${message.content}`;
+                    if (get().pendingSessionCreation[messageKey]) {
+                        console.log("🚫 SESSION CREATION ALREADY PENDING FOR THIS MESSAGE, SKIPPING...");
+                        return;
+                    }
+                    
+                    console.log("🔄 NEW CHAT USER MESSAGE - Creating session and syncing...");
+                    
+                    // Mark this message as having a pending session creation
+                    set(produce((state) => {
+                        state.pendingSessionCreation[messageKey] = true;
+                    }));
+                    
+                    try {
+                        // Call backend to create session and save user message
+                        const response = await authFetch(`${API_URL}/chat-history/create-and-sync`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                chat_name: message.content,
+                                role: message.role,
+                                content: message.content,
+                                found_molecules: message.molecules || [],
+                                extra_data: {
+                                    auto_synced: true,
+                                    timestamp: new Date().toISOString(),
+                                    mol_text: message.molText,
+                                    inputs: message.inputs,
+                                    sources: message.sources,
+                                    extra_data: message.extraData
+                                }
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                        }
+                        
+                        const result = await response.json();
+                        console.log("✅ NEW CHAT SESSION CREATED AND MESSAGE SYNCED:", result);
+                        
+                        // Update the chat ID in local state so future messages use the correct ID
+                        if (result.session_id) {
+                            console.log("🔄 UPDATING CHAT ID FROM -1 TO:", result.session_id);
+                            const currentState = get();
+                            console.log("🔍 DEBUG - State before updateNewChatId:", {
+                                activeChat: currentState.activeChat,
+                                chatMapKeys: Object.keys(currentState.chatMap),
+                                messagesInNewChat: currentState.chatMap['-1']?.messages?.length
+                            });
+                            
+                            get().updateNewChatId(result.session_id);
+                            
+                            const newState = get();
+                            console.log("🔍 DEBUG - State after updateNewChatId:", {
+                                activeChat: newState.activeChat,
+                                chatMapKeys: Object.keys(newState.chatMap),
+                                messagesInUpdatedChat: newState.chatMap[result.session_id]?.messages?.length
+                            });
+                        }
+                        
+                        // Clean up pending session creation tracking
+                        set(produce((state) => {
+                            delete state.pendingSessionCreation[messageKey];
+                        }));
+                        
+                    } catch (error) {
+                        console.error("❌ FAILED TO CREATE SESSION AND SYNC MESSAGE:", error);
+                        
+                        // Clean up pending session creation tracking on error
+                        set(produce((state) => {
+                            delete state.pendingSessionCreation[messageKey];
+                        }));
+                    }
+                } else {
+                    console.log("🚫 SKIPPING DATABASE SYNC - New chat, non-user message");
+                }
+                return;
+            }
+            
+            try {
+                console.log("💾 AUTO-SYNCING MESSAGE TO DATABASE:", targetChatId, message.role);
+                const response = await authFetch(`${API_URL}/chat-history/sync-message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: parseInt(targetChatId),
+                        role: message.role,
+                        content: message.content || '',
+                        found_molecules: message.molecules || [],
+                        extra_data: {
+                            auto_synced: true,
+                            timestamp: new Date().toISOString(),
+                            mol_text: message.molText,
+                            inputs: message.inputs,
+                            sources: message.sources,
+                            extra_data: message.extraData
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+                
+                const result = await response.json();
+                console.log("✅ MESSAGE SYNCED TO DATABASE:", result);
+                
+            } catch (error) {
+                console.error("❌ FAILED TO SYNC MESSAGE TO DATABASE:", error);
+                // Don't throw - we don't want to break the UI if sync fails
+            }
+        };
+        
+        // Run sync in background
+        syncToDatabase();
+    },
+    clearMessages: () => set(produce((state) => {
         console.log("Clearing messages for chat:", state.activeChat);
         const chat = state.chatMap[state.activeChat];
         if (!chat) return;
@@ -490,5 +731,47 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 }));
 
 export const useActiveChatData = () => {
-    return useChatStore((state: ChatState) => state.chatMap[state.activeChat]);
+    const result = useChatStore((state: ChatState) => {
+        const activeChat = state.chatMap[state.activeChat];
+        
+        // Enhanced debugging with more detail
+        console.log("🔍 ACTIVE CHAT DATA ACCESS:", {
+            activeChatId: state.activeChat,
+            activeChatExists: !!activeChat,
+            messagesLength: activeChat?.messages?.length || 0,
+            chatMapKeys: Object.keys(state.chatMap),
+            chatName: activeChat?.name,
+            lastMessage: activeChat?.messages?.length > 0 ? {
+                role: activeChat.messages[activeChat.messages.length - 1].role,
+                contentPreview: (activeChat.messages[activeChat.messages.length - 1].content || '').substring(0, 50) + '...'
+            } : null
+        });
+        
+        // Log warning if active chat has no messages but should have some
+        if (activeChat && activeChat.messages?.length === 0 && state.activeChat !== '-1') {
+            console.warn("⚠️ ACTIVE CHAT HAS NO MESSAGES - This might indicate a display issue for chat:", state.activeChat);
+        }
+        
+        return activeChat;
+    }, (oldData, newData) => {
+        // Deep comparison of the relevant data to prevent unnecessary re-renders
+        const isEqual = (
+            oldData?.foundMolecules === newData?.foundMolecules &&
+            oldData?.similarMolecules === newData?.similarMolecules &&
+            oldData?.activeMolecule === newData?.activeMolecule &&
+            oldData?.messages === newData?.messages &&
+            oldData?.isThinking === newData?.isThinking &&
+            oldData?.moleculesLoading === newData?.moleculesLoading &&
+            oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
+            oldData?.awaitingClarify === newData?.awaitingClarify
+        );
+        
+        // Log re-render decisions for debugging
+        if (!isEqual) {
+            console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
+        }
+        
+        return isEqual;
+    });
+    return result;
 };
