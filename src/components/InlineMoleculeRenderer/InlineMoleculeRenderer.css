@@ -1,0 +1,73 @@
+/* Inline Molecule Link Styles */
+.inline-molecule-link {
+    color: #0066cc;
+    background-color: rgba(0, 102, 204, 0.1);
+    border: 1px solid rgba(0, 102, 204, 0.3);
+    border-radius: 3px;
+    padding: 2px 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 0 2px;
+  }
+  
+  .inline-molecule-link:hover {
+    color: #004499;
+    background-color: rgba(0, 102, 204, 0.15);
+    border-color: rgba(0, 102, 204, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+  }
+  
+  /* Ensure the popup has high z-index and proper positioning */
+  .inline-molecule-popup {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  
+  .inline-molecule-popup .molcard-container {
+    pointer-events: auto;
+  }
+  
+
+/* Citation Link Styles */
+.citation-link {
+  color: #0066cc;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.9em;
+  transition: all 0.2s ease;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.citation-link:hover {
+  color: #004499;
+  background-color: rgba(0, 102, 204, 0.1);
+  text-decoration: underline;
+}
+
+/* Adjust for dark themes if needed */
+.dark-theme .inline-molecule-link {
+  color: #66aaff;
+  background-color: rgba(102, 170, 255, 0.1);
+  border-color: rgba(102, 170, 255, 0.3);
+}
+
+.dark-theme .inline-molecule-link:hover {
+  color: #88bbff;
+  background-color: rgba(102, 170, 255, 0.15);
+  border-color: rgba(102, 170, 255, 0.5);
+}
+
+.dark-theme .citation-link {
+  color: #66aaff;
+}
+
+.dark-theme .citation-link:hover {
+  color: #88bbff;
+  background-color: rgba(102, 170, 255, 0.1);
+} 
