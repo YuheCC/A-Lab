@@ -32,15 +32,42 @@
     pointer-events: auto;
   }
   
-  /* Adjust for dark themes if needed */
-  .dark-theme .inline-molecule-link {
-    color: #66aaff;
-    background-color: rgba(102, 170, 255, 0.1);
-    border-color: rgba(102, 170, 255, 0.3);
-  }
-  
-  .dark-theme .inline-molecule-link:hover {
-    color: #88bbff;
-    background-color: rgba(102, 170, 255, 0.15);
-    border-color: rgba(102, 170, 255, 0.5);
-  } 
+
+/* Citation Link Styles */
+.citation-link {
+  color: #0066cc;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.9em;
+  transition: all 0.2s ease;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.citation-link:hover {
+  color: #004499;
+  background-color: rgba(0, 102, 204, 0.1);
+  text-decoration: underline;
+}
+
+/* Adjust for dark themes if needed */
+.dark-theme .inline-molecule-link {
+  color: #66aaff;
+  background-color: rgba(102, 170, 255, 0.1);
+  border-color: rgba(102, 170, 255, 0.3);
+}
+
+.dark-theme .inline-molecule-link:hover {
+  color: #88bbff;
+  background-color: rgba(102, 170, 255, 0.15);
+  border-color: rgba(102, 170, 255, 0.5);
+}
+
+.dark-theme .citation-link {
+  color: #66aaff;
+}
+
+.dark-theme .citation-link:hover {
+  color: #88bbff;
+  background-color: rgba(102, 170, 255, 0.1);
+} 
