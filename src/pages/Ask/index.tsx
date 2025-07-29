@@ -103,6 +103,7 @@ const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
 // New ChatInput component added for memoized chat input rendering
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
     disableLiteratureSearch, onDisableLiteratureSearchChange,
+    disableTools, onDisableToolsChange,
     userPermissions, useMultiAgent, onUseMultiAgentChange,
     fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries }) => {
   const [inputValue, setInputValue] = React.useState("");
@@ -239,6 +240,17 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 {t('chatbox.checkboxes.fullDeepSpace')}
               </label>
             </div>
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="disableTools"
+                checked={disableTools}
+                onChange={e => onDisableToolsChange(e.target.checked)}
+              />
+              <label htmlFor="disableTools">
+                {t('chatbox.checkboxes.disableTools')}
+              </label>
+            </div>
           </div>
         )}
       </div>
@@ -316,6 +328,7 @@ const ChatbotInterface = () => {
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [fullDeepSpace, setFullDeepSpace] = useState(false);
+  const [disableTools, setDisableTools] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
@@ -713,6 +726,7 @@ const handleFindSimilarMolecules = async (details) => {
               chatId          : currentChatId,
               messages        : messagesToSend,
               ragEnabled      : !disableLiteratureSearch,
+              toolsEnabled    : !disableTools,
               webSearchEnabled: false,
               webSearchClient : "Tavily",
               numRagResults   : ragResultsCount,
@@ -785,6 +799,7 @@ const handleFindSimilarMolecules = async (details) => {
       awaitingClarify,
       setAwaitingClarify,
       fullDeepSpace,
+      disableTools,
     ]
   );
 
@@ -1062,6 +1077,8 @@ const handleFindSimilarMolecules = async (details) => {
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
             disableLiteratureSearch={disableLiteratureSearch}
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
+            disableTools={disableTools}
+            onDisableToolsChange={setDisableTools}
             userPermissions={userPermissions}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
