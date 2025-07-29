@@ -104,7 +104,8 @@ const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
 const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
     disableLiteratureSearch, onDisableLiteratureSearchChange,
     userPermissions, useMultiAgent, onUseMultiAgentChange,
-    fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries }) => {
+    fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+    enablePatentRag, onEnablePatentRagChange }) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
@@ -239,6 +240,17 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
                 {t('chatbox.checkboxes.fullDeepSpace')}
               </label>
             </div>
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="enablePatentRag"
+                checked={enablePatentRag}
+                onChange={e => onEnablePatentRagChange(e.target.checked)}
+              />
+              <label htmlFor="enablePatentRag">
+                Enable Patent RAG
+              </label>
+            </div>
           </div>
         )}
       </div>
@@ -316,6 +328,7 @@ const ChatbotInterface = () => {
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [fullDeepSpace, setFullDeepSpace] = useState(false);
+  const [enablePatentRag, setEnablePatentRag] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
@@ -717,6 +730,7 @@ const handleFindSimilarMolecules = async (details) => {
               webSearchClient : "Tavily",
               numRagResults   : ragResultsCount,
               model           : ragModel,
+              patentRagEnabled: enablePatentRag,
             }),
           });
 
@@ -1070,6 +1084,8 @@ const handleFindSimilarMolecules = async (details) => {
             remainingDeepSpaceQueries={remainingDeepSpaceQueries}
             fullDeepSpace={fullDeepSpace}
             onFullDeepSpaceChange={setFullDeepSpace}
+            enablePatentRag={enablePatentRag}
+            onEnablePatentRagChange={setEnablePatentRag}
           />
         </div>
         {false && foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (
