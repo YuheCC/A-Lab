@@ -699,6 +699,52 @@
     background-color: #fafbfc; /* Match footer background */
     color: #111827;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* About页面图片全局保护 */
+  .about-page-body img {
+    max-width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* About页面Logo特殊保护 */
+  .about-page-body .logo-container {
+    max-width: 150px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .about-page-body .logo-img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    box-sizing: border-box !important;
+  }
+
+  .about-page-body .content-sections {
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .about-page-body .about-banner-padded {
+    overflow: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 动机模块开始的内容区域边距对齐 */
+  .about-page-body .content-sections section[id="motivation"] > *:not(:first-child),
+  .about-page-body .content-sections section[id="features"] > *:not(:first-child),
+  .about-page-body .content-sections section[id="pricing"] > *:not(:first-child) {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
   }
   
   .about-header {
@@ -718,6 +764,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  
+  /* Logo大小调整，与导航标题齐平 */
+  .logo-container {
+    display: flex;
+    align-items: center;
+    max-width: 150px;
+    box-sizing: border-box;
+  }
+  
+  .logo-img {
+    height: 28px;
+    width: auto;
+    max-width: 100%;
+    max-height: 28px;
+    object-fit: contain;
+    box-sizing: border-box;
   }
   
   .about-header .about-nav {
@@ -744,6 +807,8 @@
     text-decoration: none;
     font-weight: 500;
     transition: background-color 0.3s;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
   
   .about-header .try-mu-button:hover {
@@ -869,6 +934,90 @@
   .about-header-actions {
     display: flex;
     align-items: center;
+  }
+
+  /* iPad Pro About页面适配 (1024px - 1200px) */
+  @media (min-width: 1024px) and (max-width: 1200px) {
+    .about-header-container {
+      padding: 1rem 2rem;
+      min-height: 64px;
+    }
+    
+    .logo-img {
+      height: 24px;
+      width: auto;
+      max-width: 100%;
+      max-height: 24px;
+      object-fit: contain;
+      box-sizing: border-box;
+    }
+    
+    .about-header .about-nav {
+      gap: 2rem;
+    }
+    
+    .about-header .about-nav-item {
+      font-size: 16px;
+    }
+    
+    .about-header .try-mu-button {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+    }
+    
+    /* 内容区域iPad Pro优化 */
+    .content-sections {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+    
+    .content-sections section {
+      margin-bottom: 1.2rem;
+      padding-top: 1.8rem;
+    }
+    
+    .content-sections h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .content-sections p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    
+    .content-sections h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .content-sections h4 {
+      font-size: 1.25rem;
+      margin-bottom: 0.8rem;
+      margin-top: 1.3rem;
+    }
+
+    /* iPad Pro图片处理 */
+    .about-page-body img {
+      max-width: 100% !important;
+      height: auto !important;
+      box-sizing: border-box !important;
+    }
+
+    .about-banner-padded {
+      width: 100% !important;
+      max-width: 1000px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+
+    .about-banner-padded-img {
+      width: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+    }
   }
   
   /* Feature Grid */
@@ -1011,6 +1160,106 @@
     }
     .feature-detail {
         padding: 0;
+    }
+  }
+
+  /* About页面H5移动端全局样式补充 */
+  @media (max-width: 768px) {
+    .about-page-body {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    /* 确保文字在小屏幕上可读 */
+    .about-page-body * {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    
+    /* 移动端导航优先级修复 */
+    .about-page-body .desktop-nav {
+      display: none !important;
+    }
+    
+    .about-page-body .about-header-actions {
+      display: none !important;
+    }
+    
+    .about-page-body .mobile-menu-button {
+      display: flex !important;
+    }
+    
+    .about-page-body .mobile-nav {
+      display: block !important;
+    }
+    
+    /* 触摸友好的点击区域 */
+    .about-nav-item,
+    .try-mu-button,
+    .feature-tab {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 提升按钮和链接的触摸体验 */
+    .try-mu-button,
+    .banner-enter-mu-button {
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+      touch-action: manipulation;
+    }
+    
+    /* News Feed移动端样式补充 */
+    .news-feed {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .news-item {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    
+    /* 确保图片不会溢出 */
+    .about-page-body img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* 滚动优化 */
+    .features-list {
+      scroll-behavior: smooth;
+    }
+    
+    /* 防止横向滚动 */
+    .about-page-body {
+      overflow-x: hidden;
+    }
+  }
+
+  /* 小屏手机额外优化 */
+  @media (max-width: 480px) {
+    .about-page-body {
+      font-size: 14px;
+    }
+    
+    /* 更紧凑的间距 */
+    .content-sections section {
+      margin-bottom: 2rem;
+      padding-top: 1rem;
+    }
+    
+    /* 优化触摸区域 */
+    .feature-tab {
+      padding: 0.8rem 1rem;
+      min-width: 80px;
+    }
+    
+    /* 窄屏幕隐藏Banner按钮 */
+    .about-page-body .banner-enter-mu-button {
+      display: none !important;
     }
   }
   
