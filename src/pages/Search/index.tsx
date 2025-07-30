@@ -1,3 +1,4 @@
+import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
@@ -591,6 +592,16 @@ const SearchPage = () => {
                                                     >
                                                         {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
+                                                    {
+                                                        userPermissions === 'admin' && (
+                                                            <MoleculeFeedbackBox
+                                                                molecule={molecule}
+                                                                lastSearch={lastSearch}
+                                                                queryType="normal_ask"
+                                                                onClose={() => { }}
+                                                            />
+                                                        )
+                                                    }
                                                 </div>
                                             </MolCard>
                                         ))}
