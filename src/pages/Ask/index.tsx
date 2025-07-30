@@ -73,6 +73,10 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
               {children}
             </ol>
           ),
+          // Add proper spacing for horizontal rules
+          hr: ({ node, ...props }) => (
+            <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+          ),
         }}
       >
         {trimmedContent}
@@ -105,7 +109,8 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
     disableLiteratureSearch, onDisableLiteratureSearchChange,
     disableTools, onDisableToolsChange,
     userPermissions, useMultiAgent, onUseMultiAgentChange,
-    fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries }) => {
+    fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+    enablePatentRag, onEnablePatentRagChange }) => {
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
@@ -243,12 +248,12 @@ const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreCha
             <div className='checkbox-item'>
               <input
                 type="checkbox"
-                id="disableTools"
-                checked={disableTools}
-                onChange={e => onDisableToolsChange(e.target.checked)}
+                id="enablePatentRag"
+                checked={enablePatentRag}
+                onChange={e => onEnablePatentRagChange(e.target.checked)}
               />
-              <label htmlFor="disableTools">
-                {t('chatbox.checkboxes.disableTools')}
+              <label htmlFor="enablePatentRag">
+                Enable Patent RAG
               </label>
             </div>
           </div>
@@ -328,7 +333,7 @@ const ChatbotInterface = () => {
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [fullDeepSpace, setFullDeepSpace] = useState(false);
-  const [disableTools, setDisableTools] = useState(false);
+  const [enablePatentRag, setEnablePatentRag] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
@@ -731,6 +736,7 @@ const handleFindSimilarMolecules = async (details) => {
               webSearchClient : "Tavily",
               numRagResults   : ragResultsCount,
               model           : ragModel,
+              patentRagEnabled: enablePatentRag,
             }),
           });
 
@@ -975,7 +981,9 @@ const handleFindSimilarMolecules = async (details) => {
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
                   {msg.extraData && Object.keys(msg.extraData).length > 0 && (
                     <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData).map(([key, value]) => (
+                      {Object.entries(msg.extraData)
+                        .filter(([key, value]) => key !== 'auto_synced' && key !== 'timestamp')
+                        .map(([key, value]) => (
                         <ExtraDataSection
                           key={key}
                           title={key}
@@ -1085,6 +1093,8 @@ const handleFindSimilarMolecules = async (details) => {
             remainingDeepSpaceQueries={remainingDeepSpaceQueries}
             fullDeepSpace={fullDeepSpace}
             onFullDeepSpaceChange={setFullDeepSpace}
+            enablePatentRag={enablePatentRag}
+            onEnablePatentRagChange={setEnablePatentRag}
           />
         </div>
         {false && foundMolecules && foundMolecules.length > 0 && showFoundMolecules && (

@@ -7,7 +7,7 @@ import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType }) => {
+export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType, useMultiAgent }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [submitting, setSubmitting] = useState(false);
@@ -31,6 +31,26 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     try {
       setSubmitting(true);
 
+      // Determine queryType based on useMultiAgent prop or response content
+      let determinedQueryType = queryType;
+      if (!determinedQueryType) {
+        // Check if response contains multi-agent indicators
+        const responseContent = molecule.SMILES || molecule.smiles || '';
+        const isMultiAgentResponse = useMultiAgent || 
+          (lastSearch && (
+            lastSearch.includes('Query_Planning_Agent') ||
+            lastSearch.includes('Plan_Review_Agent') ||
+            lastSearch.includes('Battery_Agent') ||
+            lastSearch.includes('Chemical_Prop_Expert') ||
+            lastSearch.includes('## Query_Planning_Agent') ||
+            lastSearch.includes('## Plan_Review_Agent') ||
+            lastSearch.includes('## Battery_Agent') ||
+            lastSearch.includes('## Chemical_Prop_Expert')
+          ));
+        
+        determinedQueryType = isMultiAgentResponse ? "multi_agent" : "normal_ask";
+      }
+
       // Submit feedback to backend
       await authFetch(`${API_URL}/api/feedback`, {
         method: 'POST',
@@ -47,7 +67,7 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
           contextContent3: '',
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
-          queryType: queryType || 'normal_ask',
+          queryType: determinedQueryType,
         }),
       });
 
