@@ -957,7 +957,7 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
+                  {msg.role === "assistant" && msg.extraData && Object.keys(msg.extraData).length > 0 && (
                     <div className="extra-data-wrapper">
                       {Object.entries(msg.extraData).map(([key, value]) => (
                         <ExtraDataSection

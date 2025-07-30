@@ -218,7 +218,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         
                         if (seenNames.has(nameKey)) {
                             console.log(`📥 SKIPPING DUPLICATE CHAT: ID=${chat.id}, Name="${chat.chat_name}", HasContent=${hasContent}`);
-                            return false;
+                            // return false;
                         }
                         
                         seenNames.add(nameKey);
