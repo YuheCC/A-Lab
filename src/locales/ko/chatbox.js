@@ -12,7 +12,8 @@ export default {
         enterDeepSpace: "딥 스페이스 진입 (BETA)",
         deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
         admin: "관리자",
-        fullDeepSpace: "전체 딥 스페이스"
+        fullDeepSpace: "전체 딥 스페이스",
+        disableTools: "Disable tools"
     },
     queryLimit: {
         queriesRemaining: "오늘 조회 횟수:",
