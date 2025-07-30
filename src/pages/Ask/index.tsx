@@ -73,6 +73,10 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
               {children}
             </ol>
           ),
+          // Add proper spacing for horizontal rules
+          hr: ({ node, ...props }) => (
+            <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+          ),
         }}
       >
         {trimmedContent}

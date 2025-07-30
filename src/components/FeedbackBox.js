@@ -5,7 +5,7 @@ import { getAPIUrl } from '../utils';
 
 const API_URL = getAPIUrl();
 
-const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, queryType, onClose }) => {
+const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, queryType, onClose, useMultiAgent }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const feedbackBoxRef = useRef(null);
@@ -33,6 +33,25 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
       return;
     }
     try {
+      // Determine queryType based on useMultiAgent prop or response content
+      let determinedQueryType = queryType;
+      if (!determinedQueryType) {
+        // Check if response contains multi-agent indicators
+        const isMultiAgentResponse = useMultiAgent || 
+          (responseContent && (
+            responseContent.includes('Query_Planning_Agent') ||
+            responseContent.includes('Plan_Review_Agent') ||
+            responseContent.includes('Battery_Agent') ||
+            responseContent.includes('Chemical_Prop_Expert') ||
+            responseContent.includes('## Query_Planning_Agent') ||
+            responseContent.includes('## Plan_Review_Agent') ||
+            responseContent.includes('## Battery_Agent') ||
+            responseContent.includes('## Chemical_Prop_Expert')
+          ));
+        
+        determinedQueryType = isMultiAgentResponse ? "multi_agent" : "normal_ask";
+      }
+
       const feedbackData = {
         isPositive: isPositive,
         feedbackText: feedbackText.trim(),
@@ -42,7 +61,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
         contextContent2: "",
         contextContent3: "",
         timestamp: new Date().toISOString(),
-        queryType: queryType || "normal_ask",
+        queryType: determinedQueryType,
       };
       const token = localStorage.getItem('token');
       const response = await axios.post(
