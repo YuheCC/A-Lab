@@ -746,6 +746,7 @@ const handleFindSimilarMolecules = async (details) => {
               chatId          : currentChatId,
               messages        : messagesToSend,
               ragEnabled      : !disableLiteratureSearch,
+              toolsEnabled    : !disableTools,
               webSearchEnabled: false,
               webSearchClient : "Tavily",
               numRagResults   : ragResultsCount,
@@ -819,6 +820,7 @@ const handleFindSimilarMolecules = async (details) => {
       awaitingClarify,
       setAwaitingClarify,
       fullDeepSpace,
+      disableTools,
     ]
   );
 
@@ -1098,6 +1100,8 @@ const handleFindSimilarMolecules = async (details) => {
             onIgnoreChatHistoryChange={setIgnoreChatHistory}
             disableLiteratureSearch={disableLiteratureSearch}
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
+            disableTools={disableTools}
+            onDisableToolsChange={setDisableTools}
             userPermissions={userPermissions}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
