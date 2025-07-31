@@ -112,6 +112,8 @@ const ChatInput = React.memo((props: {
   onIgnoreChatHistoryChange: (value: boolean) => void;
   disableLiteratureSearch: boolean;
   onDisableLiteratureSearchChange: (value: boolean) => void;
+  disableTools: boolean;
+  onDisableToolsChange: (value: boolean) => void;
   userPermissions: string;
   useMultiAgent: boolean;
   onUseMultiAgentChange: (value: boolean) => void;
@@ -123,6 +125,7 @@ const ChatInput = React.memo((props: {
 }) => {
   const { onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
       disableLiteratureSearch, onDisableLiteratureSearchChange,
+      disableTools, onDisableToolsChange,
       userPermissions, useMultiAgent, onUseMultiAgentChange,
       fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
       enablePatentRag, onEnablePatentRagChange } = props;
@@ -349,6 +352,7 @@ const ChatbotInterface = () => {
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
   const [fullDeepSpace, setFullDeepSpace] = useState(false);
   const [enablePatentRag, setEnablePatentRag] = useState(false);
+  const [disableTools, setDisableTools] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
   const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
   const [foundMoleculesError, setFoundMoleculesError] = useState(null);
