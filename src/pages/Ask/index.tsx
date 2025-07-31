@@ -105,11 +105,27 @@ const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
 };
 
 // New ChatInput component added for memoized chat input rendering
-const ChatInput = React.memo(({ onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
-    disableLiteratureSearch, onDisableLiteratureSearchChange,
-    userPermissions, useMultiAgent, onUseMultiAgentChange,
-    fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
-    enablePatentRag, onEnablePatentRagChange }) => {
+const ChatInput = React.memo((props: {
+  onSend: (input: string) => void;
+  disabled: boolean;
+  ignoreChatHistory: boolean;
+  onIgnoreChatHistoryChange: (value: boolean) => void;
+  disableLiteratureSearch: boolean;
+  onDisableLiteratureSearchChange: (value: boolean) => void;
+  userPermissions: string;
+  useMultiAgent: boolean;
+  onUseMultiAgentChange: (value: boolean) => void;
+  fullDeepSpace: boolean;
+  onFullDeepSpaceChange: (value: boolean) => void;
+  remainingDeepSpaceQueries: number;
+  enablePatentRag: boolean;
+  onEnablePatentRagChange: (value: boolean) => void;
+}) => {
+  const { onSend, disabled, ignoreChatHistory, onIgnoreChatHistoryChange,
+      disableLiteratureSearch, onDisableLiteratureSearchChange,
+      userPermissions, useMultiAgent, onUseMultiAgentChange,
+      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+      enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
