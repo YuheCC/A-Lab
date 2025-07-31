@@ -448,14 +448,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 role: message.role,
                                 content: message.content,
                                 found_molecules: message.molecules || [],
-                                extra_data: {
-                                    auto_synced: true,
-                                    timestamp: new Date().toISOString(),
-                                    mol_text: message.molText,
-                                    inputs: message.inputs,
-                                    sources: message.sources,
-                                    extra_data: message.extraData
-                                }
+                                extra_data: message.extraData || {}
                             })
                         });
                         
@@ -517,14 +510,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         role: message.role,
                         content: message.content || '',
                         found_molecules: message.molecules || [],
-                        extra_data: {
-                            auto_synced: true,
-                            timestamp: new Date().toISOString(),
-                            mol_text: message.molText,
-                            inputs: message.inputs,
-                            sources: message.sources,
-                            extra_data: message.extraData
-                        }
+                        extra_data: message.extraData || {}
                     })
                 });
                 
