@@ -152,7 +152,6 @@
     margin: 0;
     margin-bottom: 1em;
   }
-
   .message-content h1,
   .message-content h2,
   .message-content h3,
@@ -162,7 +161,6 @@
     margin: 0;
     margin-bottom: 0.5em;
   }
-
   .message-content ul,
   .message-content ol {
     margin: 0;
@@ -686,4 +684,5 @@
   padding: 8px;
   border-top: 1px solid #ddd;
   background-color: white;
-  white-space: normal;}
+  white-space: normal;
+}

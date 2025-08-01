@@ -1,10 +1,10 @@
 import React, { useState, useRef, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
 import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
+import rehypeRaw from 'rehype-raw';
 import './InlineMoleculeRenderer.css';
 
 // Component for individual clickable citation numbers

@@ -25,6 +25,7 @@ export default {
         searching: "검색 중",
         searchingDatabase: "데이터베이스 검색 중",
         thinkingForSeconds: "{{seconds}}초 동안 생각 중…",
+        thinkingForMinutesAndSeconds: "{{minutes}}분 {{seconds}}초 동안 생각 중…",
         noMoleculesFound: "분자를 찾을 수 없습니다.",
         findMoleculesFailed: "분자 찾기에 실패했습니다. 나중에 다시 시도해주세요.",
         clarifyingQuestions: "곧 몇 가지 명확한 질문에 답변을 요청할 수 있습니다.",
@@ -64,7 +65,9 @@ export default {
         goodMatch: "이것이 좋은 매치인 이유는 무엇인가요?",
         badMatch: "이것이 좋은 매치가 아닌 이유는 무엇인가요?",
         placeholder: "귀하의 피드백은 분자 매칭 개선에 도움이 됩니다",
-        thankYou: "피드백을 주셔서 감사합니다!"
+        thankYou: "피드백을 주셔서 감사합니다!",
+        selectFirst: "먼저 좋아요 또는 싫어요를 선택해주세요",
+        submitting: "제출 중..."
     },
     success: {
         addedToFavorites: "분자가 즐겨찾기에 추가되었습니다!",
@@ -80,7 +83,8 @@ export default {
         addToFavoritesError: "즐겨찾기 추가 실패",
         loginRequired: "즐겨찾기를 추가하려면 로그인해야 합니다",
         feedbackError: "피드백 제출 오류:",
-        copyError: "복사 실패:"
+        copyError: "복사 실패:",
+        generalError: "오류"
     },
     history: {
         title: "채팅 목록",
