@@ -218,12 +218,19 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         
                         if (seenNames.has(nameKey)) {
                             console.log(`📥 SKIPPING DUPLICATE CHAT: ID=${chat.id}, Name="${chat.chat_name}", HasContent=${hasContent}`);
-                            return false;
+                            // return false;
                         }
                         
                         seenNames.add(nameKey);
                         return true;
                     });
+
+                    const getExtraData = (item: any) => {
+                        if (item.extra_data) {
+                            return item.extra_data.auto_synced !== undefined ? item.extra_data.extra_data : item.extra_data;
+                        }
+                        return {};
+                    }
                     
                     filteredChats.forEach((chat, index) => {
                         console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
@@ -237,7 +244,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 content: item.content || '',
                                 molText: (item.molecules || []).join(", "),
                                 molecules: item.molecules || [],
-                                extraData: item.extra_data || {},
+                                extraData: getExtraData(item),
                             })) || [],
                             activeMolecule: chat.meta_active_molecule || null,
                             foundMolecules: chat.meta_molecules || [],
@@ -389,7 +396,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             ? messagesOrUpdater(chat.messages)
             : [...messagesOrUpdater];
     })),
-    addMessage: (message, chatId = null) => {
+    addMessage: (message: any, chatId = null) => {
         const targetChatId = chatId || get().activeChat;
         
         // Add to local state first

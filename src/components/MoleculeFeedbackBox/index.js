@@ -60,7 +60,7 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
         body: JSON.stringify({
           isPositive: feedbackType === 'up',
           feedbackText: feedbackText.trim(),
-          inputContent: lastSearch || '',
+          inputContent: lastSearch ? (typeof lastSearch === 'object' ? JSON.stringify(lastSearch) : lastSearch) : '',
           responseContent: molecule.SMILES || molecule.smiles || '',
           contextContent1: '',
           contextContent2: '',

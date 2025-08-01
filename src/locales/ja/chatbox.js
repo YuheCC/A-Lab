@@ -25,6 +25,7 @@ export default {
         searching: "検索中",
         searchingDatabase: "データベースを検索中",
         thinkingForSeconds: "{{seconds}}秒間考え中",
+        thinkingForMinutesAndSeconds: "{{minutes}}分{{seconds}}秒間考え中",
         noMoleculesFound: "分子が見つかりませんでした。",
         findMoleculesFailed: "分子の検索に失敗しました。後でもう一度お試しください。",
         clarifyingQuestions: "まもなく、いくつかの明確化のための質問に返信していただく場合があります。",
@@ -64,7 +65,9 @@ export default {
         goodMatch: "なぜこれが良い一致なのですか？",
         badMatch: "なぜこれが良い一致ではないのですか？",
         placeholder: "あなたのフィードバックは分子マッチングの改善に役立ちます",
-        thankYou: "フィードバックありがとうございます！"
+        thankYou: "フィードバックありがとうございます！",
+        selectFirst: "最初にいいねまたはよくないねを選択してください",
+        submitting: "送信中..."
     },
     success: {
         addedToFavorites: "分子がお気に入りに正常に追加されました！",
@@ -80,7 +83,8 @@ export default {
         addToFavoritesError: "お気に入りへの追加に失敗しました",
         loginRequired: "お気に入りに追加するにはログインする必要があります",
         feedbackError: "フィードバック送信エラー：",
-        copyError: "コピーに失敗しました："
+        copyError: "コピーに失敗しました：",
+        generalError: "エラー"
     },
     history: {
         title: "あなたのチャット",
