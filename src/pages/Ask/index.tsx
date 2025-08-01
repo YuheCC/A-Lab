@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import streamSSE from "@/components/StreamSSE/index.js";
 import './Chatbox.css';
-
+import FeedbackBox from '@/components/FeedbackBox/index.js';
 import DOMPurify from 'dompurify';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -11,6 +11,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
 import { useShallow } from 'zustand/react/shallow';
+import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import CustomButton from '@/components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { ChatHistorySidebar } from '@/components/ChatHistorySidebar/index.js';
@@ -927,18 +928,23 @@ const handleFindSimilarMolecules = async (details) => {
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
-                    {/* <IconButton
-                      onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
-                      size="small"
-                      style={{ marginRight: 5 }} variant="contained">
-                        <ThumbsUp size={18} style={{ margin: 4}} />
-                      </IconButton>
-                    <IconButton
-                      onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
-                      size="small"
-                      style={{ marginRight: 5 }} variant="contained">
-                        <ThumbsDown size={18} style={{ margin: 4}} />
-                      </IconButton> */}
+                    {
+                      userPermissions === 'admin' && <>
+                        <IconButton
+                        onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
+                        size="small"
+                        style={{ marginRight: 5 }} variant="contained">
+                          <ThumbsUp size={18} style={{ margin: 4}} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
+                          size="small"
+                          style={{ marginRight: 5 }} variant="contained">
+                            <ThumbsDown size={18} style={{ margin: 4}} />
+                          </IconButton>
+                      </>
+                    }
+                    
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -1274,6 +1280,20 @@ const handleFindSimilarMolecules = async (details) => {
                     {t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
+                  {
+                    userPermissions === 'admin' && (
+                      <MoleculeFeedbackBox
+                        fullWidth={true}
+                        molecule={details}
+                        lastSearch={activeMolecule}
+                        contextContent1={contextObject.contextContent1}
+                        contextContent2={contextObject.contextContent2}
+                        contextContent3={contextObject.contextContent3}
+                        onClose={() => { }}
+                      />
+                    )
+                  }
+                  
                   {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                     window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
@@ -1285,6 +1305,16 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
         )}
       </div>
+      {/* Render the FeedbackBox if needed */}
+      {showFeedbackBox && feedbackData && (
+        <FeedbackBox 
+          isPositive={feedbackData.isPositive}
+          inputContent={feedbackData.inputContent}
+          responseContent={feedbackData.responseContent}
+          contextContent1={feedbackData.contextContent1}
+          onClose={() => setShowFeedbackBox(false)}
+        />
+      )}
     </div>
   );
 };
