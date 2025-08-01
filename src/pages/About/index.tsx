@@ -8,6 +8,7 @@ import { MessageProvider } from '@/components/MessageProvider';
 const AboutPage = () => {
   const { t } = useTranslation();
   const [activeFeature, setActiveFeature] = useState('map');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Add useEffect to set up smooth scrolling
   useEffect(() => {
@@ -19,9 +20,36 @@ const AboutPage = () => {
     }
   }, []);
 
+  // Cleanup effect to restore scroll when component unmounts
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   // Handle feature tab click
   const handleFeatureClick = (feature: string) => {
     setActiveFeature(feature);
+  };
+
+  // Handle mobile menu toggle
+  const toggleMobileMenu = () => {
+    const newState = !mobileMenuOpen;
+    setMobileMenuOpen(newState);
+    
+    // 防止背景滚动
+    if (newState) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Handle mobile menu link click
+  const handleMobileMenuClick = () => {
+    setMobileMenuOpen(false);
+    // 恢复页面滚动
+    document.body.style.overflow = '';
   };
 
   return (
@@ -33,16 +61,51 @@ const AboutPage = () => {
                     <img src="logo.png" alt="SES Logo" className="logo-img" />
                 </a>
             </div>
-            <nav className="about-nav">
+            
+            {/* 桌面端导航 */}
+            <nav className="about-nav desktop-nav">
                 <a href="#newsfeed" className="about-nav-item">{t('about.navigation.newsfeed')}</a>
                 <a href="#motivation" className="about-nav-item">{t('about.navigation.motivation')}</a>
                 <a href="#features" className="about-nav-item">{t('about.navigation.features')}</a>
                 <a href="#pricing" className="about-nav-item">{t('about.navigation.pricing')}</a>               
             </nav>
+            
             <div className="about-header-actions">
                 <a target="_blank" href="/map" className="try-mu-button">{t('about.navigation.enterMu')}</a>
             </div>
+            
+            {/* 移动端菜单按钮 */}
+            <button 
+              className="mobile-menu-button" 
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
+              <span className={`hamburger ${mobileMenuOpen ? 'open' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
         </div>
+        
+        {/* 移动端导航菜单 */}
+        <nav className={`mobile-nav ${mobileMenuOpen ? 'open' : ''}`}>
+            <a href="#newsfeed" className="mobile-nav-item" onClick={handleMobileMenuClick}>
+              {t('about.navigation.newsfeed')}
+            </a>
+            <a href="#motivation" className="mobile-nav-item" onClick={handleMobileMenuClick}>
+              {t('about.navigation.motivation')}
+            </a>
+            <a href="#features" className="mobile-nav-item" onClick={handleMobileMenuClick}>
+              {t('about.navigation.features')}
+            </a>
+            <a href="#pricing" className="mobile-nav-item" onClick={handleMobileMenuClick}>
+              {t('about.navigation.pricing')}
+            </a>
+            <a target="_blank" href="/map" className="mobile-nav-item mobile-enter-mu" onClick={handleMobileMenuClick}>
+              {t('about.navigation.enterMu')}
+            </a>
+        </nav>
       </header>
 
       <main style={{paddingBottom: '100px'}}>

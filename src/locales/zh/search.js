@@ -68,5 +68,10 @@ export default {
             "您的查询可能涉及盐或阴离子分子，我们当前的数据库尚不支持。我们将在即将到来的更新中添加阴离子。"
         ],
         contactSales: "联系销售"
+    },
+
+    // Ambiguous Query Message
+    ambiguousQuery: {
+        message: "您的查询存在歧义。缩写 {{query}} 可能对应以下任一分子：{{options}}。请细化您的查询。"
     }
 }; 
