@@ -224,6 +224,13 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         seenNames.add(nameKey);
                         return true;
                     });
+
+                    const getExtraData = (item: any) => {
+                        if (item.extra_data) {
+                            return item.extra_data.auto_synced !== undefined ? item.extra_data.extra_data : item.extra_data;
+                        }
+                        return {};
+                    }
                     
                     filteredChats.forEach((chat, index) => {
                         console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
@@ -237,7 +244,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 content: item.content || '',
                                 molText: (item.molecules || []).join(", "),
                                 molecules: item.molecules || [],
-                                extraData: item.extra_data || {},
+                                extraData: getExtraData(item),
                             })) || [],
                             activeMolecule: chat.meta_active_molecule || null,
                             foundMolecules: chat.meta_molecules || [],
@@ -448,7 +455,14 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 role: message.role,
                                 content: message.content,
                                 found_molecules: message.molecules || [],
-                                extra_data: message.extraData || {}
+                                extra_data: {
+                                    auto_synced: true,
+                                    timestamp: new Date().toISOString(),
+                                    mol_text: message.molText,
+                                    inputs: message.inputs,
+                                    sources: message.sources,
+                                    extra_data: message.extraData
+                                }
                             })
                         });
                         
@@ -510,7 +524,14 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         role: message.role,
                         content: message.content || '',
                         found_molecules: message.molecules || [],
-                        extra_data: message.extraData || {}
+                        extra_data: {
+                            auto_synced: true,
+                            timestamp: new Date().toISOString(),
+                            mol_text: message.molText,
+                            inputs: message.inputs,
+                            sources: message.sources,
+                            extra_data: message.extraData
+                        }
                     })
                 });
                 
