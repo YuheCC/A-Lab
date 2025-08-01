@@ -1,3 +1,4 @@
+import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
@@ -131,9 +132,13 @@ const SearchPage = () => {
         };
     }, []);
 
+    // Store ambiguous search options when backend indicates ambiguity
+    const [ambiguousOptions, setAmbiguousOptions] = useState(null);
+
     // Update handleSearch function
     const handleSearchedMolecules = async (response: Response, select_first = false): Promise<MoleculeData[] | null> => {
         let formattedMolecules: MoleculeData[] | null = null;
+        let ambiguity = null;
         try {
             const data = await response.json();
             if (data.found) {
@@ -183,11 +188,13 @@ const SearchPage = () => {
                         }
                     }
                 }
+            } else if (data.message === 'Ambiguous molecule abbreviation') {
+                ambiguity = data.options;
             }
         } catch (error) {
             console.error('Error processing searched molecules:', error);
         }
-        return formattedMolecules;
+        return { formattedMolecules, ambiguity };
     };
 
     const handleSearch = async (searchInput: string) => {
@@ -202,6 +209,7 @@ const SearchPage = () => {
         setHighlightedSimilarMolecules([]);
         setSimilarMoleculeImages({}); // Reset similar molecule images
         setFindFriendError(null); // Reset find friend error
+        setAmbiguousOptions(null); // Reset ambiguous search info
 
         try {
             // Determine which endpoint to use based on user permissions
@@ -220,7 +228,13 @@ const SearchPage = () => {
                 return;
             }
 
-            const formattedMolecules = await handleSearchedMolecules(moleculeResponse);
+            const { formattedMolecules, ambiguity } = await handleSearchedMolecules(moleculeResponse);
+
+            if (ambiguity) {
+                setAmbiguousOptions(ambiguity);
+                return;
+            }
+
             if (formattedMolecules && findClosestFriends) {
                 // check if formattedMolecules has length > 1 - if so display warning
                 if (formattedMolecules.length > 1) {
@@ -591,6 +605,16 @@ const SearchPage = () => {
                                                     >
                                                         {t('chatbox.buttons.addToFavorites')}
                                                     </CustomButton>
+                                                    {
+                                                        userPermissions === 'admin' && (
+                                                            <MoleculeFeedbackBox
+                                                                molecule={molecule}
+                                                                lastSearch={lastSearch}
+                                                                queryType="normal_ask"
+                                                                onClose={() => { }}
+                                                            />
+                                                        )
+                                                    }
                                                 </div>
                                             </MolCard>
                                         ))}
@@ -599,23 +623,30 @@ const SearchPage = () => {
                             </div>
                         )}
                         {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
-                            <div className="molecule-not-found">
-                                <p>{t('search.moleculeNotFound.title')}</p>
-                                <br />
-                                {(t('search.moleculeNotFound.reasons', { returnObjects: true }) as string[]).map((reason, index) => (
-                                    <div key={index}>
-                                        {index + 1}. {reason}
-                                        <br />
-                                    </div>
-                                ))}
-                                <br />
-                                <button
-                                    className="pricing-cta strategic"
-                                    onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
-                                >
-                                    {t('search.moleculeNotFound.contactSales')}
-                                </button>
-                            </div>
+                            ambiguousOptions ? (
+                                <div className="molecule-not-found">
+                                    <p>{t('search.ambiguousQuery.message', { query: lastSearch, options: ambiguousOptions })}</p>
+                                </div>
+                            ) : (
+                                <div className="molecule-not-found">
+                                    <p>{t('search.moleculeNotFound.title')}</p>
+                                    <br />
+                                    <br />
+                                    {(t('search.moleculeNotFound.reasons', { returnObjects: true }) as string[]).map((reason: string, index: number) => (
+                                        <div key={index}>
+                                            {index + 1}. {reason}
+                                            <br />
+                                        </div>
+                                    ))}
+                                    <br />
+                                    <button
+                                        className="pricing-cta strategic"
+                                        onClick={() => window.location.href = 'mailto:partnership@ses.ai?subject=Joint Development Inquiry'}
+                                    >
+                                        {t('search.moleculeNotFound.contactSales')}
+                                    </button>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>

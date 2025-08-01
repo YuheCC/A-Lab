@@ -24,6 +24,7 @@ export default {
         searching: "搜索中",
         searchingDatabase: "搜索我们的数据库",
         thinkingForSeconds: "思考了{{seconds}}秒",
+        thinkingForMinutesAndSeconds: "思考了{{minutes}}分{{seconds}}秒",
         noMoleculesFound: "未找到分子。",
         findMoleculesFailed: "查找分子失败。请稍后再试。",
         clarifyingQuestions: "我们可能会要求您稍后回答一些澄清问题。",
@@ -63,7 +64,9 @@ export default {
         goodMatch: "什么使这成为一个好的匹配？",
         badMatch: "为什么这不是一个好的匹配？",
         placeholder: "您的反馈有助于我们改进分子匹配",
-        thankYou: "感谢您的反馈！"
+        thankYou: "感谢您的反馈！",
+        selectFirst: "请先选择点赞或点踩",
+        submitting: "提交中..."
     },
     success: {
         addedToFavorites: "分子已成功添加到收藏夹！",
@@ -79,7 +82,8 @@ export default {
         addToFavoritesError: "添加到收藏夹失败",
         loginRequired: "您必须登录才能添加收藏夹",
         feedbackError: "提交反馈时出错：",
-        copyError: "复制失败："
+        copyError: "复制失败：",
+        generalError: "错误"
     },
     history: {
         title: "您的聊天",

@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import streamSSE from "@/components/StreamSSE/index.js";
 import './Chatbox.css';
-
+import FeedbackBox from '@/components/FeedbackBox/index.js';
 import DOMPurify from 'dompurify';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
+import rehypeRaw from 'rehype-raw';
 import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
 import { useShallow } from 'zustand/react/shallow';
+import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import CustomButton from '@/components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { ChatHistorySidebar } from '@/components/ChatHistorySidebar/index.js';
@@ -26,14 +28,55 @@ const hasInlineMolecules = (content) => {
 
 // Custom message content renderer that handles both markdown and inline molecules
 const MessageContentRenderer = ({ content, onMoleculeClick }) => {
-  if (hasInlineMolecules(content)) {
+  // Trim leading and trailing whitespace to prevent formatting issues
+  const trimmedContent = content?.trim() || '';
+  
+  if (hasInlineMolecules(trimmedContent)) {
     // If content has inline molecules, render them with click capability
-    return <InlineMoleculeRenderer content={content} onMoleculeClick={onMoleculeClick} />;
+    return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
   } else {
     // Otherwise, render as normal markdown
     return (
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {content}
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          // Remove default margins from paragraphs
+          p: ({ node, children, ...props }) => (
+            <p {...props} style={{ margin: 0, marginBottom: '1em' }}>
+              {children}
+            </p>
+          ),
+          // Remove default margins from headings
+          h1: ({ node, children, ...props }) => (
+            <h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h1>
+          ),
+          h2: ({ node, children, ...props }) => (
+            <h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h2>
+          ),
+          h3: ({ node, children, ...props }) => (
+            <h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h3>
+          ),
+          // Remove margins from lists
+          ul: ({ node, children, ...props }) => (
+            <ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+              {children}
+            </ul>
+          ),
+          ol: ({ node, children, ...props }) => (
+            <ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+              {children}
+            </ol>
+          ),
+        }}
+      >
+        {trimmedContent}
       </ReactMarkdown>
     );
   }
@@ -236,6 +279,13 @@ const ChatbotInterface = () => {
     isInClarifyFlow,
     useMultiAgent
   } = useActiveChatData();
+
+  // Debug: Log the current active chat data
+  console.log("Debug - Active chat data:", { 
+    messages: messages,
+    messagesLength: messages ? messages.length : 'undefined',
+    activeChat: useChatStore.getState().activeChat 
+  });
 
   const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
@@ -712,11 +762,10 @@ const handleFindSimilarMolecules = async (details) => {
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        addMessage({ role: "assistant", content: "Error: " + err.message });
+        setIsThinking(false);
       } finally {
         if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
-        fetchQueryLimit();
       }
     },
 
@@ -906,11 +955,10 @@ const handleFindSimilarMolecules = async (details) => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`message-${msg.role}`}
-                style={{ whiteSpace: 'pre-wrap' }}>
+                className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
+                  {msg.role === "assistant" && msg.extraData && Object.keys(msg.extraData).length > 0 && (
                     <div className="extra-data-wrapper">
                       {Object.entries(msg.extraData).map(([key, value]) => (
                         <ExtraDataSection
@@ -927,18 +975,23 @@ const handleFindSimilarMolecules = async (details) => {
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
-                    {/* <IconButton
-                      onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
-                      size="small"
-                      style={{ marginRight: 5 }} variant="contained">
-                        <ThumbsUp size={18} style={{ margin: 4}} />
-                      </IconButton>
-                    <IconButton
-                      onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
-                      size="small"
-                      style={{ marginRight: 5 }} variant="contained">
-                        <ThumbsDown size={18} style={{ margin: 4}} />
-                      </IconButton> */}
+                    {
+                      userPermissions === 'admin' && <>
+                        <IconButton
+                        onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
+                        size="small"
+                        style={{ marginRight: 5 }} variant="contained">
+                          <ThumbsUp size={18} style={{ margin: 4}} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
+                          size="small"
+                          style={{ marginRight: 5 }} variant="contained">
+                            <ThumbsDown size={18} style={{ margin: 4}} />
+                          </IconButton>
+                      </>
+                    }
+                    
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -960,7 +1013,7 @@ const handleFindSimilarMolecules = async (details) => {
 
                           // Sanitize the HTML in case the backend returns unusual HTML
                           const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
-                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'sub', 'sup'],
                             ALLOWED_ATTR: ['href', 'target']
                           }) : msg.content;
 
@@ -1274,6 +1327,20 @@ const handleFindSimilarMolecules = async (details) => {
                     {t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
+                  {
+                    userPermissions === 'admin' && (
+                      <MoleculeFeedbackBox
+                        fullWidth={true}
+                        molecule={details}
+                        lastSearch={activeMolecule}
+                        contextContent1={contextObject.contextContent1}
+                        contextContent2={contextObject.contextContent2}
+                        contextContent3={contextObject.contextContent3}
+                        onClose={() => { }}
+                      />
+                    )
+                  }
+                  
                   {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                     window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
@@ -1285,6 +1352,16 @@ const handleFindSimilarMolecules = async (details) => {
           </div>
         )}
       </div>
+      {/* Render the FeedbackBox if needed */}
+      {showFeedbackBox && feedbackData && (
+        <FeedbackBox 
+          isPositive={feedbackData.isPositive}
+          inputContent={feedbackData.inputContent}
+          responseContent={feedbackData.responseContent}
+          contextContent1={feedbackData.contextContent1}
+          onClose={() => setShowFeedbackBox(false)}
+        />
+      )}
     </div>
   );
 };

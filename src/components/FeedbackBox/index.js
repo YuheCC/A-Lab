@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { getAPIUrl } from '../utils';
+import { getAPIUrl } from '@/utils';
 
 const API_URL = getAPIUrl();
 

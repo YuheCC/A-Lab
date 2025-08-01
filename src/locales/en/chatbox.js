@@ -24,6 +24,7 @@ export default {
         searching: "searching",
         searchingDatabase: "searching our database",
         thinkingForSeconds: "thinking for {{seconds}} s",
+        thinkingForMinutesAndSeconds: "thinking for {{minutes}} min {{seconds}} s",
         noMoleculesFound: "No molecules found.",
         findMoleculesFailed: "Failed to find molecules. Please try again later.",
         clarifyingQuestions: "We may ask you to reply to a few clarifying questions shortly.",
@@ -63,7 +64,9 @@ export default {
         goodMatch: "What makes this a good match?",
         badMatch: "Why is this not a good match?",
         placeholder: "Your feedback helps us improve molecule matching",
-        thankYou: "Thank you for your feedback!"
+        thankYou: "Thank you for your feedback!",
+        selectFirst: "Please select thumbs up or down first",
+        submitting: "Submitting..."
     },
     success: {
         addedToFavorites: "Molecule added to favorites successfully!",
@@ -79,7 +82,8 @@ export default {
         addToFavoritesError: "Failed to add to favorites",
         loginRequired: "You must be logged in to add favorites",
         feedbackError: "Error submitting feedback:",
-        copyError: "Failed to copy:"
+        copyError: "Failed to copy:",
+        generalError: "Error"
     },
     history: {
         title: "Your Chats",
