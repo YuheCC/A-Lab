@@ -68,5 +68,10 @@ export default {
             "쿼리가 염 또는 음이온 분자와 관련이 있을 수 있는데, 현재 데이터베이스에서는 아직 지원하지 않습니다. 곧 있을 업데이트에서 음이온을 추가할 예정입니다."
         ],
         contactSales: "영업팀 연락"
+    },
+
+    // Ambiguous Query Message
+    ambiguousQuery: {
+        message: "질의가 모호합니다. 약어 {{query}}는 다음 분자들 중 하나에 해당할 수 있습니다: {{options}}. 질의를 더 구체화해주세요."
     }
 }; 

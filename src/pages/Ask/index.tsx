@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
+import rehypeRaw from 'rehype-raw';
 import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
@@ -27,14 +28,55 @@ const hasInlineMolecules = (content) => {
 
 // Custom message content renderer that handles both markdown and inline molecules
 const MessageContentRenderer = ({ content, onMoleculeClick }) => {
-  if (hasInlineMolecules(content)) {
+  // Trim leading and trailing whitespace to prevent formatting issues
+  const trimmedContent = content?.trim() || '';
+  
+  if (hasInlineMolecules(trimmedContent)) {
     // If content has inline molecules, render them with click capability
-    return <InlineMoleculeRenderer content={content} onMoleculeClick={onMoleculeClick} />;
+    return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
   } else {
     // Otherwise, render as normal markdown
     return (
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {content}
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          // Remove default margins from paragraphs
+          p: ({ node, children, ...props }) => (
+            <p {...props} style={{ margin: 0, marginBottom: '1em' }}>
+              {children}
+            </p>
+          ),
+          // Remove default margins from headings
+          h1: ({ node, children, ...props }) => (
+            <h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h1>
+          ),
+          h2: ({ node, children, ...props }) => (
+            <h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h2>
+          ),
+          h3: ({ node, children, ...props }) => (
+            <h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+              {children}
+            </h3>
+          ),
+          // Remove margins from lists
+          ul: ({ node, children, ...props }) => (
+            <ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+              {children}
+            </ul>
+          ),
+          ol: ({ node, children, ...props }) => (
+            <ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+              {children}
+            </ol>
+          ),
+        }}
+      >
+        {trimmedContent}
       </ReactMarkdown>
     );
   }
@@ -237,6 +279,13 @@ const ChatbotInterface = () => {
     isInClarifyFlow,
     useMultiAgent
   } = useActiveChatData();
+
+  // Debug: Log the current active chat data
+  console.log("Debug - Active chat data:", { 
+    messages: messages,
+    messagesLength: messages ? messages.length : 'undefined',
+    activeChat: useChatStore.getState().activeChat 
+  });
 
   const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
@@ -713,11 +762,10 @@ const handleFindSimilarMolecules = async (details) => {
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        addMessage({ role: "assistant", content: "Error: " + err.message });
+        setIsThinking(false);
       } finally {
         if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
-        fetchQueryLimit();
       }
     },
 
@@ -907,11 +955,10 @@ const handleFindSimilarMolecules = async (details) => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`message-${msg.role}`}
-                style={{ whiteSpace: 'pre-wrap' }}>
+                className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.extraData && Object.keys(msg.extraData).length > 0 && (
+                  {msg.role === "assistant" && msg.extraData && Object.keys(msg.extraData).length > 0 && (
                     <div className="extra-data-wrapper">
                       {Object.entries(msg.extraData).map(([key, value]) => (
                         <ExtraDataSection
@@ -966,7 +1013,7 @@ const handleFindSimilarMolecules = async (details) => {
 
                           // Sanitize the HTML in case the backend returns unusual HTML
                           const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
-                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'sub', 'sup'],
                             ALLOWED_ATTR: ['href', 'target']
                           }) : msg.content;
 

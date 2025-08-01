@@ -68,5 +68,10 @@ export default {
             "Your query might involve salt or anion molecules, which our current database doesn't yet support. We'll be adding anions in an upcoming update."
         ],
         contactSales: "Contact Sales"
+    },
+
+    // Ambiguous Query Message
+    ambiguousQuery: {
+        message: "Your query is ambiguous. The abbreviation {{query}} can correspond to any of the following molecules: {{options}}. Please refine your query."
     }
 }; 
