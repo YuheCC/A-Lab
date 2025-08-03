@@ -275,6 +275,17 @@ const ChatInput = React.memo((props: {
                 Enable Patent RAG
               </label>
             </div>
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="disableTools"
+                checked={disableTools}
+                onChange={e => onDisableToolsChange(e.target.checked)}
+              />
+              <label htmlFor="disableTools">
+                {t('chatbox.checkboxes.disableTools')}
+              </label>
+            </div>
           </div>
         )}
       </div>
