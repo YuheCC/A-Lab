@@ -275,6 +275,17 @@ const ChatInput = React.memo((props: {
                 Enable Patent RAG
               </label>
             </div>
+            <div className='checkbox-item'>
+              <input
+                type="checkbox"
+                id="disableTools"
+                checked={disableTools}
+                onChange={e => onDisableToolsChange(e.target.checked)}
+              />
+              <label htmlFor="disableTools">
+                {t('chatbox.checkboxes.disableTools')}
+              </label>
+            </div>
           </div>
         )}
       </div>
@@ -999,11 +1010,9 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {msg.role === "assistant" && msg.extraData && Object.keys(msg.extraData).length > 0 && (
+                  {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
                     <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData)
-                        .filter(([key, value]) => key !== 'auto_synced' && key !== 'timestamp')
-                        .map(([key, value]) => (
+                      {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
                         <ExtraDataSection
                           key={key}
                           title={key}
