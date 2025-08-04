@@ -269,7 +269,10 @@ const ChatInput = React.memo((props: {
                 type="checkbox"
                 id="enablePatentRag"
                 checked={enablePatentRag}
-                onChange={e => onEnablePatentRagChange(e.target.checked)}
+                onChange={e => {
+                  console.log('🧪 PATENT RAG DEBUG - Checkbox changed to:', e.target.checked);
+                  onEnablePatentRagChange(e.target.checked);
+                }}
               />
               <label htmlFor="enablePatentRag">
                 Enable Patent RAG
@@ -767,6 +770,13 @@ const handleFindSimilarMolecules = async (details) => {
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
+          console.log('🧪 PATENT RAG DEBUG - Frontend sending request with:', {
+            enablePatentRag,
+            patentRagEnabled: enablePatentRag,
+            disableLiteratureSearch,
+            disableTools
+          });
+          
           const res = await authFetch(`${API_URL}/rag`, {
             method : "POST",
             headers: { "Content-Type": "application/json" },
