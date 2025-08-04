@@ -81,6 +81,7 @@
     padding: 24px;
     max-height: 60vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .feedback-form-group {
