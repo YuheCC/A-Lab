@@ -269,10 +269,7 @@ const ChatInput = React.memo((props: {
                 type="checkbox"
                 id="enablePatentRag"
                 checked={enablePatentRag}
-                onChange={e => {
-                  console.log('🧪 PATENT RAG DEBUG - Checkbox changed to:', e.target.checked);
-                  onEnablePatentRagChange(e.target.checked);
-                }}
+                onChange={e => onEnablePatentRagChange(e.target.checked)}
               />
               <label htmlFor="enablePatentRag">
                 Enable Patent RAG
@@ -330,11 +327,7 @@ const ChatbotInterface = () => {
   } = useActiveChatData();
 
   // Debug: Log the current active chat data
-  console.log("Debug - Active chat data:", { 
-    messages: messages,
-    messagesLength: messages ? messages.length : 'undefined',
-    activeChat: useChatStore.getState().activeChat 
-  });
+
 
   const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
@@ -770,13 +763,6 @@ const handleFindSimilarMolecules = async (details) => {
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
-          console.log('🧪 PATENT RAG DEBUG - Frontend sending request with:', {
-            enablePatentRag,
-            patentRagEnabled: enablePatentRag,
-            disableLiteratureSearch,
-            disableTools
-          });
-          
           const res = await authFetch(`${API_URL}/rag`, {
             method : "POST",
             headers: { "Content-Type": "application/json" },
@@ -1033,26 +1019,12 @@ const handleFindSimilarMolecules = async (details) => {
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
                   
-                  {/* DEBUG: Log extra data information */}
-                  {console.log(`🧪 FRONTEND DEBUG - Message ${index}:`, {
-                    hasExtraData: !!msg.extraData,
-                    extraDataType: typeof msg.extraData,
-                    extraDataKeys: msg.extraData ? Object.keys(msg.extraData) : 'none',
-                    hasNestedExtraData: !!(msg.extraData && msg.extraData.extra_data),
-                    nestedExtraDataType: msg.extraData && msg.extraData.extra_data ? typeof msg.extraData.extra_data : 'none',
-                    nestedExtraDataKeys: msg.extraData && msg.extraData.extra_data ? Object.keys(msg.extraData.extra_data) : 'none',
-                    nestedExtraDataLength: msg.extraData && msg.extraData.extra_data ? Object.keys(msg.extraData.extra_data).length : 0,
-                    willRender: !!(msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0)
-                  })}
+
                   
-                  {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
-                    <div className="extra-data-wrapper" style={{ border: '2px solid red', padding: '10px', margin: '10px 0', backgroundColor: '#ffe6e6' }}>
-                      <div style={{ color: 'red', fontWeight: 'bold', marginBottom: '5px' }}>
-                        🧪 DEBUG: Extra Data Found ({Object.keys(msg.extraData.extra_data).length} sections)
-                      </div>
-                      {console.log(`🧪 FRONTEND DEBUG - Rendering extra data for message ${index}:`, msg.extraData.extra_data)}
-                      {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
-                        <ExtraDataSection
+                                      {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+                      <div className="extra-data-wrapper">
+                        {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
+                          <ExtraDataSection
                           key={key}
                           title={key}
                           content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
