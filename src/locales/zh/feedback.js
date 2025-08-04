@@ -12,5 +12,28 @@ export default {
         required: "反馈内容不能为空。",
         success: "反馈提交成功！",
         failed: "反馈提交失败，请重试。"
+    },
+    // 意见与反馈相关
+    feedback: {
+        title: "意见与反馈",
+        submitTitle: "提交反馈",
+        type: "反馈类型",
+        typeOptions: {
+            feature: "功能建议",
+            bug: "Bug报告",
+            other: "其他"
+        },
+        description: "请描述您的建议或问题",
+        descriptionPlaceholder: "请提供详细描述...",
+        uploadScreenshot: "上传截图",
+        uploadHint: "JPG/PNG 格式，最大 5MB",
+        submit: "提交反馈",
+        cancel: "取消",
+        required: "必填项",
+        success: "反馈提交成功！",
+        failed: "反馈提交失败，请重试。",
+        uploading: "上传中...",
+        fileTooLarge: "文件大小不能超过5MB",
+        invalidFileType: "只支持JPG/PNG格式"
     }
 }; 

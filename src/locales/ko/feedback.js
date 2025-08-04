@@ -12,5 +12,28 @@ export default {
         required: "피드백 텍스트가 필요합니다.",
         success: "피드백이 성공적으로 저장되었습니다!",
         failed: "피드백 저장에 실패했습니다. 다시 시도해주세요."
+    },
+    // 피드백 모달 관련
+    feedback: {
+        title: "피드백 및 제안",
+        submitTitle: "피드백 제출",
+        type: "피드백 유형",
+        typeOptions: {
+            feature: "기능 제안",
+            bug: "버그 보고",
+            other: "기타"
+        },
+        description: "제안이나 문제를 설명해 주세요",
+        descriptionPlaceholder: "자세한 설명을 제공해 주세요...",
+        uploadScreenshot: "스크린샷 업로드",
+        uploadHint: "JPG/PNG 형식, 최대 5MB",
+        submit: "피드백 제출",
+        cancel: "취소",
+        required: "필수",
+        success: "피드백이 성공적으로 제출되었습니다!",
+        failed: "피드백 제출에 실패했습니다. 다시 시도해 주세요.",
+        uploading: "업로드 중...",
+        fileTooLarge: "파일 크기는 5MB를 초과할 수 없습니다",
+        invalidFileType: "JPG/PNG 형식만 지원됩니다"
     }
 }; 

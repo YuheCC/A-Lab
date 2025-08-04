@@ -1,4 +1,4 @@
-import { Outlet } from "umi";
+import { Outlet, useLocation } from "umi";
 import Header from "@/components/Header";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useEffect, useState, createContext } from "react";
@@ -16,6 +16,9 @@ export const FavoriteContext = createContext<any>(null);
 export const PricingContext = createContext<any>(null);
 
 const FullNavLayout = () => {
+    const location = useLocation();
+    const pathname = location.pathname;
+    const isChatPage = pathname.includes('/chat');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
@@ -134,12 +137,18 @@ const FullNavLayout = () => {
         fetchInitialData();
         fetchData();
     }, []);
+    const getMainContainerClassName = () => {
+        if (isChatPage) {
+            return 'main-container chat-container';
+        }
+        return 'main-container';
+    }
     return (
         <MessageProvider>
           <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
             <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
                 <Header />
-                <div className='main-container'>
+                <div className={getMainContainerClassName()}>
                     <Outlet />
                 </div>
                 <PricingOverlay 

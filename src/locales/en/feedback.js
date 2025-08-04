@@ -12,5 +12,28 @@ export default {
         required: "Feedback text is required.",
         success: "Feedback saved successfully!",
         failed: "Failed to save feedback. Please try again."
+    },
+    // Feedback modal related
+    feedback: {
+        title: "Feedback & Suggestions",
+        submitTitle: "Submit Feedback",
+        type: "Feedback Type",
+        typeOptions: {
+            feature: "Feature Suggestion",
+            bug: "Bug Report",
+            other: "Other"
+        },
+        description: "Please describe your suggestion or issue",
+        descriptionPlaceholder: "Please provide detailed description...",
+        uploadScreenshot: "Upload Screenshot",
+        uploadHint: "JPG/PNG format, max 5MB",
+        submit: "Submit Feedback",
+        cancel: "Cancel",
+        required: "Required",
+        success: "Feedback submitted successfully!",
+        failed: "Failed to submit feedback. Please try again.",
+        uploading: "Uploading...",
+        fileTooLarge: "File size cannot exceed 5MB",
+        invalidFileType: "Only JPG/PNG format is supported"
     }
 }; 

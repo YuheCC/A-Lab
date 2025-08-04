@@ -3635,3 +3635,7 @@ body.no-select {
 .upgrade-btn-primary:hover {
   background-color: #0052a3;
 }
+
+.chat-page .main-container {
+  margin: 0;
+}

@@ -5,8 +5,10 @@ import userCircleSvg from '@/assets/svg/userCircle.svg';
 import { useState, useEffect, useRef, useContext } from "react";
 import settingSvg from '@/assets/svg/setting.svg';
 import logoutSvg from '@/assets/svg/logout.svg';
+import feedbackSvg from '@/assets/svg/feedback.svg';
 import { useAuthStore } from "@/models/useAuth";
 import SettingModal from "@/components/SettingModal";
+import UserFeedBackModal from "@/components/UserFeedBackModal";
 import RoleRender from "../RoleRender";
 import { PricingContext } from "@/layouts/index";
 
@@ -17,6 +19,7 @@ const Header = () => {
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
+    const userFeedBackModalRef = useRef<any>(null);
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
@@ -127,6 +130,10 @@ const Header = () => {
                             <img src={settingSvg} alt="Setting" className="item-icon" />
                             {t('navigation.userDropdown.accountSettings')}
                         </a>
+                        <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
+                            <img src={feedbackSvg} alt="Feedback" className="item-icon" />
+                            {t('navigation.userDropdown.feedback')}
+                        </a>
                         <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
                             <img src={logoutSvg} alt="Logout" className="item-icon" />
                             {t('navigation.userDropdown.logout')}
@@ -135,7 +142,7 @@ const Header = () => {
                 </div>
             </div>
             <SettingModal ref={settingModalRef} />
-            
+            <UserFeedBackModal ref={userFeedBackModalRef} />
             {/* 升级确认框 */}
             {showUpgradeModal && (
                 <div className="upgrade-modal-overlay" onClick={handleUpgradeCancel}>

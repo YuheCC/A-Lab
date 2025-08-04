@@ -35,6 +35,10 @@ export default  [
         component: "Ask"
     },
     {
+        path: "/chat",
+        component: "Chat",
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,

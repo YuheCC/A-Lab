@@ -12,5 +12,28 @@ export default {
         required: "フィードバックテキストは必須です。",
         success: "フィードバックが正常に保存されました！",
         failed: "フィードバックの保存に失敗しました。もう一度お試しください。"
+    },
+    // フィードバックモーダル関連
+    feedback: {
+        title: "フィードバックと提案",
+        submitTitle: "フィードバックを送信",
+        type: "フィードバックタイプ",
+        typeOptions: {
+            feature: "機能提案",
+            bug: "バグ報告",
+            other: "その他"
+        },
+        description: "提案や問題を説明してください",
+        descriptionPlaceholder: "詳細な説明を提供してください...",
+        uploadScreenshot: "スクリーンショットをアップロード",
+        uploadHint: "JPG/PNG形式、最大5MB",
+        submit: "フィードバックを送信",
+        cancel: "キャンセル",
+        required: "必須",
+        success: "フィードバックが正常に送信されました！",
+        failed: "フィードバックの送信に失敗しました。もう一度お試しください。",
+        uploading: "アップロード中...",
+        fileTooLarge: "ファイルサイズは5MBを超えることはできません",
+        invalidFileType: "JPG/PNG形式のみサポートされています"
     }
 }; 
