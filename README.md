@@ -2,7 +2,7 @@
 
 A molecular visualization and analysis platform based on React and UmiJS, providing interactive molecular maps, intelligent chatbots, and data exploration features.
 
-## 🚀 Quick Start
+## 🚀 Quick Start Now
 
 ### Requirements
 - Node.js >= 16.0.0
