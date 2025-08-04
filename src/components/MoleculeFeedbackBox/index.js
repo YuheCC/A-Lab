@@ -31,9 +31,10 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     try {
       setSubmitting(true);
 
-      // Determine queryType based on useMultiAgent prop or response content
+      // Determine queryType based on explicit prop, useMultiAgent prop, or response content
       let determinedQueryType = queryType;
-      if (!determinedQueryType) {
+      if (!queryType) {
+        // Only use detection logic when no explicit queryType is provided
         // Check if response contains multi-agent indicators
         const responseContent = molecule.SMILES || molecule.smiles || '';
         const isMultiAgentResponse = useMultiAgent || 
@@ -48,7 +49,7 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
             lastSearch.includes('## Chemical_Prop_Expert')
           ));
         
-        determinedQueryType = isMultiAgentResponse ? "multi_agent" : "normal_ask";
+        determinedQueryType = isMultiAgentResponse ? "deep_space" : "normal_ask";
       }
 
       // Submit feedback to backend
