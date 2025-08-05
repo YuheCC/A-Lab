@@ -1,98 +1,151 @@
-# UMAP Application
+# UMAP Molecular Visualization Application
 
-A molecular visualization and exploration tool with user authentication.
+A molecular visualization and analysis platform based on React and UmiJS, providing interactive molecular maps, intelligent chatbots, and data exploration features.
 
-## Project Structure
+## 🚀 Quick Start
 
-- `src/` - React frontend application
-- `public/` - Static files for the frontend
+### Requirements
+- Node.js >= 16.0.0
+- pnpm >= 8.0.0
 
-## Setup and Running
-
-### Frontend (React Application)
-1. Node.js version v22.14.0 is recommended for frontend compatibility
-2. Install Node.js dependencies:
+### Install Dependencies
 ```bash
-npm install
+pnpm install
 ```
 
-3. Start the development server:
+### Development Server
 ```bash
-npm start
+# Start development server (using staging environment config)
+pnpm dev
+
+# Or use production environment config
+pnpm start:prod
 ```
 
-The React application will run on http://localhost:3000
-
-## Build and Hosting
-
-### Building for Production
-1. Create a production build:
+### Build Project
 ```bash
-npm run build
+# Production build
+pnpm build
+
+# Staging build
+pnpm build:staging
 ```
 
-## Features
+## ⚙️ Configuration
 
-- User authentication (login/signup)
-- UMAP visualization of molecular data
-- Property-based filtering
-- Molecule search and visualization
-- Chatbot interface for molecule exploration
-- Favorites tab to store molecules
-- Forgot password & password change
-- Team voucher redeem for account creation
-- An about page that explains our product and our goal with what we are building
-- A pricing page that links to our product line on stripe
-- Settings ability integrated in the application to manage your subscription
-- Terms page
-- Newsfeed with updates in regards to product development
+### Environment Configuration
 
-## Authentication
+The project supports two environment configurations:
 
-The application uses JWT-based authentication. Only logged-in users can access the features aside from /map and /about.
-
-## Data Source
-
-The application reads data from snowflake by making requests to the backend.
-
-## Implementation Details
-
-- Built with React (without TypeScript)
-- Uses react-force-graph for visualization
-- Implements D3 scales for color mapping
-- Implements plotly.js for the UMAP and Spider-graph
-- Implements our inhouse LLM
-- Implements statistical analysis methods for finding similar molecules
-- Implements a molecular search engine for molecule lookups to our database
-
-## AWS Amplify
-
-This front end react application is hosted on AWS amplify. Currently, it is setup so that the `main` branch automatically built and deploys to molecular-universe.ses.ai automatically. You can access and configure settings for the front end build through our AWS portal, and by going to the amplify home page.
-
-- Currently there are two domains we have for the front end applications running on
-1) https://demo.ses.ai
-2) https://molecular-universe.ses.ai
-
-## Setup
-
-1. Run `npm install`
-2. Create .env file to specify API endpoint (REACT_APP_API_URL is the env variable used)
-```
-# REACT_APP_API_URL=http://0.0.0.0:8000
-# REACT_APP_API_URL=https://api.ses.ai
-
-# Create React App expects environment variables to be prefixed with `REACT_APP_`
-REACT_APP_API_URL=https://prod-api.ses.ai
+#### 1. Production Environment (`config/config.ts`)
+```typescript
+define: {
+  'BASE_URL': "https://prod-api.ses.ai",
+  'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
+  'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
+}
 ```
 
-3. Run `npm run start`
+#### 2. Staging Environment (`config/config.staging.ts`)
+```typescript
+define: {
+  'BASE_URL': "https://api-sh.ses.ai",
+  'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
+  'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
+}
+```
 
-## Current Architecture Chart For All Environemnts and Databases
+### BaseURL Configuration
 
-| Backend Server | Backend Server URL | Back-end Repo | Back-end Branch | Frontend Server Name | Frontend Server Link | Frontend Repo | Frontend Branch | Database |
-|---|---|---|---|---|---|---|---|---|
-| current-production-server | prod-api.ses.ai | Lowry's personal | main | UMAP-APP-SH | https://molecular-universe.ses.ai | https://github.com/FrankWangSes/UMAP-APP/tree/main-sh | main-sh | Production RDS Database |
-| current-staging-server | demo-api.ses.ai | https://github.com/codywirthses/UMAP-APP | staging | UMAP-APP-US-STAGING | https://staging.d5wqg9ff3njti.amplifyapp.com/ | https://github.com/codywirthses/UMAP-APP | staging | Production RDS Database |
-| staging-sh | ? | Lowry's personal | ? | UMAP-APP-SH-Staging: Overview | https://demo-sh.ses.ai/ | https://github.com/FrankWangSes/UMAP-APP/tree/staging-sh | staging-sh | Production RDS Database |
-| llm-team-staging-server | llm-staging.ses.ai | https://github.com/codywirthses/umap-backend | llm-staging | LLM-FRONTEND-STAGING | https://llm-staging.d3k7q9ivq7by5c.amplifyapp.com | https://github.com/codywirthses/UMAP-APP | staging | Production RDS Database |
-| molecular-universe-demo | demo-api.ses.ai | https://github.com/codywirthses/umap-backend | main | UMAP-APP-Demo | https://demo.ses.ai | https://github.com/codywirthses/UMAP-APP | main | Production RDS Database |
+BaseURL is the backend API address, which can be configured in the following ways:
+
+1. **Modify Production BaseURL**:
+   Edit the `BASE_URL` value in `config/config.ts`
+
+2. **Modify Staging BaseURL**:
+   Edit the `BASE_URL` value in `config/config.staging.ts`
+
+3. **Runtime Environment Switching**:
+   - Development mode uses staging config by default
+   - Production build uses production config
+   - Switch via `UMI_ENV` environment variable
+
+### Other Configuration Items
+
+- `explorer_url`: Explorer version purchase link
+- `team_url`: Team version purchase link
+- `outputPath`: Build output directory (default: `build`)
+- `favicons`: Website favicon configuration
+
+## 🌟 Key Features
+
+- **Molecular Visualization**: Interactive molecular maps using UMAP algorithm
+- **Intelligent Chat**: AI-powered molecular Q&A
+- **Data Exploration**: Molecular data search and filtering
+- **Multi-language Support**: Chinese, English, Korean
+- **User Management**: Login, registration, user settings
+- **Pricing Plans**: Flexible subscription plans
+
+## 📁 Project Structure
+
+```
+src/
+├── components/     # Common components
+├── pages/         # Page components
+├── models/        # Data models and state management
+├── services/      # API services
+├── locales/       # Multi-language configuration
+├── hooks/         # Custom hooks
+└── utils.js       # Utility functions
+```
+
+## 🔧 Development
+
+### Main Dependencies
+- **Framework**: UmiJS 4.x + React 19
+- **UI Components**: Material-UI
+- **Visualization**: Plotly.js, Deck.gl
+- **State Management**: Zustand
+- **Internationalization**: i18next
+
+### Development Environment Variables
+```bash
+# Use staging environment
+UMI_ENV=staging pnpm dev
+
+# Use production environment
+pnpm start:prod
+```
+
+## 📝 Deployment
+
+1. **Build Project**:
+   ```bash
+   pnpm build
+   ```
+
+2. **Deploy Files**:
+   After building, the `build` directory contains all static files
+
+3. **Environment Configuration**:
+   Ensure the target environment's BaseURL configuration is correct
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create a feature branch
+3. Submit changes
+4. Create a Pull Request
+
+## 📄 License
+
+This project is private and owned by SES.AI.
+
+---
+
+For any questions, please contact the development team: feiran.wang@ses.ai
+
+## 📖 Language Versions
+
+- [中文版本 (Chinese)](./README.zh.md)
+- [English Version](./README.md) (Current) 
