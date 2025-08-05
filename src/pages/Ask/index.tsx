@@ -634,6 +634,52 @@ const handleFindSimilarMolecules = async (details) => {
     setShowSimilarMolecules(false);
   }, [activeChat]);
 
+  // Poll helper – waits until the back‑end marks the chat complete, then hydrates the
+  // latest assistant message into local state.  Stops after `maxTries` × interval.
+  const pollChatUntilComplete = async (
+    chatId: string,
+    {
+      intervalMs = 5000,
+      maxTries   = 1200, // ≈20 minutes
+    } = {}
+  ) => {
+    let tries = 0;
+    while (tries < maxTries) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+      tries += 1;
+
+      try {
+        const res   = await authFetch(`${API_URL}/chat-history/${chatId}`);
+        if (!res.ok) continue;
+        const data  = await res.json();
+        const { status, messages: serverMsgs = [] } = data;
+
+        if (status === "complete") {
+          const assistant = serverMsgs.reverse().find((m: any) => m.role === "assistant");
+          if (assistant) {
+            addMessage(
+              {
+                role: "assistant",
+                content: assistant.content || "",
+                sources: assistant.sources,
+                extraData: assistant.extra_data || null,
+              },
+              chatId
+            );
+          }
+          setIsThinking(false, chatId);
+          setStatus("complete", chatId);
+          return;
+        }
+      } catch (err) {
+        console.error("[pollChat]", err);
+      }
+    }
+    // Timed‑out – stop spinner
+    setIsThinking(false, chatId);
+    setStatus("complete", chatId);
+  };
+
   const handleSend = useCallback(
     async (input) => {
       if (!input.trim()) return;
@@ -705,6 +751,15 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
@@ -732,6 +787,19 @@ const handleFindSimilarMolecules = async (details) => {
             if (!clarRes.ok) {
               fetchQueryLimit();
               throw new Error(await clarRes.text());
+            }
+            // 202 → just { chat_id }, start polling and return early
+            if (clarRes.status === 202) {
+              const { chat_id } = await clarRes.json();
+              if (isNewChat && chat_id !== undefined) {
+                updateNewChatId(`${chat_id}`, localChatId);
+                effectiveChatId = `${chat_id}`;
+                localChatId     = effectiveChatId;
+                isNewChat       = false;
+              }
+              // Wait for clarifying questions to arrive via history polling
+              pollChatUntilComplete(effectiveChatId);
+              return;
             }
             const clarData = await clarRes.json();
 
@@ -767,6 +835,15 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
@@ -795,14 +872,30 @@ const handleFindSimilarMolecules = async (details) => {
             body: JSON.stringify(ragPayload),
           });
 
-          if (!res.ok) {
+          if (!res.ok && res.status !== 202) {
             const errText = await res.text();
             if (res.status === 400 &&
                 errText.includes("Query is not relevant to batteries or battery chemistry"))
               throw new Error(t('chatbox.errors.batteryRelevance'));
-
             throw new Error(errText || t('chatbox.errors.networkError'));
           }
+
+          // 202 → just { chat_id }, start polling and return early
+          if (res.status === 202) {
+            const { chat_id } = await res.json();
+            if (isNewChat && chat_id !== undefined) {
+              updateNewChatId(`${chat_id}`, localChatId);
+              effectiveChatId = `${chat_id}`;
+              localChatId     = effectiveChatId;
+              isNewChat       = false;
+            }
+
+            pollChatUntilComplete(effectiveChatId);
+            // spinner stays active – subsequent poll will add the assistant message
+            return;
+          }
+
+          // 200 – old synchronous behaviour
           data = await res.json();
         }
 
