@@ -634,6 +634,52 @@ const handleFindSimilarMolecules = async (details) => {
     setShowSimilarMolecules(false);
   }, [activeChat]);
 
+  // Poll helper – waits until the back‑end marks the chat complete, then hydrates the
+  // latest assistant message into local state.  Stops after `maxTries` × interval.
+  const pollChatUntilComplete = async (
+    chatId: string,
+    {
+      intervalMs = 5000,
+      maxTries   = 1200, // ≈20 minutes
+    } = {}
+  ) => {
+    let tries = 0;
+    while (tries < maxTries) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+      tries += 1;
+
+      try {
+        const res   = await authFetch(`${API_URL}/chat-history/${chatId}`);
+        if (!res.ok) continue;
+        const data  = await res.json();
+        const { status, messages: serverMsgs = [] } = data;
+
+        if (status === "complete") {
+          const assistant = serverMsgs.reverse().find((m: any) => m.role === "assistant");
+          if (assistant) {
+            addMessage(
+              {
+                role: "assistant",
+                content: assistant.content || "",
+                sources: assistant.sources,
+                extraData: assistant.extra_data || null,
+              },
+              chatId
+            );
+          }
+          setIsThinking(false, chatId);
+          setStatus("complete", chatId);
+          return;
+        }
+      } catch (err) {
+        console.error("[pollChat]", err);
+      }
+    }
+    // Timed‑out – stop spinner
+    setIsThinking(false, chatId);
+    setStatus("complete", chatId);
+  };
+
   const handleSend = useCallback(
     async (input) => {
       if (!input.trim()) return;
@@ -641,15 +687,24 @@ const handleFindSimilarMolecules = async (details) => {
       /* enforce research-tier quota */
       if (userPermissions === 'research' && remainingQueries <= 0) {
         addMessage({
-          role : "assistant",
-          content : t('chatbox.queryLimit.reachedLimit')
+          role: "assistant",
+          content: t('chatbox.queryLimit.reachedLimit')
         });
         return;
       }
 
+      // Handle temporary chat IDs so multiple new chats can be created
+      let localChatId = activeChat;
+      let isNewChat = localChatId === '-1';
+      if (isNewChat) {
+        const tempId = Date.now().toString();
+        updateNewChatId(tempId);
+        localChatId = tempId;
+      }
+
       /* push new user message */
       const newUserMessage = { role: "user", content: input.trim() };
-      addMessage(newUserMessage);
+      addMessage(newUserMessage, localChatId);
 
       /* construct message list for the back-end */
       const messagesToSend = ignoreChatHistory
@@ -657,15 +712,15 @@ const handleFindSimilarMolecules = async (details) => {
         : [...messages, newUserMessage]
             .filter(m => m.role === "user" || m.role === "assistant");
 
-      setIsThinking(true);
-      const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
-      let effectiveChatId   = currentChatId;
+      setIsThinking(true, localChatId);
+      let effectiveChatId = localChatId;
       setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10          : 3;
+      const ragModel        = isAdvancedTier ? 'o3' : 'o4-mini';
+      const ragResultsCount = isAdvancedTier ? 10 : 3;
 
-      let data;          // final payload from the back-end
+      const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
+      let data; // final payload from the back-end
 
       try {
         /* ---------------------------------------------------------- */
@@ -686,9 +741,9 @@ const handleFindSimilarMolecules = async (details) => {
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -696,6 +751,15 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
@@ -706,31 +770,44 @@ const handleFindSimilarMolecules = async (details) => {
 
           /* 2️⃣  First contact – ask for clarifying questions -------- */
           } else {
-            // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
 
             const multiAgentPayload: any = { messages: messagesToSend };
-            if (effectiveChatId !== -1) multiAgentPayload.chat_id = effectiveChatId;
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const clarifyPayload: any = { messages: messagesToSend };
             if (currentChatId !== -1) clarifyPayload.chat_id = currentChatId;
 
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify(clarifyPayload),
+              body: JSON.stringify(clarifyPayload),
             });
             if (!clarRes.ok) {
               fetchQueryLimit();
               throw new Error(await clarRes.text());
             }
+            // 202 → just { chat_id }, start polling and return early
+            if (clarRes.status === 202) {
+              const { chat_id } = await clarRes.json();
+              if (isNewChat && chat_id !== undefined) {
+                updateNewChatId(`${chat_id}`, localChatId);
+                effectiveChatId = `${chat_id}`;
+                localChatId     = effectiveChatId;
+                isNewChat       = false;
+              }
+              // Wait for clarifying questions to arrive via history polling
+              pollChatUntilComplete(effectiveChatId);
+              return;
+            }
             const clarData = await clarRes.json();
 
-            // Update chat ID for new chat
-            if (effectiveChatId === -1 && clarData.chat_id !== undefined) {
-              updateNewChatId(clarData.chat_id);
-              effectiveChatId = clarData.chat_id;
+            if (isNewChat && clarData.chat_id !== undefined) {
+              updateNewChatId(`${clarData.chat_id}`, localChatId);
+              effectiveChatId = `${clarData.chat_id}`;
+              localChatId = effectiveChatId;
+              isNewChat = false;
             }
 
             if (clarData.clarifying_questions?.length) {
@@ -742,16 +819,15 @@ const handleFindSimilarMolecules = async (details) => {
               setStatus('awaiting_clarification', effectiveChatId);
               setIsThinking(false, effectiveChatId);
               fetchQueryLimit();
-              return;                 // wait for user reply
+              return; // wait for user reply
             }
 
             setIsInClarifyFlow(false, effectiveChatId);
 
-            /* 3️⃣  No clarifications – run Deep Space directly ---- */
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -759,43 +835,67 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
               }
             }
           }
-          // Refresh query limit
           fetchQueryLimit();
         /* ---------------------------------------------------------- */
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
           const ragPayload: any = {
-            messages        : messagesToSend,
-            ragEnabled      : !disableLiteratureSearch,
-            toolsEnabled    : !disableTools,
+            messages: messagesToSend,
+            ragEnabled: !disableLiteratureSearch,
+            toolsEnabled: !disableTools,
             webSearchEnabled: false,
-            webSearchClient : "Tavily",
-            numRagResults   : ragResultsCount,
-            model           : ragModel,
+            webSearchClient: "Tavily",
+            numRagResults: ragResultsCount,
+            model: ragModel,
             patentRagEnabled: enablePatentRag,
           };
           if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
-            method : "POST",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body   : JSON.stringify(ragPayload),
+            body: JSON.stringify(ragPayload),
           });
 
-          if (!res.ok) {
+          if (!res.ok && res.status !== 202) {
             const errText = await res.text();
             if (res.status === 400 &&
                 errText.includes("Query is not relevant to batteries or battery chemistry"))
               throw new Error(t('chatbox.errors.batteryRelevance'));
-
             throw new Error(errText || t('chatbox.errors.networkError'));
           }
+
+          // 202 → just { chat_id }, start polling and return early
+          if (res.status === 202) {
+            const { chat_id } = await res.json();
+            if (isNewChat && chat_id !== undefined) {
+              updateNewChatId(`${chat_id}`, localChatId);
+              effectiveChatId = `${chat_id}`;
+              localChatId     = effectiveChatId;
+              isNewChat       = false;
+            }
+
+            pollChatUntilComplete(effectiveChatId);
+            // spinner stays active – subsequent poll will add the assistant message
+            return;
+          }
+
+          // 200 – old synchronous behaviour
           data = await res.json();
         }
 
@@ -804,21 +904,22 @@ const handleFindSimilarMolecules = async (details) => {
         /* ---------------------------------------------------------- */
         if (data?.error) throw new Error(data.error);
 
-        /* adopt/assign chat ID */
-        if (effectiveChatId === -1 && data?.chat_id !== undefined) {
-          updateNewChatId(data.chat_id);
-          effectiveChatId = data.chat_id;
+        if (isNewChat && data?.chat_id !== undefined) {
+          updateNewChatId(`${data.chat_id}`, localChatId);
+          effectiveChatId = `${data.chat_id}`;
+          localChatId = effectiveChatId;
+          isNewChat = false;
         }
+
         if (data?.status) setStatus(data.status, effectiveChatId);
         else setStatus('complete', effectiveChatId);
 
-        /* build LLM message */
         const llmMessage = {
-          role     : "assistant",
-          inputs   : data.inputs || null,
-          content  : data.llmOutput || data.answer || "",
-          sources  : data.source_html,
-          molText  : data.molecule_text,
+          role: "assistant",
+          inputs: data.inputs || null,
+          content: data.llmOutput || data.answer || "",
+          sources: data.source_html,
+          molText: data.molecule_text,
           molecules: data.molecules,
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
@@ -826,16 +927,15 @@ const handleFindSimilarMolecules = async (details) => {
         addMessage(llmMessage, effectiveChatId);
         setIsThinking(false, effectiveChatId);
 
-        /* refresh quota for research tier */
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message });
-        setIsThinking(false);
+        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
+        setIsThinking(false, effectiveChatId);
         setStatus('complete', effectiveChatId);
       } finally {
-        if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        setIsThinking(false, effectiveChatId);
         fetchQueryLimit();
       }
     },

@@ -120,61 +120,52 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
      * Method to update new chat ID after receiving it from the server.
      * @param {*} chatId 
      */
-    updateNewChatId: (chatId: string) => {
+    updateNewChatId: (chatId: string, oldChatId: string = '-1') => {
         set(produce((state: ChatState) => {
-            console.log("Updating new chat ID to:", chatId);
-            // Get the chat data
-            const chatData = state.chatMap['-1'];
+            console.log("Updating chat ID:", oldChatId, "→", chatId);
+
+            const chatData = state.chatMap[oldChatId];
             if (!chatData) {
-                console.warn(`❌ Chat with id -1 does not exist.`);
+                console.warn(`❌ Chat with id ${oldChatId} does not exist.`);
                 return;
             }
-            
-            console.log("🔍 DEBUG - Chat data being moved:", {
-                messagesLength: chatData.messages?.length,
-                chatName: chatData.name,
-                messages: chatData.messages?.map(m => ({ role: m.role, contentPreview: (m.content || '').substring(0, 50) + '...' }))
-            });
-            
+
             if (chatId === null) {
                 console.warn("❌ Chat ID is null, not updating.");
                 return;
             }
-            
-            // Check if the target chat already exists
+
             if (state.chatMap[chatId]) {
-                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing -1 chat`);
-                // If target chat exists (from history loading), merge the -1 chat messages into it
-                // and ensure we don't lose any messages that were added locally
+                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing ${oldChatId} chat`);
                 const existingChat = state.chatMap[chatId];
                 const localMessages = chatData.messages || [];
-                
-                // Merge messages, avoiding duplicates by content comparison
+
                 const mergedMessages = [...existingChat.messages];
                 localMessages.forEach(localMsg => {
-                    const isDuplicate = mergedMessages.some(existingMsg => 
-                        existingMsg.role === localMsg.role && 
+                    const isDuplicate = mergedMessages.some(existingMsg =>
+                        existingMsg.role === localMsg.role &&
                         existingMsg.content === localMsg.content
                     );
                     if (!isDuplicate) {
                         mergedMessages.push(localMsg);
                     }
                 });
-                
+
                 state.chatMap[chatId] = {
                     ...existingChat,
                     messages: mergedMessages,
-                    name: chatData.name || existingChat.name // Prefer the local name if it was set
+                    name: chatData.name || existingChat.name
                 };
             } else {
-                // Add chat with new ID
                 state.chatMap[chatId] = chatData;
             }
-            
-            // Always remove the -1 chat and set active chat
-            delete state.chatMap['-1'];
-            state.activeChat = chatId;
-            
+
+            delete state.chatMap[oldChatId];
+
+            if (state.activeChat === oldChatId) {
+                state.activeChat = chatId;
+            }
+
             console.log("✅ CHAT ID UPDATED SUCCESSFULLY:", {
                 newActiveChat: state.activeChat,
                 newChatExists: !!state.chatMap[chatId],
@@ -313,14 +304,30 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
     /**
      * Creates a new chat with the given name.
-     * - If a chat with ID '-1' already exists, it will not create a new one. (Limited to one new chat without a server set ID)
-     * @param {*} name 
+     * - If a blank chat already exists, switch to it instead of creating a new one.
+     * - If the existing default chat has messages, preserve it with a temporary ID and open a fresh blank chat.
+     * @param {*} name
      */
     createChat: (name = 'New Chat') => {
         set(produce((state: ChatState) => {
-            if (state.chatMap['-1']) {
-                console.warn("Default chat already exists, not creating a new one.");
-                return;
+            const defaultChat = state.chatMap['-1'];
+
+            if (defaultChat) {
+                const isBlank = !defaultChat.messages ||
+                    defaultChat.messages.length === 0 ||
+                    (defaultChat.messages.length === 1 && defaultChat.messages[0].role === 'system');
+
+                if (isBlank) {
+                    state.activeChat = '-1';
+                    return;
+                }
+
+                const tempId = Date.now().toString();
+                state.chatMap[tempId] = defaultChat;
+                if (state.activeChat === '-1') {
+                    state.activeChat = tempId;
+                }
+                delete state.chatMap['-1'];
             }
 
             console.log("Creating new chat with name:", name);
