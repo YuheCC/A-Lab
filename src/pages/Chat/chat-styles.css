@@ -90,11 +90,8 @@
     will-change: auto;
 }
 
-.chat-container .transition-element,
-.molecule-panel .transition-element,
-.chat-sidebar.mini-sidebar,
-.molecule-panel.expanded {
-    will-change: transform, width, opacity;
+.chat-container .chat-sidebar {
+    will-change: width;
 }
 
 /* 针对聊天页面的可访问性优化 */

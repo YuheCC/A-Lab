@@ -58,7 +58,7 @@ body.chat-page-body {
     border-right: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
+    transition: width 0.3s ease;
 }
 
 .chat-container.sidebar-collapsed .chat-main {
@@ -355,8 +355,8 @@ body.chat-page-body {
     opacity: 0.7;
 }
 
-/* Mini侧边栏样式 */
-.chat-sidebar.mini-sidebar {
+/* Mini侧边栏样式 - 使用更高优先级确保动画工作 */
+.chat-container .chat-sidebar.mini-sidebar {
     overflow: hidden;
     width: 50px !important;
     padding: 0 !important;
@@ -367,6 +367,7 @@ body.chat-page-body {
     align-items: center;
     justify-content: flex-start;
     padding-top: 2px;
+    transition: width 0.3s ease !important;
 }
 
 .chat-sidebar.mini-sidebar .sidebar-top-row {
@@ -417,7 +418,11 @@ body.chat-page-body {
 .chat-sidebar.mini-sidebar .mini-search-btn {
     display: flex !important;
     visibility: visible !important;
-    opacity: 1 !important;
+}
+
+.chat-sidebar:not(.mini-sidebar) .mini-new-chat-btn,
+.chat-sidebar:not(.mini-sidebar) .mini-search-btn {
+    display: none !important;
 }
 
 /* 保留mini模式下的切换按钮，用于切换回完整模式 */
@@ -446,7 +451,6 @@ body.chat-page-body {
 
 .chat-sidebar.mini-sidebar .mini-new-chat-btn,
 .chat-sidebar.mini-sidebar .mini-search-btn {
-    display: flex !important;
     align-items: center;
     justify-content: center;
     transition: color 0.2s ease;
@@ -463,11 +467,6 @@ body.chat-page-body {
 .chat-sidebar.mini-sidebar .mini-new-chat-btn:hover,
 .chat-sidebar.mini-sidebar .mini-search-btn:hover {
     color: #56B26A;
-}
-
-.chat-sidebar:not(.mini-sidebar) .mini-new-chat-btn,
-.chat-sidebar:not(.mini-sidebar) .mini-search-btn {
-    display: none !important;
 }
 
 /* 确保在mini模式下隐藏所有其他内容 */

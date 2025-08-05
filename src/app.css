@@ -252,6 +252,7 @@
     flex-direction: column;
     gap: 20px;
     border-right: 1px solid #e2e8f0;
+    transition: width 0.3s ease;
   }
   
   .new-chat-btn {

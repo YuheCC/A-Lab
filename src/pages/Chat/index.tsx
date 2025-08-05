@@ -5,7 +5,7 @@ const Chat = () => {
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
     return (
         <div className="chat-container">
-            <aside className={`chat-sidebar ${isSidebarCollapsed ? 'mini-sidebar' : ''}`} id="chatSidebar" style={{transition: 'width 0.3s ease'}}>
+            <aside className={`chat-sidebar ${isSidebarCollapsed ? 'mini-sidebar' : ''}`} id="chatSidebar">
                 <div className="sidebar-top-section">
                     <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 0 12px 0'}}>
                     <div className="ask-title">ASK</div>
@@ -18,7 +18,7 @@ const Chat = () => {
                     </button>
                     </div>
                     {/* Mini模式下的切换按钮 */}
-                    <button id="miniToggleSidebarBtn" className="mini-toggle-btn" title="Toggle sidebar">
+                    <button id="miniToggleSidebarBtn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mini-toggle-btn" title="Toggle sidebar">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="5" width="14" height="2" rx="1" fill="currentColor"/>
                         <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor"/>
