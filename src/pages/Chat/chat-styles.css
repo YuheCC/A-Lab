@@ -103,11 +103,15 @@
 }
 
 .chat-container input:focus,
-.chat-container textarea:focus,
 .feedback-modal input:focus,
 .feedback-modal textarea:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.2);
+}
+
+/* 移除chat-container中textarea的focus样式，避免与父容器focus-within产生双层边框 */
+.chat-container textarea:focus {
+    outline: none;
 }
 
 /* 确保高对比度模式下的可读性 */

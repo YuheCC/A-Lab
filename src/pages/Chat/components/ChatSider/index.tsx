@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ChatHistory from "../History";
 
 const ChatSider = () => {
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
@@ -48,91 +49,7 @@ const ChatSider = () => {
                 </a>
                 </div>
             </div>
-            <nav className="history-nav">
-                <p className="history-title">历史对话</p>
-                <ul>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="7">LiFePO4石墨电池电解质推荐</a>
-                        <button className="chat-menu-btn" data-chat-id="7">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="1">电解质溶剂稳定性预测分析</a>
-                        <button className="chat-menu-btn" data-chat-id="1">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="2">锂枝晶形成原因及抑制方法</a>
-                        <button className="chat-menu-btn" data-chat-id="2">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="3">SEI层组成成分研究</a>
-                        <button className="chat-menu-btn" data-chat-id="3">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="4">高镍正极材料性能优化</a>
-                        <button className="chat-menu-btn" data-chat-id="4">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="5">固态电解质界面稳定性</a>
-                        <button className="chat-menu-btn" data-chat-id="5">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="6">电池热管理系统设计</a>
-                        <button className="chat-menu-btn" data-chat-id="6">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="8">磷酸铁锂正极材料改性研究</a>
-                        <button className="chat-menu-btn" data-chat-id="8">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="9">钠离子电池电解质设计</a>
-                        <button className="chat-menu-btn" data-chat-id="9">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="10">锂硫电池正极材料优化</a>
-                        <button className="chat-menu-btn" data-chat-id="10">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="11">固态电池界面工程研究</a>
-                        <button className="chat-menu-btn" data-chat-id="11">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="12">电池循环寿命预测模型</a>
-                        <button className="chat-menu-btn" data-chat-id="12">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="13">快充技术对电池性能影响</a>
-                        <button className="chat-menu-btn" data-chat-id="13">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="14">电池安全性能评估方法</a>
-                        <button className="chat-menu-btn" data-chat-id="14">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="15">锂离子电池容量衰减机理</a>
-                        <button className="chat-menu-btn" data-chat-id="15">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="16">电池管理系统算法优化</a>
-                        <button className="chat-menu-btn" data-chat-id="16">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="17">新型电解质添加剂研究</a>
-                        <button className="chat-menu-btn" data-chat-id="17">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="18">电池材料表征技术进展</a>
-                        <button className="chat-menu-btn" data-chat-id="18">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="19">电池回收技术发展趋势</a>
-                        <button className="chat-menu-btn" data-chat-id="19">⋯</button>
-                    </li>
-                    <li>
-                        <a href="#" className="recent-chat" data-chat-id="20">电池制造工艺优化方案</a>
-                        <button className="chat-menu-btn" data-chat-id="20">⋯</button>
-                    </li>
-                </ul>
-            </nav>
+            <ChatHistory />
         </aside>
     )
 }
