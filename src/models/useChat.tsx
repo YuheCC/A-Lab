@@ -261,6 +261,17 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         }
     },
 
+    /**
+     * Overwrite the chat’s title (name) once the back‑end generates it.
+     */
+    setChatName: (name: string, chatId = null) => set(produce((state: ChatState) => {
+        if (!name) return;
+        const targetChatId = chatId || state.activeChat;
+        const chat = state.chatMap[targetChatId];
+        if (!chat) return;
+        chat.name = name;
+    })),
+
     deleteChat: async (chatId: string) => {
         set(produce((state: ChatState) => {
             console.log("Deleting chat with id:", chatId);
@@ -400,12 +411,24 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         const targetChatId = chatId || get().activeChat;
 
         set(produce((state) => {
-            if (message.role === 'user' && state.activeChat === '-1') {
-                state.chatMap[state.activeChat].name = message.content;
-            }
+            // Give the chat a meaningful title once the very first user message
+            // arrives.  We only overwrite the placeholder “New Chat”.  This works
+            // for chats that have already been assigned a real ID, too.
             const chat = state.chatMap[targetChatId];
+            if (
+              message.role === 'user' &&
+              chat &&
+              chat.messages.length === 0 &&
+              chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
+            ) {
+              chat.name = message.content;
+            }
+
             if (!chat) return;
-            chat.messages.push(message);
+
+            // Use immutable update so selectors that rely on reference equality
+            // (useActiveChatData deep compare) notice the change.
+            chat.messages = [...chat.messages, message];
         }));
     },
     clearMessages: () => set(produce((state) => {

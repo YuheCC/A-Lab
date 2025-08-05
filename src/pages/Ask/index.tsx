@@ -12,6 +12,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
 import { useShallow } from 'zustand/react/shallow';
+import i18n from '@/locales/i18n';
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import CustomButton from '@/components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
@@ -329,7 +330,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -346,6 +347,7 @@ const ChatbotInterface = () => {
     setUseMultiAgent: state.setUseMultiAgent,
     setIsInClarifyFlow: state.setIsInClarifyFlow,
     setStatus: state.setStatus,
+    setChatName: state.setChatName,
   })));
 
   useEffect(() => {
@@ -634,48 +636,69 @@ const handleFindSimilarMolecules = async (details) => {
     setShowSimilarMolecules(false);
   }, [activeChat]);
 
-  // Poll helper – waits until the back‑end marks the chat complete, then hydrates the
-  // latest assistant message into local state.  Stops after `maxTries` × interval.
+  // Poll helper – waits until the back‑end returns an assistant message, or error/timeout.
   const pollChatUntilComplete = async (
     chatId: string,
     {
       intervalMs = 5000,
-      maxTries   = 1200, // ≈20 minutes
+      maxTries   = 1200, // ≈20 min at default interval
     } = {}
   ) => {
     let tries = 0;
     while (tries < maxTries) {
-      await new Promise((r) => setTimeout(r, intervalMs));
+      // Don’t await before the very first pass so we can react quickly if the
+      // message is already there.
+      if (tries > 0) await new Promise((r) => setTimeout(r, intervalMs));
       tries += 1;
 
       try {
-        const res   = await authFetch(`${API_URL}/chat-history/${chatId}`);
+        const res = await authFetch(`${API_URL}/chat-history/${chatId}`);
         if (!res.ok) continue;
-        const data  = await res.json();
-        const { status, messages: serverMsgs = [] } = data;
 
-        if (status === "complete") {
-          const assistant = serverMsgs.reverse().find((m: any) => m.role === "assistant");
-          if (assistant) {
-            addMessage(
-              {
-                role: "assistant",
-                content: assistant.content || "",
-                sources: assistant.sources,
-                extraData: assistant.extra_data || null,
-              },
-              chatId
-            );
-          }
+        const data = await res.json();
+        // If the back‑end now has a better title, update it.
+        if (data.chat_name && data.chat_name !== (i18n.t('chatbox.history.newChat') || 'New Chat')) {
+          setChatName(data.chat_name, chatId);
+        }
+        // Back‑end may return either { messages: [...] } or the older
+        // { content: [...] }.  Normalise to one array.
+        const { status } = data;
+        const serverMsgs = data.messages || data.content || [];
+
+        // Look for an assistant turn (most likely the last one)
+        const assistant = [...serverMsgs].reverse().find((m: any) => m.role === "assistant");
+        if (assistant) {
+          addMessage(
+            {
+              role: "assistant",
+              content: assistant.content || "",
+              sources: assistant.sources,
+              extraData: assistant.extra_data || null,
+            },
+            chatId
+          );
           setIsThinking(false, chatId);
           setStatus("complete", chatId);
           return;
         }
+
+        // If the backend explicitly reports an error state, stop polling
+        if (status === "error") {
+          setIsThinking(false, chatId);
+          setStatus("complete", chatId);
+          return;
+        }
+
+        // If status is complete *but* no assistant message yet, keep waiting.
+        // Some pipelines mark the session complete a fraction of a second
+        // before they finish persisting the assistant row.
+
       } catch (err) {
         console.error("[pollChat]", err);
       }
     }
-    // Timed‑out – stop spinner
+
+    // Hard timeout – give up, clear spinner so the UI doesn’t hang forever.
     setIsThinking(false, chatId);
     setStatus("complete", chatId);
   };
@@ -758,6 +781,8 @@ const handleFindSimilarMolecules = async (details) => {
                   localChatId     = effectiveChatId;
                   isNewChat       = false;
                 }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
                 continue; // keep listening for the final answer
               }
               if (evt.answer || evt.error) {
@@ -798,8 +823,8 @@ const handleFindSimilarMolecules = async (details) => {
                 isNewChat       = false;
               }
               // Wait for clarifying questions to arrive via history polling
-              pollChatUntilComplete(effectiveChatId);
-              return;
+              await pollChatUntilComplete(effectiveChatId);
+              return; // will exit after polling completes
             }
             const clarData = await clarRes.json();
 
@@ -842,6 +867,8 @@ const handleFindSimilarMolecules = async (details) => {
                   localChatId     = effectiveChatId;
                   isNewChat       = false;
                 }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
                 continue; // keep listening for the final answer
               }
               if (evt.answer || evt.error) {
@@ -890,9 +917,9 @@ const handleFindSimilarMolecules = async (details) => {
               isNewChat       = false;
             }
 
-            pollChatUntilComplete(effectiveChatId);
+            await pollChatUntilComplete(effectiveChatId);
             // spinner stays active – subsequent poll will add the assistant message
-            return;
+            return; // will exit after polling completes
           }
 
           // 200 – old synchronous behaviour
@@ -935,7 +962,12 @@ const handleFindSimilarMolecules = async (details) => {
         setIsThinking(false, effectiveChatId);
         setStatus('complete', effectiveChatId);
       } finally {
-        setIsThinking(false, effectiveChatId);
+        /*
+         * Don’t forcibly clear the spinner here: in the 202‑polling path
+         * `pollChatUntilComplete` already does that when the assistant
+         * message lands.  For the synchronous paths we’ve already called
+         * `setIsThinking(false)` earlier in the try block or in catch.
+         */
         fetchQueryLimit();
       }
     },
