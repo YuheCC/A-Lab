@@ -329,7 +329,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -345,6 +345,7 @@ const ChatbotInterface = () => {
     setAwaitingClarify: state.setAwaitingClarify,
     setUseMultiAgent: state.setUseMultiAgent,
     setIsInClarifyFlow: state.setIsInClarifyFlow,
+    setStatus: state.setStatus,
   })));
 
   useEffect(() => {
@@ -658,12 +659,13 @@ const handleFindSimilarMolecules = async (details) => {
 
       setIsThinking(true);
       const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
+      let effectiveChatId   = currentChatId;
+      setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
       const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
       const ragResultsCount = isAdvancedTier ? 10          : 3;
 
       let data;          // final payload from the back-end
-      let effectiveChatId = currentChatId;
 
       try {
         /* ---------------------------------------------------------- */
@@ -677,9 +679,10 @@ const handleFindSimilarMolecules = async (details) => {
               ...messages,
               { role: "user", content: input.trim() }
             ];
-            
+
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload = { messages: updatedHistory, chat_id: currentChatId };
+            const multiAgentPayload: any = { messages: updatedHistory };
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
@@ -706,13 +709,17 @@ const handleFindSimilarMolecules = async (details) => {
             // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload = { messages: messagesToSend, chat_id: effectiveChatId };
+            const multiAgentPayload: any = { messages: messagesToSend };
+            if (effectiveChatId !== -1) multiAgentPayload.chat_id = effectiveChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
+
+            const clarifyPayload: any = { messages: messagesToSend };
+            if (currentChatId !== -1) clarifyPayload.chat_id = currentChatId;
 
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
               method : "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
+              body   : JSON.stringify(clarifyPayload),
             });
             if (!clarRes.ok) {
               fetchQueryLimit();
@@ -732,6 +739,7 @@ const handleFindSimilarMolecules = async (details) => {
                 content: clarData.clarifying_questions,
               }, effectiveChatId);
               setAwaitingClarify(true, effectiveChatId);
+              setStatus('awaiting_clarification', effectiveChatId);
               setIsThinking(false, effectiveChatId);
               fetchQueryLimit();
               return;                 // wait for user reply
@@ -763,20 +771,21 @@ const handleFindSimilarMolecules = async (details) => {
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
+          const ragPayload: any = {
+            messages        : messagesToSend,
+            ragEnabled      : !disableLiteratureSearch,
+            toolsEnabled    : !disableTools,
+            webSearchEnabled: false,
+            webSearchClient : "Tavily",
+            numRagResults   : ragResultsCount,
+            model           : ragModel,
+            patentRagEnabled: enablePatentRag,
+          };
+          if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
             method : "POST",
             headers: { "Content-Type": "application/json" },
-            body   : JSON.stringify({
-              chatId          : currentChatId,
-              messages        : messagesToSend,
-              ragEnabled      : !disableLiteratureSearch,
-              toolsEnabled    : !disableTools,
-              webSearchEnabled: false,
-              webSearchClient : "Tavily",
-              numRagResults   : ragResultsCount,
-              model           : ragModel,
-              patentRagEnabled: enablePatentRag,
-            }),
+            body   : JSON.stringify(ragPayload),
           });
 
           if (!res.ok) {
@@ -800,6 +809,8 @@ const handleFindSimilarMolecules = async (details) => {
           updateNewChatId(data.chat_id);
           effectiveChatId = data.chat_id;
         }
+        if (data?.status) setStatus(data.status, effectiveChatId);
+        else setStatus('complete', effectiveChatId);
 
         /* build LLM message */
         const llmMessage = {
@@ -822,6 +833,7 @@ const handleFindSimilarMolecules = async (details) => {
       } catch (err) {
         addMessage({ role: "assistant", content: "Error: " + err.message });
         setIsThinking(false);
+        setStatus('complete', effectiveChatId);
       } finally {
         if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
         fetchQueryLimit();
@@ -1012,28 +1024,30 @@ const handleFindSimilarMolecules = async (details) => {
             </div>
             )} 
           <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message-${msg.role}`}>
-                <div className='message-content'>
-                  <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  
+            {messages.map((msg, index) => {
+              const errorText = msg.extraData?.extra_data?.error;
+              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
+              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+              return (
+                <div
+                  key={index}
+                  className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
+                  <div className='message-content'>
+                    <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
 
-                  
-                                      {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+                    {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
                       <div className="extra-data-wrapper">
                         {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
                           <ExtraDataSection
-                          key={key}
-                          title={key}
-                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                          onMoleculeClick={handleMoleculeClick}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                            key={key}
+                            title={key}
+                            content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                            onMoleculeClick={handleMoleculeClick}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
@@ -1054,7 +1068,7 @@ const handleFindSimilarMolecules = async (details) => {
                           </IconButton>
                       </>
                     }
-                    
+
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -1100,7 +1114,8 @@ const handleFindSimilarMolecules = async (details) => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
             {isThinking && (
               <div className="thinking-message">
                 <div className='thinking-header'>
