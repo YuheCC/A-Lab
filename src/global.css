@@ -3636,6 +3636,7 @@ body.no-select {
   background-color: #0052a3;
 }
 
-.chat-page .main-container {
+.chat-container.main-container {
   margin: 0;
+  padding: 0;
 }
