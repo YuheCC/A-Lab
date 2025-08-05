@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ChatHistory from "../History";
+import ChatSearchModal from "../ChatSearchModal";
 
 const ChatSider = () => {
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
+    const searchModalRef = useRef<any>(null);
+    const handleSearchClick = () => {
+        searchModalRef.current.show();
+    }
     return (
         <aside className={`chat-sidebar ${isSidebarCollapsed ? 'mini-sidebar' : ''}`} id="chatSidebar">
             <div className="sidebar-top-section">
@@ -32,7 +37,7 @@ const ChatSider = () => {
                 </svg>
                 </a>
                 {/* Mini模式下的搜索按钮 */}
-                <a href="#" className="mini-search-btn" id="miniSearchBtn" title="搜索聊天">
+                <a href="#" className="mini-search-btn" id="miniSearchBtn" title="搜索聊天" onClick={handleSearchClick}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
                     <path d="M12.5 12.5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -43,13 +48,14 @@ const ChatSider = () => {
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>
                     <span>新聊天</span>
                 </a>
-                <a href="#" className="new-chat-btn" id="searchChatBtn">
+                <a href="#" className="new-chat-btn" id="searchChatBtn" onClick={handleSearchClick}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/><path d="M12.5 12.5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
                     <span>搜索聊天</span>
                 </a>
                 </div>
             </div>
             <ChatHistory />
+            <ChatSearchModal ref={searchModalRef} />
         </aside>
     )
 }
