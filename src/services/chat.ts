@@ -10,6 +10,11 @@ export interface ChatMetadataPayload {
 }
 
 export const updateChatMetadata = async (payload: ChatMetadataPayload) => {
+  // Do not hit the back‑end while the chat still lives only locally (-1)
+  if (payload.chat_id == null || payload.chat_id < 0) {
+    // Function is `async`, so returning void resolves the awaited promise.
+    return;
+  }
   const body: any = { chat_id: payload.chat_id };
   if (payload.meta_active_molecule !== undefined)
     body.meta_active_molecule = JSON.stringify(payload.meta_active_molecule);
