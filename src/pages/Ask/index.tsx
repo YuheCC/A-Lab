@@ -447,7 +447,7 @@ const handleFindSimilarMolecules = async (details) => {
     try {
       const token = localStorage.getItem('token');
       // Determine if user is high-tier
-      const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
+      const isHighTier = true; //["admin", "enterprise", "joint"].includes(userPermissions);
       
       // Extract original user query and LLM response from message history
       let originalQuery = undefined;
