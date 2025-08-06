@@ -1,0 +1,200 @@
+/* MessageList 组件样式 */
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* 消息包装器 */
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-wrapper.user {
+  align-items: flex-end;
+}
+
+.message-wrapper.bot {
+  align-items: flex-start;
+}
+
+/* 消息内容 */
+.message {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.message-wrapper.user .message {
+  background-color: #56B26A;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-wrapper.bot .message {
+  background-color: #f3f4f6;
+  color: #374151;
+  border-bottom-left-radius: 4px;
+}
+
+/* 化学分子样式 */
+.chemical-molecule {
+  color: #56B26A;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.chemical-molecule:hover {
+  background-color: #e8f5e8;
+}
+
+/* 消息操作按钮 */
+.message-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message-wrapper:hover .message-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.action-btn:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 复制按钮成功状态 */
+.copy-btn.success {
+  color: #56B26A;
+}
+
+/* 重新生成按钮 */
+.regenerate-btn:hover {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* 分子按钮 */
+.molecule-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #56B26A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.molecule-btn:hover {
+  background-color: #4a9d5a;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .message {
+    max-width: 90%;
+    font-size: 13px;
+  }
+  
+  .message-actions {
+    opacity: 1;
+  }
+  
+  .action-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* 滚动条样式 */
+.message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+.message-wrapper {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 消息时间戳样式（可选） */
+.message-timestamp {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.message-wrapper.user .message-timestamp {
+  text-align: right;
+}
+
+.message-wrapper.bot .message-timestamp {
+  text-align: left;
+} 

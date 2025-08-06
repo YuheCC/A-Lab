@@ -1,0 +1,262 @@
+import React, { useState, useEffect } from 'react';
+import type { FC } from 'react';
+import './MessageList.css';
+
+// 定义消息类型
+interface Message {
+  id: string;
+  type: 'user' | 'bot';
+  content: string;
+  timestamp: Date;
+  showRegenerate?: boolean;
+}
+
+// 定义组件 Props
+interface MessageListProps {
+  messages?: Message[];
+  onCopyMessage?: (content: string) => void;
+  onRegenerateMessage?: (messageId: string) => void;
+  onMoleculeClick?: (moleculeName: string) => void;
+  className?: string;
+}
+
+// Mock 数据
+const mockMessages: Message[] = [
+  {
+    id: '1',
+    type: 'bot',
+    content: 'Welcome to the Molecular Universe. How can I help you today?',
+    timestamp: new Date(),
+    showRegenerate: false
+  },
+  {
+    id: '2',
+    type: 'user',
+    content: '请介绍一下 LiPF6 电解质的特性',
+    timestamp: new Date()
+  },
+  {
+    id: '3',
+    type: 'bot',
+    content: `LiPF6 是锂离子电池中最常用的电解质锂盐，具有以下特性：
+
+1. **溶解性好**：在碳酸酯类溶剂中具有较高的溶解度
+2. **离子传导能力高**：能够提供大量可在正负极之间穿梭的锂离子
+3. **离子解离度高**：在溶液中能够充分解离为 Li+ 和 PF6- 离子
+4. **热稳定性差**：在高温下容易分解，生成 HF
+5. **易水解**：与水分反应生成 HF，导致电池性能衰减
+
+建议在使用和储存过程中注意保持干燥环境。`,
+    timestamp: new Date(),
+    showRegenerate: true
+  },
+  {
+    id: '4',
+    type: 'user',
+    content: 'EC 和 DEC 溶剂有什么区别？',
+    timestamp: new Date()
+  },
+  {
+    id: '5',
+    type: 'bot',
+    content: `EC（碳酸乙烯酯）和 DEC（碳酸二乙酯）的主要区别：
+
+**EC（碳酸乙烯酯）：**
+- 高介电常数，有利于锂盐解离
+- 在石墨负极表面形成稳定的 SEI 膜
+- 熔点较高（36°C），低温性能较差
+- 通常与其他溶剂混合使用
+
+**DEC（碳酸二乙酯）：**
+- 低粘度，提高电解液流动性
+- 改善电池的低温性能
+- 沸点较低，有利于快速充电
+- 通常与 EC 混合使用，如 EC+DEC 体系
+
+两种溶剂各有优势，通常混合使用以获得最佳性能。`,
+    timestamp: new Date(),
+    showRegenerate: true
+  }
+];
+
+const MessageList: FC<MessageListProps> = ({
+  messages = mockMessages,
+  onCopyMessage,
+  onRegenerateMessage,
+  onMoleculeClick,
+  className = ''
+}) => {
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  // 处理化学分子点击
+  const handleMoleculeClick = (moleculeName: string) => {
+    console.log('Clicked molecule:', moleculeName);
+    onMoleculeClick?.(moleculeName);
+  };
+
+  // 处理复制消息
+  const handleCopyMessage = async (content: string, messageId: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedMessageId(messageId);
+      onCopyMessage?.(content);
+      
+      // 3秒后重置复制状态
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to copy message:', error);
+    }
+  };
+
+  // 处理重新生成
+  const handleRegenerate = (messageId: string) => {
+    console.log('Regenerating message:', messageId);
+    onRegenerateMessage?.(messageId);
+  };
+
+  // 处理化学分子文本
+  const processChemicalText = (text: string) => {
+    const chemicalMolecules = [
+      'LiPF6', 'LiFSI', 'EC', 'DEC', 'DMC', 'EMC', 'VC', 'FEC', 
+      'LiF', 'Li2CO3', 'Li2O', 'Al2O3', 'ZrO2', 'HF'
+    ];
+    
+    let processedText = text.replace(/\n/g, '<br>');
+    
+    chemicalMolecules.forEach(molecule => {
+      const regex = new RegExp(`\\b${molecule}\\b`, 'g');
+      processedText = processedText.replace(
+        regex, 
+        `<span class="chemical-molecule" data-molecule="${molecule}">${molecule}</span>`
+      );
+    });
+    
+    return processedText;
+  };
+
+  // 渲染消息操作按钮
+  const renderMessageActions = (message: Message) => {
+    return (
+      <div className="message-actions">
+        {/* 复制按钮 */}
+        <button
+          className="action-btn copy-btn"
+          onClick={() => handleCopyMessage(message.content, message.id)}
+          title="复制"
+        >
+          {copiedMessageId === message.id ? (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <rect x="4" y="4" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+              <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+            </svg>
+          )}
+        </button>
+
+        {/* 重新生成按钮 - 只有最新回复才显示 */}
+        {message.showRegenerate && (
+          <button
+            className="action-btn regenerate-btn"
+            onClick={() => handleRegenerate(message.id)}
+            title="重新生成"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  // 渲染带按钮的系统消息
+  const renderBotMessageWithButton = (message: Message, buttonText: string) => {
+    return (
+      <div className="message-wrapper bot">
+        <div className="message">
+          <div dangerouslySetInnerHTML={{ __html: processChemicalText(message.content) }} />
+          <button
+            className="molecule-btn"
+            onClick={() => console.log('分子按钮被点击')}
+            style={{
+              marginTop: '10px',
+              padding: '8px 16px',
+              backgroundColor: '#56B26A',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#4a9d5a';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#56B26A';
+            }}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // 渲染普通消息
+  const renderMessage = (message: Message) => {
+    if (message.type === 'user') {
+      return (
+        <div key={message.id} className="message-wrapper user">
+          <div className="message">
+            {message.content}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div key={message.id} className="message-wrapper bot">
+          <div 
+            className="message"
+            dangerouslySetInnerHTML={{ __html: processChemicalText(message.content) }}
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (target.classList.contains('chemical-molecule')) {
+                const moleculeName = target.getAttribute('data-molecule');
+                if (moleculeName) {
+                  handleMoleculeClick(moleculeName);
+                  // 视觉反馈
+                  target.style.backgroundColor = '#e8f5e8';
+                  setTimeout(() => {
+                    target.style.backgroundColor = '';
+                  }, 500);
+                }
+              }
+            }}
+          />
+          {renderMessageActions(message)}
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div className={`message-list ${className}`}>
+      {messages.map((message) => {
+        // 特殊处理：如果消息内容包含特定关键词，显示带按钮的消息
+        if (message.type === 'bot' && message.content.includes('分子探索')) {
+          return renderBotMessageWithButton(message, '分子');
+        }
+        return renderMessage(message);
+      })}
+    </div>
+  );
+};
+
+export default MessageList;
+export type { Message, MessageListProps };
