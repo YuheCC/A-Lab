@@ -663,18 +663,25 @@ const handleFindSimilarMolecules = async (details) => {
         // Back‑end may return either { messages: [...] } or the older
         // { content: [...] }.  Normalise to one array.
         const { status } = data;
+        // ─── Synchronise local clarify‑state with the back‑end ───
+        if (status === "awaiting_clarification") {
+          setAwaitingClarify(true, chatId);
+        } else {
+          setAwaitingClarify(false, chatId);
+        }
         const serverMsgs = data.messages || data.content || [];
 
         // Look for an assistant turn (most likely the last one)
         const assistant = [...serverMsgs].reverse().find((m: any) => m.role === "assistant");
         if (assistant) {
-          // Avoid duplicating the last assistant message if we already have it locally
-          const existingMsgs = useChatStore.getState().chatMap[chatId]?.messages || [];
-          const lastAssistant = [...existingMsgs].reverse().find((m: any) => m.role === "assistant");
-          const isDuplicate = lastAssistant &&
-            lastAssistant.content === (assistant.content || "") &&
-            JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+          // Compare against the latest assistant message we already have.
+          const existingMsgs   = useChatStore.getState().chatMap[chatId]?.messages || [];
+          const lastAssistant  = [...existingMsgs].reverse().find((m: any) => m.role === "assistant");
+          const isDuplicate    = lastAssistant &&
+                                 lastAssistant.content === (assistant.content || "") &&
+                                 JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
 
+          // Only act when we discover a *new* assistant message.
           if (!isDuplicate) {
             addMessage(
               {
@@ -685,11 +692,15 @@ const handleFindSimilarMolecules = async (details) => {
               },
               chatId
             );
+
+            setIsThinking(false, chatId);
+            // Keep whatever status the server sent (e.g. awaiting_clarification)
+            setStatus(status || "complete", chatId);
+            return; // Finished – exit polling loop.
           }
 
-          setIsThinking(false, chatId);
-          setStatus("complete", chatId);
-          return;
+          // Duplicate of the previous turn – keep waiting.
+          continue;
         }
 
         // If the backend explicitly reports an error state, stop polling
@@ -926,7 +937,6 @@ const handleFindSimilarMolecules = async (details) => {
               localChatId     = effectiveChatId;
               isNewChat       = false;
             }
-
             await pollChatUntilComplete(effectiveChatId);
             // spinner stays active – subsequent poll will add the assistant message
             return; // will exit after polling completes

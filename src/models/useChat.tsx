@@ -455,14 +455,13 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             chat.foundMolecules = molecules;
         }));
 
-        // Send found molecules to server
         try {
             await updateChatMetadata({
                 chat_id: parseInt(chatId || get().activeChat as string),
                 meta_molecules: molecules,
             });
         } catch (error) {
-            console.error("Failed to update found molecules on server:", error);
+            console.error("Failed to update similar molecules on server:", error);
         }
     },
     setSimilarMolecules: async (preMolecules: any, chatId = null) => {
@@ -537,22 +536,6 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             if (!chat) return;
             chat.awaitingClarify = awaitingClarify;
         }));
-
-        // Send awaitingClarify to server
-        try {
-            await authFetch(`${API_URL}/chat-history/update`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: parseInt(chatId || get().activeChat as string),
-                    awaiting_clarification: awaitingClarify,
-                })
-            });
-        } catch (error) {
-            console.error("Failed to update awaiting clarification on server:", error);
-        }
     },
     setIsInClarifyFlow: (isInClarifyFlow: boolean, chatId = null) => set(produce((state: ChatState) => {
         console.log("Setting isInClarifyFlow for chat:", chatId || state.activeChat, isInClarifyFlow);
@@ -601,51 +584,45 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 }));
 
 export const useActiveChatData = () => {
-    const result = useChatStore(
-        (state: ChatState) => {
-            const activeChatId = state.activeChat;
-            const activeChat = state.chatMap[activeChatId];
-
-            // Enhanced debugging with more detail
-            console.log("🔍 ACTIVE CHAT DATA ACCESS:", {
-                activeChatId,
-                activeChatExists: !!activeChat,
-                messagesLength: activeChat?.messages?.length || 0,
-                chatMapKeys: Object.keys(state.chatMap),
-                chatName: activeChat?.name,
-                lastMessage: activeChat?.messages?.length > 0 ? {
-                    role: activeChat.messages[activeChat.messages.length - 1].role,
-                    contentPreview: (activeChat.messages[activeChat.messages.length - 1].content || '').substring(0, 50) + '...'
-                } : null
-            });
-
-            // Log warning if active chat has no messages but should have some
-            if (activeChat && activeChat.messages?.length === 0 && activeChatId !== '-1') {
-                console.warn("⚠️ ACTIVE CHAT HAS NO MESSAGES - This might indicate a display issue for chat:", activeChatId);
-            }
-
-            // Return chat data along with its ID so consumers can detect when
-            // the active chat changes even if the underlying object reference
-            // remains the same.
-            return { ...activeChat, chatId: activeChatId } as any;
-        },
-        (oldData: any, newData: any) => {
-            // Deep comparison of the relevant data to prevent unnecessary re-renders
-            const isEqual = (
-                oldData?.chatId === newData?.chatId &&
-                oldData?.foundMolecules === newData?.foundMolecules &&
-                oldData?.similarMolecules === newData?.similarMolecules &&
-                oldData?.activeMolecule === newData?.activeMolecule &&
-                oldData?.messages === newData?.messages &&
-                oldData?.isThinking === newData?.isThinking &&
-                oldData?.moleculesLoading === newData?.moleculesLoading &&
-                oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
-                oldData?.awaitingClarify === newData?.awaitingClarify
-            );
-
-            // Log re-render decisions for debugging
-            if (!isEqual) {
-                console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
+    const result = useChatStore((state: ChatState) => {
+        const activeChat = state.chatMap[state.activeChat];
+        
+        // Enhanced debugging with more detail
+        console.log("🔍 ACTIVE CHAT DATA ACCESS:", {
+            activeChatId: state.activeChat,
+            activeChatExists: !!activeChat,
+            messagesLength: activeChat?.messages?.length || 0,
+            chatMapKeys: Object.keys(state.chatMap),
+            chatFullData: activeChat,
+            chatName: activeChat?.name,
+            lastMessage: activeChat?.messages?.length > 0 ? {
+                role: activeChat.messages[activeChat.messages.length - 1].role,
+                contentPreview: (activeChat.messages[activeChat.messages.length - 1].content || '').substring(0, 50) + '...'
+            } : null
+        });
+        
+        // Log warning if active chat has no messages but should have some
+        if (activeChat && activeChat.messages?.length === 0 && state.activeChat !== '-1') {
+            console.warn("⚠️ ACTIVE CHAT HAS NO MESSAGES - This might indicate a display issue for chat:", state.activeChat);
+        }
+        
+        return activeChat;
+    }, (oldData, newData) => {
+        // Deep comparison of the relevant data to prevent unnecessary re-renders
+        const isEqual = (
+            oldData?.foundMolecules === newData?.foundMolecules &&
+            oldData?.similarMolecules === newData?.similarMolecules &&
+            oldData?.activeMolecule === newData?.activeMolecule &&
+            oldData?.messages === newData?.messages &&
+            oldData?.isThinking === newData?.isThinking &&
+            oldData?.moleculesLoading === newData?.moleculesLoading &&
+            oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
+            oldData?.awaitingClarify === newData?.awaitingClarify
+        );
+        
+        // Log re-render decisions for debugging
+        if (!isEqual) {
+            console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
             }
 
             return isEqual;

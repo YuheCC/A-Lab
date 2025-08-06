@@ -22,6 +22,8 @@ export const updateChatMetadata = async (payload: ChatMetadataPayload) => {
     body.meta_molecules = JSON.stringify(payload.meta_molecules);
   if (payload.meta_similar_molecules !== undefined)
     body.meta_similar_molecules = JSON.stringify(payload.meta_similar_molecules);
+  
+  console.log('Updating chat metadata');
 
   return authFetch(`${API_URL}/chat-history/update`, {
     method: 'PUT',
