@@ -668,15 +668,25 @@ const handleFindSimilarMolecules = async (details) => {
         // Look for an assistant turn (most likely the last one)
         const assistant = [...serverMsgs].reverse().find((m: any) => m.role === "assistant");
         if (assistant) {
-          addMessage(
-            {
-              role: "assistant",
-              content: assistant.content || "",
-              sources: assistant.sources,
-              extraData: assistant.extra_data || null,
-            },
-            chatId
-          );
+          // Avoid duplicating the last assistant message if we already have it locally
+          const existingMsgs = useChatStore.getState().chatMap[chatId]?.messages || [];
+          const lastAssistant = [...existingMsgs].reverse().find((m: any) => m.role === "assistant");
+          const isDuplicate = lastAssistant &&
+            lastAssistant.content === (assistant.content || "") &&
+            JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+
+          if (!isDuplicate) {
+            addMessage(
+              {
+                role: "assistant",
+                content: assistant.content || "",
+                sources: assistant.sources,
+                extraData: assistant.extra_data || null,
+              },
+              chatId
+            );
+          }
+
           setIsThinking(false, chatId);
           setStatus("complete", chatId);
           return;
