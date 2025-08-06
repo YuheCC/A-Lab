@@ -1017,6 +1017,15 @@ body.chat-page-body {
     font-weight: 400;
     cursor: pointer;
     transition: color 0.2s ease;
+    outline: none; /* 去除点击时的外框显示 */
+}
+
+.refresh-questions-btn:focus {
+    outline: none; /* 确保焦点时也不显示外框 */
+}
+
+.refresh-questions-btn:active {
+    outline: none; /* 确保激活状态时也不显示外框 */
 }
 
 .refresh-questions-btn:hover {

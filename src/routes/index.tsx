@@ -39,6 +39,10 @@ export default  [
         component: "Chat",
     },
     {
+        path: "/chat/:id",
+        component: "Chat",
+    },
+    {
         path: "/login",
         component: "Login/login",
         layout: false,

@@ -1,13 +1,33 @@
 import './chat-styles.css';
 import ChatSider from './components/ChatSider';
+import ChatWelcome from './components/ChatWelcome';
+import { useParams } from 'umi';
+import { useEffect, useState } from 'react';
 
 const Chat = () => {
+    const { id } = useParams();
+    const [chatId, setChatId] = useState(id);
+    const [chatData, setChatData] = useState<any>(null);
+
+    useEffect(() => {
+        if (id) {
+            setChatId(id);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (chatId) {
+            setChatData(chatId);
+        }
+    }, [chatId]);
+
     return (
         <div className="chat-container">
             <ChatSider />
             <main className="chat-main" id="chatMain" style={{position:'relative'}}>
                 <div className="chat-messages" id="chat-messages">
                     {/* 对话内容将由JS动态插入 */}
+                    <ChatWelcome />
                 </div>
                 <div className="chat-input-container">
                     <div className="chat-input-wrapper">
