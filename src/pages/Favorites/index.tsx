@@ -707,11 +707,11 @@ const FavoritesGrid = () => {
           hoverinfo: 'text',
           hovertext: typeData.map(d => 
             `ABBREVIATION: ${d.ABBREVIATION}<br>` +
-            `ESP_MIN_EV: ${d.ESP_MIN_EV?.toFixed(3) || 'N/A'}<br>` +
-            `ESP_MAX_EV: ${d.ESP_MAX_EV?.toFixed(3) || 'N/A'}<br>` +
+            `ESP_MIN_EV: ${d.ESP_MIN_EV?.toFixed(4) || 'N/A'}<br>` +
+            `ESP_MAX_EV: ${d.ESP_MAX_EV?.toFixed(4) || 'N/A'}<br>` +
             `SMILES: ${d.SMILES}<br>` +
-            `HOMO_EV: ${d.HOMO_EV?.toFixed(2) || 'N/A'}<br>` +
-            `LUMO_EV: ${d.LUMO_EV?.toFixed(2) || 'N/A'}`
+            `HOMO_EV: ${d.HOMO_EV?.toFixed(4) || 'N/A'}<br>` +
+            `LUMO_EV: ${d.LUMO_EV?.toFixed(4) || 'N/A'}`
           ),
           marker: {
             size: 8,
@@ -866,7 +866,7 @@ const FavoritesGrid = () => {
       const positionMap = new Map();
       
       return data.map(d => {
-        const key = `${d.HOMO_EV.toFixed(2)}_${d.LUMO_EV.toFixed(2)}`;
+        const key = `${d.HOMO_EV.toFixed(4)}_${d.LUMO_EV.toFixed(4)}`;
         const count = positionMap.get(key) || 0;
         positionMap.set(key, count + 1);
         
@@ -1392,26 +1392,26 @@ const FavoritesGrid = () => {
                       )}
                     </td>
                     <td>{favorite.smiles}</td>
-                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.molecular_weight ? favorite.molecular_weight.toFixed(4) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.homo_ev ? favorite.homo_ev.toFixed(4) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.lumo_ev ? favorite.lumo_ev.toFixed(4) : t('favorites.notAvailable')}</td>
                     {canSeePredictedProperties && (
-                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(2) : t('favorites.notAvailable')}</td>
+                      <td>{favorite.predicted_melting_point ? favorite.predicted_melting_point.toFixed(4) : t('favorites.notAvailable')}</td>
                     )}
                     {canSeePredictedProperties && (
-                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(2) : t('favorites.notAvailable')}</td>
+                      <td>{favorite.predicted_boiling_point ? favorite.predicted_boiling_point.toFixed(4) : t('favorites.notAvailable')}</td>
                     )}
                     {canSeePredictedProperties && (
                       <td>{favorite.predicted_fp_celsius !== undefined && favorite.predicted_fp_celsius !== null ? favorite.predicted_fp_celsius : t('favorites.notAvailable')}</td>
                     )}
-                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : '0.00'}</td>
+                    <td>{favorite.combustion_enthalpy_ev !== undefined && favorite.combustion_enthalpy_ev !== null ? favorite.combustion_enthalpy_ev : '0'}</td>
                     <td>{favorite.commercial_score !== undefined && favorite.commercial_score !== null ? favorite.commercial_score : t('favorites.notAvailable')}</td>
-                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(2) : t('favorites.notAvailable')}</td>
-                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(2) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_min_ev ? favorite.esp_min_ev.toFixed(4) : t('favorites.notAvailable')}</td>
+                    <td>{favorite.esp_max_ev ? favorite.esp_max_ev.toFixed(4) : t('favorites.notAvailable')}</td>
                     <td>{favorite.functional_groups || t('favorites.notAvailable')}</td>
                     <td>
-                      {favorite.umap_x ? favorite.umap_x.toFixed(2) : t('favorites.notAvailable')} / 
-                      {favorite.umap_y ? favorite.umap_y.toFixed(2) : t('favorites.notAvailable')}
+                      {favorite.umap_x ? favorite.umap_x.toFixed(4) : t('favorites.notAvailable')} / 
+                      {favorite.umap_y ? favorite.umap_y.toFixed(4) : t('favorites.notAvailable')}
                     </td>
                     <td>{formatDate(favorite.created_at)}</td>
                     <td>
