@@ -101,7 +101,7 @@ const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
                         : typeof value === 'number'
                           ? key === 'CLUSTER'
                             ? Math.round(value)
-                            : value.toFixed(2)
+                            : value.toFixed(4)
                           : value.toString()
                       : 'N/A'}
                   </td>

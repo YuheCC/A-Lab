@@ -17,7 +17,7 @@ export const PropItem = ({ prop }) => {
     let valueString;
     if (prop?.value) {
         if (typeof prop.value === 'number') {
-            valueString = prop.value.toFixed(2);
+            valueString = prop.value.toFixed(4);
         } else {
             valueString = prop.value.toString();
         }

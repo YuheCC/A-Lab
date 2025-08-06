@@ -14,7 +14,7 @@ const Slider = ({ property, value, min, max, onChange, label, active }) => {
 
   const formatValue = (value) => {
     if (typeof value === 'number') {
-      return value.toFixed(2);
+      return value.toFixed(4);
     }
     return value;
   };

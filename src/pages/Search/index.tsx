@@ -457,10 +457,10 @@ const SearchPage = () => {
                                                         suffix: ' eV',
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                     },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
                                                     { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true}
                                                 ]} foldPropGroups={[
                                                     { label: 'UMAP_X', value: molecule.x, span: 1 },
@@ -549,10 +549,10 @@ const SearchPage = () => {
                                                         suffix: ' eV',
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
                                                     },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 1, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 1, suffix: ' eV' },
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
                                                     { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
                                                 ]} 
                                                 foldPropGroups={[
