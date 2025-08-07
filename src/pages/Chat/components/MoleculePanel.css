@@ -7,14 +7,14 @@
    1. 分子面板基础布局
    ============================================== */
 
-/* 分子浮层样式 */
+/* 分子浮层样式 - 使用CSS变量实现动态宽度 */
 .molecule-panel {
     position: fixed;
     top: 64px;
     right: 0;
-    width: 380px !important; /* 固定分子面板宽度为380px */
-    min-width: 380px !important;
-    max-width: 380px !important; /* 固定最大宽度 */
+    width: var(--molecule-panel-width, 380px) !important;
+    min-width: var(--molecule-panel-width, 380px) !important;
+    max-width: var(--molecule-panel-width, 380px) !important;
     height: calc(100vh - 64px);
     background: white;
     border-left: 1px solid #e2e8f0;
@@ -22,12 +22,14 @@
     display: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    --molecule-panel-width: 380px; /* 默认宽度 */
 }
 
 .molecule-panel.expanded {
-    width: 730px !important; /* 查找相似时固定宽度为730px */
-    min-width: 730px !important;
-    max-width: 730px !important; /* 固定最大宽度 */
+    --molecule-panel-width: 730px; /* 展开时的宽度 */
+    width: var(--molecule-panel-width) !important;
+    min-width: var(--molecule-panel-width) !important;
+    max-width: var(--molecule-panel-width) !important;
 }
 
 /* 面板内容区域优化 - 减少上边距 */
@@ -545,24 +547,20 @@
    5. 响应式布局
    ============================================== */
 
-/* 响应式优化 */
+/* 响应式优化 - 使用CSS变量 */
 @media (max-width: 1200px) {
     .molecule-panel {
-        width: 380px !important; /* 强制应用380px宽度 */
+        --molecule-panel-width: 380px; /* 中等屏幕宽度 */
+        width: var(--molecule-panel-width) !important;
+        min-width: var(--molecule-panel-width) !important;
+        max-width: var(--molecule-panel-width) !important;
     }
     
     .molecule-panel.expanded {
-        width: 730px !important; /* 展开时使用730px */
-    }
-    
-    .chat-container.molecule-panel-active .chat-main {
-        margin-right: 380px !important; /* 使用380px的分子面板宽度 */
-        max-width: calc(100vw - 380px - 300px) !important;
-    }
-    
-    .chat-container.molecule-panel-active.expanded .chat-main {
-        margin-right: 730px !important; /* 展开时使用730px */
-        max-width: calc(100vw - 730px - 300px) !important;
+        --molecule-panel-width: 730px; /* 展开时宽度 */
+        width: var(--molecule-panel-width) !important;
+        min-width: var(--molecule-panel-width) !important;
+        max-width: var(--molecule-panel-width) !important;
     }
     
     .similar-molecules-comparison {

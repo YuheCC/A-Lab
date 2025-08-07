@@ -3,14 +3,13 @@ import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'umi';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
 import { useChat } from './hooks/useChat';
 import { chatService } from './services/chatService';
-import type { Message } from './components/MessageList';
-import type { ChatHistoryItem } from './components/History';
 import MoleculeModal from './components/MoleculeModal';
+import { useMoleculePanel } from './hooks/useMoleculePanel';
 
 const Chat = () => {
     const { t } = useTranslation();
@@ -24,13 +23,18 @@ const Chat = () => {
         addUserMessage,
         addBotMessage,
         editMessage,
-        clearChat,
         startNewChat,
         loadChatHistory,
-        saveChatHistory,
         updateChatHistory,
         setMessages
     } = useChat();
+
+    const {
+        state: moleculePanelState,
+        hidePanel: handleMoleculePanelClose,
+        handleMoleculeClick,
+        handleFindSimilar,
+    } = useMoleculePanel();
 
     // 初始化聊天历史
     useEffect(() => {
@@ -117,11 +121,7 @@ const Chat = () => {
         }
     };
 
-    // 处理分子点击
-    const handleMoleculeClick = (moleculeName: string) => {
-        console.log('Clicked molecule:', moleculeName);
-        // 这里可以添加分子点击的处理逻辑
-    };
+
 
     // 处理新聊天
     const handleNewChat = () => {
@@ -170,7 +170,13 @@ const Chat = () => {
                     }
                 </main>
             </div>
-            <MoleculeModal />
+            {moleculePanelState.isVisible && (
+                <MoleculeModal
+                    moleculeName={moleculePanelState.currentMolecule}
+                    onClose={handleMoleculePanelClose}
+                    onFindSimilar={handleFindSimilar}
+                />
+            )}
         </>
     );
 };

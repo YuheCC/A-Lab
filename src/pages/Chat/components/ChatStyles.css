@@ -41,6 +41,12 @@ body.chat-page-body {
     position: relative;
     transition: all 0.3s ease;
     overflow: hidden;
+    
+    /* CSS变量默认值 */
+    --molecule-panel-width: 380px;
+    --sidebar-collapsed-width: 50px;
+    --sidebar-normal-width: 220px;
+    --chat-main-width: auto;
 }
 
 .chat-container .chat-main {
@@ -50,10 +56,11 @@ body.chat-page-body {
     transition: all 0.3s ease;
     overflow: hidden;
     max-height: calc(100vh - 64px);
+    width: var(--chat-main-width, auto);
 }
 
 .chat-container .chat-sidebar {
-    width: 220px;
+    width: var(--sidebar-normal-width, 220px);
     background: white;
     border-right: 1px solid #e2e8f0;
     display: flex;
@@ -68,6 +75,67 @@ body.chat-page-body {
 .chat-container:not(.sidebar-collapsed) .chat-main {
     margin-left: 0;
     flex: 1;
+}
+
+/* 分子面板激活时自动收缩侧边栏 */
+.chat-container.molecule-panel-active .chat-sidebar {
+    width: var(--sidebar-collapsed-width) !important;
+    min-width: var(--sidebar-collapsed-width) !important;
+    max-width: var(--sidebar-collapsed-width) !important;
+    transition: width 0.3s ease;
+}
+
+/* 确保分子面板激活时侧边栏显示为mini模式 */
+.chat-container.molecule-panel-active .chat-sidebar {
+    overflow: hidden;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 2px;
+}
+
+.chat-container.molecule-panel-active .chat-sidebar .sidebar-top-row {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px 0;
+    width: 100%;
+}
+
+.chat-container.molecule-panel-active .chat-sidebar .ask-title,
+.chat-container.molecule-panel-active .chat-sidebar .toggle-sidebar-btn,
+.chat-container.molecule-panel-active .chat-sidebar .sidebar-actions,
+.chat-container.molecule-panel-active .chat-sidebar .new-chat-btn,
+.chat-container.molecule-panel-active .chat-sidebar .history-nav,
+.chat-container.molecule-panel-active .chat-sidebar span {
+    display: none !important;
+}
+
+.chat-container.molecule-panel-active .chat-sidebar .mini-new-chat-btn,
+.chat-container.molecule-panel-active .chat-sidebar .mini-search-btn,
+.chat-container.molecule-panel-active .chat-sidebar .mini-toggle-btn {
+    display: flex !important;
+    visibility: visible !important;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.chat-container.molecule-panel-active .chat-sidebar .mini-new-chat-btn:hover,
+.chat-container.molecule-panel-active .chat-sidebar .mini-search-btn:hover,
+.chat-container.molecule-panel-active .chat-sidebar .mini-toggle-btn:hover {
+    color: #56B26A;
 }
 
 .chat-main {
@@ -1567,49 +1635,51 @@ body.chat-page-body {
    8. 响应式布局调整
    ============================================== */
 
-/* 浮层激活时的布局调整 */
-.chat-container.molecule-panel-active .chat-main {
-    flex: 1;
-    max-width: calc(100vw - 380px - 50px); /* 使用380px的分子面板宽度和50px的mini侧边栏宽度 */
-    transition: all 0.3s ease;
-    overflow-x: hidden;
-    /* 确保聊天区域紧贴分子面板，无空白 */
-    margin-left: 0 !important; /* 紧贴侧边栏 */
-    margin-right: 0 !important; /* 移除右边距，让聊天区域紧贴分子面板 */
-    width: calc(100vw - 380px - 50px) !important; /* 聊天区域宽度 = 视窗宽度 - 分子面板宽度 - mini侧边栏宽度 */
-}
-
-.chat-container.molecule-panel-active .chat-sidebar {
-    transition: width 0.3s ease;
-}
-
-/* 浮层激活时的布局调整 */
+/* 浮层激活时的布局调整 - 使用CSS变量实现动态宽度 */
 .chat-container.molecule-panel-active {
     display: flex;
     transition: all 0.3s ease;
+    --molecule-panel-width: 380px; /* CSS变量：默认分子面板宽度 */
+    --sidebar-collapsed-width: 50px; /* CSS变量：收缩后的侧边栏宽度 */
 }
 
-.chat-container.molecule-panel-active.expanded .chat-main {
-    margin-left: auto;
+.chat-container.molecule-panel-active.expanded {
+    --molecule-panel-width: 730px; /* CSS变量：展开时的分子面板宽度 */
+}
+
+.chat-container.molecule-panel-active .chat-main {
+    flex: 1;
+    width: calc(100vw - var(--molecule-panel-width) - var(--sidebar-collapsed-width)) !important;
+    max-width: calc(100vw - var(--molecule-panel-width) - var(--sidebar-collapsed-width));
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    margin-left: 0 !important; /* 紧贴侧边栏 */
     margin-right: 0 !important; /* 移除右边距，让聊天区域紧贴分子面板 */
-    max-width: calc(100vw - 730px - 50px) !important;
-    width: calc(100vw - 730px - 50px) !important; /* 聊天区域宽度 = 视窗宽度 - 分子面板宽度 - mini侧边栏宽度 */
+}
+
+.chat-container.molecule-panel-active .chat-sidebar {
+    width: var(--sidebar-collapsed-width) !important;
+    min-width: var(--sidebar-collapsed-width) !important;
+    max-width: var(--sidebar-collapsed-width) !important;
+    transition: width 0.3s ease;
 }
 
 /* 响应式调整 */
 @media (max-width: 1200px) {
-    .chat-container.molecule-panel-active .chat-main {
-        margin-left: 0 !important; /* 紧贴侧边栏 */
-        margin-right: 0 !important; /* 移除右边距，让聊天区域紧贴分子面板 */
-        max-width: calc(100vw - 40vw - 150px); /* 额外减少150px宽度 */
-        width: calc(100vw - 40vw - 150px) !important; /* 简化宽度计算 */
+    .chat-container.molecule-panel-active {
+        --molecule-panel-width: 380px; /* 中等屏幕保持380px */
+        --sidebar-collapsed-width: 50px; /* 侧边栏收缩宽度保持50px */
     }
-
-    .chat-container.molecule-panel-active.expanded .chat-main {
-        margin-left: auto;
-        margin-right: 0 !important; /* 移除右边距，让聊天区域紧贴分子面板 */
-        max-width: calc(100vw - 60vw);
-        width: calc(100vw - 60vw) !important; /* 简化宽度计算 */
+    
+    .chat-container.molecule-panel-active.expanded {
+        --molecule-panel-width: 730px; /* 展开时保持730px */
+    }
+    
+    .chat-container.molecule-panel-active .chat-main {
+        width: calc(100vw - var(--molecule-panel-width) - var(--sidebar-collapsed-width)) !important;
+        max-width: calc(100vw - var(--molecule-panel-width) - var(--sidebar-collapsed-width));
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 
