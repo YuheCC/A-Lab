@@ -237,6 +237,15 @@ body.chat-page-body {
     opacity: 1;
 }
 
+/* 覆盖 Material-UI IconButton 的圆形样式 */
+.chat-menu-btn.MuiIconButton-root {
+    border-radius: 4px !important;
+}
+
+.chat-menu-btn.MuiIconButton-root:hover {
+    background-color: transparent !important;
+}
+
 /* 聊天删除菜单 */
 .chat-delete-menu {
     position: absolute;

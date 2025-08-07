@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
+import { Menu, MenuItem, IconButton } from '@mui/material';
 
 interface HistoryItemProps {
   /** 对话ID */
@@ -27,28 +28,12 @@ const HistoryItem: FC<HistoryItemProps> = ({
   onTogglePin,
   onDelete,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempTitle, setTempTitle] = useState(title);
-  const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 点击外部关闭菜单
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
+  const isMenuOpen = Boolean(anchorEl);
 
   // 重命名时自动聚焦输入框
   useEffect(() => {
@@ -63,15 +48,19 @@ const HistoryItem: FC<HistoryItemProps> = ({
     onChatClick?.(chatId);
   };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   const handleRenameStart = () => {
     setIsRenaming(true);
     setTempTitle(title);
-    setIsMenuOpen(false);
+    handleMenuClose();
   };
 
   const handleRenameConfirm = () => {
@@ -97,12 +86,12 @@ const HistoryItem: FC<HistoryItemProps> = ({
 
   const handleTogglePin = () => {
     onTogglePin?.(chatId);
-    setIsMenuOpen(false);
+    handleMenuClose();
   };
 
   const handleDelete = () => {
     onDelete?.(chatId);
-    setIsMenuOpen(false);
+    handleMenuClose();
   };
 
   return (
@@ -128,41 +117,65 @@ const HistoryItem: FC<HistoryItemProps> = ({
         </a>
       )}
       
-      <button
-        className="chat-menu-btn"
-        data-chat-id={chatId}
+      <IconButton
+        size="small"
         onClick={handleMenuClick}
+        className="chat-menu-btn"
+        sx={{
+          opacity: 0,
+          marginLeft: '4px',
+          padding: '4px',
+          borderRadius: '4px',
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+        }}
       >
         ⋯
-      </button>
+      </IconButton>
 
-      {isMenuOpen && (
-        <div className="chat-delete-menu" ref={menuRef}>
-          <div className="delete-menu-content">
-            <button
-              className="rename-chat-btn"
-              data-chat-id={chatId}
-              onClick={handleRenameStart}
-            >
-              修改名称
-            </button>
-            <button
-              className="pin-chat-btn"
-              data-chat-id={chatId}
-              onClick={handleTogglePin}
-            >
-              {isPinned ? '取消置顶' : '置顶'}
-            </button>
-            <button
-              className="delete-chat-btn"
-              data-chat-id={chatId}
-              onClick={handleDelete}
-            >
-              删除对话
-            </button>
-          </div>
-        </div>
-      )}
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        PaperProps={{
+          sx: {
+            minWidth: '140px',
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)',
+            border: '1px solid #e5e7eb',
+          },
+        }}
+      >
+        <MenuItem onClick={handleRenameStart} sx={{ fontSize: '13px', padding: '10px 16px' }}>
+          修改名称
+        </MenuItem>
+        <MenuItem onClick={handleTogglePin} sx={{ fontSize: '13px', padding: '10px 16px' }}>
+          {isPinned ? '取消置顶' : '置顶'}
+        </MenuItem>
+        <MenuItem 
+          onClick={handleDelete} 
+          sx={{ 
+            fontSize: '13px', 
+            padding: '10px 16px',
+            color: '#dc2626',
+            '&:hover': {
+              backgroundColor: '#fef2f2',
+              color: '#b91c1c',
+            },
+          }}
+        >
+          删除对话
+        </MenuItem>
+      </Menu>
     </li>
   );
 };
