@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
+import { history } from 'umi';
 
 interface HistoryItemProps {
   /** 对话ID */
@@ -45,6 +46,8 @@ const HistoryItem: FC<HistoryItemProps> = ({
 
   const handleChatClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    // 跳转到聊天详情页面
+    history.push(`/chat/${chatId}`);
     onChatClick?.(chatId);
   };
 
