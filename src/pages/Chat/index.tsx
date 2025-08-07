@@ -10,6 +10,7 @@ import { useChat } from './hooks/useChat';
 import { chatService } from './services/chatService';
 import type { Message } from './components/MessageList';
 import type { ChatHistoryItem } from './components/History';
+import MoleculeModal from './components/MoleculeModal';
 
 const Chat = () => {
     const { t } = useTranslation();
@@ -135,39 +136,42 @@ const Chat = () => {
     const showInput = !!currentChatId;
 
     return (
-        <div className="chat-container">
-            <ChatSider
-                onNewChat={handleNewChat}
-                onSelectChat={handleSelectChat}
-                currentChatId={currentChatId}
-                chatHistory={chatHistory}
-            />
-            <main className="chat-main" id="chatMain" style={{ position: 'relative' }}>
-                <div className="chat-messages" id="chat-messages">
+        <>
+            <div className="chat-container">
+                <ChatSider
+                    onNewChat={handleNewChat}
+                    onSelectChat={handleSelectChat}
+                    currentChatId={currentChatId}
+                    chatHistory={chatHistory}
+                />
+                <main className="chat-main" id="chatMain" style={{ position: 'relative' }}>
+                    <div className="chat-messages" id="chat-messages">
+                        {
+                            currentChatId ? (
+                                <MessageList
+                                    messages={messages}
+                                    onCopyMessage={handleCopyMessage}
+                                    onRegenerateMessage={handleRegenerateMessage}
+                                    onMoleculeClick={handleMoleculeClick}
+                                    onEditMessage={handleEditMessage}
+                                />
+                            ) : (
+                                <ChatWelcome onSendMessage={handleSendMessage} />
+                            )
+                        }
+                    </div>
                     {
-                        currentChatId ? (
-                            <MessageList
-                                messages={messages}
-                                onCopyMessage={handleCopyMessage}
-                                onRegenerateMessage={handleRegenerateMessage}
-                                onMoleculeClick={handleMoleculeClick}
-                                onEditMessage={handleEditMessage}
+                        showInput && (
+                            <ChatInput
+                                onSendMessage={handleSendMessage}
+                                disabled={isLoading}
                             />
-                        ) : (
-                            <ChatWelcome onSendMessage={handleSendMessage} />
                         )
                     }
-                </div>
-                {
-                    showInput && (
-                        <ChatInput
-                            onSendMessage={handleSendMessage}
-                            disabled={isLoading}
-                        />
-                    )
-                }
-            </main>
-        </div>
+                </main>
+            </div>
+            <MoleculeModal />
+        </>
     );
 };
 
