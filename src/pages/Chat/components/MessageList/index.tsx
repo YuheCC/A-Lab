@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
+import MessageEdit from '../MessageEdit';
 import './MessageList.css';
 
 // 定义消息类型
@@ -17,6 +18,7 @@ interface MessageListProps {
   onCopyMessage?: (content: string) => void;
   onRegenerateMessage?: (messageId: string) => void;
   onMoleculeClick?: (moleculeName: string) => void;
+  onEditMessage?: (messageId: string, newText: string) => void;
   className?: string;
 }
 
@@ -84,9 +86,11 @@ const MessageList: FC<MessageListProps> = ({
   onCopyMessage,
   onRegenerateMessage,
   onMoleculeClick,
+  onEditMessage,
   className = ''
 }) => {
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
   // 处理化学分子点击
   const handleMoleculeClick = (moleculeName: string) => {
@@ -114,6 +118,22 @@ const MessageList: FC<MessageListProps> = ({
   const handleRegenerate = (messageId: string) => {
     console.log('Regenerating message:', messageId);
     onRegenerateMessage?.(messageId);
+  };
+
+  // 处理编辑消息
+  const handleEditMessage = (messageId: string, newText: string) => {
+    onEditMessage?.(messageId, newText);
+    setEditingMessageId(null);
+  };
+
+  // 处理取消编辑
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+  };
+
+  // 处理开始编辑
+  const handleStartEdit = (messageId: string) => {
+    setEditingMessageId(messageId);
   };
 
   // 处理化学分子文本
@@ -157,6 +177,19 @@ const MessageList: FC<MessageListProps> = ({
             </svg>
           )}
         </button>
+
+        {/* 编辑按钮 - 只有用户消息才显示 */}
+        {message.type === 'user' && (
+          <button
+            className="edit-btn"
+            onClick={() => handleStartEdit(message.id)}
+            title="编辑问题"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="16" height="16">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+          </button>
+        )}
 
         {/* 重新生成按钮 - 只有最新回复才显示 */}
         {message.showRegenerate && (
@@ -210,12 +243,28 @@ const MessageList: FC<MessageListProps> = ({
 
   // 渲染普通消息
   const renderMessage = (message: Message) => {
+    // 如果正在编辑，显示编辑组件
+    if (editingMessageId === message.id && message.type === 'user') {
+      return (
+        <div key={message.id} className="message-wrapper user">
+          <MessageEdit
+            originalText={message.content}
+            onSave={(newText) => handleEditMessage(message.id, newText)}
+            onCancel={handleCancelEdit}
+          />
+        </div>
+      );
+    }
+
     if (message.type === 'user') {
       return (
         <div key={message.id} className="message-wrapper user">
-          <div className="message">
-            {message.content}
+          <div className="message-container">
+            <div className="message">
+              {message.content}
+            </div>
           </div>
+          {renderMessageActions(message)}
         </div>
       );
     } else {

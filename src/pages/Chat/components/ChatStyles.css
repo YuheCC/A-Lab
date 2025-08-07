@@ -1496,46 +1496,9 @@ body.chat-page-body {
     letter-spacing: 0.5px;
 }
 
-/* ==============================================
-   7. 模式提示框样式
-   ============================================== */
 
-.mode-tooltip {
-    position: absolute !important;
-    z-index: 2147483647 !important;
-    background: white !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-    padding: 16px !important;
-    width: 280px !important;
-    min-height: 140px !important;
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: all 0.2s ease;
-    pointer-events: none !important;
-    isolation: isolate !important;
-    overflow: visible !important;
-}
 
-.mode-tooltip.show {
-    opacity: 1;
-    transform: translateY(0);
-}
 
-.mode-tooltip::after {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
-    z-index: 2147483647;
-}
 
 .tooltip-header {
     display: flex;
@@ -1651,4 +1614,83 @@ body.chat-page-body {
     .chat-container.molecule-panel-active .chat-sidebar {
         display: none;
     }
+}
+
+/* ==============================================
+   9. Mode Tooltip 样式优化
+   ============================================== */
+
+/* Mode Tooltip 基础样式 */
+.mode-tooltip {
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    width: 280px;
+    font-size: 14px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(-5px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    word-wrap: break-word;
+    transform-origin: center top;
+    z-index: 2147483647;
+}
+
+.mode-tooltip.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* 模式按钮 hover 效果优化 */
+.new-mode-btn {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.new-mode-btn:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.new-mode-btn.active {
+    background-color: #56B26A;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(86, 178, 106, 0.3);
+}
+
+/* 优化 tooltip 显示时的按钮状态 */
+.new-chat-mode-switch:hover .new-mode-btn {
+    transform: translateY(-1px);
+}
+
+/* 确保 tooltip 在显示时有正确的层级 */
+.mode-tooltip[style*="opacity: 1"] {
+    pointer-events: auto;
+}
+
+/* 优化 tooltip 内容的可读性 */
+.mode-tooltip h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.mode-tooltip span {
+    font-size: 12px;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.mode-tooltip div {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.5;
 }

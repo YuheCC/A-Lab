@@ -9,6 +9,10 @@
   overflow-y: auto;
 }
 
+.message-list button:focus {
+  outline: none;
+}
+
 /* 消息包装器 */
 .message-wrapper {
   display: flex;

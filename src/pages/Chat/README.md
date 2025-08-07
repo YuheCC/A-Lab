@@ -1,184 +1,130 @@
-# 聊天页面样式重构说明
+# Chat 页面功能说明
 
-## 📋 概述
+## 已完成的功能
 
-原始的 `Chat.css` 文件（4700行）已经按功能模块进行了拆分，提取出聊天相关的样式，提高了代码的可维护性和可读性。
+### 1. 核心组件
+- ✅ **MessageList**: 消息列表组件，支持显示用户和机器人消息
+- ✅ **ChatInput**: 聊天输入组件，支持自动调整高度和键盘快捷键
+- ✅ **ChatWelcome**: 欢迎页面组件，支持模式切换和推荐问题
+- ✅ **ChatSider**: 侧边栏组件，支持折叠和聊天历史
+- ✅ **ChatHistory**: 聊天历史组件，支持选择、重命名、置顶、删除
+- ✅ **MessageEdit**: 消息编辑组件，支持内联编辑
+- ✅ **ModeTooltip**: 模式提示组件，显示模式说明和剩余次数
+- ✅ **ChatSearchModal**: 搜索模态框组件，支持搜索聊天记录
 
-## 🗂️ 文件结构
+### 2. 状态管理
+- ✅ **useChat Hook**: 统一管理聊天状态，包括消息、历史记录、加载状态等
+- ✅ **ChatService**: 处理与后端的通信，包括发送消息、重新生成、获取历史等
 
-### 新增的样式文件
+### 3. 功能特性
+- ✅ **消息发送**: 支持发送消息并获取AI回复
+- ✅ **消息编辑**: 支持编辑用户消息
+- ✅ **消息复制**: 支持复制消息内容
+- ✅ **重新生成**: 支持重新生成机器人回复
+- ✅ **聊天历史**: 支持查看和管理聊天历史
+- ✅ **新聊天**: 支持创建新的聊天会话
+- ✅ **模式切换**: 支持 Regular Ask 和 Deep Space 模式
+- ✅ **分子点击**: 支持点击化学分子名称
+- ✅ **搜索功能**: 支持搜索聊天记录
+- ✅ **响应式设计**: 支持侧边栏折叠和移动端适配
+
+### 4. 用户体验
+- ✅ **加载状态**: 显示加载指示器
+- ✅ **错误处理**: 处理网络错误和异常情况
+- ✅ **键盘快捷键**: 支持 Enter 发送、Esc 取消等
+- ✅ **动画效果**: 平滑的过渡动画
+- ✅ **可访问性**: 支持键盘导航和屏幕阅读器
+
+## 技术栈
+
+- **React 19**: 使用最新的 React 版本
+- **TypeScript**: 完整的类型安全
+- **CSS Modules**: 样式隔离和可维护性
+- **React Hooks**: 函数式组件和状态管理
+- **Fetch API**: 网络请求处理
+
+## 文件结构
 
 ```
 src/pages/Chat/
-├── chat-styles.css              # 🎯 主样式文件（入口）
+├── index.tsx                 # 主页面组件
+├── chat-styles.css          # 主样式文件
+├── hooks/
+│   └── useChat.tsx         # 聊天状态管理 Hook
+├── services/
+│   └── chatService.ts      # 聊天服务类
 ├── components/
-│   ├── ChatStyles.css           # 💬 聊天核心样式
-│   ├── MoleculePanel.css        # 🧪 分子面板样式  
-│   ├── MoleculeCard.css         # 🃏 分子卡片样式
-│   └── FeedbackModal.css        # 📝 反馈弹窗样式
-├── Chat.css                     # 📜 原始文件（保留其他页面样式）
-└── README.md                    # 📖 本说明文件
+│   ├── MessageList/        # 消息列表组件
+│   ├── ChatInput/          # 聊天输入组件
+│   ├── ChatWelcome/        # 欢迎页面组件
+│   ├── ChatSider/          # 侧边栏组件
+│   ├── ChatHistory/        # 聊天历史组件
+│   ├── MessageEdit/        # 消息编辑组件
+│   ├── ModeTooltip/        # 模式提示组件
+│   ├── ChatSearchModal/    # 搜索模态框组件
+│   └── HistoryItem/        # 历史记录项组件
+└── README.md               # 本文档
 ```
 
-## 🎨 样式模块说明
+## 使用示例
 
-### 1. ChatStyles.css - 聊天核心样式
-**包含内容：**
-- ✅ 聊天容器和布局系统
-- ✅ 侧边栏（历史记录区域）
-- ✅ 消息区域和消息气泡
-- ✅ 新聊天界面
-- ✅ 输入框区域
-- ✅ 搜索聊天弹窗
-- ✅ 模式提示框
-- ✅ 响应式布局调整
+```typescript
+import { useChat } from './hooks/useChat';
+import { chatService } from './services/chatService';
 
-**主要区域注释：**
-```css
-/* ============================================== 
-   1. 基础布局样式 
-   ============================================== */
+const ChatPage = () => {
+  const {
+    messages,
+    chatHistory,
+    currentChatId,
+    isLoading,
+    addUserMessage,
+    addBotMessage,
+    editMessage
+  } = useChat();
 
-/* ============================================== 
-   2. 侧边栏样式（历史记录区域） 
-   ============================================== */
+  const handleSendMessage = async (message: string) => {
+    addUserMessage(message);
+    
+    try {
+      const response = await chatService.sendMessage(message);
+      addBotMessage(response.content, response.showRegenerate);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  };
 
-/* ============================================== 
-   3. 消息区域样式 
-   ============================================== */
-
-/* ============================================== 
-   4. 新聊天界面样式 
-   ============================================== */
-
-/* ============================================== 
-   5. 输入框区域样式 
-   ============================================== */
-```
-
-### 2. MoleculePanel.css - 分子面板样式
-**包含内容：**
-- ✅ 分子面板基础布局
-- ✅ 分子信息展示区域
-- ✅ 相似分子对比区域
-- ✅ 分子面板加载动画
-- ✅ 响应式布局
-
-### 3. MoleculeCard.css - 分子卡片样式
-**包含内容：**
-- ✅ 分子卡片基础样式
-- ✅ 分子卡片头部
-- ✅ 分子结构图区域
-- ✅ 原子和化学键样式
-- ✅ 分子属性区域
-- ✅ 功能组信息区域
-- ✅ 分子卡片操作按钮
-
-### 4. FeedbackModal.css - 反馈弹窗样式
-**包含内容：**
-- ✅ 反馈弹窗基础布局
-- ✅ 反馈弹窗头部
-- ✅ 反馈弹窗内容区域
-- ✅ 反馈表单控件样式
-- ✅ 文件上传区域
-- ✅ 反馈弹窗底部按钮
-
-## 🚀 使用方法
-
-### 方法一：使用主样式文件（推荐）
-
-在你的组件中引入主样式文件：
-
-```tsx
-// 在 Chat/index.tsx 中
-import './chat-styles.css';
-
-export default function ChatPage() {
   return (
-    <div className="chat-container">
-      {/* 聊天页面内容 */}
+    <div>
+      <MessageList 
+        messages={messages}
+        onEditMessage={editMessage}
+        onCopyMessage={(content) => navigator.clipboard.writeText(content)}
+      />
+      <ChatInput onSendMessage={handleSendMessage} />
     </div>
   );
-}
+};
 ```
 
-### 方法二：按需引入特定模块
+## 下一步计划
 
-如果只需要特定功能的样式：
+1. **后端集成**: 连接真实的AI API
+2. **用户认证**: 添加用户登录和权限管理
+3. **数据持久化**: 实现聊天记录的本地存储
+4. **实时通信**: 添加 WebSocket 支持
+5. **文件上传**: 支持上传图片和文档
+6. **语音输入**: 添加语音转文字功能
+7. **多语言支持**: 完善国际化功能
+8. **主题切换**: 支持深色模式
+9. **性能优化**: 添加虚拟滚动和懒加载
+10. **单元测试**: 添加完整的测试覆盖
 
-```tsx
-// 只需要聊天核心功能
-import './components/ChatStyles.css';
+## 注意事项
 
-// 需要分子面板功能
-import './components/MoleculePanel.css';
-import './components/MoleculeCard.css';
-
-// 需要反馈功能
-import './components/FeedbackModal.css';
-```
-
-## 🎯 主要改进
-
-### 1. 结构清晰
-- 按功能模块拆分，每个文件职责单一
-- 添加了详细的区域分割注释
-- 便于团队协作和维护
-
-### 2. 性能优化
-- 可以按需加载特定模块
-- 减少了单文件大小
-- 提高了构建和开发效率
-
-### 3. 可维护性
-- 模块化设计，修改某个功能不影响其他模块
-- 清晰的命名规范和注释
-- 便于后续功能扩展
-
-## 📝 注意事项
-
-### 1. 原始文件保留
-- `Chat.css` 原始文件保留，包含其他页面（如About、Login等）的样式
-- 如果需要完全替换，请确保其他页面不受影响
-
-### 2. 样式优先级
-- 新的模块化样式具有相同的CSS优先级
-- 如有冲突，请检查导入顺序
-
-### 3. 响应式支持
-- 所有模块都包含了响应式设计
-- 支持移动端、平板端和桌面端
-
-## 🔧 开发建议
-
-### 1. 样式修改
-修改特定功能的样式时，请在对应的模块文件中进行：
-- 聊天消息样式 → `ChatStyles.css`
-- 分子展示样式 → `MoleculeCard.css`
-- 面板布局样式 → `MoleculePanel.css`
-- 反馈表单样式 → `FeedbackModal.css`
-
-### 2. 新增功能
-新增聊天相关功能时：
-1. 创建对应的CSS模块文件
-2. 在 `chat-styles.css` 中添加 `@import`
-3. 添加相应的区域注释
-
-### 3. 调试支持
-开发环境下可以使用调试模式：
-```tsx
-<div className="chat-container" data-debug="true">
-  {/* 会显示各区域的边框，便于调试布局 */}
-</div>
-```
-
-## 🌟 后续计划
-
-- [ ] 添加暗色模式支持
-- [ ] 进一步优化移动端体验
-- [ ] 添加样式变量系统（CSS自定义属性）
-- [ ] 考虑使用CSS Modules或Styled Components
-
----
-
-如有问题或建议，请联系开发团队。
+1. 所有组件都使用 TypeScript，确保类型安全
+2. 组件都是纯函数组件，使用 React Hooks 管理状态
+3. 支持键盘快捷键和可访问性
+4. 包含错误处理和加载状态
+5. 支持国际化（i18n）
+6. 使用 CSS 模块确保样式隔离

@@ -1,10 +1,24 @@
 import { useRef, useState } from "react";
 import ChatHistory from "../History";
 import ChatSearchModal from "../ChatSearchModal";
+import type { ChatHistoryItem } from "../History";
 
-const ChatSider = () => {
+interface ChatSiderProps {
+    onNewChat: () => void;
+    onSelectChat: (chatId: string) => void;
+    currentChatId?: string;
+    chatHistory: ChatHistoryItem[];
+}
+
+const ChatSider: React.FC<ChatSiderProps> = ({
+    onNewChat,
+    onSelectChat,
+    currentChatId,
+    chatHistory
+}) => {
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
     const searchModalRef = useRef<any>(null);
+    
     const handleSearchClick = () => {
         searchModalRef.current.show();
     }
@@ -30,7 +44,7 @@ const ChatSider = () => {
                 </svg>
                 </button>
                 {/* Mini模式下的新聊天按钮 */}
-                <a href="#" className="mini-new-chat-btn" id="miniNewChatBtn" title="新聊天">
+                <a href="#" className="mini-new-chat-btn" id="miniNewChatBtn" title="新聊天" onClick={(e) => { e.preventDefault(); onNewChat(); }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/>
                     <rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/>
@@ -44,7 +58,7 @@ const ChatSider = () => {
                 </svg>
                 </a>
                 <div className="sidebar-actions">
-                <a href="#" className="new-chat-btn" id="mainNewChatBtn">
+                <a href="#" className="new-chat-btn" id="mainNewChatBtn" onClick={(e) => { e.preventDefault(); onNewChat(); }}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>
                     <span>新聊天</span>
                 </a>
@@ -54,8 +68,17 @@ const ChatSider = () => {
                 </a>
                 </div>
             </div>
-            <ChatHistory />
-            <ChatSearchModal ref={searchModalRef} />
+            <ChatHistory 
+                history={chatHistory}
+                onSelectChat={onSelectChat}
+                onNewChat={onNewChat}
+                currentChatId={currentChatId}
+            />
+            <ChatSearchModal 
+                ref={searchModalRef} 
+                onSelectChat={onSelectChat}
+                onNewChat={onNewChat}
+            />
         </aside>
     )
 }
