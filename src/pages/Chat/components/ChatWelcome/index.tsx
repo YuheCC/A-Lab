@@ -1,20 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import ModeTooltip from '../ModeTooltip';
 
-// 推荐问题数据
-const RECOMMENDED_QUESTIONS = [
-    "锂离子电池的电解质溶剂选择有哪些关键考虑因素？",
-    "固态电解质在下一代电池技术中的优势和应用前景如何？",
-    "SEI层的形成机制及其对电池性能的影响是什么？",
-    "高镍正极材料的稳定性问题及解决方案有哪些？",
-    "锂枝晶的形成原因及抑制方法有哪些？",
-    "钠离子电池与锂离子电池的性能对比如何？",
-    "全固态电池的技术挑战和发展前景如何？",
-    "电池热管理系统的设计原理和关键技术有哪些？",
-    "快充技术对电池寿命的影响及优化策略？",
-    "电池回收利用的技术路线和经济性分析？"
-];
+// 推荐问题数据将从多语言配置中获取
 
 type ChatMode = 'regular' | 'deep-space';
 
@@ -23,10 +12,14 @@ interface ChatWelcomeProps {
 }
 
 const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
+    const { t } = useTranslation();
     const [inputValue, setInputValue] = useState<string>('');
     const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
+    
+    // 从多语言配置获取推荐问题
+    const recommendedQuestions = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
     const [currentQuestions, setCurrentQuestions] = useState<string[]>(
-        RECOMMENDED_QUESTIONS.slice(0, 5)
+        recommendedQuestions.slice(0, 5)
     );
     const [tooltipState, setTooltipState] = useState<{
         isVisible: boolean;
@@ -164,9 +157,9 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
             }, 500);
         }
         
-        const shuffled = [...RECOMMENDED_QUESTIONS].sort(() => 0.5 - Math.random());
+        const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
         setCurrentQuestions(shuffled.slice(0, 5));
-    }, []);
+    }, [recommendedQuestions]);
 
     // 处理 tooltip 鼠标进入
     const handleTooltipMouseEnter = useCallback(() => {
@@ -197,8 +190,8 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
     return (
         <div className='new-chat-interface'>
             <div className="new-chat-content">
-                <h2 className="new-chat-title">新聊天</h2>
-                <p className="new-chat-subtitle">开始一段新的对话，探索分子宇宙的奥秘</p>
+                <h2 className="new-chat-title">{t('chatbox.chat.newExpoler')}</h2>
+                <p className="new-chat-subtitle">{t('chatbox.chat.newChatSubtitle')}</p>
                 <div className="new-chat-input-container">
                     <div className="new-chat-input-wrapper">
                         <textarea
@@ -206,7 +199,7 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                             value={inputValue}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
-                            placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics."
+                            placeholder={t('chatbox.input.placeholder')}
                             rows={3}
                         />
                         <div className="new-chat-input-controls">
@@ -220,7 +213,7 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                                     onMouseEnter={(e) => handleModeHover('regular', e)}
                                     type="button"
                                 >
-                                    <span>Regular Ask</span>
+                                    <span>{t('chatbox.chat.modes.regular')}</span>
                                 </button>
                                 <button 
                                     className={`new-mode-btn ${currentMode === 'deep-space' ? 'active' : ''}`}
@@ -228,8 +221,8 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                                     onMouseEnter={(e) => handleModeHover('deep-space', e)}
                                     type="button"
                                 >
-                                    <span>Deep Space</span>
-                                    <span className="beta-badge">Beta</span>
+                                    <span>{t('chatbox.chat.modes.deepSpace')}</span>
+                                    <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
                                 </button>
                             </div>
                             <button 
@@ -237,7 +230,7 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                                 onClick={handleSendMessage}
                                 disabled={isInputEmpty}
                                 type="button"
-                                aria-label="发送消息"
+                                aria-label={t('chatbox.chat.sendMessage')}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
@@ -274,12 +267,12 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                         className="refresh-questions-btn"
                         onClick={handleRefreshQuestions}
                         type="button"
-                        aria-label="刷新推荐问题"
+                        aria-label={t('chatbox.chat.refreshQuestions')}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="16" height="16">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
-                        <span>换一换</span>
+                        <span>{t('chatbox.chat.refreshQuestions')}</span>
                     </button>
                 </div>
             </div>

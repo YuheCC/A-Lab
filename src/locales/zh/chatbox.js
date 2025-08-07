@@ -6,6 +6,54 @@ export default {
         placeholder: "随便问我关于电池、电池化学或相关主题的任何问题。",
         sendButton: "发送"
     },
+    chat: {
+        newChat: "新对话",
+        newExpoler: "新探索",
+        newChatSubtitle: "开始一段新的对话，探索分子宇宙的奥秘",
+        searchChat: "搜索聊天",
+        historyTitle: "历史对话",
+        askTitle: "ASK",
+        refreshQuestions: "换一换",
+        sendMessage: "发送消息",
+        editQuestion: "编辑问题",
+        copy: "复制",
+        regenerate: "重新生成",
+        sendFailed: "发送消息失败，请稍后重试。",
+        regenerateFailed: "重新生成失败，请稍后重试。",
+        loadChatFailed: "加载聊天记录失败",
+        loadHistoryFailed: "加载聊天历史失败",
+        modes: {
+            regular: "Regular Ask",
+            deepSpace: "Deep Space",
+            regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
+            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+            regularRemaining: "今日剩余: {{count}}次",
+            deepSpaceRemaining: "本月剩余: {{count}}次",
+            betaBadge: "Beta"
+        },
+        recommendedQuestions: [
+            "锂离子电池的电解质溶剂选择有哪些关键考虑因素？",
+            "固态电解质在下一代电池技术中的优势和应用前景如何？",
+            "SEI层的形成机制及其对电池性能的影响是什么？",
+            "高镍正极材料的稳定性问题及解决方案有哪些？",
+            "锂枝晶的形成原因及抑制方法有哪些？",
+            "钠离子电池与锂离子电池的性能对比如何？",
+            "全固态电池的技术挑战和发展前景如何？",
+            "电池热管理系统的设计原理和关键技术有哪些？",
+            "快充技术对电池寿命的影响及优化策略？",
+            "电池回收利用的技术路线和经济性分析？"
+        ],
+        searchModal: {
+            placeholder: "搜索聊天...",
+            recentChats: "最近聊天"
+        },
+        historyItem: {
+            rename: "修改名称",
+            pin: "置顶",
+            unpin: "取消置顶",
+            delete: "删除对话"
+        }
+    },
     checkboxes: {
         ignoreChatHistory: "忽略聊天历史",
         disableLiteratureSearch: "禁用文献搜索",

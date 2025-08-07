@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import { history } from 'umi';
 
@@ -29,6 +30,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
   onTogglePin,
   onDelete,
 }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempTitle, setTempTitle] = useState(title);
@@ -159,10 +161,10 @@ const HistoryItem: FC<HistoryItemProps> = ({
         }}
       >
         <MenuItem onClick={handleRenameStart} sx={{ fontSize: '13px', padding: '10px 16px' }}>
-          修改名称
+          {t('chatbox.chat.historyItem.rename')}
         </MenuItem>
         <MenuItem onClick={handleTogglePin} sx={{ fontSize: '13px', padding: '10px 16px' }}>
-          {isPinned ? '取消置顶' : '置顶'}
+          {isPinned ? t('chatbox.chat.historyItem.unpin') : t('chatbox.chat.historyItem.pin')}
         </MenuItem>
         <MenuItem 
           onClick={handleDelete} 
@@ -176,7 +178,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
             },
           }}
         >
-          删除对话
+          {t('chatbox.chat.historyItem.delete')}
         </MenuItem>
       </Menu>
     </li>

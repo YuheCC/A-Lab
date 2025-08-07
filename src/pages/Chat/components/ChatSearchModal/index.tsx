@@ -1,4 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 interface ChatSearchModalProps {
     onSelectChat?: (chatId: string) => void;
@@ -6,6 +7,7 @@ interface ChatSearchModalProps {
 }
 
 const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatSearchModalProps>((props, ref) => { 
+    const { t } = useTranslation();
     const [show, setShow] = useState(false);
     
     useImperativeHandle(ref, () => ({
@@ -30,7 +32,7 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
             >
                 <div className="search-chat-content">
                     <div className="search-chat-header">
-                        <input type="text" className="search-chat-input" placeholder="搜索聊天..." id="searchChatInput" />
+                        <input type="text" className="search-chat-input" placeholder={t('chatbox.chat.searchModal.placeholder')} id="searchChatInput" />
                         <button onClick={() => setShow(false)} className="search-chat-close" id="searchChatClose">×</button>
                     </div>
                     <div className="search-chat-body">
@@ -44,11 +46,11 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
                             <svg className="search-chat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
-                            <span>新聊天</span>
+                            <span>{t('chatbox.chat.newChat')}</span>
                         </div>
                         
                         <div className="search-chat-section">
-                            <div className="search-chat-section-title">最近聊天</div>
+                            <div className="search-chat-section-title">{t('chatbox.chat.searchModal.recentChats')}</div>
                             <div 
                                 className="search-chat-item" 
                                 data-chat-id="1"

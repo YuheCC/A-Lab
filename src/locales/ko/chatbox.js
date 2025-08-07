@@ -6,6 +6,54 @@ export default {
         placeholder: "배터리, 배터리 화학 또는 관련 주제에 대한 질문이라면 무엇이든 물어보세요.",
         sendButton: "전송"
     },
+    chat: {
+        newChat: "새 채팅",
+        newExpoler: "새 탐험",
+        newChatSubtitle: "새로운 대화를 시작하고 분자 우주의 신비를 탐험해보세요",
+        searchChat: "채팅 검색",
+        historyTitle: "채팅 기록",
+        askTitle: "ASK",
+        refreshQuestions: "새로고침",
+        sendMessage: "메시지 전송",
+        editQuestion: "질문 편집",
+        copy: "복사",
+        regenerate: "재생성",
+        sendFailed: "메시지 전송에 실패했습니다. 나중에 다시 시도해주세요.",
+        regenerateFailed: "재생성에 실패했습니다. 나중에 다시 시도해주세요.",
+        loadChatFailed: "채팅 데이터 로드 실패",
+        loadHistoryFailed: "채팅 기록 로드 실패",
+        modes: {
+            regular: "Regular Ask",
+            deepSpace: "Deep Space",
+            regularDescription: "기본 Q&A 모드로, 일상적인 배터리 관련 질문에 적합합니다. 정확하고 간결한 답변을 제공합니다.",
+            deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+            regularRemaining: "오늘 남은 횟수: {{count}}회",
+            deepSpaceRemaining: "이번 달 남은 횟수: {{count}}회",
+            betaBadge: "베타"
+        },
+        recommendedQuestions: [
+            "리튬이온 배터리의 전해질 용매 선택에서 주요 고려사항은 무엇인가요?",
+            "차세대 배터리 기술에서 고체 전해질의 장점과 응용 전망은 어떤가요?",
+            "SEI층의 형성 메커니즘과 배터리 성능에 미치는 영향은 무엇인가요?",
+            "고니켈 양극 소재의 안정성 문제와 해결책은 무엇인가요?",
+            "리튬 덴드라이트 형성 원인과 억제 방법은 무엇인가요?",
+            "나트륨이온 배터리와 리튬이온 배터리의 성능 비교는 어떤가요?",
+            "전고체 배터리의 기술적 도전과 개발 전망은 어떤가요?",
+            "배터리 열관리 시스템의 설계 원리와 핵심 기술은 무엇인가요?",
+            "급속 충전 기술이 배터리 수명에 미치는 영향과 최적화 전략은?",
+            "배터리 재활용 이용의 기술 경로와 경제성 분석은?"
+        ],
+        searchModal: {
+            placeholder: "채팅 검색...",
+            recentChats: "최근 채팅"
+        },
+        historyItem: {
+            rename: "이름 변경",
+            pin: "고정",
+            unpin: "고정 해제",
+            delete: "채팅 삭제"
+        }
+    },
     checkboxes: {
         ignoreChatHistory: "채팅 기록 무시",
         disableLiteratureSearch: "문헌 검색 비활성화",

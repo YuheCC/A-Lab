@@ -4,6 +4,7 @@ import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'umi';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
 import { useChat } from './hooks/useChat';
 import { chatService } from './services/chatService';
@@ -11,6 +12,7 @@ import type { Message } from './components/MessageList';
 import type { ChatHistoryItem } from './components/History';
 
 const Chat = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const {
         messages,
@@ -75,7 +77,7 @@ const Chat = () => {
             addBotMessage(response.content, response.showRegenerate);
         } catch (error) {
             console.error('Failed to send message:', error);
-            addBotMessage('发送消息失败，请稍后重试。', false);
+            addBotMessage(t('chatbox.chat.sendFailed'), false);
         } finally {
             setIsLoading(false);
         }
@@ -134,17 +136,17 @@ const Chat = () => {
 
     return (
         <div className="chat-container">
-            <ChatSider 
+            <ChatSider
                 onNewChat={handleNewChat}
                 onSelectChat={handleSelectChat}
                 currentChatId={currentChatId}
                 chatHistory={chatHistory}
             />
-            <main className="chat-main" id="chatMain" style={{position:'relative'}}>
+            <main className="chat-main" id="chatMain" style={{ position: 'relative' }}>
                 <div className="chat-messages" id="chat-messages">
                     {
                         currentChatId ? (
-                            <MessageList 
+                            <MessageList
                                 messages={messages}
                                 onCopyMessage={handleCopyMessage}
                                 onRegenerateMessage={handleRegenerateMessage}
@@ -158,7 +160,7 @@ const Chat = () => {
                 </div>
                 {
                     showInput && (
-                        <ChatInput 
+                        <ChatInput
                             onSendMessage={handleSendMessage}
                             disabled={isLoading}
                         />

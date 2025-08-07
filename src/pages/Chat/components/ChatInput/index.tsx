@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { FC, ChangeEvent, KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -10,10 +11,12 @@ interface ChatInputProps {
 
 const ChatInput: FC<ChatInputProps> = ({
   onSendMessage,
-  placeholder = "Ask me anything, as long as it's about batteries, battery chemistry, or related topics.",
+  placeholder,
   disabled = false,
   className = ''
 }) => {
+  const { t } = useTranslation();
+  const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -65,7 +68,7 @@ const ChatInput: FC<ChatInputProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={defaultPlaceholder}
           rows={3}
           disabled={disabled}
           style={{

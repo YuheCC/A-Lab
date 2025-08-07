@@ -58,7 +58,7 @@ export class ChatService {
       console.error('Failed to send message:', error);
       // 返回模拟响应
       return {
-        content: `收到您的消息：${message}\n\n这是一个模拟回复，实际应用中这里会调用AI接口。`,
+        content: `Received your message: ${message}\n\nThis is a mock response. In actual application, this would call the AI interface.`,
         showRegenerate: true
       };
     }
@@ -89,7 +89,7 @@ export class ChatService {
     } catch (error) {
       console.error('Failed to regenerate response:', error);
       return {
-        content: '重新生成失败，请稍后重试。',
+        content: 'Failed to regenerate, please try again later.',
         showRegenerate: false
       };
     }

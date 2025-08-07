@@ -6,6 +6,54 @@ export default {
         placeholder: "Ask me anything, as long as it's about batteries, battery chemistry, or related topics.",
         sendButton: "Send"
     },
+    chat: {
+        newChat: "New Chat",
+        newExpoler: "New Explorer",
+        newChatSubtitle: "Start a new conversation and explore the mysteries of the molecular universe",
+        searchChat: "Search Chat",
+        historyTitle: "Chat History",
+        askTitle: "ASK",
+        refreshQuestions: "Refresh",
+        sendMessage: "Send Message",
+        editQuestion: "Edit Question",
+        copy: "Copy",
+        regenerate: "Regenerate",
+        sendFailed: "Failed to send message, please try again later.",
+        regenerateFailed: "Failed to regenerate, please try again later.",
+        loadChatFailed: "Failed to load chat data",
+        loadHistoryFailed: "Failed to load chat history",
+        modes: {
+            regular: "Regular Ask",
+            deepSpace: "Deep Space",
+            regularDescription: "Basic Q&A mode, suitable for daily battery-related questions. Provides accurate and concise answers.",
+            deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
+            regularRemaining: "Remaining today: {{count}} times",
+            deepSpaceRemaining: "Remaining this month: {{count}} times",
+            betaBadge: "Beta"
+        },
+        recommendedQuestions: [
+            "What are the key considerations for electrolyte solvent selection in lithium-ion batteries?",
+            "What are the advantages and application prospects of solid electrolytes in next-generation battery technology?",
+            "What is the formation mechanism of SEI layer and its impact on battery performance?",
+            "What are the stability issues and solutions for high-nickel cathode materials?",
+            "What are the causes of lithium dendrite formation and methods to suppress them?",
+            "How do sodium-ion batteries compare with lithium-ion batteries in terms of performance?",
+            "What are the technical challenges and development prospects of all-solid-state batteries?",
+            "What are the design principles and key technologies of battery thermal management systems?",
+            "What is the impact of fast charging technology on battery life and optimization strategies?",
+            "What are the technical routes and economic analysis of battery recycling and utilization?"
+        ],
+        searchModal: {
+            placeholder: "Search chats...",
+            recentChats: "Recent Chats"
+        },
+        historyItem: {
+            rename: "Rename",
+            pin: "Pin",
+            unpin: "Unpin",
+            delete: "Delete Chat"
+        }
+    },
     checkboxes: {
         ignoreChatHistory: "Ignore chat history",
         disableLiteratureSearch: "Disable literature search",

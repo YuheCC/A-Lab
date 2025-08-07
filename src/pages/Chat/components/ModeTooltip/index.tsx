@@ -1,5 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModeTooltipProps {
   mode: 'regular' | 'deep-space';
@@ -11,20 +12,22 @@ interface ModeTooltipProps {
 }
 
 const ModeTooltip: FC<ModeTooltipProps> = ({ mode, isVisible, position, buttonCenterX, onMouseEnter, onMouseLeave }) => {
+  const { t } = useTranslation();
+  
   if (!isVisible) return null;
 
   const getTooltipContent = () => {
     if (mode === 'regular') {
       return {
-        title: 'Regular Ask',
-        remaining: '今日剩余: 100次',
-        description: '基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。'
+        title: t('chatbox.chat.modes.regular'),
+        remaining: t('chatbox.chat.modes.regularRemaining', { count: 100 }),
+        description: t('chatbox.chat.modes.regularDescription')
       };
     } else if (mode === 'deep-space') {
       return {
-        title: 'Deep Space',
-        remaining: '本月剩余: 20次',
-        description: '由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。'
+        title: t('chatbox.chat.modes.deepSpace'),
+        remaining: t('chatbox.chat.modes.deepSpaceRemaining', { count: 20 }),
+        description: t('chatbox.chat.modes.deepSpaceDescription')
       };
     }
     return { title: '', remaining: '', description: '' };

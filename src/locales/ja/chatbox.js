@@ -6,6 +6,54 @@ export default {
         placeholder: "バッテリー、バッテリー化学、または関連トピックに関するものなら何でも聞いてください。",
         sendButton: "送信"
     },
+    chat: {
+        newChat: "新しいチャット",
+        newExpoler: "新しい探索",
+        newChatSubtitle: "新しい会話を始めて、分子宇宙の神秘を探求しましょう",
+        searchChat: "チャット検索",
+        historyTitle: "チャット履歴",
+        askTitle: "ASK",
+        refreshQuestions: "更新",
+        sendMessage: "メッセージを送信",
+        editQuestion: "質問を編集",
+        copy: "コピー",
+        regenerate: "再生成",
+        sendFailed: "メッセージの送信に失敗しました。後でもう一度お試しください。",
+        regenerateFailed: "再生成に失敗しました。後でもう一度お試しください。",
+        loadChatFailed: "チャットデータの読み込みに失敗しました",
+        loadHistoryFailed: "チャット履歴の読み込みに失敗しました",
+        modes: {
+            regular: "Regular Ask",
+            deepSpace: "Deep Space",
+            regularDescription: "基本的なQ&Aモード。日常的なバッテリー関連の質問に適しています。正確で簡潔な回答を提供します。",
+            deepSpaceDescription: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
+            regularRemaining: "今日の残り: {{count}}回",
+            deepSpaceRemaining: "今月の残り: {{count}}回",
+            betaBadge: "ベータ"
+        },
+        recommendedQuestions: [
+            "リチウムイオン電池の電解質溶媒選択における主要な考慮事項は何ですか？",
+            "次世代電池技術における固体電解質の利点と応用の見通しはどうですか？",
+            "SEI層の形成メカニズムと電池性能への影響は何ですか？",
+            "高ニッケル正極材料の安定性問題と解決策は何ですか？",
+            "リチウムデンドライトの形成原因と抑制方法は何ですか？",
+            "ナトリウムイオン電池とリチウムイオン電池の性能比較はどうですか？",
+            "全固体電池の技術的課題と開発の見通しはどうですか？",
+            "電池熱管理システムの設計原理と主要技術は何ですか？",
+            "急速充電技術が電池寿命に与える影響と最適化戦略は？",
+            "電池リサイクル利用の技術ルートと経済性分析は？"
+        ],
+        searchModal: {
+            placeholder: "チャットを検索...",
+            recentChats: "最近のチャット"
+        },
+        historyItem: {
+            rename: "名前を変更",
+            pin: "ピン留め",
+            unpin: "ピン留め解除",
+            delete: "チャットを削除"
+        }
+    },
     checkboxes: {
         ignoreChatHistory: "チャット履歴を無視する",
         disableLiteratureSearch: "文献検索を無効にする",

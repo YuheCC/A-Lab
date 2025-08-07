@@ -1,5 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import HistoryItem from '../HistoryItem';
 
 // 定义 ChatHistoryItem 类型
@@ -47,30 +48,31 @@ const ChatHistory: FC<ChatHistoryProps> = ({
     onNewChat,
     currentChatId
 }) => {
+    const { t } = useTranslation();
     const handleChatClick = (chatId: string) => {
-        console.log('点击对话:', chatId);
+        console.log('Chat clicked:', chatId);
         onSelectChat(chatId);
     };
 
     const handleRename = (chatId: string, newTitle: string) => {
-        console.log('重命名对话:', chatId, newTitle);
+        console.log('Rename chat:', chatId, newTitle);
         // 这里可以实现重命名对话的逻辑
     };
 
     const handleTogglePin = (chatId: string) => {
-        console.log('切换置顶状态:', chatId);
+        console.log('Toggle pin status:', chatId);
         // 这里可以实现切换置顶状态的逻辑
     };
 
     const handleDelete = (chatId: string) => {
-        console.log('删除对话:', chatId);
+        console.log('Delete chat:', chatId);
         // 这里可以实现删除对话的逻辑
     };
 
     return (
         <>
             <nav className="history-nav">
-                <p className="history-title">历史对话</p>
+                <p className="history-title">{t('chatbox.chat.historyTitle')}</p>
                 <ul>
                     {history.map((item) => (
                         <HistoryItem
