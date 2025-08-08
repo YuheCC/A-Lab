@@ -13,6 +13,9 @@ export interface ChatRequest {
   chatId?: string;
 }
 
+import type { ChatStreamHandle } from './wsService';
+import { createChatWebSocketStream } from './wsService';
+
 export class ChatService {
   private static instance: ChatService;
   private baseUrl: string;
@@ -93,6 +96,53 @@ export class ChatService {
         showRegenerate: false
       };
     }
+  }
+
+  // 打开基于 WebSocket 的流式连接（长连接）
+  // 返回句柄以便外部发送、关闭、检测连接
+  openChatStream(options: {
+    chatId?: string;
+    message?: string;
+    mode?: 'regular' | 'deep-space';
+    path?: string; // 后端实际 WebSocket 路径，默认 '/chat/stream'
+    protocols?: string[];
+    onOpen?: (ev: Event) => void;
+    onMessage?: (data: any, ev: MessageEvent) => void;
+    onError?: (ev: Event) => void;
+    onClose?: (ev: CloseEvent) => void;
+  }): ChatStreamHandle {
+    const {
+      chatId,
+      message,
+      mode = 'regular',
+      path = '/chat/stream',
+      protocols,
+      onOpen,
+      onMessage,
+      onError,
+      onClose,
+    } = options || {};
+
+    const token = this.getAuthToken();
+
+    return createChatWebSocketStream({
+      baseUrl: this.baseUrl,
+      path,
+      chatId,
+      message,
+      mode,
+      protocols,
+      query: {},
+      withTokenInQuery: true,
+      heartbeat: { intervalMs: 30000, pingMessage: 'ping' },
+      autoReconnect: true,
+      maxRetries: 8,
+      retryDelayBaseMs: 800,
+      onOpen,
+      onMessage,
+      onError,
+      onClose,
+    });
   }
 
   // 获取聊天历史
@@ -362,7 +412,11 @@ This combination balances dielectric constant and viscosity; see [1,2] for detai
 
   // 获取认证令牌
   private getAuthToken(): string {
-    return localStorage.getItem('authToken') || '';
+    return (
+      localStorage.getItem('token') ||
+      localStorage.getItem('authToken') ||
+      ''
+    );
   }
 }
 
