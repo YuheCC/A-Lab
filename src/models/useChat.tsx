@@ -193,7 +193,12 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         }));
         
         try {
-            const historyList = await authFetch(`${API_URL}/chat-history`).then(res => res.json());
+            const historyResp = await authFetch(`${API_URL}/chat-history`);
+            const historyJson = await historyResp.json().catch(() => []);
+            const historyList = Array.isArray(historyJson) ? historyJson : [];
+            if (!Array.isArray(historyJson)) {
+                console.warn("📥 UNEXPECTED CHAT HISTORY RESPONSE:", historyJson);
+            }
             console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyList.length, "sessions");
 
             const fullChats = await Promise.all(historyList.map(async (chat: any) => {
