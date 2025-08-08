@@ -157,6 +157,9 @@ body.chat-page-body {
     flex-direction: column;
     gap: 16px;
     border-right: 1px solid #e2e8f0;
+    /* 让侧边栏占满容器高度，并防止内部溢出遮挡 */
+    height: calc(100vh - 64px);
+    overflow: hidden;
 }
 
 .new-chat-btn {
@@ -235,13 +238,24 @@ body.chat-page-body {
     text-transform: uppercase;
 }
 
+/* 历史记录容器：使用flex占据剩余空间 */
+.history-nav {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0; /* 关键：允许子元素在flex容器内正确收缩 */
+}
+
 .history-nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: calc(100vh - 200px);
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    max-height: none; /* 取消固定视口高度计算，改为随容器自适应 */
 }
 
 .history-nav ul::-webkit-scrollbar {
@@ -254,9 +268,7 @@ body.chat-page-body {
     scrollbar-width: none;
 }
 
-.history-nav {
-    margin-top: 16px;
-}
+/* 注意：.history-nav 的 margin-top 已在上方合并 */
 
 .history-nav li {
     display: flex;
