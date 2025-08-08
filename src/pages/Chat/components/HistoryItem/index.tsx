@@ -11,6 +11,8 @@ interface HistoryItemProps {
   title: string;
   /** 是否置顶 */
   isPinned?: boolean;
+  /** 是否为当前会话（高亮） */
+  isActive?: boolean;
   /** 点击对话标题的回调 */
   onChatClick?: (chatId: string) => void;
   /** 重命名对话的回调 */
@@ -25,6 +27,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
   chatId,
   title,
   isPinned = false,
+  isActive = false,
   onChatClick,
   onRename,
   onTogglePin,
@@ -100,7 +103,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
   };
 
   return (
-    <li className={isPinned ? 'pinned' : ''}>
+    <li className={`${isPinned ? 'pinned' : ''} ${isActive ? 'active' : ''}`.trim()}>
       {isRenaming ? (
         <input
           ref={inputRef}
@@ -114,7 +117,8 @@ const HistoryItem: FC<HistoryItemProps> = ({
       ) : (
         <a
           href="#"
-          className="recent-chat"
+          className={`recent-chat ${isActive ? 'active' : ''}`}
+          aria-current={isActive ? 'page' : undefined}
           data-chat-id={chatId}
           onClick={handleChatClick}
         >

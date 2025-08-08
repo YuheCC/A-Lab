@@ -80,6 +80,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
                             chatId={item.chatId}
                             title={item.title}
                             isPinned={item.isPinned}
+                            isActive={currentChatId === item.chatId}
                             onChatClick={handleChatClick}
                             onRename={handleRename}
                             onTogglePin={handleTogglePin}

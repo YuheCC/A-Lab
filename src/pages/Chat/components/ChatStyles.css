@@ -286,6 +286,19 @@ body.chat-page-body {
     background-color: rgba(0, 0, 0, 0.03);
 }
 
+.history-nav li.active {
+    background-color: rgba(86, 178, 106, 0.12);
+}
+
+.history-nav li.active .recent-chat {
+    color: #111827;
+    font-weight: 600;
+}
+
+.history-nav li.active .chat-menu-btn {
+    opacity: 1;
+}
+
 .history-nav li a {
     display: block;
     text-decoration: none;
