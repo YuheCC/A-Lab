@@ -20,6 +20,25 @@ export default {
     clickToCollapse: "クリックして折りたたむ",
     clickToExpand: "クリックして詳細を展開"
   },
+  moleculeModal: {
+    original: "元の分子",
+    findSimilar: "類似を検索",
+    similarWithCount: "類似分子 ({{count}})",
+    functionalGroupsTitle: "官能基",
+    functionalGroupList: "エーテル、ケタール、炭酸エステル、エステル",
+    unknown: "不明",
+    types: {
+      all: "すべてのタイプ",
+      solvent: "溶媒",
+      diluent: "希釈剤",
+      additive: "添加剤"
+    },
+    properties: {
+      predictedFp: "予測引火点",
+      combustionEnthalpy: "燃焼エンタルピー",
+      commercialViability: "商業的実現可能性"
+    }
+  },
   umapPlot: {
     controls: {
       resetViewport: "ビューポートをリセット",

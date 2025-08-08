@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { moleculeService, type MoleculeProperties, type SimilarMolecule } from '@/pages/Chat/services/moleculeService';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -15,8 +17,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     onFindSimilar,
     onUpdateMoleculeType
 }) => {
+    const { t } = useTranslation();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
+    const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleClose = () => {
         onClose?.();
@@ -74,7 +80,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
     };
 
-    const renderMoleculeCard = (name: string, properties: any, isOriginal = false) => {
+    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false) => {
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -85,7 +91,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             e.stopPropagation();
                             handleAddToFavorites(name);
                         }} 
-                        title="收藏"
+                        title={t('molecular.nodePopup.addToFavorites')}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
@@ -99,48 +105,48 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-properties">
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">SMILES:</span>
-                        <span className="molecule-card-property-value">{properties.smiles || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">Molecular Weight:</span>
-                        <span className="molecule-card-property-value">{properties.molecularWeight || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).molecularWeight || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">Predicted Melting Point:</span>
-                        <span className="molecule-card-property-value">{properties.meltingPoint || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedMp')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).meltingPoint || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">Predicted Boiling Point:</span>
-                        <span className="molecule-card-property-value">{properties.boilingPoint || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedBp')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).boilingPoint || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">Predicted Flash Point:</span>
-                        <span className="molecule-card-property-value">{properties.flashPoint || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.predictedFp')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).flashPoint || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">Combustion Enthalpy:</span>
-                        <span className="molecule-card-property-value">{properties.combustionEnthalpy || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.combustionEnthalpy')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).combustionEnthalpy || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">HOMO:</span>
-                        <span className="molecule-card-property-value">{properties.homo || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.homo')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).homo || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">LUMO:</span>
-                        <span className="molecule-card-property-value">{properties.lumo || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.lumo')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).lumo || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">ESP Max:</span>
-                        <span className="molecule-card-property-value">{properties.espMax || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMax')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).espMax || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">ESP Min:</span>
-                        <span className="molecule-card-property-value">{properties.espMin || '-'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMin')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).espMin || '-'}</span>
                     </div>
                     <div className="molecule-card-property-item commercial-viability">
-                        <span className="molecule-card-property-label">Commercial Viability:</span>
-                        <span className="molecule-card-property-value">{properties.commercialViability || 'Unknown'}</span>
+                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.commercialViability')}:</span>
+                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).commercialViability || t('molecular.moleculeModal.unknown')}</span>
                     </div>
                 </div>
                 
@@ -153,12 +159,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         <svg className="chevron-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
                         </svg>
-                        <span className="functional-groups-title">点击展开查看更多详情</span>
+                        <span className="functional-groups-title">{t('molecular.molCard.clickToExpand')}</span>
                     </div>
                     {isFunctionalGroupsExpanded && (
                         <div className="functional-groups-content">
-                            <h4>功能基团</h4>
-                            <p>醚、缩酮、碳酸酯、酯</p>
+                            <h4>{t('molecular.moleculeModal.functionalGroupsTitle')}</h4>
+                            <p>{t('molecular.moleculeModal.functionalGroupList')}</p>
                         </div>
                     )}
                 </div>
@@ -170,10 +176,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
-                            <option value="all">所有类型</option>
-                            <option value="solvent">溶剂</option>
-                            <option value="diluent">稀释剂</option>
-                            <option value="additive">添加剂</option>
+                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
+                            <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                            <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                            <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
                         <button 
                             className="molecule-card-btn find-similar" 
@@ -182,7 +188,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
                             </svg>
-                            <span>查找相似</span>
+                            <span>{t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
                 )}
@@ -190,95 +196,39 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
     };
 
-    // 相似分子数据
-    const similarMolecules = [
-        {
-            name: 'Similar 1',
-            properties: {
-                smiles: 'CCO',
-                molecularWeight: '150.0 g/mol',
-                meltingPoint: '25°C',
-                boilingPoint: '150°C',
-                flashPoint: '45°C',
-                combustionEnthalpy: '-65.0 eV',
-                homo: '-7.0 eV',
-                lumo: '0.5 eV',
-                espMax: '0.8 eV',
-                espMin: '-1.5 eV',
-                commercialViability: 'Commercially available'
+    // 加载原始与相似分子数据（接口优先，失败走mock）
+    useEffect(() => {
+        let isCancelled = false;
+        const loadData = async () => {
+            setIsLoading(true);
+            try {
+                const [original, similars] = await Promise.all([
+                    moleculeService.getMoleculeDetails(moleculeName),
+                    moleculeService.getSimilarMolecules(moleculeName, selectedMoleculeType)
+                ]);
+                if (!isCancelled) {
+                    setOriginalMoleculeProps(original?.properties);
+                    setSimilarMolecules(similars);
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    setSimilarMolecules([]);
+                }
+            } finally {
+                if (!isCancelled) setIsLoading(false);
             }
-        },
-        {
-            name: 'Similar 2',
-            properties: {
-                smiles: 'CCCO',
-                molecularWeight: '160.0 g/mol',
-                meltingPoint: '30°C',
-                boilingPoint: '160°C',
-                flashPoint: '50°C',
-                combustionEnthalpy: '-68.0 eV',
-                homo: '-7.2 eV',
-                lumo: '0.4 eV',
-                espMax: '0.7 eV',
-                espMin: '-1.6 eV',
-                commercialViability: 'Commercially available'
-            }
-        },
-        {
-            name: 'Similar 3',
-            properties: {
-                smiles: 'CCCCO',
-                molecularWeight: '170.0 g/mol',
-                meltingPoint: '35°C',
-                boilingPoint: '170°C',
-                flashPoint: '55°C',
-                combustionEnthalpy: '-71.0 eV',
-                homo: '-7.4 eV',
-                lumo: '0.3 eV',
-                espMax: '0.6 eV',
-                espMin: '-1.7 eV',
-                commercialViability: 'Limited commercial availability'
-            }
-        },
-        {
-            name: 'Similar 4',
-            properties: {
-                smiles: 'CCCCCO',
-                molecularWeight: '180.0 g/mol',
-                meltingPoint: '40°C',
-                boilingPoint: '180°C',
-                flashPoint: '60°C',
-                combustionEnthalpy: '-74.0 eV',
-                homo: '-7.6 eV',
-                lumo: '0.2 eV',
-                espMax: '0.5 eV',
-                espMin: '-1.8 eV',
-                commercialViability: 'Limited commercial availability'
-            }
-        },
-        {
-            name: 'Similar 5',
-            properties: {
-                smiles: 'CCCCCCO',
-                molecularWeight: '190.0 g/mol',
-                meltingPoint: '45°C',
-                boilingPoint: '190°C',
-                flashPoint: '65°C',
-                combustionEnthalpy: '-77.0 eV',
-                homo: '-7.8 eV',
-                lumo: '0.1 eV',
-                espMax: '0.4 eV',
-                espMin: '-1.9 eV',
-                commercialViability: 'Limited commercial availability'
-            }
-        }
-    ];
+        };
+        loadData();
+        return () => { isCancelled = true; };
+    }, [moleculeName, selectedMoleculeType]);
+
+    const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
     return (
         <div className="molecule-panel expanded" style={{ display: 'block', opacity: 1, transform: 'translateX(0px)', transition: '0.3s' }}>
             <div className="molecule-panel-header">
                 <div className="molecule-panel-title">
-                    <span>分子详情</span>
+                    <span>{t('molecular.nodePopup.title')}</span>
                 </div>
                 <button className="molecule-panel-close" onClick={handleClose}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -290,18 +240,24 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 <div className="molecule-panel-main" id="moleculePanelMain">
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
-                            <h3 className="section-title">原始分子</h3>
-                            {renderMoleculeCard(moleculeName, {}, true)}
+                            <h3 className="section-title">{t('molecular.moleculeModal.original')}</h3>
+                            {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true)}
                         </div>
                         <div className="similar-molecules-section">
-                            <h3 className="section-title">相似分子 ({similarMolecules.length})</h3>
-                            <div className="similar-molecules-grid">
-                                {similarMolecules.map((molecule, index) => (
-                                    <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties)}
-                                    </div>
-                                ))}
-                            </div>
+                            <h3 className="section-title">{similarCountText}</h3>
+                            {isLoading ? (
+                                <div className="similar-molecules-grid">
+                                    {t('molecular.molCard.loading')}
+                                </div>
+                            ) : (
+                                <div className="similar-molecules-grid">
+                                    {similarMolecules.map((molecule, index) => (
+                                        <div key={index}>
+                                            {renderMoleculeCard(molecule.name, molecule.properties)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

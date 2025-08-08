@@ -20,6 +20,25 @@ export default {
     clickToCollapse: "Click to collapse",
     clickToExpand: "Click to expand for more details"
   },
+  moleculeModal: {
+    original: "Original Molecule",
+    findSimilar: "Find Similar",
+    similarWithCount: "Similar Molecules ({{count}})",
+    functionalGroupsTitle: "Functional Groups",
+    functionalGroupList: "Ether, ketal, carbonate, ester",
+    unknown: "Unknown",
+    types: {
+      all: "All Types",
+      solvent: "Solvent",
+      diluent: "Diluent",
+      additive: "Additive"
+    },
+    properties: {
+      predictedFp: "Predicted Flash Point",
+      combustionEnthalpy: "Combustion Enthalpy",
+      commercialViability: "Commercial Viability"
+    }
+  },
   umapPlot: {
     controls: {
       resetViewport: "Reset Viewport",

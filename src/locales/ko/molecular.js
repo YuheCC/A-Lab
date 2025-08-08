@@ -20,6 +20,25 @@ export default {
     clickToCollapse: "클릭하여 접기",
     clickToExpand: "클릭하여 자세한 내용 확장"
   },
+  moleculeModal: {
+    original: "원래 분자",
+    findSimilar: "유사 찾기",
+    similarWithCount: "유사 분자 ({{count}})",
+    functionalGroupsTitle: "작용기",
+    functionalGroupList: "에테르, 케탈, 탄산에스터, 에스터",
+    unknown: "알 수 없음",
+    types: {
+      all: "모든 유형",
+      solvent: "용매",
+      diluent: "희석제",
+      additive: "첨가제"
+    },
+    properties: {
+      predictedFp: "예상 인화점",
+      combustionEnthalpy: "연소 엔탈피",
+      commercialViability: "상업적 실현 가능성"
+    }
+  },
   umapPlot: {
     controls: {
       resetViewport: "뷰포트 재설정",

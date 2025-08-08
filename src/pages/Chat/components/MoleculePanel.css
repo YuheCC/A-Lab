@@ -64,7 +64,7 @@
 .molecule-panel-main {
     padding: 1px 1px; /* 进一步减少内边距 */
     height: 100%;
-    overflow-y: auto;
+    overflow-y: visible; /* 由外层容器统一管理滚动 */
     animation: fadeInUp 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -320,7 +320,7 @@
 .similar-molecules-section {
     padding: 16px 2px; /* 减少左右内边距从4px到2px */
     height: 100%;
-    overflow-y: auto;
+    overflow-y: visible; /* 避免嵌套滚动条 */
     animation: slideInRight 0.3s ease;
     background: transparent;
 }
@@ -452,10 +452,12 @@
 
 .similar-molecules-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 8px;
-    max-height: calc(100vh - 300px);
-    overflow-y: auto;
+    /* 由外层容器统一管理滚动 */
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
 }
 
 /* 相似分子比较布局样式 */
@@ -479,8 +481,9 @@
     border-radius: 8px;
     padding: 16px 4px !important; /* 减少左右内边距从8px到4px */
     border: none;
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    overflow-y: visible; /* 避免嵌套滚动条 */
+    max-height: none;
+    overflow-x: hidden;
 }
 
 .original-molecule-section h3,
@@ -508,10 +511,23 @@
 
 .similar-molecules-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 8px;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
+    /* 由外层容器统一管理滚动 */
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
+/* 折叠状态下（窄面板）改为上下布局，避免横向溢出 */
+.molecule-panel:not(.expanded) .similar-molecules-comparison {
+    grid-template-columns: 1fr !important;
+}
+
+/* 相似分子卡片宽度随容器自适应，避免横向滚动 */
+.similar-molecules-section .molecule-card {
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 /* ==============================================
