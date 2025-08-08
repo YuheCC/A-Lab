@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
 import './MessageList.css';
+import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 
 // 定义消息类型
 interface Message {
@@ -94,10 +95,12 @@ const MessageList: FC<MessageListProps> = ({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
-  // 处理化学分子点击
-  const handleMoleculeClick = (moleculeName: string) => {
-    console.log('Clicked molecule:', moleculeName);
-    onMoleculeClick?.(moleculeName);
+  // 处理化学分子点击（来自 InlineMoleculeRenderer 的对象 -> 仅传递名称给上层）
+  const forwardMoleculeClick = (molecule: any) => {
+    const moleculeName = molecule?.name || molecule?.SMILES || '';
+    if (moleculeName) {
+      onMoleculeClick?.(moleculeName);
+    }
   };
 
   // 处理复制消息
@@ -138,25 +141,7 @@ const MessageList: FC<MessageListProps> = ({
     setEditingMessageId(messageId);
   };
 
-  // 处理化学分子文本
-  const processChemicalText = (text: string) => {
-    const chemicalMolecules = [
-      'LiPF6', 'LiFSI', 'EC', 'DEC', 'DMC', 'EMC', 'VC', 'FEC', 
-      'LiF', 'Li2CO3', 'Li2O', 'Al2O3', 'ZrO2', 'HF'
-    ];
-    
-    let processedText = text.replace(/\n/g, '<br>');
-    
-    chemicalMolecules.forEach(molecule => {
-      const regex = new RegExp(`\\b${molecule}\\b`, 'g');
-      processedText = processedText.replace(
-        regex, 
-        `<span class="chemical-molecule" data-molecule="${molecule}">${molecule}</span>`
-      );
-    });
-    
-    return processedText;
-  };
+  // InlineMoleculeRenderer 将负责解析与高亮分子及 hover 浮层
 
   // 渲染消息操作按钮
   const renderMessageActions = (message: Message) => {
@@ -214,7 +199,7 @@ const MessageList: FC<MessageListProps> = ({
     return (
       <div className="message-wrapper bot">
         <div className="message">
-          <div dangerouslySetInnerHTML={{ __html: processChemicalText(message.content) }} />
+          <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
           <button
             className="molecule-btn"
             onClick={() => console.log('Molecule button clicked')}
@@ -272,24 +257,9 @@ const MessageList: FC<MessageListProps> = ({
     } else {
       return (
         <div key={message.id} className="message-wrapper bot">
-          <div 
-            className="message"
-            dangerouslySetInnerHTML={{ __html: processChemicalText(message.content) }}
-            onClick={(e) => {
-              const target = e.target as HTMLElement;
-              if (target.classList.contains('chemical-molecule')) {
-                const moleculeName = target.getAttribute('data-molecule');
-                if (moleculeName) {
-                  handleMoleculeClick(moleculeName);
-                  // 视觉反馈
-                  target.style.backgroundColor = '#e8f5e8';
-                  setTimeout(() => {
-                    target.style.backgroundColor = '';
-                  }, 500);
-                }
-              }
-            }}
-          />
+          <div className="message">
+            <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+          </div>
           {renderMessageActions(message)}
         </div>
       );

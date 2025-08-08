@@ -176,7 +176,26 @@ export class ChatService {
           title: '锂电池制造工艺优化',
           messages: [
             { id: '1-1', type: 'user' as const, content: '锂电池制造工艺中的关键控制点有哪些？', timestamp: new Date() },
-            { id: '1-2', type: 'bot' as const, content: '锂电池制造工艺的关键控制点包括：\n\n1. **涂布工艺**：浆料均匀性、涂布厚度控制\n2. **干燥工艺**：温度曲线、残留溶剂控制\n3. **压实工艺**：压实密度、孔隙率控制\n4. **分切工艺**：毛刺控制、尺寸精度\n5. **卷绕/叠片**：对齐精度、张力控制\n6. **注液工艺**：电解液量、浸润性\n7. **化成工艺**：电压曲线、温度控制\n\n每个环节都需要严格的质量控制来确保电池性能。', timestamp: new Date(), showRegenerate: true }
+            { id: '1-2', type: 'bot' as const, content: `### Electrolyte overview
+
+A common electrolyte system pairs <inline_molecule>{"text":"EC","data":[{"SMILES":"O=C1OCCO1","molecular_weight":88.06,"HOMO_eV":-8.12,"LUMO_eV":-0.72,"ESP_min_eV":-1.85,"ESP_max_eV":0.93,"predicted_MP_celsius":36.0,"predicted_BP_celsius":248.5,"predicted_FP_celsius":140.0,"COMBUSTION_ENTHALPY_EV":-67.21,"COMMERCIAL_SCORE":3,"COMMERCIAL_LINK":"https://example.com/ec","functional_groups":["carbonate","cyclic"],"UMAP_0":-2.134,"UMAP_1":1.572}]}</inline_molecule> with <inline_molecule>{"text":"DEC","data":[{"SMILES":"CCOC(=O)OCC","molecular_weight":118.09,"HOMO_eV":-7.65,"LUMO_eV":-0.41,"ESP_min_eV":-1.42,"ESP_max_eV":0.71,"predicted_MP_celsius":-43.0,"predicted_BP_celsius":126.0,"predicted_FP_celsius":25.0,"COMBUSTION_ENTHALPY_EV":-85.02,"COMMERCIAL_SCORE":2,"COMMERCIAL_LINK":"https://example.com/dec","functional_groups":["carbonate","alkyl"],"UMAP_0":0.842,"UMAP_1":-0.315}]}</inline_molecule> as solvents, and uses the salt <inline_molecule>{"text":"LiPF6","data":[{"SMILES":"F[P-](F)(F)(F)(F)F.[Li+]","molecular_weight":151.91,"HOMO_eV":-10.2,"LUMO_eV":-2.1,"ESP_min_eV":-3.2,"ESP_max_eV":1.8,"predicted_MP_celsius":"-","predicted_BP_celsius":"-","predicted_FP_celsius":"-","COMBUSTION_ENTHALPY_EV":-12.34,"COMMERCIAL_SCORE":3,"COMMERCIAL_LINK":"https://example.com/lipf6","functional_groups":["salt"],"UMAP_0":1.423,"UMAP_1":2.017}]}</inline_molecule>.
+This combination balances dielectric constant and viscosity; see [1,2] for details.
+
+#### Quick comparison
+
+| Molecule | SMILES              | MW (g/mol) | HOMO (eV) | LUMO (eV) |
+|---------:|---------------------|------------|-----------|-----------|
+| EC       | O=C1OCCO1           | 88.06      | -8.12     | -0.72     |
+| DEC      | CCOC(=O)OCC         | 118.09     | -7.65     | -0.41     |
+| LiPF6    | F[P-](F)(F)(F)(F)F… | 151.91     | -10.2     | -2.1      |
+
+- EC tends to form stable SEI on graphite [1].
+- DEC lowers viscosity and improves low-temperature performance [2].
+
+## References
+- [1] Aurbach, D. et al., On the SEI formation mechanisms on graphite in EC-based electrolytes.
+- [2] Xu, K., Nonaqueous liquid electrolytes for lithium-based rechargeable batteries.
+`, timestamp: new Date(), showRegenerate: true }
           ]
         },
         '2': {
