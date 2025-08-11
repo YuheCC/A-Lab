@@ -260,6 +260,40 @@ export class ChatService {
     }
   }
 
+  async renameChat(chatId: string, newTitle: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chat/${chatId}/rename`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.getAuthToken()}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Failed to rename chat:', error);
+      return false;
+    }
+  }
+
+  async togglePinChat(chatId: string, isPinned: boolean): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chat/${chatId}/pin`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.getAuthToken()}`,
+        },
+        body: JSON.stringify({ isPinned }),
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Failed to toggle pin chat:', error);
+      return false;
+    }
+  }
+
   private getAuthToken(): string {
     return (
       localStorage.getItem('token') ||

@@ -26,7 +26,10 @@ const Chat = () => {
         startNewChat,
         loadChatHistory,
         updateChatHistory,
-        setMessages
+        setMessages,
+        deleteChat,
+        renameChat,
+        togglePinChat
     } = useChat();
 
     const {
@@ -133,6 +136,33 @@ const Chat = () => {
         loadChatHistory(selectedChatId);
     };
 
+    // 处理删除聊天
+    const handleDeleteChat = async (chatId: string) => {
+        const success = await chatService.deleteChat(chatId);
+        if (success) {
+            deleteChat(chatId);
+        }
+    };
+
+    // 处理重命名聊天
+    const handleRenameChat = async (chatId: string, newTitle: string) => {
+        const success = await chatService.renameChat(chatId, newTitle);
+        if (success) {
+            renameChat(chatId, newTitle);
+        }
+    };
+
+    // 处理置顶聊天
+    const handleTogglePinChat = async (chatId: string) => {
+        const chatItem = chatHistory.find(item => item.chatId === chatId);
+        if (chatItem) {
+            const success = await chatService.togglePinChat(chatId, !chatItem.isPinned);
+            if (success) {
+                togglePinChat(chatId);
+            }
+        }
+    };
+
     const showInput = !!currentChatId;
 
     return (
@@ -143,6 +173,9 @@ const Chat = () => {
                     onSelectChat={handleSelectChat}
                     currentChatId={currentChatId}
                     chatHistory={chatHistory}
+                    onDeleteChat={handleDeleteChat}
+                    onRenameChat={handleRenameChat}
+                    onTogglePinChat={handleTogglePinChat}
                 />
                 <main className="chat-main" id="chatMain" style={{ position: 'relative' }}>
                     <div className="chat-messages" id="chat-messages">

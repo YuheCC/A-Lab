@@ -113,6 +113,32 @@ export const useChat = () => {
     }));
   }, []);
 
+  const deleteChat = useCallback((chatId: string) => {
+    setState(prev => ({
+      ...prev,
+      chatHistory: prev.chatHistory.filter(item => item.chatId !== chatId),
+      currentChatId: prev.currentChatId === chatId ? undefined : prev.currentChatId
+    }));
+  }, []);
+
+  const renameChat = useCallback((chatId: string, newTitle: string) => {
+    setState(prev => ({
+      ...prev,
+      chatHistory: prev.chatHistory.map(item =>
+        item.chatId === chatId ? { ...item, title: newTitle } : item
+      )
+    }));
+  }, []);
+
+  const togglePinChat = useCallback((chatId: string) => {
+    setState(prev => ({
+      ...prev,
+      chatHistory: prev.chatHistory.map(item =>
+        item.chatId === chatId ? { ...item, isPinned: !item.isPinned } : item
+      )
+    }));
+  }, []);
+
   return {
     ...state,
     setIsLoading,
@@ -125,6 +151,9 @@ export const useChat = () => {
     loadChatHistory,
     saveChatHistory,
     updateChatHistory,
-    setMessages
+    setMessages,
+    deleteChat,
+    renameChat,
+    togglePinChat
   };
 };
