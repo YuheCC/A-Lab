@@ -32,7 +32,7 @@ export default  [
     },
     {
         path: "/ask",
-        component: "Ask"
+        component: "Chat"
     },
     {
         path: "/chat",
