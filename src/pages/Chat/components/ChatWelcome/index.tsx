@@ -70,8 +70,6 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
             setHideTimeout(null);
         }
 
-
-
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
         const container = button.closest('.new-chat-interface');
