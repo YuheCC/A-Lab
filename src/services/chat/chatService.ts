@@ -1,5 +1,7 @@
 import type { Message } from '@/pages/Chat/components/MessageList';
 import type { ChatHistoryItem } from '@/pages/Chat/components/History';
+import request from '@/services/request';
+import { getAPIUrl } from '@/utils';
 
 export interface ChatResponse {
   content: string;
@@ -21,7 +23,7 @@ export class ChatService {
   private baseUrl: string;
 
   private constructor() {
-    this.baseUrl = process.env.REACT_APP_API_BASE_URL || '/api';
+    this.baseUrl = getAPIUrl() || '/api';
   }
 
   public static getInstance(): ChatService {
@@ -33,21 +35,15 @@ export class ChatService {
 
   async sendMessage(message: string, mode: 'regular' | 'deep-space' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/send`, {
+      const resp = await request('/chat/send', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`,
-        },
-        body: JSON.stringify({ message, mode, chatId }),
+        data: { message, mode, chatId },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      const data = resp.data;
       return {
         content: data.content,
-        showRegenerate: data.showRegenerate || true,
+        showRegenerate: data.showRegenerate ?? true,
         messageId: data.messageId,
       };
     } catch (error) {
@@ -61,21 +57,15 @@ export class ChatService {
 
   async regenerateResponse(messageId: string): Promise<ChatResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/regenerate`, {
+      const resp = await request('/chat/regenerate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`,
-        },
-        body: JSON.stringify({ messageId }),
+        data: { messageId },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      const data = resp.data;
       return {
         content: data.content,
-        showRegenerate: data.showRegenerate || true,
+        showRegenerate: data.showRegenerate ?? true,
         messageId: data.messageId,
       };
     } catch (error) {
@@ -119,15 +109,14 @@ export class ChatService {
 
   async getChatHistory(): Promise<ChatHistoryItem[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/history`, {
+      const resp = await request('/api/chat/list', {
+        params: {
+          pinned: false
+        },
         method: 'GET',
-        headers: { Authorization: `Bearer ${this.getAuthToken()}` },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
-      return data.history || [];
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data.history || [];
     } catch (error) {
       console.error('Failed to get chat history:', error);
       return [
@@ -167,14 +156,11 @@ export class ChatService {
 
   async getChatById(chatId: string): Promise<{ title: string; messages: Message[] }> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/${chatId}`, {
+      const resp = await request(`/chat/${chatId}`, {
         method: 'GET',
-        headers: { Authorization: `Bearer ${this.getAuthToken()}` },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      const data = resp.data;
       return { title: data.title, messages: data.messages || [] };
     } catch (error) {
       console.error('Failed to get chat by id:', error);
@@ -217,15 +203,11 @@ export class ChatService {
 
   async saveChat(chatId: string, title: string, messages: Message[]): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/save`, {
+      const resp = await request('/chat/save', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.getAuthToken()}`,
-        },
-        body: JSON.stringify({ chatId, title, messages }),
+        data: { chatId, title, messages },
       });
-      return response.ok;
+      return resp.status >= 200 && resp.status < 300;
     } catch (error) {
       console.error('Failed to save chat:', error);
       return false;
@@ -234,11 +216,10 @@ export class ChatService {
 
   async deleteChat(chatId: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/${chatId}`, {
+      const resp = await request(`/chat/${chatId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${this.getAuthToken()}` },
       });
-      return response.ok;
+      return resp.status >= 200 && resp.status < 300;
     } catch (error) {
       console.error('Failed to delete chat:', error);
       return false;
@@ -247,13 +228,12 @@ export class ChatService {
 
   async searchChats(query: string): Promise<ChatHistoryItem[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/search?q=${encodeURIComponent(query)}`, {
+      const resp = await request('/chat/search', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${this.getAuthToken()}` },
+        params: { q: query },
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      return data.results || [];
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data.results || [];
     } catch (error) {
       console.error('Failed to search chats:', error);
       return [];
@@ -262,15 +242,11 @@ export class ChatService {
 
   async renameChat(chatId: string, newTitle: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/${chatId}/rename`, {
+      const resp = await request(`/chat/${chatId}/rename`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.getAuthToken()}`,
-        },
-        body: JSON.stringify({ title: newTitle }),
+        data: { title: newTitle },
       });
-      return response.ok;
+      return resp.status >= 200 && resp.status < 300;
     } catch (error) {
       console.error('Failed to rename chat:', error);
       return false;
@@ -279,27 +255,15 @@ export class ChatService {
 
   async togglePinChat(chatId: string, isPinned: boolean): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/chat/${chatId}/pin`, {
+      const resp = await request(`/chat/${chatId}/pin`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.getAuthToken()}`,
-        },
-        body: JSON.stringify({ isPinned }),
+        data: { isPinned },
       });
-      return response.ok;
+      return resp.status >= 200 && resp.status < 300;
     } catch (error) {
       console.error('Failed to toggle pin chat:', error);
       return false;
     }
-  }
-
-  private getAuthToken(): string {
-    return (
-      localStorage.getItem('token') ||
-      localStorage.getItem('authToken') ||
-      ''
-    );
   }
 }
 

@@ -27,7 +27,9 @@ class MoleculeService {
   private baseUrl: string;
 
   private constructor() {
-    this.baseUrl = process.env.REACT_APP_API_BASE_URL || '/api';
+    // Use global BASE_URL via util helper to satisfy TS
+    const { getAPIUrl } = require('@/utils');
+    this.baseUrl = getAPIUrl() || '/api';
   }
 
   public static getInstance(): MoleculeService {
@@ -39,13 +41,13 @@ class MoleculeService {
 
   async getMoleculeDetails(name: string): Promise<MoleculeDetails> {
     try {
-      const resp = await fetch(`${this.baseUrl}/molecule/details?name=${encodeURIComponent(name)}`, {
+      const { default: request } = await import('@/services/request');
+      const resp = await request('/molecule/details', {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${this.getAuthToken()}` }
+        params: { name },
       });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      return data as MoleculeDetails;
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
+      return resp.data as MoleculeDetails;
     } catch (err) {
       // mock fallback
       return {
@@ -69,13 +71,13 @@ class MoleculeService {
 
   async getSimilarMolecules(name: string, type: string = 'all'): Promise<SimilarMolecule[]> {
     try {
-      const resp = await fetch(`${this.baseUrl}/molecule/similar?name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`, {
+      const { default: request } = await import('@/services/request');
+      const resp = await request('/molecule/similar', {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${this.getAuthToken()}` }
+        params: { name, type },
       });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      return (data?.items || []) as SimilarMolecule[];
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
+      return (resp.data?.items || []) as SimilarMolecule[];
     } catch (err) {
       // mock fallback (same content as original hardcoded list)
       return [
