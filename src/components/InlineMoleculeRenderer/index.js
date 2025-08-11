@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
@@ -226,19 +227,21 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       >
         {text}
       </span>
-      {hoveredObject && propGroups.length > 0 && (
-        <div style={position}>
-          <MolCard
-            ref={hoverRef}
-            showMoreDetails={true}
-            propGroups={propGroups}
-            onMouseEnter={() => {
-              // Keep popup open when hovering over it
-            }}
-            onMouseLeave={handleMouseLeave}
-          />
-        </div>
-      )}
+      {hoveredObject && propGroups.length > 0 &&
+        createPortal(
+          <div style={position}>
+            <MolCard
+              ref={hoverRef}
+              showMoreDetails={true}
+              propGroups={propGroups}
+              onMouseEnter={() => {
+                // Keep popup open when hovering over it
+              }}
+              onMouseLeave={handleMouseLeave}
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 };

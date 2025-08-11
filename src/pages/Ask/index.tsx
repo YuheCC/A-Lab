@@ -12,6 +12,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
 import { useShallow } from 'zustand/react/shallow';
+import i18n from '@/locales/i18n';
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import CustomButton from '@/components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
@@ -329,7 +330,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -345,6 +346,8 @@ const ChatbotInterface = () => {
     setAwaitingClarify: state.setAwaitingClarify,
     setUseMultiAgent: state.setUseMultiAgent,
     setIsInClarifyFlow: state.setIsInClarifyFlow,
+    setStatus: state.setStatus,
+    setChatName: state.setChatName,
   })));
 
   useEffect(() => {
@@ -503,7 +506,7 @@ const handleFindSimilarMolecules = async (details) => {
     try {
       const token = localStorage.getItem('token');
       // Determine if user is high-tier
-      const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
+      const isHighTier = true; //["admin", "enterprise", "joint"].includes(userPermissions);
       
       // Extract original user query and LLM response from message history
       let originalQuery = undefined;
@@ -633,6 +636,94 @@ const handleFindSimilarMolecules = async (details) => {
     setShowSimilarMolecules(false);
   }, [activeChat]);
 
+  // Poll helper – waits until the back‑end returns an assistant message, or error/timeout.
+  const pollChatUntilComplete = async (
+    chatId: string,
+    {
+      intervalMs = 5000,
+      maxTries   = 1200, // ≈20 min at default interval
+    } = {}
+  ) => {
+    let tries = 0;
+    while (tries < maxTries) {
+      // Don’t await before the very first pass so we can react quickly if the
+      // message is already there.
+      if (tries > 0) await new Promise((r) => setTimeout(r, intervalMs));
+      tries += 1;
+
+      try {
+        const res = await authFetch(`${API_URL}/chat-history/${chatId}`);
+        if (!res.ok) continue;
+
+        const data = await res.json();
+        // If the back‑end now has a better title, update it.
+        if (data.chat_name && data.chat_name !== (i18n.t('chatbox.history.newChat') || 'New Chat')) {
+          setChatName(data.chat_name, chatId);
+        }
+        // Back‑end may return either { messages: [...] } or the older
+        // { content: [...] }.  Normalise to one array.
+        const { status } = data;
+        // ─── Synchronise local clarify‑state with the back‑end ───
+        if (status === "awaiting_clarification") {
+          setAwaitingClarify(true, chatId);
+        } else {
+          setAwaitingClarify(false, chatId);
+        }
+        const serverMsgs = data.messages || data.content || [];
+
+        // Look for an assistant turn (most likely the last one)
+        const assistant = [...serverMsgs].reverse().find((m: any) => m.role === "assistant");
+        if (assistant) {
+          // Compare against the latest assistant message we already have.
+          const existingMsgs   = useChatStore.getState().chatMap[chatId]?.messages || [];
+          const lastAssistant  = [...existingMsgs].reverse().find((m: any) => m.role === "assistant");
+          const isDuplicate    = lastAssistant &&
+                                 lastAssistant.content === (assistant.content || "") &&
+                                 JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+
+          // Only act when we discover a *new* assistant message.
+          if (!isDuplicate) {
+            addMessage(
+              {
+                role: "assistant",
+                content: assistant.content || "",
+                sources: assistant.sources,
+                extraData: assistant.extra_data || null,
+              },
+              chatId
+            );
+
+            setIsThinking(false, chatId);
+            // Keep whatever status the server sent (e.g. awaiting_clarification)
+            setStatus(status || "complete", chatId);
+            return; // Finished – exit polling loop.
+          }
+
+          // Duplicate of the previous turn – keep waiting.
+          continue;
+        }
+
+        // If the backend explicitly reports an error state, stop polling
+        if (status === "error") {
+          setIsThinking(false, chatId);
+          setStatus("complete", chatId);
+          return;
+        }
+
+        // If status is complete *but* no assistant message yet, keep waiting.
+        // Some pipelines mark the session complete a fraction of a second
+        // before they finish persisting the assistant row.
+
+      } catch (err) {
+        console.error("[pollChat]", err);
+      }
+    }
+
+    // Hard timeout – give up, clear spinner so the UI doesn’t hang forever.
+    setIsThinking(false, chatId);
+    setStatus("complete", chatId);
+  };
+
   const handleSend = useCallback(
     async (input) => {
       if (!input.trim()) return;
@@ -640,15 +731,24 @@ const handleFindSimilarMolecules = async (details) => {
       /* enforce research-tier quota */
       if (userPermissions === 'research' && remainingQueries <= 0) {
         addMessage({
-          role : "assistant",
-          content : t('chatbox.queryLimit.reachedLimit')
+          role: "assistant",
+          content: t('chatbox.queryLimit.reachedLimit')
         });
         return;
       }
 
+      // Handle temporary chat IDs so multiple new chats can be created
+      let localChatId = activeChat;
+      let isNewChat = localChatId === '-1';
+      if (isNewChat) {
+        const tempId = Date.now().toString();
+        updateNewChatId(tempId);
+        localChatId = tempId;
+      }
+
       /* push new user message */
       const newUserMessage = { role: "user", content: input.trim() };
-      addMessage(newUserMessage);
+      addMessage(newUserMessage, localChatId);
 
       /* construct message list for the back-end */
       const messagesToSend = ignoreChatHistory
@@ -656,14 +756,15 @@ const handleFindSimilarMolecules = async (details) => {
         : [...messages, newUserMessage]
             .filter(m => m.role === "user" || m.role === "assistant");
 
-      setIsThinking(true);
-      const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
+      setIsThinking(true, localChatId);
+      let effectiveChatId = localChatId;
+      setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10          : 3;
+      const ragModel        = isAdvancedTier ? 'o3' : 'o4-mini';
+      const ragResultsCount = isAdvancedTier ? 10 : 3;
 
-      let data;          // final payload from the back-end
-      let effectiveChatId = currentChatId;
+      const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
+      let data; // final payload from the back-end
 
       try {
         /* ---------------------------------------------------------- */
@@ -677,15 +778,16 @@ const handleFindSimilarMolecules = async (details) => {
               ...messages,
               { role: "user", content: input.trim() }
             ];
-            
+
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload = { messages: updatedHistory, chat_id: currentChatId };
+            const multiAgentPayload: any = { messages: updatedHistory };
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -693,6 +795,17 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
@@ -703,27 +816,44 @@ const handleFindSimilarMolecules = async (details) => {
 
           /* 2️⃣  First contact – ask for clarifying questions -------- */
           } else {
-            // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload = { messages: messagesToSend, chat_id: effectiveChatId };
+            const multiAgentPayload: any = { messages: messagesToSend };
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
+            const clarifyPayload: any = { messages: messagesToSend };
+            if (currentChatId !== -1) clarifyPayload.chat_id = currentChatId;
+
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
+              body: JSON.stringify(clarifyPayload),
             });
             if (!clarRes.ok) {
               fetchQueryLimit();
               throw new Error(await clarRes.text());
             }
+            // 202 → just { chat_id }, start polling and return early
+            if (clarRes.status === 202) {
+              const { chat_id } = await clarRes.json();
+              if (isNewChat && chat_id !== undefined) {
+                updateNewChatId(`${chat_id}`, localChatId);
+                effectiveChatId = `${chat_id}`;
+                localChatId     = effectiveChatId;
+                isNewChat       = false;
+              }
+              // Wait for clarifying questions to arrive via history polling
+              await pollChatUntilComplete(effectiveChatId);
+              return; // will exit after polling completes
+            }
             const clarData = await clarRes.json();
 
-            // Update chat ID for new chat
-            if (effectiveChatId === -1 && clarData.chat_id !== undefined) {
-              updateNewChatId(clarData.chat_id);
-              effectiveChatId = clarData.chat_id;
+            if (isNewChat && clarData.chat_id !== undefined) {
+              updateNewChatId(`${clarData.chat_id}`, localChatId);
+              effectiveChatId = `${clarData.chat_id}`;
+              localChatId = effectiveChatId;
+              isNewChat = false;
             }
 
             if (clarData.clarifying_questions?.length) {
@@ -732,18 +862,18 @@ const handleFindSimilarMolecules = async (details) => {
                 content: clarData.clarifying_questions,
               }, effectiveChatId);
               setAwaitingClarify(true, effectiveChatId);
+              setStatus('awaiting_clarification', effectiveChatId);
               setIsThinking(false, effectiveChatId);
               fetchQueryLimit();
-              return;                 // wait for user reply
+              return; // wait for user reply
             }
 
             setIsInClarifyFlow(false, effectiveChatId);
 
-            /* 3️⃣  No clarifications – run Deep Space directly ---- */
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -751,42 +881,68 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
               }
             }
           }
-          // Refresh query limit
           fetchQueryLimit();
         /* ---------------------------------------------------------- */
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
+          const ragPayload: any = {
+            messages: messagesToSend,
+            ragEnabled: !disableLiteratureSearch,
+            toolsEnabled: !disableTools,
+            webSearchEnabled: false,
+            webSearchClient: "Tavily",
+            numRagResults: ragResultsCount,
+            model: ragModel,
+            patentRagEnabled: enablePatentRag,
+          };
+          if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
-            method : "POST",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body   : JSON.stringify({
-              chatId          : currentChatId,
-              messages        : messagesToSend,
-              ragEnabled      : !disableLiteratureSearch,
-              toolsEnabled    : !disableTools,
-              webSearchEnabled: false,
-              webSearchClient : "Tavily",
-              numRagResults   : ragResultsCount,
-              model           : ragModel,
-              patentRagEnabled: enablePatentRag,
-            }),
+            body: JSON.stringify(ragPayload),
           });
 
-          if (!res.ok) {
+          if (!res.ok && res.status !== 202) {
             const errText = await res.text();
             if (res.status === 400 &&
                 errText.includes("Query is not relevant to batteries or battery chemistry"))
               throw new Error(t('chatbox.errors.batteryRelevance'));
-
             throw new Error(errText || t('chatbox.errors.networkError'));
           }
+
+          // 202 → just { chat_id }, start polling and return early
+          if (res.status === 202) {
+            const { chat_id } = await res.json();
+            if (isNewChat && chat_id !== undefined) {
+              updateNewChatId(`${chat_id}`, localChatId);
+              effectiveChatId = `${chat_id}`;
+              localChatId     = effectiveChatId;
+              isNewChat       = false;
+            }
+            await pollChatUntilComplete(effectiveChatId);
+            // spinner stays active – subsequent poll will add the assistant message
+            return; // will exit after polling completes
+          }
+
+          // 200 – old synchronous behaviour
           data = await res.json();
         }
 
@@ -795,19 +951,22 @@ const handleFindSimilarMolecules = async (details) => {
         /* ---------------------------------------------------------- */
         if (data?.error) throw new Error(data.error);
 
-        /* adopt/assign chat ID */
-        if (effectiveChatId === -1 && data?.chat_id !== undefined) {
-          updateNewChatId(data.chat_id);
-          effectiveChatId = data.chat_id;
+        if (isNewChat && data?.chat_id !== undefined) {
+          updateNewChatId(`${data.chat_id}`, localChatId);
+          effectiveChatId = `${data.chat_id}`;
+          localChatId = effectiveChatId;
+          isNewChat = false;
         }
 
-        /* build LLM message */
+        if (data?.status) setStatus(data.status, effectiveChatId);
+        else setStatus('complete', effectiveChatId);
+
         const llmMessage = {
-          role     : "assistant",
-          inputs   : data.inputs || null,
-          content  : data.llmOutput || data.answer || "",
-          sources  : data.source_html,
-          molText  : data.molecule_text,
+          role: "assistant",
+          inputs: data.inputs || null,
+          content: data.llmOutput || data.answer || "",
+          sources: data.source_html,
+          molText: data.molecule_text,
           molecules: data.molecules,
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
@@ -815,15 +974,20 @@ const handleFindSimilarMolecules = async (details) => {
         addMessage(llmMessage, effectiveChatId);
         setIsThinking(false, effectiveChatId);
 
-        /* refresh quota for research tier */
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message });
-        setIsThinking(false);
+        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
+        setIsThinking(false, effectiveChatId);
+        setStatus('complete', effectiveChatId);
       } finally {
-        if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        /*
+         * Don’t forcibly clear the spinner here: in the 202‑polling path
+         * `pollChatUntilComplete` already does that when the assistant
+         * message lands.  For the synchronous paths we’ve already called
+         * `setIsThinking(false)` earlier in the try block or in catch.
+         */
         fetchQueryLimit();
       }
     },
@@ -1012,34 +1176,36 @@ const handleFindSimilarMolecules = async (details) => {
             </div>
             )} 
           <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message-${msg.role}`}>
-                <div className='message-content'>
-                  <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  
+            {messages.map((msg, index) => {
+              const errorText = msg.extraData?.extra_data?.error;
+              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
+              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+              return (
+                <div
+                  key={index}
+                  className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
+                  <div className='message-content'>
+                    <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
 
-                  
-                                      {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+                    {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
                       <div className="extra-data-wrapper">
                         {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
                           <ExtraDataSection
-                          key={key}
-                          title={key}
-                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                          onMoleculeClick={handleMoleculeClick}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                            key={key}
+                            title={key}
+                            content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                            onMoleculeClick={handleMoleculeClick}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
                     {
-                      userPermissions === 'admin' && <>
+                      <>
                         <IconButton
                         onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
                         size="small"
@@ -1054,7 +1220,7 @@ const handleFindSimilarMolecules = async (details) => {
                           </IconButton>
                       </>
                     }
-                    
+
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -1100,7 +1266,8 @@ const handleFindSimilarMolecules = async (details) => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
             {isThinking && (
               <div className="thinking-message">
                 <div className='thinking-header'>
