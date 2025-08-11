@@ -9,7 +9,6 @@
 - ✅ **ChatSider**: 侧边栏组件，支持折叠和聊天历史
 - ✅ **ChatHistory**: 聊天历史组件，支持选择、重命名、置顶、删除
 - ✅ **MessageEdit**: 消息编辑组件，支持内联编辑
-- ✅ **ModeTooltip**: 模式提示组件，显示模式说明和剩余次数
 - ✅ **ChatSearchModal**: 搜索模态框组件，支持搜索聊天记录
 
 ### 2. 状态管理
@@ -60,7 +59,6 @@ src/pages/Chat/
 │   ├── ChatSider/          # 侧边栏组件
 │   ├── ChatHistory/        # 聊天历史组件
 │   ├── MessageEdit/        # 消息编辑组件
-│   ├── ModeTooltip/        # 模式提示组件
 │   ├── ChatSearchModal/    # 搜索模态框组件
 │   └── HistoryItem/        # 历史记录项组件
 └── README.md               # 本文档

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import ModeTooltip from '../ModeTooltip';
+import { Tooltip } from '@mui/material';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -21,33 +21,12 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
     const [currentQuestions, setCurrentQuestions] = useState<string[]>(
         recommendedQuestions.slice(0, 5)
     );
-    const [tooltipState, setTooltipState] = useState<{
-        isVisible: boolean;
-        mode: ChatMode;
-        position: { x: number; y: number };
-        buttonCenterX?: number;
-    }>({
-        isVisible: false,
-        mode: 'regular',
-        position: { x: 0, y: 0 },
-        buttonCenterX: undefined
-    });
-    const [isTooltipHovered, setIsTooltipHovered] = useState(false);
-    const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // 处理输入变化
     const handleInputChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
     }, []);
-
-    // 处理键盘事件
-    const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    }, [inputValue, currentMode]);
 
     // 处理发送消息
     const handleSendMessage = useCallback(() => {
@@ -57,84 +36,95 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
         }
     }, [inputValue, currentMode, onSendMessage]);
 
+    // 处理键盘事件
+    const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    }, [handleSendMessage]);
+
     // 处理模式切换
     const handleModeChange = useCallback((mode: ChatMode) => {
         setCurrentMode(mode);
     }, []);
 
-    // 处理模式按钮悬停
-    const handleModeHover = useCallback((mode: ChatMode, event: React.MouseEvent) => {
-        // 清除之前的隐藏定时器
-        if (hideTimeout) {
-            clearTimeout(hideTimeout);
-            setHideTimeout(null);
+    // 创建tooltip内容的辅助函数
+    const getModeTooltipContent = (mode: ChatMode) => {
+        if (mode === 'regular') {
+            return (
+                <div style={{ padding: '4px' }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px'
+                    }}>
+                        <h4 style={{
+                            margin: 0,
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#111827'
+                        }}>
+                            {t('chatbox.chat.modes.regular')}
+                        </h4>
+                        <span style={{
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            backgroundColor: '#f3f4f6',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                        }}>
+                            {t('chatbox.chat.modes.regularRemaining', { count: 100 })}
+                        </span>
+                    </div>
+                    <div style={{
+                        fontSize: '13px',
+                        color: '#4b5563',
+                        lineHeight: '1.5'
+                    }}>
+                        {t('chatbox.chat.modes.regularDescription')}
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div style={{ padding: '4px' }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px'
+                    }}>
+                        <h4 style={{
+                            margin: 0,
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#111827'
+                        }}>
+                            {t('chatbox.chat.modes.deepSpace')}
+                        </h4>
+                        <span style={{
+                            fontSize: '12px',
+                            color: '#6b7280',
+                            backgroundColor: '#f3f4f6',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                        }}>
+                            {t('chatbox.chat.modes.deepSpaceRemaining', { count: 20 })}
+                        </span>
+                    </div>
+                    <div style={{
+                        fontSize: '13px',
+                        color: '#4b5563',
+                        lineHeight: '1.5'
+                    }}>
+                        {t('chatbox.chat.modes.deepSpaceDescription')}
+                    </div>
+                </div>
+            );
         }
-
-        const button = event.currentTarget;
-        const rect = button.getBoundingClientRect();
-        const container = button.closest('.new-chat-interface');
-        
-        if (container) {
-            const containerRect = container.getBoundingClientRect();
-            
-            // 计算相对于容器的位置
-            const buttonCenterX = rect.left - containerRect.left + rect.width / 2;
-            const buttonBottomY = rect.bottom - containerRect.top;
-            
-            // tooltip 宽度为 280px
-            const tooltipWidth = 280;
-            const margin = 10; // 边距
-            
-            // 计算 tooltip 的初始位置（居中于按钮）
-            let tooltipX = buttonCenterX - tooltipWidth / 2;
-            const tooltipY = buttonBottomY + 8; // 8px 的间距
-            
-            // 边界检测和调整
-            const containerWidth = containerRect.width;
-            
-            // 如果 tooltip 超出左边界
-            if (tooltipX < margin) {
-                tooltipX = margin;
-            }
-            
-            // 如果 tooltip 超出右边界
-            if (tooltipX + tooltipWidth > containerWidth - margin) {
-                tooltipX = containerWidth - tooltipWidth - margin;
-            }
-            
-            // 确保 tooltipX 在有效范围内
-            tooltipX = Math.max(margin, Math.min(tooltipX, containerWidth - tooltipWidth - margin));
-            
-            // 更新 tooltip 状态
-            setTooltipState({
-                isVisible: true,
-                mode,
-                position: {
-                    x: tooltipX,
-                    y: tooltipY
-                },
-                buttonCenterX: buttonCenterX
-            });
-        }
-    }, [hideTimeout]);
-
-    // 处理模式按钮离开
-    const handleModeLeave = useCallback(() => {
-        // 清除之前的隐藏定时器
-        if (hideTimeout) {
-            clearTimeout(hideTimeout);
-        }
-        
-        // 延迟隐藏，让动画有时间完成，也给鼠标移动到 tooltip 的时间
-        const timeout = setTimeout(() => {
-            if (!isTooltipHovered) {
-                setTooltipState(prev => ({ ...prev, isVisible: false }));
-            }
-            setHideTimeout(null);
-        }, 150);
-        
-        setHideTimeout(timeout);
-    }, [hideTimeout, isTooltipHovered]);
+    };
 
     // 处理推荐问题点击
     const handleQuestionClick = useCallback((question: string) => {
@@ -159,30 +149,6 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
         setCurrentQuestions(shuffled.slice(0, 5));
     }, [recommendedQuestions]);
 
-    // 处理 tooltip 鼠标进入
-    const handleTooltipMouseEnter = useCallback(() => {
-        // 清除隐藏定时器
-        if (hideTimeout) {
-            clearTimeout(hideTimeout);
-            setHideTimeout(null);
-        }
-        setIsTooltipHovered(true);
-    }, [hideTimeout]);
-
-    // 处理 tooltip 鼠标离开
-    const handleTooltipMouseLeave = useCallback(() => {
-        setIsTooltipHovered(false);
-        
-        // 清除之前的隐藏定时器
-        if (hideTimeout) {
-            clearTimeout(hideTimeout);
-        }
-        
-        // 立即隐藏 tooltip
-        setTooltipState(prev => ({ ...prev, isVisible: false }));
-        setHideTimeout(null);
-    }, [hideTimeout]);
-
     const isInputEmpty = inputValue.trim().length === 0;
 
     return (
@@ -201,27 +167,66 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                             rows={3}
                         />
                         <div className="new-chat-input-controls">
-                            <div 
-                                className="new-chat-mode-switch"
-                                onMouseLeave={handleModeLeave}
-                            >
-                                <button 
-                                    className={`new-mode-btn ${currentMode === 'regular' ? 'active' : ''}`}
-                                    onClick={() => handleModeChange('regular')}
-                                    onMouseEnter={(e) => handleModeHover('regular', e)}
-                                    type="button"
+                            <div className="new-chat-mode-switch">
+                                <Tooltip 
+                                    title={getModeTooltipContent('regular')} 
+                                    placement="bottom" 
+                                    arrow
+                                    PopperProps={{
+                                        sx: {
+                                            '& .MuiTooltip-tooltip': {
+                                                backgroundColor: 'white',
+                                                color: 'black',
+                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                                borderRadius: '8px',
+                                                padding: '12px',
+                                                fontSize: '14px',
+                                                maxWidth: 280
+                                            },
+                                            '& .MuiTooltip-arrow': {
+                                                color: 'white',
+                                            }
+                                        }
+                                    }}
                                 >
-                                    <span>{t('chatbox.chat.modes.regular')}</span>
-                                </button>
-                                <button 
-                                    className={`new-mode-btn ${currentMode === 'deep-space' ? 'active' : ''}`}
-                                    onClick={() => handleModeChange('deep-space')}
-                                    onMouseEnter={(e) => handleModeHover('deep-space', e)}
-                                    type="button"
+                                    <button 
+                                        className={`new-mode-btn ${currentMode === 'regular' ? 'active' : ''}`}
+                                        onClick={() => handleModeChange('regular')}
+                                        type="button"
+                                    >
+                                        <span>{t('chatbox.chat.modes.regular')}</span>
+                                    </button>
+                                </Tooltip>
+                                <Tooltip 
+                                    title={getModeTooltipContent('deep-space')} 
+                                    placement="bottom" 
+                                    arrow
+                                    PopperProps={{
+                                        sx: {
+                                            '& .MuiTooltip-tooltip': {
+                                                backgroundColor: 'white',
+                                                color: 'black',
+                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                                borderRadius: '8px',
+                                                padding: '12px',
+                                                fontSize: '14px',
+                                                maxWidth: 280
+                                            },
+                                            '& .MuiTooltip-arrow': {
+                                                color: 'white',
+                                            }
+                                        }
+                                    }}
                                 >
-                                    <span>{t('chatbox.chat.modes.deepSpace')}</span>
-                                    <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
-                                </button>
+                                    <button 
+                                        className={`new-mode-btn ${currentMode === 'deep-space' ? 'active' : ''}`}
+                                        onClick={() => handleModeChange('deep-space')}
+                                        type="button"
+                                    >
+                                        <span>{t('chatbox.chat.modes.deepSpace')}</span>
+                                        <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
+                                    </button>
+                                </Tooltip>
                             </div>
                             <button 
                                 className="new-chat-send-btn" 
@@ -274,16 +279,6 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                     </button>
                 </div>
             </div>
-            
-            {/* 模式提示组件 */}
-            <ModeTooltip
-                mode={tooltipState.mode}
-                isVisible={tooltipState.isVisible}
-                position={tooltipState.position}
-                buttonCenterX={tooltipState.buttonCenterX}
-                onMouseEnter={handleTooltipMouseEnter}
-                onMouseLeave={handleTooltipMouseLeave}
-            />
         </div>
     );
 };

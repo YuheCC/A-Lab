@@ -1146,7 +1146,7 @@ body.chat-page-body {
 
 .chat-input-container {
     position: relative;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 50px 20px;
     border-top: none;
     background: transparent;
     display: flex;
@@ -1735,33 +1735,8 @@ body.chat-page-body {
 }
 
 /* ==============================================
-   9. Mode Tooltip 样式优化
+   9. Mode Button 样式优化
    ============================================== */
-
-/* Mode Tooltip 基础样式 */
-.mode-tooltip {
-    position: absolute;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 12px;
-    width: 280px;
-    font-size: 14px;
-    line-height: 1.4;
-    opacity: 0;
-    transform: translateY(-5px) scale(0.9);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    word-wrap: break-word;
-    transform-origin: center top;
-    z-index: 2147483647;
-}
-
-.mode-tooltip.show {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-}
 
 /* 模式按钮 hover 效果优化 */
 .new-mode-btn {
@@ -1781,34 +1756,7 @@ body.chat-page-body {
     box-shadow: 0 2px 8px rgba(86, 178, 106, 0.3);
 }
 
-/* 优化 tooltip 显示时的按钮状态 */
+/* 优化按钮悬停状态 */
 .new-chat-mode-switch:hover .new-mode-btn {
     transform: translateY(-1px);
-}
-
-/* 确保 tooltip 在显示时有正确的层级 */
-.mode-tooltip[style*="opacity: 1"] {
-    pointer-events: auto;
-}
-
-/* 优化 tooltip 内容的可读性 */
-.mode-tooltip h4 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #111827;
-}
-
-.mode-tooltip span {
-    font-size: 12px;
-    color: #6b7280;
-    background-color: #f3f4f6;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-.mode-tooltip div {
-    font-size: 13px;
-    color: #4b5563;
-    line-height: 1.5;
 }
