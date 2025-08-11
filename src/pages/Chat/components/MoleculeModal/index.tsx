@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { moleculeService, type MoleculeProperties, type SimilarMolecule } from '@/pages/Chat/services/moleculeService';
+import { moleculeService, type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 
 interface MoleculeModalProps {
     moleculeName?: string;

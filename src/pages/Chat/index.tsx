@@ -2,12 +2,12 @@ import './chat-styles.css';
 import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
-import { useParams } from 'umi';
+import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
 import { useChat } from './hooks/useChat';
-import { chatService } from './services/chatService';
+import { chatService } from '@/services/chat/chatService';
 import MoleculeModal from './components/MoleculeModal';
 import { useMoleculePanel } from './hooks/useMoleculePanel';
 
@@ -172,7 +172,7 @@ const Chat = () => {
             </div>
             {moleculePanelState.isVisible && (
                 <MoleculeModal
-                    moleculeName={moleculePanelState.currentMolecule}
+                    moleculeName={moleculePanelState.currentMolecule || 'LiPF6'}
                     onClose={handleMoleculePanelClose}
                     onFindSimilar={handleFindSimilar}
                 />

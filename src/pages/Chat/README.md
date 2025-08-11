@@ -70,7 +70,7 @@ src/pages/Chat/
 
 ```typescript
 import { useChat } from './hooks/useChat';
-import { chatService } from './services/chatService';
+import { chatService } from '@/services/chat/chatService';
 
 const ChatPage = () => {
   const {
