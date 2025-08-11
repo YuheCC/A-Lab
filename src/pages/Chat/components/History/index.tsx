@@ -1,5 +1,5 @@
-import React from 'react';
 import type { FC } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import HistoryItem from '../HistoryItem';
 
@@ -19,6 +19,9 @@ interface ChatHistoryProps {
     onDeleteChat?: (chatId: string) => void;
     onRenameChat?: (chatId: string, newTitle: string) => void;
     onTogglePinChat?: (chatId: string) => void;
+    onLoadMore?: () => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
 }
 
 const ChatHistory: FC<ChatHistoryProps> = ({
@@ -28,9 +31,14 @@ const ChatHistory: FC<ChatHistoryProps> = ({
     currentChatId,
     onDeleteChat,
     onRenameChat,
-    onTogglePinChat
+    onTogglePinChat,
+    onLoadMore,
+    hasMore = false,
+    loadingMore = false,
 }) => {
     const { t } = useTranslation();
+    const listRef = useRef<HTMLUListElement | null>(null);
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
     const handleChatClick = (chatId: string) => {
         console.log('Chat clicked:', chatId);
         onSelectChat(chatId);
@@ -57,11 +65,35 @@ const ChatHistory: FC<ChatHistoryProps> = ({
         }
     };
 
+    useEffect(() => {
+        if (!hasMore || loadingMore) return;
+        const rootEl = listRef.current;
+        const sentinelEl = sentinelRef.current;
+        if (!rootEl || !sentinelEl) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        onLoadMore?.();
+                    }
+                }
+            },
+            { root: rootEl, threshold: 0.1 }
+        );
+
+        observer.observe(sentinelEl);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasMore, loadingMore, onLoadMore]);
+
     return (
         <>
             <nav className="history-nav">
                 <p className="history-title">{t('chatbox.chat.historyTitle')}</p>
-                <ul>
+                <ul ref={listRef}>
                     {history.map((item) => (
                         <HistoryItem
                             key={item.chatId}
@@ -75,6 +107,14 @@ const ChatHistory: FC<ChatHistoryProps> = ({
                             onDelete={handleDelete}
                         />
                     ))}
+                    <li style={{ padding: 0, margin: 0 }}>
+                        <div ref={sentinelRef} style={{ height: 1 }} />
+                    </li>
+                    {loadingMore && (
+                        <li style={{ textAlign: 'center', padding: '6px 0', color: '#64748b', fontSize: 12 }}>
+                            加载中...
+                        </li>
+                    )}
                 </ul>
             </nav>
         </>

@@ -12,6 +12,9 @@ interface ChatSiderProps {
     onDeleteChat?: (chatId: string) => void;
     onRenameChat?: (chatId: string, newTitle: string) => void;
     onTogglePinChat?: (chatId: string) => void;
+    onLoadMoreHistory?: () => void;
+    hasMoreHistory?: boolean;
+    loadingMoreHistory?: boolean;
 }
 
 const ChatSider: React.FC<ChatSiderProps> = ({
@@ -21,7 +24,10 @@ const ChatSider: React.FC<ChatSiderProps> = ({
     chatHistory,
     onDeleteChat,
     onRenameChat,
-    onTogglePinChat
+    onTogglePinChat,
+    onLoadMoreHistory,
+    hasMoreHistory,
+    loadingMoreHistory
 }) => {
     const { t } = useTranslation();
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
@@ -84,6 +90,9 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 onDeleteChat={onDeleteChat}
                 onRenameChat={onRenameChat}
                 onTogglePinChat={onTogglePinChat}
+                onLoadMore={onLoadMoreHistory}
+                hasMore={!!hasMoreHistory}
+                loadingMore={!!loadingMoreHistory}
             />
             <ChatSearchModal 
                 ref={searchModalRef} 
