@@ -149,6 +149,6 @@ export default {
     requires_rd: "Requires R&D to assess viability",
     likely_synthesizable_but_not_commercially_available: "Likely synthesizable but probably not commercially available",
     likely_synthesizable_may_be_commercially_available: "Likely synthesizable, may be commercially available",
-    likely_commercially_available: "Likely commercially available"
+    likely_commercially_available: "Commercially available"
   }
 }; 
