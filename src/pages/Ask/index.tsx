@@ -1047,21 +1047,25 @@ const handleFindSimilarMolecules = async (details) => {
                 className={`message-${msg.role}`}>
                 <div className='message-content'>
                   <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  
-
-                  
-                                      {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
-                      <div className="extra-data-wrapper">
-                        {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
-                          <ExtraDataSection
-                          key={key}
-                          title={key}
-                          content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                          onMoleculeClick={handleMoleculeClick}
-                        />
-                      ))}
+                  {userPermissions === 'admin' && msg.createdAt && (
+                    <div style={{ fontSize: '11px', color: '#888', marginTop: 4 }}>
+                      {new Date(msg.createdAt).toLocaleString()}
                     </div>
                   )}
+                  
+                  
+                  {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+                    <div className="extra-data-wrapper">
+                      {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
+                        <ExtraDataSection
+                        key={key}
+                        title={key}
+                        content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                        onMoleculeClick={handleMoleculeClick}
+                      />
+                    ))}
+                  </div>
+                )}
                 </div>
 
                 {/* Add thumbs buttons for feedback */}
