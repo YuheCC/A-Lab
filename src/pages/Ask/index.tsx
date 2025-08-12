@@ -437,6 +437,8 @@ const ChatbotInterface = () => {
   const handleMoleculeClick = (molecule) => {
     setSelectedMolecule(molecule);
     setShowSelectedMolecule(true);
+    // Persist selection per chat so it survives chat switches
+    setActiveMolecule(molecule, activeChat);
     // Hide other molecule panels
     setShowFoundMolecules(false);
     setShowSimilarMolecules(false);
@@ -625,13 +627,19 @@ const handleFindSimilarMolecules = async (details) => {
     }
   }, [isSynced, loadHistory]);
 
-  // Clear selected molecule state when switching chats
+  // Restore molecule panels when switching chats based on persisted store data
   useEffect(() => {
-    setSelectedMolecule(null);
-    setShowSelectedMolecule(false);
-    setSimilarMolecules([]);
-    setShowSimilarMolecules(false);
-  }, [activeChat]);
+    if (activeMolecule) {
+      setSelectedMolecule(activeMolecule);
+      setShowSelectedMolecule(true);
+    } else {
+      setSelectedMolecule(null);
+      setShowSelectedMolecule(false);
+    }
+    // Keep similar/found panels visible if they exist for this chat
+    setShowSimilarMolecules(similarMolecules && similarMolecules.length > 0);
+    setShowFoundMolecules(foundMolecules && foundMolecules.length > 0);
+  }, [activeChat, activeMolecule, similarMolecules, foundMolecules]);
 
   const handleSend = useCallback(
     async (input) => {
