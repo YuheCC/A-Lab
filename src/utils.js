@@ -1,4 +1,4 @@
-export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://prod-api.ses.ai';
+export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://demo-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
