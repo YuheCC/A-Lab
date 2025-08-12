@@ -3,7 +3,7 @@ import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'react-router';
-import { history } from 'umi';
+// import { history } from 'umi';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
@@ -12,7 +12,7 @@ import { useChat } from './hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import MoleculeModal from './components/MoleculeModal';
 import { useMoleculePanel } from './hooks/useMoleculePanel';
-import type { ChatStreamHandle } from '@/services/chat/wsService';
+import { globalWebSocketManager } from '@/services/chat/wsService';
 
 const Chat = () => {
     const { t } = useTranslation();
@@ -22,6 +22,8 @@ const Chat = () => {
         chatHistory,
         currentChatId,
         isLoading,
+        sessionId,
+        setSessionId,
         setIsLoading,
         addUserMessage,
         addBotMessage,
@@ -33,7 +35,9 @@ const Chat = () => {
         deleteChat,
         renameChat,
         togglePinChat,
-        isChatHistoryCached
+        isChatHistoryCached,
+        sendMessage,
+        isWebSocketConnected
     } = useChat();
 
     const {
@@ -49,9 +53,8 @@ const Chat = () => {
     const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(undefined);
     const loadMoreGateTsRef = useRef<number>(0);
 
-    // WebSocket连接状态
+    // WebSocket连接状态 - 现在通过全局管理器管理
     const [wsConnected, setWsConnected] = useState(false);
-    const wsHandleRef = useRef<ChatStreamHandle | null>(null);
     const currentBotMessageRef = useRef<string>('');
 
     const nonPinnedHistory = useMemo(() => chatHistory.filter(i => !i.isPinned), [chatHistory]);
@@ -76,10 +79,10 @@ const Chat = () => {
         const initChatHistory = async () => {
             try {
                 console.log('初始化聊天历史请求');
-                const history = await chatService.getChatHistory();
-                updateChatHistory(history);
+                const chatHistoryData = await chatService.getChatHistory();
+                updateChatHistory(chatHistoryData);
                 // 根据初次返回的非置顶条目数量与末尾updated_at，设置分页信息
-                const initialNonPinned = history.filter(item => !item.isPinned);
+                const initialNonPinned = chatHistoryData.filter(item => !item.isPinned);
                 // hasMore 按接口是否返回为空判断：首屏非置顶条目非空则认为还有更多，直到下一次请求返回空
                 setHasMoreHistory(initialNonPinned.length > 0);
                 if (initialNonPinned.length > 0) {
@@ -100,22 +103,95 @@ const Chat = () => {
         if (id) {
             // 立即更新 currentChatId 以反映选中状态
             loadChatHistory(id);
+            // 设置sessionId
+            setSessionId(id);
             // 加载聊天数据
             loadChatData(id);
         } else {
             startNewChat();
         }
-    }, [id, loadChatHistory, startNewChat]);
+    }, [id, loadChatHistory, startNewChat, setSessionId]);
 
-    // 组件卸载时清理WebSocket连接
+    // 设置WebSocket事件监听器
     useEffect(() => {
-        return () => {
-            if (wsHandleRef.current) {
-                wsHandleRef.current.close();
-                wsHandleRef.current = null;
+        // 监听WebSocket连接状态变化
+        const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
+            console.log('全局WebSocket连接已建立');
+            setWsConnected(true);
+        });
+
+        const unsubscribeDisconnect = globalWebSocketManager.onDisconnect(() => {
+            console.log('全局WebSocket连接已断开');
+            setWsConnected(false);
+            setIsLoading(false);
+        });
+
+        const unsubscribeError = globalWebSocketManager.onError((error) => {
+            console.error('全局WebSocket错误:', error);
+            setWsConnected(false);
+            setIsLoading(false);
+            
+            // 根据错误类型提供不同的错误消息
+            let errorMessage = t('chatbox.chat.sendFailed');
+            if (error.message && error.message.includes('timeout')) {
+                errorMessage = '连接超时，请检查网络状况或稍后重试。';
+            } else if (error.message && error.message.includes('connect')) {
+                errorMessage = '无法连接到服务器，请检查网络连接。';
             }
+            
+            addBotMessage(errorMessage, false);
+        });
+
+        // 监听消息
+        const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
+            console.log('收到全局WebSocket消息:', data);
+            
+            if (typeof data === 'string') {
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    // 如果不是JSON，直接使用字符串
+                }
+            }
+
+            // 处理流式消息
+            if (data.type === 'chunk' || data.content) {
+                const content = data.content || data.chunk || data;
+                currentBotMessageRef.current += content;
+                
+                // 更新最后一条机器人消息
+                const updatedMessage = {
+                    id: `bot-${Date.now()}`,
+                    type: 'bot' as const,
+                    content: currentBotMessageRef.current,
+                    timestamp: new Date(),
+                    showRegenerate: true
+                };
+                
+                // 更新消息列表中的最后一条机器人消息
+                const newMessages = [...messages];
+                const lastBotIndex = newMessages.findLastIndex((msg: Message) => msg.type === 'bot');
+                if (lastBotIndex !== -1) {
+                    newMessages[lastBotIndex] = updatedMessage;
+                }
+                setMessages(newMessages);
+            }
+
+            // 处理完成消息
+            if (data.type === 'done' || data.finished) {
+                setIsLoading(false);
+                currentBotMessageRef.current = '';
+            }
+        });
+
+        return () => {
+            // 组件卸载时清理事件监听器
+            unsubscribeConnect();
+            unsubscribeDisconnect();
+            unsubscribeError();
+            unsubscribeMessage();
         };
-    }, []);
+    }, [setIsLoading, addBotMessage, setMessages, t]);
 
     // 加载聊天数据
     const loadChatData = async (chatId: string) => {
@@ -130,95 +206,48 @@ const Chat = () => {
         }
     };
 
-    // 处理发送消息
-    const handleSendMessage = async (chatID: string, message: string, mode: 'regular' | 'deep-space' = 'regular') => {
-        addUserMessage(message);
-        setIsLoading(true);
+    // 处理发送消息 - 使用全局WebSocket管理器
+    const handleSendMessage = async (messageOrChatID: string, modeOrMessage?: 'regular' | 'deep-space' | string, modeParam?: 'regular' | 'deep-space') => {
+        // 处理不同的调用签名
+        // 1. handleSendMessage(message, mode) - 来自ChatInput
+        // 2. handleSendMessage(chatID, message, mode) - 来自其他地方
+        let message: string;
+        let mode: 'regular' | 'deep-space' = 'regular';
+        let chatID: string | undefined;
+
+        if (typeof modeOrMessage === 'string' && (modeOrMessage === 'regular' || modeOrMessage === 'deep-space')) {
+            // 调用方式1: handleSendMessage(message, mode)
+            message = messageOrChatID;
+            mode = modeOrMessage;
+            chatID = currentChatId;
+        } else if (typeof modeOrMessage === 'string' && typeof modeParam !== 'undefined') {
+            // 调用方式2: handleSendMessage(chatID, message, mode)
+            chatID = messageOrChatID;
+            message = modeOrMessage;
+            mode = modeParam;
+        } else {
+            // 默认处理：假设第一个参数是消息
+            message = messageOrChatID;
+            chatID = currentChatId;
+        }
+
+        console.log('handleSendMessage: 开始发送消息', { chatID, message, mode, sessionId });
+        
+        // 确保有sessionId，如果没有则设置为chatID
+        if (!sessionId && chatID) {
+            console.log('handleSendMessage: 设置sessionId为', chatID);
+            setSessionId(chatID);
+        }
+        
+        // 先添加一个空的机器人消息，用于流式更新
+        addBotMessage('', true);
         currentBotMessageRef.current = '';
 
-        // 先添加一个空的机器人消息，用于流式更新
-        const botMessageId = `bot-${Date.now()}`;
-        addBotMessage('', true);
-
-        try {
-            // 关闭之前的连接
-            if (wsHandleRef.current) {
-                wsHandleRef.current.close();
-            }
-
-            // 创建新的WebSocket连接
-            const wsHandle = chatService.openChatStream({
-                chatId: currentChatId,
-                message: message,
-                mode: mode,
-                onOpen: (ev) => {
-                    console.log('WebSocket连接已建立');
-                    setWsConnected(true);
-                },
-                onMessage: (data, rawEvent) => {
-                    console.log('收到WebSocket消息:', data);
-                    
-                    if (typeof data === 'string') {
-                        try {
-                            data = JSON.parse(data);
-                        } catch (e) {
-                            // 如果不是JSON，直接使用字符串
-                        }
-                    }
-
-                    // 处理流式消息
-                    if (data.type === 'chunk' || data.content) {
-                        const content = data.content || data.chunk || data;
-                        currentBotMessageRef.current += content;
-                        
-                        // 更新最后一条机器人消息
-                        const updatedMessage = {
-                            id: botMessageId,
-                            type: 'bot' as const,
-                            content: currentBotMessageRef.current,
-                            timestamp: new Date(),
-                            showRegenerate: true
-                        };
-                        
-                        // 更新消息列表中的最后一条机器人消息
-                        setMessages((prevMessages: Message[]) => {
-                            const newMessages = [...prevMessages];
-                            const lastBotIndex = newMessages.findLastIndex(msg => msg.type === 'bot');
-                            if (lastBotIndex !== -1) {
-                                newMessages[lastBotIndex] = updatedMessage;
-                            }
-                            return newMessages;
-                        });
-                    }
-
-                    // 处理完成消息
-                    if (data.type === 'done' || data.finished) {
-                        setIsLoading(false);
-                        setWsConnected(false);
-                        if (wsHandleRef.current) {
-                            wsHandleRef.current.close();
-                            wsHandleRef.current = null;
-                        }
-                    }
-                },
-                onError: (ev) => {
-                    console.error('WebSocket错误:', ev);
-                    setWsConnected(false);
-                    setIsLoading(false);
-                    addBotMessage(t('chatbox.chat.sendFailed'), false);
-                },
-                onClose: (ev) => {
-                    console.log('WebSocket连接已关闭');
-                    setWsConnected(false);
-                    setIsLoading(false);
-                }
-            });
-
-            wsHandleRef.current = wsHandle;
-
-        } catch (error) {
-            console.error('Failed to send message:', error);
-            setIsLoading(false);
+        // 使用useChat的sendMessage函数，它会使用全局WebSocket管理器
+        const success = sendMessage(message, mode);
+        
+        if (!success) {
+            console.error('handleSendMessage: 消息发送失败');
             addBotMessage(t('chatbox.chat.sendFailed'), false);
         }
     };
@@ -262,7 +291,8 @@ const Chat = () => {
     const handleNewChat = () => {
         startNewChat();
         // 跳转到新聊天页面
-        history.push('/chat');
+        // TODO: 添加路由跳转逻辑
+        window.location.href = '/chat';
     };
 
     // 处理选择聊天历史
@@ -371,14 +401,40 @@ const Chat = () => {
                             )
                         }
                     </div>
-                    {
-                        showInput && (
-                            <ChatInput
-                                onSendMessage={handleSendMessage}
-                                disabled={isLoading}
-                            />
-                        )
-                    }
+                                            {
+                            showInput && (
+                                <>
+                                    {/* WebSocket连接状态指示器 */}
+                                    {!wsConnected && (
+                                        <div style={{
+                                            background: '#fff3cd',
+                                            border: '1px solid #ffeaa7',
+                                            borderRadius: '8px',
+                                            padding: '8px 16px',
+                                            margin: '8px 16px',
+                                            fontSize: '14px',
+                                            color: '#856404',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
+                                        }}>
+                                            <div style={{
+                                                width: '8px',
+                                                height: '8px',
+                                                borderRadius: '50%',
+                                                backgroundColor: '#ffc107',
+                                                animation: 'pulse 2s infinite'
+                                            }}></div>
+                                            正在连接服务器...
+                                        </div>
+                                    )}
+                                    <ChatInput
+                                        onSendMessage={handleSendMessage}
+                                        disabled={isLoading || !wsConnected}
+                                    />
+                                </>
+                            )
+                        }
                 </main>
             </div>
             {moleculePanelState.isVisible && (

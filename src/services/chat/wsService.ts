@@ -135,7 +135,7 @@ function createChatWebSocketStreamInternal(options: ChatStreamOptions, transport
       reconnectionAttempts: maxRetries,
       reconnectionDelay: retryDelayBaseMs,
       reconnectionDelayMax: retryDelayBaseMs * Math.pow(2, 5),
-      timeout: 20000,
+      timeout: 200000,
       forceNew: true,
       // 明确指定传输方式
       transports: transports,
@@ -143,10 +143,7 @@ function createChatWebSocketStreamInternal(options: ChatStreamOptions, transport
       upgrade: true,
       rememberUpgrade: false,
       // 添加额外的配置来处理潜在的连接问题
-      withCredentials: false,
-      extraHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      },
+      withCredentials: false
     });
 
     socket.on('connect', () => {
@@ -240,5 +237,226 @@ function createChatWebSocketStreamInternal(options: ChatStreamOptions, transport
 }
 
 export default createChatWebSocketStream;
+
+// 全局WebSocket连接管理器
+class GlobalWebSocketManager {
+  private static instance: GlobalWebSocketManager;
+  private socket: Socket | null = null;
+  private isConnected: boolean = false;
+  private sessionId: string | undefined = undefined;
+  private messageCallbacks: Array<(data: any) => void> = [];
+  private connectionCallbacks: Array<() => void> = [];
+  private disconnectionCallbacks: Array<() => void> = [];
+  private errorCallbacks: Array<(error: any) => void> = [];
+
+  private constructor() {}
+
+  static getInstance(): GlobalWebSocketManager {
+    if (!GlobalWebSocketManager.instance) {
+      GlobalWebSocketManager.instance = new GlobalWebSocketManager();
+    }
+    return GlobalWebSocketManager.instance;
+  }
+
+  // 设置session_id
+  setSessionId(sessionId: string) {
+    this.sessionId = sessionId;
+    console.log('全局WebSocket管理器设置session_id:', sessionId);
+  }
+
+  // 获取session_id
+  getSessionId(): string | undefined {
+    return this.sessionId;
+  }
+
+  // 初始化连接（页面加载时调用）
+  initialize() {
+    if (this.socket && this.socket.connected) {
+      console.log('WebSocket已连接，无需重新初始化');
+      return;
+    }
+
+    const baseUrl = (window as any).BASE_URL || '/api';
+    const path = '/ws/socket.io';
+    const socketUrl = buildSocketUrl(baseUrl);
+    const token = localStorage.getItem('token') || '';
+
+    const socketQuery: Record<string, string> = {};
+    if (token) socketQuery.token = token;
+
+    console.log('初始化全局WebSocket连接:', {
+      url: socketUrl,
+      path: path,
+      query: socketQuery
+    });
+
+    this.socket = io(socketUrl, {
+      path: path,
+      query: socketQuery,
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 800,
+      reconnectionDelayMax: 5000,
+      timeout: 200000,
+      forceNew: false, // 允许复用连接
+      transports: ['websocket', 'polling'],
+      upgrade: true,
+      rememberUpgrade: false,
+      withCredentials: false,
+      extraHeaders: {
+        'Access-Control-Allow-Origin': '*'
+      },
+    });
+
+    this.setupEventListeners();
+  }
+
+  private setupEventListeners() {
+    if (!this.socket) return;
+
+    this.socket.on('connect', () => {
+      console.log('全局WebSocket连接成功');
+      this.isConnected = true;
+      this.connectionCallbacks.forEach(callback => callback());
+    });
+
+    this.socket.on('message', (data: any) => {
+      console.log('全局WebSocket收到 message 事件:', data);
+      this.messageCallbacks.forEach(callback => callback(data));
+    });
+
+    this.socket.on('chat_message', (data: any) => {
+      console.log('全局WebSocket收到 chat_message 事件:', data);
+      this.messageCallbacks.forEach(callback => callback(data));
+    });
+
+    this.socket.on('response', (data: any) => {
+      console.log('全局WebSocket收到 response 事件:', data);
+      this.messageCallbacks.forEach(callback => callback(data));
+    });
+
+    this.socket.on('connect_error', (error: any) => {
+      console.error('全局WebSocket连接错误:', error);
+      this.isConnected = false;
+      this.errorCallbacks.forEach(callback => callback(error));
+    });
+
+    this.socket.on('error', (error: any) => {
+      console.error('全局WebSocket运行错误:', error);
+      this.errorCallbacks.forEach(callback => callback(error));
+    });
+
+    this.socket.on('disconnect', (reason: string) => {
+      console.log('全局WebSocket断开连接:', reason);
+      this.isConnected = false;
+      this.disconnectionCallbacks.forEach(callback => callback());
+    });
+
+    this.socket.on('reconnect', (attemptNumber: number) => {
+      console.log('全局WebSocket重连成功，尝试次数:', attemptNumber);
+      this.isConnected = true;
+      this.connectionCallbacks.forEach(callback => callback());
+    });
+
+    this.socket.on('reconnect_attempt', (attemptNumber: number) => {
+      console.log('全局WebSocket尝试重连，尝试次数:', attemptNumber);
+    });
+
+    this.socket.on('reconnect_error', (error: any) => {
+      console.error('全局WebSocket重连失败:', error);
+    });
+
+    this.socket.on('reconnect_failed', () => {
+      console.error('全局WebSocket重连完全失败');
+      this.isConnected = false;
+    });
+  }
+
+  // 发送消息
+  sendMessage(data: { message: string; chatId?: string; mode?: string }) {
+    if (!this.socket || !this.socket.connected) {
+      console.error('WebSocket未连接，无法发送消息');
+      return false;
+    }
+
+    const payload = {
+      ...data,
+      chat_id: data.chatId || this.sessionId,
+      session_id: this.sessionId
+    };
+
+    console.log('发送WebSocket消息:', payload);
+    this.socket.emit('message', JSON.stringify(payload));
+    return true;
+  }
+
+  // 检查连接状态
+  isWebSocketConnected(): boolean {
+    return this.isConnected && this.socket?.connected === true;
+  }
+
+  // 订阅消息
+  onMessage(callback: (data: any) => void) {
+    this.messageCallbacks.push(callback);
+    
+    // 返回取消订阅函数
+    return () => {
+      this.messageCallbacks = this.messageCallbacks.filter(cb => cb !== callback);
+    };
+  }
+
+  // 订阅连接事件
+  onConnect(callback: () => void) {
+    this.connectionCallbacks.push(callback);
+    
+    // 如果已经连接，立即触发回调
+    if (this.isConnected) {
+      callback();
+    }
+    
+    // 返回取消订阅函数
+    return () => {
+      this.connectionCallbacks = this.connectionCallbacks.filter(cb => cb !== callback);
+    };
+  }
+
+  // 订阅断连事件
+  onDisconnect(callback: () => void) {
+    this.disconnectionCallbacks.push(callback);
+    
+    // 返回取消订阅函数
+    return () => {
+      this.disconnectionCallbacks = this.disconnectionCallbacks.filter(cb => cb !== callback);
+    };
+  }
+
+  // 订阅错误事件
+  onError(callback: (error: any) => void) {
+    this.errorCallbacks.push(callback);
+    
+    // 返回取消订阅函数
+    return () => {
+      this.errorCallbacks = this.errorCallbacks.filter(cb => cb !== callback);
+    };
+  }
+
+  // 关闭连接
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+    this.isConnected = false;
+    this.sessionId = undefined;
+    this.messageCallbacks = [];
+    this.connectionCallbacks = [];
+    this.disconnectionCallbacks = [];
+    this.errorCallbacks = [];
+  }
+}
+
+// 导出全局WebSocket管理器实例
+export const globalWebSocketManager = GlobalWebSocketManager.getInstance();
 
 
