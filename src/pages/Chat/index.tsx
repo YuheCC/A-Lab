@@ -3,6 +3,7 @@ import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'react-router';
+import { useNavigate } from 'umi';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
@@ -13,6 +14,7 @@ import { useMoleculePanel } from './hooks/useMoleculePanel';
 
 const Chat = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { id } = useParams();
     const {
         messages,
@@ -29,7 +31,8 @@ const Chat = () => {
         setMessages,
         deleteChat,
         renameChat,
-        togglePinChat
+        togglePinChat,
+        isChatHistoryCached
     } = useChat();
 
     const {
@@ -47,10 +50,26 @@ const Chat = () => {
 
     const nonPinnedHistory = useMemo(() => chatHistory.filter(i => !i.isPinned), [chatHistory]);
 
-    // 初始化聊天历史
+    // 初始化聊天历史 - 使用缓存机制避免重复请求
     useEffect(() => {
+        // 如果聊天历史已缓存，跳过请求
+        if (isChatHistoryCached()) {
+            console.log('聊天历史已缓存，跳过重复请求', chatHistory.length);
+            // 仍需要设置分页信息
+            const initialNonPinned = chatHistory.filter(item => !item.isPinned);
+            setHasMoreHistory(initialNonPinned.length > 0);
+            if (initialNonPinned.length > 0) {
+                const lastItem = initialNonPinned[initialNonPinned.length - 1];
+                setLastUpdatedAt(lastItem.timestamp.toISOString());
+            } else {
+                setLastUpdatedAt(undefined);
+            }
+            return;
+        }
+
         const initChatHistory = async () => {
             try {
+                console.log('初始化聊天历史请求');
                 const history = await chatService.getChatHistory();
                 updateChatHistory(history);
                 // 根据初次返回的非置顶条目数量与末尾updated_at，设置分页信息
@@ -68,12 +87,14 @@ const Chat = () => {
             }
         };
         initChatHistory();
-    }, [updateChatHistory]);
+    }, [updateChatHistory, isChatHistoryCached, chatHistory]);
 
     // 处理路由参数变化
     useEffect(() => {
         if (id) {
+            // 立即更新 currentChatId 以反映选中状态
             loadChatHistory(id);
+            // 加载聊天数据
             loadChatData(id);
         } else {
             startNewChat();
@@ -147,10 +168,13 @@ const Chat = () => {
     // 处理新聊天
     const handleNewChat = () => {
         startNewChat();
+        // 跳转到新聊天页面
+        navigate('/chat');
     };
 
     // 处理选择聊天历史
     const handleSelectChat = (selectedChatId: string) => {
+        // 只更新状态，路由跳转由 HistoryItem 处理
         loadChatHistory(selectedChatId);
     };
 

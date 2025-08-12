@@ -163,7 +163,7 @@ export class ChatService {
       // 并发获取置顶数据和第一页数据，用于初始化聊天列表
       const [pinnedChatList, chatList] = await Promise.all([
         this.getPinnedChatList(),
-        this.getChatList(undefined, 8)
+        this.getChatList(undefined, 20)
       ]);
       return [...pinnedChatList, ...chatList];
     } catch (error) {

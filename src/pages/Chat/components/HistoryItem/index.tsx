@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Menu, MenuItem, IconButton } from '@mui/material';
-import { history } from 'umi';
+import { useNavigate } from 'umi';
 
 interface HistoryItemProps {
   /** 对话ID */
@@ -34,6 +34,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
   onDelete,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempTitle, setTempTitle] = useState(title);
@@ -51,9 +52,10 @@ const HistoryItem: FC<HistoryItemProps> = ({
 
   const handleChatClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // 跳转到聊天详情页面
-    history.push(`/chat/${chatId}`);
+    // 先更新状态，确保立即反映选中状态
     onChatClick?.(chatId);
+    // 然后进行路由跳转
+    navigate(`/chat/${chatId}`);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {

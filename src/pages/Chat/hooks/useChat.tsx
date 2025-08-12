@@ -9,10 +9,14 @@ export interface ChatState {
   isLoading: boolean;
 }
 
+// 全局会话级别缓存
+let chatHistoryCache: ChatHistoryItem[] = [];
+let isChatHistoryLoaded = false;
+
 export const useChat = () => {
   const [state, setState] = useState<ChatState>({
     messages: [],
-    chatHistory: [],
+    chatHistory: chatHistoryCache, // 使用缓存初始化
     currentChatId: undefined,
     isLoading: false
   });
@@ -100,6 +104,10 @@ export const useChat = () => {
   }, []);
 
   const updateChatHistory = useCallback((chatHistory: ChatHistoryItem[]) => {
+    // 更新缓存
+    chatHistoryCache = chatHistory;
+    isChatHistoryLoaded = true;
+    
     setState(prev => ({
       ...prev,
       chatHistory
@@ -139,6 +147,11 @@ export const useChat = () => {
     }));
   }, []);
 
+  // 获取缓存状态
+  const isChatHistoryCached = useCallback(() => {
+    return isChatHistoryLoaded && chatHistoryCache.length > 0;
+  }, []);
+
   return {
     ...state,
     setIsLoading,
@@ -154,6 +167,7 @@ export const useChat = () => {
     setMessages,
     deleteChat,
     renameChat,
-    togglePinChat
+    togglePinChat,
+    isChatHistoryCached
   };
 };
