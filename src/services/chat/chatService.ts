@@ -174,8 +174,11 @@ export class ChatService {
 
   async getChatById(chatId: string): Promise<{ title: string; messages: Message[] }> {
     try {
-      const resp = await request(`/chat/${chatId}`, {
+      const resp = await request(`/api/chat/detail`, {
         method: 'GET',
+        params: {
+          id: chatId,
+        },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
