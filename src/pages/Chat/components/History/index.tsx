@@ -39,6 +39,8 @@ const ChatHistory: FC<ChatHistoryProps> = ({
     const { t } = useTranslation();
     const listRef = useRef<HTMLUListElement | null>(null);
     const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+    const loadMoreDebounceTimerRef = useRef<number | null>(null);
     const handleChatClick = (chatId: string) => {
         console.log('Chat clicked:', chatId);
         onSelectChat(chatId);
@@ -65,29 +67,59 @@ const ChatHistory: FC<ChatHistoryProps> = ({
         }
     };
 
-    useEffect(() => {
-        if (!hasMore || loadingMore) return;
-        const rootEl = listRef.current;
-        const sentinelEl = sentinelRef.current;
-        if (!rootEl || !sentinelEl) return;
+  useEffect(() => {
+      // 若当前不允许加载，清理观察器与任何待执行的防抖定时器
+      if (!hasMore || loadingMore) {
+          if (observerRef.current) {
+              observerRef.current.disconnect();
+              observerRef.current = null;
+          }
+          if (loadMoreDebounceTimerRef.current) {
+              window.clearTimeout(loadMoreDebounceTimerRef.current);
+              loadMoreDebounceTimerRef.current = null;
+          }
+          return;
+      }
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                for (const entry of entries) {
-                    if (entry.isIntersecting) {
-                        onLoadMore?.();
-                    }
-                }
-            },
-            { root: rootEl, threshold: 0.1 }
-        );
+      const rootEl = listRef.current;
+      const sentinelEl = sentinelRef.current;
+      if (!rootEl || !sentinelEl) return;
 
-        observer.observe(sentinelEl);
+      const scheduleLoadMore = () => {
+          // 双重保护：若已经加载完成或当前正在加载，则不再触发
+          if (!hasMore || loadingMore) return;
+          if (loadMoreDebounceTimerRef.current) {
+              window.clearTimeout(loadMoreDebounceTimerRef.current);
+          }
+          loadMoreDebounceTimerRef.current = window.setTimeout(() => {
+              onLoadMore?.();
+              loadMoreDebounceTimerRef.current = null;
+          }, 300);
+      };
 
-        return () => {
-            observer.disconnect();
-        };
-    }, [hasMore, loadingMore, onLoadMore]);
+      const observer = new IntersectionObserver(
+          (entries) => {
+              for (const entry of entries) {
+                  if (entry.isIntersecting) {
+                      scheduleLoadMore();
+                  }
+              }
+          },
+          { root: rootEl, threshold: 0.1 }
+      );
+
+      observerRef.current = observer;
+      observer.observe(sentinelEl);
+
+      return () => {
+          observer.disconnect();
+          observerRef.current = null;
+          if (loadMoreDebounceTimerRef.current) {
+              window.clearTimeout(loadMoreDebounceTimerRef.current);
+              loadMoreDebounceTimerRef.current = null;
+          }
+      };
+  }, [hasMore, loadingMore, onLoadMore]);
 
     return (
         <>
@@ -107,9 +139,11 @@ const ChatHistory: FC<ChatHistoryProps> = ({
                             onDelete={handleDelete}
                         />
                     ))}
-                    <li style={{ padding: 0, margin: 0 }}>
-                        <div ref={sentinelRef} style={{ height: 1 }} />
-                    </li>
+                    {hasMore && (
+                        <li style={{ padding: 0, margin: 0 }}>
+                            <div ref={sentinelRef} style={{ height: 1 }} />
+                        </li>
+                    )}
                     {loadingMore && (
                         <li style={{ textAlign: 'center', padding: '6px 0', color: '#64748b', fontSize: 12 }}>
                             加载中...

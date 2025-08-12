@@ -124,7 +124,7 @@ export class ChatService {
         title: item.session_name,
         timestamp: new Date(item.updated_at),
         isPinned: item.pinned,
-      }));
+      })) || [];
     } catch (error) {
       console.error('Failed to get pinned chat list:', error);
       return [];
@@ -132,24 +132,25 @@ export class ChatService {
   }
 
   // 获取聊天列表
-  async getChatList(id?: string, limit: number = 20): Promise<ChatHistoryItem[]> {
+  async getChatList(start?: string, limit: number = 20): Promise<ChatHistoryItem[]> {
     try {
       const resp = await request('/api/chat/list', {
         params: {
           pinned: false,
-          id: id || null,
+          start: start || null,
           limit,
         },
         method: 'GET',
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      console.log('resp.data', resp.data);
       return (resp.data || [])?.map((item: any) => ({
         ...item,
         chatId: item.id,
         title: item.session_name,
         timestamp: new Date(item.updated_at),
         isPinned: item.pinned,
-      }));
+      })) || [];
     } catch (error) {
       console.error('Failed to get chat list:', error);
       return [];

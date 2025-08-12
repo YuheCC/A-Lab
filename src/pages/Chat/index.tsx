@@ -3,7 +3,7 @@ import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'react-router';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
 import { useChat } from './hooks/useChat';
@@ -42,7 +42,8 @@ const Chat = () => {
     // 历史列表分页状态
     const [hasMoreHistory, setHasMoreHistory] = useState(false);
     const [loadingMoreHistory, setLoadingMoreHistory] = useState(false);
-    const [lastHistoryId, setLastHistoryId] = useState<string | undefined>(undefined);
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(undefined);
+    const loadMoreGateTsRef = useRef<number>(0);
 
     const nonPinnedHistory = useMemo(() => chatHistory.filter(i => !i.isPinned), [chatHistory]);
 
@@ -52,10 +53,16 @@ const Chat = () => {
             try {
                 const history = await chatService.getChatHistory();
                 updateChatHistory(history);
-                // 根据初次返回的非置顶条目数量与末尾ID，设置分页信息
+                // 根据初次返回的非置顶条目数量与末尾updated_at，设置分页信息
                 const initialNonPinned = history.filter(item => !item.isPinned);
-                setHasMoreHistory(initialNonPinned.length >= 20);
-                setLastHistoryId(initialNonPinned.length ? initialNonPinned[initialNonPinned.length - 1].chatId : undefined);
+                // hasMore 按接口是否返回为空判断：首屏非置顶条目非空则认为还有更多，直到下一次请求返回空
+                setHasMoreHistory(initialNonPinned.length > 0);
+                if (initialNonPinned.length > 0) {
+                    const lastItem = initialNonPinned[initialNonPinned.length - 1];
+                    setLastUpdatedAt(lastItem.timestamp.toISOString());
+                } else {
+                    setLastUpdatedAt(undefined);
+                }
             } catch (error) {
                 console.error('Failed to load chat history:', error);
             }
@@ -178,10 +185,15 @@ const Chat = () => {
 
     // 加载更多历史（下拉到底触发）
     const handleLoadMoreHistory = async () => {
+        const now = Date.now();
+        // 双保险：简单时间窗防抖，避免极端情况下重复触发
+        if (now - loadMoreGateTsRef.current < 500) return;
+        loadMoreGateTsRef.current = now;
         if (loadingMoreHistory || !hasMoreHistory) return;
         try {
             setLoadingMoreHistory(true);
-            const more = await chatService.getChatList(lastHistoryId, 20);
+            const more = await chatService.getChatList(lastUpdatedAt, 20);
+            console.log('more', more);
             // 仅追加非置顶数据
             const moreNonPinned = more.filter(item => !item.isPinned);
             const pinned = chatHistory.filter(item => item.isPinned);
@@ -193,12 +205,20 @@ const Chat = () => {
                 if (!existingIds.has(item.chatId)) mergedNonPinned.push(item);
             }
             updateChatHistory([...pinned, ...mergedNonPinned]);
-            // 更新分页标志
-            setHasMoreHistory(moreNonPinned.length >= 20);
-            setLastHistoryId(mergedNonPinned.length ? mergedNonPinned[mergedNonPinned.length - 1].chatId : lastHistoryId);
+            console.log('mergedNonPinned', mergedNonPinned);
+            // 更新分页标志：仅依据接口是否返回空
+            setHasMoreHistory(moreNonPinned.length > 0);
+            if (moreNonPinned?.length > 0) {
+                // 使用最后一条数据的updated_at作为下次分页的起始点
+                const lastItem = mergedNonPinned[mergedNonPinned.length - 1];
+                setLastUpdatedAt(lastItem.timestamp.toISOString());
+            } else {
+                setLastUpdatedAt(undefined);
+            }
         } catch (error) {
             console.error('Failed to load more history:', error);
         } finally {
+            console.log('loadingMoreHistoryend', loadingMoreHistory);
             setLoadingMoreHistory(false);
         }
     };
