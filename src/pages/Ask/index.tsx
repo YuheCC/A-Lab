@@ -656,7 +656,9 @@ const handleFindSimilarMolecules = async (details) => {
         : [...messages, newUserMessage]
             .filter(m => m.role === "user" || m.role === "assistant");
 
+      console.log("🚀 STARTING REQUEST - Chat:", activeChat, "useMultiAgent:", useMultiAgent);
       setIsThinking(true);
+      console.log("✅ setIsThinking(true) called");
       const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
       const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
@@ -763,6 +765,7 @@ const handleFindSimilarMolecules = async (details) => {
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
+          console.log("📡 MAKING REGULAR /rag REQUEST");
           const res = await authFetch(`${API_URL}/rag`, {
             method : "POST",
             headers: { "Content-Type": "application/json" },
@@ -797,8 +800,13 @@ const handleFindSimilarMolecules = async (details) => {
 
         /* adopt/assign chat ID */
         if (effectiveChatId === -1 && data?.chat_id !== undefined) {
+          console.log("🔄 CHAT ID CHANGING FROM -1 TO:", data.chat_id);
+          // Transfer thinking state from old chat to new chat
+          setIsThinking(false); // Turn off thinking for chat -1
           updateNewChatId(data.chat_id);
           effectiveChatId = data.chat_id;
+          setIsThinking(true, effectiveChatId); // Turn on thinking for new chat
+          console.log("✅ Thinking state transferred to new chat:", effectiveChatId);
         }
 
         /* build LLM message */
@@ -812,8 +820,18 @@ const handleFindSimilarMolecules = async (details) => {
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
 
-        addMessage(llmMessage, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        console.log("🎉 SUCCESS - Adding message and turning off thinking for chat:", effectiveChatId);
+        console.log("📝 Response content:", llmMessage.content);
+        
+        // Only add message and stop thinking if there's actual content
+        if (llmMessage.content.trim()) {
+          addMessage(llmMessage, effectiveChatId);
+          setIsThinking(false, effectiveChatId);
+          console.log("✅ setIsThinking(false) called for chat:", effectiveChatId);
+        } else {
+          console.log("⚠️ Empty response received, keeping thinking animation active");
+          // Keep thinking animation while we wait for actual content
+        }
 
         /* refresh quota for research tier */
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
@@ -823,7 +841,10 @@ const handleFindSimilarMolecules = async (details) => {
         addMessage({ role: "assistant", content: "Error: " + err.message });
         setIsThinking(false);
       } finally {
-        if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        // Don't automatically turn off thinking in finally block for regular queries
+        // This was causing the thinking animation to disappear immediately
+        // Let the success/error handlers manage the thinking state properly
+        // if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
         fetchQueryLimit();
       }
     },
