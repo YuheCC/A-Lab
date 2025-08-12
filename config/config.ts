@@ -7,7 +7,7 @@ export default defineConfig({
   favicons: ['https://cdn.prod.website-files.com/671b8da8cb402b2908cb39f0/671bb55d6ea8b4dc808e5cfa_fav-256.png'],
   outputPath: 'build',
   define: {
-    'BASE_URL': "https://llm-staging.ses.ai",
+    'BASE_URL': "https://demo-api.ses.ai",
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },
