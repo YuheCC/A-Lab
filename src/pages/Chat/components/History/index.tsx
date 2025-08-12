@@ -120,7 +120,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
           }
       };
   }, [hasMore, loadingMore, onLoadMore]);
-
+console.log(currentChatId)
     return (
         <>
             <nav className="history-nav">
@@ -132,7 +132,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
                             chatId={item.chatId}
                             title={item.title}
                             isPinned={item.isPinned}
-                            isActive={currentChatId === item.chatId}
+                            isActive={String(currentChatId) === String(item.chatId)}
                             onChatClick={handleChatClick}
                             onRename={handleRename}
                             onTogglePin={handleTogglePin}
