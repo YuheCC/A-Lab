@@ -7,3 +7,4 @@ export default defineConfig({
     'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
   },
 });
+

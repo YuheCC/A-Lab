@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@vaadin/vaadin-usage-statistics'
+  - core-js
+  - core-js-pure
+  - es5-ext
+  - esbuild

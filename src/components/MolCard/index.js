@@ -1,11 +1,13 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import MolViewer2D from '../MolViewer2D';
-import React, { useEffect, useRef, useState } from 'react';
+import MolViewer2D from '@/components/NodePopup/MolViewer2D';
+import { useTranslation } from 'react-i18next';
+import { useEffect, useRef, useState } from 'react';
 
 import './Molcard.css';
 import { Tooltip } from '@mui/material';
 
 export const PropItem = ({ prop }) => {
+    const { t } = useTranslation();
 
     // State used for tooltip visibility
     const codeRef = useRef(null);
@@ -21,12 +23,12 @@ export const PropItem = ({ prop }) => {
         }
         valueString += (prop?.suffix ? prop.suffix : ""); 
     } else {
-        valueString = "N/A";
+        valueString = t('molecular.molCard.notAvailable');
     }
 
     if (Array.isArray(prop.value)) {
         if (prop.value.length === 0) {
-            valueString = "N/A";
+            valueString = t('molecular.molCard.notAvailable');
         } else {
             valueString = prop.value.join(", ");
         }
@@ -59,7 +61,8 @@ export const PropItem = ({ prop }) => {
     ) : null;
 };
 
-export const MolCard = (props) => {
+const MolCard = (props) => {
+    const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
 
@@ -81,7 +84,7 @@ export const MolCard = (props) => {
     }, null);
 
     if (!smileString) {
-        return <div className='molcard-container' {...domProps}><div className='deck-error'>No molecule data available.</div></div>;
+        return <div className='molcard-container' {...domProps}><div className='deck-error'>{t('molecular.molCard.noMoleculeData')}</div></div>;
     }
 
     return (
@@ -94,10 +97,10 @@ export const MolCard = (props) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
-                    }}>Loading...</div>}
+                    }}>{t('molecular.molCard.loading')}</div>}
                 </div>
                 <div className='molcard-info-panel'>
-                    <div className='deck-info-title'><span>{name ?? "Molecule Information"}</span></div>
+                    <div className='deck-info-title'><span></span></div>
                     <div className='molcard-info-content'>
                         {propGroups && propGroups.length > 0 ? (
                                 propGroups.map((prop, index) => (
@@ -111,13 +114,13 @@ export const MolCard = (props) => {
                 </div>
             </div>
             {showMoreDetails ? <div className='molcard-footer'>
-                Click on the molecule to view more details.
+                {t('molecular.molCard.clickForDetails')}
             </div> : null}
             {foldPropGroups && foldPropGroups.length > 0 ? (
                 <div className='molcard-footer-expanded'>
                     <div className='molcard-expand-controls' onClick={() => setExpanded(!expanded)}>
                         {expanded ? <ChevronUp className='molcard-control-icon' size={15} /> :  <ChevronDown className='molcard-control-icon' size={15} /> }
-                        <span className='deck-info-footer-text'>{expanded ? "Click to collapse" : "Click to expand for more details"}</span>
+                        <span className='deck-info-footer-text'>{expanded ? t('molecular.molCard.clickToCollapse') : t('molecular.molCard.clickToExpand')}</span>
                     </div>
                     {expanded ? (
                         <div className='molcard-expanded-content'>
@@ -135,3 +138,5 @@ export const MolCard = (props) => {
         </div>
     )
 }
+
+export default MolCard;

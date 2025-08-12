@@ -1,0 +1,77 @@
+export default {
+    // Search Input
+    searchPlaceholder: "Enter SMILES string, molecule name, or query",
+    searchButton: "Search",
+    searchTooltip: '<p>Valid queries can search over any numerical properties of molecules. For example:</p><p>- "Find all molecules with HOMO at most -8"<br/>- "Find all molecules with LUMO at least -2 and molecular weight at most 200"</p><p>For more open-ended queries, use Ask.</p><p>To draw and look up SMILES strings, please click this icon or visit <a>{{pubChemUrl}}</a></p>',
+    drawMolecule: "Draw molecule",
+    
+    // Search Options
+    findFriendsLabel: 'Find "friends"',
+    findFriendsDescription: 'Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.',
+    
+    // Loading and Status Messages
+    searching: "Searching...",
+    loadingMap: "Loading Map of the Molecular Universe",
+    errorLoadingData: "Error loading data",
+    noDataAvailable: "No data available",
+    tooManyRequests: "Too many requests. Please wait a moment before trying again.",
+    
+    // Search Results
+    searchedMolecules: "Searched Molecules",
+    moleculeNumber: "Molecule {{number}}",
+    similarMolecules: "Similar Molecules",
+    similarMoleculeNumber: "Similar Molecule #{{number}}",
+    selectMolType: "Select what type of molecule it is for best results",
+    
+    // Property Names (Professional terms - not translated according to rules)
+    properties: {
+        smiles: "SMILES",
+        chemicalFormula: "Chemical Formula",
+        molecularWeight: "Molecular Weight",
+        homo: "HOMO",
+        lumo: "LUMO",
+        espMin: "ESP Min",
+        espMax: "ESP Max",
+        predictedMp: "Predicted Melting Point",
+        predictedBp: "Predicted Boiling Point",
+        predictedFp: "Predicted Flash Point",
+        combustionEnthalpy: "Combustion Enthalpy",
+        commercialScore: "Commercial Score",
+        functionalGroups: "Functional Groups",
+        umapX: "UMAP_X",
+        umapY: "UMAP_Y"
+    },
+
+    moleculeTypes: {
+        selectMolType: "Molecule Type",
+        solvent: "Solvent",
+        diluent: "Diluent",
+        additive: "Additive"
+    },
+    
+    // Buttons and Actions
+    addToFavorites: "Add to Favorites ★",
+    saving: "Saving...",
+    
+    // Warning and Error Messages
+    multipleMoleculesWarning: "Multiple molecules found matching your search criterion. Find friends disabled.",
+    findFriendError: "Failed to find similar molecules. Please try again.",
+    searchError: "Error searching for molecules. Please try again.",
+    
+    // Not Found Message
+    moleculeNotFound: {
+        title: "Your query did not return any molecules. Here are several possibilities:",
+        reasons: [
+            "Your query may not be battery relevant or have errors. Please check.",
+            "Your result molecules are included in premium levels Enterprise and Joint Development. Please upgrade.",
+            "Your query hit one of our hidden galaxies of treasure molecules. Please contact us.",
+            "Your query might involve salt or anion molecules, which our current database doesn't yet support. We'll be adding anions in an upcoming update."
+        ],
+        contactSales: "Contact Sales"
+    },
+
+    // Ambiguous Query Message
+    ambiguousQuery: {
+        message: "Your query is ambiguous. The abbreviation {{query}} can correspond to any of the following molecules: {{options}}. Please refine your query."
+    }
+}; 

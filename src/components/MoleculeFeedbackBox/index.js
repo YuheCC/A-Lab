@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authFetch, getAPIUrl } from '../../utils.js';
-import { ThumbsDown, ThumbsUp, X } from 'lucide-react';
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
 
 import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3 }) => {
+export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType, useMultiAgent }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const { t } = useTranslation();
 
   const handleThumbsUp = () => {
     setFeedbackType('up');
@@ -22,12 +24,33 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
 
   const handleFeedbackSubmit = async () => {
     if (!feedbackType) {
-      setStatusMessage('Please select thumbs up or down first');
+      setStatusMessage(t('chatbox.feedback.selectFirst'));
       return;
     }
 
     try {
       setSubmitting(true);
+
+      // Determine queryType based on explicit prop, useMultiAgent prop, or response content
+      let determinedQueryType = queryType;
+      if (!queryType) {
+        // Only use detection logic when no explicit queryType is provided
+        // Check if response contains multi-agent indicators
+        const responseContent = molecule.SMILES || molecule.smiles || '';
+        const isMultiAgentResponse = useMultiAgent || 
+          (lastSearch && (
+            lastSearch.includes('Query_Planning_Agent') ||
+            lastSearch.includes('Plan_Review_Agent') ||
+            lastSearch.includes('Battery_Agent') ||
+            lastSearch.includes('Chemical_Prop_Expert') ||
+            lastSearch.includes('## Query_Planning_Agent') ||
+            lastSearch.includes('## Plan_Review_Agent') ||
+            lastSearch.includes('## Battery_Agent') ||
+            lastSearch.includes('## Chemical_Prop_Expert')
+          ));
+        
+        determinedQueryType = isMultiAgentResponse ? "deep_space" : "normal_ask";
+      }
 
       // Submit feedback to backend
       await authFetch(`${API_URL}/api/feedback`, {
@@ -38,21 +61,22 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
         body: JSON.stringify({
           isPositive: feedbackType === 'up',
           feedbackText: feedbackText.trim(),
-          inputContent: lastSearch || '',
+          inputContent: lastSearch ? (typeof lastSearch === 'object' ? JSON.stringify(lastSearch) : lastSearch) : '',
           responseContent: molecule.SMILES || molecule.smiles || '',
-          contextContent1,
-          contextContent2,
-          contextContent3,
+          contextContent1: '',
+          contextContent2: '',
+          contextContent3: '',
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
+          queryType: determinedQueryType,
         }),
       });
 
-      setStatusMessage('Thank you for your feedback!');
+      setStatusMessage(t('chatbox.feedback.thankYou'));
       setTimeout(() => onClose(), 1500);
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      setStatusMessage('Failed to submit feedback. Please try again.');
+      setStatusMessage(t('chatbox.success.feedbackSubmitted'));
     } finally {
       setSubmitting(false);
     }
@@ -63,43 +87,27 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     setFeedbackType(null);
   };
 
-  const handleClose = () => {
-    setFeedbackText('');
-    setFeedbackType(null);
-    setStatusMessage('');
-    if (onClose) {
-      onClose();
-    }
-  };
-
   return (
-    <div className={`molecule-feedback-buttons ${fullWidth ? 'full-width' : ''}`}>
+    <div className="molecule-feedback-buttons">
       <div className='feedback-buttons'>
-        <span className="rate-text">Rate this match</span>
+        <span className="rate-text">{t('chatbox.molecules.rateMatch')}</span>
         <ThumbsUp className={`feedback-icon ${feedbackType === 'up' ? 'active' : ''}`} size={18} onClick={handleThumbsUp} />
         <ThumbsDown className={`feedback-icon ${feedbackType === 'down' ? 'active' : ''}`} size={18} onClick={handleThumbsDown} />
       </div>
 
       {feedbackType && (
         <div className="feedback-form">
-          <button
-            onClick={handleClose}
-            className="feedback-close-button"
-            disabled={submitting}
-          >
-            <X size={16} />
-          </button>
           <p className="feedback-question">
             {feedbackType === 'up'
-              ? 'What makes this a good match?'
-              : 'Why is this not a good match?'}
+              ? t('chatbox.feedback.goodMatch')
+              : t('chatbox.feedback.badMatch')}
           </p>
           <textarea
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             rows={4}
             className="feedback-textarea"
-            placeholder="Your feedback helps us improve molecule matching"
+            placeholder={t('chatbox.feedback.placeholder')}
           />
           <div className="feedback-actions">
             <button
@@ -107,14 +115,14 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
               className="cancel-button"
               disabled={submitting}
             >
-              Cancel
+              {t('chatbox.buttons.cancel')}
             </button>
             <button
               onClick={handleFeedbackSubmit}
-              className={`submit-button ${feedbackType === 'up' ? 'sucess' : 'error'}`}
+              className="submit-button"
               disabled={submitting}
             >
-              {submitting ? 'Submitting...' : 'Submit'}
+              {submitting ? t('chatbox.feedback.submitting') : t('chatbox.buttons.submit')}
             </button>
           </div>
           {statusMessage && (

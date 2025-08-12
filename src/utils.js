@@ -1,13 +1,13 @@
-export const getAPIUrl = () => process.env.REACT_APP_API_URL || 'https://demo-api.ses.ai';
+export const getAPIUrl = () => BASE_URL || 'https://demo-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
 // Commercial score map for displaying the commercial viability of compounds
 export const COMMERCIAL_SCORE_MAP = {
-  0: "Requires R&D to assess viability",
-  1: "Likely synthesizable but probably not commercially available",
-  2: "Likely synthesizable, may be commercially available",
-  3: "Likely commercially available"
+  0: 'Requires R&D to assess viability',
+  1: 'Likely synthesizable but probably not commercially available',
+  2: 'Likely synthesizable, may be commercially available',
+  3: 'Likely commercially available'
 }
 
 /**
@@ -76,4 +76,22 @@ export const redirectToLogin = () => {
     `/login?redirect=${encodeURIComponent(current)}`,
   );
   window.location.reload();
+};
+
+
+// Labels for filters
+export const filterLabels = {
+    molwt: "Molecular Weight",
+    homo_eV: "HOMO (eV)",
+    lumo_eV: "LUMO (eV)",
+    esp_max_eV: "Max ESP (eV)",
+    esp_min_eV: "Min ESP (eV)",
+    predicted_mp: "Predicted Melting Point (°C)",
+    predicted_bp: "Predicted Boiling Point (°C)",
+    predicted_fp: "Predicted Flash Point (°C)",
+    combustion_enthalpy: "Combustion Enthalpy (eV)",
+    commercial_score: "Commercial Viability",
+    CLUSTER: "Cluster",
+    functional_groups: "Functional Groups",
+    chemical_formula: "Chemical Formula"
 };

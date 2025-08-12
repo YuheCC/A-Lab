@@ -1,11 +1,13 @@
 // FeedbackBox.js
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import { getAPIUrl } from '../utils';
 
 const API_URL = getAPIUrl();
 
-const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, onClose }) => {
+const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent1, queryType, onClose, useMultiAgent }) => {
+  const { t } = useTranslation();
   const [feedbackText, setFeedbackText] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const feedbackBoxRef = useRef(null);
@@ -29,10 +31,30 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
 
   const handleSubmit = async () => {
     if (!feedbackText.trim()) {
-      setStatusMessage("Feedback text is required.");
+      setStatusMessage(t('feedback.status.required'));
       return;
     }
     try {
+      // Determine queryType based on explicit prop, useMultiAgent prop, or response content
+      let determinedQueryType = queryType;
+      if (!queryType) {
+        // Only use detection logic when no explicit queryType is provided
+        // Check if response contains multi-agent indicators
+        const isMultiAgentResponse = useMultiAgent || 
+          (responseContent && (
+            responseContent.includes('Query_Planning_Agent') ||
+            responseContent.includes('Plan_Review_Agent') ||
+            responseContent.includes('Battery_Agent') ||
+            responseContent.includes('Chemical_Prop_Expert') ||
+            responseContent.includes('## Query_Planning_Agent') ||
+            responseContent.includes('## Plan_Review_Agent') ||
+            responseContent.includes('## Battery_Agent') ||
+            responseContent.includes('## Chemical_Prop_Expert')
+          ));
+        
+        determinedQueryType = isMultiAgentResponse ? "deep_space" : "normal_ask";
+      }
+
       const feedbackData = {
         isPositive: isPositive,
         feedbackText: feedbackText.trim(),
@@ -42,6 +64,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
         contextContent2: "",
         contextContent3: "",
         timestamp: new Date().toISOString(),
+        queryType: determinedQueryType,
       };
       const token = localStorage.getItem('token');
       const response = await axios.post(
@@ -55,27 +78,27 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
           timeout: 10000,
         }
       );
-      setStatusMessage("Feedback saved successfully!");
+      setStatusMessage(t('feedback.status.success'));
       setTimeout(() => onClose(), 1000);
     } catch (err) {
       console.error("Error saving feedback:", err.message);
-      setStatusMessage("Failed to save feedback. Please try again.");
+      setStatusMessage(t('feedback.status.failed'));
     }
   };
 
   return (
     <div className="feedback-box" ref={feedbackBoxRef}>
       <div className="feedback-header">
-        {isPositive ? "What was good?" : "What was wrong?"}
+        {isPositive ? t('feedback.header.positive') : t('feedback.header.negative')}
       </div>
       <textarea
         className="feedback-textarea"
-        placeholder="Provide feedback regarding the answer and the model's thinking..."
+        placeholder={t('feedback.placeholder')}
         value={feedbackText}
         onChange={(e) => setFeedbackText(e.target.value)}
       />
       <div className="feedback-buttons">
-        <button className="feedback-cancel" onClick={onClose}>Cancel</button>
+        <button className="feedback-cancel" onClick={onClose}>{t('feedback.buttons.cancel')}</button>
         <button 
             className="feedback-submit" 
             style={{ 
@@ -88,7 +111,7 @@ const FeedbackBox = ({ isPositive, inputContent, responseContent, contextContent
             }}
             onClick={handleSubmit}
             >
-            Submit
+            {t('feedback.buttons.submit')}
             </button>
       </div>
       {statusMessage && <div className="feedback-status">{statusMessage}</div>}

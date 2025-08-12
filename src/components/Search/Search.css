@@ -71,3 +71,19 @@
 .control-icon:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
+
+/* 针对分子绘制笔按钮，移除额外内边距，使 hover 区域与图标一致 */
+.pen-icon {
+    padding: 0;
+}
+
+/* 若需要保持同样的 hover 背景效果，可复用同类规则 */
+.pen-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 确保内部 img 尺寸一致 */
+.pen-icon .icon {
+    width: 32px;
+    height: 32px;
+}
