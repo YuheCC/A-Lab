@@ -3,18 +3,19 @@ import ChatSider from './components/ChatSider';
 import ChatWelcome from './components/ChatWelcome';
 import ChatInput from './components/ChatInput';
 import { useParams } from 'react-router';
-import { useNavigate } from 'umi';
+import { history } from 'umi';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
+import type { Message } from './components/MessageList';
 import { useChat } from './hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import MoleculeModal from './components/MoleculeModal';
 import { useMoleculePanel } from './hooks/useMoleculePanel';
+import type { ChatStreamHandle } from '@/services/chat/wsService';
 
 const Chat = () => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const { id } = useParams();
     const {
         messages,
@@ -47,6 +48,11 @@ const Chat = () => {
     const [loadingMoreHistory, setLoadingMoreHistory] = useState(false);
     const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(undefined);
     const loadMoreGateTsRef = useRef<number>(0);
+
+    // WebSocket连接状态
+    const [wsConnected, setWsConnected] = useState(false);
+    const wsHandleRef = useRef<ChatStreamHandle | null>(null);
+    const currentBotMessageRef = useRef<string>('');
 
     const nonPinnedHistory = useMemo(() => chatHistory.filter(i => !i.isPinned), [chatHistory]);
 
@@ -101,6 +107,16 @@ const Chat = () => {
         }
     }, [id, loadChatHistory, startNewChat]);
 
+    // 组件卸载时清理WebSocket连接
+    useEffect(() => {
+        return () => {
+            if (wsHandleRef.current) {
+                wsHandleRef.current.close();
+                wsHandleRef.current = null;
+            }
+        };
+    }, []);
+
     // 加载聊天数据
     const loadChatData = async (chatId: string) => {
         try {
@@ -115,18 +131,95 @@ const Chat = () => {
     };
 
     // 处理发送消息
-    const handleSendMessage = async (message: string, mode: 'regular' | 'deep-space' = 'regular') => {
+    const handleSendMessage = async (chatID: string, message: string, mode: 'regular' | 'deep-space' = 'regular') => {
         addUserMessage(message);
+        setIsLoading(true);
+        currentBotMessageRef.current = '';
+
+        // 先添加一个空的机器人消息，用于流式更新
+        const botMessageId = `bot-${Date.now()}`;
+        addBotMessage('', true);
 
         try {
-            setIsLoading(true);
-            const response = await chatService.sendMessage(message, mode, currentChatId);
-            addBotMessage(response.content, response.showRegenerate);
+            // 关闭之前的连接
+            if (wsHandleRef.current) {
+                wsHandleRef.current.close();
+            }
+
+            // 创建新的WebSocket连接
+            const wsHandle = chatService.openChatStream({
+                chatId: currentChatId,
+                message: message,
+                mode: mode,
+                onOpen: (ev) => {
+                    console.log('WebSocket连接已建立');
+                    setWsConnected(true);
+                },
+                onMessage: (data, rawEvent) => {
+                    console.log('收到WebSocket消息:', data);
+                    
+                    if (typeof data === 'string') {
+                        try {
+                            data = JSON.parse(data);
+                        } catch (e) {
+                            // 如果不是JSON，直接使用字符串
+                        }
+                    }
+
+                    // 处理流式消息
+                    if (data.type === 'chunk' || data.content) {
+                        const content = data.content || data.chunk || data;
+                        currentBotMessageRef.current += content;
+                        
+                        // 更新最后一条机器人消息
+                        const updatedMessage = {
+                            id: botMessageId,
+                            type: 'bot' as const,
+                            content: currentBotMessageRef.current,
+                            timestamp: new Date(),
+                            showRegenerate: true
+                        };
+                        
+                        // 更新消息列表中的最后一条机器人消息
+                        setMessages((prevMessages: Message[]) => {
+                            const newMessages = [...prevMessages];
+                            const lastBotIndex = newMessages.findLastIndex(msg => msg.type === 'bot');
+                            if (lastBotIndex !== -1) {
+                                newMessages[lastBotIndex] = updatedMessage;
+                            }
+                            return newMessages;
+                        });
+                    }
+
+                    // 处理完成消息
+                    if (data.type === 'done' || data.finished) {
+                        setIsLoading(false);
+                        setWsConnected(false);
+                        if (wsHandleRef.current) {
+                            wsHandleRef.current.close();
+                            wsHandleRef.current = null;
+                        }
+                    }
+                },
+                onError: (ev) => {
+                    console.error('WebSocket错误:', ev);
+                    setWsConnected(false);
+                    setIsLoading(false);
+                    addBotMessage(t('chatbox.chat.sendFailed'), false);
+                },
+                onClose: (ev) => {
+                    console.log('WebSocket连接已关闭');
+                    setWsConnected(false);
+                    setIsLoading(false);
+                }
+            });
+
+            wsHandleRef.current = wsHandle;
+
         } catch (error) {
             console.error('Failed to send message:', error);
-            addBotMessage(t('chatbox.chat.sendFailed'), false);
-        } finally {
             setIsLoading(false);
+            addBotMessage(t('chatbox.chat.sendFailed'), false);
         }
     };
 
@@ -169,7 +262,7 @@ const Chat = () => {
     const handleNewChat = () => {
         startNewChat();
         // 跳转到新聊天页面
-        navigate('/chat');
+        history.push('/chat');
     };
 
     // 处理选择聊天历史

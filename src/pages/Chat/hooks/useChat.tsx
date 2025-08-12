@@ -7,6 +7,7 @@ export interface ChatState {
   chatHistory: ChatHistoryItem[];
   currentChatId: string | undefined;
   isLoading: boolean;
+  sessionId: string | undefined;
 }
 
 // 全局会话级别缓存
@@ -18,8 +19,13 @@ export const useChat = () => {
     messages: [],
     chatHistory: chatHistoryCache, // 使用缓存初始化
     currentChatId: undefined,
-    isLoading: false
+    isLoading: false,
+    sessionId: undefined
   });
+
+  const setSessionId = useCallback((sessionId: string) => {
+    setState(prev => ({ ...prev, sessionId }));
+  }, []);
 
   const setIsLoading = useCallback((loading: boolean) => {
     setState(prev => ({ ...prev, isLoading: loading }));
@@ -154,6 +160,7 @@ export const useChat = () => {
 
   return {
     ...state,
+    setSessionId,
     setIsLoading,
     addUserMessage,
     addBotMessage,

@@ -1,3 +1,5 @@
+import { io, Socket } from 'socket.io-client';
+
 export type ChatMode = 'regular' | 'deep-space';
 
 export interface HeartbeatOptions {
@@ -18,13 +20,13 @@ export interface ChatStreamOptions extends ReconnectOptions {
   message?: string;
   mode?: ChatMode;
   query?: Record<string, string | number | boolean | undefined | null>;
-  protocols?: string[]; // optional Sec-WebSocket-Protocol list
+  protocols?: string[]; // optional Sec-WebSocket-Protocol list (not used in Socket.IO)
   withTokenInQuery?: boolean; // default true. If true, append token= to query
   heartbeat?: HeartbeatOptions; // default { intervalMs: 30000, pingMessage: 'ping' }
-  onOpen?: (ev: Event) => void;
-  onMessage?: (data: any, rawEvent: MessageEvent) => void;
-  onError?: (ev: Event) => void;
-  onClose?: (ev: CloseEvent) => void;
+  onOpen?: (ev: any) => void;
+  onMessage?: (data: any, rawEvent?: any) => void;
+  onError?: (ev: any) => void;
+  onClose?: (ev: any) => void;
 }
 
 export interface ChatStreamHandle {
@@ -33,33 +35,35 @@ export interface ChatStreamHandle {
   isConnected: () => boolean;
 }
 
-function toWebSocketBase(apiBase: string): string {
-  // apiBase may be absolute (https://domain) or relative (/api)
+function buildSocketUrl(apiBase: string): string {
+  // For Socket.IO, we need HTTP/HTTPS URLs, not WebSocket URLs
   if (/^https?:/i.test(apiBase)) {
-    return apiBase.replace(/^http/i, 'ws');
+    return apiBase;
   }
   const origin = window.location.origin; // http(s)://host
-  return origin.replace(/^http/i, 'ws') + (apiBase.startsWith('/') ? apiBase : `/${apiBase}`);
+  return origin + (apiBase.startsWith('/') ? apiBase : `/${apiBase}`);
 }
 
-function buildUrl(baseUrl: string, path: string, params: Record<string, string | number | boolean | undefined | null> = {}): string {
-  const url = new URL((path.startsWith('ws') || path.startsWith('http')) ? path : `${baseUrl}${path}`);
-  Object.entries(params).forEach(([k, v]) => {
-    if (v === undefined || v === null) return;
-    url.searchParams.set(k, String(v));
-  });
-  return url.toString();
+// 创建仅使用WebSocket传输的Socket.IO连接（备用方案）
+export function createChatWebSocketStreamWebSocketOnly(options: ChatStreamOptions): ChatStreamHandle {
+  const modifiedOptions = { ...options };
+  return createChatWebSocketStreamInternal(modifiedOptions, ['websocket']);
 }
 
+// 创建标准Socket.IO连接
 export function createChatWebSocketStream(options: ChatStreamOptions): ChatStreamHandle {
+  return createChatWebSocketStreamInternal(options, ['websocket', 'polling']);
+}
+
+function createChatWebSocketStreamInternal(options: ChatStreamOptions, transports: string[]): ChatStreamHandle {
   const {
-    baseUrl = '/api',
-    path = '/chat/stream',
+    baseUrl = (window as any).BASE_URL || '/api',
+    path = '/ws/socket.io',  // Socket.IO 默认路径
     chatId,
     message,
     mode,
     query = {},
-    protocols,
+    protocols, // Socket.IO 不使用 protocols，但保留兼容性
     withTokenInQuery = true,
     heartbeat: hb = {},
     autoReconnect = true,
@@ -71,18 +75,25 @@ export function createChatWebSocketStream(options: ChatStreamOptions): ChatStrea
     onClose,
   } = options;
 
-  const wsBase = toWebSocketBase(baseUrl);
-
+  const socketUrl = buildSocketUrl(baseUrl);
   const token = localStorage.getItem('token') || '';
-  const params: Record<string, string | number | boolean> = {
-    ...query,
-  };
-  if (chatId) params.chat_id = chatId;
-  if (mode) params.mode = mode;
-  if (message) params.message = message;
-  if (withTokenInQuery && token) params.token = token;
+  
+  // 构建 Socket.IO 查询参数
+  const socketQuery: Record<string, string> = {};
+  
+  // 只添加有效的参数值
+  Object.entries(query).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      socketQuery[key] = String(value);
+    }
+  });
+  
+  if (chatId) socketQuery.chat_id = chatId;
+  if (mode) socketQuery.mode = mode;
+  if (message) socketQuery.message = message;
+  if (withTokenInQuery && token) socketQuery.token = token;
 
-  let ws: WebSocket | null = null;
+  let socket: Socket | null = null;
   let retries = 0;
   let heartbeatTimer: number | undefined;
   const heartbeatInterval = hb.intervalMs ?? 30000;
@@ -97,11 +108,11 @@ export function createChatWebSocketStream(options: ChatStreamOptions): ChatStrea
 
   const startHeartbeat = () => {
     clearHeartbeat();
-    if (heartbeatInterval > 0 && ws && ws.readyState === WebSocket.OPEN) {
+    if (heartbeatInterval > 0 && socket && socket.connected) {
       heartbeatTimer = window.setInterval(() => {
         try {
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(heartbeatMsg);
+          if (socket && socket.connected) {
+            socket.emit('ping', heartbeatMsg);
           }
         } catch {}
       }, heartbeatInterval);
@@ -109,55 +120,120 @@ export function createChatWebSocketStream(options: ChatStreamOptions): ChatStrea
   };
 
   const connect = () => {
-    const url = buildUrl(wsBase, path, params);
-    ws = new WebSocket(url, protocols);
+    console.log('Socket.IO 连接配置:', {
+      url: socketUrl,
+      path: path,
+      query: socketQuery
+    });
+    
+    // 创建 Socket.IO 连接
+    socket = io(socketUrl, {
+      path: path,
+      query: socketQuery,
+      autoConnect: true,
+      reconnection: autoReconnect,
+      reconnectionAttempts: maxRetries,
+      reconnectionDelay: retryDelayBaseMs,
+      reconnectionDelayMax: retryDelayBaseMs * Math.pow(2, 5),
+      timeout: 20000,
+      forceNew: true,
+      // 明确指定传输方式
+      transports: transports,
+      // 添加更多调试信息
+      upgrade: true,
+      rememberUpgrade: false,
+      // 添加额外的配置来处理潜在的连接问题
+      withCredentials: false,
+      extraHeaders: {
+        'Access-Control-Allow-Origin': '*'
+      },
+    });
 
-    ws.onopen = (ev) => {
+    socket.on('connect', () => {
+      console.log('Socket.IO 连接成功');
       retries = 0;
       startHeartbeat();
-      onOpen && onOpen(ev);
-    };
+      onOpen && onOpen({});
+    });
 
-    ws.onmessage = (ev) => {
-      const text = typeof ev.data === 'string' ? ev.data : '';
-      let payload: any = text;
-      try {
-        payload = JSON.parse(text);
-      } catch {}
-      onMessage && onMessage(payload, ev);
-    };
+    socket.on('message', (data: any) => {
+      console.log('收到 message 事件:', data);
+      onMessage && onMessage(data);
+    });
 
-    ws.onerror = (ev) => {
-      onError && onError(ev);
-    };
+    socket.on('chat_message', (data: any) => {
+      console.log('收到 chat_message 事件:', data);
+      onMessage && onMessage(data);
+    });
 
-    ws.onclose = (ev) => {
+    socket.on('response', (data: any) => {
+      console.log('收到 response 事件:', data);
+      onMessage && onMessage(data);
+    });
+
+    socket.on('connect_error', (error: any) => {
+      console.error('Socket.IO 连接错误:', error);
+      console.error('错误详情:', {
+        message: error.message,
+        description: error.description,
+        context: error.context,
+        type: error.type
+      });
+      onError && onError(error);
+    });
+
+    socket.on('error', (error: any) => {
+      console.error('Socket.IO 运行错误:', error);
+      onError && onError(error);
+    });
+
+    socket.on('disconnect', (reason: string) => {
+      console.log('Socket.IO 断开连接:', reason);
       clearHeartbeat();
-      onClose && onClose(ev);
+      onClose && onClose({ reason });
+      
       if (autoReconnect && (maxRetries < 0 || retries < maxRetries)) {
-        const delay = retryDelayBaseMs * Math.pow(2, retries);
         retries += 1;
-        window.setTimeout(connect, delay);
+        console.log(`准备重连，当前重试次数: ${retries}/${maxRetries}`);
       }
-    };
+    });
+
+    // 添加更多调试事件
+    socket.on('reconnect', (attemptNumber: number) => {
+      console.log('Socket.IO 重连成功，尝试次数:', attemptNumber);
+    });
+
+    socket.on('reconnect_attempt', (attemptNumber: number) => {
+      console.log('Socket.IO 尝试重连，尝试次数:', attemptNumber);
+    });
+
+    socket.on('reconnect_error', (error: any) => {
+      console.error('Socket.IO 重连失败:', error);
+    });
+
+    socket.on('reconnect_failed', () => {
+      console.error('Socket.IO 重连完全失败');
+    });
   };
 
   connect();
 
   const handle: ChatStreamHandle = {
     send: (data: string | object) => {
-      if (!ws || ws.readyState !== WebSocket.OPEN) return;
-      ws.send(typeof data === 'string' ? data : JSON.stringify(data));
+      if (!socket || !socket.connected) return;
+      
+      // 发送消息到 Socket.IO 服务器
+      const payload = typeof data === 'string' ? data : JSON.stringify(data);
+      socket.emit('message', payload);
     },
     close: () => {
-      autoReconnect && (options.autoReconnect = false);
       clearHeartbeat();
-      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-        try { ws.close(); } catch {}
+      if (socket) {
+        socket.disconnect();
+        socket = null;
       }
-      ws = null;
     },
-    isConnected: () => !!ws && ws.readyState === WebSocket.OPEN,
+    isConnected: () => !!socket && socket.connected,
   };
 
   return handle;

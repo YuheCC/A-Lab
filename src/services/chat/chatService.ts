@@ -16,7 +16,7 @@ export interface ChatRequest {
 }
 
 import type { ChatStreamHandle } from './wsService';
-import { createChatWebSocketStream } from './wsService';
+import { createChatWebSocketStream, createChatWebSocketStreamWebSocketOnly } from './wsService';
 
 export class ChatService {
   private static instance: ChatService;
@@ -80,14 +80,31 @@ export class ChatService {
     mode?: 'regular' | 'deep-space';
     path?: string;
     protocols?: string[];
+    websocketOnly?: boolean; // 新增选项：是否仅使用WebSocket
     onOpen?: (ev: Event) => void;
     onMessage?: (data: any, ev: MessageEvent) => void;
     onError?: (ev: Event) => void;
     onClose?: (ev: CloseEvent) => void;
   }): ChatStreamHandle {
-    const { chatId, message, mode = 'regular', path = '/chat/stream', protocols, onOpen, onMessage, onError, onClose } = options || {};
-
-    return createChatWebSocketStream({
+    const { 
+      chatId, 
+      message, 
+      mode = 'regular', 
+      path = '/ws/socket.io', 
+      protocols, 
+      websocketOnly = false,
+      onOpen, 
+      onMessage, 
+      onError, 
+      onClose 
+    } = options || {};
+    
+    console.log('chatId', chatId);
+    console.log('使用WebSocket-only模式:', websocketOnly);
+    
+    const createStreamFn = websocketOnly ? createChatWebSocketStreamWebSocketOnly : createChatWebSocketStream;
+    
+    return createStreamFn({
       baseUrl: this.baseUrl,
       path,
       chatId,
@@ -98,11 +115,14 @@ export class ChatService {
       withTokenInQuery: true,
       heartbeat: { intervalMs: 30000, pingMessage: 'ping' },
       autoReconnect: true,
-      maxRetries: 8,
+      maxRetries: websocketOnly ? 3 : 8, // WebSocket-only模式下减少重试次数
       retryDelayBaseMs: 800,
       onOpen,
       onMessage,
-      onError,
+      onError: (ev) => {
+        console.error('连接错误，当前模式:', websocketOnly ? 'WebSocket-only' : 'Auto');
+        if (onError) onError(ev);
+      },
       onClose,
     });
   }
@@ -219,6 +239,64 @@ export class ChatService {
           { id: `${chatId}-2`, type: 'bot' as const, content: `关于${title}，这是一个重要的电池技术领域。我需要更多具体信息来为您提供详细的技术分析和建议。请告诉我您最关心的具体方面，比如材料特性、工艺参数、性能指标等。`, timestamp: new Date(), showRegenerate: true },
         ],
       };
+    }
+  }
+
+  // only create a new chat with a chat_name
+  async createChat(title: string): Promise<string> {
+    try {
+      const resp = await request('/api/chat/new', {
+        method: 'POST',
+        data: { chat_name: title },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to create chat:', error);
+      return '';
+    }
+  }
+
+  // send a new message to the chat, return a response id
+  async newMessage(chatId: string, message: string, model: string = 'o3'): Promise<string> {
+    try {
+      const resp = await request('/api/chat/new_message', {
+        method: 'POST',
+        data: { 
+            chatId: chatId, 
+            message: {
+              model,
+              content: message,
+              role: 'user',
+            } 
+        },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to new message:', error);
+      return '';
+    }
+  }
+
+  async triggerMessageAsUser(chatId: string, message: string, model: string = 'o3'): Promise<string> {
+    try {
+      const resp = await request('/api/llm/ask', {
+        method: 'POST',
+        data: { 
+          chatId, 
+          message, 
+          model,
+          ragEnabled: false,
+          webSearchEnabled: false,
+          webSearchClient: "Tavily",
+        },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to trigger message as user:', error);
+      return '';
     }
   }
 
