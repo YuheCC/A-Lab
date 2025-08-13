@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
 import './MessageList.css';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
+import { 
+  Message, 
+  getMessageRole, 
+  isUserMessage, 
+  isAssistantMessage, 
+  isSystemMessage 
+} from '@/utils/messageUtils';
 
-// 定义消息类型
-interface Message {
-  id: string;
-  type: 'user' | 'bot';
-  content: string;
-  timestamp: Date;
-  showRegenerate?: boolean;
-}
+// 使用共享的Message类型，这里不需要重复定义
 
 // 定义组件 Props
 interface MessageListProps {
@@ -24,24 +24,33 @@ interface MessageListProps {
   className?: string;
 }
 
+// 工具函数已移动到 @/utils/messageUtils 中
+
 // Mock 数据
 const mockMessages: Message[] = [
   {
-    id: '1',
-    type: 'bot',
+    id: '0',
+    role: 'system',
     content: 'Welcome to the Molecular Universe. How can I help you today?',
     timestamp: new Date(),
     showRegenerate: false
   },
   {
+    id: '1',
+    role: 'assistant',
+    content: '这是一条助手消息示例。',
+    timestamp: new Date(),
+    showRegenerate: false
+  },
+  {
     id: '2',
-    type: 'user',
+    role: 'user',
     content: '请介绍一下 LiPF6 电解质的特性',
     timestamp: new Date()
   },
   {
     id: '3',
-    type: 'bot',
+    role: 'assistant',
     content: `LiPF6 是锂离子电池中最常用的电解质锂盐，具有以下特性：
 
 1. **溶解性好**：在碳酸酯类溶剂中具有较高的溶解度
@@ -56,13 +65,13 @@ const mockMessages: Message[] = [
   },
   {
     id: '4',
-    type: 'user',
+    role: 'user',
     content: 'EC 和 DEC 溶剂有什么区别？',
     timestamp: new Date()
   },
   {
     id: '5',
-    type: 'bot',
+    role: 'assistant',
     content: `EC（碳酸乙烯酯）和 DEC（碳酸二乙酯）的主要区别：
 
 **EC（碳酸乙烯酯）：**
@@ -166,7 +175,7 @@ const MessageList: FC<MessageListProps> = ({
         </button>
 
         {/* 编辑按钮 - 只有用户消息才显示 */}
-        {message.type === 'user' && (
+        {isUserMessage(message) && (
           <button
             className="edit-btn"
             onClick={() => handleStartEdit(message.id)}
@@ -231,7 +240,7 @@ const MessageList: FC<MessageListProps> = ({
   // 渲染普通消息
   const renderMessage = (message: Message) => {
     // 如果正在编辑，显示编辑组件
-    if (editingMessageId === message.id && message.type === 'user') {
+    if (editingMessageId === message.id && isUserMessage(message)) {
       return (
         <div key={message.id} className="message-wrapper user">
           <MessageEdit
@@ -243,7 +252,7 @@ const MessageList: FC<MessageListProps> = ({
       );
     }
 
-    if (message.type === 'user') {
+    if (isUserMessage(message)) {
       return (
         <div key={message.id} className="message-wrapper user">
           <div className="message-container">
@@ -254,7 +263,8 @@ const MessageList: FC<MessageListProps> = ({
           {renderMessageActions(message)}
         </div>
       );
-    } else {
+    } else if (isAssistantMessage(message) || isSystemMessage(message)) {
+      // system消息按assistant样式展示
       return (
         <div key={message.id} className="message-wrapper bot">
           <div className="message">
@@ -270,7 +280,7 @@ const MessageList: FC<MessageListProps> = ({
     <div className={`message-list ${className}`}>
       {messages.map((message) => {
         // 特殊处理：如果消息内容包含特定关键词，显示带按钮的消息
-        if (message.type === 'bot' && message.content.includes('分子探索')) {
+        if ((isAssistantMessage(message) || isSystemMessage(message)) && message.content.includes('分子探索')) {
           return renderBotMessageWithButton(message, '分子');
         }
         return renderMessage(message);

@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { Message } from '../components/MessageList';
+import type { Message } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { globalWebSocketManager } from '@/services/chat/wsService';
+import { createUserMessage, createAssistantMessage } from '@/utils/messageUtils';
 
 export interface ChatState {
   messages: Message[];
@@ -61,12 +62,7 @@ export const useChat = () => {
   }, []);
 
   const addUserMessage = useCallback((content: string) => {
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
-      type: 'user',
-      content,
-      timestamp: new Date()
-    };
+    const userMessage = createUserMessage(content);
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, userMessage]
@@ -74,13 +70,7 @@ export const useChat = () => {
   }, []);
 
   const addBotMessage = useCallback((content: string, showRegenerate: boolean = true) => {
-    const botMessage: Message = {
-      id: `bot-${Date.now()}`,
-      type: 'bot',
-      content,
-      timestamp: new Date(),
-      showRegenerate
-    };
+    const botMessage = createAssistantMessage(content, undefined, showRegenerate);
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, botMessage]

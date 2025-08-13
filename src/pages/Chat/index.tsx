@@ -7,7 +7,12 @@ import { useParams } from 'react-router';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageList from './components/MessageList';
-import type { Message } from './components/MessageList';
+import type { Message } from '@/utils/messageUtils';
+import { 
+  createAssistantMessage, 
+  isAssistantMessage, 
+  getLastMessageByRole 
+} from '@/utils/messageUtils';
 import { useChat } from './hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import MoleculeModal from './components/MoleculeModal';
@@ -160,17 +165,17 @@ const Chat = () => {
                 currentBotMessageRef.current += content;
                 
                 // 更新最后一条机器人消息
-                const updatedMessage = {
-                    id: `bot-${Date.now()}`,
-                    type: 'bot' as const,
-                    content: currentBotMessageRef.current,
-                    timestamp: new Date(),
-                    showRegenerate: true
-                };
+                const updatedMessage = createAssistantMessage(
+                    currentBotMessageRef.current, 
+                    `bot-${Date.now()}`, 
+                    true
+                );
                 
                 // 更新消息列表中的最后一条机器人消息
                 const newMessages = [...messages];
-                const lastBotIndex = newMessages.findLastIndex((msg: Message) => msg.type === 'bot');
+                const lastBotIndex = newMessages.findLastIndex((msg: Message) => 
+                    isAssistantMessage(msg) // 使用工具函数，自动处理兼容性
+                );
                 if (lastBotIndex !== -1) {
                     newMessages[lastBotIndex] = updatedMessage;
                 }
@@ -268,7 +273,9 @@ const Chat = () => {
             setIsLoading(true);
             const response = await chatService.regenerateResponse(messageId);
             // 更新最后一条机器人消息
-            const lastBotMessageIndex = messages.findLastIndex(msg => msg.type === 'bot');
+            const lastBotMessageIndex = messages.findLastIndex(msg => 
+                isAssistantMessage(msg) // 使用工具函数，自动处理兼容性
+            );
             if (lastBotMessageIndex !== -1) {
                 const updatedMessages = [...messages];
                 updatedMessages[lastBotMessageIndex] = {
