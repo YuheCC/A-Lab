@@ -77,11 +77,7 @@ const SearchPage = () => {
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
     const [selectedMolType, setSelectedMolType] = useState("");
-    const defaultCompute = useMemo(() => {
-        if (userPermissions === 'research') return 'Low';
-        if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
-        return 'High';
-    }, [userPermissions]);
+    const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [cathode, setCathode] = useState('');
