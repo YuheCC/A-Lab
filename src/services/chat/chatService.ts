@@ -332,10 +332,22 @@ export class ChatService {
     try {
       const resp = await request('/api/chat/list', {
         method: 'GET',
-        params: { searchText: query, limit: 20 },
+        params: { 
+          search_text: query, 
+          limit: 20,
+          pinned: false,
+        },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
-      return resp.data.results || [];
+      const list = resp.data || [];
+      return (list || [])?.map((item: any) => ({
+        ...item,
+        chatId: item.id,
+        title: item.session_name,
+        timestamp: new Date(item.updated_at),
+        isPinned: !!item.pinned,
+        updatedAt: item.updated_at,
+      })) || [];
     } catch (error) {
       console.error('Failed to search chats:', error);
       return [];

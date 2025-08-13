@@ -1582,6 +1582,14 @@ body.chat-page-body {
     font-size: 13px;
 }
 
+.search-chat-item span {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .search-chat-item:hover {
     background-color: #f3f4f6;
 }
