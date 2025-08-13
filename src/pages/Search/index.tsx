@@ -75,6 +75,7 @@ const SearchPage = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
+    const [structureWeight, setStructureWeight] = useState(0.5);
     const [selectedMolType, setSelectedMolType] = useState("");
 
     // Add state for find-friend error message
@@ -249,6 +250,7 @@ const SearchPage = () => {
                     const payload = {
                         smiles: formattedMolecule.smiles.trim(),
                         use_35m: isHighTier,
+                        structure_weight: structureWeight,
                         ...(selectedMolType && { mol_type: selectedMolType })
                     };
 
@@ -381,11 +383,28 @@ const SearchPage = () => {
                                         checked={findClosestFriends}
                                         onChange={(e) => setFindClosestFriends(e.target.checked)}
                                     />
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}>
                                         <span>{t('search.findFriendsLabel')}</span>
                                         <Tooltip title={t('search.findFriendsDescription')} placement="top">
                                             <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
                                         </Tooltip>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '10px' }}>
+                                        <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                                            <input
+                                                type="range"
+                                                min={0}
+                                                max={1}
+                                                step={0.01}
+                                                value={structureWeight}
+                                                onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                                                style={{ margin: '0 4px' }}
+                                            />
+                                            <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                                            <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                                        </div>
                                     </div>
                                     <select
                                         value={selectedMolType}

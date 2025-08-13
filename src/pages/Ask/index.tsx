@@ -312,6 +312,7 @@ const ChatbotInterface = () => {
   const { t } = useTranslation();
   const [remainingQueries, setRemainingQueries] = useState(0);
   const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+  const [structureWeight, setStructureWeight] = useState(0.5);
 
   const { 
     messages, 
@@ -566,6 +567,7 @@ const handleFindSimilarMolecules = async (details) => {
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
+        structure_weight: structureWeight,
         ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
         ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
       };
@@ -1370,7 +1372,7 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%' }}>
+                    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                       <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
                         fullWidth
                         loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
@@ -1378,6 +1380,23 @@ const handleFindSimilarMolecules = async (details) => {
                         size="small" style={{ flexGrow: 1 }}>
                         {t('chatbox.buttons.findSimilarMolecules')}
                       </CustomButton>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '5px' }}>
+                        <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={structureWeight}
+                            onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                            style={{ margin: '0 4px' }}
+                          />
+                          <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                          <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                        </div>
+                      </div>
                       <select
                         value={molTypeSelections[details.SMILES] || ""}
                         onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
@@ -1456,7 +1475,7 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%' }}>
+                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                     <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
@@ -1464,6 +1483,23 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small" style={{ flexGrow: 1 }}>
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '5px' }}>
+                      <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={structureWeight}
+                          onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                          style={{ margin: '0 4px' }}
+                        />
+                        <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                      </div>
+                    </div>
                     <select
                       value={molTypeSelections[selectedMolecule.SMILES] || ""}
                       onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
