@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import HistoryItem from '../HistoryItem';
+import { useChatContext } from '../../context/ChatContext';
 
 // 定义 ChatHistoryItem 类型
 export interface ChatHistoryItem {
@@ -38,33 +39,34 @@ const ChatHistory: FC<ChatHistoryProps> = ({
     loadingMore = false,
 }) => {
     const { t } = useTranslation();
+    const ctx = useChatContext();
     const listRef = useRef<HTMLUListElement | null>(null);
     const sentinelRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
     const loadMoreDebounceTimerRef = useRef<number | null>(null);
     const handleChatClick = (chatId: string) => {
         console.log('Chat clicked:', chatId);
-        onSelectChat(chatId);
+        (onSelectChat || ctx.handleSelectChat)(chatId);
     };
 
     const handleRename = (chatId: string, newTitle: string) => {
         console.log('Rename chat:', chatId, newTitle);
-        if (onRenameChat) {
-            onRenameChat(chatId, newTitle);
+        if (onRenameChat || ctx.handleRenameChat) {
+            (onRenameChat || ctx.handleRenameChat)(chatId, newTitle);
         }
     };
 
     const handleTogglePin = (chatId: string) => {
         console.log('Toggle pin status:', chatId);
-        if (onTogglePinChat) {
-            onTogglePinChat(chatId);
+        if (onTogglePinChat || ctx.handleTogglePinChat) {
+            (onTogglePinChat || ctx.handleTogglePinChat)(chatId);
         }
     };
 
     const handleDelete = (chatId: string) => {
         console.log('Delete chat:', chatId);
-        if (onDeleteChat) {
-            onDeleteChat(chatId);
+        if (onDeleteChat || ctx.handleDeleteChat) {
+            (onDeleteChat || ctx.handleDeleteChat)(chatId);
         }
     };
 
@@ -93,7 +95,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
               window.clearTimeout(loadMoreDebounceTimerRef.current);
           }
           loadMoreDebounceTimerRef.current = window.setTimeout(() => {
-              onLoadMore?.();
+               (onLoadMore || ctx.handleLoadMoreHistory)?.();
               loadMoreDebounceTimerRef.current = null;
           }, 300);
       };

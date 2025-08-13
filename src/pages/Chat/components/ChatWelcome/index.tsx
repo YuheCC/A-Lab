@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
+import { useChatContext } from '../../context/ChatContext';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -13,6 +14,7 @@ interface ChatWelcomeProps {
 
 const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
     const { t } = useTranslation();
+    const { handleSendMessage } = useChatContext();
     const [inputValue, setInputValue] = useState<string>('');
     const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
     
@@ -29,18 +31,22 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
     }, []);
 
     // 处理发送消息
-    const handleSendMessage = useCallback(() => {
+    const handleSendMessageLocal = useCallback(() => {
         if (inputValue.trim() && onSendMessage) {
             onSendMessage(inputValue.trim(), currentMode);
             setInputValue('');
         }
-    }, [inputValue, currentMode, onSendMessage]);
+        if (inputValue.trim() && !onSendMessage) {
+            handleSendMessage(inputValue.trim(), currentMode);
+            setInputValue('');
+        }
+    }, [inputValue, currentMode, onSendMessage, handleSendMessage]);
 
     // 处理键盘事件
     const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSendMessage();
+            handleSendMessageLocal();
         }
     }, [handleSendMessage]);
 
@@ -230,7 +236,7 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
                             </div>
                             <button 
                                 className="new-chat-send-btn" 
-                                onClick={handleSendMessage}
+                                onClick={handleSendMessageLocal}
                                 disabled={isInputEmpty}
                                 type="button"
                                 aria-label={t('chatbox.chat.sendMessage')}

@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import ChatHistory from "../History";
 import ChatSearchModal from "../ChatSearchModal";
 import type { ChatHistoryItem } from "../History";
+import { useChatContext } from '../../context/ChatContext';
 
 interface ChatSiderProps {
-    onNewChat: () => void;
-    onSelectChat: (chatId: string) => void;
+    onNewChat?: () => void;
+    onSelectChat?: (chatId: string) => void;
     currentChatId?: string;
-    chatHistory: ChatHistoryItem[];
+    chatHistory?: ChatHistoryItem[];
     onDeleteChat?: (chatId: string) => void;
     onRenameChat?: (chatId: string, newTitle: string) => void;
     onTogglePinChat?: (chatId: string) => void;
@@ -30,6 +31,7 @@ const ChatSider: React.FC<ChatSiderProps> = ({
     loadingMoreHistory
 }) => {
     const { t } = useTranslation();
+    const ctx = useChatContext();
     const [ isSidebarCollapsed, setIsSidebarCollapsed ] = useState(false);
     const searchModalRef = useRef<any>(null);
     
@@ -58,7 +60,7 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 </svg>
                 </button>
                 {/* Mini模式下的新聊天按钮 */}
-                <a href="#" className="mini-new-chat-btn" id="miniNewChatBtn" title={t('chatbox.chat.newChat')} onClick={(e) => { e.preventDefault(); onNewChat(); }}>
+                <a href="#" className="mini-new-chat-btn" id="miniNewChatBtn" title={t('chatbox.chat.newChat')} onClick={(e) => { e.preventDefault(); (onNewChat || ctx.handleNewChat)(); }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/>
                     <rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/>
@@ -72,7 +74,7 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 </svg>
                 </a>
                 <div className="sidebar-actions">
-                <a href="#" className="new-chat-btn" id="mainNewChatBtn" onClick={(e) => { e.preventDefault(); onNewChat(); }}>
+                <a href="#" className="new-chat-btn" id="mainNewChatBtn" onClick={(e) => { e.preventDefault(); (onNewChat || ctx.handleNewChat)(); }}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>
                     <span>{t('chatbox.chat.newChat')}</span>
                 </a>
@@ -83,21 +85,21 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 </div>
             </div>
             <ChatHistory 
-                history={chatHistory}
-                onSelectChat={onSelectChat}
-                onNewChat={onNewChat}
-                currentChatId={currentChatId}
-                onDeleteChat={onDeleteChat}
-                onRenameChat={onRenameChat}
-                onTogglePinChat={onTogglePinChat}
-                onLoadMore={onLoadMoreHistory}
-                hasMore={!!hasMoreHistory}
-                loadingMore={!!loadingMoreHistory}
+                history={chatHistory || ctx.chatHistory}
+                onSelectChat={onSelectChat || ctx.handleSelectChat}
+                onNewChat={onNewChat || ctx.handleNewChat}
+                currentChatId={currentChatId || ctx.currentChatId}
+                onDeleteChat={onDeleteChat || ctx.handleDeleteChat}
+                onRenameChat={onRenameChat || ctx.handleRenameChat}
+                onTogglePinChat={onTogglePinChat || ctx.handleTogglePinChat}
+                onLoadMore={onLoadMoreHistory || ctx.handleLoadMoreHistory}
+                hasMore={!!(hasMoreHistory ?? ctx.hasMoreHistory)}
+                loadingMore={!!(loadingMoreHistory ?? ctx.loadingMoreHistory)}
             />
             <ChatSearchModal 
                 ref={searchModalRef} 
-                onSelectChat={onSelectChat}
-                onNewChat={onNewChat}
+                onSelectChat={onSelectChat || ctx.handleSelectChat}
+                onNewChat={onNewChat || ctx.handleNewChat}
             />
         </aside>
     )

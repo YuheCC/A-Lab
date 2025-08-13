@@ -2,11 +2,12 @@ import React, { useState, useRef, useCallback } from 'react';
 import type { FC, ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
+import { useChatContext } from '../../context/ChatContext';
 
 type ChatMode = 'regular' | 'deep-space';
 
 interface ChatInputProps {
-  onSendMessage: (message: string, mode: ChatMode) => void;
+  onSendMessage?: (message: string, mode: ChatMode) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -19,6 +20,7 @@ const ChatInput: FC<ChatInputProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
+  const { handleSendMessage } = useChatContext();
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -39,14 +41,14 @@ const ChatInput: FC<ChatInputProps> = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendMessageLocal();
     }
   };
 
   // 处理发送消息
-  const handleSendMessage = () => {
+  const handleSendMessageLocal = () => {
     if (inputValue.trim() && isButtonEnabled) {
-      onSendMessage(inputValue.trim(), currentMode);
+      (onSendMessage || handleSendMessage)(inputValue.trim(), currentMode);
       setInputValue('');
     }
   };
@@ -218,7 +220,7 @@ const ChatInput: FC<ChatInputProps> = ({
           <button
             id="send-btn"
             className="send-btn"
-            onClick={handleSendMessage}
+            onClick={handleSendMessageLocal}
             disabled={!isButtonEnabled}
             style={{
               opacity: isButtonEnabled ? '1' : '0.6',

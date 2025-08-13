@@ -92,6 +92,8 @@ const mockMessages: Message[] = [
   }
 ];
 
+import { useChatContext } from '../../context/ChatContext';
+
 const MessageList: FC<MessageListProps> = ({
   messages = mockMessages,
   onCopyMessage,
@@ -101,6 +103,13 @@ const MessageList: FC<MessageListProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
+  const {
+    messages: ctxMessages,
+    handleCopyMessage: ctxHandleCopyMessage,
+    handleRegenerateMessage: ctxHandleRegenerateMessage,
+    handleMoleculeClick: ctxHandleMoleculeClick,
+    handleEditMessage: ctxHandleEditMessage,
+  } = useChatContext() as any;
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
@@ -108,7 +117,7 @@ const MessageList: FC<MessageListProps> = ({
   const forwardMoleculeClick = (molecule: any) => {
     const moleculeName = molecule?.name || molecule?.SMILES || '';
     if (moleculeName) {
-      onMoleculeClick?.(moleculeName);
+      (onMoleculeClick || ctxHandleMoleculeClick)?.(moleculeName);
     }
   };
 
@@ -117,7 +126,7 @@ const MessageList: FC<MessageListProps> = ({
     try {
       await navigator.clipboard.writeText(content);
       setCopiedMessageId(messageId);
-      onCopyMessage?.(content);
+      (onCopyMessage || ctxHandleCopyMessage)?.(content);
       
       // 3秒后重置复制状态
       setTimeout(() => {
@@ -131,12 +140,12 @@ const MessageList: FC<MessageListProps> = ({
   // 处理重新生成
   const handleRegenerate = (messageId: string) => {
     console.log('Regenerating message:', messageId);
-    onRegenerateMessage?.(messageId);
+    (onRegenerateMessage || ctxHandleRegenerateMessage)?.(messageId);
   };
 
   // 处理编辑消息
   const handleEditMessage = (messageId: string, newText: string) => {
-    onEditMessage?.(messageId, newText);
+    (onEditMessage || ctxHandleEditMessage)?.(messageId, newText);
     setEditingMessageId(null);
   };
 
@@ -278,7 +287,7 @@ const MessageList: FC<MessageListProps> = ({
 
   return (
     <div className={`message-list ${className}`}>
-      {messages.map((message) => {
+      {(ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages).map((message: Message) => {
         // 特殊处理：如果消息内容包含特定关键词，显示带按钮的消息
         if ((isAssistantMessage(message) || isSystemMessage(message)) && message.content.includes('分子探索')) {
           return renderBotMessageWithButton(message, '分子');
