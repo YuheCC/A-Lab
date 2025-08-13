@@ -7,7 +7,7 @@ import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Info, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
@@ -77,6 +77,33 @@ const SearchPage = () => {
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
     const [selectedMolType, setSelectedMolType] = useState("");
+    const defaultCompute = useMemo(() => {
+        if (userPermissions === 'research') return 'Low';
+        if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+        return 'High';
+    }, [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [cathode, setCathode] = useState('');
+    const [cathodeCustom, setCathodeCustom] = useState('');
+    const [anode, setAnode] = useState('');
+    const [anodeCustom, setAnodeCustom] = useState('');
+    const [salt, setSalt] = useState('');
+    const [saltCustom, setSaltCustom] = useState('');
+    const [solvent, setSolvent] = useState('');
+    const [solventCustom, setSolventCustom] = useState('');
+    const [metric, setMetric] = useState('');
+    const [metricCustom, setMetricCustom] = useState('');
+
+    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
+    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
+    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
+    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
+    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -132,6 +159,19 @@ const SearchPage = () => {
             document.body.classList.remove('dragging');
         };
     }, []);
+
+    const buildQueryString = (c: string, a: string, s: string, sv: string, m: string) => {
+        const introParts: string[] = [];
+        if (s) introParts.push(s);
+        if (sv) introParts.push(`in ${sv}`);
+        const intro = introParts.length ? `I have ${introParts.join(' ')} in a battery` : 'I have a battery';
+        let rest = '';
+        if (c && a) rest = ` with ${c} cathode and ${a} anode`;
+        else if (c) rest = ` with ${c} cathode`;
+        else if (a) rest = ` with ${a} anode`;
+        const question = m ? ` How can I improve ${m}?` : ' How can I improve it?';
+        return `${intro}${rest}.${question}`;
+    };
 
     // Store ambiguous search options when backend indicates ambiguity
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
@@ -244,14 +284,33 @@ const SearchPage = () => {
                     const formattedMolecule = formattedMolecules[0];
 
                     // Then fetch similar molecules
-                    // Prepare JSON payload for finding friends (default version, no extra params)
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const payload = {
+                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
+                    const aVal = anode === 'custom' ? anodeCustom : anode;
+                    const sVal = salt === 'custom' ? saltCustom : salt;
+                    const svVal = solvent === 'custom' ? solventCustom : solvent;
+                    const mVal = metric === 'custom' ? metricCustom : metric;
+                    const computeEnabled = computeLevel !== 'Disabled';
+                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+
+                    let computeToSend = computeLevel;
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified) {
+                        setSearchWarning(t('search.computeWarning'));
+                        computeToSend = 'Low';
+                        setComputeLevel('Low');
+                    }
+
+                    const payload: any = {
                         smiles: formattedMolecule.smiles.trim(),
                         use_35m: isHighTier,
                         structure_weight: structureWeight,
-                        ...(selectedMolType && { mol_type: selectedMolType })
+                        ...(selectedMolType && { mol_type: selectedMolType }),
+                        ...(computeEnabled && { compute: computeToSend.toLowerCase() }),
+                        ...(computeEnabled && optionsSpecified && {
+                            query: buildQueryString(cVal, aVal, sVal, svVal, mVal),
+                            response: "No additional context is available for this query."
+                        })
                     };
 
                     try {
@@ -370,26 +429,34 @@ const SearchPage = () => {
                         disabled={searchLoading}
                     />
 
-                    {/* Add "Find closest friends" checkbox and mol type selector */}
+                    {/* Add "Find closest friends" checkbox and advanced options */}
                     <div className="search-options">
                         <label className="search-option">
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={findClosestFriends}
-                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                    />
-                                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}>
-                                        <span>{t('search.findFriendsLabel')}</span>
-                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                        </Tooltip>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={findClosestFriends}
+                                            onChange={(e) => setFindClosestFriends(e.target.checked)}
+                                        />
+                                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}>
+                                            <span>{t('search.findFriendsLabel')}</span>
+                                            <Tooltip title={t('search.findFriendsDescription')} placement="top">
+                                                <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
+                                            </Tooltip>
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '10px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+                                        <span>{t('search.advancedOptions')}</span>
+                                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                                    </div>
+                                </div>
+                                <div style={{ color: '#555', fontSize: '14px' }}>
+                                    {t('search.findFriendsDescription')}
+                                </div>
+                                <div style={{ maxHeight: showAdvanced ? '1000px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
+                                    <div style={{ marginTop: '8px' }}>
                                         <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
@@ -406,22 +473,130 @@ const SearchPage = () => {
                                             <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
                                         </div>
                                     </div>
-                                    <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select>
-                                </div>
-                                <div style={{
-                                    color: '#555',
-                                    fontSize: '14px',
-                                }}>
-                                {t('search.findFriendsDescription')}
+                                    <div style={{ marginTop: '8px' }}>
+                                        <select
+                                            value={selectedMolType}
+                                            onChange={e => setSelectedMolType(e.target.value)}
+                                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                                        </select>
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.intelligentCompute')}:</label>
+                                        <select
+                                            value={computeLevel}
+                                            onChange={e => setComputeLevel(e.target.value)}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                                            <option value="Low">{t('search.computeLow')}</option>
+                                            <option
+                                                value="Medium"
+                                                disabled={userPermissions === 'research'}
+                                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                                            >{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                                            <option
+                                                value="High"
+                                                disabled={["research", "explorer", "team"].includes(userPermissions || '')}
+                                                title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                                            >{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                                        </select>
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.cathode')}:</label>
+                                        <select
+                                            value={cathode}
+                                            onChange={e => setCathode(e.target.value)}
+                                            disabled={computeLevel === 'Disabled'}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value=""></option>
+                                            {cathodeOptions.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                            <option value="custom">{t('search.custom')}</option>
+                                        </select>
+                                        {cathode === 'custom' && (
+                                            <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                        )}
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.anode')}:</label>
+                                        <select
+                                            value={anode}
+                                            onChange={e => setAnode(e.target.value)}
+                                            disabled={computeLevel === 'Disabled'}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value=""></option>
+                                            {anodeOptions.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                            <option value="custom">{t('search.custom')}</option>
+                                        </select>
+                                        {anode === 'custom' && (
+                                            <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                        )}
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.salt')}:</label>
+                                        <select
+                                            value={salt}
+                                            onChange={e => setSalt(e.target.value)}
+                                            disabled={computeLevel === 'Disabled'}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value=""></option>
+                                            {saltOptions.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                            <option value="custom">{t('search.custom')}</option>
+                                        </select>
+                                        {salt === 'custom' && (
+                                            <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                        )}
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.solvent')}:</label>
+                                        <select
+                                            value={solvent}
+                                            onChange={e => setSolvent(e.target.value)}
+                                            disabled={computeLevel === 'Disabled'}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value=""></option>
+                                            {solventOptions.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                            <option value="custom">{t('search.custom')}</option>
+                                        </select>
+                                        {solvent === 'custom' && (
+                                            <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                        )}
+                                    </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.performanceMetric')}:</label>
+                                        <select
+                                            value={metric}
+                                            onChange={e => setMetric(e.target.value)}
+                                            disabled={computeLevel === 'Disabled'}
+                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                        >
+                                            <option value=""></option>
+                                            {performanceOptions.map(opt => (
+                                                <option key={opt} value={opt}>{opt}</option>
+                                            ))}
+                                            <option value="custom">{t('search.custom')}</option>
+                                        </select>
+                                        {metric === 'custom' && (
+                                            <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </label>

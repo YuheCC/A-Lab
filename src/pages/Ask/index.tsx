@@ -129,11 +129,21 @@ const ChatInput = React.memo((props: {
       disableLiteratureSearch, onDisableLiteratureSearchChange,
       disableTools, onDisableToolsChange,
       userPermissions, useMultiAgent, onUseMultiAgentChange,
-      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries,
       enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
   const { t } = useTranslation();
+  const [showAdvanced, setShowAdvanced] = React.useState(false);
+  const getDefaultCompute = React.useCallback(() => {
+    if (userPermissions === 'research') return 'Low';
+    if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+    return 'High';
+  }, [userPermissions]);
+  const [computeLevel, setComputeLevel] = React.useState(getDefaultCompute());
+  React.useEffect(() => {
+    setComputeLevel(getDefaultCompute());
+  }, [getDefaultCompute]);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
@@ -289,6 +299,26 @@ const ChatInput = React.memo((props: {
             </div>
           </div>
         )}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+        <span>{t('search.advancedOptions')}</span>
+        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+      </div>
+      <div style={{ maxHeight: showAdvanced ? '200px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
+        <div className='checkbox-item' style={{ marginTop: '8px' }}>
+          <label>{t('search.intelligentCompute')}:</label>
+          <select
+            value={computeLevel}
+            onChange={e => setComputeLevel(e.target.value)}
+            style={{ marginLeft: '8px' }}
+          >
+            <option value="Disabled">{t('search.computeDisabled')}</option>
+            <option value="Low">{t('search.computeLow')}</option>
+            <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+            <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+          </select>
+        </div>
       </div>
     </div>
   );
