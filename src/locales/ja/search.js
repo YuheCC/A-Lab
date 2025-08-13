@@ -9,6 +9,10 @@ export default {
     findFriendsLabel: '"友達"を探す',
     findFriendsDescription: '類似の物理化学的特性を持つ分子。"友達"には、意図的に類似した構造を持つ分子と多様な構造を持つ分子の両方が含まれています。リストは、クエリ分子との物理化学的特性の類似度順にソートされています。',
 
+    searchRange: '検索範囲',
+    nearbyFriends: '近くの友達',
+    distantFriends: '遠くの友達',
+
     // Loading and Status Messages
     searching: "検索中...",
     loadingMap: "Molecular Universeのマップを読み込み中",

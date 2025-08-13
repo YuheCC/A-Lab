@@ -8,6 +8,10 @@ export default {
     // Search Options
     findFriendsLabel: '查找"朋友"',
     findFriendsDescription: '具有相似物理化学性质的分子。"朋友"有意包括一些具有相似结构的分子和一些具有不同结构的分子。列表按与查询分子物理化学性质的相似程度排序。',
+
+    searchRange: '搜索范围',
+    nearbyFriends: '附近的朋友',
+    distantFriends: '远处的朋友',
     
     // Loading and Status Messages
     searching: "搜索中...",

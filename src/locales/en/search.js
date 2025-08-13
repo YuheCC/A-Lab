@@ -8,6 +8,10 @@ export default {
     // Search Options
     findFriendsLabel: 'Find "friends"',
     findFriendsDescription: 'Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.',
+
+    searchRange: 'Search range',
+    nearbyFriends: 'nearby friends',
+    distantFriends: 'distant friends',
     
     // Loading and Status Messages
     searching: "Searching...",
