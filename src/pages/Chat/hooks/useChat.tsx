@@ -12,14 +12,10 @@ export interface ChatState {
   sessionId: string | undefined;
 }
 
-// 全局会话级别缓存
-let chatHistoryCache: ChatHistoryItem[] = [];
-let isChatHistoryLoaded = false;
-
 export const useChat = () => {
   const [state, setState] = useState<ChatState>({
     messages: [],
-    chatHistory: chatHistoryCache, // 使用缓存初始化
+    chatHistory: [], // 简化：不使用缓存
     currentChatId: undefined,
     isLoading: false,
     sessionId: undefined
@@ -129,10 +125,6 @@ export const useChat = () => {
   }, []);
 
   const updateChatHistory = useCallback((chatHistory: ChatHistoryItem[]) => {
-    // 更新缓存
-    chatHistoryCache = chatHistory;
-    isChatHistoryLoaded = true;
-    
     setState(prev => ({
       ...prev,
       chatHistory
@@ -228,10 +220,7 @@ export const useChat = () => {
     return globalWebSocketManager.isWebSocketConnected();
   }, []);
 
-  // 获取缓存状态
-  const isChatHistoryCached = useCallback(() => {
-    return isChatHistoryLoaded && chatHistoryCache.length > 0;
-  }, []);
+  // 简化：移除缓存检查逻辑
 
   return {
     ...state,
@@ -250,7 +239,6 @@ export const useChat = () => {
     deleteChat,
     renameChat,
     togglePinChat,
-    isChatHistoryCached,
     sendMessage,
     isWebSocketConnected
   };

@@ -144,6 +144,7 @@ export class ChatService {
         title: item.session_name,
         timestamp: new Date(item.updated_at),
         isPinned: item.pinned,
+        updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
     } catch (error) {
       console.error('Failed to get pinned chat list:', error);
@@ -170,6 +171,7 @@ export class ChatService {
         title: item.session_name,
         timestamp: new Date(item.updated_at),
         isPinned: item.pinned,
+        updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
     } catch (error) {
       console.error('Failed to get chat list:', error);

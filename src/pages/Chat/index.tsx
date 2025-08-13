@@ -40,7 +40,7 @@ const Chat = () => {
         deleteChat,
         renameChat,
         togglePinChat,
-        isChatHistoryCached,
+
         sendMessage,
         isWebSocketConnected
     } = useChat();
@@ -64,23 +64,8 @@ const Chat = () => {
 
     const nonPinnedHistory = useMemo(() => chatHistory.filter(i => !i.isPinned), [chatHistory]);
 
-    // 初始化聊天历史 - 使用缓存机制避免重复请求
+    // 初始化聊天历史
     useEffect(() => {
-        // 如果聊天历史已缓存，跳过请求
-        if (isChatHistoryCached()) {
-            console.log('聊天历史已缓存，跳过重复请求', chatHistory.length);
-            // 仍需要设置分页信息
-            const initialNonPinned = chatHistory.filter(item => !item.isPinned);
-            setHasMoreHistory(initialNonPinned.length > 0);
-            if (initialNonPinned.length > 0) {
-                const lastItem = initialNonPinned[initialNonPinned.length - 1];
-                setLastUpdatedAt(lastItem.timestamp.toISOString());
-            } else {
-                setLastUpdatedAt(undefined);
-            }
-            return;
-        }
-
         const initChatHistory = async () => {
             try {
                 console.log('初始化聊天历史请求');
@@ -92,7 +77,8 @@ const Chat = () => {
                 setHasMoreHistory(initialNonPinned.length > 0);
                 if (initialNonPinned.length > 0) {
                     const lastItem = initialNonPinned[initialNonPinned.length - 1];
-                    setLastUpdatedAt(lastItem.timestamp.toISOString());
+                    // 使用updatedAt字段进行分页
+                    setLastUpdatedAt(lastItem.updatedAt);
                 } else {
                     setLastUpdatedAt(undefined);
                 }
@@ -101,7 +87,7 @@ const Chat = () => {
             }
         };
         initChatHistory();
-    }, [updateChatHistory, isChatHistoryCached, chatHistory]);
+    }, [updateChatHistory]);
 
     // 处理路由参数变化
     useEffect(() => {
@@ -346,6 +332,7 @@ const Chat = () => {
         if (loadingMoreHistory || !hasMoreHistory) return;
         try {
             setLoadingMoreHistory(true);
+            console.log('lastUpdatedAt', lastUpdatedAt);
             const more = await chatService.getChatList(lastUpdatedAt, 20);
             console.log('more', more);
             // 仅追加非置顶数据
@@ -358,14 +345,17 @@ const Chat = () => {
             for (const item of moreNonPinned) {
                 if (!existingIds.has(item.chatId)) mergedNonPinned.push(item);
             }
-            updateChatHistory([...pinned, ...mergedNonPinned]);
+            // 更新历史记录和缓存
+            const updatedHistory = [...pinned, ...mergedNonPinned];
+            updateChatHistory(updatedHistory);
             console.log('mergedNonPinned', mergedNonPinned);
+            console.log('moreNonPinned', moreNonPinned);
             // 更新分页标志：仅依据接口是否返回空
             setHasMoreHistory(moreNonPinned.length > 0);
             if (moreNonPinned?.length > 0) {
-                // 使用最后一条数据的updated_at作为下次分页的起始点
+                // 使用updatedAt字段进行分页
                 const lastItem = mergedNonPinned[mergedNonPinned.length - 1];
-                setLastUpdatedAt(lastItem.timestamp.toISOString());
+                setLastUpdatedAt(lastItem.updatedAt);
             } else {
                 setLastUpdatedAt(undefined);
             }

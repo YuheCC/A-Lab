@@ -9,6 +9,7 @@ export interface ChatHistoryItem {
   title: string;
   timestamp: Date;
   isPinned: boolean;
+  updatedAt?: string; // 原始的updated_at字符串，用于分页
 }
 
 interface ChatHistoryProps {
