@@ -143,7 +143,7 @@ export class ChatService {
         chatId: item.id,
         title: item.session_name,
         timestamp: new Date(item.updated_at),
-        isPinned: item.pinned,
+        isPinned: true,
         updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
     } catch (error) {
@@ -279,14 +279,14 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: string, answerId: string, message: string, sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsUser(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/ask', {
         method: 'POST',
         data: { 
           chat_id: chatId, 
           answer_id: answerId,
-          message: message, 
+          messages, 
           session_id: sessionId,
           model,
           ragEnabled: false,
@@ -319,7 +319,7 @@ export class ChatService {
     try {
       const resp = await request(`/api/chat/delete`, {
         method: 'POST',
-        data: { chat_id: chatId },
+        data: { id: chatId },
       });
       return resp.status >= 200 && resp.status < 300;
     } catch (error) {
@@ -330,9 +330,9 @@ export class ChatService {
 
   async searchChats(query: string): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/chat/search', {
+      const resp = await request('/api/chat/list', {
         method: 'GET',
-        params: { q: query },
+        params: { searchText: query, limit: 20 },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data.results || [];

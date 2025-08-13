@@ -20,7 +20,7 @@ interface ChatContextType {
     wsConnected: boolean;
     hasMoreHistory: boolean;
     loadingMoreHistory: boolean;
-    handleSendMessage: (message: string, mode: ChatMode) => void;
+    handleSendMessage: (message: string, mode: ChatMode, chatId?: string) => void;
     onSendMessage: (message: string, mode: ChatMode) => void;
     handleEditMessage: (messageId: string, newText: string) => void;
     onEditMessage: (messageId: string, newText: string) => void;
@@ -68,6 +68,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         currentChatId,
         isLoading,
         sessionId,
+        socketId,
         setSessionId,
         setIsLoading,
         addUserMessage,
@@ -202,12 +203,34 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const createNewChat = useCallback(async (message: string) => {
+        const info = globalWebSocketManager.getConnectionInfo();
+        const sid = (socketId || (info?.socketId as string) || '') as string;
+
         const chatData = await chatService.createChat(message);
         const messageData = await chatService.createNewMessage(chatData?.id, message);
         const answerData = messageData?.answer || {};
-        await chatService.triggerMessageAsUser(chatData?.id, answerData?.id, message, sessionId || '');
+        await chatService.triggerMessageAsUser(
+            chatData?.id,
+            answerData?.id,
+            [{ role: 'user', content: message }],
+            sid
+        );
         return chatData?.id;
-    }, [navigate]);
+    }, [socketId]);
+
+    const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[]) => {
+        const info = globalWebSocketManager.getConnectionInfo();
+        const sid = (socketId || (info?.socketId as string) || '') as string;
+        const messageData = await chatService.createNewMessage(chatId, message);
+        const answerData = messageData?.answer || {};
+        await chatService.triggerMessageAsUser(
+            chatId,
+            answerData?.id,
+            historyMessages,
+            sid
+        );
+        return messageData?.id;
+    }, [socketId]);
 
     const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string) => {
         if (chatId) {
@@ -223,7 +246,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!success) {
             addBotMessage(t('chatbox.chat.sendFailed'), false);
         }
-    }, [addBotMessage, sendMessage, t]);
+    }, [addBotMessage, sendMessage, t, createNewChat, navigate, setSessionId]);
 
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);

@@ -7,20 +7,18 @@ import { useChatContext } from '../../context/ChatContext';
 type ChatMode = 'regular' | 'deep-space';
 
 interface ChatInputProps {
-  onSendMessage?: (message: string, mode: ChatMode) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
 }
 
 const ChatInput: FC<ChatInputProps> = ({
-  onSendMessage,
   placeholder,
   disabled = false,
   className = ''
 }) => {
   const { t } = useTranslation();
-  const { handleSendMessage } = useChatContext();
+  const { handleSendMessage, currentChatId } = useChatContext();
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -48,7 +46,7 @@ const ChatInput: FC<ChatInputProps> = ({
   // 处理发送消息
   const handleSendMessageLocal = () => {
     if (inputValue.trim() && isButtonEnabled) {
-      (onSendMessage || handleSendMessage)(inputValue.trim(), currentMode);
+      handleSendMessage(inputValue.trim(), currentMode, currentChatId);
       setInputValue('');
     }
   };
