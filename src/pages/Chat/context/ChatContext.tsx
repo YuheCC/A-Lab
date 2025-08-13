@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'umi';
 import { useTranslation } from 'react-i18next';
 import type { Message } from '@/utils/messageUtils';
 import { createAssistantMessage, isAssistantMessage } from '@/utils/messageUtils';
@@ -8,7 +8,6 @@ import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
-import { useChatStore } from '@/models/useChat';
 
 type ChatMode = 'regular' | 'deep-space';
 
@@ -21,21 +20,27 @@ interface ChatContextType {
     wsConnected: boolean;
     hasMoreHistory: boolean;
     loadingMoreHistory: boolean;
-
     handleSendMessage: (message: string, mode: ChatMode) => void;
+    onSendMessage: (message: string, mode: ChatMode) => void;
     handleEditMessage: (messageId: string, newText: string) => void;
+    onEditMessage: (messageId: string, newText: string) => void;
     handleCopyMessage: (content: string) => void;
+    onCopyMessage: (content: string) => void;
     handleRegenerateMessage: (messageId: string) => Promise<void>;
-
+    onRegenerateMessage: (messageId: string) => Promise<void>;
     handleNewChat: () => void;
+    onNewChat: () => void;
     handleSelectChat: (selectedChatId: string) => void;
+    onSelectChat: (selectedChatId: string) => void;
     handleDeleteChat: (chatId: string) => Promise<void>;
+    onDeleteChat: (chatId: string) => Promise<void>;
     handleRenameChat: (chatId: string, newTitle: string) => Promise<void>;
+    onRenameChat: (chatId: string, newTitle: string) => Promise<void>;
     handleTogglePinChat: (chatId: string) => Promise<void>;
-
+    onTogglePinChat: (chatId: string) => Promise<void>;
     handleLoadMoreHistory: () => Promise<void>;
+    onLoadMoreHistory: () => Promise<void>;
     showInput: boolean;
-
     moleculePanelState: ReturnType<typeof useMoleculePanel>['state'];
     handleMoleculePanelClose: ReturnType<typeof useMoleculePanel>['hidePanel'];
     handleMoleculeClick: ReturnType<typeof useMoleculePanel>['handleMoleculeClick'];
@@ -55,6 +60,7 @@ export const useChatContext = (): ChatContextType => {
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { t } = useTranslation();
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const {
         messages,
@@ -124,18 +130,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
             setWsConnected(true);
-            const info = globalWebSocketManager.getConnectionInfo();
-            try {
-                useChatStore.getState().setSocketId?.(info?.socketId || undefined);
-            } catch (e) {}
         });
 
         const unsubscribeDisconnect = globalWebSocketManager.onDisconnect(() => {
             setWsConnected(false);
             setIsLoading(false);
-            try {
-                useChatStore.getState().setSocketId?.(undefined);
-            } catch (e) {}
         });
 
         const unsubscribeError = globalWebSocketManager.onError((error) => {
@@ -202,7 +201,21 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const handleSendMessage = useCallback((message: string, mode: ChatMode) => {
+    const createNewChat = useCallback(async (message: string) => {
+        const chatData = await chatService.createChat(message);
+        const messageData = await chatService.createNewMessage(chatData?.id, message);
+        const answerData = messageData?.answer || {};
+        await chatService.triggerMessageAsUser(chatData?.id, answerData?.id, message, sessionId || '');
+        return chatData?.id;
+    }, [navigate]);
+
+    const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string) => {
+        if (chatId) {
+            setSessionId(chatId);
+        }else{
+            const chatId = await createNewChat(message);
+            navigate(`/chat/${chatId}`);
+        }
         // sessionId 由 socketId 填充，这里不再覆盖
         addBotMessage('', true);
         currentBotMessageRef.current = '';
@@ -318,15 +331,25 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasMoreHistory,
         loadingMoreHistory,
         handleSendMessage,
+        onSendMessage: handleSendMessage,
         handleEditMessage,
+        onEditMessage: handleEditMessage,
         handleCopyMessage,
+        onCopyMessage: handleCopyMessage,
         handleRegenerateMessage,
+        onRegenerateMessage: handleRegenerateMessage,
         handleNewChat,
+        onNewChat: handleNewChat,
         handleSelectChat,
+        onSelectChat: handleSelectChat,
         handleDeleteChat,
+        onDeleteChat: handleDeleteChat,
         handleRenameChat,
+        onRenameChat: handleRenameChat,
         handleTogglePinChat,
+        onTogglePinChat: handleTogglePinChat,
         handleLoadMoreHistory,
+        onLoadMoreHistory: handleLoadMoreHistory,
         showInput,
         moleculePanelState,
         handleMoleculePanelClose,

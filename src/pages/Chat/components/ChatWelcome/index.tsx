@@ -8,11 +8,7 @@ import { useChatContext } from '../../context/ChatContext';
 
 type ChatMode = 'regular' | 'deep-space';
 
-interface ChatWelcomeProps {
-    onSendMessage?: (message: string, mode: ChatMode) => void;
-}
-
-const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
+const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
     const { handleSendMessage } = useChatContext();
     const [inputValue, setInputValue] = useState<string>('');
@@ -32,15 +28,9 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
-        if (inputValue.trim() && onSendMessage) {
-            onSendMessage(inputValue.trim(), currentMode);
-            setInputValue('');
-        }
-        if (inputValue.trim() && !onSendMessage) {
-            handleSendMessage(inputValue.trim(), currentMode);
-            setInputValue('');
-        }
-    }, [inputValue, currentMode, onSendMessage, handleSendMessage]);
+        handleSendMessage(inputValue.trim(), currentMode);
+        setInputValue('');
+    }, [inputValue, currentMode, handleSendMessage]);
 
     // 处理键盘事件
     const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -134,10 +124,8 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ onSendMessage }) => {
 
     // 处理推荐问题点击
     const handleQuestionClick = useCallback((question: string) => {
-        if (onSendMessage) {
-            onSendMessage(question, currentMode);
-        }
-    }, [currentMode, onSendMessage]);
+        handleSendMessage(question, currentMode);
+    }, [currentMode, handleSendMessage]);
 
     // 处理刷新推荐问题
     const handleRefreshQuestions = useCallback(() => {

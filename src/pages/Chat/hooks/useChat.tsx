@@ -10,6 +10,7 @@ export interface ChatState {
   currentChatId: string | undefined;
   isLoading: boolean;
   sessionId: string | undefined;
+  socketId?: string;
 }
 
 export const useChat = () => {
@@ -18,13 +19,32 @@ export const useChat = () => {
     chatHistory: [], // 简化：不使用缓存
     currentChatId: undefined,
     isLoading: false,
-    sessionId: undefined
+    sessionId: undefined,
+    socketId: undefined
   });
+
+  const setSocketId = useCallback((socketId: string | undefined) => {
+    setState(prev => ({ ...prev, socketId }));
+  }, []);
 
   // 在组件初始化时建立WebSocket连接
   useEffect(() => {
     console.log('useChat: 初始化全局WebSocket连接');
     globalWebSocketManager.initialize();
+
+    // 连接成功后，同步 socketId 到本地状态
+    const unSubConnect = globalWebSocketManager.onConnect(() => {
+      const info = globalWebSocketManager.getConnectionInfo();
+      if (info?.socketId) {
+        setSocketId(info.socketId);
+      }
+    });
+
+    // 若初始化时已经连接，立即同步一次
+    const initInfo = globalWebSocketManager.getConnectionInfo();
+    if (initInfo?.socketId) {
+      setSocketId(initInfo.socketId as string);
+    }
 
     // 添加连接状态监控
     const checkConnection = () => {
@@ -43,6 +63,7 @@ export const useChat = () => {
     // 清理函数：当组件卸载时不关闭连接，因为这是全局连接
     return () => {
       console.log('useChat: 组件卸载，保持WebSocket连接');
+      unSubConnect && unSubConnect();
       clearInterval(healthCheckInterval);
     };
   }, []);
@@ -223,6 +244,7 @@ export const useChat = () => {
   return {
     ...state,
     setSessionId,
+    setSocketId,
     setIsLoading,
     addUserMessage,
     addBotMessage,

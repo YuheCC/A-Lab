@@ -65,10 +65,8 @@ const generateNewChat = (): Chat => ({
     activeMolecule: null,
     foundMolecules: [],
     similarMolecules: [],
-
     // Deep Space metadata
     awaitingClarify: false,
-
     createdAt: new Date().toISOString(),
 })
 

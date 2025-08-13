@@ -245,7 +245,7 @@ export class ChatService {
   }
 
   // only create a new chat with a chat_name
-  async createChat(title: string): Promise<string> {
+  async createChat(title: string): Promise<any> {
     try {
       const resp = await request('/api/chat/new', {
         method: 'POST',
@@ -260,17 +260,15 @@ export class ChatService {
   }
 
   // send a new message to the chat, return a response id
-  async newMessage(chatId: string, message: string, model: string = 'o3'): Promise<string> {
+  async createNewMessage(chatId: string, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/new_message', {
+      const resp = await request('/api/chat/message/new', {
         method: 'POST',
         data: { 
-            chatId: chatId, 
-            message: {
-              model,
-              content: message,
-              role: 'user',
-            } 
+            chat_id: chatId, 
+            model,
+            content: message,
+            role: 'user',
         },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
@@ -281,13 +279,15 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: string, message: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsUser(chatId: string, answerId: string, message: string, sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/ask', {
         method: 'POST',
         data: { 
-          chatId, 
-          message, 
+          chat_id: chatId, 
+          answer_id: answerId,
+          message: message, 
+          session_id: sessionId,
           model,
           ragEnabled: false,
           webSearchEnabled: false,
@@ -317,8 +317,9 @@ export class ChatService {
 
   async deleteChat(chatId: string): Promise<boolean> {
     try {
-      const resp = await request(`/chat/${chatId}`, {
-        method: 'DELETE',
+      const resp = await request(`/api/chat/delete`, {
+        method: 'POST',
+        data: { chat_id: chatId },
       });
       return resp.status >= 200 && resp.status < 300;
     } catch (error) {
@@ -343,9 +344,9 @@ export class ChatService {
 
   async renameChat(chatId: string, newTitle: string): Promise<boolean> {
     try {
-      const resp = await request(`/chat/${chatId}/rename`, {
-        method: 'PUT',
-        data: { title: newTitle },
+      const resp = await request(`/api/chat/update`, {
+        method: 'POST',
+        data: { id: chatId, chat_name: newTitle },
       });
       return resp.status >= 200 && resp.status < 300;
     } catch (error) {
@@ -356,9 +357,9 @@ export class ChatService {
 
   async togglePinChat(chatId: string, isPinned: boolean): Promise<boolean> {
     try {
-      const resp = await request(`/chat/${chatId}/pin`, {
-        method: 'PUT',
-        data: { isPinned },
+      const resp = await request(`/api/chat/update`, {
+        method: 'POST',
+        data: { id: chatId, pinned: isPinned },
       });
       return resp.status >= 200 && resp.status < 300;
     } catch (error) {
