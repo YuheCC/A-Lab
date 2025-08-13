@@ -64,7 +64,7 @@ function createChatWebSocketStreamInternal(options: ChatStreamOptions, transport
     mode,
     query = {},
     protocols, // Socket.IO 不使用 protocols，但保留兼容性
-    withTokenInQuery = true,
+    withTokenInQuery = false,
     heartbeat: hb = {},
     autoReconnect = true,
     maxRetries = 5,
@@ -276,15 +276,16 @@ class GlobalWebSocketManager {
       return;
     }
 
-    const baseUrl = (window as any).BASE_URL || '/api';
+    const baseUrl = BASE_URL || 'https://prod-api.ses.ai';
     const path = '/ws/socket.io';
     const socketUrl = buildSocketUrl(baseUrl);
     const token = localStorage.getItem('token') || '';
 
     const socketQuery: Record<string, string> = {};
-    if (token) socketQuery.token = token;
+    // if (token) socketQuery.token = token;
 
     console.log('初始化全局WebSocket连接:', {
+      baseUrl: baseUrl,
       url: socketUrl,
       path: path,
       query: socketQuery
@@ -294,19 +295,19 @@ class GlobalWebSocketManager {
       path: path,
       query: socketQuery,
       autoConnect: true,
-      reconnection: true,
+      reconnection: false,
       reconnectionAttempts: 5,
       reconnectionDelay: 800,
       reconnectionDelayMax: 5000,
-      timeout: 200000,
+      timeout: 20000,
       forceNew: false, // 允许复用连接
       transports: ['websocket', 'polling'],
       upgrade: true,
       rememberUpgrade: false,
-      withCredentials: false,
-      extraHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      },
+      withCredentials: true,
+      auth: {
+        token: token
+      }
     });
 
     this.setupEventListeners();
@@ -394,6 +395,53 @@ class GlobalWebSocketManager {
   // 检查连接状态
   isWebSocketConnected(): boolean {
     return this.isConnected && this.socket?.connected === true;
+  }
+
+  // 获取连接信息
+  getConnectionInfo() {
+    return {
+      isConnected: this.isConnected,
+      socketConnected: this.socket?.connected || false,
+      sessionId: this.sessionId,
+      socketId: this.socket?.id || null,
+      transport: this.socket?.io?.engine?.transport?.name || null
+    };
+  }
+
+  // 检查连接健康状态
+  checkConnectionHealth(): boolean {
+    if (!this.socket) {
+      console.warn('WebSocket: socket实例不存在');
+      return false;
+    }
+    
+    if (!this.socket.connected) {
+      console.warn('WebSocket: socket未连接');
+      return false;
+    }
+    
+    if (!this.isConnected) {
+      console.warn('WebSocket: 管理器状态显示未连接');
+      return false;
+    }
+    
+    return true;
+  }
+
+  // 重连方法
+  reconnect() {
+    console.log('WebSocket: 尝试重新连接...');
+    
+    if (this.socket) {
+      // 先断开现有连接
+      this.socket.disconnect();
+    }
+    
+    // 重置状态
+    this.isConnected = false;
+    
+    // 重新初始化连接
+    this.initialize();
   }
 
   // 订阅消息
