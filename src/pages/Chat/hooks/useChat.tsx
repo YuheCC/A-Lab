@@ -49,8 +49,6 @@ export const useChat = () => {
 
   const setSessionId = useCallback((sessionId: string) => {
     setState(prev => ({ ...prev, sessionId }));
-    // 同时设置全局WebSocket管理器的session_id
-    globalWebSocketManager.setSessionId(sessionId);
   }, []);
 
   const setIsLoading = useCallback((loading: boolean) => {
@@ -166,7 +164,7 @@ export const useChat = () => {
 
   // 发送消息函数，使用全局WebSocket连接
   const sendMessage = useCallback((message: string, mode: 'regular' | 'deep-space' = 'regular') => {
-    console.log('sendMessage: 发送消息', { message, mode, sessionId: state.sessionId });
+    console.log('sendMessage: 发送消息', { message, mode, socketSessionId: state.sessionId, chatId: state.currentChatId });
     
     // 检查连接状态
     const connectionInfo = globalWebSocketManager.getConnectionInfo();
@@ -185,7 +183,7 @@ export const useChat = () => {
       setTimeout(() => {
         const retrySuccess = globalWebSocketManager.sendMessage({
           message,
-          chatId: state.sessionId,
+          chatId: state.currentChatId,
           mode
         });
         
@@ -202,7 +200,7 @@ export const useChat = () => {
     // 使用全局WebSocket发送消息
     const success = globalWebSocketManager.sendMessage({
       message,
-      chatId: state.sessionId,
+      chatId: state.currentChatId,
       mode
     });
 

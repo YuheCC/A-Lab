@@ -43,6 +43,8 @@ interface ChatState {
     isSynced: boolean;
     activeChat: string;
     chatMap: Record<string, Chat>;
+    socketId?: string;
+    setSocketId?: (socketId?: string) => void;
 }
 
 const getWelcomeMessage = () => {
@@ -84,6 +86,9 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     chatMap: {
         "-1": generateNewChat()
     },
+    socketId: undefined,
+    // 设置 WebSocket socketId，仅本地存储
+    setSocketId: (socketId?: string) => set({ socketId }),
     pendingSessionCreation: {}, // Track pending session creations to prevent duplicates
 
     /**

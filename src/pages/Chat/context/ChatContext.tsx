@@ -8,6 +8,7 @@ import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
+import { useChatStore } from '@/models/useChat';
 
 type ChatMode = 'regular' | 'deep-space';
 
@@ -114,21 +115,27 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         if (id) {
             loadChatHistory(id);
-            setSessionId(id);
             loadChatData(id);
         } else {
             startNewChat();
         }
-    }, [id, loadChatHistory, startNewChat, setSessionId]);
+    }, [id, loadChatHistory, startNewChat]);
 
     useEffect(() => {
         const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
             setWsConnected(true);
+            const info = globalWebSocketManager.getConnectionInfo();
+            try {
+                useChatStore.getState().setSocketId?.(info?.socketId || undefined);
+            } catch (e) {}
         });
 
         const unsubscribeDisconnect = globalWebSocketManager.onDisconnect(() => {
             setWsConnected(false);
             setIsLoading(false);
+            try {
+                useChatStore.getState().setSocketId?.(undefined);
+            } catch (e) {}
         });
 
         const unsubscribeError = globalWebSocketManager.onError((error) => {
@@ -196,17 +203,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const handleSendMessage = useCallback((message: string, mode: ChatMode) => {
-        let chatID: string | undefined = currentChatId;
-        if (!sessionId && chatID) {
-            setSessionId(chatID);
-        }
+        // sessionId 由 socketId 填充，这里不再覆盖
         addBotMessage('', true);
         currentBotMessageRef.current = '';
         const success = sendMessage(message, mode);
         if (!success) {
             addBotMessage(t('chatbox.chat.sendFailed'), false);
         }
-    }, [currentChatId, sessionId, setSessionId, addBotMessage, sendMessage, t]);
+    }, [addBotMessage, sendMessage, t]);
 
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);
