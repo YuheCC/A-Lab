@@ -792,8 +792,10 @@ const handleFindSimilarMolecules = async (details) => {
       let effectiveChatId = localChatId;
       setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3' : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10 : 3;
+      const ragModel        = isAdvancedTier ? 'gpt-5' : 'gpt-5-mini'; // deprecated
+      const ragResultsCount = isAdvancedTier ? 10 : 3; // deprecated
+      const llmComputePower = isAdvancedTier ? "high" : "medium";
+      const ragComputePower = isAdvancedTier ? "medium" : "low";
 
       const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
       let data; // final payload from the back-end
@@ -812,7 +814,7 @@ const handleFindSimilarMolecules = async (details) => {
             ];
 
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload: any = { messages: updatedHistory };
+            const multiAgentPayload: any = { messages: updatedHistory, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -850,7 +852,7 @@ const handleFindSimilarMolecules = async (details) => {
           } else {
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload: any = { messages: messagesToSend };
+            const multiAgentPayload: any = { messages: messagesToSend, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -944,6 +946,7 @@ const handleFindSimilarMolecules = async (details) => {
             numRagResults: ragResultsCount,
             model: ragModel,
             patentRagEnabled: enablePatentRag,
+            llm_compute_power: ragComputePower,
           };
           if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
