@@ -302,7 +302,7 @@ const SearchPage = () => {
                         use_35m: isHighTier,
                         structure_weight: structureWeight,
                         ...(selectedMolType && { mol_type: selectedMolType }),
-                        ...(computeEnabled && { compute: computeToSend.toLowerCase() }),
+                        ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
                         ...(computeEnabled && optionsSpecified && {
                             query: buildQueryString(cVal, aVal, sVal, svVal, mVal),
                             response: "No additional context is available for this query."

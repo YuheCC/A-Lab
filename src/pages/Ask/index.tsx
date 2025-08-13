@@ -580,7 +580,7 @@ const handleFindSimilarMolecules = async (details) => {
         use_35m: isHighTier,
         structure_weight: structureWeight,
         ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] }),
-        ...(computeEnabled && { compute: computeLevel.toLowerCase() }),
+        ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
         ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
