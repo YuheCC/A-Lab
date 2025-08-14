@@ -129,7 +129,7 @@ const ChatInput = React.memo((props: {
       disableLiteratureSearch, onDisableLiteratureSearchChange,
       disableTools, onDisableToolsChange,
       userPermissions, useMultiAgent, onUseMultiAgentChange,
-      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries,
       enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
@@ -312,6 +312,7 @@ const ChatbotInterface = () => {
   const { t } = useTranslation();
   const [remainingQueries, setRemainingQueries] = useState(0);
   const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+  const [structureWeight, setStructureWeight] = useState(0.5);
 
   const { 
     messages, 
@@ -354,6 +355,16 @@ const ChatbotInterface = () => {
     console.log(foundMolecules)
   }, [foundMolecules])
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const getDefaultCompute = useCallback(() => {
+    if (userPermissions === 'research') return 'Low';
+    if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+    return 'High';
+  }, [userPermissions]);
+  const [computeLevel, setComputeLevel] = useState(getDefaultCompute());
+  useEffect(() => {
+    setComputeLevel(getDefaultCompute());
+  }, [getDefaultCompute]);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
@@ -563,11 +574,14 @@ const handleFindSimilarMolecules = async (details) => {
         : undefined;
       
       // Construct request payload
+      const computeEnabled = computeLevel !== 'Disabled';
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
-        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
+        structure_weight: structureWeight,
+        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] }),
+        ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
       const response = await authFetch(
@@ -760,8 +774,10 @@ const handleFindSimilarMolecules = async (details) => {
       let effectiveChatId = localChatId;
       setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3' : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10 : 3;
+      const ragModel        = isAdvancedTier ? 'gpt-5' : 'gpt-5-mini'; // deprecated
+      const ragResultsCount = isAdvancedTier ? 10 : 3; // deprecated
+      const llmComputePower = isAdvancedTier ? "high" : "medium";
+      const ragComputePower = isAdvancedTier ? "medium" : "low";
 
       const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
       let data; // final payload from the back-end
@@ -780,7 +796,7 @@ const handleFindSimilarMolecules = async (details) => {
             ];
 
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload: any = { messages: updatedHistory };
+            const multiAgentPayload: any = { messages: updatedHistory, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -818,7 +834,7 @@ const handleFindSimilarMolecules = async (details) => {
           } else {
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload: any = { messages: messagesToSend };
+            const multiAgentPayload: any = { messages: messagesToSend, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -912,6 +928,7 @@ const handleFindSimilarMolecules = async (details) => {
             numRagResults: ragResultsCount,
             model: ragModel,
             patentRagEnabled: enablePatentRag,
+            llm_compute_power: ragComputePower,
           };
           if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
@@ -1177,7 +1194,17 @@ const handleFindSimilarMolecules = async (details) => {
             )} 
           <div className="chat-messages">
             {messages.map((msg, index) => {
-              const errorText = msg.extraData?.extra_data?.error;
+              const normalizedExtraData = (msg.extraData && typeof msg.extraData === 'object')
+                ? (msg.extraData.extra_data ?? msg.extraData)
+                : null;
+
+              // Extract only the extra_outputs subfield and normalize it for rendering
+              const extraOutputs = normalizedExtraData?.extra_outputs;
+              const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
+                ? extraOutputs
+                : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
+
+              const errorText = normalizedExtraData?.error;
               const displayContent = errorText ? `Error: ${errorText}` : msg.content;
               const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
               return (
@@ -1187,9 +1214,9 @@ const handleFindSimilarMolecules = async (details) => {
                   <div className='message-content'>
                     <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
 
-                    {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+                    {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
                       <div className="extra-data-wrapper">
-                        {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
+                        {Object.entries(renderableExtraOutputs).map(([key, value]) => (
                           <ExtraDataSection
                             key={key}
                             title={key}
@@ -1370,7 +1397,7 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%' }}>
+                    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                       <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
                         fullWidth
                         loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
@@ -1378,17 +1405,56 @@ const handleFindSimilarMolecules = async (details) => {
                         size="small" style={{ flexGrow: 1 }}>
                         {t('chatbox.buttons.findSimilarMolecules')}
                       </CustomButton>
-                      <select
-                        value={molTypeSelections[details.SMILES] || ""}
-                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                      >
-                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                      </select>
+                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                        <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                        {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                      </div>
                     </div>
+                    {showAdvancedOptions && (
+                      <div style={{ width: '100%', marginTop: '8px' }}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <select
+                            value={molTypeSelections[details.SMILES] || ""}
+                            onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                            style={{ backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                          >
+                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                          </select>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                          <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={structureWeight}
+                            onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                            style={{ margin: '0 4px' }}
+                          />
+                          <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                          <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                        </div>
+                        <div className='checkbox-item'>
+                          <label>{t('search.intelligentCompute')}:</label>
+                          <select
+                            value={computeLevel}
+                            onChange={e => setComputeLevel(e.target.value)}
+                            style={{ marginLeft: '8px' }}
+                          >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                            <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                     {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
@@ -1456,7 +1522,7 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%' }}>
+                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                     <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
@@ -1464,6 +1530,10 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small" style={{ flexGrow: 1 }}>
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
+                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                      <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                      {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                    </div>
                     <select
                       value={molTypeSelections[selectedMolecule.SMILES] || ""}
                       onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
@@ -1475,6 +1545,39 @@ const handleFindSimilarMolecules = async (details) => {
                       <option value="additive">{t('search.moleculeTypes.additive')}</option>
                     </select>
                   </div>
+                  {showAdvancedOptions && (
+                    <div style={{ width: '100%', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                        <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={structureWeight}
+                          onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                          style={{ margin: '0 4px' }}
+                        />
+                        <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                      </div>
+                      <div className='checkbox-item'>
+                        <label>{t('search.intelligentCompute')}:</label>
+                        <select
+                          value={computeLevel}
+                          onChange={e => setComputeLevel(e.target.value)}
+                          style={{ marginLeft: '8px' }}
+                        >
+                          <option value="Disabled">{t('search.computeDisabled')}</option>
+                          <option value="Low">{t('search.computeLow')}</option>
+                          <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                          <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                          {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                      </div>
+                    </div>
+                  )}
                   {false && selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>
