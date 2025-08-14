@@ -93,6 +93,9 @@ const mockMessages: Message[] = [
 ];
 
 import { useChatContext } from '../../context/ChatContext';
+import FeedbackBox from '@/components/FeedbackBox/index.js';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { useAuthStore } from '@/models/useAuth';
 
 const MessageList: FC<MessageListProps> = ({
   messages = mockMessages,
@@ -112,6 +115,23 @@ const MessageList: FC<MessageListProps> = ({
   } = useChatContext() as any;
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [showFeedbackBox, setShowFeedbackBox] = useState(false);
+  const [feedbackData, setFeedbackData] = useState<any>(null);
+  const userPermissions = useAuthStore(state => state.userPermissions);
+
+  // 取上下文消息源
+  const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
+
+  // 计算某条助手消息对应的上一条用户消息内容
+  const getPrevUserContent = (target: Message): string => {
+    const idx = resolvedMessages.findIndex(m => m.id === target.id);
+    for (let i = (idx === -1 ? resolvedMessages.length - 1 : idx - 1); i >= 0; i--) {
+      if (isUserMessage(resolvedMessages[i] as Message)) {
+        return (resolvedMessages[i] as Message).content || '';
+      }
+    }
+    return '';
+  };
 
   // 处理化学分子点击（来自 InlineMoleculeRenderer 的对象 -> 仅传递名称给上层）
   const forwardMoleculeClick = (molecule: any) => {
@@ -165,6 +185,41 @@ const MessageList: FC<MessageListProps> = ({
   const renderMessageActions = (message: Message) => {
     return (
       <div className="message-actions">
+        {/* 反馈按钮：仅管理员且助手消息显示 */}
+        {isAssistantMessage(message) && userPermissions === 'admin' && (
+          <>
+            <button
+              className="action-btn"
+              onClick={() => {
+                setFeedbackData({
+                  isPositive: true,
+                  inputContent: getPrevUserContent(message),
+                  responseContent: message.content,
+                  contextContent1: (message as any)?.sources || ''
+                });
+                setShowFeedbackBox(true);
+              }}
+              title={t('chatbox.chat.like')}
+            >
+              <ThumbsUp size={16} />
+            </button>
+            <button
+              className="action-btn"
+              onClick={() => {
+                setFeedbackData({
+                  isPositive: false,
+                  inputContent: getPrevUserContent(message),
+                  responseContent: message.content,
+                  contextContent1: (message as any)?.sources || ''
+                });
+                setShowFeedbackBox(true);
+              }}
+              title={t('chatbox.chat.dislike')}
+            >
+              <ThumbsDown size={16} />
+            </button>
+          </>
+        )}
         {/* 复制按钮 */}
         <button
           className="action-btn copy-btn"
@@ -294,6 +349,17 @@ const MessageList: FC<MessageListProps> = ({
         }
         return renderMessage(message);
       })}
+      {/* 反馈弹窗 */}
+      {showFeedbackBox && feedbackData && (
+        <FeedbackBox
+          isPositive={feedbackData.isPositive}
+          inputContent={feedbackData.inputContent}
+          responseContent={feedbackData.responseContent}
+          contextContent1={feedbackData.contextContent1}
+          queryType="normal_chat"
+          onClose={() => setShowFeedbackBox(false)}
+        />
+      )}
     </div>
   );
 };
