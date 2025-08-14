@@ -307,6 +307,10 @@
     transition: transform 0.2s ease;
 }
 
+.chevron-icon.rotated {
+    transform: rotate(180deg);
+}
+
 .functional-groups-title {
     font-size: 13px;
     font-weight: 500;
@@ -332,6 +336,39 @@
     color: #64748b;
     margin: 0;
     line-height: 1.4;
+}
+
+/* 新类名，保持与原样式一致，避免与 Ask 冲突 */
+.functional-groups-content-new {
+    display: block;
+    padding: 12px;
+    background: white;
+}
+
+.functional-groups-content-new h4 {
+    font-size: 12px; /* 与主体内容字号保持一致 */
+    font-weight: 600;
+    color: #374151; /* 与主体内容色系对齐 */
+    margin: 0 0 8px 0;
+}
+
+.functional-groups-content-new p {
+    font-size: 12px; /* 与主体内容字号保持一致 */
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.functional-groups-content-new ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.functional-groups-content-new li {
+    font-size: 12px; /* 与主体内容字号保持一致 */
+    color: #1e293b;
+    line-height: 1.4;
+    margin-bottom: 4px;
 }
 
 /* ==============================================

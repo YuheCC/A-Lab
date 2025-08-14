@@ -27,6 +27,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
+    const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
     const [isLoading, setIsLoading] = useState(false);
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
@@ -56,8 +57,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 raw = original?.raw;
             }
             if (smilesToUse) {
-                const similars = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
-                setSimilarMolecules(similars);
+                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
+                setSimilarMolecules(list);
+                setSimilarRawList(raws);
                 setShowSimilar(true);
             }
         } finally {
@@ -85,7 +87,16 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
     };
 
-    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false) => {
+    const extractFunctionalGroups = (raw?: any, props?: any): string[] => {
+        let fg: any = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS ?? props?.functional_groups ?? props?.FUNCTIONAL_GROUPS;
+        if (Array.isArray(fg)) return fg as string[];
+        if (typeof fg === 'string') {
+            try { return JSON.parse(fg || '[]'); } catch { return []; }
+        }
+        return [];
+    };
+
+    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false, raw?: any) => {
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -155,27 +166,22 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                 </div>
                 
-                {/* 功能组区域：默认折叠，内容按 Ask 字段展示 */}
+                {/* 功能组：默认折叠，字段按 Ask 填充 */}
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
                         onClick={toggleFunctionalGroups}
                     >
-                        <svg className="chevron-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                        <svg className={`chevron-icon ${isFunctionalGroupsExpanded ? 'rotated' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
                         </svg>
                         <span className="functional-groups-title">{t('molecular.molCard.clickToExpand')}</span>
                     </div>
                     {isFunctionalGroupsExpanded && (
-                        <div className="functional-groups-content">
+                        <div className="functional-groups-content-new">
                             <h4>{t('molecular.moleculeModal.functionalGroupsTitle')}</h4>
                             {(() => {
-                                let groups: any[] = [];
-                                const fg = rawOriginal?.functional_groups;
-                                if (Array.isArray(fg)) groups = fg;
-                                else if (typeof fg === 'string') {
-                                    try { groups = JSON.parse(fg || '[]'); } catch { groups = []; }
-                                }
+                                const groups = extractFunctionalGroups(raw, properties);
                                 return groups && groups.length > 0 ? (
                                     <ul className="functional-groups-list">
                                         {groups.map((g: any, idx: number) => (
@@ -261,7 +267,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return { props, smiles: props.smiles, raw: first };
     };
 
-    const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<SimilarMolecule[]> => {
+    const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<{ list: SimilarMolecule[]; raws: any[] }> => {
         const payload: any = {
             smiles,
             use_35m: isHighTier
@@ -297,7 +303,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             name: it?.name || it?.SMILES || 'Unknown',
             properties: mapDetailsToProperties(it)
         }));
-        return mapped;
+        return { list: mapped, raws: items };
     };
 
     // 仅加载原始分子详情；相似分子改为点击后再请求
@@ -312,10 +318,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 setCurrentSmiles(original?.smiles);
                 setRawOriginal(original?.raw);
                 setSimilarMolecules([]);
+                setSimilarRawList([]);
                 setShowSimilar(false);
             } catch (err) {
                 if (!isCancelled) {
                     setSimilarMolecules([]);
+                    setSimilarRawList([]);
                 }
             } finally {
                 if (!isCancelled) setIsLoading(false);
@@ -344,7 +352,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
                             <h3 className="section-title">{t('molecular.moleculeModal.original')}</h3>
-                            {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true)}
+                            {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
@@ -357,7 +365,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties)}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index])}
                                     </div>
                                 ))}
                             </div>
