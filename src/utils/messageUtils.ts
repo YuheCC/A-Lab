@@ -19,6 +19,26 @@ export interface Message {
 }
 
 /**
+ * 规范化后端时间字符串到 Date（默认无时区按 UTC 处理）
+ */
+export const normalizeServerDate = (input?: string | Date): Date => {
+  if (!input) return new Date();
+  if (input instanceof Date) return new Date(input);
+  const trimmed = String(input).trim();
+  const hasTimezone = /[zZ]$|[+-]\d{2}:\d{2}$/.test(trimmed);
+  const normalized = hasTimezone ? trimmed : (trimmed.endsWith('Z') ? trimmed : trimmed + 'Z');
+  const parsed = new Date(normalized);
+  return isNaN(parsed.getTime()) ? new Date(trimmed) : parsed;
+};
+
+/**
+ * 规范化后端时间字符串到 ISO 字符串（默认无时区按 UTC 处理）
+ */
+export const normalizeServerDateToISOString = (input?: string | Date): string => {
+  return normalizeServerDate(input).toISOString();
+};
+
+/**
  * 获取消息角色（支持role和type字段，优先使用role）
  * @param message 消息对象
  * @returns 消息角色：'system' | 'user' | 'assistant'

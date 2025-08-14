@@ -9,7 +9,8 @@ import {
   getMessageRole, 
   isUserMessage, 
   isAssistantMessage, 
-  isSystemMessage 
+  isSystemMessage,
+  normalizeServerDate
 } from '@/utils/messageUtils';
 
 // 使用共享的Message类型，这里不需要重复定义
@@ -141,8 +142,8 @@ const MessageList: FC<MessageListProps> = ({
       const msg = resolvedMessages[i] as Message & { created_at?: string };
       if (isAssistantMessage(msg) && (!msg.content || String(msg.content).trim() === '')) {
         const createdAt: Date = msg.timestamp
-          ? new Date(msg.timestamp)
-          : (msg.created_at ? new Date(msg.created_at) : new Date());
+          ? normalizeServerDate(msg.timestamp as any)
+          : (msg.created_at ? normalizeServerDate(msg.created_at) : new Date());
         return { id: msg.id, createdAt };
       }
     }
