@@ -181,21 +181,21 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     const propGroups = [
       { label: 'SMILES', value: moleculeData.SMILES, span: 2 },
       { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol' },
-      { label: 'UMAP X', value: moleculeData.UMAP_0?.toFixed(2) },
-      { label: 'UMAP Y', value: moleculeData.UMAP_1?.toFixed(2) },
-      { label: 'HOMO', value: moleculeData.HOMO_eV?.toFixed(2), suffix: ' eV' },
-      { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(2), suffix: ' eV' },
-      { label: 'ESP Max', value: moleculeData.ESP_max_eV?.toFixed(2), suffix: ' eV' },
-      { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(2), suffix: ' eV' },
+      { label: 'UMAP X', value: moleculeData.UMAP_0?.toFixed(4) },
+      { label: 'UMAP Y', value: moleculeData.UMAP_1?.toFixed(4) },
+      { label: 'HOMO', value: moleculeData.HOMO_eV?.toFixed(4), suffix: ' eV' },
+      { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(4), suffix: ' eV' },
+      { label: 'ESP Max', value: moleculeData.ESP_max_eV?.toFixed(4), suffix: ' eV' },
+      { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV' },
     ];
 
     // Add permission-restricted properties
     if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
       propGroups.push(
-        { label: 'Predicted MP', value: moleculeData.predicted_MP_celsius?.toFixed(1), suffix: ' °C' },
-        { label: 'Predicted BP', value: moleculeData.predicted_BP_celsius?.toFixed(1), suffix: ' °C' },
-        { label: 'Predicted FP', value: moleculeData.predicted_FP_celsius?.toFixed(1), suffix: ' °C' },
-        { label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV?.toFixed(2) || '0.00', suffix: ' eV' }
+        { label: 'Predicted MP', value: moleculeData.predicted_MP_celsius?.toFixed(4), suffix: ' °C' },
+        { label: 'Predicted BP', value: moleculeData.predicted_BP_celsius?.toFixed(4), suffix: ' °C' },
+        { label: 'Predicted FP', value: moleculeData.predicted_FP_celsius?.toFixed(4), suffix: ' °C' },
+        { label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV?.toFixed(4) || '0', suffix: ' eV' }
       );
     }
 
