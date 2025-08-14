@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import type { Message } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { createUserMessage, createAssistantMessage } from '@/utils/messageUtils';
+import { useAuthStore } from '@/models/useAuth';
 
 export interface ChatState {
   messages: Message[];
@@ -22,6 +23,8 @@ export const useChat = () => {
     sessionId: undefined,
     socketId: undefined
   });
+
+  const userPermissions = useAuthStore(state => state.userPermissions);
 
   const setSocketId = useCallback((socketId: string | undefined) => {
     setState(prev => ({ ...prev, socketId }));
@@ -191,6 +194,10 @@ export const useChat = () => {
     }));
   }, []);
 
+  const isAdvancedTier = useMemo(() => ['admin', 'enterprise', 'joint'].includes(userPermissions || ''), [userPermissions]  );
+  const ragModel = useMemo(() => isAdvancedTier ? 'o3' : 'o4-mini', [isAdvancedTier]);
+  const ragResultsCount = useMemo(() => isAdvancedTier ? 10 : 3, [isAdvancedTier]);
+
   // 发送消息函数，使用全局WebSocket连接
   const sendMessage = useCallback((message: string, mode: 'regular' | 'deep-space' = 'regular', extra?: Record<string, any>) => {
     console.log('sendMessage: 发送消息', { message, mode, socketSessionId: state.sessionId, chatId: state.currentChatId });
@@ -269,6 +276,9 @@ export const useChat = () => {
     renameChat,
     togglePinChat,
     sendMessage,
-    isWebSocketConnected
+    isWebSocketConnected,
+    ragModel,
+    ragResultsCount,
+    isAdvancedTier
   };
 };

@@ -122,6 +122,19 @@ const MessageList: FC<MessageListProps> = ({
   // 取上下文消息源
   const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
 
+  // 计算最后一条用户消息与最后一条助手消息的 id
+  const { lastUserId, lastAssistantId } = useMemo(() => {
+    let u: string | null = null;
+    let a: string | null = null;
+    for (let i = resolvedMessages.length - 1; i >= 0; i--) {
+      const m = resolvedMessages[i] as Message;
+      if (!u && isUserMessage(m)) u = m.id;
+      if (!a && isAssistantMessage(m)) a = m.id;
+      if (u && a) break;
+    }
+    return { lastUserId: u, lastAssistantId: a };
+  }, [resolvedMessages]);
+
   // 思考中：仅针对最后一条助手消息且内容为空
   const thinkingTarget = useMemo(() => {
     for (let i = resolvedMessages.length - 1; i >= 0; i--) {
@@ -279,8 +292,8 @@ const MessageList: FC<MessageListProps> = ({
           )}
         </button>
 
-        {/* 编辑按钮 - 只有用户消息才显示 */}
-        {isUserMessage(message) && (
+        {/* 编辑按钮 - 仅最后一条用户消息显示 */}
+        {isUserMessage(message) && lastUserId === message.id && (
           <button
             className="edit-btn"
             onClick={() => handleStartEdit(message.id)}
@@ -292,8 +305,8 @@ const MessageList: FC<MessageListProps> = ({
           </button>
         )}
 
-        {/* 重新生成按钮 - 只有最新回复才显示 */}
-        {message.showRegenerate && (
+        {/* 重新生成按钮 - 仅最后一条助手消息显示 */}
+        {isAssistantMessage(message) && lastAssistantId === message.id && message.showRegenerate && (
           <button
             className="action-btn regenerate-btn"
             onClick={() => handleRegenerate(message.id)}

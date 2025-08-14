@@ -82,6 +82,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         renameChat,
         togglePinChat,
         sendMessage,
+        ragModel,
+        ragResultsCount,
+        isAdvancedTier
     } = useChat();
 
     const {
@@ -231,7 +234,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const sid = (socketId || (info?.socketId as string) || '') as string;
 
         const chatData = await chatService.createChat(message);
-        const messageData = await chatService.createNewMessage(chatData?.id, message);
+        const messageData = await chatService.createNewMessage(chatData?.id, message, ragModel);
         const answerData = messageData?.answer || {};
         if(answerData?.id){
             addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
@@ -248,7 +251,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[]) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
-        const messageData = await chatService.createNewMessage(chatId, message);
+        const messageData = await chatService.createNewMessage(chatId, message, ragModel);
         const answerData = messageData?.answer || {};
         if(answerData?.id){
             addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
