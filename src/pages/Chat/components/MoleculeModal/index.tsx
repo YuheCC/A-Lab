@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
+import { FavoriteContext } from '@/layouts';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -38,8 +39,38 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         onClose?.();
     };
 
-    const handleAddToFavorites = (name: string) => {
-        onAddToFavorites?.(name);
+    const favoriteCtx = useContext(FavoriteContext);
+    const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
+        // 构建与 Ask/Favorites 一致的数据结构
+        const smiles = raw?.SMILES || raw?.smiles || (props as MoleculeProperties | undefined)?.smiles;
+        const properties = raw || {};
+        const mappedNode = {
+            smiles,
+            properties: {
+                molwt: properties?.molecular_weight ?? properties?.molecularWeight ?? null,
+                homo_eV: properties?.HOMO_eV ?? properties?.HOMO ?? properties?.homo ?? null,
+                lumo_eV: properties?.LUMO_eV ?? properties?.LUMO ?? properties?.lumo ?? null,
+                esp_min_eV: properties?.ESP_min_eV ?? properties?.ESP_MIN ?? null,
+                esp_max_eV: properties?.ESP_max_eV ?? properties?.ESP_MAX ?? null,
+                predicted_mp: properties?.predicted_MP_celsius ?? properties?.predicted_mp_celsius ?? properties?.predicted_MP ?? properties?.predicted_mp ?? null,
+                predicted_bp: properties?.predicted_BP_celsius ?? properties?.predicted_bp_celsius ?? properties?.predicted_BP ?? properties?.predicted_bp ?? null,
+                predicted_fp_celsius: properties?.PREDICTED_FP_CELSIUS ?? properties?.predicted_FP_celsius ?? properties?.predicted_fp_celsius ?? null,
+                predicted_fp: properties?.predicted_fp_celsius ?? properties?.predicted_fp ?? null,
+                combustion_enthalpy_ev: properties?.combustion_enthalpy_ev ?? properties?.combustion_enthalpy ?? null,
+                commercial_score: properties?.commercial_score ?? properties?.COMMERCIAL_SCORE ?? null,
+                commercial_link: properties?.commercial_link ?? properties?.COMMERCIAL_LINK ?? null,
+                functional_groups: properties?.functional_groups ?? null,
+            },
+            x: properties?.x ?? null,
+            y: properties?.y ?? null,
+        };
+
+        if (onAddToFavorites) {
+            // 兼容旧用法：若父级传入，则回调 name；否则用全局收藏
+            onAddToFavorites(smiles);
+            return;
+        }
+        favoriteCtx?.handleAddToFavorites?.(mappedNode);
     };
 
     const handleFindSimilar = async (name: string) => {
@@ -105,12 +136,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         className="molecule-card-favorite-btn" 
                         onClick={(e) => {
                             e.stopPropagation();
-                            handleAddToFavorites(name);
+                            handleAddToFavoritesByRaw(raw, properties);
                         }} 
                         title={t('molecular.nodePopup.addToFavorites')}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
+                        <svg t="1755154990581" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M912 208H427.872l-50.368-94.176A63.936 63.936 0 0 0 321.056 80H112c-35.296 0-64 28.704-64 64v736c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-608c0-35.296-28.704-64-64-64z m-800-64h209.056l68.448 128H912v97.984c-0.416 0-0.8-0.128-1.216-0.128H113.248c-0.416 0-0.8 0.128-1.248 0.128V144z m0 736v-96l1.248-350.144 798.752 1.216V784h0.064v96H112z" fill="#020202"></path>
                         </svg>
                     </button>
                 </div>
