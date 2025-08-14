@@ -24,6 +24,8 @@ export default {
     salt: 'Salt',
     solvent: 'Primary Solvent',
     performanceMetric: 'Desired Performance Metric',
+    extraRequests: 'Extra requests',
+    extraRequestsPlaceholder: 'Any additional requests for the LLM',
     custom: 'Custom',
     upgradeEnterprise: 'Upgrade to an enterprise-tier account',
     upgradeAccount: 'Upgrade your account',

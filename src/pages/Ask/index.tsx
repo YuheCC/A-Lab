@@ -1399,19 +1399,21 @@ const handleFindSimilarMolecules = async (details) => {
                         <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
                         {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
                       </div>
-                      <select
-                        value={molTypeSelections[details.SMILES] || ""}
-                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                      >
-                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                      </select>
                     </div>
                     {showAdvancedOptions && (
                       <div style={{ width: '100%', marginTop: '8px' }}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <select
+                            value={molTypeSelections[details.SMILES] || ""}
+                            onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                            style={{ backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                          >
+                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                          </select>
+                        </div>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                           <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
                           <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
