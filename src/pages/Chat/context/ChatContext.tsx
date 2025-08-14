@@ -9,7 +9,7 @@ import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
 
-type ChatMode = 'regular' | 'deep-space';
+type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
 interface ChatContextType {
     messages: Message[];
@@ -229,7 +229,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const createNewChat = useCallback(async (message: string) => {
+    const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: string, historyMessages: Message[], answerId: string) => {
+        if(mode === 'regular'){
+            await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId);
+        }else if(mode === 'deep-space'){
+            await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId);
+        }else if(mode === 'clarify'){
+            await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId);
+        }
+    }, []);
+
+    const createNewChat = useCallback(async (message: string, mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
 
@@ -239,16 +249,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
         }
-        await chatService.triggerMessageAsUser(
+        await triggerMessageByMode(
+            sid,
+            mode,
             chatData?.id,
+            [{ role: 'user', content: message, id: messageData?.id }],
             answerData?.id,
-            [{ role: 'user', content: message }],
-            sid
         );
         return chatData?.id;
     }, [socketId]);
 
-    const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[]) => {
+    const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[], mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
         const messageData = await chatService.createNewMessage(chatId, message, ragModel);
@@ -256,11 +267,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
         }
-        await chatService.triggerMessageAsUser(
+        await triggerMessageByMode(
+            sid,
+            mode,
             chatId,
-            answerData?.id,
             historyMessages,
-            sid
+            answerData?.id,
         );
         return messageData?.id;
     }, [socketId]);
@@ -272,9 +284,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
-            createNewMessage(message, chatId, historyWithNew);
+            createNewMessage(message, chatId, historyWithNew, mode);
         } else {
-            const newChatId = await createNewChat(message);
+            const newChatId = await createNewChat(message, mode);
             navigate(`/chat/${newChatId}`);
         }
     }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);

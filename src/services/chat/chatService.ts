@@ -33,6 +33,15 @@ export class ChatService {
     return ChatService.instance;
   }
 
+  private normalizeServerDate(input?: string): Date {
+    if (!input) return new Date();
+    const trimmed = String(input).trim();
+    const hasTimezone = /[zZ]$|[+-]\d{2}:\d{2}$/.test(trimmed);
+    const normalized = hasTimezone ? trimmed : (trimmed.endsWith('Z') ? trimmed : trimmed + 'Z');
+    const parsed = new Date(normalized);
+    return isNaN(parsed.getTime()) ? new Date(trimmed) : parsed;
+  }
+
   async sendMessage(message: string, mode: 'regular' | 'deep-space' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
       const resp = await request('/chat/send', {
@@ -142,7 +151,7 @@ export class ChatService {
         ...item,
         chatId: item.id,
         title: item.session_name,
-        timestamp: new Date(item.updated_at),
+        timestamp: this.normalizeServerDate(item.updated_at),
         isPinned: true,
         updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
@@ -169,7 +178,7 @@ export class ChatService {
         ...item,
         chatId: item.id,
         title: item.session_name,
-        timestamp: new Date(item.updated_at),
+        timestamp: this.normalizeServerDate(item.updated_at),
         isPinned: item.pinned,
         updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
@@ -323,6 +332,52 @@ export class ChatService {
     }
   }
 
+  async triggerMessageAsDeepSpace(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+    try {
+      const resp = await request('/api/llm/multi-agent', {
+        method: 'POST',
+        data: { 
+          chat_id: chatId, 
+          answer_id: answerId,
+          messages, 
+          session_id: sessionId,
+          model,
+          ragEnabled: false,
+          webSearchEnabled: false,
+          webSearchClient: "Tavily",
+        },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to trigger message as deep space:', error);
+      return '';
+    }
+  }
+
+  async triggerMessageAsClarify(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+    try {
+      const resp = await request('/api/llm/multi-agent/clarify', {
+        method: 'POST',
+        data: { 
+          chat_id: chatId, 
+          answer_id: answerId,
+          messages, 
+          session_id: sessionId,
+          model,
+          ragEnabled: false,
+          webSearchEnabled: false,
+          webSearchClient: "Tavily",
+        },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to trigger message as claritai:', error);
+      return '';
+    }
+  }
+
   async saveChat(chatId: string, title: string, messages: Message[]): Promise<boolean> {
     try {
       const resp = await request('/chat/save', {
@@ -365,7 +420,7 @@ export class ChatService {
         ...item,
         chatId: item.id,
         title: item.session_name,
-        timestamp: new Date(item.updated_at),
+        timestamp: this.normalizeServerDate(item.updated_at),
         isPinned: !!item.pinned,
         updatedAt: item.updated_at,
       })) || [];

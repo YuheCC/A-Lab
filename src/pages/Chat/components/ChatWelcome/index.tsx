@@ -6,7 +6,7 @@ import { useChatContext } from '../../context/ChatContext';
 
 // 推荐问题数据将从多语言配置中获取
 
-type ChatMode = 'regular' | 'deep-space';
+type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
@@ -28,7 +28,7 @@ const ChatWelcome: React.FC = () => {
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
-        handleSendMessage(inputValue.trim(), currentMode);
+        handleSendMessage(inputValue.trim(), (currentMode === "deep-space" ? "clarify" : currentMode) as ChatMode);
         setInputValue('');
     }, [inputValue, currentMode, handleSendMessage]);
 

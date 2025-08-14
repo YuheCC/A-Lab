@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-export type ChatMode = 'regular' | 'deep-space';
+export type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
 export interface HeartbeatOptions {
   intervalMs?: number;

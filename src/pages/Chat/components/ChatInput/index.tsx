@@ -5,7 +5,7 @@ import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space';
+type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
 interface ChatInputProps {
   placeholder?: string;
@@ -19,7 +19,7 @@ const ChatInput: FC<ChatInputProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
-  const { handleSendMessage, currentChatId } = useChatContext();
+  const { handleSendMessage, currentChatId, messages } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
@@ -61,8 +61,11 @@ const ChatInput: FC<ChatInputProps> = ({
       if (currentMode === 'deep-space') {
         extraPayload.dump_state = !!fullDeepSpace;
       }
-
-      handleSendMessage(inputValue.trim(), currentMode, currentChatId, extraPayload);
+      let mode: ChatMode = currentMode;
+      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].role === 'assistant' && messages[messages.length - 1].msg_type === 'multi-agent-clarify '){
+        mode = 'clarify';
+      }
+      handleSendMessage(inputValue.trim(), mode, currentChatId, extraPayload);
       setInputValue('');
     }
   };
