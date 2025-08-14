@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { moleculeService, type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
+import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
+import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
+import { useAuthStore } from '@/models/useAuth';
+import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -18,11 +21,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     onUpdateMoleculeType
 }) => {
     const { t } = useTranslation();
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
+    const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
     const [isLoading, setIsLoading] = useState(false);
+    const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
+    const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
+    const [showSimilar, setShowSimilar] = useState(false);
 
     const handleClose = () => {
         onClose?.();
@@ -32,8 +41,28 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         onAddToFavorites?.(name);
     };
 
-    const handleFindSimilar = (name: string) => {
+    const handleFindSimilar = async (name: string) => {
         onFindSimilar?.(name);
+        try {
+            setIsLoading(true);
+            let smilesToUse = currentSmiles;
+            let raw = rawOriginal;
+            if (!smilesToUse) {
+                const original = await fetchOriginalDetails(name);
+                setOriginalMoleculeProps(original?.props);
+                setCurrentSmiles(original?.smiles);
+                setRawOriginal(original?.raw);
+                smilesToUse = original?.smiles;
+                raw = original?.raw;
+            }
+            if (smilesToUse) {
+                const similars = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
+                setSimilarMolecules(similars);
+                setShowSimilar(true);
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -46,37 +75,13 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         setIsFunctionalGroupsExpanded(!isFunctionalGroupsExpanded);
     };
 
-    const renderMoleculeStructure = (name: string) => {
-        return (
-            <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <style>
-                        {`
-                            .atom { font-family: Arial, sans-serif; font-weight: bold; }
-                            .carbon { fill: #000; font-size: 14px; }
-                            .oxygen { fill: #ff0000; font-size: 14px; }
-                            .fluorine { fill: #00ff00; font-size: 14px; }
-                            .nitrogen { fill: #0000ff; font-size: 14px; }
-                            .hydrogen { fill: #666; font-size: 12px; }
-                            .bond { stroke: #000; stroke-width: 2; fill: none; }
-                            .double-bond { stroke: #000; stroke-width: 3; fill: none; }
-                            .ring { stroke: #000; stroke-width: 2; fill: none; }
-                        `}
-                    </style>
-                </defs>
-                
-                {/* 根据分子名称显示不同的结构图 */}
-                <text x="100" y="60" className="atom carbon">C</text>
-                <text x="80" y="70" className="atom hydrogen">H</text>
-                <text x="120" y="70" className="atom hydrogen">H</text>
-                <text x="100" y="80" className="atom hydrogen">H</text>
-                <text x="100" y="90" className="atom hydrogen">H</text>
-                {/* 键 */}
-                <path className="bond" d="M100,60 L80,70"></path>
-                <path className="bond" d="M100,60 L120,70"></path>
-                <path className="bond" d="M100,60 L100,80"></path>
-                <path className="bond" d="M100,60 L100,90"></path>
-            </svg>
+    const renderMoleculeStructure = (smiles?: string) => {
+        return smiles ? (
+            <MolViewer2D smile={smiles} width={200} height={200} />
+        ) : (
+            <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {t('molecular.molCard.loading')}
+            </div>
         );
     };
 
@@ -100,7 +105,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">
-                        {renderMoleculeStructure(name)}
+                        {renderMoleculeStructure((properties as MoleculeProperties).smiles)}
                     </div>
                 </div>
                 <div className="molecule-card-properties">
@@ -150,7 +155,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                 </div>
                 
-                {/* 可展开/收起的功能组信息栏 */}
+                {/* 功能组区域：默认折叠，内容按 Ask 字段展示 */}
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
@@ -164,7 +169,23 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     {isFunctionalGroupsExpanded && (
                         <div className="functional-groups-content">
                             <h4>{t('molecular.moleculeModal.functionalGroupsTitle')}</h4>
-                            <p>{t('molecular.moleculeModal.functionalGroupList')}</p>
+                            {(() => {
+                                let groups: any[] = [];
+                                const fg = rawOriginal?.functional_groups;
+                                if (Array.isArray(fg)) groups = fg;
+                                else if (typeof fg === 'string') {
+                                    try { groups = JSON.parse(fg || '[]'); } catch { groups = []; }
+                                }
+                                return groups && groups.length > 0 ? (
+                                    <ul className="functional-groups-list">
+                                        {groups.map((g: any, idx: number) => (
+                                            <li key={idx}>{String(g)}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>{t('molecular.molCard.notAvailable')}</p>
+                                );
+                            })()}
                         </div>
                     )}
                 </div>
@@ -196,20 +217,102 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
     };
 
-    // 加载原始与相似分子数据（接口优先，失败走mock）
+    // 将后端字段映射到面板展示字段
+    const mapDetailsToProperties = (raw: any): MoleculeProperties => {
+        const smiles = raw?.SMILES || raw?.smiles || '';
+        const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
+        const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
+        const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
+        const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
+        const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+        const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;
+        const lumo = raw?.LUMO_eV ?? raw?.LUMO ?? raw?.lumo;
+        const espMax = raw?.ESP_max_eV ?? raw?.ESP_MAX ?? raw?.espMax;
+        const espMin = raw?.ESP_min_eV ?? raw?.ESP_MIN ?? raw?.espMin;
+        const commercialScore = raw?.commercial_score ?? raw?.COMMERCIAL_SCORE;
+        const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
+
+        return {
+            smiles,
+            molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
+            meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
+            boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
+            flashPoint: predictedFp != null ? `${predictedFp} °C` : undefined,
+            combustionEnthalpy: combustionEnthalpy != null ? String(combustionEnthalpy) : undefined,
+            homo: homo != null ? String(homo) : undefined,
+            lumo: lumo != null ? String(lumo) : undefined,
+            espMax: espMax != null ? String(espMax) : undefined,
+            espMin: espMin != null ? String(espMin) : undefined,
+            commercialViability
+        };
+    };
+
+    const fetchOriginalDetails = async (name: string): Promise<{ props?: MoleculeProperties; smiles?: string; raw?: any; }> => {
+        let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(name)}`;
+        if (isHighTier) {
+            queryUrl += '&query_type=molecule&use_35m=true';
+        }
+        const resp = await authFetch(queryUrl, { method: 'GET' });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
+        const list = Array.isArray(data?.molecule_details) ? data.molecule_details : [];
+        const first = list[0] || {};
+        const props = mapDetailsToProperties(first);
+        return { props, smiles: props.smiles, raw: first };
+    };
+
+    const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<SimilarMolecule[]> => {
+        const payload: any = {
+            smiles,
+            use_35m: isHighTier
+        };
+        if (molType && molType !== 'all') {
+            payload.mol_type = molType;
+        }
+        if (isHighTier && rawOriginal) {
+            const selectedMoleculeStr = [
+                `Name: ${rawOriginal?.name || 'N/A'}`,
+                `SMILES: ${rawOriginal?.SMILES || smiles}`,
+                `Molecular weight: ${rawOriginal?.molecular_weight ?? 'N/A'}`,
+                `HOMO eV: ${rawOriginal?.HOMO_eV ?? 'N/A'}`,
+                `LUMO eV: ${rawOriginal?.LUMO_eV ?? 'N/A'}`,
+                `ESP Max: ${rawOriginal?.ESP_max_eV ?? 'N/A'}`,
+                `ESP Min: ${rawOriginal?.ESP_min_eV ?? 'N/A'}`,
+                `Functional groups: ${JSON.stringify(rawOriginal?.functional_groups || [])}`,
+                `Predicted MP: ${rawOriginal?.predicted_MP_celsius ?? 'N/A'} °C`,
+                `Predicted BP: ${rawOriginal?.predicted_BP_celsius ?? 'N/A'} °C`
+            ].join('\n');
+            payload.selected_molecule_str = selectedMoleculeStr;
+        }
+
+        const resp = await authFetch(`${API_URL}/find-friend-with-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data?.detail || 'Failed to find similar molecules');
+        const items = Array.isArray(data?.similar_molecules) ? data.similar_molecules : [];
+        const mapped: SimilarMolecule[] = items.map((it: any) => ({
+            name: it?.name || it?.SMILES || 'Unknown',
+            properties: mapDetailsToProperties(it)
+        }));
+        return mapped;
+    };
+
+    // 仅加载原始分子详情；相似分子改为点击后再请求
     useEffect(() => {
         let isCancelled = false;
         const loadData = async () => {
             setIsLoading(true);
             try {
-                const [original, similars] = await Promise.all([
-                    moleculeService.getMoleculeDetails(moleculeName),
-                    moleculeService.getSimilarMolecules(moleculeName, selectedMoleculeType)
-                ]);
-                if (!isCancelled) {
-                    setOriginalMoleculeProps(original?.properties);
-                    setSimilarMolecules(similars);
-                }
+                const original = await fetchOriginalDetails(moleculeName);
+                if (isCancelled) return;
+                setOriginalMoleculeProps(original?.props);
+                setCurrentSmiles(original?.smiles);
+                setRawOriginal(original?.raw);
+                setSimilarMolecules([]);
+                setShowSimilar(false);
             } catch (err) {
                 if (!isCancelled) {
                     setSimilarMolecules([]);
@@ -220,7 +323,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         };
         loadData();
         return () => { isCancelled = true; };
-    }, [moleculeName, selectedMoleculeType]);
+    }, [moleculeName]);
 
     const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
@@ -243,22 +346,24 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <h3 className="section-title">{t('molecular.moleculeModal.original')}</h3>
                             {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true)}
                         </div>
-                        <div className="similar-molecules-section">
-                            <h3 className="section-title">{similarCountText}</h3>
-                            {isLoading ? (
-                                <div className="similar-molecules-grid">
-                                    {t('molecular.molCard.loading')}
-                                </div>
-                            ) : (
-                                <div className="similar-molecules-grid">
-                                    {similarMolecules.map((molecule, index) => (
-                                        <div key={index}>
-                                            {renderMoleculeCard(molecule.name, molecule.properties)}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                {showSimilar && (
+                    <div className="similar-molecules-section">
+                        <h3 className="section-title">{similarCountText}</h3>
+                        {isLoading ? (
+                            <div className="similar-molecules-grid">
+                                {t('molecular.molCard.loading')}
+                            </div>
+                        ) : (
+                            <div className="similar-molecules-grid">
+                                {similarMolecules.map((molecule, index) => (
+                                    <div key={index}>
+                                        {renderMoleculeCard(molecule.name, molecule.properties)}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                     </div>
                 </div>
             </div>
