@@ -76,16 +76,24 @@ export const useChat = () => {
     setState(prev => ({ ...prev, isLoading: loading }));
   }, []);
 
-  const addUserMessage = useCallback((content: string) => {
-    const userMessage = createUserMessage(content);
+  const addUserMessage = useCallback((content: string | Message) => {
+    const userMessage = typeof content === 'string' ? createUserMessage(content) : content;
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, userMessage]
     }));
   }, []);
 
-  const addBotMessage = useCallback((content: string, showRegenerate: boolean = true) => {
-    const botMessage = createAssistantMessage(content, undefined, showRegenerate);
+  const addBotMessage = useCallback((content: string | Message, showRegenerate: boolean = true, id?: string) => {
+    const botMessage: Message = typeof content === 'string'
+      ? createAssistantMessage(content, id, showRegenerate)
+      : ({
+          ...content,
+          id: (content as Message).id || (id || `assistant-${Date.now()}`),
+          role: (content as Message).role || 'assistant',
+          showRegenerate: (content as Message).showRegenerate ?? showRegenerate,
+          timestamp: (content as Message).timestamp || new Date()
+        } as Message);
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, botMessage]

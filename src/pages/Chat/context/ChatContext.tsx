@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Message } from '@/utils/messageUtils';
-import { createAssistantMessage, isAssistantMessage } from '@/utils/messageUtils';
+import { createAssistantMessage, isAssistantMessage, createUserMessage } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
@@ -97,7 +97,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const loadMoreGateTsRef = useRef<number>(0);
 
     const [wsConnected, setWsConnected] = useState(false);
-    const currentBotMessageRef = useRef<string>('');
+    // 分消息ID缓存分片，避免串流到错误消息
+    const botChunksRef = useRef<Record<string, string>>({});
 
     useEffect(() => {
         const initChatHistory = async () => {
@@ -174,56 +175,34 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return;
             }
 
-            // 流式片段或完整答案
-            const messageId = data?.message_id ?? messageBody?.message_id;
+            // 流式片段或完整答案（必须存在 message_id 才处理）
+            // 兼容不同字段名: message_id | id
+            const messageId = data?.message_id ?? messageBody?.message_id ?? data?.id ?? messageBody?.id;
             const chunk = messageBody?.chunk ?? messageBody?.answer ?? messageBody?.content ?? messageBody;
             const isChunk = Boolean(messageBody?.chunk || messageBody?.content || typeof chunk === 'string');
             const isDone = Boolean(messageBody?.finished || messageBody?.type === 'done');
 
-            if (isChunk && chunk) {
-                currentBotMessageRef.current += String(chunk);
-                const targetId = messageId ? `assistant-${messageId}` : `bot-${Date.now()}`;
-                const updatedMessage = createAssistantMessage(currentBotMessageRef.current, targetId, true);
+            if (isChunk && chunk && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                botChunksRef.current[key] = (botChunksRef.current[key] || '') + String(chunk);
+                const targetId = `assistant-${key}`;
+                const updatedMessage = createAssistantMessage(botChunksRef.current[key], targetId, true);
 
                 const newMessages = [...messages];
-                // 优先按 message_id 寻找已存在的助手消息
-                let targetIndex = -1;
-                if (messageId !== undefined) {
-                    targetIndex = newMessages.findIndex((msg: Message) => isAssistantMessage(msg) && String(msg.id) === `assistant-${messageId}`);
-                }
-                // 回退使用最后一条助手消息
-                if (targetIndex === -1) {
-                    targetIndex = newMessages.findLastIndex((msg: Message) => isAssistantMessage(msg));
-                }
+                const targetIndex = newMessages.findIndex((msg: Message) => isAssistantMessage(msg) && (String(msg.id) === targetId || String(msg.id) === key));
                 if (targetIndex !== -1) {
                     newMessages[targetIndex] = updatedMessage;
                 } else {
                     newMessages.push(updatedMessage);
                 }
-
-                // 将所有助手消息按 message_id 升序重排，保留非助手消息相对位置
-                const assistantSorted = newMessages
-                    .filter((m: Message) => isAssistantMessage(m))
-                    .sort((a: Message, b: Message) => {
-                        const aNum = Number(String(a.id).split('assistant-')[1]) || Number.MAX_SAFE_INTEGER;
-                        const bNum = Number(String(b.id).split('assistant-')[1]) || Number.MAX_SAFE_INTEGER;
-                        return aNum - bNum;
-                    });
-                const merged: Message[] = [];
-                let aiPtr = 0;
-                for (const m of newMessages) {
-                    if (isAssistantMessage(m)) {
-                        merged.push(assistantSorted[aiPtr++] || m);
-                    } else {
-                        merged.push(m);
-                    }
-                }
-                setMessages(merged);
+                setMessages(newMessages);
             }
 
             if (isDone) {
                 setIsLoading(false);
-                currentBotMessageRef.current = '';
+                if (messageId !== undefined && messageId !== null) {
+                    delete botChunksRef.current[String(messageId)];
+                }
             }
         });
 
@@ -254,6 +233,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const chatData = await chatService.createChat(message);
         const messageData = await chatService.createNewMessage(chatData?.id, message);
         const answerData = messageData?.answer || {};
+        if(answerData?.id){
+            addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
+        }
         await chatService.triggerMessageAsUser(
             chatData?.id,
             answerData?.id,
@@ -268,6 +250,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const sid = (socketId || (info?.socketId as string) || '') as string;
         const messageData = await chatService.createNewMessage(chatId, message);
         const answerData = messageData?.answer || {};
+        if(answerData?.id){
+            addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
+        }
         await chatService.triggerMessageAsUser(
             chatId,
             answerData?.id,
@@ -278,20 +263,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [socketId]);
 
     const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => {
+        // 先本地显示用户消息
+        const userMsg = createUserMessage(message);
+        addUserMessage(userMsg);
+
         if (chatId) {
-            createNewMessage(message, chatId, messages);
-        }else{
-            const chatId = await createNewChat(message);
-            navigate(`/chat/${chatId}`);
+            // 将包含新用户消息的历史传递给后端
+            const historyWithNew = [...messages, userMsg];
+            createNewMessage(message, chatId, historyWithNew);
+        } else {
+            const newChatId = await createNewChat(message);
+            navigate(`/chat/${newChatId}`);
         }
-        // sessionId 由 socketId 填充，这里不再覆盖
-        addBotMessage('', true);
-        currentBotMessageRef.current = '';
-        const success = sendMessage(message, mode, extra);
-        if (!success) {
-            addBotMessage(t('chatbox.chat.sendFailed'), false);
-        }
-    }, [addBotMessage, sendMessage, t, createNewChat, navigate, setSessionId]);
+    }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
 
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);
