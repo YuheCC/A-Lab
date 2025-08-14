@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
@@ -121,6 +121,47 @@ const MessageList: FC<MessageListProps> = ({
 
   // 取上下文消息源
   const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
+
+  // 思考中：仅针对最后一条助手消息且内容为空
+  const thinkingTarget = useMemo(() => {
+    for (let i = resolvedMessages.length - 1; i >= 0; i--) {
+      const msg = resolvedMessages[i] as Message & { created_at?: string };
+      if (isAssistantMessage(msg) && (!msg.content || String(msg.content).trim() === '')) {
+        const createdAt: Date = msg.timestamp
+          ? new Date(msg.timestamp)
+          : (msg.created_at ? new Date(msg.created_at) : new Date());
+        return { id: msg.id, createdAt };
+      }
+    }
+    return null;
+  }, [resolvedMessages]);
+
+  // 已等待时长（秒）
+  const [thinkingElapsed, setThinkingElapsed] = useState<number>(0);
+
+  useEffect(() => {
+    if (!thinkingTarget) {
+      setThinkingElapsed(0);
+      return;
+    }
+    const computeElapsed = () => {
+      const now = Date.now();
+      const elapsedSec = Math.max(0, Math.floor((now - thinkingTarget.createdAt.getTime()) / 1000));
+      setThinkingElapsed(elapsedSec);
+    };
+    computeElapsed();
+    const timer = setInterval(computeElapsed, 1000);
+    return () => clearInterval(timer);
+  }, [thinkingTarget]);
+
+  const thinkingElapsedLabel = useMemo(() => {
+    const minutes = Math.floor(thinkingElapsed / 60);
+    const seconds = thinkingElapsed % 60;
+    if (minutes <= 0) {
+      return t('chatbox.status.thinkingForSeconds', { seconds: thinkingElapsed });
+    }
+    return t('chatbox.status.thinkingForMinutesAndSeconds', { minutes, seconds });
+  }, [thinkingElapsed, t]);
 
   // 计算某条助手消息对应的上一条用户消息内容
   const getPrevUserContent = (target: Message): string => {
@@ -331,9 +372,18 @@ const MessageList: FC<MessageListProps> = ({
       // system消息按assistant样式展示
       return (
         <div key={message.id} className="message-wrapper bot">
-          <div className="message">
-            <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
-          </div>
+          {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
+            <div className="message">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span>{t('chatbox.status.thinking') || '思考中'}</span>
+                <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="message">
+              <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+            </div>
+          )}
           {renderMessageActions(message)}
         </div>
       );
