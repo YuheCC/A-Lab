@@ -24,6 +24,8 @@ export default {
     salt: '염',
     solvent: '주요 용매',
     performanceMetric: '원하는 성능 지표',
+    extraRequests: '추가 요청',
+    extraRequestsPlaceholder: 'LLM에 대한 추가 요청',
     custom: '사용자 정의',
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',

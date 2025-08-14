@@ -24,6 +24,8 @@ export default {
     salt: '塩',
     solvent: '主要溶媒',
     performanceMetric: '望ましい性能指標',
+    extraRequests: '追加のリクエスト',
+    extraRequestsPlaceholder: 'LLMへのその他のリクエスト',
     custom: 'カスタム',
     upgradeEnterprise: 'エンタープライズアカウントにアップグレード',
     upgradeAccount: 'アカウントをアップグレード',

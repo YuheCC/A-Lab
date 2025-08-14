@@ -11,7 +11,8 @@ import { ExternalLink, Info, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip } from "@mui/material";
+import { Tooltip, IconButton } from "@mui/material";
+import './index.css';
 
 const API_URL = getAPIUrl();
 
@@ -21,6 +22,8 @@ interface MoleculeData {
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -55,6 +58,8 @@ interface SimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
 }
 
 const SearchPage = () => {
@@ -77,9 +82,11 @@ const SearchPage = () => {
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
     const [selectedMolType, setSelectedMolType] = useState("");
+    const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -186,6 +193,8 @@ const SearchPage = () => {
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image, // Add image to the molecule data
+                            grade: mol.grade,
+                            reasoning: mol.reasoning,
                             properties: {
                                 molwt: mol.molecular_weight,
                                 homo_eV: mol.HOMO_eV,
@@ -291,11 +300,17 @@ const SearchPage = () => {
                     const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
 
                     let computeToSend = computeLevel;
-                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified) {
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
                         setSearchWarning(t('search.computeWarning'));
                         computeToSend = 'Low';
                         setComputeLevel('Low');
                     }
+
+                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+                    const queryString = extraRequests.trim()
+                        ? `${baseQuery} User's additional requests: ${extraRequests.trim()}`
+                        : baseQuery;
+                    const includeQuery = optionsSpecified || extraRequests.trim();
 
                     const payload: any = {
                         smiles: formattedMolecule.smiles.trim(),
@@ -303,8 +318,8 @@ const SearchPage = () => {
                         structure_weight: structureWeight,
                         ...(selectedMolType && { mol_type: selectedMolType }),
                         ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
-                        ...(computeEnabled && optionsSpecified && {
-                            query: buildQueryString(cVal, aVal, sVal, svVal, mVal),
+                        ...(computeEnabled && includeQuery && {
+                            query: queryString,
                             response: "No additional context is available for this query."
                         })
                     };
@@ -358,8 +373,23 @@ const SearchPage = () => {
     return (
         // SEARCH PAGE CONTENT:
         <>
-            <div 
-                className="search-umap-container" 
+            {reasoningText && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button
+                            className="modal-close-button"
+                            onClick={() => setReasoningText(null)}
+                        >
+                            ×
+                        </button>
+                        <pre className="modal-pre">
+                            {reasoningText}
+                        </pre>
+                    </div>
+                </div>
+            )}
+            <div
+                className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
@@ -593,6 +623,24 @@ const SearchPage = () => {
                                             <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
                                         )}
                                     </div>
+                                    <div style={{ marginTop: '8px' }}>
+                                        <label>{t('search.extraRequests')}:</label>
+                                        <textarea
+                                            value={extraRequests}
+                                            onChange={e => setExtraRequests(e.target.value)}
+                                            disabled={!findClosestFriends}
+                                            placeholder={t('search.extraRequestsPlaceholder')}
+                                            style={{
+                                                marginLeft: '8px',
+                                                width: '100%',
+                                                boxSizing: 'border-box',
+                                                backgroundColor: 'white',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '4px',
+                                                padding: '4px'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </label>
@@ -631,6 +679,11 @@ const SearchPage = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
+                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
+                                                            <Info size={18} style={{ margin: 2 }} />
+                                                        </IconButton>
+                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -723,6 +776,11 @@ const SearchPage = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
+                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
+                                                            <Info size={18} style={{ margin: 2 }} />
+                                                        </IconButton>
+                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'

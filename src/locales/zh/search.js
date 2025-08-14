@@ -24,6 +24,8 @@ export default {
     salt: '盐',
     solvent: '主要溶剂',
     performanceMetric: '期望性能指标',
+    extraRequests: '额外请求',
+    extraRequestsPlaceholder: '对LLM的其他要求',
     custom: '自定义',
     upgradeEnterprise: '升级到企业级账户',
     upgradeAccount: '升级账户',
