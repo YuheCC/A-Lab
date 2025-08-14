@@ -334,7 +334,7 @@ export class ChatService {
         method: 'GET',
         params: { 
           search_text: query, 
-          limit: 20,
+          limit: 10,
           pinned: false,
         },
       });

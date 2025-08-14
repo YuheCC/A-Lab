@@ -158,6 +158,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 } catch (e) {}
             }
 
+            // 仅处理当前会话的消息：按 chat_id 过滤
+            const incomingChatId = (data as any)?.chat_id ?? (data as any)?.chatId;
+            // 若无法识别 chat_id 或与当前会话不匹配，则忽略
+            if (!incomingChatId || !currentChatId || String(incomingChatId) !== String(currentChatId)) {
+                return;
+            }
+
             if ((data as any).type === 'chunk' || (data as any).content) {
                 const content = (data as any).content || (data as any).chunk || data;
                 currentBotMessageRef.current += content as string;
@@ -188,7 +195,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             unsubscribeError();
             unsubscribeMessage();
         };
-    }, [setIsLoading, addBotMessage, setMessages, messages, t]);
+    }, [setIsLoading, addBotMessage, setMessages, messages, t, currentChatId]);
 
     const loadChatData = async (chatId: string) => {
         try {
@@ -234,7 +241,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string) => {
         if (chatId) {
-            setSessionId(chatId);
+            createNewMessage(message, chatId, messages);
         }else{
             const chatId = await createNewChat(message);
             navigate(`/chat/${chatId}`);
