@@ -269,7 +269,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
         addUserMessage(userMsg);
-
+        return false;
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];

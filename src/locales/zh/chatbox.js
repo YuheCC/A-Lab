@@ -15,6 +15,8 @@ export default {
         askTitle: "ASK",
         refreshQuestions: "换一换",
         sendMessage: "发送消息",
+        like: "点赞",
+        dislike: "点踩",
         editQuestion: "编辑问题",
         copy: "复制",
         regenerate: "重新生成",

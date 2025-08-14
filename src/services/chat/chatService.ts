@@ -279,6 +279,27 @@ export class ChatService {
     }
   }
 
+  // update a message with a new content
+  async updateMessage(chatId: string, messageId: string, message: string, model: string = 'o3'): Promise<any> {
+    try {
+      const resp = await request('/api/chat/message/update', {
+        method: 'POST',
+        data: { 
+            id: messageId,
+            chat_id: chatId, 
+            model,
+            content: message,
+            role: 'user',
+        },
+      });
+      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
+      return resp.data;
+    } catch (error) {
+      console.error('Failed to update message:', error);
+      return '';
+    }
+  }
+
   async triggerMessageAsUser(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/ask', {

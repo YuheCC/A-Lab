@@ -15,6 +15,8 @@ export default {
         askTitle: "ASK",
         refreshQuestions: "Refresh",
         sendMessage: "Send Message",
+        like: "Like",
+        dislike: "Dislike",
         editQuestion: "Edit Question",
         copy: "Copy",
         regenerate: "Regenerate",
