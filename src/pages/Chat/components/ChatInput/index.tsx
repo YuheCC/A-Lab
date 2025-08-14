@@ -3,6 +3,7 @@ import type { FC, ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
+import { useAuthStore } from '@/models/useAuth';
 
 type ChatMode = 'regular' | 'deep-space';
 
@@ -19,11 +20,17 @@ const ChatInput: FC<ChatInputProps> = ({
 }) => {
   const { t } = useTranslation();
   const { handleSendMessage, currentChatId } = useChatContext();
+  const userPermissions = useAuthStore(state => state.userPermissions);
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
+
+  // 管理员参数（参考 Ask 页）
+  const [ignoreChatHistory, setIgnoreChatHistory] = useState<boolean>(false);
+  const [disableLiteratureSearch, setDisableLiteratureSearch] = useState<boolean>(false);
+  const [fullDeepSpace, setFullDeepSpace] = useState<boolean>(false);
 
   // 更新按钮状态
   React.useEffect(() => {
@@ -46,7 +53,16 @@ const ChatInput: FC<ChatInputProps> = ({
   // 处理发送消息
   const handleSendMessageLocal = () => {
     if (inputValue.trim() && isButtonEnabled) {
-      handleSendMessage(inputValue.trim(), currentMode, currentChatId);
+      // 组装附加参数，透传到后端
+      const extraPayload: Record<string, any> = {
+        ignoreChatHistory,
+        ragEnabled: !disableLiteratureSearch,
+      };
+      if (currentMode === 'deep-space') {
+        extraPayload.dump_state = !!fullDeepSpace;
+      }
+
+      handleSendMessage(inputValue.trim(), currentMode, currentChatId, extraPayload);
       setInputValue('');
     }
   };
@@ -230,6 +246,34 @@ const ChatInput: FC<ChatInputProps> = ({
             </svg>
           </button>
         </div>
+      </div>
+      <div className="chat-input-options" style={{ justifyContent: 'space-between' }}>
+        <label className="option-item">
+          
+        </label>
+        {userPermissions === 'admin' && (
+          <div className="admin-group">
+            <span className="group-title">{t('chatbox.checkboxes.admin')}</span>
+            <label className="option-item">
+              <input
+                type="checkbox"
+                checked={disableLiteratureSearch}
+                onChange={(e) => setDisableLiteratureSearch(e.target.checked)}
+                disabled={disabled}
+              />
+              <span>{t('chatbox.checkboxes.disableLiteratureSearch')}</span>
+            </label>
+            <label className="option-item">
+              <input
+                type="checkbox"
+                checked={fullDeepSpace}
+                onChange={(e) => setFullDeepSpace(e.target.checked)}
+                disabled={disabled || currentMode !== 'deep-space'}
+              />
+              <span>{t('chatbox.checkboxes.fullDeepSpace')}</span>
+            </label>
+          </div>
+        )}
       </div>
     </div>
   );

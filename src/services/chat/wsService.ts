@@ -322,9 +322,10 @@ class GlobalWebSocketManager {
       this.connectionCallbacks.forEach(callback => callback());
     });
 
-    this.socket.on('message', (data: any) => {
-      console.log('全局WebSocket收到 message 事件:', data);
-      this.messageCallbacks.forEach(callback => callback(data));
+    this.socket.on('message', (...args: any[]) => {
+      console.log('全局WebSocket收到 message 事件:', ...args);
+      const payload = args.length > 1 ? args : args[0];
+      this.messageCallbacks.forEach(callback => callback(payload));
     });
 
     this.socket.on('chat_message', (data: any) => {
@@ -332,9 +333,17 @@ class GlobalWebSocketManager {
       this.messageCallbacks.forEach(callback => callback(data));
     });
 
-    this.socket.on('response', (data: any) => {
-      console.log('全局WebSocket收到 response 事件:', data);
-      this.messageCallbacks.forEach(callback => callback(data));
+    this.socket.on('response', (...args: any[]) => {
+      console.log('全局WebSocket收到 response 事件:', ...args);
+      const payload = args.length > 1 ? args : args[0];
+      this.messageCallbacks.forEach(callback => callback(payload));
+    });
+
+    // 兼容后端通过 message("chat-events", payload) 的新格式
+    this.socket.on('chat-events', (...args: any[]) => {
+      console.log('全局WebSocket收到 chat-events 事件:', ...args);
+      const payload = args.length > 1 ? args : args[0];
+      this.messageCallbacks.forEach(callback => callback(payload));
     });
 
     this.socket.on('connect_error', (error: any) => {
@@ -375,7 +384,7 @@ class GlobalWebSocketManager {
   }
 
   // 发送消息
-  sendMessage(data: { message: string; chatId?: string; mode?: string }) {
+  sendMessage(data: { message: string; chatId?: string; mode?: string } & Record<string, any>) {
     if (!this.socket || !this.socket.connected) {
       console.error('WebSocket未连接，无法发送消息');
       return false;

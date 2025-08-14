@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'umi';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Message } from '@/utils/messageUtils';
 import { createAssistantMessage, isAssistantMessage } from '@/utils/messageUtils';
@@ -20,8 +20,8 @@ interface ChatContextType {
     wsConnected: boolean;
     hasMoreHistory: boolean;
     loadingMoreHistory: boolean;
-    handleSendMessage: (message: string, mode: ChatMode, chatId?: string) => void;
-    onSendMessage: (message: string, mode: ChatMode) => void;
+    handleSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
+    onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
     handleEditMessage: (messageId: string, newText: string) => void;
     onEditMessage: (messageId: string, newText: string) => void;
     handleCopyMessage: (content: string) => void;
@@ -151,39 +151,77 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             addBotMessage(errorMessage, false);
         });
 
-        const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
+        const unsubscribeMessage = globalWebSocketManager.onMessage((raw) => {
+            // 新格式可能是 [eventName, payload] 或 payload 直接对象/字符串
+            const normalizePayload = (input: any) => {
+                if (Array.isArray(input) && input.length >= 2 && typeof input[0] === 'string') {
+                    return input[1];
+                }
+                return input;
+            };
+
+            let data: any = normalizePayload(raw);
             if (typeof data === 'string') {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {}
+                try { data = JSON.parse(data); } catch (e) {}
             }
 
-            // 仅处理当前会话的消息：按 chat_id 过滤
-            const incomingChatId = (data as any)?.chat_id ?? (data as any)?.chatId;
-            // 若无法识别 chat_id 或与当前会话不匹配，则忽略
+            // 统一拿 chat_id 与消息体
+            const incomingChatId = data?.chat_id ?? data?.chatId;
+            const messageBody = data?.data ?? data;
+
+            // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || String(incomingChatId) !== String(currentChatId)) {
                 return;
             }
 
-            if ((data as any).type === 'chunk' || (data as any).content) {
-                const content = (data as any).content || (data as any).chunk || data;
-                currentBotMessageRef.current += content as string;
+            // 流式片段或完整答案
+            const messageId = data?.message_id ?? messageBody?.message_id;
+            const chunk = messageBody?.chunk ?? messageBody?.answer ?? messageBody?.content ?? messageBody;
+            const isChunk = Boolean(messageBody?.chunk || messageBody?.content || typeof chunk === 'string');
+            const isDone = Boolean(messageBody?.finished || messageBody?.type === 'done');
 
-                const updatedMessage = createAssistantMessage(
-                    currentBotMessageRef.current,
-                    `bot-${Date.now()}`,
-                    true
-                );
+            if (isChunk && chunk) {
+                currentBotMessageRef.current += String(chunk);
+                const targetId = messageId ? `assistant-${messageId}` : `bot-${Date.now()}`;
+                const updatedMessage = createAssistantMessage(currentBotMessageRef.current, targetId, true);
 
                 const newMessages = [...messages];
-                const lastBotIndex = newMessages.findLastIndex((msg: Message) => isAssistantMessage(msg));
-                if (lastBotIndex !== -1) {
-                    newMessages[lastBotIndex] = updatedMessage;
+                // 优先按 message_id 寻找已存在的助手消息
+                let targetIndex = -1;
+                if (messageId !== undefined) {
+                    targetIndex = newMessages.findIndex((msg: Message) => isAssistantMessage(msg) && String(msg.id) === `assistant-${messageId}`);
                 }
-                setMessages(newMessages);
+                // 回退使用最后一条助手消息
+                if (targetIndex === -1) {
+                    targetIndex = newMessages.findLastIndex((msg: Message) => isAssistantMessage(msg));
+                }
+                if (targetIndex !== -1) {
+                    newMessages[targetIndex] = updatedMessage;
+                } else {
+                    newMessages.push(updatedMessage);
+                }
+
+                // 将所有助手消息按 message_id 升序重排，保留非助手消息相对位置
+                const assistantSorted = newMessages
+                    .filter((m: Message) => isAssistantMessage(m))
+                    .sort((a: Message, b: Message) => {
+                        const aNum = Number(String(a.id).split('assistant-')[1]) || Number.MAX_SAFE_INTEGER;
+                        const bNum = Number(String(b.id).split('assistant-')[1]) || Number.MAX_SAFE_INTEGER;
+                        return aNum - bNum;
+                    });
+                const merged: Message[] = [];
+                let aiPtr = 0;
+                for (const m of newMessages) {
+                    if (isAssistantMessage(m)) {
+                        merged.push(assistantSorted[aiPtr++] || m);
+                    } else {
+                        merged.push(m);
+                    }
+                }
+                setMessages(merged);
             }
 
-            if ((data as any).type === 'done' || (data as any).finished) {
+            if (isDone) {
                 setIsLoading(false);
                 currentBotMessageRef.current = '';
             }
@@ -239,7 +277,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return messageData?.id;
     }, [socketId]);
 
-    const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string) => {
+    const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => {
         if (chatId) {
             createNewMessage(message, chatId, messages);
         }else{
@@ -249,7 +287,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // sessionId 由 socketId 填充，这里不再覆盖
         addBotMessage('', true);
         currentBotMessageRef.current = '';
-        const success = sendMessage(message, mode);
+        const success = sendMessage(message, mode, extra);
         if (!success) {
             addBotMessage(t('chatbox.chat.sendFailed'), false);
         }
@@ -361,7 +399,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasMoreHistory,
         loadingMoreHistory,
         handleSendMessage,
-        onSendMessage: handleSendMessage,
+        onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),
         handleEditMessage,
         onEditMessage: handleEditMessage,
         handleCopyMessage,
