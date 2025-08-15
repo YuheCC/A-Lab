@@ -10,3 +10,7 @@
 /build
 config/config.staging.ts
 .swc
+.cursorrules
+/.cursor/
+.cursor/
+.cursor
