@@ -1269,11 +1269,6 @@ const handleFindSimilarMolecules = async (details: any) => {
                   className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
                   <div className='message-content'>
                     <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
-                    {userPermissions === 'admin' && msg.createdAt && (
-                      <div className="message-timestamp">
-                        {new Date(msg.createdAt).toLocaleString()}
-                      </div>
-                    )}
  
                     {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
                       <div className="extra-data-wrapper">
@@ -1289,6 +1284,12 @@ const handleFindSimilarMolecules = async (details: any) => {
                     )}
                   </div>
 
+                  {userPermissions === 'admin' && msg.role === 'assistant' && msg.createdAt && (
+                    <div className="message-timestamp">
+                      {new Date(msg.createdAt).toLocaleString()}
+                    </div>
+                  )}
+ 
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
