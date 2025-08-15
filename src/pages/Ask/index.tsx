@@ -1218,20 +1218,23 @@ const handleFindSimilarMolecules = async (details) => {
 
               // Extract only the extra_outputs subfield and normalize it for rendering
               const extraOutputs = normalizedExtraData?.extra_outputs;
-              const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
+                            const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
                 ? extraOutputs
                 : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
-
-              const errorText = normalizedExtraData?.error;
-              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
-              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+ 
+              const errorRaw = normalizedExtraData?.error;
+              const normalizedError = (typeof errorRaw === 'string' && errorRaw.trim() !== '')
+                ? errorRaw
+                : (errorRaw ? t('chatbox.errors.batteryRelevance') : null);
+              const displayContent = normalizedError ? `Error: ${normalizedError}` : msg.content;
+              const isError = !!normalizedError || (displayContent && displayContent.startsWith('Error:'));
               return (
                 <div
                   key={index}
                   className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
                   <div className='message-content'>
                     <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
-
+ 
                     {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
                       <div className="extra-data-wrapper">
                         {Object.entries(renderableExtraOutputs).map(([key, value]) => (

@@ -1,4 +1,4 @@
-simport { create } from 'zustand';
+import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { produce } from 'immer';
 import { authFetch, getAPIUrl } from '@/utils';
@@ -217,6 +217,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                     "-1": generateNewChat()
                 };
 
+                /*
                 if (historyData.length > 0) {
                     // Filter out chats with duplicate names and empty content to prevent UI duplicates
                     const seenNames = new Set<string>();
@@ -272,8 +273,10 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         }
                     });
                 }
+ 
                 draft.chatMap = { "-1": generateNewChat() };
-
+                */
+ 
                 const parseMaybeJSON = (v: any) => {
                     if (!v) return v;
                     if (typeof v === 'string') {
@@ -476,43 +479,31 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     })),
     addMessage: (message: any, chatId = null) => {
         const targetChatId = chatId || get().activeChat;
-        
-        // Add to local state first
+
+        // Update local state first
         set(produce((state: ChatState) => {
             if (message.role === 'user' && state.activeChat === '-1') {
                 state.chatMap[state.activeChat].name = message.content;
             }
-            console.log("📝 ADDING MESSAGE TO LOCAL STATE:", targetChatId, message);
 
-        set(produce((state) => {
-            // Give the chat a meaningful title once the very first user message
-            // arrives.  We only overwrite the placeholder “New Chat”.  This works
-            // for chats that have already been assigned a real ID, too.
             const chat = state.chatMap[targetChatId];
+            if (!chat) return;
+
+            // Give the chat a meaningful title on the first user message if still default name
             if (
-              message.role === 'user' &&
-              chat &&
-              chat.messages.length === 0 &&
-              chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
+                message.role === 'user' &&
+                chat.messages.length === 0 &&
+                chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
             ) {
-              chat.name = message.content;
+                chat.name = message.content;
             }
 
-            if (!chat) return;
             chat.messages.push({
                 ...message,
                 createdAt: message.createdAt || new Date().toISOString(),
             });
         }));
-        
-        console.log("🔍 DEBUG - Current state after adding message:", {
-            targetChatId,
-            messageRole: message.role,
-            chatExists: !!get().chatMap[targetChatId],
-            messagesLength: get().chatMap[targetChatId]?.messages?.length,
-            activeChat: get().activeChat
-        });
-        
+
         // Auto-sync to database (async, don't block UI)
         const syncToDatabase = async () => {
             console.log("🔍 DEBUG - Auto-sync starting:", {
@@ -520,8 +511,8 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                 messageRole: message.role,
                 isNewChat: targetChatId === '-1' || parseInt(targetChatId) === -1
             });
-            
-            // For new chats (-1), we need to create a session first if it's a user message
+
+            // For new chats (-1), create a session first if it's a user message
             if (targetChatId === '-1' || parseInt(targetChatId) === -1) {
                 if (message.role === 'user') {
                     // Prevent duplicate session creation for the same message
@@ -530,14 +521,14 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         console.log("🚫 SESSION CREATION ALREADY PENDING FOR THIS MESSAGE, SKIPPING...");
                         return;
                     }
-                    
+
                     console.log("🔄 NEW CHAT USER MESSAGE - Creating session and syncing...");
-                    
+
                     // Mark this message as having a pending session creation
                     set(produce((state: ChatState) => {
                         state.pendingSessionCreation[messageKey] = true;
                     }));
-                    
+
                     try {
                         // Call backend to create session and save user message
                         const response = await authFetch(`${API_URL}/chat-history/create-and-sync`, {
@@ -560,42 +551,27 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                                 }
                             })
                         });
-                        
+
                         if (!response.ok) {
                             throw new Error(`HTTP ${response.status}: ${await response.text()}`);
                         }
-                        
+
                         const result = await response.json();
                         console.log("✅ NEW CHAT SESSION CREATED AND MESSAGE SYNCED:", result);
-                        
+
                         // Update the chat ID in local state so future messages use the correct ID
                         if (result.session_id) {
-                            console.log("🔄 UPDATING CHAT ID FROM -1 TO:", result.session_id);
-                            const currentState = get();
-                            console.log("🔍 DEBUG - State before updateNewChatId:", {
-                                activeChat: currentState.activeChat,
-                                chatMapKeys: Object.keys(currentState.chatMap),
-                                messagesInNewChat: currentState.chatMap['-1']?.messages?.length
-                            });
-                            
                             get().updateNewChatId(result.session_id);
-                            
-                            const newState = get();
-                            console.log("🔍 DEBUG - State after updateNewChatId:", {
-                                activeChat: newState.activeChat,
-                                chatMapKeys: Object.keys(newState.chatMap),
-                                messagesInUpdatedChat: newState.chatMap[result.session_id]?.messages?.length
-                            });
                         }
-                        
+
                         // Clean up pending session creation tracking
                         set(produce((state: ChatState) => {
                             delete state.pendingSessionCreation[messageKey];
                         }));
-                        
+
                     } catch (error) {
                         console.error("❌ FAILED TO CREATE SESSION AND SYNC MESSAGE:", error);
-                        
+
                         // Clean up pending session creation tracking on error
                         set(produce((state: ChatState) => {
                             delete state.pendingSessionCreation[messageKey];
@@ -606,7 +582,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                 }
                 return;
             }
-            
+
             try {
                 console.log("💾 AUTO-SYNCING MESSAGE TO DATABASE:", targetChatId, message.role);
                 const response = await authFetch(`${API_URL}/chat-history/sync-message`, {
@@ -629,27 +605,22 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         }
                     })
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${await response.text()}`);
                 }
-                
+
                 const result = await response.json();
                 console.log("✅ MESSAGE SYNCED TO DATABASE:", result);
-                
+
             } catch (error) {
                 console.error("❌ FAILED TO SYNC MESSAGE TO DATABASE:", error);
                 // Don't throw - we don't want to break the UI if sync fails
             }
         };
-        
+
         // Run sync in background
         syncToDatabase();
-
-            // Use immutable update so selectors that rely on reference equality
-            // (useActiveChatData deep compare) notice the change.
-            chat.messages = [...chat.messages, message];
-        }));
     },
     clearMessages: () => set(produce((state: ChatState) => {
         console.log("Clearing messages for chat:", state.activeChat);
@@ -807,7 +778,6 @@ export const useActiveChatData = () => {
     const result = useChatStore((state: ChatState) => {
         const activeChat = state.chatMap[state.activeChat];
         
-        // Enhanced debugging with more detail
         console.log("🔍 ACTIVE CHAT DATA ACCESS:", {
             activeChatId: state.activeChat,
             activeChatExists: !!activeChat,
@@ -821,33 +791,11 @@ export const useActiveChatData = () => {
             } : null
         });
         
-        // Log warning if active chat has no messages but should have some
         if (activeChat && activeChat.messages?.length === 0 && state.activeChat !== '-1') {
             console.warn("⚠️ ACTIVE CHAT HAS NO MESSAGES - This might indicate a display issue for chat:", state.activeChat);
         }
         
         return activeChat;
     });
-    }, (oldData, newData) => {
-        // Deep comparison of the relevant data to prevent unnecessary re-renders
-        const isEqual = (
-            oldData?.foundMolecules === newData?.foundMolecules &&
-            oldData?.similarMolecules === newData?.similarMolecules &&
-            oldData?.activeMolecule === newData?.activeMolecule &&
-            oldData?.messages === newData?.messages &&
-            oldData?.isThinking === newData?.isThinking &&
-            oldData?.moleculesLoading === newData?.moleculesLoading &&
-            oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
-            oldData?.awaitingClarify === newData?.awaitingClarify
-        );
-        
-        // Log re-render decisions for debugging
-        if (!isEqual) {
-            console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
-            }
-
-            return isEqual;
-        }
-    );
     return result;
 };
