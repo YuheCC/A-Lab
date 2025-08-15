@@ -702,9 +702,14 @@ const handleFindSimilarMolecules = async (details) => {
           const isDuplicate    = lastAssistant &&
                                  lastAssistant.content === (assistant.content || "") &&
                                  JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+          const serverAssistantCount = serverMsgs.filter((m: any) => m.role === "assistant").length;
+          const localAssistantCount  = existingMsgs.filter((m: any) => m.role === "assistant").length;
+
+          // If server has more assistant messages than we have locally, treat it as new even if text matches.
+          const isNewByCount = serverAssistantCount > localAssistantCount;
 
           // Only act when we discover a *new* assistant message.
-          if (!isDuplicate) {
+          if (!isDuplicate || isNewByCount) {
             addMessage(
               {
                 role: "assistant",
@@ -721,19 +726,15 @@ const handleFindSimilarMolecules = async (details) => {
             return; // Finished – exit polling loop.
           }
 
-          // Duplicate of the previous turn – treat as completed and render the message again.
-          addMessage(
-            {
-              role: "assistant",
-              content: assistant.content || "",
-              sources: assistant.sources,
-              extraData: assistant.extra_data || null,
-            },
-            chatId
-          );
-          setIsThinking(false, chatId);
-          setStatus(status || "complete", chatId);
-          return;
+          // Duplicate of previous turn with no new assistant rows.
+          // If the backend says we're complete, clear spinner; otherwise keep polling.
+          if (status === "complete" || status === "error") {
+            setIsThinking(false, chatId);
+            setStatus(status || "complete", chatId);
+            return;
+          }
+
+          continue;
         }
 
         // If the backend explicitly reports an error state, stop polling
@@ -1023,8 +1024,11 @@ const handleFindSimilarMolecules = async (details) => {
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
 
-      } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
+      } catch (err: any) {
+        const rawMessage = (err?.message ?? '').toString();
+        const looksGeneric = rawMessage.trim() === '' || /^error$/i.test(rawMessage.trim());
+        const friendly = looksGeneric ? t('chatbox.errors.batteryRelevance') : rawMessage;
+        addMessage({ role: "assistant", content: "Error: " + friendly }, effectiveChatId);
         setIsThinking(false, effectiveChatId);
         setStatus('complete', effectiveChatId);
       } finally {
@@ -1234,9 +1238,21 @@ const handleFindSimilarMolecules = async (details) => {
                 : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
  
               const errorRaw = normalizedExtraData?.error;
-              const normalizedError = (typeof errorRaw === 'string' && errorRaw.trim() !== '')
-                ? errorRaw
-                : (errorRaw ? t('chatbox.errors.batteryRelevance') : null);
+              const errorReason = (normalizedExtraData?.reason || normalizedExtraData?.message || '').toString();
+              const errorCode = normalizedExtraData?.error_code;
+              const isBatteryIrrelevance = /not relevant to batteries|battery chemistry/i.test(errorReason) || errorCode === 'battery_irrelevant';
+              const rawString = typeof errorRaw === 'string' ? errorRaw.trim() : '';
+              const looksGeneric = rawString === '' || /^error$/i.test(rawString);
+              let normalizedError = null as string | null;
+              if (isBatteryIrrelevance) {
+                normalizedError = t('chatbox.errors.batteryRelevance');
+              } else if (typeof errorRaw === 'string' && !looksGeneric) {
+                normalizedError = rawString;
+              } else if (errorRaw) {
+                normalizedError = t('chatbox.errors.batteryRelevance');
+              } else {
+                normalizedError = null;
+              }
               const displayContent = normalizedError ? `Error: ${normalizedError}` : msg.content;
               const isError = !!normalizedError || (displayContent && displayContent.startsWith('Error:'));
               return (
