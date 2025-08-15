@@ -1,7 +1,8 @@
-import { create } from 'zustand';
+simport { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { produce } from 'immer';
 import { authFetch, getAPIUrl } from '@/utils';
+import { updateChatMetadata } from '@/services/chat';
 import i18n from '@/locales/i18n';
 
 const API_URL = getAPIUrl();
@@ -13,6 +14,9 @@ interface ChatMessage {
     molText?: string;
     molecules?: any[];
     createdAt?: string; // ISO timestamp for when the message was first saved/created
+    inputs?: any;
+    sources?: any;
+    extraData?: any;
 }
 
 // 定义分子类型
@@ -34,6 +38,7 @@ interface Chat {
     foundMolecules: Molecule[];
     similarMolecules: Molecule[];
     awaitingClarify: boolean;
+    status: string;
     createdAt: string;
 }
 
@@ -68,6 +73,7 @@ const generateNewChat = (): Chat => ({
 
     // Deep Space metadata
     awaitingClarify: false,
+    status: 'complete',
 
     createdAt: new Date().toISOString(),
 })
@@ -82,11 +88,10 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     isLoading: false,
     error: null,
     isSynced: false,
-    activeChat: '-1', 
+    activeChat: '-1',
     chatMap: {
         "-1": generateNewChat()
     },
-    pendingSessionCreation: {}, // Track pending session creations to prevent duplicates
 
     /**
      * 更新所有聊天中的系统欢迎消息（用于语言切换时）
@@ -117,61 +122,52 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
      * Method to update new chat ID after receiving it from the server.
      * @param {*} chatId 
      */
-    updateNewChatId: (chatId: string) => {
+    updateNewChatId: (chatId: string, oldChatId: string = '-1') => {
         set(produce((state: ChatState) => {
-            console.log("Updating new chat ID to:", chatId);
-            // Get the chat data
-            const chatData = state.chatMap['-1'];
+            console.log("Updating chat ID:", oldChatId, "→", chatId);
+
+            const chatData = state.chatMap[oldChatId];
             if (!chatData) {
-                console.warn(`❌ Chat with id -1 does not exist.`);
+                console.warn(`❌ Chat with id ${oldChatId} does not exist.`);
                 return;
             }
-            
-            console.log("🔍 DEBUG - Chat data being moved:", {
-                messagesLength: chatData.messages?.length,
-                chatName: chatData.name,
-                messages: chatData.messages?.map(m => ({ role: m.role, contentPreview: (m.content || '').substring(0, 50) + '...' }))
-            });
-            
+
             if (chatId === null) {
                 console.warn("❌ Chat ID is null, not updating.");
                 return;
             }
-            
-            // Check if the target chat already exists
+
             if (state.chatMap[chatId]) {
-                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing -1 chat`);
-                // If target chat exists (from history loading), merge the -1 chat messages into it
-                // and ensure we don't lose any messages that were added locally
+                console.log(`⚠️ Chat with id ${chatId} already exists - merging messages and removing ${oldChatId} chat`);
                 const existingChat = state.chatMap[chatId];
                 const localMessages = chatData.messages || [];
-                
-                // Merge messages, avoiding duplicates by content comparison
+
                 const mergedMessages = [...existingChat.messages];
                 localMessages.forEach(localMsg => {
-                    const isDuplicate = mergedMessages.some(existingMsg => 
-                        existingMsg.role === localMsg.role && 
+                    const isDuplicate = mergedMessages.some(existingMsg =>
+                        existingMsg.role === localMsg.role &&
                         existingMsg.content === localMsg.content
                     );
                     if (!isDuplicate) {
                         mergedMessages.push(localMsg);
                     }
                 });
-                
+
                 state.chatMap[chatId] = {
                     ...existingChat,
                     messages: mergedMessages,
-                    name: chatData.name || existingChat.name // Prefer the local name if it was set
+                    name: chatData.name || existingChat.name
                 };
             } else {
-                // Add chat with new ID
                 state.chatMap[chatId] = chatData;
             }
-            
-            // Always remove the -1 chat and set active chat
-            delete state.chatMap['-1'];
-            state.activeChat = chatId;
-            
+
+            delete state.chatMap[oldChatId];
+
+            if (state.activeChat === oldChatId) {
+                state.activeChat = chatId;
+            }
+
             console.log("✅ CHAT ID UPDATED SUCCESSFULLY:", {
                 newActiveChat: state.activeChat,
                 newChatExists: !!state.chatMap[chatId],
@@ -199,9 +195,19 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         }));
         
         try {
-            const historyData = await authFetch(`${API_URL}/chat-history`).then(res => res.json());
-            console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyData.length, "sessions");
-            
+            const historyResp = await authFetch(`${API_URL}/chat-history`);
+            const historyJson = await historyResp.json().catch(() => []);
+            const historyList = Array.isArray(historyJson) ? historyJson : [];
+            if (!Array.isArray(historyJson)) {
+                console.warn("📥 UNEXPECTED CHAT HISTORY RESPONSE:", historyJson);
+            }
+            console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyList.length, "sessions");
+
+            const fullChats = await Promise.all(historyList.map(async (chat: any) => {
+                const details = await authFetch(`${API_URL}/chat-history/${chat.id}`).then(res => res.json());
+                return { ...chat, ...details };
+            }));
+
             set(produce((draft: ChatState) => {
                 draft.isSynced = true;
                 draft.isLoading = false;
@@ -266,16 +272,52 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         }
                     });
                 }
+                draft.chatMap = { "-1": generateNewChat() };
 
-                if (draft.chatMap['-1']) {
-                    draft.activeChat = '-1';
-                } else {
-                    const chatIds = Object.keys(draft.chatMap);
-                    draft.activeChat = chatIds[0];
-                }
+                const parseMaybeJSON = (v: any) => {
+                    if (!v) return v;
+                    if (typeof v === 'string') {
+                        try { return JSON.parse(v); } catch { return v; }
+                    }
+                    return v;
+                };
+
+                fullChats.forEach((chat, index) => {
+                    console.log(`📥 LOADING SESSION ${index + 1}/${fullChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.messages?.length || 0}`);
+
+                    draft.chatMap[chat.id] = {
+                        createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
+                        useMultiAgent: false,
+                        name: chat.chat_name || 'New Chat',
+                        messages: (chat.content || chat.messages || []).map((item: any) => ({
+                            role: item.role,
+                            content: item.content || '',
+                            molText: (item.molecules || []).join(', '),
+                            molecules: item.molecules || [],
+                            extraData: item.extra_data || null,
+                            inputs: item.inputs,
+                            sources: item.sources,
+                        })),
+                        activeMolecule: parseMaybeJSON(chat.meta_active_molecule) || null,
+                        foundMolecules: parseMaybeJSON(chat.meta_molecules) || [],
+                        similarMolecules: parseMaybeJSON(chat.meta_similar_molecules) || [],
+                        awaitingClarify: chat.status === 'awaiting_clarification',
+                        status: chat.status || 'complete',
+                        isInClarifyFlow: false,
+                        isThinking: chat.status === 'pending',
+                        thinkingStartedAt: null,
+                        moleculesLoading: false,
+                        similarMoleculesLoading: false,
+                    };
+
+                    if (chat.messages && chat.messages.length > 0) {
+                        console.log(`📥 SESSION ${chat.id} MESSAGES:`, chat.messages.map((msg: any) => `${msg.role}: ${(msg.content || '').substring(0, 50)}...`));
+                    }
+                });
+
+                draft.activeChat = draft.chatMap['-1'] ? '-1' : Object.keys(draft.chatMap)[0];
 
                 console.log("✅ CHAT MAP UPDATED - Active chat:", draft.activeChat, "Total sessions:", Object.keys(draft.chatMap).length);
-
             }));
 
         } catch (error) {
@@ -285,6 +327,17 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             }));
         }
     },
+
+    /**
+     * Overwrite the chat’s title (name) once the back‑end generates it.
+     */
+    setChatName: (name: string, chatId = null) => set(produce((state: ChatState) => {
+        if (!name) return;
+        const targetChatId = chatId || state.activeChat;
+        const chat = state.chatMap[targetChatId];
+        if (!chat) return;
+        chat.name = name;
+    })),
 
     deleteChat: async (chatId: string) => {
         set(produce((state: ChatState) => {
@@ -329,14 +382,30 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
     /**
      * Creates a new chat with the given name.
-     * - If a chat with ID '-1' already exists, it will not create a new one. (Limited to one new chat without a server set ID)
-     * @param {*} name 
+     * - If a blank chat already exists, switch to it instead of creating a new one.
+     * - If the existing default chat has messages, preserve it with a temporary ID and open a fresh blank chat.
+     * @param {*} name
      */
     createChat: (name = 'New Chat') => {
         set(produce((state: ChatState) => {
-            if (state.chatMap['-1']) {
-                console.warn("Default chat already exists, not creating a new one.");
-                return;
+            const defaultChat = state.chatMap['-1'];
+
+            if (defaultChat) {
+                const isBlank = !defaultChat.messages ||
+                    defaultChat.messages.length === 0 ||
+                    (defaultChat.messages.length === 1 && defaultChat.messages[0].role === 'system');
+
+                if (isBlank) {
+                    state.activeChat = '-1';
+                    return;
+                }
+
+                const tempId = Date.now().toString();
+                state.chatMap[tempId] = defaultChat;
+                if (state.activeChat === '-1') {
+                    state.activeChat = tempId;
+                }
+                delete state.chatMap['-1'];
             }
 
             console.log("Creating new chat with name:", name);
@@ -388,6 +457,12 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         
         chat.isThinking = isThinking;
     })),
+    setStatus: (status: string, chatId = null) => set(produce((state: ChatState) => {
+        const targetChatId = chatId || state.activeChat;
+        const chat = state.chatMap[targetChatId];
+        if (!chat) return;
+        chat.status = status;
+    })),
 
     // Message actions (immer: only update active chat)
     // - Messages are persistent, but through ChatBox.js since the backend expects specific formats (and a chat message being set != a chat message being sent)
@@ -408,7 +483,21 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                 state.chatMap[state.activeChat].name = message.content;
             }
             console.log("📝 ADDING MESSAGE TO LOCAL STATE:", targetChatId, message);
+
+        set(produce((state) => {
+            // Give the chat a meaningful title once the very first user message
+            // arrives.  We only overwrite the placeholder “New Chat”.  This works
+            // for chats that have already been assigned a real ID, too.
             const chat = state.chatMap[targetChatId];
+            if (
+              message.role === 'user' &&
+              chat &&
+              chat.messages.length === 0 &&
+              chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
+            ) {
+              chat.name = message.content;
+            }
+
             if (!chat) return;
             chat.messages.push({
                 ...message,
@@ -556,6 +645,11 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         
         // Run sync in background
         syncToDatabase();
+
+            // Use immutable update so selectors that rely on reference equality
+            // (useActiveChatData deep compare) notice the change.
+            chat.messages = [...chat.messages, message];
+        }));
     },
     clearMessages: () => set(produce((state: ChatState) => {
         console.log("Clearing messages for chat:", state.activeChat);
@@ -581,20 +675,13 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             chat.foundMolecules = molecules;
         }));
 
-        // Send found molecules to server
         try {
-            await authFetch(`${API_URL}/chat-history/update`, {
-                method: "PUT",
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: parseInt(chatId || get().activeChat as string),
-                    meta_molecules: JSON.stringify(molecules),
-                })
+            await updateChatMetadata({
+                chat_id: parseInt(chatId || get().activeChat as string),
+                meta_molecules: molecules,
             });
         } catch (error) {
-            console.error("Failed to update found molecules on server:", error);
+            console.error("Failed to update similar molecules on server:", error);
         }
     },
     setSimilarMolecules: async (preMolecules: any, chatId = null) => {
@@ -614,15 +701,9 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
         // Send similar molecules to server
         try {
-            await authFetch(`${API_URL}/chat-history/update`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: parseInt(chatId || get().activeChat as string),
-                    meta_similar_molecules: JSON.stringify(molecules),
-                })
+            await updateChatMetadata({
+                chat_id: parseInt(chatId || get().activeChat as string),
+                meta_similar_molecules: molecules,
             });
         } catch (error) {
             console.error("Failed to update similar molecules on server:", error);
@@ -638,15 +719,9 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
         // Send active molecule to server
         try {
-            await authFetch(`${API_URL}/chat-history/update`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: parseInt(chatId || get().activeChat as string),
-                    meta_active_molecule: JSON.stringify(molecule),
-                })
+            await updateChatMetadata({
+                chat_id: parseInt(chatId || get().activeChat as string),
+                meta_active_molecule: molecule,
             });
         } catch (error) {
             console.error("Failed to update active molecule on server:", error);
@@ -681,22 +756,6 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             if (!chat) return;
             chat.awaitingClarify = awaitingClarify;
         }));
-
-        // Send awaitingClarify to server
-        try {
-            await authFetch(`${API_URL}/chat-history/update`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: parseInt(chatId || get().activeChat as string),
-                    awaiting_clarification: awaitingClarify,
-                })
-            });
-        } catch (error) {
-            console.error("Failed to update awaiting clarification on server:", error);
-        }
     },
     setIsInClarifyFlow: (isInClarifyFlow: boolean, chatId = null) => set(produce((state: ChatState) => {
         console.log("Setting isInClarifyFlow for chat:", chatId || state.activeChat, isInClarifyFlow);
@@ -726,6 +785,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                     awaitingClarify: value.awaitingClarify,
                     isInClarifyFlow: value.isInClarifyFlow,
                     useMultiAgent: value.useMultiAgent,
+                    status: value.status,
                     createdAt: value.createdAt,
                 }
             ])
@@ -753,6 +813,7 @@ export const useActiveChatData = () => {
             activeChatExists: !!activeChat,
             messagesLength: activeChat?.messages?.length || 0,
             chatMapKeys: Object.keys(state.chatMap),
+            chatFullData: activeChat,
             chatName: activeChat?.name,
             lastMessage: activeChat?.messages?.length > 0 ? {
                 role: activeChat.messages[activeChat.messages.length - 1].role,
@@ -767,5 +828,26 @@ export const useActiveChatData = () => {
         
         return activeChat;
     });
+    }, (oldData, newData) => {
+        // Deep comparison of the relevant data to prevent unnecessary re-renders
+        const isEqual = (
+            oldData?.foundMolecules === newData?.foundMolecules &&
+            oldData?.similarMolecules === newData?.similarMolecules &&
+            oldData?.activeMolecule === newData?.activeMolecule &&
+            oldData?.messages === newData?.messages &&
+            oldData?.isThinking === newData?.isThinking &&
+            oldData?.moleculesLoading === newData?.moleculesLoading &&
+            oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
+            oldData?.awaitingClarify === newData?.awaitingClarify
+        );
+        
+        // Log re-render decisions for debugging
+        if (!isEqual) {
+            console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
+            }
+
+            return isEqual;
+        }
+    );
     return result;
 };

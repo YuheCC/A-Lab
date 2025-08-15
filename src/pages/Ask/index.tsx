@@ -12,6 +12,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard/index.js';
 import { useChatStore, useActiveChatData } from '@/models/useChat';
 import { useShallow } from 'zustand/react/shallow';
+import i18n from '@/locales/i18n';
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import CustomButton from '@/components/CustomButton/index.js';
 import { Copy, ExternalLink, Info, MessageCircle, Search, Star, ThumbsDown, ThumbsUp, ChevronDown, ChevronUp } from 'lucide-react';
@@ -128,7 +129,7 @@ const ChatInput = React.memo((props: {
       disableLiteratureSearch, onDisableLiteratureSearchChange,
       disableTools, onDisableToolsChange,
       userPermissions, useMultiAgent, onUseMultiAgentChange,
-      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries,
       enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
   const textareaRef = useRef(null);
@@ -311,6 +312,7 @@ const ChatbotInterface = () => {
   const { t } = useTranslation();
   const [remainingQueries, setRemainingQueries] = useState(0);
   const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+  const [structureWeight, setStructureWeight] = useState(0.5);
 
   const { 
     messages, 
@@ -329,7 +331,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow(state => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -345,12 +347,24 @@ const ChatbotInterface = () => {
     setAwaitingClarify: state.setAwaitingClarify,
     setUseMultiAgent: state.setUseMultiAgent,
     setIsInClarifyFlow: state.setIsInClarifyFlow,
+    setStatus: state.setStatus,
+    setChatName: state.setChatName,
   })));
 
   useEffect(() => {
     console.log(foundMolecules)
   }, [foundMolecules])
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const getDefaultCompute = useCallback(() => {
+    if (userPermissions === 'research') return 'Low';
+    if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+    return 'High';
+  }, [userPermissions]);
+  const [computeLevel, setComputeLevel] = useState(getDefaultCompute());
+  useEffect(() => {
+    setComputeLevel(getDefaultCompute());
+  }, [getDefaultCompute]);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
@@ -505,7 +519,7 @@ const handleFindSimilarMolecules = async (details) => {
     try {
       const token = localStorage.getItem('token');
       // Determine if user is high-tier
-      const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions);
+      const isHighTier = true; //["admin", "enterprise", "joint"].includes(userPermissions);
       
       // Extract original user query and LLM response from message history
       let originalQuery = undefined;
@@ -562,11 +576,14 @@ const handleFindSimilarMolecules = async (details) => {
         : undefined;
       
       // Construct request payload
+      const computeEnabled = computeLevel !== 'Disabled';
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
-        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
+        structure_weight: structureWeight,
+        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] }),
+        ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
       const response = await authFetch(
@@ -641,6 +658,94 @@ const handleFindSimilarMolecules = async (details) => {
     setShowFoundMolecules(foundMolecules && foundMolecules.length > 0);
   }, [activeChat, activeMolecule, similarMolecules, foundMolecules]);
 
+  // Poll helper – waits until the back‑end returns an assistant message, or error/timeout.
+  const pollChatUntilComplete = async (
+    chatId: string,
+    {
+      intervalMs = 5000,
+      maxTries   = 1200, // ≈20 min at default interval
+    } = {}
+  ) => {
+    let tries = 0;
+    while (tries < maxTries) {
+      // Don’t await before the very first pass so we can react quickly if the
+      // message is already there.
+      if (tries > 0) await new Promise((r) => setTimeout(r, intervalMs));
+      tries += 1;
+
+      try {
+        const res = await authFetch(`${API_URL}/chat-history/${chatId}`);
+        if (!res.ok) continue;
+
+        const data = await res.json();
+        // If the back‑end now has a better title, update it.
+        if (data.chat_name && data.chat_name !== (i18n.t('chatbox.history.newChat') || 'New Chat')) {
+          setChatName(data.chat_name, chatId);
+        }
+        // Back‑end may return either { messages: [...] } or the older
+        // { content: [...] }.  Normalise to one array.
+        const { status } = data;
+        // ─── Synchronise local clarify‑state with the back‑end ───
+        if (status === "awaiting_clarification") {
+          setAwaitingClarify(true, chatId);
+        } else {
+          setAwaitingClarify(false, chatId);
+        }
+        const serverMsgs = data.messages || data.content || [];
+
+        // Look for an assistant turn (most likely the last one)
+        const assistant = [...serverMsgs].reverse().find((m: any) => m.role === "assistant");
+        if (assistant) {
+          // Compare against the latest assistant message we already have.
+          const existingMsgs   = useChatStore.getState().chatMap[chatId]?.messages || [];
+          const lastAssistant  = [...existingMsgs].reverse().find((m: any) => m.role === "assistant");
+          const isDuplicate    = lastAssistant &&
+                                 lastAssistant.content === (assistant.content || "") &&
+                                 JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+
+          // Only act when we discover a *new* assistant message.
+          if (!isDuplicate) {
+            addMessage(
+              {
+                role: "assistant",
+                content: assistant.content || "",
+                sources: assistant.sources,
+                extraData: assistant.extra_data || null,
+              },
+              chatId
+            );
+
+            setIsThinking(false, chatId);
+            // Keep whatever status the server sent (e.g. awaiting_clarification)
+            setStatus(status || "complete", chatId);
+            return; // Finished – exit polling loop.
+          }
+
+          // Duplicate of the previous turn – keep waiting.
+          continue;
+        }
+
+        // If the backend explicitly reports an error state, stop polling
+        if (status === "error") {
+          setIsThinking(false, chatId);
+          setStatus("complete", chatId);
+          return;
+        }
+
+        // If status is complete *but* no assistant message yet, keep waiting.
+        // Some pipelines mark the session complete a fraction of a second
+        // before they finish persisting the assistant row.
+
+      } catch (err) {
+        console.error("[pollChat]", err);
+      }
+    }
+
+    // Hard timeout – give up, clear spinner so the UI doesn’t hang forever.
+    setIsThinking(false, chatId);
+    setStatus("complete", chatId);
+  };
+
   const handleSend = useCallback(
     async (input) => {
       if (!input.trim()) return;
@@ -648,15 +753,24 @@ const handleFindSimilarMolecules = async (details) => {
       /* enforce research-tier quota */
       if (userPermissions === 'research' && remainingQueries <= 0) {
         addMessage({
-          role : "assistant",
-          content : t('chatbox.queryLimit.reachedLimit')
+          role: "assistant",
+          content: t('chatbox.queryLimit.reachedLimit')
         });
         return;
       }
 
+      // Handle temporary chat IDs so multiple new chats can be created
+      let localChatId = activeChat;
+      let isNewChat = localChatId === '-1';
+      if (isNewChat) {
+        const tempId = Date.now().toString();
+        updateNewChatId(tempId);
+        localChatId = tempId;
+      }
+
       /* push new user message */
       const newUserMessage = { role: "user", content: input.trim() };
-      addMessage(newUserMessage);
+      addMessage(newUserMessage, localChatId);
 
       /* construct message list for the back-end */
       const messagesToSend = ignoreChatHistory
@@ -664,16 +778,17 @@ const handleFindSimilarMolecules = async (details) => {
         : [...messages, newUserMessage]
             .filter(m => m.role === "user" || m.role === "assistant");
 
-      console.log("🚀 STARTING REQUEST - Chat:", activeChat, "useMultiAgent:", useMultiAgent);
-      setIsThinking(true);
-      console.log("✅ setIsThinking(true) called");
-      const currentChatId   = activeChat ? parseInt(activeChat, 10) : -1;
+      setIsThinking(true, localChatId);
+      let effectiveChatId = localChatId;
+      setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3'       : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10          : 3;
+      const ragModel        = isAdvancedTier ? 'gpt-5' : 'gpt-5-mini'; // deprecated
+      const ragResultsCount = isAdvancedTier ? 10 : 3; // deprecated
+      const llmComputePower = isAdvancedTier ? "high" : "medium";
+      const ragComputePower = isAdvancedTier ? "medium" : "low";
 
-      let data;          // final payload from the back-end
-      let effectiveChatId = currentChatId;
+      const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
+      let data; // final payload from the back-end
 
       try {
         /* ---------------------------------------------------------- */
@@ -687,15 +802,16 @@ const handleFindSimilarMolecules = async (details) => {
               ...messages,
               { role: "user", content: input.trim() }
             ];
-            
+
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload = { messages: updatedHistory, chat_id: currentChatId };
+            const multiAgentPayload: any = { messages: updatedHistory, llm_compute_power: llmComputePower };
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -703,6 +819,17 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
@@ -713,27 +840,44 @@ const handleFindSimilarMolecules = async (details) => {
 
           /* 2️⃣  First contact – ask for clarifying questions -------- */
           } else {
-            // Track whether we are in a clarification flow
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload = { messages: messagesToSend, chat_id: effectiveChatId };
+            const multiAgentPayload: any = { messages: messagesToSend, llm_compute_power: llmComputePower };
+            if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
+            const clarifyPayload: any = { messages: messagesToSend };
+            if (currentChatId !== -1) clarifyPayload.chat_id = currentChatId;
+
             const clarRes = await authFetch(`${API_URL}/multi-agent/clarify`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json" },
-              body   : JSON.stringify(({ messages: messagesToSend, chat_id: currentChatId })),
+              body: JSON.stringify(clarifyPayload),
             });
             if (!clarRes.ok) {
               fetchQueryLimit();
               throw new Error(await clarRes.text());
             }
+            // 202 → just { chat_id }, start polling and return early
+            if (clarRes.status === 202) {
+              const { chat_id } = await clarRes.json();
+              if (isNewChat && chat_id !== undefined) {
+                updateNewChatId(`${chat_id}`, localChatId);
+                effectiveChatId = `${chat_id}`;
+                localChatId     = effectiveChatId;
+                isNewChat       = false;
+              }
+              // Wait for clarifying questions to arrive via history polling
+              await pollChatUntilComplete(effectiveChatId);
+              return; // will exit after polling completes
+            }
             const clarData = await clarRes.json();
 
-            // Update chat ID for new chat
-            if (effectiveChatId === -1 && clarData.chat_id !== undefined) {
-              updateNewChatId(clarData.chat_id);
-              effectiveChatId = clarData.chat_id;
+            if (isNewChat && clarData.chat_id !== undefined) {
+              updateNewChatId(`${clarData.chat_id}`, localChatId);
+              effectiveChatId = `${clarData.chat_id}`;
+              localChatId = effectiveChatId;
+              isNewChat = false;
             }
 
             if (clarData.clarifying_questions?.length) {
@@ -742,18 +886,18 @@ const handleFindSimilarMolecules = async (details) => {
                 content: clarData.clarifying_questions,
               }, effectiveChatId);
               setAwaitingClarify(true, effectiveChatId);
+              setStatus('awaiting_clarification', effectiveChatId);
               setIsThinking(false, effectiveChatId);
               fetchQueryLimit();
-              return;                 // wait for user reply
+              return; // wait for user reply
             }
 
             setIsInClarifyFlow(false, effectiveChatId);
 
-            /* 3️⃣  No clarifications – run Deep Space directly ---- */
             const res = await authFetch(`${API_URL}/multi-agent`, {
-              method : "POST",
+              method: "POST",
               headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-              body   : JSON.stringify(multiAgentPayload),
+              body: JSON.stringify(multiAgentPayload),
             });
             if (!res.ok) {
               fetchQueryLimit();
@@ -761,43 +905,69 @@ const handleFindSimilarMolecules = async (details) => {
             }
 
             for await (const evt of streamSSE(res)) {
+              if (evt.event === "init" && evt.chat_id !== undefined) {
+                if (isNewChat) {
+                  updateNewChatId(`${evt.chat_id}`, localChatId);
+                  effectiveChatId = `${evt.chat_id}`;
+                  localChatId     = effectiveChatId;
+                  isNewChat       = false;
+                }
+                // Set chat name if provided
+                if (evt.title) setChatName(evt.title, `${evt.chat_id}`);
+                continue; // keep listening for the final answer
+              }
               if (evt.answer || evt.error) {
                 data = evt;
                 break;
               }
             }
           }
-          // Refresh query limit
           fetchQueryLimit();
         /* ---------------------------------------------------------- */
         /* NORMAL `/rag` WORKFLOW                                    */
         /* ---------------------------------------------------------- */
         } else {
-          console.log("📡 MAKING REGULAR /rag REQUEST");
+          const ragPayload: any = {
+            messages: messagesToSend,
+            ragEnabled: !disableLiteratureSearch,
+            toolsEnabled: !disableTools,
+            webSearchEnabled: false,
+            webSearchClient: "Tavily",
+            numRagResults: ragResultsCount,
+            model: ragModel,
+            patentRagEnabled: enablePatentRag,
+            llm_compute_power: ragComputePower,
+          };
+          if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
-            method : "POST",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body   : JSON.stringify({
-              chatId          : currentChatId,
-              messages        : messagesToSend,
-              ragEnabled      : !disableLiteratureSearch,
-              toolsEnabled    : !disableTools,
-              webSearchEnabled: false,
-              webSearchClient : "Tavily",
-              numRagResults   : ragResultsCount,
-              model           : ragModel,
-              patentRagEnabled: enablePatentRag,
-            }),
+            body: JSON.stringify(ragPayload),
           });
 
-          if (!res.ok) {
+          if (!res.ok && res.status !== 202) {
             const errText = await res.text();
             if (res.status === 400 &&
                 errText.includes("Query is not relevant to batteries or battery chemistry"))
               throw new Error(t('chatbox.errors.batteryRelevance'));
-
             throw new Error(errText || t('chatbox.errors.networkError'));
           }
+
+          // 202 → just { chat_id }, start polling and return early
+          if (res.status === 202) {
+            const { chat_id } = await res.json();
+            if (isNewChat && chat_id !== undefined) {
+              updateNewChatId(`${chat_id}`, localChatId);
+              effectiveChatId = `${chat_id}`;
+              localChatId     = effectiveChatId;
+              isNewChat       = false;
+            }
+            await pollChatUntilComplete(effectiveChatId);
+            // spinner stays active – subsequent poll will add the assistant message
+            return; // will exit after polling completes
+          }
+
+          // 200 – old synchronous behaviour
           data = await res.json();
         }
 
@@ -806,24 +976,22 @@ const handleFindSimilarMolecules = async (details) => {
         /* ---------------------------------------------------------- */
         if (data?.error) throw new Error(data.error);
 
-        /* adopt/assign chat ID */
-        if (effectiveChatId === -1 && data?.chat_id !== undefined) {
-          console.log("🔄 CHAT ID CHANGING FROM -1 TO:", data.chat_id);
-          // Transfer thinking state from old chat to new chat
-          setIsThinking(false); // Turn off thinking for chat -1
-          updateNewChatId(data.chat_id);
-          effectiveChatId = data.chat_id;
-          setIsThinking(true, effectiveChatId); // Turn on thinking for new chat
-          console.log("✅ Thinking state transferred to new chat:", effectiveChatId);
+        if (isNewChat && data?.chat_id !== undefined) {
+          updateNewChatId(`${data.chat_id}`, localChatId);
+          effectiveChatId = `${data.chat_id}`;
+          localChatId = effectiveChatId;
+          isNewChat = false;
         }
 
-        /* build LLM message */
+        if (data?.status) setStatus(data.status, effectiveChatId);
+        else setStatus('complete', effectiveChatId);
+
         const llmMessage = {
-          role     : "assistant",
-          inputs   : data.inputs || null,
-          content  : data.llmOutput || data.answer || "",
-          sources  : data.source_html,
-          molText  : data.molecule_text,
+          role: "assistant",
+          inputs: data.inputs || null,
+          content: data.llmOutput || data.answer || "",
+          sources: data.source_html,
+          molText: data.molecule_text,
           molecules: data.molecules,
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
@@ -841,18 +1009,20 @@ const handleFindSimilarMolecules = async (details) => {
           // Keep thinking animation while we wait for actual content
         }
 
-        /* refresh quota for research tier */
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
 
       } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message });
-        setIsThinking(false);
+        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
+        setIsThinking(false, effectiveChatId);
+        setStatus('complete', effectiveChatId);
       } finally {
-        // Don't automatically turn off thinking in finally block for regular queries
-        // This was causing the thinking animation to disappear immediately
-        // Let the success/error handlers manage the thinking state properly
-        // if (effectiveChatId !== -1) setIsThinking(false, effectiveChatId);
+        /*
+         * Don’t forcibly clear the spinner here: in the 202‑polling path
+         * `pollChatUntilComplete` already does that when the assistant
+         * message lands.  For the synchronous paths we’ve already called
+         * `setIsThinking(false)` earlier in the try block or in catch.
+         */
         fetchQueryLimit();
       }
     },
@@ -1041,38 +1211,46 @@ const handleFindSimilarMolecules = async (details) => {
             </div>
             )} 
           <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message-${msg.role}`}>
-                <div className='message-content'>
-                  <MessageContentRenderer content={msg.content} onMoleculeClick={handleMoleculeClick} />
-                  {userPermissions === 'admin' && msg.createdAt && (
-                    <div style={{ fontSize: '11px', color: '#888', marginTop: 4 }}>
-                      {new Date(msg.createdAt).toLocaleString()}
-                    </div>
-                  )}
-                  
-                  
-                  {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
-                    <div className="extra-data-wrapper">
-                      {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
-                        <ExtraDataSection
-                        key={key}
-                        title={key}
-                        content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                        onMoleculeClick={handleMoleculeClick}
-                      />
-                    ))}
+            {messages.map((msg, index) => {
+              const normalizedExtraData = (msg.extraData && typeof msg.extraData === 'object')
+                ? (msg.extraData.extra_data ?? msg.extraData)
+                : null;
+
+              // Extract only the extra_outputs subfield and normalize it for rendering
+              const extraOutputs = normalizedExtraData?.extra_outputs;
+              const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
+                ? extraOutputs
+                : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
+
+              const errorText = normalizedExtraData?.error;
+              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
+              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+              return (
+                <div
+                  key={index}
+                  className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
+                  <div className='message-content'>
+                    <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
+
+                    {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
+                      <div className="extra-data-wrapper">
+                        {Object.entries(renderableExtraOutputs).map(([key, value]) => (
+                          <ExtraDataSection
+                            key={key}
+                            title={key}
+                            content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                            onMoleculeClick={handleMoleculeClick}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-                </div>
 
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
                     {
-                      userPermissions === 'admin' && <>
+                      <>
                         <IconButton
                         onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
                         size="small"
@@ -1087,7 +1265,7 @@ const handleFindSimilarMolecules = async (details) => {
                           </IconButton>
                       </>
                     }
-                    
+
                     <Tooltip title={t('chatbox.buttons.copy')} placement='bottom'>
                       <IconButton
                         size="small"
@@ -1133,7 +1311,8 @@ const handleFindSimilarMolecules = async (details) => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
             {isThinking && (
               <div className="thinking-message">
                 <div className='thinking-header'>
@@ -1236,7 +1415,7 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%' }}>
+                    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                       <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
                         fullWidth
                         loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
@@ -1244,17 +1423,56 @@ const handleFindSimilarMolecules = async (details) => {
                         size="small" style={{ flexGrow: 1 }}>
                         {t('chatbox.buttons.findSimilarMolecules')}
                       </CustomButton>
-                      <select
-                        value={molTypeSelections[details.SMILES] || ""}
-                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                      >
-                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                      </select>
+                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                        <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                        {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                      </div>
                     </div>
+                    {showAdvancedOptions && (
+                      <div style={{ width: '100%', marginTop: '8px' }}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <select
+                            value={molTypeSelections[details.SMILES] || ""}
+                            onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                            style={{ backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                          >
+                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                          </select>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                          <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={structureWeight}
+                            onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                            style={{ margin: '0 4px' }}
+                          />
+                          <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                          <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                        </div>
+                        <div className='checkbox-item'>
+                          <label>{t('search.intelligentCompute')}:</label>
+                          <select
+                            value={computeLevel}
+                            onChange={e => setComputeLevel(e.target.value)}
+                            style={{ marginLeft: '8px' }}
+                          >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                            <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                     {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
@@ -1322,7 +1540,7 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%' }}>
+                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                     <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
@@ -1330,6 +1548,10 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small" style={{ flexGrow: 1 }}>
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
+                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                      <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                      {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                    </div>
                     <select
                       value={molTypeSelections[selectedMolecule.SMILES] || ""}
                       onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
@@ -1341,6 +1563,39 @@ const handleFindSimilarMolecules = async (details) => {
                       <option value="additive">{t('search.moleculeTypes.additive')}</option>
                     </select>
                   </div>
+                  {showAdvancedOptions && (
+                    <div style={{ width: '100%', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                        <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={structureWeight}
+                          onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                          style={{ margin: '0 4px' }}
+                        />
+                        <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                      </div>
+                      <div className='checkbox-item'>
+                        <label>{t('search.intelligentCompute')}:</label>
+                        <select
+                          value={computeLevel}
+                          onChange={e => setComputeLevel(e.target.value)}
+                          style={{ marginLeft: '8px' }}
+                        >
+                          <option value="Disabled">{t('search.computeDisabled')}</option>
+                          <option value="Low">{t('search.computeLow')}</option>
+                          <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                          <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                          {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                      </div>
+                    </div>
+                  )}
                   {false && selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>

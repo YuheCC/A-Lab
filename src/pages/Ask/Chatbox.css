@@ -184,6 +184,10 @@
   .message-assistant {
     margin-bottom: 15px;
   }
+
+  .message-assistant.error-message .message-content {
+    color: red;
+  }
   
   .message-user:last-child,
   .message-assistant:last-child {
