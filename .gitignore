@@ -14,3 +14,4 @@ config/config.staging.ts
 /.cursor/
 .cursor/
 .cursor
+.code-workspace.code-workspace
