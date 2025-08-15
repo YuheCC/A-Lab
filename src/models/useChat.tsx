@@ -49,7 +49,6 @@ interface ChatState {
     isSynced: boolean;
     activeChat: string;
     chatMap: Record<string, Chat>;
-    pendingSessionCreation: Record<string, boolean>;
 }
 
 const getWelcomeMessage = () => {
@@ -504,123 +503,8 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             });
         }));
 
-        // Auto-sync to database (async, don't block UI)
-        const syncToDatabase = async () => {
-            console.log("🔍 DEBUG - Auto-sync starting:", {
-                targetChatId,
-                messageRole: message.role,
-                isNewChat: targetChatId === '-1' || parseInt(targetChatId) === -1
-            });
-
-            // For new chats (-1), create a session first if it's a user message
-            if (targetChatId === '-1' || parseInt(targetChatId) === -1) {
-                if (message.role === 'user') {
-                    // Prevent duplicate session creation for the same message
-                    const messageKey = `${message.role}:${message.content}`;
-                    if (get().pendingSessionCreation[messageKey]) {
-                        console.log("🚫 SESSION CREATION ALREADY PENDING FOR THIS MESSAGE, SKIPPING...");
-                        return;
-                    }
-
-                    console.log("🔄 NEW CHAT USER MESSAGE - Creating session and syncing...");
-
-                    // Mark this message as having a pending session creation
-                    set(produce((state: ChatState) => {
-                        state.pendingSessionCreation[messageKey] = true;
-                    }));
-
-                    try {
-                        // Call backend to create session and save user message
-                        const response = await authFetch(`${API_URL}/chat-history/create-and-sync`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                chat_name: message.content,
-                                role: message.role,
-                                content: message.content,
-                                found_molecules: message.molecules || [],
-                                extra_data: {
-                                    auto_synced: true,
-                                    timestamp: new Date().toISOString(),
-                                    mol_text: message.molText,
-                                    inputs: message.inputs,
-                                    sources: message.sources,
-                                    extra_data: message.extraData
-                                }
-                            })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-                        }
-
-                        const result = await response.json();
-                        console.log("✅ NEW CHAT SESSION CREATED AND MESSAGE SYNCED:", result);
-
-                        // Update the chat ID in local state so future messages use the correct ID
-                        if (result.session_id) {
-                            get().updateNewChatId(result.session_id);
-                        }
-
-                        // Clean up pending session creation tracking
-                        set(produce((state: ChatState) => {
-                            delete state.pendingSessionCreation[messageKey];
-                        }));
-
-                    } catch (error) {
-                        console.error("❌ FAILED TO CREATE SESSION AND SYNC MESSAGE:", error);
-
-                        // Clean up pending session creation tracking on error
-                        set(produce((state: ChatState) => {
-                            delete state.pendingSessionCreation[messageKey];
-                        }));
-                    }
-                } else {
-                    console.log("🚫 SKIPPING DATABASE SYNC - New chat, non-user message");
-                }
-                return;
-            }
-
-            try {
-                console.log("💾 AUTO-SYNCING MESSAGE TO DATABASE:", targetChatId, message.role);
-                const response = await authFetch(`${API_URL}/chat-history/sync-message`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        session_id: parseInt(targetChatId),
-                        role: message.role,
-                        content: message.content || '',
-                        found_molecules: message.molecules || [],
-                        extra_data: {
-                            auto_synced: true,
-                            timestamp: new Date().toISOString(),
-                            mol_text: message.molText,
-                            inputs: message.inputs,
-                            sources: message.sources,
-                            extra_data: message.extraData
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-                }
-
-                const result = await response.json();
-                console.log("✅ MESSAGE SYNCED TO DATABASE:", result);
-
-            } catch (error) {
-                console.error("❌ FAILED TO SYNC MESSAGE TO DATABASE:", error);
-                // Don't throw - we don't want to break the UI if sync fails
-            }
-        };
-
-        // Run sync in background
-        syncToDatabase();
+        // Auto-sync to database is handled by the backend when sending queries.
+        // Removed deprecated client-side sync calls to non-existent endpoints.
     },
     clearMessages: () => set(produce((state: ChatState) => {
         console.log("Clearing messages for chat:", state.activeChat);
