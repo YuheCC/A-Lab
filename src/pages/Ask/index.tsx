@@ -23,87 +23,87 @@ import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/inde
 const API_URL = getAPIUrl();
 
 // Helper function to check if content contains inline molecules
-const hasInlineMolecules = (content) => {
+const hasInlineMolecules = (content: string): boolean => {
   return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
 };
 
 // Custom message content renderer that handles both markdown and inline molecules
-const MessageContentRenderer = ({ content, onMoleculeClick }) => {
-  // Trim leading and trailing whitespace to prevent formatting issues
-  const trimmedContent = content?.trim() || '';
-  
-  if (hasInlineMolecules(trimmedContent)) {
-    // If content has inline molecules, render them with click capability
-    return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
-  } else {
-    // Otherwise, render as normal markdown
-    return (
-      <ReactMarkdown 
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          // Remove default margins from paragraphs
-          p: ({ node, children, ...props }) => (
-            <p {...props} style={{ margin: 0, marginBottom: '1em' }}>
-              {children}
-            </p>
-          ),
-          // Remove default margins from headings
-          h1: ({ node, children, ...props }) => (
-            <h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h1>
-          ),
-          h2: ({ node, children, ...props }) => (
-            <h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h2>
-          ),
-          h3: ({ node, children, ...props }) => (
-            <h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h3>
-          ),
-          // Remove margins from lists
-          ul: ({ node, children, ...props }) => (
-            <ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
-              {children}
-            </ul>
-          ),
-          ol: ({ node, children, ...props }) => (
-            <ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
-              {children}
-            </ol>
-          ),
-          // Add proper spacing for horizontal rules
-          hr: ({ node, ...props }) => (
-            <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
-          ),
-        }}
-      >
-        {trimmedContent}
-      </ReactMarkdown>
-    );
-  }
+const MessageContentRenderer = ({ content, onMoleculeClick }: { content: string; onMoleculeClick?: (mol: any) => void }) => {
+	// Trim leading and trailing whitespace to prevent formatting issues
+	const trimmedContent = content?.trim() || '';
+	
+	if (hasInlineMolecules(trimmedContent)) {
+		// If content has inline molecules, render them with click capability
+		return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
+	} else {
+		// Otherwise, render as normal markdown
+		return (
+			<ReactMarkdown 
+				remarkPlugins={[remarkGfm]}
+				rehypePlugins={[rehypeRaw]}
+				components={{
+					// Remove default margins from paragraphs
+					p: ({ node, children, ...props }: any) => (
+						<p {...props} style={{ margin: 0, marginBottom: '1em' }}>
+							{children}
+						</p>
+					),
+					// Remove default margins from headings
+					h1: ({ node, children, ...props }: any) => (
+						<h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h1>
+					),
+					h2: ({ node, children, ...props }: any) => (
+						<h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h2>
+					),
+					h3: ({ node, children, ...props }: any) => (
+						<h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h3>
+					),
+					// Remove margins from lists
+					ul: ({ node, children, ...props }: any) => (
+						<ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+							{children}
+						</ul>
+					),
+					ol: ({ node, children, ...props }: any) => (
+						<ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+							{children}
+						</ol>
+					),
+					// Add proper spacing for horizontal rules
+					hr: ({ node, ...props }: any) => (
+						<hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+					),
+				}}
+			>
+				{trimmedContent}
+			</ReactMarkdown>
+		);
+	}
 };
 
 // Dropdown section for displaying supplemental information
-const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
-  const [open, setOpen] = useState(false);
+const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; content: string; onMoleculeClick?: (mol: any) => void }) => {
+	const [open, setOpen] = useState(false);
 
-  return (
-    <div className="extra-data-section">
-      <div className="extra-data-header" onClick={() => setOpen(!open)}>
-        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        <span>{title}</span>
-      </div>
-      {open && (
-        <div className="extra-data-content">
-          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
-        </div>
-      )}
-    </div>
-  );
+	return (
+		<div className="extra-data-section">
+			<div className="extra-data-header" onClick={() => setOpen(!open)}>
+				{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+				<span>{title}</span>
+			</div>
+			{open && (
+				<div className="extra-data-content">
+					<MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
+				</div>
+			)}
+		</div>
+	);
 };
 
 // New ChatInput component added for memoized chat input rendering
@@ -132,10 +132,10 @@ const ChatInput = React.memo((props: {
       fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries,
       enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
-  const textareaRef = useRef(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { t } = useTranslation();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
 
     // Auto-resize textarea
@@ -144,7 +144,7 @@ const ChatInput = React.memo((props: {
     textareaRef.current.style.height = (textareaRef.current.scrollHeight - 20) + 'px';
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // if (e.key === 'Enter' && !e.shiftKey) {
     //   e.preventDefault();
     //   if (inputValue.trim()) {
@@ -294,7 +294,7 @@ const ChatInput = React.memo((props: {
   );
 });
 
-const formatThinkingTime = (seconds) => {
+const formatThinkingTime = (seconds: number) => {
   if (seconds === undefined || seconds === null || Number.isNaN(seconds) || seconds < 0) {
     return "0 seconds";
   }
@@ -331,7 +331,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow((state: any) => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -451,6 +451,8 @@ const ChatbotInterface = () => {
   const handleMoleculeClick = (molecule) => {
     setSelectedMolecule(molecule);
     setShowSelectedMolecule(true);
+    // Persist selection per chat so it survives chat switches
+    setActiveMolecule(molecule, activeChat);
     // Hide other molecule panels
     setShowFoundMolecules(false);
     setShowSimilarMolecules(false);
@@ -642,25 +644,31 @@ const handleFindSimilarMolecules = async (details) => {
     }
   }, [isSynced, loadHistory]);
 
-  // Clear selected molecule state when switching chats
+  // Restore molecule panels when switching chats based on persisted store data
   useEffect(() => {
-    setSelectedMolecule(null);
-    setShowSelectedMolecule(false);
-    setSimilarMolecules([]);
-    setShowSimilarMolecules(false);
-  }, [activeChat]);
+    if (activeMolecule) {
+      setSelectedMolecule(activeMolecule);
+      setShowSelectedMolecule(true);
+    } else {
+      setSelectedMolecule(null);
+      setShowSelectedMolecule(false);
+    }
+    // Keep similar/found panels visible if they exist for this chat
+    setShowSimilarMolecules(similarMolecules && similarMolecules.length > 0);
+    setShowFoundMolecules(foundMolecules && foundMolecules.length > 0);
+  }, [activeChat, activeMolecule, similarMolecules, foundMolecules]);
 
   // Poll helper – waits until the back‑end returns an assistant message, or error/timeout.
   const pollChatUntilComplete = async (
     chatId: string,
     {
       intervalMs = 5000,
-      maxTries   = 1200, // ≈20 min at default interval
+      maxTries   = 1200, // ≈20 min at default interval
     } = {}
   ) => {
     let tries = 0;
     while (tries < maxTries) {
-      // Don’t await before the very first pass so we can react quickly if the
+      // Don't await before the very first pass so we can react quickly if the
       // message is already there.
       if (tries > 0) await new Promise((r) => setTimeout(r, intervalMs));
       tries += 1;
@@ -713,8 +721,19 @@ const handleFindSimilarMolecules = async (details) => {
             return; // Finished – exit polling loop.
           }
 
-          // Duplicate of the previous turn – keep waiting.
-          continue;
+          // Duplicate of the previous turn – treat as completed and render the message again.
+          addMessage(
+            {
+              role: "assistant",
+              content: assistant.content || "",
+              sources: assistant.sources,
+              extraData: assistant.extra_data || null,
+            },
+            chatId
+          );
+          setIsThinking(false, chatId);
+          setStatus(status || "complete", chatId);
+          return;
         }
 
         // If the backend explicitly reports an error state, stop polling
@@ -733,7 +752,7 @@ const handleFindSimilarMolecules = async (details) => {
       }
     }
 
-    // Hard timeout – give up, clear spinner so the UI doesn’t hang forever.
+    // Hard timeout – give up, clear spinner so the UI doesn't hang forever.
     setIsThinking(false, chatId);
     setStatus("complete", chatId);
   };
@@ -988,8 +1007,18 @@ const handleFindSimilarMolecules = async (details) => {
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
 
-        addMessage(llmMessage, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        console.log("🎉 SUCCESS - Adding message and turning off thinking for chat:", effectiveChatId);
+        console.log("📝 Response content:", llmMessage.content);
+        
+        // Only add message and stop thinking if there's actual content
+        if (llmMessage.content.trim()) {
+          addMessage(llmMessage, effectiveChatId);
+          setIsThinking(false, effectiveChatId);
+          console.log("✅ setIsThinking(false) called for chat:", effectiveChatId);
+        } else {
+          console.log("⚠️ Empty response received, keeping thinking animation active");
+          // Keep thinking animation while we wait for actual content
+        }
 
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
@@ -1000,9 +1029,9 @@ const handleFindSimilarMolecules = async (details) => {
         setStatus('complete', effectiveChatId);
       } finally {
         /*
-         * Don’t forcibly clear the spinner here: in the 202‑polling path
+         * Don't forcibly clear the spinner here: in the 202‑polling path
          * `pollChatUntilComplete` already does that when the assistant
-         * message lands.  For the synchronous paths we’ve already called
+         * message lands.  For the synchronous paths we've already called
          * `setIsThinking(false)` earlier in the try block or in catch.
          */
         fetchQueryLimit();
@@ -1200,20 +1229,23 @@ const handleFindSimilarMolecules = async (details) => {
 
               // Extract only the extra_outputs subfield and normalize it for rendering
               const extraOutputs = normalizedExtraData?.extra_outputs;
-              const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
+                            const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
                 ? extraOutputs
                 : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
-
-              const errorText = normalizedExtraData?.error;
-              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
-              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+ 
+              const errorRaw = normalizedExtraData?.error;
+              const normalizedError = (typeof errorRaw === 'string' && errorRaw.trim() !== '')
+                ? errorRaw
+                : (errorRaw ? t('chatbox.errors.batteryRelevance') : null);
+              const displayContent = normalizedError ? `Error: ${normalizedError}` : msg.content;
+              const isError = !!normalizedError || (displayContent && displayContent.startsWith('Error:'));
               return (
                 <div
                   key={index}
                   className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
                   <div className='message-content'>
                     <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
-
+ 
                     {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
                       <div className="extra-data-wrapper">
                         {Object.entries(renderableExtraOutputs).map(([key, value]) => (
