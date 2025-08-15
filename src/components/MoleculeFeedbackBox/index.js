@@ -37,30 +37,31 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
         // Only use detection logic when no explicit queryType is provided
         // Check if response contains multi-agent indicators
         const responseContent = molecule.SMILES || molecule.smiles || '';
-        const isMultiAgentResponse = useMultiAgent || 
-          (lastSearch && (
-            lastSearch.includes('Query_Planning_Agent') ||
-            lastSearch.includes('Plan_Review_Agent') ||
-            lastSearch.includes('Battery_Agent') ||
-            lastSearch.includes('Chemical_Prop_Expert') ||
-            lastSearch.includes('## Query_Planning_Agent') ||
-            lastSearch.includes('## Plan_Review_Agent') ||
-            lastSearch.includes('## Battery_Agent') ||
-            lastSearch.includes('## Chemical_Prop_Expert')
+        const lastSearchText = typeof lastSearch === 'string' ? lastSearch : (lastSearch ? JSON.stringify(lastSearch) : '');
+        const isMultiAgentResponse = !!useMultiAgent || 
+          (!!lastSearchText && (
+            lastSearchText.includes('Query_Planning_Agent') ||
+            lastSearchText.includes('Plan_Review_Agent') ||
+            lastSearchText.includes('Battery_Agent') ||
+            lastSearchText.includes('Chemical_Prop_Expert') ||
+            lastSearchText.includes('## Query_Planning_Agent') ||
+            lastSearchText.includes('## Plan_Review_Agent') ||
+            lastSearchText.includes('## Battery_Agent') ||
+            lastSearchText.includes('## Chemical_Prop_Expert')
           ));
         
         determinedQueryType = isMultiAgentResponse ? "deep_space" : "normal_ask";
       }
 
       // Submit feedback to backend
-      await authFetch(`${API_URL}/api/feedback`, {
+      const response = await authFetch(`${API_URL}/api/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           isPositive: feedbackType === 'up',
-          feedbackText: feedbackText.trim(),
+          feedbackText: (feedbackText || '').trim(),
           inputContent: lastSearch ? (typeof lastSearch === 'object' ? JSON.stringify(lastSearch) : lastSearch) : '',
           responseContent: molecule.SMILES || molecule.smiles || '',
           contextContent1: '',
@@ -71,6 +72,17 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
           queryType: determinedQueryType,
         }),
       });
+
+      // Handle non-2xx responses explicitly
+      if (!response.ok) {
+        let detail = '';
+        try {
+          const data = await response.json();
+          detail = data?.detail || '';
+        } catch (_) {}
+        setStatusMessage(detail || t('chatbox.success.feedbackSubmitted'));
+        return;
+      }
 
       setStatusMessage(t('chatbox.feedback.thankYou'));
       setTimeout(() => onClose(), 1500);

@@ -13,6 +13,7 @@ interface ChatMessage {
     content: string;
     molText?: string;
     molecules?: any[];
+    createdAt?: string; // ISO timestamp for when the message was first saved/created
     inputs?: any;
     sources?: any;
     extraData?: any;
@@ -188,7 +189,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             return;
         }
         
-        set(produce((draft) => {
+        set(produce((draft: ChatState) => {
             draft.isLoading = true;
         }));
         
@@ -210,8 +211,71 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                 draft.isSynced = true;
                 draft.isLoading = false;
 
-                draft.chatMap = { "-1": generateNewChat() };
+                // Delete all existing chats except the default one
+                draft.chatMap = {
+                    "-1": generateNewChat()
+                };
 
+                /*
+                if (historyData.length > 0) {
+                    // Filter out chats with duplicate names and empty content to prevent UI duplicates
+                    const seenNames = new Set<string>();
+                    const filteredChats = historyData.filter((chat: any) => {
+                        const hasContent = chat.content && chat.content.length > 0;
+                        const nameKey = `${chat.chat_name}_${hasContent}`;
+                        
+                        if (seenNames.has(nameKey)) {
+                            console.log(`📥 SKIPPING DUPLICATE CHAT: ID=${chat.id}, Name="${chat.chat_name}", HasContent=${hasContent}`);
+                            // return false;
+                        }
+                        
+                        seenNames.add(nameKey);
+                        return true;
+                    });
+
+                    const getExtraData = (item: any) => {
+                        if (item.extra_data) {
+                            return item.extra_data.auto_synced !== undefined ? item.extra_data.extra_data : item.extra_data;
+                        }
+                        return {} as any;
+                    }
+                    
+                    filteredChats.forEach((chat: any, index: number) => {
+                        console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
+                        
+                        draft.chatMap[chat.id] = {
+                            createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
+                            useMultiAgent: false,
+                            name: chat.chat_name || 'New Chat',
+                            messages: (chat.content as any[]).map((item: any) => ({
+                                role: item.role,
+                                content: item.content || '',
+                                molText: (item.molecules || []).join(", "),
+                                molecules: item.molecules || [],
+                                extraData: getExtraData(item),
+                                createdAt: item.created_at ? (item.created_at.endsWith('Z') ? item.created_at : item.created_at + 'Z') : undefined,
+                            })) || [],
+                            activeMolecule: chat.meta_active_molecule || null,
+                            foundMolecules: chat.meta_molecules || [],
+                            similarMolecules: chat.meta_similar_molecules || [],
+                            awaitingClarify: chat.awaiting_clarification || false,
+                            isInClarifyFlow: false,
+                            isThinking: false,
+                            thinkingStartedAt: null,
+                            moleculesLoading: false,
+                            similarMoleculesLoading: false,
+                        } as any;
+                        
+                        // Log message details for debugging
+                        if (chat.content && chat.content.length > 0) {
+                            console.log(`📥 SESSION ${chat.id} MESSAGES:`, chat.content.map((msg: any) => `${msg.role}: ${(msg.content || '').substring(0, 50)}...`));
+                        }
+                    });
+                }
+ 
+                draft.chatMap = { "-1": generateNewChat() };
+                */
+ 
                 const parseMaybeJSON = (v: any) => {
                     if (!v) return v;
                     if (typeof v === 'string') {
@@ -260,7 +324,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
         } catch (error) {
             console.error("❌ ERROR LOADING CHAT HISTORY:", error);
-            set(produce((draft) => {
+            set(produce((draft: ChatState) => {
                 draft.isLoading = false;
             }));
         }
@@ -415,28 +479,34 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     addMessage: (message: any, chatId = null) => {
         const targetChatId = chatId || get().activeChat;
 
-        set(produce((state) => {
-            // Give the chat a meaningful title once the very first user message
-            // arrives.  We only overwrite the placeholder “New Chat”.  This works
-            // for chats that have already been assigned a real ID, too.
-            const chat = state.chatMap[targetChatId];
-            if (
-              message.role === 'user' &&
-              chat &&
-              chat.messages.length === 0 &&
-              chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
-            ) {
-              chat.name = message.content;
+        // Update local state first
+        set(produce((state: ChatState) => {
+            if (message.role === 'user' && state.activeChat === '-1') {
+                state.chatMap[state.activeChat].name = message.content;
             }
 
+            const chat = state.chatMap[targetChatId];
             if (!chat) return;
 
-            // Use immutable update so selectors that rely on reference equality
-            // (useActiveChatData deep compare) notice the change.
-            chat.messages = [...chat.messages, message];
+            // Give the chat a meaningful title on the first user message if still default name
+            if (
+                message.role === 'user' &&
+                chat.messages.length === 0 &&
+                chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
+            ) {
+                chat.name = message.content;
+            }
+
+            chat.messages.push({
+                ...message,
+                createdAt: message.createdAt || new Date().toISOString(),
+            });
         }));
+
+        // Auto-sync to database is handled by the backend when sending queries.
+        // Removed deprecated client-side sync calls to non-existent endpoints.
     },
-    clearMessages: () => set(produce((state) => {
+    clearMessages: () => set(produce((state: ChatState) => {
         console.log("Clearing messages for chat:", state.activeChat);
         const chat = state.chatMap[state.activeChat];
         if (!chat) return;
@@ -592,7 +662,6 @@ export const useActiveChatData = () => {
     const result = useChatStore((state: ChatState) => {
         const activeChat = state.chatMap[state.activeChat];
         
-        // Enhanced debugging with more detail
         console.log("🔍 ACTIVE CHAT DATA ACCESS:", {
             activeChatId: state.activeChat,
             activeChatExists: !!activeChat,
@@ -606,32 +675,11 @@ export const useActiveChatData = () => {
             } : null
         });
         
-        // Log warning if active chat has no messages but should have some
         if (activeChat && activeChat.messages?.length === 0 && state.activeChat !== '-1') {
             console.warn("⚠️ ACTIVE CHAT HAS NO MESSAGES - This might indicate a display issue for chat:", state.activeChat);
         }
         
         return activeChat;
-    }, (oldData, newData) => {
-        // Deep comparison of the relevant data to prevent unnecessary re-renders
-        const isEqual = (
-            oldData?.foundMolecules === newData?.foundMolecules &&
-            oldData?.similarMolecules === newData?.similarMolecules &&
-            oldData?.activeMolecule === newData?.activeMolecule &&
-            oldData?.messages === newData?.messages &&
-            oldData?.isThinking === newData?.isThinking &&
-            oldData?.moleculesLoading === newData?.moleculesLoading &&
-            oldData?.similarMoleculesLoading === newData?.similarMoleculesLoading &&
-            oldData?.awaitingClarify === newData?.awaitingClarify
-        );
-        
-        // Log re-render decisions for debugging
-        if (!isEqual) {
-            console.log("🔄 ACTIVE CHAT DATA CHANGED - Component will re-render");
-            }
-
-            return isEqual;
-        }
-    );
+    });
     return result;
 };

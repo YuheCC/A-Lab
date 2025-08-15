@@ -8,6 +8,28 @@ export default {
     // Search Options
     findFriendsLabel: '查找"朋友"',
     findFriendsDescription: '具有相似物理化学性质的分子。"朋友"有意包括一些具有相似结构的分子和一些具有不同结构的分子。列表按与查询分子物理化学性质的相似程度排序。',
+
+    searchRange: '搜索范围',
+    nearbyFriends: '附近的朋友',
+    distantFriends: '远处的朋友',
+    advancedOptions: '高级选项',
+    intelligentCompute: '智能找朋友计算',
+    computeDisabled: '禁用',
+    computeLow: '低',
+    computeMedium: '中',
+    computeHigh: '高',
+    computeExtreme: '极致',
+    cathode: '正极',
+    anode: '负极',
+    salt: '盐',
+    solvent: '主要溶剂',
+    performanceMetric: '期望性能指标',
+    extraRequests: '额外请求',
+    extraRequestsPlaceholder: '对LLM的其他要求',
+    custom: '自定义',
+    upgradeEnterprise: '升级到企业级账户',
+    upgradeAccount: '升级账户',
+    computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
     
     // Loading and Status Messages
     searching: "搜索中...",

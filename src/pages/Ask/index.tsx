@@ -23,87 +23,87 @@ import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/inde
 const API_URL = getAPIUrl();
 
 // Helper function to check if content contains inline molecules
-const hasInlineMolecules = (content) => {
+const hasInlineMolecules = (content: string): boolean => {
   return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
 };
 
 // Custom message content renderer that handles both markdown and inline molecules
-const MessageContentRenderer = ({ content, onMoleculeClick }) => {
-  // Trim leading and trailing whitespace to prevent formatting issues
-  const trimmedContent = content?.trim() || '';
-  
-  if (hasInlineMolecules(trimmedContent)) {
-    // If content has inline molecules, render them with click capability
-    return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
-  } else {
-    // Otherwise, render as normal markdown
-    return (
-      <ReactMarkdown 
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          // Remove default margins from paragraphs
-          p: ({ node, children, ...props }) => (
-            <p {...props} style={{ margin: 0, marginBottom: '1em' }}>
-              {children}
-            </p>
-          ),
-          // Remove default margins from headings
-          h1: ({ node, children, ...props }) => (
-            <h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h1>
-          ),
-          h2: ({ node, children, ...props }) => (
-            <h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h2>
-          ),
-          h3: ({ node, children, ...props }) => (
-            <h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
-              {children}
-            </h3>
-          ),
-          // Remove margins from lists
-          ul: ({ node, children, ...props }) => (
-            <ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
-              {children}
-            </ul>
-          ),
-          ol: ({ node, children, ...props }) => (
-            <ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
-              {children}
-            </ol>
-          ),
-          // Add proper spacing for horizontal rules
-          hr: ({ node, ...props }) => (
-            <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
-          ),
-        }}
-      >
-        {trimmedContent}
-      </ReactMarkdown>
-    );
-  }
+const MessageContentRenderer = ({ content, onMoleculeClick }: { content: string; onMoleculeClick?: (mol: any) => void }) => {
+	// Trim leading and trailing whitespace to prevent formatting issues
+	const trimmedContent = content?.trim() || '';
+	
+	if (hasInlineMolecules(trimmedContent)) {
+		// If content has inline molecules, render them with click capability
+		return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
+	} else {
+		// Otherwise, render as normal markdown
+		return (
+			<ReactMarkdown 
+				remarkPlugins={[remarkGfm]}
+				rehypePlugins={[rehypeRaw]}
+				components={{
+					// Remove default margins from paragraphs
+					p: ({ node, children, ...props }: any) => (
+						<p {...props} style={{ margin: 0, marginBottom: '1em' }}>
+							{children}
+						</p>
+					),
+					// Remove default margins from headings
+					h1: ({ node, children, ...props }: any) => (
+						<h1 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h1>
+					),
+					h2: ({ node, children, ...props }: any) => (
+						<h2 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h2>
+					),
+					h3: ({ node, children, ...props }: any) => (
+						<h3 {...props} style={{ margin: 0, marginBottom: '0.5em' }}>
+							{children}
+						</h3>
+					),
+					// Remove margins from lists
+					ul: ({ node, children, ...props }: any) => (
+						<ul {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+							{children}
+						</ul>
+					),
+					ol: ({ node, children, ...props }: any) => (
+						<ol {...props} style={{ margin: 0, marginBottom: '1em', paddingLeft: '1.5em' }}>
+							{children}
+						</ol>
+					),
+					// Add proper spacing for horizontal rules
+					hr: ({ node, ...props }: any) => (
+						<hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+					),
+				}}
+			>
+				{trimmedContent}
+			</ReactMarkdown>
+		);
+	}
 };
 
 // Dropdown section for displaying supplemental information
-const ExtraDataSection = ({ title, content, onMoleculeClick }) => {
-  const [open, setOpen] = useState(false);
+const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; content: string; onMoleculeClick?: (mol: any) => void }) => {
+	const [open, setOpen] = useState(false);
 
-  return (
-    <div className="extra-data-section">
-      <div className="extra-data-header" onClick={() => setOpen(!open)}>
-        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        <span>{title}</span>
-      </div>
-      {open && (
-        <div className="extra-data-content">
-          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
-        </div>
-      )}
-    </div>
-  );
+	return (
+		<div className="extra-data-section">
+			<div className="extra-data-header" onClick={() => setOpen(!open)}>
+				{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+				<span>{title}</span>
+			</div>
+			{open && (
+				<div className="extra-data-content">
+					<MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
+				</div>
+			)}
+		</div>
+	);
 };
 
 // New ChatInput component added for memoized chat input rendering
@@ -129,13 +129,13 @@ const ChatInput = React.memo((props: {
       disableLiteratureSearch, onDisableLiteratureSearchChange,
       disableTools, onDisableToolsChange,
       userPermissions, useMultiAgent, onUseMultiAgentChange,
-      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries, 
+      fullDeepSpace, onFullDeepSpaceChange, remainingDeepSpaceQueries,
       enablePatentRag, onEnablePatentRagChange } = props;
   const [inputValue, setInputValue] = React.useState("");
-  const textareaRef = useRef(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { t } = useTranslation();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
 
     // Auto-resize textarea
@@ -144,7 +144,7 @@ const ChatInput = React.memo((props: {
     textareaRef.current.style.height = (textareaRef.current.scrollHeight - 20) + 'px';
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // if (e.key === 'Enter' && !e.shiftKey) {
     //   e.preventDefault();
     //   if (inputValue.trim()) {
@@ -294,7 +294,7 @@ const ChatInput = React.memo((props: {
   );
 });
 
-const formatThinkingTime = (seconds) => {
+const formatThinkingTime = (seconds: number) => {
   if (seconds === undefined || seconds === null || Number.isNaN(seconds) || seconds < 0) {
     return "0 seconds";
   }
@@ -312,6 +312,7 @@ const ChatbotInterface = () => {
   const { t } = useTranslation();
   const [remainingQueries, setRemainingQueries] = useState(0);
   const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+  const [structureWeight, setStructureWeight] = useState(0.5);
 
   const { 
     messages, 
@@ -330,7 +331,7 @@ const ChatbotInterface = () => {
   // Debug: Log the current active chat data
 
 
-  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow(state => ({
+  const { addMessage, setActiveMolecule, setFoundMolecules, setSimilarMolecules, loadHistory, isLoading, isSynced, setIsThinking, updateNewChatId, activeChat, setMoleculesLoading, setSimilarMoleculesLoading, setAwaitingClarify, setUseMultiAgent, setIsInClarifyFlow, setStatus, setChatName } = useChatStore(useShallow((state: any) => ({
     addMessage: state.addMessage,
     setActiveMolecule: state.setActiveMolecule,
     setFoundMolecules: state.setFoundMolecules,
@@ -354,6 +355,16 @@ const ChatbotInterface = () => {
     console.log(foundMolecules)
   }, [foundMolecules])
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const getDefaultCompute = useCallback(() => {
+    if (userPermissions === 'research') return 'Low';
+    if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+    return 'High';
+  }, [userPermissions]);
+  const [computeLevel, setComputeLevel] = useState(getDefaultCompute());
+  useEffect(() => {
+    setComputeLevel(getDefaultCompute());
+  }, [getDefaultCompute]);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
@@ -440,6 +451,8 @@ const ChatbotInterface = () => {
   const handleMoleculeClick = (molecule) => {
     setSelectedMolecule(molecule);
     setShowSelectedMolecule(true);
+    // Persist selection per chat so it survives chat switches
+    setActiveMolecule(molecule, activeChat);
     // Hide other molecule panels
     setShowFoundMolecules(false);
     setShowSimilarMolecules(false);
@@ -563,11 +576,14 @@ const handleFindSimilarMolecules = async (details) => {
         : undefined;
       
       // Construct request payload
+      const computeEnabled = computeLevel !== 'Disabled';
       const payload = {
         smiles: details.SMILES,
         use_35m: isHighTier,
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr }),
-        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] })
+        structure_weight: structureWeight,
+        ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] }),
+        ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
+        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
       };
       // Perform POST request
       const response = await authFetch(
@@ -628,25 +644,31 @@ const handleFindSimilarMolecules = async (details) => {
     }
   }, [isSynced, loadHistory]);
 
-  // Clear selected molecule state when switching chats
+  // Restore molecule panels when switching chats based on persisted store data
   useEffect(() => {
-    setSelectedMolecule(null);
-    setShowSelectedMolecule(false);
-    setSimilarMolecules([]);
-    setShowSimilarMolecules(false);
-  }, [activeChat]);
+    if (activeMolecule) {
+      setSelectedMolecule(activeMolecule);
+      setShowSelectedMolecule(true);
+    } else {
+      setSelectedMolecule(null);
+      setShowSelectedMolecule(false);
+    }
+    // Keep similar/found panels visible if they exist for this chat
+    setShowSimilarMolecules(similarMolecules && similarMolecules.length > 0);
+    setShowFoundMolecules(foundMolecules && foundMolecules.length > 0);
+  }, [activeChat, activeMolecule, similarMolecules, foundMolecules]);
 
   // Poll helper – waits until the back‑end returns an assistant message, or error/timeout.
   const pollChatUntilComplete = async (
     chatId: string,
     {
       intervalMs = 5000,
-      maxTries   = 1200, // ≈20 min at default interval
+      maxTries   = 1200, // ≈20 min at default interval
     } = {}
   ) => {
     let tries = 0;
     while (tries < maxTries) {
-      // Don’t await before the very first pass so we can react quickly if the
+      // Don't await before the very first pass so we can react quickly if the
       // message is already there.
       if (tries > 0) await new Promise((r) => setTimeout(r, intervalMs));
       tries += 1;
@@ -680,9 +702,14 @@ const handleFindSimilarMolecules = async (details) => {
           const isDuplicate    = lastAssistant &&
                                  lastAssistant.content === (assistant.content || "") &&
                                  JSON.stringify(lastAssistant.sources) === JSON.stringify(assistant.sources);
+          const serverAssistantCount = serverMsgs.filter((m: any) => m.role === "assistant").length;
+          const localAssistantCount  = existingMsgs.filter((m: any) => m.role === "assistant").length;
+
+          // If server has more assistant messages than we have locally, treat it as new even if text matches.
+          const isNewByCount = serverAssistantCount > localAssistantCount;
 
           // Only act when we discover a *new* assistant message.
-          if (!isDuplicate) {
+          if (!isDuplicate || isNewByCount) {
             addMessage(
               {
                 role: "assistant",
@@ -699,7 +726,14 @@ const handleFindSimilarMolecules = async (details) => {
             return; // Finished – exit polling loop.
           }
 
-          // Duplicate of the previous turn – keep waiting.
+          // Duplicate of previous turn with no new assistant rows.
+          // If the backend says we're complete, clear spinner; otherwise keep polling.
+          if (status === "complete" || status === "error") {
+            setIsThinking(false, chatId);
+            setStatus(status || "complete", chatId);
+            return;
+          }
+
           continue;
         }
 
@@ -719,7 +753,7 @@ const handleFindSimilarMolecules = async (details) => {
       }
     }
 
-    // Hard timeout – give up, clear spinner so the UI doesn’t hang forever.
+    // Hard timeout – give up, clear spinner so the UI doesn't hang forever.
     setIsThinking(false, chatId);
     setStatus("complete", chatId);
   };
@@ -760,8 +794,10 @@ const handleFindSimilarMolecules = async (details) => {
       let effectiveChatId = localChatId;
       setStatus('pending', effectiveChatId);
       const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
-      const ragModel        = isAdvancedTier ? 'o3' : 'o4-mini';
-      const ragResultsCount = isAdvancedTier ? 10 : 3;
+      const ragModel        = isAdvancedTier ? 'gpt-5' : 'gpt-5-mini'; // deprecated
+      const ragResultsCount = isAdvancedTier ? 10 : 3; // deprecated
+      const llmComputePower = isAdvancedTier ? "high" : "medium";
+      const ragComputePower = isAdvancedTier ? "medium" : "low";
 
       const currentChatId = isNewChat ? -1 : parseInt(localChatId, 10);
       let data; // final payload from the back-end
@@ -780,7 +816,7 @@ const handleFindSimilarMolecules = async (details) => {
             ];
 
             setIsInClarifyFlow(false, effectiveChatId);
-            const multiAgentPayload: any = { messages: updatedHistory };
+            const multiAgentPayload: any = { messages: updatedHistory, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -818,7 +854,7 @@ const handleFindSimilarMolecules = async (details) => {
           } else {
             setIsInClarifyFlow(true, effectiveChatId);
 
-            const multiAgentPayload: any = { messages: messagesToSend };
+            const multiAgentPayload: any = { messages: messagesToSend, llm_compute_power: llmComputePower };
             if (currentChatId !== -1) multiAgentPayload.chat_id = currentChatId;
             if (fullDeepSpace) multiAgentPayload.dump_state = true;
 
@@ -912,6 +948,7 @@ const handleFindSimilarMolecules = async (details) => {
             numRagResults: ragResultsCount,
             model: ragModel,
             patentRagEnabled: enablePatentRag,
+            llm_compute_power: ragComputePower,
           };
           if (currentChatId !== -1) ragPayload.chatId = currentChatId;
           const res = await authFetch(`${API_URL}/rag`, {
@@ -971,21 +1008,34 @@ const handleFindSimilarMolecules = async (details) => {
           extraData: data.extra_data ? { extra_data: data.extra_data } : null,
         };
 
-        addMessage(llmMessage, effectiveChatId);
-        setIsThinking(false, effectiveChatId);
+        console.log("🎉 SUCCESS - Adding message and turning off thinking for chat:", effectiveChatId);
+        console.log("📝 Response content:", llmMessage.content);
+        
+        // Only add message and stop thinking if there's actual content
+        if (llmMessage.content.trim()) {
+          addMessage(llmMessage, effectiveChatId);
+          setIsThinking(false, effectiveChatId);
+          console.log("✅ setIsThinking(false) called for chat:", effectiveChatId);
+        } else {
+          console.log("⚠️ Empty response received, keeping thinking animation active");
+          // Keep thinking animation while we wait for actual content
+        }
 
         if (userPermissions === 'research' && data.remaining_queries !== undefined)
           setRemainingQueries(data.remaining_queries);
 
-      } catch (err) {
-        addMessage({ role: "assistant", content: "Error: " + err.message }, effectiveChatId);
+      } catch (err: any) {
+        const rawMessage = (err?.message ?? '').toString();
+        const looksGeneric = rawMessage.trim() === '' || /^error$/i.test(rawMessage.trim());
+        const friendly = looksGeneric ? t('chatbox.errors.batteryRelevance') : rawMessage;
+        addMessage({ role: "assistant", content: "Error: " + friendly }, effectiveChatId);
         setIsThinking(false, effectiveChatId);
         setStatus('complete', effectiveChatId);
       } finally {
         /*
-         * Don’t forcibly clear the spinner here: in the 202‑polling path
+         * Don't forcibly clear the spinner here: in the 202‑polling path
          * `pollChatUntilComplete` already does that when the assistant
-         * message lands.  For the synchronous paths we’ve already called
+         * message lands.  For the synchronous paths we've already called
          * `setIsThinking(false)` earlier in the try block or in catch.
          */
         fetchQueryLimit();
@@ -1177,19 +1227,44 @@ const handleFindSimilarMolecules = async (details) => {
             )} 
           <div className="chat-messages">
             {messages.map((msg, index) => {
-              const errorText = msg.extraData?.extra_data?.error;
-              const displayContent = errorText ? `Error: ${errorText}` : msg.content;
-              const isError = !!errorText || (displayContent && displayContent.startsWith('Error:'));
+              const normalizedExtraData = (msg.extraData && typeof msg.extraData === 'object')
+                ? (msg.extraData.extra_data ?? msg.extraData)
+                : null;
+
+              // Extract only the extra_outputs subfield and normalize it for rendering
+              const extraOutputs = normalizedExtraData?.extra_outputs;
+                            const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
+                ? extraOutputs
+                : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
+ 
+              const errorRaw = normalizedExtraData?.error;
+              const errorReason = (normalizedExtraData?.reason || normalizedExtraData?.message || '').toString();
+              const errorCode = normalizedExtraData?.error_code;
+              const isBatteryIrrelevance = /not relevant to batteries|battery chemistry/i.test(errorReason) || errorCode === 'battery_irrelevant';
+              const rawString = typeof errorRaw === 'string' ? errorRaw.trim() : '';
+              const looksGeneric = rawString === '' || /^error$/i.test(rawString);
+              let normalizedError = null as string | null;
+              if (isBatteryIrrelevance) {
+                normalizedError = t('chatbox.errors.batteryRelevance');
+              } else if (typeof errorRaw === 'string' && !looksGeneric) {
+                normalizedError = rawString;
+              } else if (errorRaw) {
+                normalizedError = t('chatbox.errors.batteryRelevance');
+              } else {
+                normalizedError = null;
+              }
+              const displayContent = normalizedError ? `Error: ${normalizedError}` : msg.content;
+              const isError = !!normalizedError || (displayContent && displayContent.startsWith('Error:'));
               return (
                 <div
                   key={index}
                   className={`message-${msg.role} ${isError ? 'error-message' : ''}`}>
                   <div className='message-content'>
                     <MessageContentRenderer content={displayContent} onMoleculeClick={handleMoleculeClick} />
-
-                    {msg.extraData && msg.extraData.extra_data && Object.keys(msg.extraData.extra_data).length > 0 && (
+ 
+                    {renderableExtraOutputs && Object.keys(renderableExtraOutputs).length > 0 && (
                       <div className="extra-data-wrapper">
-                        {Object.entries(msg.extraData.extra_data).map(([key, value]) => (
+                        {Object.entries(renderableExtraOutputs).map(([key, value]) => (
                           <ExtraDataSection
                             key={key}
                             title={key}
@@ -1370,7 +1445,7 @@ const handleFindSimilarMolecules = async (details) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%' }}>
+                    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                       <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
                         fullWidth
                         loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
@@ -1378,17 +1453,56 @@ const handleFindSimilarMolecules = async (details) => {
                         size="small" style={{ flexGrow: 1 }}>
                         {t('chatbox.buttons.findSimilarMolecules')}
                       </CustomButton>
-                      <select
-                        value={molTypeSelections[details.SMILES] || ""}
-                        onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                        style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                      >
-                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                      </select>
+                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                        <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                        {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                      </div>
                     </div>
+                    {showAdvancedOptions && (
+                      <div style={{ width: '100%', marginTop: '8px' }}>
+                        <div style={{ marginBottom: '8px' }}>
+                          <select
+                            value={molTypeSelections[details.SMILES] || ""}
+                            onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                            style={{ backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                          >
+                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                          </select>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                          <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={structureWeight}
+                            onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                            style={{ margin: '0 4px' }}
+                          />
+                          <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                          <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                        </div>
+                        <div className='checkbox-item'>
+                          <label>{t('search.intelligentCompute')}:</label>
+                          <select
+                            value={computeLevel}
+                            onChange={e => setComputeLevel(e.target.value)}
+                            style={{ marginLeft: '8px' }}
+                          >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                            <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                     {false && details.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                         window.open(details.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                     }}>
@@ -1456,7 +1570,7 @@ const handleFindSimilarMolecules = async (details) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%' }}>
+                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                     <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
@@ -1464,6 +1578,10 @@ const handleFindSimilarMolecules = async (details) => {
                       size="small" style={{ flexGrow: 1 }}>
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
+                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                      <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                      {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                    </div>
                     <select
                       value={molTypeSelections[selectedMolecule.SMILES] || ""}
                       onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
@@ -1475,6 +1593,39 @@ const handleFindSimilarMolecules = async (details) => {
                       <option value="additive">{t('search.moleculeTypes.additive')}</option>
                     </select>
                   </div>
+                  {showAdvancedOptions && (
+                    <div style={{ width: '100%', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                        <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={structureWeight}
+                          onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                          style={{ margin: '0 4px' }}
+                        />
+                        <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                      </div>
+                      <div className='checkbox-item'>
+                        <label>{t('search.intelligentCompute')}:</label>
+                        <select
+                          value={computeLevel}
+                          onChange={e => setComputeLevel(e.target.value)}
+                          style={{ marginLeft: '8px' }}
+                        >
+                          <option value="Disabled">{t('search.computeDisabled')}</option>
+                          <option value="Low">{t('search.computeLow')}</option>
+                          <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                          <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                          {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                      </div>
+                    </div>
+                  )}
                   {false && selectedMolecule.COMMERCIAL_LINK && <CustomButton Icon={ExternalLink} size="small" fullWidth variant="outlined" onClick={() => {
                       window.open(selectedMolecule.COMMERCIAL_LINK, '_blank', 'noopener,noreferrer');
                   }}>

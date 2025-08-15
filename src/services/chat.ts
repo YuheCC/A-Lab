@@ -31,3 +31,8 @@ export const updateChatMetadata = async (payload: ChatMetadataPayload) => {
     body: JSON.stringify(body),
   });
 };
+
+// Supported chat history endpoints
+export const getChatHistory = () => authFetch(`${API_URL}/chat-history`);
+export const getChatSession = (id: number) => authFetch(`${API_URL}/chat-history/${id}`);
+export const deleteChatSession = (id: number) => authFetch(`${API_URL}/chat-history/delete/${id}`, { method: 'DELETE' });
