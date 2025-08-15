@@ -1284,7 +1284,7 @@ const handleFindSimilarMolecules = async (details: any) => {
                     )}
                   </div>
 
-                  {userPermissions === 'admin' && msg.role === 'assistant' && msg.createdAt && (
+                  {userPermissions === 'admin' && msg.createdAt && (
                     <div className="message-timestamp">
                       {new Date(msg.createdAt).toLocaleString()}
                     </div>
