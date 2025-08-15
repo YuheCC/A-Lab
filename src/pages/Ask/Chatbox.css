@@ -703,7 +703,7 @@
   text-align: left;
 }
 .message-assistant .message-timestamp {
-  text-align: right;
+  text-align: left;
 }
 @media (max-width: 600px) {
   .message-timestamp { font-size: 11px; }
