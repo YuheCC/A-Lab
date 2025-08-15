@@ -299,6 +299,11 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                             extraData: item.extra_data || null,
                             inputs: item.inputs,
                             sources: item.sources,
+                            createdAt: item.created_at
+                                ? (item.created_at.endsWith('Z') ? item.created_at : item.created_at + 'Z')
+                                : (item.createdAt
+                                    ? (item.createdAt.endsWith('Z') ? item.createdAt : item.createdAt + 'Z')
+                                    : undefined),
                         })),
                         activeMolecule: parseMaybeJSON(chat.meta_active_molecule) || null,
                         foundMolecules: parseMaybeJSON(chat.meta_molecules) || [],

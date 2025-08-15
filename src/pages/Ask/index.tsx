@@ -366,8 +366,16 @@ const ChatbotInterface = () => {
   }, [getDefaultCompute]);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
+  type FeedbackData = {
+    isPositive: boolean;
+    inputContent: string;
+    responseContent: string;
+    contextContent1?: string;
+    queryType: 'normal_ask' | 'deep_space';
+  };
+
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
-  const [feedbackData, setFeedbackData] = useState(null);
+  const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
   const messagesEndRef = useRef(null);
   const [thinkingTime, setThinkingTime] = useState(0);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
@@ -376,8 +384,8 @@ const ChatbotInterface = () => {
   const [enablePatentRag, setEnablePatentRag] = useState(false);
   const [disableTools, setDisableTools] = useState(false);
   const [showFoundMolecules, setShowFoundMolecules] = useState(true);
-  const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState(null);
-  const [foundMoleculesError, setFoundMoleculesError] = useState(null);
+  const [foundMoleculesMessageIndex, setFoundMoleculesMessageIndex] = useState<number | null>(null);
+  const [foundMoleculesError, setFoundMoleculesError] = useState<string | null>(null);
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(false);
   
   // State for selected molecule functionality
@@ -425,7 +433,7 @@ const ChatbotInterface = () => {
   }, [thinkingStartedAt, isThinking]);
 
   // Define handlers for llm response thumbs feedback
-  const handleThumbsUp = (inputContent, responseContent, contextContent1) => {
+  const handleThumbsUp = (inputContent: string, responseContent: string, contextContent1?: string) => {
     setFeedbackData({ 
       isPositive: true, 
       inputContent: inputContent, 
@@ -436,7 +444,7 @@ const ChatbotInterface = () => {
     setShowFeedbackBox(true);
   };
 
-  const handleThumbsDown = (inputContent, responseContent, contextContent1) => {
+  const handleThumbsDown = (inputContent: string, responseContent: string, contextContent1?: string) => {
     setFeedbackData({ 
       isPositive: false, 
       inputContent: inputContent, 
@@ -448,7 +456,7 @@ const ChatbotInterface = () => {
   };
 
   // Handler for when an inline molecule is clicked
-  const handleMoleculeClick = (molecule) => {
+  const handleMoleculeClick = (molecule: any) => {
     setSelectedMolecule(molecule);
     setShowSelectedMolecule(true);
     // Persist selection per chat so it survives chat switches
@@ -459,7 +467,7 @@ const ChatbotInterface = () => {
   };
 
   
-  const handleFindMolecules = async (message, index) => {
+  const handleFindMolecules = async (message: any, index: number) => {
     setFoundMoleculesMessageIndex(index);
     setActiveFindMessage(message);
     const moleculeList = message.molecules || [];
@@ -470,8 +478,8 @@ const ChatbotInterface = () => {
     setFoundMoleculesError(null);
     try {
       setMoleculesLoading(true);
-      const responses = await Promise.allSettled(
-        moleculeList.map(async (mol) => {
+      const responses = await Promise.allSettled<any>(
+        moleculeList.map(async (mol: string) => {
           // Add the use_35m parameter when user has appropriate permissions
           let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(mol)}`;
           if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
@@ -490,7 +498,7 @@ const ChatbotInterface = () => {
         .filter(item => item.found);
 
       // Flatten the molecule_details lists from each response into a single array.
-      const flattenedMolecules = validResponses.reduce((acc, cur) => {
+      const flattenedMolecules = validResponses.reduce((acc: any[], cur: any) => {
         if (Array.isArray(cur.molecule_details)) {
           return acc.concat(cur.molecule_details);
         }
@@ -512,7 +520,7 @@ const ChatbotInterface = () => {
     }
   };
 
-const handleFindSimilarMolecules = async (details) => {
+const handleFindSimilarMolecules = async (details: any) => {
     setActiveMolecule(details);
     setSimilarMoleculesLoading(true);
     setShowSimilarMolecules(true);
@@ -528,7 +536,7 @@ const handleFindSimilarMolecules = async (details) => {
       if (isHighTier) {
         if (activeFindMessage) {
           // Find the index of the message containing molecules
-          const messageIndex = messages.findIndex(msg => msg === activeFindMessage);
+          const messageIndex = messages.findIndex((msg: any) => msg === activeFindMessage);
           
           // Get the user query that led to this response
           // Look backwards for the most recent user message
@@ -1276,6 +1284,12 @@ const handleFindSimilarMolecules = async (details) => {
                     )}
                   </div>
 
+                  {userPermissions === 'admin' && msg.createdAt && (
+                    <div className="message-timestamp">
+                      {new Date(msg.createdAt).toLocaleString()}
+                    </div>
+                  )}
+ 
                 {/* Add thumbs buttons for feedback */}
                 {msg.role === "assistant" && (
                   <div className="thumbs">
