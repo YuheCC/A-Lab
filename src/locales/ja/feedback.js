@@ -42,6 +42,8 @@ export default {
         required: "必須",
         success: "フィードバックが正常に送信されました！",
         failed: "フィードバックの送信に失敗しました。もう一度お試しください。",
+        networkError: "ネットワークエラー。接続を確認してもう一度お試しください。",
+        validationError: "すべての必須フィールドを正しく入力してください。",
         uploading: "アップロード中...",
         fileTooLarge: "ファイルサイズは5MBを超えることはできません",
         invalidFileType: "JPG/PNG形式のみサポートされています"

@@ -42,6 +42,8 @@ export default {
         required: "必填项",
         success: "反馈提交成功！",
         failed: "反馈提交失败，请重试。",
+        networkError: "网络错误，请检查网络连接后重试。",
+        validationError: "请正确填写所有必填项。",
         uploading: "上传中...",
         fileTooLarge: "文件大小不能超过5MB",
         invalidFileType: "只支持JPG/PNG格式"

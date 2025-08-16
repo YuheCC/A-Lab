@@ -42,6 +42,8 @@ export default {
         required: "Required",
         success: "Feedback submitted successfully!",
         failed: "Failed to submit feedback. Please try again.",
+        networkError: "Network error. Please check your connection and try again.",
+        validationError: "Please fill in all required fields correctly.",
         uploading: "Uploading...",
         fileTooLarge: "File size cannot exceed 5MB",
         invalidFileType: "Only JPG/PNG format is supported"

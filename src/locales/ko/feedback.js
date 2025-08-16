@@ -42,6 +42,8 @@ export default {
         required: "필수",
         success: "피드백이 성공적으로 제출되었습니다!",
         failed: "피드백 제출에 실패했습니다. 다시 시도해 주세요.",
+        networkError: "네트워크 오류입니다. 연결을 확인하고 다시 시도해 주세요.",
+        validationError: "모든 필수 필드를 올바르게 입력해 주세요.",
         uploading: "업로드 중...",
         fileTooLarge: "파일 크기는 5MB를 초과할 수 없습니다",
         invalidFileType: "JPG/PNG 형식만 지원됩니다"

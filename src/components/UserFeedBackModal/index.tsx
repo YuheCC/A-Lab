@@ -1,12 +1,13 @@
 import { useState, useImperativeHandle, forwardRef, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import feedbackSvg from '@/assets/svg/feedback.svg';
+import { submitFeedback } from '@/services/feedback';
 import './feedback.css';
 
 interface FeedbackForm {
     type: string;
     function: string;
-    description: string;
+    text: string;
     screenshot?: File;
 }
 
@@ -16,7 +17,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
     const [formData, setFormData] = useState<FeedbackForm>({
         type: 'feature',
         function: 'map',
-        description: ''
+        text: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -34,7 +35,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         setFormData({
             type: 'feature',
             function: 'map',
-            description: ''
+            text: ''
         });
         setUploadedFile(null);
         setFileError('');
@@ -79,24 +80,43 @@ const UserFeedBackModal = forwardRef((props, ref) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!formData.description.trim()) {
-            alert(t('feedback.feedback.description') + ' ' + t('feedback.feedback.required'));
+        // 前端验证
+        if (!formData.type || !formData.function || !formData.text.trim()) {
+            alert(t('feedback.feedback.validationError'));
             return;
         }
 
         setIsSubmitting(true);
 
         try {
-            // 这里可以添加实际的API调用
-            // const response = await submitFeedback(formData);
+            const response = await submitFeedback({
+                type: formData.type,
+                function: formData.function,
+                text: formData.text,
+                screenshot: formData.screenshot
+            });
             
-            // 模拟API调用
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // 检查响应状态
+            if (response.status >= 200 && response.status < 300) {
+                alert(t('feedback.feedback.success'));
+                handleClose();
+            } else if (response.status >= 400 && response.status < 500) {
+                // 客户端错误（如验证错误）
+                const errorMessage = response.data?.message || t('feedback.feedback.validationError');
+                alert(errorMessage);
+            } else {
+                // 服务器错误
+                alert(t('feedback.feedback.failed'));
+            }
+        } catch (error: any) {
+            console.error('Feedback submission error:', error);
             
-            alert(t('feedback.feedback.success'));
-            handleClose();
-        } catch (error) {
-            alert(t('feedback.feedback.failed'));
+            // 区分网络错误和其他错误
+            if (error.code === 'NETWORK_ERROR' || error.message?.includes('Network')) {
+                alert(t('feedback.feedback.networkError'));
+            } else {
+                alert(t('feedback.feedback.failed'));
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -165,8 +185,8 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                                 className="feedback-textarea" 
                                 placeholder={t('feedback.feedback.descriptionPlaceholder')} 
                                 required
-                                value={formData.description}
-                                onChange={(e) => handleInputChange('description', e.target.value)}
+                                value={formData.text}
+                                onChange={(e) => handleInputChange('text', e.target.value)}
                             />
                         </div>
                         
@@ -218,7 +238,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                         type="submit" 
                         className="feedback-btn feedback-btn-primary" 
                         onClick={handleSubmit}
-                        disabled={isSubmitting || !formData.description.trim()}
+                        disabled={isSubmitting || !formData.text.trim()}
                     >
                         {isSubmitting ? t('feedback.feedback.uploading') : t('feedback.feedback.submit')}
                     </button>
