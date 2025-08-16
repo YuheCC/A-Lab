@@ -19,7 +19,7 @@ const ChatInput: FC<ChatInputProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
-  const { handleSendMessage, currentChatId, messages } = useChatContext();
+  const { handleSendMessage, currentChatId, messages, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
@@ -62,7 +62,8 @@ const ChatInput: FC<ChatInputProps> = ({
         extraPayload.dump_state = !!fullDeepSpace;
       }
       let mode: ChatMode = currentMode;
-      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].role === 'assistant' && messages[messages.length - 1].msg_type === 'multi-agent-clarify '){
+      // 如果是deep-space模式且有消息历史，默认使用clarify模式
+      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].role === 'assistant'){
         mode = 'clarify';
       }
       handleSendMessage(inputValue.trim(), mode, currentChatId, extraPayload);
@@ -100,7 +101,7 @@ const ChatInput: FC<ChatInputProps> = ({
               padding: '2px 6px',
               borderRadius: '4px'
             }}>
-              {t('chatbox.chat.modes.regularRemaining', { count: 100 })}
+              {t('chatbox.chat.modes.regularRemaining', { count: remainingQueries })}
             </span>
           </div>
           <div style={{
@@ -136,7 +137,7 @@ const ChatInput: FC<ChatInputProps> = ({
               padding: '2px 6px',
               borderRadius: '4px'
             }}>
-              {t('chatbox.chat.modes.deepSpaceRemaining', { count: 20 })}
+              {t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries })}
             </span>
           </div>
           <div style={{

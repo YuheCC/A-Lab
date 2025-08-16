@@ -8,6 +8,8 @@ import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
+import { authFetch, getAPIUrl } from '@/utils.js';
+import { useAuthStore } from '@/models/useAuth';
 
 type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
@@ -20,6 +22,9 @@ interface ChatContextType {
     wsConnected: boolean;
     hasMoreHistory: boolean;
     loadingMoreHistory: boolean;
+    remainingQueries: number;
+    remainingDeepSpaceQueries: number;
+    fetchQueryLimit: () => Promise<void>;
     handleSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
     onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
     handleEditMessage: (messageId: string, newText: string) => void;
@@ -61,6 +66,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
+    const userPermissions = useAuthStore(state => state.userPermissions);
 
     const {
         messages,
@@ -103,6 +109,35 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 分消息ID缓存分片，避免串流到错误消息
     const botChunksRef = useRef<Record<string, string>>({});
 
+    // 使用次数相关状态
+    const [remainingQueries, setRemainingQueries] = useState(0);
+    const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+
+    // 获取使用次数限制
+    const fetchQueryLimit = useCallback(async () => {
+        if (userPermissions === 'research' || true) {
+            try {
+                const API_URL = getAPIUrl();
+                const response = await authFetch(`${API_URL}/query_limit`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json"
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    setRemainingQueries(data.query_limit);
+                    setRemainingDeepSpaceQueries(data.ds_limit);
+                } else {
+                    console.error("Failed to fetch query limit");
+                }
+            } catch (error) {
+                console.error("Error fetching query limit:", error);
+            }
+        }
+    }, [userPermissions]);
+
     useEffect(() => {
         const initChatHistory = async () => {
             try {
@@ -122,6 +157,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         initChatHistory();
     }, [updateChatHistory]);
+
+    // 初始化时获取使用次数
+    useEffect(() => {
+        fetchQueryLimit();
+    }, [fetchQueryLimit]);
 
     useEffect(() => {
         if (id) {
@@ -396,6 +436,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         wsConnected,
         hasMoreHistory,
         loadingMoreHistory,
+        remainingQueries,
+        remainingDeepSpaceQueries,
+        fetchQueryLimit,
         handleSendMessage,
         onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),
         handleEditMessage,

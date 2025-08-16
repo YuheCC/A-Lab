@@ -11,7 +11,7 @@ type ChatMode = 'regular' | 'deep-space' | 'clarify';
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
-    const { handleSendMessage } = useChatContext();
+    const { handleSendMessage, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
     const [inputValue, setInputValue] = useState<string>('');
     const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
     
@@ -78,7 +78,7 @@ const ChatWelcome: React.FC = () => {
                             padding: '2px 6px',
                             borderRadius: '4px'
                         }}>
-                            {t('chatbox.chat.modes.regularRemaining', { count: 100 })}
+                            {t('chatbox.chat.modes.regularRemaining', { count: remainingQueries })}
                         </span>
                     </div>
                     <div style={{
@@ -114,7 +114,7 @@ const ChatWelcome: React.FC = () => {
                             padding: '2px 6px',
                             borderRadius: '4px'
                         }}>
-                            {t('chatbox.chat.modes.deepSpaceRemaining', { count: 20 })}
+                            {t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries })}
                         </span>
                     </div>
                     <div style={{
