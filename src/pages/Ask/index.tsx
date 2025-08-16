@@ -376,7 +376,7 @@ const ChatbotInterface = () => {
 
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [thinkingTime, setThinkingTime] = useState(0);
   const [ignoreChatHistory, setIgnoreChatHistory] = useState(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState(false);
@@ -389,12 +389,12 @@ const ChatbotInterface = () => {
   const [showSimilarMolecules, setShowSimilarMolecules] = useState(false);
   
   // State for selected molecule functionality
-  const [selectedMolecule, setSelectedMolecule] = useState(null);
+  const [selectedMolecule, setSelectedMolecule] = useState<any>(null);
   const [showSelectedMolecule, setShowSelectedMolecule] = useState(false);
   
   // Add new state for molecule feedback functionality
-  const [activeFindMessage, setActiveFindMessage] = useState(null);
-  const [contextObject, setContextObject] = useState({
+  const [activeFindMessage, setActiveFindMessage] = useState<any>(null);
+  const [contextObject, setContextObject] = useState<{ contextContent1: string; contextContent2: string; contextContent3: string; }>({
     contextContent1: "",
     contextContent2: "",
     contextContent3: "",
@@ -402,8 +402,8 @@ const ChatbotInterface = () => {
   const [reasoningText, setReasoningText] = useState(null);
   
   // Add favorites state - remove unused states
-  const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState({});
-  const [molTypeSelections, setMolTypeSelections] = useState({});
+  const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<Record<string, { loading?: boolean; success?: string | null; error?: string | null }>>({});
+  const [molTypeSelections, setMolTypeSelections] = useState<Record<string, string>>({});
 
   useEffect(() => {
     // If awaitingClarify is true, set useMultiAgent to true
@@ -767,7 +767,7 @@ const handleFindSimilarMolecules = async (details: any) => {
   };
 
   const handleSend = useCallback(
-    async (input) => {
+    async (input: string) => {
       if (!input.trim()) return;
 
       /* enforce research-tier quota */
@@ -801,7 +801,7 @@ const handleFindSimilarMolecules = async (details: any) => {
       setIsThinking(true, localChatId);
       let effectiveChatId = localChatId;
       setStatus('pending', effectiveChatId);
-      const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions);
+      const isAdvancedTier  = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
       const ragModel        = isAdvancedTier ? 'gpt-5' : 'gpt-5-mini'; // deprecated
       const ragResultsCount = isAdvancedTier ? 10 : 3; // deprecated
       const llmComputePower = isAdvancedTier ? "high" : "medium";
@@ -1071,15 +1071,15 @@ const handleFindSimilarMolecules = async (details: any) => {
   );
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    (messagesEndRef.current as unknown as HTMLElement | null)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleMolTypeChange = (smiles, type) => {
+  const handleMolTypeChange = (smiles: string, type: string) => {
     setMolTypeSelections(prev => ({ ...prev, [smiles]: type }));
   };
 
   // Function to handle adding molecule to favorites
-  const handleAddToFavorites = async (molecule) => {
+  const handleAddToFavorites = async (molecule: any) => {
     // Remove global loading state
     // Use SMILES as unique identifier for the molecule
     const smiles = molecule.SMILES || molecule.smiles;
@@ -1101,7 +1101,7 @@ const handleFindSimilarMolecules = async (details: any) => {
       
       // Convert commercial score from numeric to descriptive text
       const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
-        ? COMMERCIAL_SCORE_MAP[rawCommercialScore] || null
+        ? (COMMERCIAL_SCORE_MAP[rawCommercialScore as keyof typeof COMMERCIAL_SCORE_MAP] || null)
         : null;
 
       // Prepare favorite data from molecule properties
@@ -1195,6 +1195,57 @@ const handleFindSimilarMolecules = async (details: any) => {
     });
 
   }, [activeFindMessage])
+
+  // Build supplemental table markdown for similar molecules (Deep Space style)
+  const similarMoleculesTableMd = React.useMemo(() => {
+    try {
+      if (!similarMolecules || similarMolecules.length === 0) return '';
+      // Columns shown for all users
+      const baseHeaders = ['Molecule', 'MW', 'HOMO (eV)', 'LUMO (eV)', 'ESP min (eV)', 'ESP max (eV)'];
+      const isHighTier = ['admin', 'enterprise', 'joint'].includes(useAuthStore.getState().userPermissions || '');
+      const extraHeaders = isHighTier ? ['Pred. MP (°C)', 'Pred. BP (°C)', 'Pred. FP (°C)'] : [];
+      const headers = `| ${[...baseHeaders, ...extraHeaders].join(' | ')} |\n| ${[...baseHeaders, ...extraHeaders].map(() => '---').join(' | ')} |`;
+      const rows = similarMolecules.map((it: any) => {
+        const details = it.molecule_details || it;
+        const dataObj = {
+          SMILES: details.SMILES,
+          molecular_weight: details.molecular_weight,
+          HOMO_eV: details.HOMO_eV,
+          LUMO_eV: details.LUMO_eV,
+          ESP_min_eV: details.ESP_min_eV,
+          ESP_max_eV: details.ESP_max_eV,
+          predicted_MP_celsius: details.predicted_MP_celsius,
+          predicted_BP_celsius: details.predicted_BP_celsius,
+          predicted_FP_celsius: details.predicted_FP_celsius,
+          COMBUSTION_ENTHALPY_EV: details.COMBUSTION_ENTHALPY_EV,
+          COMMERCIAL_SCORE: details.COMMERCIAL_SCORE,
+          UMAP_0: details.UMAP_0,
+          UMAP_1: details.UMAP_1,
+          functional_groups: details.functional_groups
+        };
+        // Prefer MU-CX id if present in future data; fallback to SMILES text
+        const linkText = details.MU_CX || details['MU-CX'] || details.SMILES;
+        const moleculeCell = `<inline_molecule>${JSON.stringify({ text: linkText, data: [dataObj] })}</inline_molecule>`;
+        const baseCells = [
+          moleculeCell,
+          details.molecular_weight ?? '',
+          details.HOMO_eV ?? '',
+          details.LUMO_eV ?? '',
+          details.ESP_min_eV ?? '',
+          details.ESP_max_eV ?? ''
+        ];
+        const extraCells = isHighTier ? [
+          details.predicted_MP_celsius ?? '',
+          details.predicted_BP_celsius ?? '',
+          details.predicted_FP_celsius ?? ''
+        ] : [];
+        return `| ${[...baseCells, ...extraCells].join(' | ')} |`;
+      }).join('\n');
+      return `${headers}\n${rows}`;
+    } catch (e) {
+      return '';
+    }
+  }, [similarMolecules]);
 
   return (
     <div className="chatbot-container">
@@ -1296,15 +1347,15 @@ const handleFindSimilarMolecules = async (details: any) => {
                     {
                       <>
                         <IconButton
-                        onClick={() => handleThumbsUp(msg.inputs, msg.content, msg.sources)}
+                        onClick={() => handleThumbsUp(msg.inputs as any, msg.content as string, msg.sources as any)}
                         size="small"
-                        style={{ marginRight: 5 }} variant="contained">
+                        style={{ marginRight: 5 }}>
                           <ThumbsUp size={18} style={{ margin: 4}} />
                         </IconButton>
                         <IconButton
-                          onClick={() => handleThumbsDown(msg.inputs, msg.content, msg.sources)}
+                          onClick={() => handleThumbsDown(msg.inputs as any, msg.content as string, msg.sources as any)}
                           size="small"
-                          style={{ marginRight: 5 }} variant="contained">
+                          style={{ marginRight: 5 }}>
                             <ThumbsDown size={18} style={{ margin: 4}} />
                           </IconButton>
                       </>
@@ -1314,15 +1365,15 @@ const handleFindSimilarMolecules = async (details: any) => {
                       <IconButton
                         size="small"
                         style={{ marginRight: 5 }}
-                        variant="contained"
                         className="copy-btn"
-                        onClick={(evt) => {
+                        onClick={(evt: React.MouseEvent<HTMLButtonElement>) => {
                           // Extract the message html from the event target
-                          const messageElement = evt.target.closest('.message-assistant').querySelector('.message-content');
+                          const container = (evt.currentTarget.closest('.message-assistant') as HTMLElement | null);
+                          const messageElement = container ? container.querySelector('.message-content') as HTMLElement | null : null;
 
                           // Create a temporary element and set its innerHTML to the message's text.
                           const tempEl = document.createElement('div');
-                          tempEl.innerText = msg.content;
+                          tempEl.innerText = (msg.content || '').toString();
 
                           console.log("Copying message:", tempEl.innerText);
 
@@ -1330,10 +1381,10 @@ const handleFindSimilarMolecules = async (details: any) => {
                           const plainTextToCopy = tempEl.innerText;
 
                           // Sanitize the HTML in case the backend returns unusual HTML
-                          const htmlToCopy = messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
+                          const htmlToCopy = messageElement && messageElement.innerHTML ? DOMPurify.sanitize(messageElement.innerHTML, {
                             ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'sub', 'sup'],
                             ALLOWED_ATTR: ['href', 'target']
-                          }) : msg.content;
+                          }) : (msg.content || '').toString();
 
                           // For markdown, copy plain text and also the markdown string as text/markdown
                           const blobText = new Blob([plainTextToCopy], { type: 'text/plain' });
@@ -1379,6 +1430,16 @@ const handleFindSimilarMolecules = async (details: any) => {
             )}
             <div ref={messagesEndRef} />
           </div>
+          {/* Supplemental table (collapsible) mirroring Deep Space extra_outputs */}
+          {showSimilarMolecules && similarMolecules && similarMolecules.length > 0 && similarMoleculesTableMd && (
+            <div style={{ margin: '12px 0' }}>
+              <ExtraDataSection 
+                title={`Similar Molecules to ${(activeMolecule?.name || activeMolecule?.SMILES || '').toLowerCase()}`}
+                content={similarMoleculesTableMd}
+                onMoleculeClick={handleMoleculeClick}
+              />
+            </div>
+          )}
           <ChatInput 
             onSend={handleSend}
             disabled={(userPermissions === 'research' && remainingQueries <= 0) || isThinking || isLoading || !isSynced}
@@ -1388,7 +1449,7 @@ const handleFindSimilarMolecules = async (details: any) => {
             onDisableLiteratureSearchChange={setDisableLiteratureSearch}
             disableTools={disableTools}
             onDisableToolsChange={setDisableTools}
-            userPermissions={userPermissions}
+            userPermissions={userPermissions || ''}
             useMultiAgent={useMultiAgent}
             onUseMultiAgentChange={setUseMultiAgent}
             remainingDeepSpaceQueries={remainingDeepSpaceQueries}
@@ -1444,27 +1505,29 @@ const handleFindSimilarMolecules = async (details: any) => {
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   {
-                    label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true
                   }
                 ]} foldPropGroups={[
                   { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 },
                 ]}>
                   <div className="molecule-actions">
                     {/* Add to Favorites button */}
-                    <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
+                    <CustomButton Icon={Star as any} onClick={() => handleAddToFavorites(details)}
+                      color={undefined as any}
+                      variant={undefined as any}
                       fullWidth
                       loading={moleculeFavoriteStatus[details.SMILES]?.loading}
                       loadingText={t('chatbox.molecules.saving')}
                       successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
-                      errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
+                      errorMessage={moleculeFavoriteStatus[details.SMILES]?.error}>
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
                     <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                      <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(details)}
+                      <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(details)}
                         fullWidth
                         loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
                         loadingText={t('chatbox.molecules.searchingForFriends')}
-                        size="small" style={{ flexGrow: 1 }}>
+                        style={{ flexGrow: 1 }}>
                         {t('chatbox.buttons.findSimilarMolecules')}
                       </CustomButton>
                       <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
@@ -1569,27 +1632,29 @@ const handleFindSimilarMolecules = async (details: any) => {
                 { label: 'ESP Max', value: selectedMolecule.ESP_max_eV, span: 1, suffix: ' eV' },
                 { label: 'ESP Min', value: selectedMolecule.ESP_min_eV, span: 1, suffix: ' eV' },
                 {
-                  label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[selectedMolecule.COMMERCIAL_SCORE], span: 4, wrap: true
+                  label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[selectedMolecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true
                 }
               ]} foldPropGroups={[
                 { label: 'Functional Groups', value: JSON.parse(selectedMolecule.functional_groups ?? "[]"), span: 4 },
               ]}>
                 <div className="molecule-actions">
                   {/* Add to Favorites button */}
-                  <CustomButton Icon={Star} onClick={() => handleAddToFavorites(selectedMolecule)}
+                  <CustomButton Icon={Star as any} onClick={() => handleAddToFavorites(selectedMolecule)}
+                    color={undefined as any}
+                    variant={undefined as any}
                     fullWidth
                     loading={moleculeFavoriteStatus[selectedMolecule.SMILES]?.loading}
                     loadingText={t('chatbox.buttons.addToFavoritesLoading')}
                     successMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.success}
-                    errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error} size="small">
+                    errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error}>
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                    <CustomButton Icon={Search} color="secondary" onClick={() => handleFindSimilarMolecules(selectedMolecule)}
+                    <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(selectedMolecule)}
                       fullWidth
                       loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
                       loadingText={t('chatbox.molecules.searchingForFriends')}
-                      size="small" style={{ flexGrow: 1 }}>
+                      style={{ flexGrow: 1 }}>
                       {t('chatbox.buttons.findSimilarMolecules')}
                     </CustomButton>
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
@@ -1710,19 +1775,21 @@ const handleFindSimilarMolecules = async (details: any) => {
                   { label: 'ESP Min', value: details.ESP_min_eV, span: 1, suffix: ' eV' },
                   { label: 'ESP Max', value: details.ESP_max_eV, span: 1, suffix: ' eV' },
                   {
-                    label: '', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE], span: 4, wrap: true
+                    label: '', value: COMMERCIAL_SCORE_MAP[details.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true
                   }
                   ]} foldPropGroups={[
                     { label: 'Functional Groups', value: JSON.parse(details.functional_groups ?? "[]"), span: 4 }
                   ]}>
                 <div className='molecule-actions'>
 
-                  <CustomButton Icon={Star} onClick={() => handleAddToFavorites(details)}
+                  <CustomButton Icon={Star as any} onClick={() => handleAddToFavorites(details)}
+                    color={undefined as any}
+                    variant={undefined as any}
                     loading={moleculeFavoriteStatus[details.SMILES]?.loading}
                     fullWidth
                     loadingText={t('chatbox.molecules.saving')}
                     successMessage={moleculeFavoriteStatus[details.SMILES]?.success}
-                    errorMessage={moleculeFavoriteStatus[details.SMILES]?.error} size="small">
+                    errorMessage={moleculeFavoriteStatus[details.SMILES]?.error}>
                     {t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
                   {/* Add Favorites button at the bottom of the molecule box */}
@@ -1732,6 +1799,7 @@ const handleFindSimilarMolecules = async (details: any) => {
                         fullWidth={true}
                         molecule={details}
                         lastSearch={activeMolecule}
+                        queryType={useMultiAgent ? 'deep_space' : 'normal_ask'}
                         contextContent1={contextObject.contextContent1}
                         contextContent2={contextObject.contextContent2}
                         contextContent3={contextObject.contextContent3}
