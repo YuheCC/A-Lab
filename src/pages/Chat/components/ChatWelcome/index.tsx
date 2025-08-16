@@ -1,8 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
+import i18n from '@/locales/i18n';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -25,6 +26,11 @@ const ChatWelcome: React.FC = () => {
     const handleInputChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
     }, []);
+
+    useEffect(() => {
+        const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
+        setCurrentQuestions(shuffled.slice(0, 5));
+    }, [i18n.language]);
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
