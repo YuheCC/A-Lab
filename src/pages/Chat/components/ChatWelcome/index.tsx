@@ -29,8 +29,9 @@ const ChatWelcome: React.FC = () => {
 
     useEffect(() => {
         const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
-        setCurrentQuestions(shuffled.slice(0, 5));
-    }, [i18n.language]);
+        const initialQuestions = shuffled.slice(0, 5);
+        setCurrentQuestions(initialQuestions);
+    }, [i18n.language, recommendedQuestions]);
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
@@ -44,7 +45,7 @@ const ChatWelcome: React.FC = () => {
             e.preventDefault();
             handleSendMessageLocal();
         }
-    }, [handleSendMessage]);
+    }, [handleSendMessageLocal]);
 
     // 处理模式切换
     const handleModeChange = useCallback((mode: ChatMode) => {
@@ -130,7 +131,9 @@ const ChatWelcome: React.FC = () => {
 
     // 处理推荐问题点击
     const handleQuestionClick = useCallback((question: string) => {
-        handleSendMessage(question, currentMode);
+        if (question && question.trim()) {
+            handleSendMessage(question, currentMode);
+        }
     }, [currentMode, handleSendMessage]);
 
     // 处理刷新推荐问题
@@ -146,7 +149,8 @@ const ChatWelcome: React.FC = () => {
         }
         
         const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
-        setCurrentQuestions(shuffled.slice(0, 5));
+        const newQuestions = shuffled.slice(0, 5);
+        setCurrentQuestions(newQuestions);
     }, [recommendedQuestions]);
 
     const isInputEmpty = inputValue.trim().length === 0;
