@@ -30,7 +30,7 @@ export default {
             regularDescription: "Basic Q&A mode, suitable for daily battery-related questions. Provides accurate and concise answers.",
             deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
             regularRemaining: "Remaining today: {{count}} times",
-            deepSpaceRemaining: "Remaining this month: {{count}} times",
+            deepSpaceRemaining: "Remaining monthly: {{count}} times",
             betaBadge: "Beta"
         },
         recommendedQuestions: [

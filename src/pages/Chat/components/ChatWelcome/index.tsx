@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
 import i18n from '@/locales/i18n';
+import { useAuthStore } from '@/models/useAuth';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -12,6 +13,7 @@ type ChatMode = 'regular' | 'deep-space' | 'clarify';
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
     const { handleSendMessage, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
+    const userPermissions = useAuthStore(state => state.userPermissions);
     const [inputValue, setInputValue] = useState<string>('');
     const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
     
@@ -31,7 +33,7 @@ const ChatWelcome: React.FC = () => {
         const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
         const initialQuestions = shuffled.slice(0, 5);
         setCurrentQuestions(initialQuestions);
-    }, [i18n.language, recommendedQuestions]);
+    }, [i18n.language]);
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
@@ -73,8 +75,7 @@ const ChatWelcome: React.FC = () => {
                         </h4>
                         <span style={{
                             fontSize: '12px',
-                            color: '#6b7280',
-                            backgroundColor: '#f3f4f6',
+                            color: '#56B26A',
                             padding: '2px 6px',
                             borderRadius: '4px'
                         }}>
@@ -107,15 +108,18 @@ const ChatWelcome: React.FC = () => {
                         }}>
                             {t('chatbox.chat.modes.deepSpace')}
                         </h4>
-                        <span style={{
-                            fontSize: '12px',
-                            color: '#6b7280',
-                            backgroundColor: '#f3f4f6',
-                            padding: '2px 6px',
-                            borderRadius: '4px'
-                        }}>
-                            {t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries })}
-                        </span>
+                        {
+                            userPermissions !== 'admin' && (
+                                <span style={{
+                                    fontSize: '12px',
+                                    color: '#56B26A',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px'
+                                }}>
+                                    {t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries })}
+                                </span>
+                            )
+                        }        
                     </div>
                     <div style={{
                         fontSize: '13px',
