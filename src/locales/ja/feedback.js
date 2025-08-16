@@ -23,6 +23,16 @@ export default {
             bug: "バグ報告",
             other: "その他"
         },
+        function: "機能",
+        functionOptions: {
+            map: "マップ",
+            regularAsk: "通常の質問",
+            deepSpace: "ディープスペース",
+            search: "検索",
+            filter: "フィルター",
+            favorites: "お気に入り",
+            other: "その他"
+        },
         description: "提案や問題を説明してください",
         descriptionPlaceholder: "詳細な説明を提供してください...",
         uploadScreenshot: "スクリーンショットをアップロード",

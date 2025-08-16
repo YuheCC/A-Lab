@@ -23,6 +23,16 @@ export default {
             bug: "Bug报告",
             other: "其他"
         },
+        function: "功能",
+        functionOptions: {
+            map: "地图",
+            regularAsk: "常规问答",
+            deepSpace: "深度空间",
+            search: "搜索",
+            filter: "筛选",
+            favorites: "收藏夹",
+            other: "其他"
+        },
         description: "请描述您的建议或问题",
         descriptionPlaceholder: "请提供详细描述...",
         uploadScreenshot: "上传截图",

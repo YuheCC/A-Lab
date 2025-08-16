@@ -23,6 +23,16 @@ export default {
             bug: "버그 보고",
             other: "기타"
         },
+        function: "기능",
+        functionOptions: {
+            map: "지도",
+            regularAsk: "일반 질문",
+            deepSpace: "딥 스페이스",
+            search: "검색",
+            filter: "필터",
+            favorites: "즐겨찾기",
+            other: "기타"
+        },
         description: "제안이나 문제를 설명해 주세요",
         descriptionPlaceholder: "자세한 설명을 제공해 주세요...",
         uploadScreenshot: "스크린샷 업로드",

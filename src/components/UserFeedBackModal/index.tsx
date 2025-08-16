@@ -5,6 +5,7 @@ import './feedback.css';
 
 interface FeedbackForm {
     type: string;
+    function: string;
     description: string;
     screenshot?: File;
 }
@@ -14,6 +15,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState<FeedbackForm>({
         type: 'feature',
+        function: 'map',
         description: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +33,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         // 重置表单
         setFormData({
             type: 'feature',
+            function: 'map',
             description: ''
         });
         setUploadedFile(null);
@@ -129,6 +132,27 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                                 <option value="feature">{t('feedback.feedback.typeOptions.feature')}</option>
                                 <option value="bug">{t('feedback.feedback.typeOptions.bug')}</option>
                                 <option value="other">{t('feedback.feedback.typeOptions.other')}</option>
+                            </select>
+                        </div>
+                        
+                        <div className="feedback-form-group">
+                            <label htmlFor="feedbackFunction" className="feedback-label">
+                                {t('feedback.feedback.function')} <span className="required">*</span>
+                            </label>
+                            <select 
+                                id="feedbackFunction" 
+                                className="feedback-select" 
+                                required
+                                value={formData.function}
+                                onChange={(e) => handleInputChange('function', e.target.value)}
+                            >
+                                <option value="map">{t('feedback.feedback.functionOptions.map')}</option>
+                                <option value="regularAsk">{t('feedback.feedback.functionOptions.regularAsk')}</option>
+                                <option value="deepSpace">{t('feedback.feedback.functionOptions.deepSpace')}</option>
+                                <option value="search">{t('feedback.feedback.functionOptions.search')}</option>
+                                <option value="filter">{t('feedback.feedback.functionOptions.filter')}</option>
+                                <option value="favorites">{t('feedback.feedback.functionOptions.favorites')}</option>
+                                <option value="other">{t('feedback.feedback.functionOptions.other')}</option>
                             </select>
                         </div>
                         

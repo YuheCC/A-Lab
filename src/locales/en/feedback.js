@@ -16,18 +16,28 @@ export default {
     // Feedback modal related
     feedback: {
         title: "Feedback & Suggestions",
-        submitTitle: "Submit Feedback",
+        submitTitle: "Submit",
         type: "Feedback Type",
         typeOptions: {
             feature: "Feature Suggestion",
             bug: "Bug Report",
             other: "Other"
         },
+        function: "Function",
+        functionOptions: {
+            map: "Map",
+            regularAsk: "Regular Ask",
+            deepSpace: "Deep Space",
+            search: "Search",
+            filter: "Filter",
+            favorites: "Favorites",
+            other: "Other"
+        },
         description: "Please describe your suggestion or issue",
         descriptionPlaceholder: "Please provide detailed description...",
         uploadScreenshot: "Upload Screenshot",
         uploadHint: "JPG/PNG format, max 5MB",
-        submit: "Submit Feedback",
+        submit: "Submit",
         cancel: "Cancel",
         required: "Required",
         success: "Feedback submitted successfully!",
