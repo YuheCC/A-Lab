@@ -7,12 +7,12 @@ import { useChatContext } from '../../context/ChatContext';
 
 interface ChatSiderProps {
     onNewChat?: () => void;
-    onSelectChat?: (chatId: string) => void;
-    currentChatId?: string;
+    onSelectChat?: (chatId: number) => void;
+    currentChatId?: number;
     chatHistory?: ChatHistoryItem[];
-    onDeleteChat?: (chatId: string) => void;
-    onRenameChat?: (chatId: string, newTitle: string) => void;
-    onTogglePinChat?: (chatId: string) => void;
+    onDeleteChat?: (chatId: number) => void;
+    onRenameChat?: (chatId: number, newTitle: string) => void;
+    onTogglePinChat?: (chatId: number) => void;
     onLoadMoreHistory?: () => void;
     hasMoreHistory?: boolean;
     loadingMoreHistory?: boolean;

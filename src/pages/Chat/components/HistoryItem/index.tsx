@@ -6,7 +6,7 @@ import { useNavigate } from 'umi';
 
 interface HistoryItemProps {
   /** 对话ID */
-  chatId: string;
+  chatId: number;
   /** 对话标题 */
   title: string;
   /** 是否置顶 */
@@ -14,13 +14,13 @@ interface HistoryItemProps {
   /** 是否为当前会话（高亮） */
   isActive?: boolean;
   /** 点击对话标题的回调 */
-  onChatClick?: (chatId: string) => void;
+  onChatClick?: (chatId: number) => void;
   /** 重命名对话的回调 */
-  onRename?: (chatId: string, newTitle: string) => void;
+  onRename?: (chatId: number, newTitle: string) => void;
   /** 切换置顶状态的回调 */
-  onTogglePin?: (chatId: string) => void;
+  onTogglePin?: (chatId: number) => void;
   /** 删除对话的回调 */
-  onDelete?: (chatId: string) => void;
+  onDelete?: (chatId: number) => void;
 }
 
 const HistoryItem: FC<HistoryItemProps> = ({

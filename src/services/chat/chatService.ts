@@ -203,7 +203,7 @@ export class ChatService {
     }
   }
 
-  async getChatById(chatId: string): Promise<{ title: string; messages: Message[] }> {
+  async getChatById(chatId: number): Promise<{ title: string; messages: Message[] }> {
     try {
       const resp = await request(`/api/chat/detail`, {
         method: 'GET',
@@ -269,7 +269,7 @@ export class ChatService {
   }
 
   // send a new message to the chat, return a response id
-  async createNewMessage(chatId: string, message: string, model: string = 'o3'): Promise<any> {
+  async createNewMessage(chatId: number, message: string, model: string = 'o3'): Promise<any> {
     try {
       const resp = await request('/api/chat/message/new', {
         method: 'POST',
@@ -289,7 +289,7 @@ export class ChatService {
   }
 
   // update a message with a new content
-  async updateMessage(chatId: string, messageId: string, message: string, model: string = 'o3'): Promise<any> {
+  async updateMessage(chatId: number, messageId: string, message: string, model: string = 'o3'): Promise<any> {
     try {
       const resp = await request('/api/chat/message/update', {
         method: 'POST',
@@ -309,7 +309,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/ask', {
         method: 'POST',
@@ -332,7 +332,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsDeepSpace(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/multi-agent', {
         method: 'POST',
@@ -355,7 +355,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsClarify(chatId: string, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
     try {
       const resp = await request('/api/llm/multi-agent/clarify', {
         method: 'POST',
@@ -378,7 +378,7 @@ export class ChatService {
     }
   }
 
-  async saveChat(chatId: string, title: string, messages: Message[]): Promise<boolean> {
+  async saveChat(chatId: number, title: string, messages: Message[]): Promise<boolean> {
     try {
       const resp = await request('/chat/save', {
         method: 'POST',
@@ -391,7 +391,7 @@ export class ChatService {
     }
   }
 
-  async deleteChat(chatId: string): Promise<boolean> {
+  async deleteChat(chatId: number): Promise<boolean> {
     try {
       const resp = await request(`/api/chat/delete`, {
         method: 'POST',
@@ -430,7 +430,7 @@ export class ChatService {
     }
   }
 
-  async renameChat(chatId: string, newTitle: string): Promise<boolean> {
+  async renameChat(chatId: number, newTitle: string): Promise<boolean> {
     try {
       const resp = await request(`/api/chat/update`, {
         method: 'POST',
@@ -443,7 +443,7 @@ export class ChatService {
     }
   }
 
-  async togglePinChat(chatId: string, isPinned: boolean): Promise<boolean> {
+  async togglePinChat(chatId: number, isPinned: boolean): Promise<boolean> {
     try {
       const resp = await request(`/api/chat/update`, {
         method: 'POST',

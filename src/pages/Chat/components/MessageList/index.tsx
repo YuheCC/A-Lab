@@ -19,7 +19,7 @@ import {
 interface MessageListProps {
   messages?: Message[];
   onCopyMessage?: (content: string) => void;
-  onRegenerateMessage?: (messageId: string) => void;
+  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify') => void;
   onMoleculeClick?: (moleculeName: string) => void;
   onEditMessage?: (messageId: string, newText: string) => void;
   className?: string;

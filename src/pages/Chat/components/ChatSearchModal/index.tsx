@@ -4,7 +4,7 @@ import { chatService } from '@/services/chat/chatService';
 import { useChatContext } from '../../context/ChatContext';
 
 interface ChatSearchModalProps {
-    onSelectChat?: (chatId: string) => void;
+    onSelectChat?: (chatId: number) => void;
     onNewChat?: () => void;
 }
 
@@ -14,7 +14,7 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
     const [show, setShow] = useState(false);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
-    const [results, setResults] = useState<{ chatId: string; title: string }[]>([]);
+    const [results, setResults] = useState<{ chatId: number; title: string }[]>([]);
     const debounceTimer = useRef<number | null>(null);
     
     useImperativeHandle(ref, () => ({
@@ -62,7 +62,7 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
         };
     }, [query, show]);
 
-    const handleSelect = (chatId: string) => {
+    const handleSelect = (chatId: number) => {
         setShow(false);
         props.onSelectChat?.(chatId);
         window.location.href = `/chat/${chatId}`;

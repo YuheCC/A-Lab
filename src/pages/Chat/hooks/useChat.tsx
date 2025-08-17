@@ -8,7 +8,7 @@ import { useAuthStore } from '@/models/useAuth';
 export interface ChatState {
   messages: Message[];
   chatHistory: ChatHistoryItem[];
-  currentChatId: string | undefined;
+  currentChatId: number | undefined;
   isLoading: boolean;
   sessionId: string | undefined;
   socketId?: string;
@@ -134,14 +134,14 @@ export const useChat = () => {
     }));
   }, []);
 
-  const loadChatHistory = useCallback((chatId: string) => {
+  const loadChatHistory = useCallback((chatId: number) => {
     setState(prev => ({
       ...prev,
       currentChatId: chatId
     }));
   }, []);
 
-  const saveChatHistory = useCallback((chatId: string, title: string) => {
+  const saveChatHistory = useCallback((chatId: number, title: string) => {
     const newChatItem: ChatHistoryItem = {
       chatId,
       title,
@@ -168,7 +168,33 @@ export const useChat = () => {
     }));
   }, []);
 
-  const deleteChat = useCallback((chatId: string) => {
+  // 精确更新特定消息
+  const updateMessage = useCallback((messageId: string, updatedMessage: Partial<Message>) => {
+    setState(prev => ({
+      ...prev,
+      messages: prev.messages.map(msg => 
+        msg.id === messageId ? { ...msg, ...updatedMessage } : msg
+      )
+    }));
+  }, []);
+
+  // 更新或添加消息
+  const upsertMessage = useCallback((message: Message) => {
+    setState(prev => {
+      const existingIndex = prev.messages.findIndex(msg => msg.id === message.id);
+      if (existingIndex !== -1) {
+        // 更新现有消息
+        const newMessages = [...prev.messages];
+        newMessages[existingIndex] = message;
+        return { ...prev, messages: newMessages };
+      } else {
+        // 添加新消息
+        return { ...prev, messages: [...prev.messages, message] };
+      }
+    });
+  }, []);
+
+  const deleteChat = useCallback((chatId: number) => {
     setState(prev => ({
       ...prev,
       chatHistory: prev.chatHistory.filter(item => item.chatId !== chatId),
@@ -176,7 +202,7 @@ export const useChat = () => {
     }));
   }, []);
 
-  const renameChat = useCallback((chatId: string, newTitle: string) => {
+  const renameChat = useCallback((chatId: number, newTitle: string) => {
     setState(prev => ({
       ...prev,
       chatHistory: prev.chatHistory.map(item =>
@@ -185,7 +211,7 @@ export const useChat = () => {
     }));
   }, []);
 
-  const togglePinChat = useCallback((chatId: string) => {
+  const togglePinChat = useCallback((chatId: number) => {
     setState(prev => ({
       ...prev,
       chatHistory: prev.chatHistory.map(item =>
@@ -219,7 +245,7 @@ export const useChat = () => {
       setTimeout(() => {
         const retrySuccess = globalWebSocketManager.sendMessage({
           message,
-          chatId: state.currentChatId,
+          chatId: state.currentChatId ? String(state.currentChatId) : undefined,
           mode
         });
         
@@ -236,7 +262,7 @@ export const useChat = () => {
     // 使用全局WebSocket发送消息
     const success = globalWebSocketManager.sendMessage({
       message,
-      chatId: state.currentChatId,
+      chatId: state.currentChatId ? String(state.currentChatId) : undefined,
       mode,
       ...(extra || {})
     });
@@ -272,6 +298,8 @@ export const useChat = () => {
     saveChatHistory,
     updateChatHistory,
     setMessages,
+    updateMessage,
+    upsertMessage,
     deleteChat,
     renameChat,
     togglePinChat,

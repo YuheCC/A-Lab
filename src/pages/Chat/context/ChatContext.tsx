@@ -16,7 +16,7 @@ type ChatMode = 'regular' | 'deep-space' | 'clarify';
 interface ChatContextType {
     messages: Message[];
     chatHistory: ChatHistoryItem[];
-    currentChatId?: string;
+    currentChatId?: number;
     isLoading: boolean;
     sessionId?: string;
     wsConnected: boolean;
@@ -25,24 +25,24 @@ interface ChatContextType {
     remainingQueries: number;
     remainingDeepSpaceQueries: number;
     fetchQueryLimit: () => Promise<void>;
-    handleSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
-    onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => Promise<void>;
+    handleSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
+    onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
     handleEditMessage: (messageId: string, newText: string) => void;
     onEditMessage: (messageId: string, newText: string) => void;
     handleCopyMessage: (content: string) => void;
     onCopyMessage: (content: string) => void;
-    handleRegenerateMessage: (messageId: string) => Promise<void>;
-    onRegenerateMessage: (messageId: string) => Promise<void>;
+    handleRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
+    onRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
     handleNewChat: () => void;
     onNewChat: () => void;
-    handleSelectChat: (selectedChatId: string) => void;
-    onSelectChat: (selectedChatId: string) => void;
-    handleDeleteChat: (chatId: string) => Promise<void>;
-    onDeleteChat: (chatId: string) => Promise<void>;
-    handleRenameChat: (chatId: string, newTitle: string) => Promise<void>;
-    onRenameChat: (chatId: string, newTitle: string) => Promise<void>;
-    handleTogglePinChat: (chatId: string) => Promise<void>;
-    onTogglePinChat: (chatId: string) => Promise<void>;
+    handleSelectChat: (selectedChatId: number) => void;
+    onSelectChat: (selectedChatId: number) => void;
+    handleDeleteChat: (chatId: number) => Promise<void>;
+    onDeleteChat: (chatId: number) => Promise<void>;
+    handleRenameChat: (chatId: number, newTitle: string) => Promise<void>;
+    onRenameChat: (chatId: number, newTitle: string) => Promise<void>;
+    handleTogglePinChat: (chatId: number) => Promise<void>;
+    onTogglePinChat: (chatId: number) => Promise<void>;
     handleLoadMoreHistory: () => Promise<void>;
     onLoadMoreHistory: () => Promise<void>;
     showInput: boolean;
@@ -84,6 +84,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loadChatHistory,
         updateChatHistory,
         setMessages,
+        updateMessage: updateMessageFromHook,
+        upsertMessage: upsertMessageFromHook,
         deleteChat,
         renameChat,
         togglePinChat,
@@ -111,6 +113,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 用于跟踪当前会话开始时间，区分历史记录和新消息
     const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+
+    // 使用从 hook 中获取的精确更新函数
+    const updateMessage = updateMessageFromHook;
+    const upsertMessage = upsertMessageFromHook;
 
     // 使用次数相关状态
     const [remainingQueries, setRemainingQueries] = useState(0);
@@ -168,8 +174,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         if (id) {
-            loadChatHistory(id);
-            loadChatData(id);
+            const chatId = parseInt(id, 10);
+            if (!isNaN(chatId)) {
+                loadChatHistory(chatId);
+                loadChatData(chatId);
+            }
         } else {
             startNewChat();
             // 新聊天时也设置会话开始时间
@@ -219,7 +228,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const messageBody = data?.data ?? data;
 
             // 若无 chat_id 或与当前会话不匹配，忽略
-            if (!incomingChatId || !currentChatId || String(incomingChatId) !== String(currentChatId)) {
+            if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
                 return;
             }
 
@@ -239,14 +248,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
                 const updatedMessage = createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
-                const newMessages = [...messages];
-                const targetIndex = newMessages.findIndex((msg: Message) => isAssistantMessage(msg) && (String(msg.id) === targetId || String(msg.id) === key));
-                if (targetIndex !== -1) {
-                    newMessages[targetIndex] = updatedMessage;
-                } else {
-                    newMessages.push(updatedMessage);
-                }
-                setMessages(newMessages);
+                // 使用精确更新，避免全量刷新
+                upsertMessage(updatedMessage);
             }
 
             if (isDone) {
@@ -263,9 +266,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             unsubscribeError();
             unsubscribeMessage();
         };
-    }, [setIsLoading, addBotMessage, setMessages, messages, t, currentChatId]);
+    }, [setIsLoading, addBotMessage, upsertMessage, messages, t, currentChatId]);
 
-    const loadChatData = async (chatId: string) => {
+    const loadChatData = async (chatId: number) => {
         try {
             setIsLoading(true);
             const chatData = await chatService.getChatById(chatId);
@@ -296,7 +299,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: string, historyMessages: Message[], answerId: string) => {
+    const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string) => {
         if(mode === 'regular'){
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId);
         }else if(mode === 'deep-space'){
@@ -328,7 +331,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return chatData?.id;
     }, [socketId, sessionStartTime]);
 
-    const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[], mode: ChatMode) => {
+    const createNewMessage = useCallback(async (message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
         const messageData = await chatService.createNewMessage(chatId, message, ragModel);
@@ -348,7 +351,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return messageData?.id;
     }, [socketId, sessionStartTime]);
 
-    const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => {
+    const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => {
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
         addUserMessage(userMsg);
@@ -358,7 +361,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             createNewMessage(message, chatId, historyWithNew, mode);
         } else {
             const newChatId = await createNewChat(message, mode);
-            navigate(`/chat/${newChatId}`);
+            if (newChatId) {
+                navigate(`/chat/${newChatId}`);
+            }
         }
     }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
 
@@ -370,51 +375,80 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigator.clipboard.writeText(content);
     }, []);
 
-    const handleRegenerateMessage = useCallback(async (messageId: string) => {
+    const handleRegenerateMessage = useCallback(async (messageId: string, mode: ChatMode = 'regular') => {
         try {
             setIsLoading(true);
-            const response = await chatService.regenerateResponse(messageId);
-            const lastBotMessageIndex = messages.findLastIndex(msg => isAssistantMessage(msg));
-            if (lastBotMessageIndex !== -1) {
-                const updatedMessages = [...messages];
-                updatedMessages[lastBotMessageIndex] = {
-                    ...updatedMessages[lastBotMessageIndex],
-                    content: (response as any).content,
-                    showRegenerate: (response as any).showRegenerate
-                } as Message;
-                setMessages(updatedMessages);
+            
+            // 获取 sessionId
+            const info = globalWebSocketManager.getConnectionInfo();
+            const sid = (socketId || (info?.socketId as string) || '') as string;
+            
+            // 确保有当前聊天ID
+            if (!currentChatId) {
+                console.error('No current chat ID for regeneration');
+                return;
             }
+            
+            // 找到要重新生成的消息索引
+            const messageIndex = messages.findIndex(msg => msg.id === messageId || msg.id === `assistant-${messageId}`);
+            if (messageIndex === -1) {
+                console.error('Message not found for regeneration:', messageId);
+                return;
+            }
+            
+            // 构建历史消息列表，只包含要重新生成消息之前的消息
+            const historyMessages = messages.slice(0, messageIndex);
+            
+            // 提取answerId（去掉 'assistant-' 前缀）
+            const answerId = String(messageId).startsWith('assistant-') ? messageId.substring(10) : messageId;
+            
+            // 清空当前要重新生成的消息内容，显示思考状态
+            const targetMessage = messages[messageIndex];
+            updateMessage(targetMessage.id, {
+                content: '',
+                showRegenerate: true
+            });
+            
+            // 调用 triggerMessageByMode 进行重新生成
+            await triggerMessageByMode(
+                sid,
+                mode,
+                currentChatId,
+                historyMessages,
+                answerId
+            );
+            
         } catch (error) {
             console.error('Failed to regenerate message:', error);
         } finally {
             setIsLoading(false);
         }
-    }, [messages, setIsLoading, setMessages]);
+    }, [messages, setIsLoading, updateMessage, socketId, currentChatId, triggerMessageByMode]);
 
     const handleNewChat = useCallback(() => {
         startNewChat();
         window.location.href = '/chat';
     }, [startNewChat]);
 
-    const handleSelectChat = useCallback((selectedChatId: string) => {
+    const handleSelectChat = useCallback((selectedChatId: number) => {
         loadChatHistory(selectedChatId);
     }, [loadChatHistory]);
 
-    const handleDeleteChat = useCallback(async (chatId: string) => {
+    const handleDeleteChat = useCallback(async (chatId: number) => {
         const success = await chatService.deleteChat(chatId);
         if (success) {
             deleteChat(chatId);
         }
     }, [deleteChat]);
 
-    const handleRenameChat = useCallback(async (chatId: string, newTitle: string) => {
+    const handleRenameChat = useCallback(async (chatId: number, newTitle: string) => {
         const success = await chatService.renameChat(chatId, newTitle);
         if (success) {
             renameChat(chatId, newTitle);
         }
     }, [renameChat]);
 
-    const handleTogglePinChat = useCallback(async (chatId: string) => {
+    const handleTogglePinChat = useCallback(async (chatId: number) => {
         const chatItem = chatHistory.find(item => item.chatId === chatId);
         if (chatItem) {
             const success = await chatService.togglePinChat(chatId, !chatItem.isPinned);
@@ -471,7 +505,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         remainingDeepSpaceQueries,
         fetchQueryLimit,
         handleSendMessage,
-        onSendMessage: (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),
+        onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),
         handleEditMessage,
         onEditMessage: handleEditMessage,
         handleCopyMessage,

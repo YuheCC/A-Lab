@@ -6,7 +6,7 @@ import { useChatContext } from '../../context/ChatContext';
 
 // 定义 ChatHistoryItem 类型
 export interface ChatHistoryItem {
-  chatId: string;
+  chatId: number;
   title: string;
   timestamp: Date;
   isPinned: boolean;
@@ -15,12 +15,12 @@ export interface ChatHistoryItem {
 
 interface ChatHistoryProps {
     history: ChatHistoryItem[];
-    onSelectChat: (chatId: string) => void;
+    onSelectChat: (chatId: number) => void;
     onNewChat: () => void;
-    currentChatId?: string;
-    onDeleteChat?: (chatId: string) => void;
-    onRenameChat?: (chatId: string, newTitle: string) => void;
-    onTogglePinChat?: (chatId: string) => void;
+    currentChatId?: number;
+    onDeleteChat?: (chatId: number) => void;
+    onRenameChat?: (chatId: number, newTitle: string) => void;
+    onTogglePinChat?: (chatId: number) => void;
     onLoadMore?: () => void;
     hasMore?: boolean;
     loadingMore?: boolean;
@@ -135,7 +135,7 @@ console.log(currentChatId)
                             chatId={item.chatId}
                             title={item.title}
                             isPinned={item.isPinned}
-                            isActive={String(currentChatId) === String(item.chatId)}
+                            isActive={currentChatId === item.chatId}
                             onChatClick={handleChatClick}
                             onRename={handleRename}
                             onTogglePin={handleTogglePin}
