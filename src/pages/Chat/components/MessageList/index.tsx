@@ -22,6 +22,7 @@ interface MessageListProps {
   onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify') => void;
   onMoleculeClick?: (moleculeName: string) => void;
   onEditMessage?: (messageId: string, newText: string) => void;
+  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'deep-space' | 'clarify') => Promise<void>;
   className?: string;
 }
 
@@ -104,6 +105,7 @@ const MessageList: FC<MessageListProps> = ({
   onRegenerateMessage,
   onMoleculeClick,
   onEditMessage,
+  onMessageUpdate,
   className = ''
 }) => {
   const { t } = useTranslation();
@@ -113,6 +115,7 @@ const MessageList: FC<MessageListProps> = ({
     handleRegenerateMessage: ctxHandleRegenerateMessage,
     handleMoleculeClick: ctxHandleMoleculeClick,
     handleEditMessage: ctxHandleEditMessage,
+    handleMessageUpdate: ctxHandleMessageUpdate,
   } = useChatContext() as any;
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -220,7 +223,17 @@ const MessageList: FC<MessageListProps> = ({
 
   // 处理编辑消息
   const handleEditMessage = (messageId: string, newText: string) => {
-    (onEditMessage || ctxHandleEditMessage)?.(messageId, newText);
+    // 查找当前消息
+    const currentMessage = resolvedMessages.find(msg => msg.id === messageId);
+    
+    // 如果是用户消息，使用 handleMessageUpdate 来更新并获取新的AI回复
+    if (currentMessage && isUserMessage(currentMessage)) {
+      (onMessageUpdate || ctxHandleMessageUpdate)?.(messageId, newText, 'regular');
+    } else {
+      // 对于非用户消息，使用原来的编辑逻辑
+      (onEditMessage || ctxHandleEditMessage)?.(messageId, newText);
+    }
+    
     setEditingMessageId(null);
   };
 

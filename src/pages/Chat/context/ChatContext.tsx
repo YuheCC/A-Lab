@@ -29,10 +29,14 @@ interface ChatContextType {
     onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
     handleEditMessage: (messageId: string, newText: string) => void;
     onEditMessage: (messageId: string, newText: string) => void;
+    handleMessageUpdate: (messageId: string, newText: string, mode?: ChatMode) => Promise<void>;
+    onMessageUpdate: (messageId: string, newText: string, mode?: ChatMode) => Promise<void>;
     handleCopyMessage: (content: string) => void;
     onCopyMessage: (content: string) => void;
     handleRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
     onRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
+    sendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => Promise<string | undefined>;
+    onSendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => Promise<string | undefined>;
     handleNewChat: () => void;
     onNewChat: () => void;
     handleSelectChat: (selectedChatId: number) => void;
@@ -80,6 +84,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addUserMessage,
         addBotMessage,
         editMessage,
+        deleteMessage,
         startNewChat,
         loadChatHistory,
         updateChatHistory,
@@ -376,6 +381,26 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return messageData?.id;
     }, [socketId, sessionStartTime]);
 
+    const sendMessageUpdate = useCallback(async (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
+        const info = globalWebSocketManager.getConnectionInfo();
+        const sid = (socketId || (info?.socketId as string) || '') as string;
+        const messageData = await chatService.updateMessage(chatId, messageId, message, ragModel);
+        const answerData = messageData?.answer || {};
+        if(answerData?.id){
+            // 更新消息应该显示 regenerate
+            const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
+            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+        }
+        await triggerMessageByMode(
+            sid,
+            mode,
+            chatId,
+            historyMessages,
+            answerData?.id,
+        );
+        return messageData?.id;
+    }, [socketId, sessionStartTime]);
+
     const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => {
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
@@ -395,6 +420,43 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);
     }, [editMessage]);
+
+    const handleMessageUpdate = useCallback(async (messageId: string, newText: string, mode: ChatMode = 'regular') => {
+        console.log('handleMessageUpdate', messageId, newText, mode);
+        if (!currentChatId) {
+            console.error('No current chat ID for message update');
+            return;
+        }
+
+        try {
+            // 找到被修改消息的索引位置
+            const messageIndex = messages.findIndex(msg => msg.id === messageId);
+            if (messageIndex === -1) {
+                console.error('Message not found:', messageId);
+                return;
+            }
+
+            // 删除该消息之后的所有消息（包括旧的AI回复）
+            const messagesToDelete = messages.slice(messageIndex + 1);
+            messagesToDelete.forEach(msg => {
+                console.log('删除消息:', msg.id, msg.content.substring(0, 50));
+                deleteMessage(msg.id);
+            });
+
+            // 更新用户消息的内容
+            editMessage(messageId, newText);
+            
+            // 获取更新后的消息列表（只包含修改消息之前的和修改后的消息）
+            const updatedHistoryMessages = messages.slice(0, messageIndex + 1).map(msg => 
+                msg.id === messageId ? { ...msg, content: newText } : msg
+            );
+            
+            // 调用 sendMessageUpdate 获取新的 AI 回复
+            await sendMessageUpdate(messageId, newText, currentChatId, updatedHistoryMessages, mode);
+        } catch (error) {
+            console.error('Failed to update message:', error);
+        }
+    }, [editMessage, deleteMessage, messages, currentChatId, sendMessageUpdate]);
 
     const handleCopyMessage = useCallback((content: string) => {
         navigator.clipboard.writeText(content);
@@ -534,10 +596,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),
         handleEditMessage,
         onEditMessage: handleEditMessage,
+        handleMessageUpdate,
+        onMessageUpdate: handleMessageUpdate,
         handleCopyMessage,
         onCopyMessage: handleCopyMessage,
         handleRegenerateMessage,
         onRegenerateMessage: handleRegenerateMessage,
+        sendMessageUpdate,
+        onSendMessageUpdate: sendMessageUpdate,
         handleNewChat,
         onNewChat: handleNewChat,
         handleSelectChat,
