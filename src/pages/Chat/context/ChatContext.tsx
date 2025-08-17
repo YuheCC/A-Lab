@@ -242,11 +242,36 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (isChunk && chunk && messageId !== undefined && messageId !== null) {
                 const key = String(messageId);
                 botChunksRef.current[key] = (botChunksRef.current[key] || '') + String(chunk);
-                const targetId = `assistant-${key}`;
+                
+                // 智能匹配现有消息 ID
+                // 可能的格式：messageId, assistant-messageId
+                const possibleIds = [key, `assistant-${key}`];
+                let existingMessage = null;
+                let targetId = `assistant-${key}`;
+                // 查找现有消息
+                for (const possibleId of possibleIds) {
+                    existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        targetId = possibleId; // 使用已存在的消息 ID
+                        break;
+                    }
+                }
+                
+                if (!existingMessage) {
+                    console.log('WebSocket message creating new message:', key);
+                }
                 
                 // 只有在当前会话开始后的新消息才显示 regenerate
                 const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-                const updatedMessage = createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
+                
+                // 如果找到现有消息，保持其原有的时间戳和其他属性
+                const updatedMessage = existingMessage 
+                    ? {
+                        ...existingMessage,
+                        content: botChunksRef.current[key],
+                        showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage
+                    } as Message
+                    : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
                 // 使用精确更新，避免全量刷新
                 upsertMessage(updatedMessage);
@@ -398,15 +423,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
             // 构建历史消息列表，只包含要重新生成消息之前的消息
             const historyMessages = messages.slice(0, messageIndex);
+            const targetMessage = messages[messageIndex];
             
             // 提取answerId（去掉 'assistant-' 前缀）
             const answerId = String(messageId).startsWith('assistant-') ? messageId.substring(10) : messageId;
             
-            // 清空当前要重新生成的消息内容，显示思考状态
-            const targetMessage = messages[messageIndex];
+            // 清空当前要重新生成的消息内容，显示思考状态，并更新时间戳
             updateMessage(targetMessage.id, {
                 content: '',
-                showRegenerate: true
+                showRegenerate: true,
+                timestamp: new Date() // 重置时间戳，让倒计时从0开始
             });
             
             // 调用 triggerMessageByMode 进行重新生成
