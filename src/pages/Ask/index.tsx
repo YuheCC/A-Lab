@@ -41,6 +41,12 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
         components={{
+          // Add target="_blank" to all links
+          a: ({ node, children, ...props }) => (
+            <a {...props} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ),
           // Remove default margins from paragraphs
           p: ({ node, children, ...props }) => (
             <p {...props} style={{ margin: 0, marginBottom: '1em' }}>

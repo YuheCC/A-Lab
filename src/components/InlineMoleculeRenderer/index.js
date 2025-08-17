@@ -889,7 +889,14 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         });
         
         return <ul {...props}>{processedChildren}</ul>;
-      }
+      },
+      
+      // Add target="_blank" to all links
+      a: ({ node, children, ...props }) => (
+        <a {...props} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      )
     };
   };
 
