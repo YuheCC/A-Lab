@@ -187,6 +187,56 @@
   }
 }
 
+/* ExtraData 补充信息样式 */
+.extra-data-wrapper {
+  margin-top: 12px;
+}
+
+.extra-data-section {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 8px;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.extra-data-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  user-select: none;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.extra-data-header:hover {
+  background-color: #e5e7eb;
+}
+
+.extra-data-header span {
+  margin-left: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+}
+
+.extra-data-content {
+  padding: 12px;
+  background-color: white;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4b5563;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* 多个 ExtraData 之间的间距 */
+.extra-data-section:first-child {
+  margin-top: 12px;
+}
+
 /* 消息时间戳样式（可选） */
 .message-timestamp {
   font-size: 11px;

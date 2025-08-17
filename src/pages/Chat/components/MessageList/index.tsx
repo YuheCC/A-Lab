@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
 import './MessageList.css';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { 
   Message, 
   getMessageRole, 
@@ -12,6 +13,48 @@ import {
   isSystemMessage,
   normalizeServerDate
 } from '@/utils/messageUtils';
+
+// 检查内容是否包含内联分子的辅助函数
+const hasInlineMolecules = (content: string): boolean => {
+  return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
+};
+
+// 自定义消息内容渲染器，用于处理markdown和内联分子
+const MessageContentRenderer: React.FC<{ content: string; onMoleculeClick?: (moleculeName: string) => void }> = ({ content, onMoleculeClick }) => {
+  // 清理前后空格以避免格式问题
+  const trimmedContent = content?.trim() || '';
+  
+  if (hasInlineMolecules(trimmedContent)) {
+    // 如果内容包含内联分子，使用InlineMoleculeRenderer渲染
+    return <InlineMoleculeRenderer content={trimmedContent} onMoleculeClick={onMoleculeClick} />;
+  } else {
+    // 否则直接渲染为普通文本
+    return <div style={{ whiteSpace: 'pre-wrap' }}>{trimmedContent}</div>;
+  }
+};
+
+// ExtraData展开/折叠组件，用于显示补充信息
+const ExtraDataSection: React.FC<{ 
+  title: string; 
+  content: string; 
+  onMoleculeClick?: (moleculeName: string) => void;
+}> = ({ title, content, onMoleculeClick }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="extra-data-section">
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{title}</span>
+      </div>
+      {open && (
+        <div className="extra-data-content">
+          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 // 使用共享的Message类型，这里不需要重复定义
 
@@ -341,6 +384,19 @@ const MessageList: FC<MessageListProps> = ({
           ) : (
             <div className="message">
               <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
+              {/* 渲染extraData - 仅助手消息显示 */}
+              {isAssistantMessage(message) && message.extraData && Object.keys(message.extraData).length > 0 && (
+                <div className="extra-data-wrapper">
+                  {Object.entries(message.extraData).map(([key, value]) => (
+                    <ExtraDataSection
+                      key={key}
+                      title={key}
+                      content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                      onMoleculeClick={forwardMoleculeClick}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
           {renderMessageActions(message)}

@@ -42,6 +42,30 @@ export class ChatService {
     return isNaN(parsed.getTime()) ? new Date(trimmed) : parsed;
   }
 
+  /**
+   * 映射后端消息数据到前端Message格式
+   * 主要处理字段名转换：extra_data -> extraData
+   * 支持嵌套extra_data，如果内部还有extra_data则以内部字段为准
+   */
+  private mapServerMessageToClientMessage(serverMessage: any): Message {
+    let extraData = serverMessage.extra_data || serverMessage.extraData;
+    
+    // 如果extra_data内部还有extra_data这个key，以内部字段为准（不管值是什么）
+    if (extraData && typeof extraData === 'object' && 'extra_data' in extraData) {
+      extraData = extraData.extra_data;
+    }
+    
+    return {
+      ...serverMessage,
+      // 将后端的extra_data映射为前端的extraData
+      extraData: extraData,
+      // 确保时间戳格式正确
+      timestamp: serverMessage.timestamp ? this.normalizeServerDate(serverMessage.timestamp) : undefined,
+      // 移除后端的extra_data字段，避免重复
+      extra_data: undefined
+    };
+  }
+
   async sendMessage(message: string, mode: 'regular' | 'deep-space' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
       const resp = await request('/chat/send', {
@@ -213,7 +237,13 @@ export class ChatService {
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = resp.data;
-      return { title: data.title, messages: data.messages || [] };
+      
+      // 映射后端消息数据到前端格式
+      const mappedMessages = (data.messages || []).map((msg: any) => 
+        this.mapServerMessageToClientMessage(msg)
+      );
+      
+      return { title: data.title, messages: mappedMessages };
     } catch (error) {
       console.error('Failed to get chat by id:', error);
       // 直接抛出错误，不返回mock数据
