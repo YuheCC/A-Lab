@@ -64,7 +64,7 @@ const generateNewChat = (): Chat => ({
     moleculesLoading: false,
     similarMoleculesLoading: false,
     messages: [
-        { role: "system", content: getWelcomeMessage() }
+        { role: "system", content: getWelcomeMessage(), createdAt: new Date().toISOString() }
     ],
     activeMolecule: null,
     foundMolecules: [],
