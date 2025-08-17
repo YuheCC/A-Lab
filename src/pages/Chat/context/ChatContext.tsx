@@ -109,6 +109,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 分消息ID缓存分片，避免串流到错误消息
     const botChunksRef = useRef<Record<string, string>>({});
 
+    // 用于跟踪当前会话开始时间，区分历史记录和新消息
+    const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+
     // 使用次数相关状态
     const [remainingQueries, setRemainingQueries] = useState(0);
     const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
@@ -169,6 +172,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             loadChatData(id);
         } else {
             startNewChat();
+            // 新聊天时也设置会话开始时间
+            setSessionStartTime(new Date());
         }
     }, [id, loadChatHistory, startNewChat]);
 
@@ -229,7 +234,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const key = String(messageId);
                 botChunksRef.current[key] = (botChunksRef.current[key] || '') + String(chunk);
                 const targetId = `assistant-${key}`;
-                const updatedMessage = createAssistantMessage(botChunksRef.current[key], targetId, true);
+                
+                // 只有在当前会话开始后的新消息才显示 regenerate
+                const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
+                const updatedMessage = createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
                 const newMessages = [...messages];
                 const targetIndex = newMessages.findIndex((msg: Message) => isAssistantMessage(msg) && (String(msg.id) === targetId || String(msg.id) === key));
@@ -261,7 +269,26 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             setIsLoading(true);
             const chatData = await chatService.getChatById(chatId);
-            setMessages(chatData.messages);
+            
+            // 设置当前会话开始时间，用于区分历史记录和新消息
+            setSessionStartTime(new Date());
+            
+            // 找到最后一条助手消息的索引
+            let lastAssistantIndex = -1;
+            for (let i = chatData.messages.length - 1; i >= 0; i--) {
+                if (isAssistantMessage(chatData.messages[i])) {
+                    lastAssistantIndex = i;
+                    break;
+                }
+            }
+            
+            // 处理历史记录消息：只有最后一条助手消息显示 regenerate
+            const historyMessages = chatData.messages.map((msg, index) => ({
+                ...msg,
+                showRegenerate: isAssistantMessage(msg) && index === lastAssistantIndex
+            }));
+            
+            setMessages(historyMessages);
         } catch (error) {
             console.error('Failed to load chat data:', error);
         } finally {
@@ -287,7 +314,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const messageData = await chatService.createNewMessage(chatData?.id, message, ragModel);
         const answerData = messageData?.answer || {};
         if(answerData?.id){
-            addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
+            // 新聊天的消息应该显示 regenerate
+            const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
+            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         await triggerMessageByMode(
             sid,
@@ -297,7 +326,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             answerData?.id,
         );
         return chatData?.id;
-    }, [socketId]);
+    }, [socketId, sessionStartTime]);
 
     const createNewMessage = useCallback(async (message: string, chatId: string, historyMessages: Message[], mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
@@ -305,7 +334,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const messageData = await chatService.createNewMessage(chatId, message, ragModel);
         const answerData = messageData?.answer || {};
         if(answerData?.id){
-            addBotMessage(answerData?.content, true, `assistant-${answerData?.id}`);
+            // 当前会话中的新消息应该显示 regenerate
+            const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
+            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         await triggerMessageByMode(
             sid,
@@ -315,7 +346,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             answerData?.id,
         );
         return messageData?.id;
-    }, [socketId]);
+    }, [socketId, sessionStartTime]);
 
     const handleSendMessage = useCallback(async (message: string, mode: ChatMode, chatId?: string, extra?: Record<string, any>) => {
         // 先本地显示用户消息
