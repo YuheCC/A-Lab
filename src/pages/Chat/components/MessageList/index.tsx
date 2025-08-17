@@ -26,81 +26,13 @@ interface MessageListProps {
   className?: string;
 }
 
-// 工具函数已移动到 @/utils/messageUtils 中
-
-// Mock 数据
-const mockMessages: Message[] = [
-  {
-    id: '0',
-    role: 'system',
-    content: 'Welcome to the Molecular Universe. How can I help you today?',
-    timestamp: new Date(),
-    showRegenerate: false
-  },
-  {
-    id: '1',
-    role: 'assistant',
-    content: '这是一条助手消息示例。',
-    timestamp: new Date(),
-    showRegenerate: false
-  },
-  {
-    id: '2',
-    role: 'user',
-    content: '请介绍一下 LiPF6 电解质的特性',
-    timestamp: new Date()
-  },
-  {
-    id: '3',
-    role: 'assistant',
-    content: `LiPF6 是锂离子电池中最常用的电解质锂盐，具有以下特性：
-
-1. **溶解性好**：在碳酸酯类溶剂中具有较高的溶解度
-2. **离子传导能力高**：能够提供大量可在正负极之间穿梭的锂离子
-3. **离子解离度高**：在溶液中能够充分解离为 Li+ 和 PF6- 离子
-4. **热稳定性差**：在高温下容易分解，生成 HF
-5. **易水解**：与水分反应生成 HF，导致电池性能衰减
-
-建议在使用和储存过程中注意保持干燥环境。`,
-    timestamp: new Date(),
-    showRegenerate: true
-  },
-  {
-    id: '4',
-    role: 'user',
-    content: 'EC 和 DEC 溶剂有什么区别？',
-    timestamp: new Date()
-  },
-  {
-    id: '5',
-    role: 'assistant',
-    content: `EC（碳酸乙烯酯）和 DEC（碳酸二乙酯）的主要区别：
-
-**EC（碳酸乙烯酯）：**
-- 高介电常数，有利于锂盐解离
-- 在石墨负极表面形成稳定的 SEI 膜
-- 熔点较高（36°C），低温性能较差
-- 通常与其他溶剂混合使用
-
-**DEC（碳酸二乙酯）：**
-- 低粘度，提高电解液流动性
-- 改善电池的低温性能
-- 沸点较低，有利于快速充电
-- 通常与 EC 混合使用，如 EC+DEC 体系
-
-两种溶剂各有优势，通常混合使用以获得最佳性能。`,
-    timestamp: new Date(),
-    showRegenerate: true
-  }
-];
-
 import { useChatContext } from '../../context/ChatContext';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useAuthStore } from '@/models/useAuth';
 
 const MessageList: FC<MessageListProps> = ({
-  messages = mockMessages,
+  messages =  [],
   onCopyMessage,
   onRegenerateMessage,
   onMoleculeClick,

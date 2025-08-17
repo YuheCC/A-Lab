@@ -18,6 +18,7 @@ interface ChatContextType {
     chatHistory: ChatHistoryItem[];
     currentChatId?: number;
     isLoading: boolean;
+    loadingChatData: boolean;
     sessionId?: string;
     wsConnected: boolean;
     hasMoreHistory: boolean;
@@ -109,6 +110,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const [hasMoreHistory, setHasMoreHistory] = useState(false);
     const [loadingMoreHistory, setLoadingMoreHistory] = useState(false);
+    const [loadingChatData, setLoadingChatData] = useState(false);
     const [lastUpdatedAt, setLastUpdatedAt] = useState<string | undefined>(undefined);
     const loadMoreGateTsRef = useRef<number>(0);
 
@@ -300,7 +302,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const loadChatData = async (chatId: number) => {
         try {
-            setIsLoading(true);
+            setLoadingChatData(true);
             const chatData = await chatService.getChatById(chatId);
             
             // 设置当前会话开始时间，用于区分历史记录和新消息
@@ -324,8 +326,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setMessages(historyMessages);
         } catch (error) {
             console.error('Failed to load chat data:', error);
+            // 聊天数据不存在或加载失败时跳转到welcome页面
+            navigate('/chat');
         } finally {
-            setIsLoading(false);
+            setLoadingChatData(false);
         }
     };
 
@@ -585,6 +589,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         chatHistory,
         currentChatId,
         isLoading,
+        loadingChatData,
         sessionId,
         wsConnected,
         hasMoreHistory,

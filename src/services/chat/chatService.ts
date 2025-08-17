@@ -216,40 +216,8 @@ export class ChatService {
       return { title: data.title, messages: data.messages || [] };
     } catch (error) {
       console.error('Failed to get chat by id:', error);
-      const chatTitles: Record<string, string> = {
-        '30': 'LiFePO4石墨电池电解质推荐',
-        '27': 'SEI层组成成分研究',
-        '26': '高镍正极材料性能优化',
-        '25': '固态电解质界面稳定性',
-        '24': '电池热管理系统设计',
-        '23': '钠离子电池正极材料筛选',
-        '22': '电池循环寿命预测模型',
-        '21': '硅负极材料膨胀抑制策略',
-        '20': '电解液添加剂优化配方',
-        '19': '锂金属负极保护层设计',
-        '18': '电池安全性评估方法',
-        '17': '快充技术对电池寿命影响',
-        '16': '三元材料掺杂改性研究',
-        '15': '电池管理系统算法优化',
-        '14': '固态电池界面阻抗分析',
-        '13': '电池回收工艺流程设计',
-        '12': '锂离子传导机理研究',
-        '11': '电池包结构优化设计',
-        '10': '电解质盐浓度优化策略',
-        '9': '电池容量衰减机理分析',
-        '8': '新型导电剂性能评估',
-        '7': '电池电化学阻抗谱解析',
-        '6': '磷酸铁锂改性技术路线',
-      };
-
-      const title = chatTitles[chatId] || '未知对话';
-      return {
-        title,
-        messages: [
-          { id: `${chatId}-1`, type: 'user' as const, content: `请详细介绍一下${title}相关的技术要点。`, timestamp: new Date() },
-          { id: `${chatId}-2`, type: 'bot' as const, content: `关于${title}，这是一个重要的电池技术领域。我需要更多具体信息来为您提供详细的技术分析和建议。请告诉我您最关心的具体方面，比如材料特性、工艺参数、性能指标等。`, timestamp: new Date(), showRegenerate: true },
-        ],
-      };
+      // 直接抛出错误，不返回mock数据
+      throw error;
     }
   }
 
