@@ -73,14 +73,18 @@ const ChatWelcome: React.FC = () => {
                         }}>
                             {t('chatbox.chat.modes.regular')}
                         </h4>
-                        <span style={{
-                            fontSize: '12px',
-                            color: '#56B26A',
-                            padding: '2px 6px',
-                            borderRadius: '4px'
-                        }}>
-                            {t('chatbox.chat.modes.regularRemaining', { count: remainingQueries })}
-                        </span>
+                        {
+                            userPermissions === 'research' && (
+                                <span style={{
+                                    fontSize: '12px',
+                                    color: '#56B26A',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px'
+                                }}>
+                                    {t('chatbox.chat.modes.regularRemaining', { count: remainingQueries })}
+                                </span>
+                            )
+                        }
                     </div>
                     <div style={{
                         fontSize: '13px',
