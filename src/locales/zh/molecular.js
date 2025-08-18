@@ -5,7 +5,7 @@ export default {
     umapCoordinates: "UMAP坐标",
     properties: "属性",
     copyAllData: "复制所有数据",
-    addToFavorites: "添加到收藏 ★",
+    addToFavorites: "添加到收藏",
     saving: "保存中...",
     copySuccess: "分子信息已复制到剪贴板！",
     copyError: "复制分子数据失败"

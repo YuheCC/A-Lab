@@ -5,7 +5,7 @@ export default {
     umapCoordinates: "UMAP座標",
     properties: "プロパティ",
     copyAllData: "すべてのデータをコピー",
-    addToFavorites: "お気に入りに追加 ★",
+    addToFavorites: "お気に入りに追加",
     saving: "保存中...",
     copySuccess: "分子情報がクリップボードにコピーされました！",
     copyError: "分子データのコピーに失敗しました"

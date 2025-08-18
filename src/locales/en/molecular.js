@@ -5,7 +5,7 @@ export default {
     umapCoordinates: "UMAP Coordinates",
     properties: "Properties",
     copyAllData: "Copy All Data",
-    addToFavorites: "Add to Favorites ★",
+    addToFavorites: "Add to Favorites",
     saving: "Saving...",
     copySuccess: "Molecule information copied to clipboard!",
     copyError: "Failed to copy molecule data"

@@ -12,7 +12,7 @@
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 16px 8px; /* 增加左右内边距从2px到8px */
+    padding: 8px 8px; /* 增加左右内边距从2px到8px */
     margin-bottom: 12px;
     margin-top: 0; /* 确保没有上边距 */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
@@ -39,15 +39,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px; /* 减少下边距 */
-    padding-bottom: 8px; /* 减少内边距 */
+    margin-bottom: 8px; /* 进一步减少下边距 */
+    padding-bottom: 4px; /* 进一步减少内边距 */
     border-bottom: 1px solid #f1f5f9;
     margin-top: 0; /* 确保没有上边距 */
 }
 
 .molecule-card-name {
-    font-size: 18px; /* 减小字体 */
-    font-weight: 600; /* 减弱字重 */
+    font-size: 16px; /* 进一步减小字体 */
+    font-weight: 500; /* 进一步减弱字重 */
     color: #1e293b;
     margin: 0;
     line-height: 1.2;
@@ -56,6 +56,28 @@
 }
 
 /* 卡片右上角收藏按钮 */
+.molecule-card-header .custom-button-group {
+    flex-shrink: 0;
+}
+
+.molecule-card-header .custom-button-group .icon-button {
+    font-size: 10px !important;
+    min-height: 24px !important;
+    border-radius: 8px !important;
+    padding: 2px 6px !important;
+    transition: all 0.2s ease !important;
+    background-color: #fef3c7 !important;
+    color: #f59e0b !important;
+    border: 1px solid #f59e0b !important;
+}
+
+.molecule-card-header .custom-button-group .icon-button:hover {
+    background-color: #f59e0b !important;
+    color: white !important;
+    border-color: #f59e0b !important;
+    transform: translateY(-1px) !important;
+}
+
 .molecule-card-favorite-btn {
     position: relative;
     width: 24px;

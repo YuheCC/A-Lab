@@ -70,7 +70,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 12px; /* 添加顶部内边距，让分子卡片稍微往下一点 */
 }
 
 @keyframes fadeInUp {
@@ -88,7 +87,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 8px 16px;
     border-bottom: 1px solid #e2e8f0;
     background: white;
     flex-shrink: 0;
@@ -472,7 +471,7 @@
 .original-molecule-section {
     background: transparent;
     border-radius: 8px;
-    padding: 16px 4px !important; /* 减少左右内边距从8px到4px */
+    padding: 6px 4px !important; /* 减少左右内边距从8px到4px */
     border: none;
 }
 
@@ -601,7 +600,7 @@
     }
     
     .molecule-panel-header {
-        padding: 16px 20px;
+        padding: 8px 20px;
     }
     
     .molecule-panel-content {

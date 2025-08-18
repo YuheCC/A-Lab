@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Plus } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
+import CustomButton from '@/components/CustomButton/index.js';
 import { FavoriteContext } from '@/layouts';
 
 interface MoleculeModalProps {
@@ -110,7 +112,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
     const renderMoleculeStructure = (smiles?: string) => {
         return smiles ? (
-            <MolViewer2D smile={smiles} width={200} height={200} />
+            <MolViewer2D smile={smiles} />
         ) : (
             <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('molecular.molCard.loading')}
@@ -132,18 +134,30 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             <div className="molecule-card">
                 <div className="molecule-card-header">
                     <h3 className="molecule-card-name">{name}</h3>
-                    <button 
-                        className="molecule-card-favorite-btn" 
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddToFavoritesByRaw(raw, properties);
-                        }} 
-                        title={t('molecular.nodePopup.addToFavorites')}
-                    >
-                        <svg t="1755154990581" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M912 208H427.872l-50.368-94.176A63.936 63.936 0 0 0 321.056 80H112c-35.296 0-64 28.704-64 64v736c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-608c0-35.296-28.704-64-64-64z m-800-64h209.056l68.448 128H912v97.984c-0.416 0-0.8-0.128-1.216-0.128H113.248c-0.416 0-0.8 0.128-1.248 0.128V144z m0 736v-96l1.248-350.144 798.752 1.216V784h0.064v96H112z" fill="#020202"></path>
-                        </svg>
-                    </button>
+                    <div className="custom-button-group">
+                        <CustomButton 
+                            Icon={Plus as any} 
+                            onClick={(e: any) => {
+                                e.stopPropagation();
+                                handleAddToFavoritesByRaw(raw, properties);
+                            }}
+                            color="primary"
+                            variant="contained"
+                            loading={false}
+                            loadingText=""
+                            errorMessage=""
+                            successMessage=""
+                            sideError={false}
+                            style={{ 
+                                minWidth: 'auto', 
+                                padding: '2px 6px',
+                                fontSize: '10px',
+                                fontWeight: '500'
+                            }}
+                        >
+                            {t('molecular.nodePopup.addToFavorites')}
+                        </CustomButton>
+                    </div>
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">

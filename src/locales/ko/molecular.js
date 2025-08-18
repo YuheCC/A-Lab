@@ -5,7 +5,7 @@ export default {
     umapCoordinates: "UMAP 좌표",
     properties: "속성",
     copyAllData: "모든 데이터 복사",
-    addToFavorites: "즐겨찾기에 추가 ★",
+    addToFavorites: "즐겨찾기에 추가",
     saving: "저장 중...",
     copySuccess: "분자 정보가 클립보드에 복사되었습니다!",
     copyError: "분자 데이터 복사에 실패했습니다"
