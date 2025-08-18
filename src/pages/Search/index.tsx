@@ -307,10 +307,15 @@ const SearchPage = () => {
                     }
 
                     const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
-                    const queryString = extraRequests.trim()
-                        ? `${baseQuery} User's additional requests: ${extraRequests.trim()}`
-                        : baseQuery;
-                    const includeQuery = optionsSpecified || extraRequests.trim();
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
                     const payload: any = {
                         smiles: formattedMolecule.smiles.trim(),

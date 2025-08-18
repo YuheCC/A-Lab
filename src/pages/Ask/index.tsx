@@ -566,6 +566,10 @@ const handleFindSimilarMolecules = async (details: any) => {
           }
         }
       }
+
+      // Add category note for LLM context if user selected a molecule type
+      const category = molTypeSelections[details.SMILES];
+      const categoryNote = category ? ` I am looking for ${category} molecules.` : "";
       
       // Build selected molecule string if high-tier
       const selectedMoleculeStr = isHighTier
@@ -591,7 +595,11 @@ const handleFindSimilarMolecules = async (details: any) => {
         structure_weight: structureWeight,
         ...(molTypeSelections[details.SMILES] && { mol_type: molTypeSelections[details.SMILES] }),
         ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
-        ...(isHighTier && { query: originalQuery, response: llmResponse, selected_molecule_str: selectedMoleculeStr })
+        ...(isHighTier && { 
+          query: (originalQuery ? `${originalQuery}${categoryNote}` : (categoryNote || undefined)), 
+          response: llmResponse, 
+          selected_molecule_str: selectedMoleculeStr 
+        })
       };
       // Perform POST request
       const response = await authFetch(
