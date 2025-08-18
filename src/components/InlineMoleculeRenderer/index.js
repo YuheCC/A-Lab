@@ -904,7 +904,7 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
   const componentsAfterRefs = useMemo(() => createComponents(true), [moleculeMap, processedContent]);
 
   return (
-    <div>
+    <div className="inline-molecule-renderer">
       {contentParts.map((part, index) => (
         <ReactMarkdown 
           key={index}
