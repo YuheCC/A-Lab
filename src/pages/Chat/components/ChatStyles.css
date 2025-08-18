@@ -781,7 +781,6 @@ body.chat-page-body {
 .message-actions {
     display: flex;
     gap: 8px;
-    margin-top: 8px;
     opacity: 0;
     transition: opacity 0.2s;
     justify-content: flex-end;
@@ -801,7 +800,7 @@ body.chat-page-body {
     position: static;
     justify-content: flex-start;
     align-self: flex-start;
-    margin-top: 8px;
+    margin-top: -8px;
     margin-left: 0;
     bottom: auto;
     right: auto;
