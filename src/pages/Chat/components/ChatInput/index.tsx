@@ -88,7 +88,7 @@ const ChatInput: FC<ChatInputProps> = ({
       }
       let mode: ChatMode = currentMode;
       // 如果是deep-space模式且有消息历史，默认使用clarify模式
-      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].role === 'assistant'){
+      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
         mode = 'clarify';
       }
       handleSendMessage(inputValue.trim(), mode, currentChatId, extraPayload);

@@ -8,6 +8,7 @@ export interface Message {
   id: string;
   role?: 'system' | 'user' | 'assistant';
   type?: 'user' | 'bot'; // 保持向后兼容性，将被弃用
+  msg_type?: string; // 消息类型标识，用于业务场景区分
   content: string;
   timestamp?: Date;
   showRegenerate?: boolean;
@@ -85,14 +86,16 @@ export const isSystemMessage = (message: Message): boolean => {
  * 创建用户消息
  * @param content 消息内容
  * @param id 消息ID（可选，默认自动生成）
+ * @param msg_type 消息类型（可选）
  * @returns Message
  */
-export const createUserMessage = (content: string, id?: string): Message => {
+export const createUserMessage = (content: string, id?: string, msg_type?: string): Message => {
   return {
     id: id || `user-${Date.now()}`,
     role: 'user',
     content,
-    timestamp: new Date()
+    timestamp: new Date(),
+    ...(msg_type && { msg_type })
   };
 };
 
@@ -101,19 +104,22 @@ export const createUserMessage = (content: string, id?: string): Message => {
  * @param content 消息内容
  * @param id 消息ID（可选，默认自动生成）
  * @param showRegenerate 是否显示重新生成按钮
+ * @param msg_type 消息类型（可选）
  * @returns Message
  */
 export const createAssistantMessage = (
   content: string, 
   id?: string, 
-  showRegenerate: boolean = true
+  showRegenerate: boolean = true,
+  msg_type?: string
 ): Message => {
   return {
     id: id || `assistant-${Date.now()}`,
     role: 'assistant',
     content,
     timestamp: new Date(),
-    showRegenerate
+    showRegenerate,
+    ...(msg_type && { msg_type })
   };
 };
 
@@ -121,14 +127,16 @@ export const createAssistantMessage = (
  * 创建系统消息
  * @param content 消息内容
  * @param id 消息ID（可选，默认自动生成）
+ * @param msg_type 消息类型（可选）
  * @returns Message
  */
-export const createSystemMessage = (content: string, id?: string): Message => {
+export const createSystemMessage = (content: string, id?: string, msg_type?: string): Message => {
   return {
     id: id || `system-${Date.now()}`,
     role: 'system',
     content,
-    timestamp: new Date()
+    timestamp: new Date(),
+    ...(msg_type && { msg_type })
   };
 };
 
@@ -180,4 +188,36 @@ export const getLastMessageByRole = (
     }
   }
   return undefined;
+};
+
+/**
+ * 获取消息的msg_type
+ * @param message 消息对象
+ * @returns msg_type字符串或undefined
+ */
+export const getMessageType = (message: Message): string | undefined => {
+  return message.msg_type;
+};
+
+/**
+ * 设置消息的msg_type
+ * @param message 消息对象
+ * @param msg_type 消息类型
+ * @returns 更新后的消息对象
+ */
+export const setMessageType = (message: Message, msg_type: string): Message => {
+  return {
+    ...message,
+    msg_type
+  };
+};
+
+/**
+ * 判断消息是否为指定类型
+ * @param message 消息对象
+ * @param msg_type 消息类型
+ * @returns boolean
+ */
+export const isMessageType = (message: Message, msg_type: string): boolean => {
+  return message.msg_type === msg_type;
 };

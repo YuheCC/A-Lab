@@ -185,6 +185,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (!isNaN(chatId)) {
                 loadChatHistory(chatId);
                 loadChatData(chatId);
+            } else {
+                // id 存在但不是数字（如 "new"），按新聊天处理
+                startNewChat();
+                // 新聊天时也设置会话开始时间
+                setSessionStartTime(new Date());
             }
         } else {
             startNewChat();
