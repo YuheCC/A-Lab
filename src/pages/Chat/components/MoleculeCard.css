@@ -496,8 +496,35 @@
     border-color: #f59e0b;
 }
 
-.molecule-card-btn.find-similar:hover {
+.molecule-card-btn.find-similar:hover:not(:disabled) {
     background: #f59e0b;
     color: white;
     border-color: #f59e0b;
+}
+
+/* Loading state styles */
+.molecule-card-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.molecule-card-btn.loading {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.loading-spinner-small {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

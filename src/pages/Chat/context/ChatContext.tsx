@@ -356,6 +356,29 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
+    // 辅助函数：将聊天记录添加到非置顶位置第一条
+    const addOrMoveToTopOfNonPinned = useCallback((chatId: number, title: string) => {
+        const newChatItem: ChatHistoryItem = {
+            chatId,
+            title,
+            timestamp: new Date(),
+            isPinned: false,
+            updatedAt: new Date().toISOString()
+        };
+
+        const currentHistory = chatHistory;
+        const pinnedItems = currentHistory.filter(item => item.isPinned);
+        const nonPinnedItems = currentHistory.filter(item => !item.isPinned);
+        
+        // 移除可能已存在的相同聊天记录
+        const filteredNonPinned = nonPinnedItems.filter(item => item.chatId !== chatId);
+        
+        // 将新聊天记录添加到非置顶项的第一位
+        console.log('newChatItem', newChatItem);
+        const updatedHistory = [...pinnedItems, newChatItem, ...filteredNonPinned];
+        updateChatHistory(updatedHistory);
+    }, [chatHistory, updateChatHistory]);
+
     const createNewChat = useCallback(async (message: string, mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
@@ -368,6 +391,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
             addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
+        
+        // 在历史记录的非置顶位置增加新创建的聊天
+        if (chatData?.id && chatData?.session_name) {
+            addOrMoveToTopOfNonPinned(chatData.id, chatData.session_name);
+        }
+        
         await triggerMessageByMode(
             sid,
             mode,
@@ -376,7 +405,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             answerData?.id,
         );
         return chatData?.id;
-    }, [socketId, sessionStartTime]);
+    }, [socketId, sessionStartTime, addOrMoveToTopOfNonPinned]);
 
     const createNewMessage = useCallback(async (message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();
@@ -388,6 +417,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
             addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
+        
+        // 在已有聊天发送消息后，将该聊天提升至非置顶位置第一条
+        const existingChatItem = chatHistory.find(item => item.chatId === chatId);
+        if (existingChatItem && !existingChatItem.isPinned) {
+            addOrMoveToTopOfNonPinned(chatId, existingChatItem.title);
+        }
+        
         await triggerMessageByMode(
             sid,
             mode,
@@ -396,7 +432,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             answerData?.id,
         );
         return messageData?.id;
-    }, [socketId, sessionStartTime]);
+    }, [socketId, sessionStartTime, chatHistory, addOrMoveToTopOfNonPinned]);
 
     const sendMessageUpdate = useCallback(async (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
         const info = globalWebSocketManager.getConnectionInfo();

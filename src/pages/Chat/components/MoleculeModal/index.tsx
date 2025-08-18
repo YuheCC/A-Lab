@@ -31,11 +31,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
     const [isLoading, setIsLoading] = useState(false);
+    const [isSimilarLoading, setIsSimilarLoading] = useState(false);
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
@@ -79,9 +80,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     };
 
     const handleFindSimilar = async (name: string) => {
+        // 如果已经在loading状态，防止重复请求
+        if (isSimilarLoading) {
+            return;
+        }
+        
         onFindSimilar?.(name);
         try {
-            setIsLoading(true);
+            setIsSimilarLoading(true);
             let smilesToUse = currentSmiles;
             let raw = rawOriginal;
             if (!smilesToUse) {
@@ -99,7 +105,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 setShowSimilar(true);
             }
         } finally {
-            setIsLoading(false);
+            setIsSimilarLoading(false);
         }
     };
 
@@ -257,13 +263,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
                         <button 
-                            className="molecule-card-btn find-similar" 
+                            className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
                             onClick={() => handleFindSimilar(name)}
+                            disabled={isSimilarLoading}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-                            </svg>
-                            <span>{t('molecular.moleculeModal.findSimilar')}</span>
+                            {isSimilarLoading ? (
+                                <div className="loading-spinner-small"></div>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                                </svg>
+                            )}
+                            <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
                 )}
@@ -427,7 +438,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 {showSimilar && (
                     <div className="similar-molecules-section">
                         <h3 className="section-title">{similarCountText}</h3>
-                        {isLoading ? (
+                        {isSimilarLoading ? (
                             <div className="similar-molecules-grid">
                                 {t('molecular.molCard.loading')}
                             </div>
