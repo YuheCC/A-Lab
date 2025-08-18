@@ -93,7 +93,7 @@ export const createUserMessage = (content: string, id?: string, msg_type?: strin
   return {
     id: id || `user-${Date.now()}`,
     role: 'user',
-    content,
+    content: cleanMessageContent(content),
     timestamp: new Date(),
     ...(msg_type && { msg_type })
   };
@@ -116,7 +116,7 @@ export const createAssistantMessage = (
   return {
     id: id || `assistant-${Date.now()}`,
     role: 'assistant',
-    content,
+    content: cleanMessageContent(content),
     timestamp: new Date(),
     showRegenerate,
     ...(msg_type && { msg_type })
@@ -134,7 +134,7 @@ export const createSystemMessage = (content: string, id?: string, msg_type?: str
   return {
     id: id || `system-${Date.now()}`,
     role: 'system',
-    content,
+    content: cleanMessageContent(content),
     timestamp: new Date(),
     ...(msg_type && { msg_type })
   };
@@ -220,4 +220,35 @@ export const setMessageType = (message: Message, msg_type: string): Message => {
  */
 export const isMessageType = (message: Message, msg_type: string): boolean => {
   return message.msg_type === msg_type;
+};
+
+/**
+ * 清理消息内容中的无效换行符
+ * 删除叠加在一起的多个换行符，保留合理的换行结构
+ * @param content 原始消息内容
+ * @returns 清理后的消息内容
+ */
+export const cleanMessageNewlines = (content: string): string => {
+  if (!content || typeof content !== 'string') {
+    return content || '';
+  }
+
+  return content
+    // 将3个或更多连续的换行符替换为2个
+    .replace(/\n{3,}/g, '\n\n')
+    // 清理行首和行尾的空白字符，但保留换行符
+    .replace(/^[ \t]+|[ \t]+$/gm, '')
+    // 删除首尾的多余换行符
+    .replace(/^\n+|\n+$/g, '')
+    // 确保段落之间最多只有一个空行
+    .replace(/\n\s*\n\s*\n/g, '\n\n');
+};
+
+/**
+ * 清理消息内容（综合处理函数）
+ * @param content 原始消息内容
+ * @returns 清理后的消息内容
+ */
+export const cleanMessageContent = (content: string): string => {
+  return cleanMessageNewlines(content);
 };

@@ -225,7 +225,7 @@
 .extra-data-content {
   padding: 12px;
   background-color: white;
-  white-space: pre-wrap;
+  /* 移除 white-space: pre-wrap，让内容正常渲染 */
   font-size: 13px;
   line-height: 1.5;
   color: #4b5563;

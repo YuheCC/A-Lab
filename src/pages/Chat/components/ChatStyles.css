@@ -694,7 +694,7 @@ body.chat-page-body {
     color: #1e293b;
     border-bottom-left-radius: 4px;
     text-align: left;
-    white-space: pre-wrap;
+    /* 移除 white-space: pre-wrap，让 markdown 渲染器控制格式 */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
