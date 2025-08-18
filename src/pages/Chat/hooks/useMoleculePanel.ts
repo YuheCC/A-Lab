@@ -8,7 +8,7 @@ export interface MoleculePanelState {
   dimensions: LayoutDimensions | null;
 }
 
-export function useMoleculePanel() {
+export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) => void) {
   const [state, setState] = useState<MoleculePanelState>({
     isVisible: false,
     isExpanded: false,
@@ -25,6 +25,11 @@ export function useMoleculePanel() {
       currentMolecule: moleculeName,
     }));
 
+    // 当分子面板展开时，收缩侧边栏
+    if (expanded && setIsSidebarCollapsed) {
+      setIsSidebarCollapsed(true);
+    }
+
     // 应用布局变化
     setTimeout(() => {
       toggleMoleculePanelExpansion(expanded, (dimensions) => {
@@ -39,7 +44,7 @@ export function useMoleculePanel() {
         }
       }
     }, 50);
-  }, []);
+  }, [setIsSidebarCollapsed]);
 
   // 隐藏分子面板
   const hidePanel = useCallback(() => {
@@ -62,6 +67,11 @@ export function useMoleculePanel() {
     const newExpanded = !state.isExpanded;
     setState(prev => ({ ...prev, isExpanded: newExpanded }));
 
+    // 当分子面板展开时，收缩侧边栏
+    if (newExpanded && setIsSidebarCollapsed) {
+      setIsSidebarCollapsed(true);
+    }
+
     toggleMoleculePanelExpansion(newExpanded, (dimensions) => {
       setState(prev => ({ ...prev, dimensions }));
     });
@@ -74,7 +84,7 @@ export function useMoleculePanel() {
         chatContainer.classList.remove('expanded');
       }
     }
-  }, [state.isExpanded]);
+  }, [state.isExpanded, setIsSidebarCollapsed]);
 
   // 处理分子点击
   const handleMoleculeClick = useCallback((moleculeName: string) => {
