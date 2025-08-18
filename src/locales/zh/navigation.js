@@ -34,6 +34,7 @@ export default {
   // User dropdown menu
   userDropdown: {
     accountSettings: "账号设置",
+    feedback: "意见与反馈",
     logout: "退出登录"
   },
   

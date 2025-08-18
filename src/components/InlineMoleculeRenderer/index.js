@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
@@ -12,14 +12,11 @@ const IndividualCitationLink = ({ number, style }) => {
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    console.log(`Clicked citation ${number}, looking for ref-${number}`);
-    
+
     // Find the target reference element
     const targetElement = document.getElementById(`ref-${number}`);
     
     if (targetElement) {
-      console.log(`Found target element for ref-${number}`, targetElement);
       targetElement.scrollIntoView({ 
         behavior: 'smooth', 
         block: 'start',
@@ -32,25 +29,19 @@ const IndividualCitationLink = ({ number, style }) => {
         targetElement.style.backgroundColor = '';
       }, 2000);
     } else {
-      console.log(`Could not find target element for ref-${number}`);
-      console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
-      
       // Fallback: try to find any reference section and scroll to it
       const referencesHeadings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter(heading => 
         heading.textContent?.toLowerCase().includes('references')
       );
       
       if (referencesHeadings.length > 0) {
-        console.log('Found references heading, scrolling to it');
         referencesHeadings[0].scrollIntoView({ behavior: 'smooth' });
       } else {
-        console.log('No references heading found either');
         // Last fallback: look for any element containing the reference number
         const allElements = Array.from(document.querySelectorAll('*')).filter(el => 
           el.textContent?.includes(`[${number}]`)
         );
         if (allElements.length > 0) {
-          console.log('Found element containing reference number, scrolling to it');
           allElements[0].scrollIntoView({ behavior: 'smooth' });
         }
       }
@@ -100,6 +91,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const linkRef = useRef(null);
   const hoverRef = useRef(null);
+  const hideTimerRef = useRef(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
 
   const handleMouseEnter = (e) => {
@@ -109,8 +101,27 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     }
   };
 
+  const handleMouseMove = (e) => {
+    if (!hoveredObject) return;
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  const clearHideTimer = useCallback(() => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleHide = useCallback(() => {
+    clearHideTimer();
+    hideTimerRef.current = setTimeout(() => {
+      setHoveredObject(null);
+    }, 150);
+  }, [clearHideTimer]);
+
   const handleMouseLeave = () => {
-    setHoveredObject(null);
+    scheduleHide();
   };
 
   const handleClick = (e) => {
@@ -173,6 +184,15 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     };
   }, [hoveredObject, mousePosition]);
 
+  // 安全数字格式化
+  const formatMaybeNumber = (value, decimals = 2) => {
+    const num = typeof value === 'string' ? Number(value) : value;
+    if (typeof num === 'number' && Number.isFinite(num)) {
+      return num.toFixed(decimals);
+    }
+    return num ?? undefined;
+  };
+
   // Transform the inline molecule data to MolCard format for hover popup
   const transformToMolCardProps = (moleculeData) => {
     if (!moleculeData) return [];
@@ -221,21 +241,18 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         style={{ ...style, cursor: 'pointer' }}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         title={`Hover to preview • Click to view full details for ${text}`}
       >
         {text}
       </span>
       {hoveredObject && propGroups.length > 0 && (
-        <div style={position}>
+        <div style={position} onMouseEnter={clearHideTimer} onMouseLeave={scheduleHide}>
           <MolCard
             ref={hoverRef}
             showMoreDetails={true}
             propGroups={propGroups}
-            onMouseEnter={() => {
-              // Keep popup open when hovering over it
-            }}
-            onMouseLeave={handleMouseLeave}
           />
         </div>
       )}
@@ -250,7 +267,7 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
   
   // Parse and prepare the content for rendering
   const { processedContent, moleculeMap, referencesIndex } = useMemo(() => {
-    const inlineMoleculeRegex = /<inline_molecule>(\{.*?\})<\/inline_molecule>/g;
+    const inlineMoleculeRegex = /<inline_molecule>(\{[\s\S]*?\})<\/inline_molecule>/g;
     const molecules = new Map();
     let processedText = trimmedContent;
     let index = 0;
@@ -342,24 +359,10 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         } else {
           refIndex = referencesMatch.index + referencesMatch[0].length;
         }
-        console.log('Found References section with pattern:', pattern, 'at index:', refIndex);
-        console.log('Match:', referencesMatch[0]);
         break;
       }
     }
     
-    // Debug logging
-    if (refIndex === -1) {
-      console.log('No References section found. Content preview:', processedText.substring(0, 500));
-      console.log('Content includes "References"?', processedText.toLowerCase().includes('references'));
-      // Show where "references" appears in the content
-      const referencesIndex = processedText.toLowerCase().indexOf('references');
-      if (referencesIndex !== -1) {
-        console.log('Found "references" at index:', referencesIndex);
-        console.log('Context around references:', processedText.substring(Math.max(0, referencesIndex - 50), referencesIndex + 100));
-      }
-    }
-
     return {
       processedContent: processedText,
       moleculeMap: molecules,
@@ -470,10 +473,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
     
     const beforeReferences = processedContent.slice(0, referencesIndex);
     const afterReferences = processedContent.slice(referencesIndex);
-    
-    console.log('Content split at References:');
-    console.log('Before:', beforeReferences.substring(beforeReferences.length - 100));
-    console.log('After:', afterReferences.substring(0, 100));
     
     return [
       { content: beforeReferences, isAfterReferences: false },
@@ -890,9 +889,19 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         });
         
         return <ul {...props}>{processedChildren}</ul>;
-      }
+      },
+      
+      // Add target="_blank" to all links
+      a: ({ node, children, ...props }) => (
+        <a {...props} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      )
     };
   };
+
+  const componentsBeforeRefs = useMemo(() => createComponents(false), [moleculeMap, processedContent]);
+  const componentsAfterRefs = useMemo(() => createComponents(true), [moleculeMap, processedContent]);
 
   return (
     <div>
@@ -901,7 +910,7 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           key={index}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
-          components={createComponents(part.isAfterReferences)}
+          components={part.isAfterReferences ? componentsAfterRefs : componentsBeforeRefs}
         >
           {part.content}
         </ReactMarkdown>

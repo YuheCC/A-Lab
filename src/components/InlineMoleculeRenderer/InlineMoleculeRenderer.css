@@ -1,8 +1,9 @@
 /* Inline Molecule Link Styles */
 .inline-molecule-link {
-  color: #0066cc;
-  background-color: rgba(0, 102, 204, 0.1);
-  border: 1px solid rgba(0, 102, 204, 0.3);
+  /* Chat theme green */
+  color: #56B26A;
+  background-color: rgba(86, 178, 106, 0.10);
+  border: 1px solid rgba(86, 178, 106, 0.30);
   border-radius: 3px;
   padding: 2px 4px;
   cursor: pointer;
@@ -14,11 +15,11 @@
 }
 
 .inline-molecule-link:hover {
-  color: #004499;
-  background-color: rgba(0, 102, 204, 0.15);
-  border-color: rgba(0, 102, 204, 0.5);
+  color: #4a9d5a;
+  background-color: rgba(86, 178, 106, 0.15);
+  border-color: rgba(86, 178, 106, 0.50);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+  box-shadow: 0 2px 4px rgba(86, 178, 106, 0.20);
 }
 
 /* Ensure the popup has high z-index and proper positioning */
@@ -51,15 +52,15 @@
 
 /* Adjust for dark themes if needed */
 .dark-theme .inline-molecule-link {
-  color: #66aaff;
-  background-color: rgba(102, 170, 255, 0.1);
-  border-color: rgba(102, 170, 255, 0.3);
+  color: #7bd394;
+  background-color: rgba(86, 178, 106, 0.12);
+  border-color: rgba(86, 178, 106, 0.35);
 }
 
 .dark-theme .inline-molecule-link:hover {
-  color: #88bbff;
-  background-color: rgba(102, 170, 255, 0.15);
-  border-color: rgba(102, 170, 255, 0.5);
+  color: #a0e2b3;
+  background-color: rgba(86, 178, 106, 0.18);
+  border-color: rgba(86, 178, 106, 0.55);
 }
 
 .dark-theme .citation-link {
