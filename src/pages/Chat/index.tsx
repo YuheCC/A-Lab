@@ -20,7 +20,7 @@ const ChatContent: React.FC = () => {
 
     return (
         <>
-            <div className="chat-container">
+            <div className="chat-container chat-container-with-messages">
                 <ChatSider />
                 <main className="chat-main" id="chatMain" style={{ position: 'relative' }}>
                     <div className="chat-messages" id="chat-messages">
