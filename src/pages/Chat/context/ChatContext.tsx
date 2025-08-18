@@ -55,6 +55,9 @@ interface ChatContextType {
     handleMoleculePanelClose: ReturnType<typeof useMoleculePanel>['hidePanel'];
     handleMoleculeClick: ReturnType<typeof useMoleculePanel>['handleMoleculeClick'];
     handleFindSimilar: ReturnType<typeof useMoleculePanel>['handleFindSimilar'];
+    isSidebarCollapsed: boolean;
+    setIsSidebarCollapsed: (collapsed: boolean) => void;
+    handleToggleSidebar: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -101,12 +104,15 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdvancedTier
     } = useChat();
 
+    // 侧边栏状态管理
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
     const {
         state: moleculePanelState,
         hidePanel: handleMoleculePanelClose,
         handleMoleculeClick,
         handleFindSimilar,
-    } = useMoleculePanel();
+    } = useMoleculePanel(setIsSidebarCollapsed);
 
     const [hasMoreHistory, setHasMoreHistory] = useState(false);
     const [loadingMoreHistory, setLoadingMoreHistory] = useState(false);
@@ -591,6 +597,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, [loadingMoreHistory, hasMoreHistory, lastUpdatedAt, chatHistory, updateChatHistory]);
 
+    // 处理侧边栏切换
+    const handleToggleSidebar = useCallback(() => {
+        setIsSidebarCollapsed(prev => !prev);
+    }, []);
+
     const showInput = useMemo(() => !!currentChatId, [currentChatId]);
 
     const value: ChatContextType = {
@@ -635,6 +646,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         handleMoleculePanelClose,
         handleMoleculeClick,
         handleFindSimilar,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        handleToggleSidebar,
     };
 
     return (

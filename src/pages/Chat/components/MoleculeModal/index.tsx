@@ -7,6 +7,7 @@ import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import CustomButton from '@/components/CustomButton/index.js';
 import { FavoriteContext } from '@/layouts';
+import type { Message } from '@/utils/messageUtils';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -14,6 +15,7 @@ interface MoleculeModalProps {
     onAddToFavorites?: (moleculeName: string) => void;
     onFindSimilar?: (moleculeName: string) => void;
     onUpdateMoleculeType?: (moleculeName: string, type: string) => void;
+    messages?: Message[];
 }
 
 const MoleculeModal: React.FC<MoleculeModalProps> = ({
@@ -21,7 +23,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     onClose,
     onAddToFavorites,
     onFindSimilar,
-    onUpdateMoleculeType
+    onUpdateMoleculeType,
+    messages = []
 }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
@@ -321,6 +324,26 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.mol_type = molType;
         }
         if (isHighTier && rawOriginal) {
+            // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
+            let originalQuery: string | undefined = undefined;
+            let llmResponse: string | undefined = undefined;
+            
+            if (messages.length > 0) {
+                // 获取最新的用户消息和助手回复
+                for (let i = messages.length - 1; i >= 0; i--) {
+                    if (messages[i].role === 'assistant' && !llmResponse) {
+                        llmResponse = messages[i].content;
+                    } else if (messages[i].role === 'user' && !originalQuery) {
+                        originalQuery = messages[i].content;
+                    }
+                    
+                    // 一旦找到两个就停止
+                    if (originalQuery && llmResponse) {
+                        break;
+                    }
+                }
+            }
+
             const selectedMoleculeStr = [
                 `Name: ${rawOriginal?.name || 'N/A'}`,
                 `SMILES: ${rawOriginal?.SMILES || smiles}`,
@@ -334,6 +357,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 `Predicted BP: ${rawOriginal?.predicted_BP_celsius ?? 'N/A'} °C`
             ].join('\n');
             payload.selected_molecule_str = selectedMoleculeStr;
+            payload.query = originalQuery;
+            payload.response = llmResponse;
         }
 
         const resp = await authFetch(`${API_URL}/find-friend-with-image`, {

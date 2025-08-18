@@ -15,6 +15,7 @@ const ChatContent: React.FC = () => {
         moleculePanelState,
         handleMoleculePanelClose,
         handleFindSimilar,
+        messages,
     } = useChatContext();
 
     return (
@@ -60,6 +61,7 @@ const ChatContent: React.FC = () => {
                     moleculeName={moleculePanelState.currentMolecule || 'LiPF6'}
                     onClose={handleMoleculePanelClose}
                     onFindSimilar={handleFindSimilar}
+                    messages={messages}
                 />
             )}
         </>
