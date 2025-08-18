@@ -85,7 +85,8 @@ const ChatWelcome: React.FC = () => {
                     <div style={{
                         fontSize: '13px',
                         color: '#4b5563',
-                        lineHeight: '1.5'
+                        lineHeight: '1.5',
+                        fontWeight: '300'
                     }}>
                         {t('chatbox.chat.modes.regularDescription')}
                     </div>
@@ -124,7 +125,8 @@ const ChatWelcome: React.FC = () => {
                     <div style={{
                         fontSize: '13px',
                         color: '#4b5563',
-                        lineHeight: '1.5'
+                        lineHeight: '1.5',
+                        fontWeight: '300'
                     }}>
                         {t('chatbox.chat.modes.deepSpaceDescription')}
                     </div>
@@ -163,7 +165,7 @@ const ChatWelcome: React.FC = () => {
         <div className='new-chat-interface'>
             <div className="new-chat-content">
                 <h2 className="new-chat-title">{t('chatbox.chat.newExpoler')}</h2>
-                <p className="new-chat-subtitle">{t('chatbox.chat.newChatSubtitle')}</p>
+                {/* <p className="new-chat-subtitle">{t('chatbox.chat.newChatSubtitle')}</p> */}
                 <div className="new-chat-input-container">
                     <div className="new-chat-input-wrapper">
                         <textarea

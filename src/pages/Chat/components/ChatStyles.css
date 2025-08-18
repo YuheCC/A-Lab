@@ -587,7 +587,7 @@ body.chat-page-body {
 .chat-messages {
     flex: 1;
     overflow-y: hidden;
-    padding: 24px;
+    padding: 24px 24px 2px 24px;
     max-height: calc(100vh - 64px - 80px); /* 减去header高度和输入框区域高度 */
 }
 
@@ -1145,7 +1145,7 @@ body.chat-page-body {
 
 .chat-input-container {
     position: relative;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 2px 20px;
     border-top: none;
     background: transparent;
     display: flex;

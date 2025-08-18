@@ -121,8 +121,7 @@ const ChatInput: FC<ChatInputProps> = ({
             </h4>
             <span style={{
               fontSize: '12px',
-              color: '#6b7280',
-              backgroundColor: '#f3f4f6',
+              color: '#56B26A',
               padding: '2px 6px',
               borderRadius: '4px'
             }}>
@@ -132,7 +131,8 @@ const ChatInput: FC<ChatInputProps> = ({
           <div style={{
             fontSize: '13px',
             color: '#4b5563',
-            lineHeight: '1.5'
+            lineHeight: '1.5',
+            fontWeight: '300'
           }}>
             {t('chatbox.chat.modes.regularDescription')}
           </div>
@@ -157,8 +157,7 @@ const ChatInput: FC<ChatInputProps> = ({
             </h4>
             <span style={{
               fontSize: '12px',
-              color: '#6b7280',
-              backgroundColor: '#f3f4f6',
+              color: '#56B26A',
               padding: '2px 6px',
               borderRadius: '4px'
             }}>
@@ -168,7 +167,8 @@ const ChatInput: FC<ChatInputProps> = ({
           <div style={{
             fontSize: '13px',
             color: '#4b5563',
-            lineHeight: '1.5'
+            lineHeight: '1.5',
+            fontWeight: '300'
           }}>
             {t('chatbox.chat.modes.deepSpaceDescription')}
           </div>

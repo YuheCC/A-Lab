@@ -10,7 +10,7 @@ export default {
         newChat: "新探索",
         newExpoler: "新探索",
         newChatSubtitle: "开始一段新的对话，探索分子宇宙的奥秘",
-        searchChat: "搜索聊天",
+        searchChat: "搜索对话",
         historyTitle: "历史对话",
         askTitle: "ASK",
         refreshQuestions: "换一换",
@@ -62,8 +62,8 @@ export default {
             "堆叠压力如何改变固体电解质的断裂力学，因为枝晶通过固体电解质生长？"
         ],
         searchModal: {
-            placeholder: "搜索聊天...",
-            recentChats: "最近聊天"
+            placeholder: "搜索对话...",
+            recentChats: "最近对话"
         },
         historyItem: {
             rename: "修改名称",
