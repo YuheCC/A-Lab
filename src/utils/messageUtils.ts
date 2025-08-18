@@ -11,6 +11,7 @@ export interface Message {
   content: string;
   timestamp?: Date;
   showRegenerate?: boolean;
+  is_running?: boolean; // 是否需要显示计时，用于区分历史记录和新消息
   molText?: string;
   molecules?: any[];
   sources?: string;

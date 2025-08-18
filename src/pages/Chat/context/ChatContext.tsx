@@ -318,9 +318,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             
             // 处理历史记录消息：只有最后一条助手消息显示 regenerate
+            // is_running 字段从接口数据中读取，不存在时默认为 false
             const historyMessages = chatData.messages.map((msg, index) => ({
                 ...msg,
-                showRegenerate: isAssistantMessage(msg) && index === lastAssistantIndex
+                showRegenerate: isAssistantMessage(msg) && index === lastAssistantIndex,
+                is_running: msg.is_running ?? false // 从接口读取 is_running，不存在时默认为 false
             }));
             
             setMessages(historyMessages);

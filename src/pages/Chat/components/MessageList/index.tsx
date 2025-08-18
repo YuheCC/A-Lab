@@ -114,11 +114,14 @@ const MessageList: FC<MessageListProps> = ({
     return { lastUserId: u, lastAssistantId: a };
   }, [resolvedMessages]);
 
-  // 思考中：仅针对最后一条助手消息且内容为空
+  // 思考中：仅针对最后一条助手消息且内容为空，并且需要显示计时
+  // is_running为false时不显示计时（历史消息），is_running为true或undefined时显示计时（新消息）
   const thinkingTarget = useMemo(() => {
     for (let i = resolvedMessages.length - 1; i >= 0; i--) {
       const msg = resolvedMessages[i] as Message & { created_at?: string };
-      if (isAssistantMessage(msg) && (!msg.content || String(msg.content).trim() === '')) {
+      if (isAssistantMessage(msg) && 
+          (!msg.content || String(msg.content).trim() === '') &&
+          msg.is_running !== false) { // is_running为false的历史消息不显示计时，新消息（undefined）或明确需要计时（true）的消息显示计时
         const createdAt: Date = msg.timestamp
           ? normalizeServerDate(msg.timestamp as any)
           : (msg.created_at ? normalizeServerDate(msg.created_at) : new Date());
