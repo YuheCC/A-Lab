@@ -8,13 +8,18 @@
    ============================================== */
 
 /* 分子浮层样式 - 使用CSS变量实现动态宽度 */
+:root {
+    --molecule-panel-width: 380px; /* 默认宽度 */
+    --expanded-molecule-panel-width: 730px; /* 展开时的宽度 */
+}
+
 .molecule-panel {
     position: fixed;
     top: 64px;
     right: 0;
-    width: var(--molecule-panel-width, 380px) !important;
-    min-width: var(--molecule-panel-width, 380px) !important;
-    max-width: var(--molecule-panel-width, 380px) !important;
+    width: var(--molecule-panel-width) !important;
+    min-width: var(--molecule-panel-width) !important;
+    max-width: var(--molecule-panel-width) !important;
     height: calc(100vh - 64px);
     background: white;
     border-left: 1px solid #e2e8f0;
@@ -22,14 +27,12 @@
     display: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    --molecule-panel-width: 380px; /* 默认宽度 */
 }
 
 .molecule-panel.expanded {
-    --molecule-panel-width: 730px; /* 展开时的宽度 */
-    width: var(--molecule-panel-width) !important;
-    min-width: var(--molecule-panel-width) !important;
-    max-width: var(--molecule-panel-width) !important;
+    width: var(--expanded-molecule-panel-width) !important;
+    min-width: var(--expanded-molecule-panel-width) !important;
+    max-width: var(--expanded-molecule-panel-width) !important;
 }
 
 /* 面板内容区域优化 - 减少上边距 */
@@ -564,18 +567,9 @@
 
 /* 响应式优化 - 使用CSS变量 */
 @media (max-width: 1200px) {
-    .molecule-panel {
+    :root {
         --molecule-panel-width: 380px; /* 中等屏幕宽度 */
-        width: var(--molecule-panel-width) !important;
-        min-width: var(--molecule-panel-width) !important;
-        max-width: var(--molecule-panel-width) !important;
-    }
-    
-    .molecule-panel.expanded {
-        --molecule-panel-width: 730px; /* 展开时宽度 */
-        width: var(--molecule-panel-width) !important;
-        min-width: var(--molecule-panel-width) !important;
-        max-width: var(--molecule-panel-width) !important;
+        --expanded-molecule-panel-width: 730px; /* 展开时宽度 */
     }
     
     .similar-molecules-comparison {
@@ -611,15 +605,7 @@
         padding: 16px 12px;
     }
     
-    .chat-container.molecule-panel-active .chat-main {
-        margin-right: 0;
-        max-width: 100%;
-        display: none;
-    }
-    
-    .chat-container.molecule-panel-active .chat-sidebar {
-        display: none;
-    }
+
     
     .similar-molecules-comparison {
         grid-template-columns: 1fr;

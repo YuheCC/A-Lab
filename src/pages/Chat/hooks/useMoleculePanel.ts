@@ -26,9 +26,7 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
     }));
 
     // 当分子面板展开时，收缩侧边栏
-    if (expanded && setIsSidebarCollapsed) {
-      setIsSidebarCollapsed(true);
-    }
+    setIsSidebarCollapsed?.(true);
 
     // 应用布局变化
     setTimeout(() => {
@@ -54,6 +52,8 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
       isExpanded: false,
       currentMolecule: null,
     }));
+    
+    setIsSidebarCollapsed?.(false);
 
     // 移除布局类
     const chatContainer = document.querySelector('.chat-container');

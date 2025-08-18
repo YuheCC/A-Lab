@@ -216,3 +216,35 @@
 [data-debug="true"] .molecule-panel {
     outline: 2px solid orange;
 }
+
+.chat-container-with-messages{
+    flex: 1;
+}
+
+.main-container.chat-container{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+/* 分子面板激活时调整聊天容器宽度 */
+.chat-container.molecule-panel-active {
+    margin-right: var(--molecule-panel-width, 380px);
+    transition: margin-right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-container.molecule-panel-active.expanded {
+    margin-right: var(--expanded-molecule-panel-width, 730px);
+}
+
+/* 移动端分子面板激活时的样式调整 */
+@media (max-width: 768px) {
+    .chat-container.molecule-panel-active {
+        margin-right: 0;
+        /* 移动端分子面板是全屏覆盖，不需要调整容器宽度 */
+    }
+    
+    .chat-container.molecule-panel-active.expanded {
+        margin-right: 0;
+    }
+}
