@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import type { FC, ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router';
 import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
@@ -19,6 +20,8 @@ const ChatInput: FC<ChatInputProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { handleSendMessage, currentChatId, messages, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
@@ -36,6 +39,28 @@ const ChatInput: FC<ChatInputProps> = ({
   React.useEffect(() => {
     setIsButtonEnabled(inputValue.trim().length > 0 && !disabled);
   }, [inputValue, disabled]);
+
+  // 从 URL 参数读取 mode 并设置，读取后删除参数
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const urlMode = searchParams.get('mode');
+    
+    if (urlMode && (urlMode === 'regular' || urlMode === 'deep-space' || urlMode === 'clarify')) {
+      console.log('URL mode detected:', urlMode);
+      setCurrentMode(urlMode as ChatMode);
+      
+      // 删除 URL 参数
+      searchParams.delete('mode');
+      const newSearch = searchParams.toString();
+      const newUrl = location.pathname + (newSearch ? `?${newSearch}` : '');
+      
+      // 使用 replace 而不是 push，这样不会在浏览器历史中留下记录
+      navigate(newUrl, { replace: true });
+    } else {
+      // 如果没有 URL 参数，使用默认的 regular
+      // setCurrentMode('regular');
+    }
+  }, [location.search, location.pathname, navigate]);
 
   // 处理输入变化
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

@@ -416,9 +416,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const historyWithNew = [...messages, userMsg];
             createNewMessage(message, chatId, historyWithNew, mode);
         } else {
+            // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
             const newChatId = await createNewChat(message, mode);
             if (newChatId) {
-                navigate(`/chat/${newChatId}`);
+                const urlMode = mode === "clarify" ? "deep-space" : mode;
+                navigate(`/chat/${newChatId}?mode=${urlMode}`);
             }
         }
     }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
