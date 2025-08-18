@@ -329,7 +329,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (error) {
             console.error('Failed to load chat data:', error);
             // 聊天数据不存在或加载失败时跳转到welcome页面
-            navigate('/chat/new');
+            navigate('/ask');
         } finally {
             setLoadingChatData(false);
         }
@@ -420,7 +420,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const newChatId = await createNewChat(message, mode);
             if (newChatId) {
                 const urlMode = mode === "clarify" ? "deep-space" : mode;
-                navigate(`/chat/${newChatId}?mode=${urlMode}`);
+                navigate(`/ask/${newChatId}?mode=${urlMode}`);
             }
         }
     }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
@@ -523,7 +523,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const handleNewChat = useCallback(() => {
         startNewChat();
-        navigate('/chat/new');
+        navigate('/ask');
     }, [startNewChat]);
 
     const handleSelectChat = useCallback((selectedChatId: number) => {

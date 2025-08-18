@@ -32,10 +32,10 @@ export default  [
     },
     {
         path: "/ask",
-        component: "Chat"
+        redirect: "/ask/new"
     },
     {
-        path: "/chat/:id",
+        path: "/ask/:id",
         component: "Chat",
     },
     {

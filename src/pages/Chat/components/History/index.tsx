@@ -42,7 +42,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
     const ctx = useChatContext();
     const listRef = useRef<HTMLUListElement | null>(null);
     const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+    const observerRef = useRef<IntersectionObserver | null>(null);
     const loadMoreDebounceTimerRef = useRef<number | null>(null);
     const handleChatClick = (chatId: string) => {
         console.log('Chat clicked:', chatId);
@@ -123,7 +123,7 @@ const ChatHistory: FC<ChatHistoryProps> = ({
           }
       };
   }, [hasMore, loadingMore, onLoadMore]);
-console.log(currentChatId)
+
     return (
         <>
             <nav className="history-nav">

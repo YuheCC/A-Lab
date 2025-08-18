@@ -55,7 +55,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
     // 先更新状态，确保立即反映选中状态
     onChatClick?.(chatId);
     // 然后进行路由跳转
-    navigate(`/chat/${chatId}`);
+    navigate(`/ask/${chatId}`);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {

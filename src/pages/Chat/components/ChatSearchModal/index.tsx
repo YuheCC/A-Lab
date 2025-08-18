@@ -65,7 +65,7 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
     const handleSelect = (chatId: number) => {
         setShow(false);
         props.onSelectChat?.(chatId);
-        window.location.href = `/chat/${chatId}`;
+        window.location.href = `/ask/${chatId}`;
     };
 
     const handleNew = () => {
