@@ -329,7 +329,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (error) {
             console.error('Failed to load chat data:', error);
             // 聊天数据不存在或加载失败时跳转到welcome页面
-            navigate('/chat');
+            navigate('/chat/new');
         } finally {
             setLoadingChatData(false);
         }
@@ -523,7 +523,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const handleNewChat = useCallback(() => {
         startNewChat();
-        window.location.href = '/chat';
+        navigate('/chat/new');
     }, [startNewChat]);
 
     const handleSelectChat = useCallback((selectedChatId: number) => {
