@@ -88,8 +88,9 @@ if (validation.valid) {
    - 提交期间禁用所有操作
    - 一次性提交所有反馈数据和文件
 6. 显示结果：
-   - ✅ 成功：显示成功消息
-   - ❌ 失败：显示错误消息
+   - ✅ 成功：显示成功message tip后自动关闭浮层
+   - ❌ 失败：显示错误message tip
+   - ⚠️ 验证失败：显示警告message tip
 
 ### 新增功能特性
 
@@ -103,6 +104,12 @@ if (validation.valid) {
 - 提交按钮显示loading状态
 - 提交期间禁用所有操作
 - 旋转图标 + "提交中..." 文案
+
+#### 💬 智能消息提示
+- 使用Material-UI的Snackbar组件替代原生alert
+- 支持成功(success)、错误(error)、警告(warning)消息类型
+- 成功提示后自动关闭浮层，无需用户点击
+- 消息自动消失，用户体验更佳
 
 #### 🌐 多语言支持
 - 所有文案支持中文/英文/日文/韩文
@@ -127,8 +134,44 @@ formData.append('file_path', fileName); // 文件名
 
 **特点：**
 - 一次请求完成所有数据提交
-- 支持文件上传进度监控
 - FormData 格式，适合包含文件的表单提交
+- 智能消息提示替代原生alert
+
+### 消息提示实现
+
+**引入MessageProvider：**
+```typescript
+import { useMessage } from '@/components/MessageProvider';
+
+const UserFeedBackModal = () => {
+  const message = useMessage();
+  
+  // 验证错误
+  if (!formData.text.trim()) {
+    message.warning(t('feedback.feedback.validationError'));
+    return;
+  }
+  
+  // 提交成功
+  if (response.status >= 200 && response.status < 300) {
+    message.success(t('feedback.feedback.success'));
+    setTimeout(() => {
+      handleClose(); // 自动关闭浮层
+    }, 500);
+  }
+  
+  // 提交失败
+  catch (error) {
+    message.error(t('feedback.feedback.failed'));
+  }
+}
+```
+
+**消息类型：**
+- `message.success()` - 绿色成功提示
+- `message.error()` - 红色错误提示  
+- `message.warning()` - 橙色警告提示
+- `message.info()` - 蓝色信息提示
 
 ## 支持的文件类型
 - JPEG (image/jpeg)

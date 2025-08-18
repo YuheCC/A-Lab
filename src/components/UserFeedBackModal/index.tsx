@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import feedbackSvg from '@/assets/svg/feedback.svg';
 import { submitFeedback } from '@/services/feedback';
 import { validateFile } from '@/services/file';
+import { useMessage } from '@/components/MessageProvider';
 import './feedback.css';
 
 interface FeedbackForm {
@@ -14,6 +15,7 @@ interface FeedbackForm {
 
 const UserFeedBackModal = forwardRef((props, ref) => {
     const { t } = useTranslation();
+    const message = useMessage();
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState<FeedbackForm>({
         type: 'feature',
@@ -88,7 +90,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         
         // 前端验证
         if (!formData.type || !formData.feature || !formData.text.trim()) {
-            alert(t('feedback.feedback.validationError'));
+            message.warning(t('feedback.feedback.validationError'));
             return;
         }
 
@@ -104,24 +106,27 @@ const UserFeedBackModal = forwardRef((props, ref) => {
             
             // 检查响应状态
             if (response.status >= 200 && response.status < 300) {
-                alert(t('feedback.feedback.success'));
-                handleClose();
+                message.success(t('feedback.feedback.success'));
+                // 直接关闭浮层，不等待用户点击
+                setTimeout(() => {
+                    handleClose();
+                }, 500); // 短暂延迟让用户看到成功提示
             } else if (response.status >= 400 && response.status < 500) {
                 // 客户端错误（如验证错误）
                 const errorMessage = response.data?.message || t('feedback.feedback.validationError');
-                alert(errorMessage);
+                message.error(errorMessage);
             } else {
                 // 服务器错误
-                alert(t('feedback.feedback.failed'));
+                message.error(t('feedback.feedback.failed'));
             }
         } catch (error: any) {
             console.error('Feedback submission error:', error);
             
             // 区分网络错误和其他错误
             if (error.code === 'NETWORK_ERROR' || error.message?.includes('Network')) {
-                alert(t('feedback.feedback.networkError'));
+                message.error(t('feedback.feedback.networkError'));
             } else {
-                alert(t('feedback.feedback.failed'));
+                message.error(t('feedback.feedback.failed'));
             }
         } finally {
             setIsSubmitting(false);
