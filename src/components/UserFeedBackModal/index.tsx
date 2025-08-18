@@ -2,13 +2,14 @@ import { useState, useImperativeHandle, forwardRef, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import feedbackSvg from '@/assets/svg/feedback.svg';
 import { submitFeedback } from '@/services/feedback';
+import { validateFile } from '@/services/file';
 import './feedback.css';
 
 interface FeedbackForm {
     type: string;
-    function: string;
+    feature: string;
     text: string;
-    screenshot?: File;
+    file?: File; // 可选的文件
 }
 
 const UserFeedBackModal = forwardRef((props, ref) => {
@@ -16,12 +17,13 @@ const UserFeedBackModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState<FeedbackForm>({
         type: 'feature',
-        function: 'map',
+        feature: 'map', // 字段名从 function 改为 feature
         text: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState('');
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => ({
@@ -34,11 +36,12 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         // 重置表单
         setFormData({
             type: 'feature',
-            function: 'map',
+            feature: 'map', // 字段名从 function 改为 feature
             text: ''
         });
         setUploadedFile(null);
         setFileError('');
+        setImagePreview(null);
     };
 
     const handleInputChange = (field: keyof FeedbackForm, value: string) => {
@@ -54,23 +57,26 @@ const UserFeedBackModal = forwardRef((props, ref) => {
 
         if (!file) return;
 
-        // 检查文件类型
-        if (!['image/jpeg', 'image/png'].includes(file.type)) {
-            setFileError(t('feedback.feedback.invalidFileType'));
+        // 使用新的文件验证函数
+        const validation = validateFile(file, 5, ['image/jpeg', 'image/png']);
+        if (!validation.valid) {
+            setFileError(validation.error || t('feedback.feedback.invalidFileType'));
             return;
         }
 
-        // 检查文件大小 (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            setFileError(t('feedback.feedback.fileTooLarge'));
-            return;
-        }
-
+        // 设置文件到组件状态和表单数据
         setUploadedFile(file);
         setFormData(prev => ({
             ...prev,
-            screenshot: file
+            file: file
         }));
+        
+        // 创建图片预览
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setImagePreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
     };
 
     const handleUploadClick = () => {
@@ -81,7 +87,7 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         e.preventDefault();
         
         // 前端验证
-        if (!formData.type || !formData.function || !formData.text.trim()) {
+        if (!formData.type || !formData.feature || !formData.text.trim()) {
             alert(t('feedback.feedback.validationError'));
             return;
         }
@@ -91,9 +97,9 @@ const UserFeedBackModal = forwardRef((props, ref) => {
         try {
             const response = await submitFeedback({
                 type: formData.type,
-                function: formData.function,
+                feature: formData.feature,
                 text: formData.text,
-                screenshot: formData.screenshot
+                file: formData.file // 直接传递文件
             });
             
             // 检查响应状态
@@ -156,15 +162,15 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                         </div>
                         
                         <div className="feedback-form-group">
-                            <label htmlFor="feedbackFunction" className="feedback-label">
+                            <label htmlFor="feedbackFeature" className="feedback-label">
                                 {t('feedback.feedback.function')} <span className="required">*</span>
                             </label>
                             <select 
-                                id="feedbackFunction" 
+                                id="feedbackFeature" 
                                 className="feedback-select" 
                                 required
-                                value={formData.function}
-                                onChange={(e) => handleInputChange('function', e.target.value)}
+                                value={formData.feature} // 字段名从 function 改为 feature
+                                onChange={(e) => handleInputChange('feature', e.target.value)} // 字段名从 function 改为 feature
                             >
                                 <option value="map">{t('feedback.feedback.functionOptions.map')}</option>
                                 <option value="regularAsk">{t('feedback.feedback.functionOptions.regularAsk')}</option>
@@ -191,19 +197,47 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                         </div>
                         
                         <div className="feedback-form-group">
-                            <label className="feedback-label">{t('feedback.feedback.uploadScreenshot')}</label>
+                            <label className="feedback-label">
+                                {t('feedback.feedback.uploadScreenshot')}
+                            </label>
                             <div 
                                 className={`feedback-upload-area ${uploadedFile ? 'has-file' : ''}`} 
                                 id="feedbackUploadArea"
-                                onClick={handleUploadClick}
+                                onClick={!isSubmitting ? handleUploadClick : undefined}
+                                style={{ 
+                                    cursor: isSubmitting ? 'not-allowed' : 'pointer', 
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    opacity: isSubmitting ? 0.5 : 1
+                                }}
                             >
-                                {uploadedFile ? (
-                                    <>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24" height="24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                        </svg>
-                                        <span>{uploadedFile.name}</span>
-                                    </>
+                                {imagePreview ? (
+                                    <div className="image-preview-container">
+                                        <img 
+                                            src={imagePreview} 
+                                            alt={t('feedback.feedback.imagePreview')}
+                                            className="image-preview"
+                                        />
+                                        <div className="image-overlay">
+                                            <span className="image-name">{uploadedFile?.name}</span>
+                                            <button 
+                                                type="button"
+                                                className="remove-image-btn"
+                                                title={t('feedback.feedback.removeImage')}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setImagePreview(null);
+                                                    setUploadedFile(null);
+                                                    setFormData(prev => {
+                                                        const { file, ...rest } = prev;
+                                                        return rest;
+                                                    });
+                                                }}
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24" height="24">
@@ -214,11 +248,12 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                                 )}
                                 <input 
                                     type="file" 
-                                    id="feedbackScreenshot" 
+                                    id="feedbackFile" 
                                     accept="image/jpeg,image/png" 
                                     style={{ display: 'none' }}
                                     ref={fileInputRef}
                                     onChange={handleFileUpload}
+                                    disabled={isSubmitting}
                                 />
                             </div>
                             {fileError && <div className="feedback-error">{fileError}</div>}
@@ -240,7 +275,24 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                         onClick={handleSubmit}
                         disabled={isSubmitting || !formData.text.trim()}
                     >
-                        {isSubmitting ? t('feedback.feedback.uploading') : t('feedback.feedback.submit')}
+                        {isSubmitting ? (
+                            <>
+                                <svg 
+                                    className="feedback-loading-spinner" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    fill="none" 
+                                    viewBox="0 0 24 24" 
+                                    width="16" 
+                                    height="16"
+                                >
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {t('feedback.feedback.submitting')}
+                            </>
+                        ) : (
+                            t('feedback.feedback.submit')
+                        )}
                     </button>
                 </div>
             </div>

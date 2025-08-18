@@ -45,7 +45,12 @@ export default {
         networkError: "ネットワークエラー。接続を確認してもう一度お試しください。",
         validationError: "すべての必須フィールドを正しく入力してください。",
         uploading: "アップロード中...",
+        submitting: "送信中...",
         fileTooLarge: "ファイルサイズは5MBを超えることはできません",
-        invalidFileType: "JPG/PNG形式のみサポートされています"
+        invalidFileType: "JPG/PNG形式のみサポートされています",
+        imagePreview: "画像プレビュー",
+        removeImage: "画像を削除",
+        uploadFailed: "アップロード失敗",
+        uploadError: "アップロードエラー：ネットワークエラーまたはインターフェースが利用できません"
     }
 }; 

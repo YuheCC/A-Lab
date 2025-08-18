@@ -45,7 +45,12 @@ export default {
         networkError: "Network error. Please check your connection and try again.",
         validationError: "Please fill in all required fields correctly.",
         uploading: "Uploading...",
+        submitting: "Submitting...",
         fileTooLarge: "File size cannot exceed 5MB",
-        invalidFileType: "Only JPG/PNG format is supported"
+        invalidFileType: "Only JPG/PNG format is supported",
+        imagePreview: "Image Preview",
+        removeImage: "Remove Image",
+        uploadFailed: "Upload failed",
+        uploadError: "Upload error: Network error or interface unavailable"
     }
 }; 

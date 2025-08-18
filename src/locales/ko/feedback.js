@@ -45,7 +45,12 @@ export default {
         networkError: "네트워크 오류입니다. 연결을 확인하고 다시 시도해 주세요.",
         validationError: "모든 필수 필드를 올바르게 입력해 주세요.",
         uploading: "업로드 중...",
+        submitting: "제출 중...",
         fileTooLarge: "파일 크기는 5MB를 초과할 수 없습니다",
-        invalidFileType: "JPG/PNG 형식만 지원됩니다"
+        invalidFileType: "JPG/PNG 형식만 지원됩니다",
+        imagePreview: "이미지 미리보기",
+        removeImage: "이미지 제거",
+        uploadFailed: "업로드 실패",
+        uploadError: "업로드 오류: 네트워크 오류 또는 인터페이스를 사용할 수 없습니다"
     }
 }; 

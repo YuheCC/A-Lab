@@ -45,7 +45,12 @@ export default {
         networkError: "网络错误，请检查网络连接后重试。",
         validationError: "请正确填写所有必填项。",
         uploading: "上传中...",
+        submitting: "提交中...",
         fileTooLarge: "文件大小不能超过5MB",
-        invalidFileType: "只支持JPG/PNG格式"
+        invalidFileType: "只支持JPG/PNG格式",
+        imagePreview: "图片预览",
+        removeImage: "移除图片",
+        uploadFailed: "上传失败",
+        uploadError: "上传出错：网络错误或接口不可用"
     }
 }; 

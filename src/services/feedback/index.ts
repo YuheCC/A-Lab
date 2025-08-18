@@ -2,9 +2,9 @@ import request from "@/services/request";
 
 export interface FeedbackSubmitData {
     type: string;
-    function: string;
+    feature: string;
     text: string;
-    screenshot?: File;
+    file?: File; // 可选的文件上传
 }
 
 export async function submitFeedback(data: FeedbackSubmitData) {
@@ -12,15 +12,18 @@ export async function submitFeedback(data: FeedbackSubmitData) {
     
     // 添加基本字段
     formData.append('type', data.type);
-    formData.append('function', data.function);
+    formData.append('feature', data.feature);
     formData.append('text', data.text);
     
-    // 如果有截图，添加到FormData
-    if (data.screenshot) {
-        formData.append('screenshot', data.screenshot);
+    // 处理文件字段
+    if (data.file) {
+        formData.append('file', data.file);
+        formData.append('file_path', data.file.name); // 使用文件名作为路径
+    } else {
+        formData.append('file_path', ''); // 没有文件时设为空字符串
     }
 
-    return request('/api/feedback/new', {
+    return request('/api/user/feedback/new', {
         method: "POST",
         data: formData,
     });
