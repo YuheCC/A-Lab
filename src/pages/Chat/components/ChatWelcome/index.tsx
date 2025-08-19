@@ -22,6 +22,9 @@ const ChatWelcome: React.FC = () => {
     const [currentQuestions, setCurrentQuestions] = useState<string[]>(
         recommendedQuestions.slice(0, 5)
     );
+    
+    // 随机宽度样式类名数组
+    const widthClasses = ['width-xs', 'width-sm', 'width-md', 'width-lg', 'width-xl'];
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // 处理输入变化
@@ -255,23 +258,28 @@ const ChatWelcome: React.FC = () => {
                 
                 {/* 推荐问题区域 */}
                 <div className="recommended-questions">
-                    {currentQuestions.map((question, index) => (
-                        <div 
-                            key={`${question}-${index}`}
-                            className="recommended-question"
-                            onClick={() => handleQuestionClick(question)}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    handleQuestionClick(question);
-                                }
-                            }}
-                        >
-                            <span className="question-text">{question}</span>
-                        </div>
-                    ))}
+                    {currentQuestions.map((question, index) => {
+                        // 为每个问题分配随机宽度类名，创造错落效果
+                        const randomWidthClass = widthClasses[Math.floor(Math.random() * widthClasses.length)];
+                        
+                        return (
+                            <div 
+                                key={`${question}-${index}`}
+                                className={`recommended-question ${randomWidthClass}`}
+                                onClick={() => handleQuestionClick(question)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleQuestionClick(question);
+                                    }
+                                }}
+                            >
+                                <span title={question} className="question-text">{question}</span>
+                            </div>
+                        );
+                    })}
                 </div>
                 
                 {/* 换一换标签 */}

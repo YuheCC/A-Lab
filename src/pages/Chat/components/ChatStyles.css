@@ -1017,12 +1017,33 @@ body.chat-page-body {
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
-    max-width: 400px;
+    max-width: 400px; /* 默认最大宽度 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     z-index: 1;
     position: relative;
+}
+
+/* 错落样式变体 - 不同宽度 */
+.recommended-question.width-xs {
+    max-width: 220px;
+}
+
+.recommended-question.width-sm {
+    max-width: 280px;
+}
+
+.recommended-question.width-md {
+    max-width: 340px;
+}
+
+.recommended-question.width-lg {
+    max-width: 400px;
+}
+
+.recommended-question.width-xl {
+    max-width: 480px;
 }
 
 .recommended-question:hover {
