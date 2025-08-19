@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
@@ -84,6 +84,7 @@ const MessageList: FC<MessageListProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation();
+  const messageListRef = useRef<HTMLDivElement>(null);
   const {
     messages: ctxMessages,
     handleCopyMessage: ctxHandleCopyMessage,
@@ -100,6 +101,16 @@ const MessageList: FC<MessageListProps> = ({
 
   // 取上下文消息源
   const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
+
+  // 滚动到底部的函数
+  const scrollToBottom = () => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTo({
+        top: messageListRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // 计算最后一条用户消息与最后一条助手消息的 id
   const { lastUserId, lastAssistantId } = useMemo(() => {
@@ -148,6 +159,16 @@ const MessageList: FC<MessageListProps> = ({
     const timer = setInterval(computeElapsed, 1000);
     return () => clearInterval(timer);
   }, [thinkingTarget]);
+
+  // 监听消息变化，自动滚动到底部
+  useEffect(() => {
+    // 当消息列表有变化时，延迟一小段时间确保DOM更新完成后再滚动
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [resolvedMessages.length]); // 只监听消息数量变化，避免内容更新时频繁滚动
 
   const thinkingElapsedLabel = useMemo(() => {
     const minutes = Math.floor(thinkingElapsed / 60);
@@ -409,7 +430,7 @@ const MessageList: FC<MessageListProps> = ({
   };
 
   return (
-    <div className={`message-list ${className}`}>
+    <div ref={messageListRef} className={`message-list ${className}`}>
       {(ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages).map((message: Message) => {
         // 特殊处理：如果消息内容包含特定关键词，显示带按钮的消息
         if ((isAssistantMessage(message) || isSystemMessage(message)) && message.content.includes('分子探索')) {
