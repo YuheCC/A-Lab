@@ -70,8 +70,8 @@ const ChatInput: FC<ChatInputProps> = ({
   // 处理键盘事件
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessageLocal();
+      // e.preventDefault();
+      // handleSendMessageLocal();
     }
   };
 

@@ -105,7 +105,8 @@ export default {
         submit: "Submit",
         viewInMolPort: "View in MolPort",
         findSimilarMoleculesLoading: "Searching for friends",
-        addToFavoritesLoading: "Saving..."
+        addToFavoritesLoading: "Saving...",
+        favorites: "Favorites"
     },
     molecules: {
         llmFoundMolecules: "LLM Found Molecules",

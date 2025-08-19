@@ -180,11 +180,9 @@
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
   background-color: #f1f5f9;
-  padding: 12px;
   border-radius: 6px;
   overflow: auto;
   font-size: 0.9em;
-  font-family: monospace;
   margin: 0.5em 0 !important;
   line-height: 1.4;
 }

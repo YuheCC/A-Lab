@@ -23,8 +23,8 @@ export default {
         loadChatFailed: "채팅 데이터 로드 실패",
         loadHistoryFailed: "채팅 기록 로드 실패",
         modes: {
-            regular: "Regular Ask",
-            deepSpace: "Deep Space",
+            regular: "일반 문답",
+            deepSpace: "딥 스페이스",
             regularDescription: "기본 Q&A 모드로, 일상적인 배터리 관련 질문에 적합합니다. 정확하고 간결한 답변을 제공합니다.",
             deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
             regularRemaining: "오늘 남은 횟수: {{count}}회",
@@ -103,7 +103,8 @@ export default {
         submit: "제출",
         viewInMolPort: "MolPort에서 보기",
         findSimilarMoleculesLoading: "유사한 분자 검색 중...",
-        addToFavoritesLoading: "저장 중..."
+        addToFavoritesLoading: "저장 중...",
+        favorites: "즐겨찾기"
     },
     molecules: {
         llmFoundMolecules: "LLM이 찾은 분자",

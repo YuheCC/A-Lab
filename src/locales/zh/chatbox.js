@@ -25,8 +25,8 @@ export default {
         loadChatFailed: "加载聊天记录失败",
         loadHistoryFailed: "加载聊天历史失败",
         modes: {
-            regular: "Regular Ask",
-            deepSpace: "Deep Space",
+            regular: "常规问答",
+            deepSpace: "深度搜索",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
             deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
             regularRemaining: "今日剩余: {{count}}次",
@@ -105,7 +105,8 @@ export default {
         submit: "提交",
         viewInMolPort: "在MolPort中查看",
         findSimilarMoleculesLoading: "搜索相似分子...",
-        addToFavoritesLoading: "保存中..."
+        addToFavoritesLoading: "保存中...",
+        favorites: "收藏"
     },
     molecules: {
         llmFoundMolecules: "LLM 分析出的分子",

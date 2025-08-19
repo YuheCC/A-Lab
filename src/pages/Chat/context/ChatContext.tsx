@@ -196,13 +196,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 startNewChat();
                 // 新聊天时也设置会话开始时间
                 setSessionStartTime(new Date());
+                // 重置 molecular panel 状态
+                handleMoleculePanelClose();
             }
         } else {
             startNewChat();
             // 新聊天时也设置会话开始时间
             setSessionStartTime(new Date());
+            // 重置 molecular panel 状态
+            handleMoleculePanelClose();
         }
-    }, [id, loadChatHistory, startNewChat]);
+    }, [id, loadChatHistory, startNewChat, handleMoleculePanelClose]);
 
     useEffect(() => {
         const unsubscribeConnect = globalWebSocketManager.onConnect(() => {

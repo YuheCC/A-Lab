@@ -481,7 +481,7 @@
 .similar-molecules-section {
     background: transparent;
     border-radius: 8px;
-    padding: 16px 4px !important; /* 减少左右内边距从8px到4px */
+    padding: 6px 4px !important; /* 减少左右内边距从8px到4px */
     border: none;
     overflow-y: visible; /* 避免嵌套滚动条 */
     max-height: none;
