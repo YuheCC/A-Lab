@@ -180,7 +180,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       position: 'fixed',
       left: `${left}px`,
       top: `${top}px`,
-      zIndex: 1000
+      zIndex: 1001
     };
   }, [hoveredObject, mousePosition]);
 
