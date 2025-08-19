@@ -23,8 +23,8 @@ export default {
         loadChatFailed: "チャットデータの読み込みに失敗しました",
         loadHistoryFailed: "チャット履歴の読み込みに失敗しました",
         modes: {
-            regular: "Regular Ask",
-            deepSpace: "Deep Space",
+            regular: "通常の質問",
+            deepSpace: "ディープスペース",
             regularDescription: "基本的なQ&Aモード。日常的なバッテリー関連の質問に適しています。正確で簡潔な回答を提供します。",
             deepSpaceDescription: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
             regularRemaining: "今日の残り: {{count}}回",
