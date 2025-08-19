@@ -115,7 +115,7 @@ const MessageList: FC<MessageListProps> = ({
   // 计算最后一条用户消息与最后一条助手消息的 id
   const { lastUserId, lastAssistantId } = useMemo(() => {
     let u: string | null = null;
-    let a: string | null = null;
+    let a: string | null = null
     for (let i = resolvedMessages.length - 1; i >= 0; i--) {
       const m = resolvedMessages[i] as Message;
       if (!u && isUserMessage(m)) u = m.id;
