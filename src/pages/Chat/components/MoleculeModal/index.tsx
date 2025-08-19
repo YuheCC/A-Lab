@@ -5,7 +5,7 @@ import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/m
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
-import CustomButton from '@/components/CustomButton/index.js';
+
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
 
@@ -144,28 +144,39 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 <div className="molecule-card-header">
                     <h3 className="molecule-card-name">{name}</h3>
                     <div className="custom-button-group">
-                        <CustomButton 
-                            Icon={Plus as any} 
+                        <button 
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 handleAddToFavoritesByRaw(raw, properties);
                             }}
-                            color="primary"
-                            variant="contained"
-                            loading={false}
-                            loadingText=""
-                            errorMessage=""
-                            successMessage=""
-                            sideError={false}
                             style={{ 
-                                minWidth: 'auto', 
-                                padding: '2px 6px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                padding: '6px 10px',
+                                border: '1px solid #f59e0b',
+                                borderRadius: '8px',
+                                background: '#fef3c7',
+                                color: '#f59e0b',
+                                cursor: 'pointer',
                                 fontSize: '10px',
-                                fontWeight: '500'
+                                fontWeight: '500',
+                                minWidth: 'auto',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f59e0b';
+                                e.currentTarget.style.color = 'white';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = '#fef3c7';
+                                e.currentTarget.style.color = '#f59e0b';
                             }}
                         >
+                            <Plus size={14} />
                             {t('chatbox.buttons.favorites')}
-                        </CustomButton>
+                        </button>
                     </div>
                 </div>
                 <div className="molecule-card-structure">
@@ -432,12 +443,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 <div className="molecule-panel-main" id="moleculePanelMain">
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
-                            <h3 className="section-title">{t('molecular.moleculeModal.original')}</h3>
+                            <h4 style={{fontWeight: '400'}} className="section-title">{t('molecular.moleculeModal.original')}</h4>
                             {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
-                        <h3 className="section-title">{similarCountText}</h3>
+                        <h4 style={{fontWeight: '400'}} className="section-title">{similarCountText}</h4>
                         {isSimilarLoading ? (
                             <div className="similar-molecules-grid">
                                 {t('molecular.molCard.loading')}
