@@ -105,7 +105,8 @@ export default {
         submit: "提交",
         viewInMolPort: "在MolPort中查看",
         findSimilarMoleculesLoading: "搜索相似分子...",
-        addToFavoritesLoading: "保存中..."
+        addToFavoritesLoading: "保存中...",
+        favorites: "收藏"
     },
     molecules: {
         llmFoundMolecules: "LLM 分析出的分子",

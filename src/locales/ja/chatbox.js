@@ -103,7 +103,8 @@ export default {
         submit: "送信",
         viewInMolPort: "MolPortで表示",
         findSimilarMoleculesLoading: "友達を検索中",
-        addToFavoritesLoading: "保存中..."
+        addToFavoritesLoading: "保存中...",
+        favorites: "お気に入り"
     },
     molecules: {
         llmFoundMolecules: "LLMが見つけた分子",

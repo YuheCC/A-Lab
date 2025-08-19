@@ -164,7 +164,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                                 fontWeight: '500'
                             }}
                         >
-                            {t('molecular.nodePopup.addToFavorites')}
+                            {t('chatbox.buttons.favorites')}
                         </CustomButton>
                     </div>
                 </div>

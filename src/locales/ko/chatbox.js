@@ -103,7 +103,8 @@ export default {
         submit: "제출",
         viewInMolPort: "MolPort에서 보기",
         findSimilarMoleculesLoading: "유사한 분자 검색 중...",
-        addToFavoritesLoading: "저장 중..."
+        addToFavoritesLoading: "저장 중...",
+        favorites: "즐겨찾기"
     },
     molecules: {
         llmFoundMolecules: "LLM이 찾은 분자",
