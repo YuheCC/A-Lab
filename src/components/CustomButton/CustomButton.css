@@ -43,6 +43,26 @@
 .icon-button {
     font-size: 12px !important;
 }
+
+/* 收藏按钮黄色主题样式 */
+.icon-button.favorite-button {
+    background-color: #fef3c7 !important;
+    color: #f59e0b !important;
+    border: 1px solid #f59e0b !important;
+}
+
+.icon-button.favorite-button:hover {
+    background-color: #f59e0b !important;
+    color: white !important;
+    border-color: #f59e0b !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 小尺寸按钮内图标样式 */
+.molecule-card-header .custom-button-group .icon-button svg {
+    width: 14px !important;
+    height: 14px !important;
+}
 .icon-button.MuiButton-containedPrimary {
     background-color: #0080ff !important;
     color: #ffffff !important;

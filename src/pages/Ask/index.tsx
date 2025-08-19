@@ -41,6 +41,12 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
         components={{
+          // Add target="_blank" to all links
+          a: ({ node, children, ...props }) => (
+            <a {...props} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ),
           // Remove default margins from paragraphs
           p: ({ node, children, ...props }) => (
             <p {...props} style={{ margin: 0, marginBottom: '1em' }}>
@@ -74,6 +80,38 @@ const MessageContentRenderer = ({ content, onMoleculeClick }) => {
               {children}
             </ol>
           ),
+          // Fix code tags to allow line wrapping
+          code: ({ node, children, ...props }) => (
+            <code {...props} style={{ 
+              whiteSpace: 'pre-wrap', 
+              wordWrap: 'break-word', 
+              overflowWrap: 'break-word',
+              backgroundColor: '#f1f5f9',
+              padding: '2px 4px',
+              borderRadius: '3px',
+              fontSize: '0.9em',
+              fontFamily: 'monospace'
+            }}>
+              {children}
+            </code>
+          ),
+          // Fix pre tags to allow line wrapping
+          pre: ({ node, children, ...props }) => (
+            <pre {...props} style={{ 
+              whiteSpace: 'pre-wrap', 
+              wordWrap: 'break-word', 
+              overflowWrap: 'break-word',
+              backgroundColor: '#f1f5f9',
+              padding: '12px',
+              borderRadius: '6px',
+              overflow: 'auto',
+              fontSize: '0.9em',
+              fontFamily: 'monospace',
+              margin: '0.5em 0'
+            }}>
+              {children}
+            </pre>
+          )
         }}
       >
         {trimmedContent}
