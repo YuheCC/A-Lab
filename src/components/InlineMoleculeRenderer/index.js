@@ -921,11 +921,9 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           wordWrap: 'break-word', 
           overflowWrap: 'break-word',
           backgroundColor: '#f1f5f9',
-          padding: '12px',
           borderRadius: '6px',
           overflow: 'auto',
           fontSize: '0.9em',
-          fontFamily: 'monospace',
           margin: '0.5em 0'
         }}>
           {children}
