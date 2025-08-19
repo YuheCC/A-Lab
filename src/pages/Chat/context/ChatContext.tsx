@@ -30,14 +30,14 @@ interface ChatContextType {
     onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
     handleEditMessage: (messageId: string, newText: string) => void;
     onEditMessage: (messageId: string, newText: string) => void;
-    handleMessageUpdate: (messageId: string, newText: string, mode?: ChatMode) => Promise<void>;
-    onMessageUpdate: (messageId: string, newText: string, mode?: ChatMode) => Promise<void>;
+    handleMessageUpdate: (messageId: string, newText: string, mode?: ChatMode, extraOptions?: any) => Promise<void>;
+    onMessageUpdate: (messageId: string, newText: string, mode?: ChatMode, extraOptions?: any) => Promise<void>;
     handleCopyMessage: (content: string) => void;
     onCopyMessage: (content: string) => void;
-    handleRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
-    onRegenerateMessage: (messageId: string, mode?: ChatMode) => Promise<void>;
-    sendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => Promise<string | undefined>;
-    onSendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => Promise<string | undefined>;
+    handleRegenerateMessage: (messageId: string, mode?: ChatMode, extraOptions?: any) => Promise<void>;
+    onRegenerateMessage: (messageId: string, mode?: ChatMode, extraOptions?: any) => Promise<void>;
+    sendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode, extraOptions?: any) => Promise<string | undefined>;
+    onSendMessageUpdate: (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode, extraOptions?: any) => Promise<string | undefined>;
     handleNewChat: () => void;
     onNewChat: () => void;
     handleSelectChat: (selectedChatId: number) => void;
@@ -350,13 +350,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string) => {
+    const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string, extraOptions?: any) => {
         if(mode === 'regular'){
-            await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId);
+            await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
         }else if(mode === 'deep-space'){
-            await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId);
+            await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
         }else if(mode === 'clarify'){
-            await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId);
+            await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
         }
     }, []);
 
@@ -383,7 +383,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateChatHistory(updatedHistory);
     }, [chatHistory, updateChatHistory]);
 
-    const createNewChat = useCallback(async (message: string, mode: ChatMode) => {
+    const createNewChat = useCallback(async (message: string, mode: ChatMode, extraOptions?: any) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
 
@@ -407,11 +407,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             chatData?.id,
             [{ role: 'user', content: message, id: messageData?.id }],
             answerData?.id,
+            extraOptions
         );
         return chatData?.id;
     }, [socketId, sessionStartTime, addOrMoveToTopOfNonPinned]);
 
-    const createNewMessage = useCallback(async (message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
+    const createNewMessage = useCallback(async (message: string, chatId: number, historyMessages: Message[], mode: ChatMode, extraOptions?: any) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
         const messageData = await chatService.createNewMessage(chatId, message, ragModel);
@@ -434,11 +435,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             chatId,
             historyMessages,
             answerData?.id,
+            extraOptions
         );
         return messageData?.id;
     }, [socketId, sessionStartTime, chatHistory, addOrMoveToTopOfNonPinned]);
 
-    const sendMessageUpdate = useCallback(async (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode) => {
+    const sendMessageUpdate = useCallback(async (messageId: string, message: string, chatId: number, historyMessages: Message[], mode: ChatMode, extraOptions?: any) => {
         const info = globalWebSocketManager.getConnectionInfo();
         const sid = (socketId || (info?.socketId as string) || '') as string;
         const messageData = await chatService.updateMessage(chatId, messageId, message, ragModel);
@@ -454,6 +456,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             chatId,
             historyMessages,
             answerData?.id,
+            extraOptions
         );
         return messageData?.id;
     }, [socketId, sessionStartTime]);
@@ -462,13 +465,21 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
         addUserMessage(userMsg);
+        
+        // 从extra参数中提取管理员开关参数
+        const extraOptions = extra ? {
+            ragEnabled: extra.ragEnabled,
+            disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
+            fullDeepSpace: extra.dump_state
+        } : undefined;
+        
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
-            createNewMessage(message, chatId, historyWithNew, mode);
+            createNewMessage(message, chatId, historyWithNew, mode, extraOptions);
         } else {
             // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
-            const newChatId = await createNewChat(message, mode);
+            const newChatId = await createNewChat(message, mode, extraOptions);
             if (newChatId) {
                 const urlMode = mode === "clarify" ? "deep-space" : mode;
                 navigate(`/ask/${newChatId}?mode=${urlMode}`);
@@ -480,7 +491,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         editMessage(messageId, newText);
     }, [editMessage]);
 
-    const handleMessageUpdate = useCallback(async (messageId: string, newText: string, mode: ChatMode = 'regular') => {
+    const handleMessageUpdate = useCallback(async (messageId: string, newText: string, mode: ChatMode = 'regular', extraOptions?: any) => {
         console.log('handleMessageUpdate', messageId, newText, mode);
         if (!currentChatId) {
             console.error('No current chat ID for message update');
@@ -511,7 +522,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             );
             
             // 调用 sendMessageUpdate 获取新的 AI 回复
-            await sendMessageUpdate(messageId, newText, currentChatId, updatedHistoryMessages, mode);
+            await sendMessageUpdate(messageId, newText, currentChatId, updatedHistoryMessages, mode, extraOptions);
         } catch (error) {
             console.error('Failed to update message:', error);
         }
@@ -521,7 +532,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigator.clipboard.writeText(content);
     }, []);
 
-    const handleRegenerateMessage = useCallback(async (messageId: string, mode: ChatMode = 'regular') => {
+    const handleRegenerateMessage = useCallback(async (messageId: string, mode: ChatMode = 'regular', extraOptions?: any) => {
         try {
             setIsLoading(true);
             
@@ -562,7 +573,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 mode,
                 currentChatId,
                 historyMessages,
-                answerId
+                answerId,
+                extraOptions
             );
             
         } catch (error) {

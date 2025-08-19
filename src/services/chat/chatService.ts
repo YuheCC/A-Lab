@@ -307,8 +307,11 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; }): Promise<string> {
     try {
+      // 处理管理员开关参数
+      const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
+      
       const resp = await request('/api/llm/ask', {
         method: 'POST',
         data: { 
@@ -317,7 +320,7 @@ export class ChatService {
           messages, 
           session_id: sessionId,
           model,
-          ragEnabled: false,
+          ragEnabled,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
         },
@@ -330,20 +333,30 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; }): Promise<string> {
     try {
+      // 处理管理员开关参数
+      const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
+      
+      const payload: any = {
+        chat_id: chatId, 
+        answer_id: answerId,
+        messages, 
+        session_id: sessionId,
+        model,
+        ragEnabled,
+        webSearchEnabled: false,
+        webSearchClient: "Tavily",
+      };
+      
+      // 如果启用了fullDeepSpace，添加dump_state参数
+      if (extraOptions?.fullDeepSpace) {
+        payload.dump_state = true;
+      }
+      
       const resp = await request('/api/llm/multi-agent', {
         method: 'POST',
-        data: { 
-          chat_id: chatId, 
-          answer_id: answerId,
-          messages, 
-          session_id: sessionId,
-          model,
-          ragEnabled: false,
-          webSearchEnabled: false,
-          webSearchClient: "Tavily",
-        },
+        data: payload,
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
@@ -353,20 +366,30 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3'): Promise<string> {
+  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; }): Promise<string> {
     try {
+      // 处理管理员开关参数
+      const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
+      
+      const payload: any = {
+        chat_id: chatId, 
+        answer_id: answerId,
+        messages, 
+        session_id: sessionId,
+        model,
+        ragEnabled,
+        webSearchEnabled: false,
+        webSearchClient: "Tavily",
+      };
+      
+      // 如果启用了fullDeepSpace，添加dump_state参数
+      if (extraOptions?.fullDeepSpace) {
+        payload.dump_state = true;
+      }
+      
       const resp = await request('/api/llm/multi-agent/clarify', {
         method: 'POST',
-        data: { 
-          chat_id: chatId, 
-          answer_id: answerId,
-          messages, 
-          session_id: sessionId,
-          model,
-          ragEnabled: false,
-          webSearchEnabled: false,
-          webSearchClient: "Tavily",
-        },
+        data: payload,
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
       return resp.data;
