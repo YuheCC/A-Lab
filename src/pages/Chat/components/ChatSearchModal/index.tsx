@@ -2,6 +2,7 @@ import React, { forwardRef, useImperativeHandle, useState, useEffect, useMemo, u
 import { useTranslation } from 'react-i18next';
 import { chatService } from '@/services/chat/chatService';
 import { useChatContext } from '../../context/ChatContext';
+import { useNavigate } from "react-router";
 
 interface ChatSearchModalProps {
     onSelectChat?: (chatId: number) => void;
@@ -11,6 +12,7 @@ interface ChatSearchModalProps {
 const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatSearchModalProps>((props, ref) => { 
     const { t } = useTranslation();
     const { chatHistory } = useChatContext();
+    const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -65,7 +67,7 @@ const ChatSearchModal = forwardRef<{ show: () => void; hide: () => void }, ChatS
     const handleSelect = (chatId: number) => {
         setShow(false);
         props.onSelectChat?.(chatId);
-        window.location.href = `/ask/${chatId}`;
+        navigate(`/ask/${chatId}`);
     };
 
     const handleNew = () => {
