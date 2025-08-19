@@ -160,4 +160,37 @@
   padding: 0.5em 1em;
   border-left: 4px solid #56B26A;
   background-color: #f8f9fa;
+}
+
+/* 代码块和内联代码样式 - 确保能正确换行 */
+.inline-molecule-renderer code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  background-color: #f1f5f9;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: monospace;
+  line-height: 1.4;
+}
+
+.inline-molecule-renderer pre {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  background-color: #f1f5f9;
+  padding: 12px;
+  border-radius: 6px;
+  overflow: auto;
+  font-size: 0.9em;
+  font-family: monospace;
+  margin: 0.5em 0 !important;
+  line-height: 1.4;
+}
+
+.inline-molecule-renderer pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
 } 
