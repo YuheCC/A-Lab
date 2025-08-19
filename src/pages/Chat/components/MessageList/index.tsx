@@ -190,11 +190,11 @@ const MessageList: FC<MessageListProps> = ({
     return '';
   };
 
-  // 处理化学分子点击（来自 InlineMoleculeRenderer 的对象 -> 仅传递名称给上层）
+  // 处理化学分子点击（来自 InlineMoleculeRenderer 的对象 -> 传递完整分子对象给上层）
   const forwardMoleculeClick = (molecule: any) => {
-    const moleculeName = molecule?.name || molecule?.SMILES || '';
-    if (moleculeName) {
-      (onMoleculeClick || ctxHandleMoleculeClick)?.(moleculeName);
+    if (molecule && (molecule.name || molecule.SMILES)) {
+      // 传递完整的分子对象而不仅仅是名称
+      (onMoleculeClick || ctxHandleMoleculeClick)?.(molecule);
     }
   };
 

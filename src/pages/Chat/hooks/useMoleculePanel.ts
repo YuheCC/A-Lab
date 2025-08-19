@@ -1,10 +1,30 @@
 import { useState, useEffect, useCallback } from 'react';
 import { setupResponsiveLayout, toggleMoleculePanelExpansion, type LayoutDimensions } from '../utils/layoutUtils';
 
+// 定义分子对象的接口结构
+export interface MoleculeData {
+  name: string;
+  SMILES: string;
+  molecular_weight?: number;
+  HOMO_eV?: number;
+  LUMO_eV?: number;
+  ESP_min_eV?: number;
+  ESP_max_eV?: number;
+  predicted_MP_celsius?: number;
+  predicted_BP_celsius?: number;
+  predicted_FP_celsius?: number;
+  COMBUSTION_ENTHALPY_EV?: number;
+  COMMERCIAL_SCORE?: number;
+  COMMERCIAL_LINK?: string;
+  functional_groups?: string;
+  UMAP_0?: number;
+  UMAP_1?: number;
+}
+
 export interface MoleculePanelState {
   isVisible: boolean;
   isExpanded: boolean;
-  currentMolecule: string | null;
+  currentMolecule: MoleculeData | null;
   dimensions: LayoutDimensions | null;
 }
 
@@ -17,12 +37,12 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
   });
 
   // 显示分子面板
-  const showPanel = useCallback((moleculeName: string, expanded: boolean = false) => {
+  const showPanel = useCallback((molecule: MoleculeData, expanded: boolean = false) => {
     setState(prev => ({
       ...prev,
       isVisible: true,
       isExpanded: expanded,
-      currentMolecule: moleculeName,
+      currentMolecule: molecule,
     }));
 
     // 当分子面板展开时，收缩侧边栏
@@ -87,18 +107,21 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
   }, [state.isExpanded, setIsSidebarCollapsed]);
 
   // 处理分子点击
-  const handleMoleculeClick = useCallback((moleculeName: string) => {
-    showPanel(moleculeName, false);
+  const handleMoleculeClick = useCallback((molecule: MoleculeData) => {
+    showPanel(molecule, false);
   }, [showPanel]);
 
   // 处理查找相似分子
-  const handleFindSimilar = useCallback((moleculeName: string) => {
-    if (state.isVisible && state.currentMolecule === moleculeName) {
+  const handleFindSimilar = useCallback((molecule: MoleculeData) => {
+    const currentMoleculeName = state.currentMolecule?.name || state.currentMolecule?.SMILES;
+    const targetMoleculeName = molecule?.name || molecule?.SMILES;
+    
+    if (state.isVisible && currentMoleculeName === targetMoleculeName) {
       // 如果已经显示相同分子，则切换展开状态
       toggleExpansion();
     } else {
       // 显示新分子并展开
-      showPanel(moleculeName, true);
+      showPanel(molecule, true);
     }
   }, [state.isVisible, state.currentMolecule, showPanel, toggleExpansion]);
 

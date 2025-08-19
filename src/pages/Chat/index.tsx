@@ -58,7 +58,8 @@ const ChatContent: React.FC = () => {
             </div>
             {moleculePanelState.isVisible && (
                 <MoleculeModal
-                    moleculeName={moleculePanelState.currentMolecule || 'LiPF6'}
+                    moleculeName={moleculePanelState.currentMolecule?.name || moleculePanelState.currentMolecule?.SMILES || 'LiPF6'}
+                    molecule={moleculePanelState.currentMolecule}
                     onClose={handleMoleculePanelClose}
                     onFindSimilar={handleFindSimilar}
                     messages={messages}

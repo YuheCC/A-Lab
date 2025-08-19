@@ -5,21 +5,24 @@ import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/m
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
+import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
 
 interface MoleculeModalProps {
     moleculeName?: string;
+    molecule?: MoleculeData | null;  // 新增：完整的分子对象，允许 null
     onClose?: () => void;
     onAddToFavorites?: (moleculeName: string) => void;
-    onFindSimilar?: (moleculeName: string) => void;
+    onFindSimilar?: (molecule: MoleculeData) => void;  // 修改为接受完整分子对象
     onUpdateMoleculeType?: (moleculeName: string, type: string) => void;
     messages?: Message[];
 }
 
 const MoleculeModal: React.FC<MoleculeModalProps> = ({
     moleculeName = 'LiPF6',
+    molecule,
     onClose,
     onAddToFavorites,
     onFindSimilar,
@@ -85,7 +88,16 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             return;
         }
         
-        onFindSimilar?.(name);
+        // 构造分子对象传递给上层处理函数
+        if (onFindSimilar && (molecule || rawOriginal)) {
+            const moleculeForCallback = molecule || {
+                name: name,
+                SMILES: currentSmiles || '',
+                ...rawOriginal
+            };
+            onFindSimilar(moleculeForCallback);
+        }
+        
         try {
             setIsSimilarLoading(true);
             let smilesToUse = currentSmiles;
@@ -323,6 +335,26 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         };
     };
 
+    // 将 MoleculeData 转换为 MoleculeProperties（用于直接传入的完整分子对象）
+    const convertMoleculeDataToProperties = (moleculeData: MoleculeData): MoleculeProperties => {
+        const commercialScore = moleculeData?.COMMERCIAL_SCORE;
+        const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
+
+        return {
+            smiles: moleculeData.SMILES,
+            molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
+            meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
+            boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,
+            flashPoint: moleculeData.predicted_FP_celsius != null ? `${moleculeData.predicted_FP_celsius} °C` : undefined,
+            combustionEnthalpy: moleculeData.COMBUSTION_ENTHALPY_EV != null ? String(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined,
+            homo: moleculeData.HOMO_eV != null ? String(moleculeData.HOMO_eV) : undefined,
+            lumo: moleculeData.LUMO_eV != null ? String(moleculeData.LUMO_eV) : undefined,
+            espMax: moleculeData.ESP_max_eV != null ? String(moleculeData.ESP_max_eV) : undefined,
+            espMin: moleculeData.ESP_min_eV != null ? String(moleculeData.ESP_min_eV) : undefined,
+            commercialViability
+        };
+    };
+
     const fetchOriginalDetails = async (name: string): Promise<{ props?: MoleculeProperties; smiles?: string; raw?: any; }> => {
         let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(name)}`;
         if (isHighTier) {
@@ -398,32 +430,47 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return { list: mapped, raws: items };
     };
 
-    // 仅加载原始分子详情；相似分子改为点击后再请求
+    // 加载原始分子详情：如果有完整分子对象则直接使用，否则从API获取
     useEffect(() => {
         let isCancelled = false;
-        const loadData = async () => {
-            setIsLoading(true);
-            try {
-                const original = await fetchOriginalDetails(moleculeName);
-                if (isCancelled) return;
-                setOriginalMoleculeProps(original?.props);
-                setCurrentSmiles(original?.smiles);
-                setRawOriginal(original?.raw);
-                setSimilarMolecules([]);
-                setSimilarRawList([]);
-                setShowSimilar(false);
-            } catch (err) {
-                if (!isCancelled) {
+        
+        if (molecule) {
+            // 直接使用传入的完整分子对象，避免API请求
+            const properties = convertMoleculeDataToProperties(molecule);
+            setOriginalMoleculeProps(properties);
+            setCurrentSmiles(molecule.SMILES);
+            setRawOriginal(molecule);
+            setSimilarMolecules([]);
+            setSimilarRawList([]);
+            setShowSimilar(false);
+            setIsLoading(false);
+        } else {
+            // 如果没有完整分子对象，则从API获取（向后兼容）
+            const loadData = async () => {
+                setIsLoading(true);
+                try {
+                    const original = await fetchOriginalDetails(moleculeName);
+                    if (isCancelled) return;
+                    setOriginalMoleculeProps(original?.props);
+                    setCurrentSmiles(original?.smiles);
+                    setRawOriginal(original?.raw);
                     setSimilarMolecules([]);
                     setSimilarRawList([]);
+                    setShowSimilar(false);
+                } catch (err) {
+                    if (!isCancelled) {
+                        setSimilarMolecules([]);
+                        setSimilarRawList([]);
+                    }
+                } finally {
+                    if (!isCancelled) setIsLoading(false);
                 }
-            } finally {
-                if (!isCancelled) setIsLoading(false);
-            }
-        };
-        loadData();
+            };
+            loadData();
+        }
+        
         return () => { isCancelled = true; };
-    }, [moleculeName]);
+    }, [moleculeName, molecule]);
 
     const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
@@ -444,7 +491,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
                             <h4 style={{fontWeight: '400'}} className="section-title">{t('molecular.moleculeModal.original')}</h4>
-                            {renderMoleculeCard(moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
+                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
