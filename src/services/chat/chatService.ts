@@ -307,7 +307,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; }): Promise<string> {
+  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; numRagResults?: number; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -323,6 +323,7 @@ export class ChatService {
           ragEnabled,
           webSearchEnabled: false,
           webSearchClient: "Tavily",
+          numRagResults: extraOptions?.numRagResults,
         },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
@@ -333,7 +334,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; }): Promise<string> {
+  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -347,6 +348,7 @@ export class ChatService {
         ragEnabled,
         webSearchEnabled: false,
         webSearchClient: "Tavily",
+        numRagResults: extraOptions?.numRagResults,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数
@@ -366,7 +368,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; }): Promise<string> {
+  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -380,6 +382,7 @@ export class ChatService {
         ragEnabled,
         webSearchEnabled: false,
         webSearchClient: "Tavily",
+        numRagResults: extraOptions?.numRagResults,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数

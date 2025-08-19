@@ -351,14 +351,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string, extraOptions?: any) => {
+        // 确保传递ragResultsCount
+        const finalExtraOptions = { 
+            ...extraOptions, 
+            numRagResults: ragResultsCount 
+        };
+        
         if(mode === 'regular'){
-            await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
+            await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }else if(mode === 'deep-space'){
-            await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
+            await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }else if(mode === 'clarify'){
-            await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, 'o3', extraOptions);
+            await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }
-    }, []);
+    }, [ragResultsCount, ragModel]);
 
     // 辅助函数：将聊天记录添加到非置顶位置第一条
     const addOrMoveToTopOfNonPinned = useCallback((chatId: number, title: string) => {
@@ -470,8 +476,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const extraOptions = extra ? {
             ragEnabled: extra.ragEnabled,
             disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
-            fullDeepSpace: extra.dump_state
-        } : undefined;
+            fullDeepSpace: extra.dump_state,
+            numRagResults: ragResultsCount
+        } : { numRagResults: ragResultsCount };
         
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
