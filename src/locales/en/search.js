@@ -1,4 +1,10 @@
 export default {
+    // Search Tabs
+    tabs: {
+        organic: 'Organic Molecules',
+        inorganic: 'Inorganic Molecules'
+    },
+    
     // Search Input
     searchPlaceholder: "Enter SMILES string, molecule name, or query",
     searchButton: "Search",
