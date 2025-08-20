@@ -126,7 +126,7 @@ const InorganicMolecules = () => {
                 </div>
 
                 {/* Right text content */}
-                <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', height: 'calc(100vh - 140px)', overflow: 'scroll' }}>
+                <div className="search-interface-section" style={{ flex: '0.8', overflowY: 'auto', padding: '20px', backgroundColor: '#fff', borderRadius: '0px', height: 'calc(100vh - 140px)', overflow: 'scroll' }}>
                     <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>{t('map.inorganic.title')}</h2>
                     
                     {/* Motivation Section */}
