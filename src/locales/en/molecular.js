@@ -5,7 +5,7 @@ export default {
     umapCoordinates: "UMAP Coordinates",
     properties: "Properties",
     copyAllData: "Copy All Data",
-    addToFavorites: "Add to Favorites ★",
+    addToFavorites: "Add to Favorites",
     saving: "Saving...",
     copySuccess: "Molecule information copied to clipboard!",
     copyError: "Failed to copy molecule data"
@@ -19,6 +19,25 @@ export default {
     notAvailable: "N/A",
     clickToCollapse: "Click to collapse",
     clickToExpand: "Click to expand for more details"
+  },
+  moleculeModal: {
+    original: "Original Molecule",
+    findSimilar: "Find Similar",
+    similarWithCount: "Similar Molecules ({{count}})",
+    functionalGroupsTitle: "Functional Groups",
+    functionalGroupList: "Ether, ketal, carbonate, ester",
+    unknown: "Unknown",
+    types: {
+      all: "All Types",
+      solvent: "Solvent",
+      diluent: "Diluent",
+      additive: "Additive"
+    },
+    properties: {
+      predictedFp: "Predicted Flash Point",
+      combustionEnthalpy: "Combustion Enthalpy",
+      commercialViability: "Commercial Viability"
+    }
   },
   umapPlot: {
     controls: {

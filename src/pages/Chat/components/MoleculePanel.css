@@ -1,0 +1,619 @@
+/* ==============================================
+   分子面板相关样式
+   提取自原始Chat.css文件
+   ============================================== */
+
+/* ==============================================
+   1. 分子面板基础布局
+   ============================================== */
+
+/* 分子浮层样式 - 使用CSS变量实现动态宽度 */
+:root {
+    --molecule-panel-width: 380px; /* 默认宽度 */
+    --expanded-molecule-panel-width: 730px; /* 展开时的宽度 */
+}
+
+.molecule-panel {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: var(--molecule-panel-width) !important;
+    min-width: var(--molecule-panel-width) !important;
+    max-width: var(--molecule-panel-width) !important;
+    height: calc(100vh - 64px);
+    background: white;
+    border-left: 1px solid #e2e8f0;
+    z-index: 1000;
+    display: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.molecule-panel.expanded {
+    width: var(--expanded-molecule-panel-width) !important;
+    min-width: var(--expanded-molecule-panel-width) !important;
+    max-width: var(--expanded-molecule-panel-width) !important;
+}
+
+/* 面板内容区域优化 - 减少上边距 */
+.molecule-panel-content {
+    padding: 2px 2px; /* 进一步减少内边距 */
+    height: calc(100% - 60px);
+    overflow-y: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.molecule-panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.molecule-panel-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.molecule-panel-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.molecule-panel-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.molecule-panel-main {
+    padding: 1px 1px; /* 进一步减少内边距 */
+    height: 100%;
+    overflow-y: visible; /* 由外层容器统一管理滚动 */
+    animation: fadeInUp 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.molecule-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    background: white;
+    flex-shrink: 0;
+}
+
+.molecule-panel-header .molecule-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.molecule-panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.molecule-panel-close {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.molecule-panel-close:hover {
+    background: #f1f5f9;
+    color: #374151;
+}
+
+.molecule-panel-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ==============================================
+   2. 分子信息展示区域
+   ============================================== */
+
+.molecule-info,
+.molecule-structure,
+.molecule-properties {
+    margin-bottom: 32px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.molecule-info h1 {
+    margin: 0 0 24px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+}
+
+.molecule-structure h3,
+.molecule-properties h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.structure-placeholder {
+    background: #f1f5f9;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-text {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.structure-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.structure-image img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; /* 减少间距 */
+    margin-top: 12px; /* 减少上边距 */
+}
+
+.property-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* 减少间距 */
+    padding: 6px 0; /* 减少内边距 */
+}
+
+.property-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.property-label {
+    font-size: 11px; /* 减小字体 */
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px; /* 减少字母间距 */
+}
+
+.property-value {
+    font-size: 13px; /* 减小字体 */
+    color: #1f2937;
+    font-weight: 600;
+    font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    word-break: break-all;
+    line-height: 1.3; /* 减少行高 */
+}
+
+/* 分子面板中的分子卡片样式 - 居中显示 */
+.molecule-panel .molecule-card {
+    width: 350px; /* 固定分子卡片宽度 */
+    max-width: 350px; /* 固定最大宽度 */
+    margin: 0 auto; /* 左右居中显示 */
+}
+
+/* 分子面板操作按钮样式 */
+.molecule-panel-actions {
+    margin-top: 20px; /* 减少上边距 */
+    padding-top: 16px; /* 减少内边距 */
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* 减少间距 */
+}
+
+.molecule-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 减少间距 */
+    padding: 8px 12px; /* 减少内边距 */
+    border: 1px solid #d1d5db;
+    border-radius: 6px; /* 减少圆角 */
+    background: white;
+    color: #374151;
+    font-size: 13px; /* 减小字体 */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.molecule-action-btn:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+}
+
+.molecule-action-btn:active {
+    background-color: #f3f4f6;
+    transform: translateY(1px);
+}
+
+.molecule-action-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.molecule-action-btn span {
+    flex: 1;
+    text-align: left;
+}
+
+.add-to-favorites-btn {
+    color: #dc2626;
+    border-color: #fecaca;
+    background-color: #fef2f2;
+}
+
+.add-to-favorites-btn:hover {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+.find-similar-btn {
+    color: #2563eb;
+    border-color: #dbeafe;
+    background-color: #eff6ff;
+}
+
+.find-similar-btn:hover {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+}
+
+/* ==============================================
+   3. 相似分子对比区域
+   ============================================== */
+
+/* 相似分子区域优化 */
+.similar-molecules-section {
+    padding: 16px 2px; /* 减少左右内边距从4px到2px */
+    height: 100%;
+    overflow-y: visible; /* 避免嵌套滚动条 */
+    animation: slideInRight 0.3s ease;
+    background: transparent;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.similar-molecules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+}
+
+.similar-molecules-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* 相似分子面板样式 */
+.similar-molecules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.similar-molecules-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* 相似分子比较布局 */
+.similar-molecules-comparison {
+    display: flex;
+    gap: 0px;
+    height: calc(100vh - 200px);
+}
+
+.original-molecule-section {
+    flex: 1;
+    border-right: 1px solid #e2e8f0;
+    padding-right: 0px !important;
+}
+
+.similar-molecules-section {
+    flex: 1;
+    padding-left: 0px !important;
+}
+
+.original-molecule-section h4,
+.similar-molecules-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.original-molecule-info h5 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.original-molecule-structure {
+    width: 100%;
+    height: 80px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.original-molecule-structure img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.original-molecule-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.original-property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 11px;
+}
+
+.original-property-item:last-child {
+    border-bottom: none;
+}
+
+.original-property-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.original-property-value {
+    font-size: 11px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.similar-molecules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+    /* 由外层容器统一管理滚动 */
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
+/* 相似分子比较布局样式 */
+.similar-molecules-comparison {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0px !important;
+    height: 100%;
+    padding: 0;
+}
+
+.original-molecule-section {
+    background: transparent;
+    border-radius: 8px;
+    padding: 6px 4px !important; /* 减少左右内边距从8px到4px */
+    border: none;
+}
+
+.similar-molecules-section {
+    background: transparent;
+    border-radius: 8px;
+    padding: 6px 4px !important; /* 减少左右内边距从8px到4px */
+    border: none;
+    overflow-y: visible; /* 避免嵌套滚动条 */
+    max-height: none;
+    overflow-x: hidden;
+}
+
+.original-molecule-section h3,
+.similar-molecules-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.similar-molecules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+}
+
+.similar-molecules-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.similar-molecules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+    /* 由外层容器统一管理滚动 */
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
+/* 折叠状态下（窄面板）改为上下布局，避免横向溢出 */
+.molecule-panel:not(.expanded) .similar-molecules-comparison {
+    grid-template-columns: 1fr !important;
+}
+
+/* 相似分子卡片宽度随容器自适应，避免横向滚动 */
+.similar-molecules-section .molecule-card {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* ==============================================
+   4. 分子面板加载动画
+   ============================================== */
+
+/* 加载动画 */
+.molecule-panel.loading {
+    position: relative;
+}
+
+.molecule-panel.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1001;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==============================================
+   5. 响应式布局
+   ============================================== */
+
+/* 响应式优化 - 使用CSS变量 */
+@media (max-width: 1200px) {
+    :root {
+        --molecule-panel-width: 380px; /* 中等屏幕宽度 */
+        --expanded-molecule-panel-width: 730px; /* 展开时宽度 */
+    }
+    
+    .similar-molecules-comparison {
+        grid-template-columns: 1fr;
+        gap: 16px !important;
+    }
+    
+    .original-molecule-section,
+    .similar-molecules-section {
+        padding: 12px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .molecule-panel {
+        width: 100%;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        border-left: none;
+        box-shadow: none;
+    }
+    
+    .molecule-panel-header {
+        padding: 8px 20px;
+    }
+    
+    .molecule-panel-content {
+        padding: 20px 16px;
+    }
+    
+    .molecule-panel-main {
+        padding: 16px 12px;
+    }
+    
+
+    
+    .similar-molecules-comparison {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .similar-molecules-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}

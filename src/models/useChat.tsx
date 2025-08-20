@@ -7,6 +7,16 @@ import i18n from '@/locales/i18n';
 
 const API_URL = getAPIUrl();
 
+// 规范化后端时间字符串到 ISO 字符串（UTC）
+const normalizeServerDateToISOString = (input: string): string => {
+    if (!input) return new Date().toISOString();
+    const trimmed = input.trim();
+    const hasTimezone = /[zZ]$|[+-]\d{2}:\d{2}$/.test(trimmed);
+    const normalized = hasTimezone ? trimmed : (trimmed.endsWith('Z') ? trimmed : trimmed + 'Z');
+    const parsed = new Date(normalized);
+    return isNaN(parsed.getTime()) ? new Date(trimmed).toISOString() : parsed.toISOString();
+};
+
 // 定义聊天消息类型
 interface ChatMessage {
     role: string;
@@ -49,6 +59,8 @@ interface ChatState {
     isSynced: boolean;
     activeChat: string;
     chatMap: Record<string, Chat>;
+    socketId?: string;
+    setSocketId?: (socketId?: string) => void;
 }
 
 const getWelcomeMessage = () => {
@@ -69,7 +81,6 @@ const generateNewChat = (): Chat => ({
     activeMolecule: null,
     foundMolecules: [],
     similarMolecules: [],
-
     // Deep Space metadata
     awaitingClarify: false,
     status: 'complete',
@@ -91,6 +102,10 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
     chatMap: {
         "-1": generateNewChat()
     },
+    socketId: undefined,
+    // 设置 WebSocket socketId，仅本地存储
+    setSocketId: (socketId?: string) => set({ socketId }),
+    pendingSessionCreation: {}, // Track pending session creations to prevent duplicates
 
     /**
      * 更新所有聊天中的系统欢迎消息（用于语言切换时）
@@ -244,7 +259,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         console.log(`📥 LOADING SESSION ${index + 1}/${filteredChats.length}: ID=${chat.id}, Name="${chat.chat_name}", Messages=${chat.content?.length || 0}`);
                         
                         draft.chatMap[chat.id] = {
-                            createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
+                            createdAt: normalizeServerDateToISOString(chat.created_at),
                             useMultiAgent: false,
                             name: chat.chat_name || 'New Chat',
                             messages: (chat.content as any[]).map((item: any) => ({

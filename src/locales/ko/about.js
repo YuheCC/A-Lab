@@ -149,6 +149,6 @@ export default {
     requires_rd: "상용 가능성 평가를 위해 R&D 필요",
     likely_synthesizable_but_not_commercially_available: "합성 가능하지만 상용 불가능",
     likely_synthesizable_may_be_commercially_available: "합성 가능하며 상용 가능",
-    likely_commercially_available: "상용 가능"
+    likely_commercially_available: "상업적으로 이용 가능"
   }
 }; 

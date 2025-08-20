@@ -1,6 +1,10 @@
 import { defineConfig } from "umi";
+import path from "path";
 
 export default defineConfig({
+  alias: {
+    '@': path.resolve(__dirname, '../src'),
+  },
   define: {
     'BASE_URL': "http://localhost:8000",
     'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",

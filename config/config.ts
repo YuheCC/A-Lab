@@ -1,4 +1,5 @@
 import { defineConfig } from "umi";
+import path from "path";
 import routes from "../src/routes";
 
 export default defineConfig({
@@ -6,6 +7,9 @@ export default defineConfig({
   npmClient: 'npm',
   favicons: ['https://cdn.prod.website-files.com/671b8da8cb402b2908cb39f0/671bb55d6ea8b4dc808e5cfa_fav-256.png'],
   outputPath: 'build',
+  alias: {
+    '@': path.resolve(__dirname, '../src'),
+  },
   define: {
     'BASE_URL': "https://llm-staging.ses.ai",
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",

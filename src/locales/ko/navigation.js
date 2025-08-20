@@ -34,6 +34,7 @@ export default {
   // User dropdown menu
   userDropdown: {
     accountSettings: "계정 설정",
+    feedback: "피드백 및 제안",
     logout: "로그아웃"
   },
   

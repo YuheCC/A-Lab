@@ -149,6 +149,6 @@ export default {
     requires_rd: "需要R&D来评估商业可行性",
     likely_synthesizable_but_not_commercially_available: "可能可合成，但可能不商业化",
     likely_synthesizable_may_be_commercially_available: "可能可合成，可能商业化",
-    likely_commercially_available: "可能商业化"
+    likely_commercially_available: "商业化"
   }
 }; 

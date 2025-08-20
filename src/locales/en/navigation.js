@@ -34,6 +34,7 @@ export default {
   // User dropdown menu
   userDropdown: {
     accountSettings: "Account Settings",
+    feedback: "Feedback & Suggestions",
     logout: "Logout"
   },
   
