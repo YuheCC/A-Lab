@@ -1,0 +1,111 @@
+.filter-tabs-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-tabs-wrapper {
+    display: flex;
+    gap: 18px;
+    position: relative;
+}
+
+.filter-tab-button {
+    padding: 1px 0;
+    border: none;
+    background: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #999;
+    position: relative;
+    min-width: 45px;
+    text-align: center;
+    outline: none;
+}
+
+.filter-tab-button.active {
+    color: #0066cc;
+}
+
+.filter-tab-button:hover:not(.active) {
+    color: #666;
+}
+
+.filter-tab-button:focus {
+    outline: none;
+}
+
+.filter-tab-button:active {
+    transform: translateY(1px);
+}
+
+/* 平滑的下划线动画 */
+.filter-tab-button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #0066cc;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.filter-tab-button.active::after {
+    width: 100%;
+}
+
+/* Tab内容区域过渡效果 */
+.tab-content {
+    transition: opacity 0.3s ease;
+}
+
+.tab-content.fade-enter {
+    opacity: 0;
+}
+
+.tab-content.fade-enter-active {
+    opacity: 1;
+}
+
+.tab-content.fade-exit {
+    opacity: 1;
+}
+
+.tab-content.fade-exit-active {
+    opacity: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .filter-tab-button {
+        padding: 0;
+        font-size: 11px;
+        min-width: 40px;
+    }
+    
+    .filter-tabs-container {
+        padding: 0;
+    }
+    
+    .filter-tabs-wrapper {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-tabs-wrapper {
+        gap: 10px;
+    }
+    
+    .filter-tab-button {
+        min-width: 35px;
+        font-size: 10px;
+    }
+}

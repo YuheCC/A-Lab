@@ -4,6 +4,12 @@ export default {
     resetAllButton: "모두 재설정",
     resetFilterButton: "재설정",
     
+    // Filter Tabs
+    filterTabs: {
+        organic: "유기 분자",
+        inorganic: "무기 분자"
+    },
+    
     // Loading and Status Messages
     loadingMap: "분자 우주 지도 로딩 중",
     errorLoadingData: "데이터 로딩 오류",
