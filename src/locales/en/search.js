@@ -2,7 +2,8 @@ export default {
     // Search Tabs
     tabs: {
         organic: 'Organic Molecules',
-        inorganic: 'Inorganic Molecules'
+        inorganic: 'Inorganic Molecules',
+        third: 'Third Molecule Search'
     },
     
     // Search Input

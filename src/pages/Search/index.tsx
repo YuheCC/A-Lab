@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicSearch, InorganicSearch } from "./components";
+import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
 import "./Search.css";
 
 const Search = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'third'>('organic');
 
     return (
         <div>
@@ -24,6 +24,12 @@ const Search = () => {
                     >
                         {t('search.tabs.inorganic')}
                     </button>
+                    <button
+                        onClick={() => setActiveTab('third')}
+                        className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
+                    >
+                        {t('search.tabs.third')}
+                    </button>
                 </div>
             </div>
 
@@ -31,8 +37,10 @@ const Search = () => {
             <div className="tab-content">
                 {activeTab === 'organic' ? (
                     <OrganicSearch />
-                ) : (
+                ) : activeTab === 'inorganic' ? (
                     <InorganicSearch />
+                ) : (
+                    <ThirdSearch />
                 )}
             </div>
         </div>

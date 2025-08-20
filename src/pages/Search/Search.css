@@ -266,3 +266,31 @@
 .pricing-cta.strategic:hover {
     background-color: #e55a2b;
 }
+
+/* ThirdSearch Component Styles */
+.third-search-container {
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.third-search-content {
+    max-width: 600px;
+}
+
+.third-search-content h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.third-search-content p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}

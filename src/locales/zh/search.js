@@ -2,7 +2,8 @@ export default {
     // Search Tabs
     tabs: {
         organic: '有机分子',
-        inorganic: '无机分子'
+        inorganic: '无机分子',
+        third: '第三分子搜索'
     },
     
     // Search Input
