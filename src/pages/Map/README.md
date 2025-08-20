@@ -1,58 +1,110 @@
-# Map 页面
+# Map Page - Inorganic Molecules Implementation
 
 ## 概述
 
-Map页面现在支持两种分子类型的可视化：有机分子和无机分子。页面使用tab切换的方式在两种分子类型之间进行切换。
+无机分子页面已经实现了完整的UMAP数据集成和多语言支持，包括数据模型、接口调用和可视化展示。
 
-## 文件结构
+## 数据模型
 
+### 无机分子数据类型 (InorganicPlotDataNode)
+
+```typescript
+interface InorganicPlotDataNode {
+    id: string;
+    x: number;           // UMAP X坐标
+    y: number;           // UMAP Y坐标
+    smiles: string;      // 分子SMILES表示
+    properties: {
+        molwt: number;                    // 分子量
+        homo_eV: number;                  // HOMO能级
+        lumo_eV: number;                  // LUMO能级
+        esp_min_eV: number;               // ESP最小值
+        esp_max_eV: number;               // ESP最大值
+        functional_groups: string;        // 官能团
+        predicted_mp: number;             // 预测熔点
+        predicted_bp: number;             // 预测沸点
+        predicted_fp: number;             // 预测闪点
+        chemical_formula: string;         // 化学式
+        combustion_enthalpy: number;      // 燃烧焓
+        commercial_score: number;         // 商业化评分
+        commercial_link: string;          // 商业化链接
+        CLUSTER: string;                  // 聚类标签
+    };
+    rawData: any;                        // 原始数据
+}
 ```
-src/pages/Map/
-├── index.tsx              # 主页面，包含tab切换逻辑
-├── Map.css                # 页面样式文件
-├── README.md              # 本文档
-└── components/            # 组件目录
-    ├── index.ts           # 组件导出文件
-    ├── OrganicMolecules.tsx    # 有机分子组件
-    └── InorganicMolecules.tsx  # 无机分子组件
-```
 
-## 组件说明
+## 数据存储
 
-### OrganicMolecules 组件
-- 包含原有的Map页面所有功能
-- 显示有机分子的UMAP可视化
-- 包含完整的聚类描述和说明
+### 无机分子数据存储 (useInorganicPlotDataStore)
+
+- **状态管理**: 使用Zustand进行状态管理
+- **数据获取**: 直接从API接口获取数据，无预加载逻辑
+- **接口兼容**: 暂时使用有机分子接口，直到无机分子专用接口实现
+- **错误处理**: 完整的错误处理和加载状态管理
+
+## 组件结构
 
 ### InorganicMolecules 组件
-- 与有机分子组件保持相同的结构
-- 内容待补充
-- 为无机分子的可视化预留了接口
 
-## Tab切换功能
+- **UMAP可视化**: 集成UMAPClusterPlotDeck组件
+- **多语言支持**: 支持中文、英文、日语、韩语
+- **内容展示**: 包含研究动机、数据集生成、可视化方法、结果分析等完整内容
+- **聚类分析**: 展示6个无机分子聚类的详细描述
 
-- 默认显示有机分子tab
-- 支持在有机分子和无机分子之间切换
-- 使用状态管理控制当前激活的tab
-- 响应式设计，支持移动端
+## 数据流程
 
-## 国际化支持
+1. **组件挂载**: 组件挂载时自动调用fetchData()
+2. **API调用**: 调用snowflake-query接口获取数据
+3. **数据处理**: 将API返回的数据映射为InorganicPlotDataNode格式
+4. **状态更新**: 更新loading、error和data状态
+5. **可视化**: 将数据传递给UMAPClusterPlotDeck进行可视化
 
-- 支持中文和英文
-- tab标签和内容都支持多语言
-- 无机分子相关文本已添加到国际化文件中
+## 接口集成
 
-## 样式特点
+### 当前实现
+- 使用有机分子接口 `/snowflake-query` 作为临时方案
+- 数据格式完全兼容现有的UMAP可视化组件
 
-- 现代化的tab设计
-- 平滑的切换动画
-- 响应式布局
-- 与现有设计风格保持一致
+### 未来扩展
+- 实现专门的无机分子接口
+- 添加无机分子特有的属性和分析方法
+- 优化无机分子的聚类算法和可视化效果
 
-## 后续开发
+## 多语言支持
 
-无机分子组件目前包含基础结构，后续可以根据需要：
-1. 添加无机分子的具体数据
-2. 实现无机分子的聚类分析
-3. 添加无机分子特有的可视化功能
-4. 完善无机分子的描述和说明
+### 支持语言
+- 中文 (zh)
+- 英文 (en)
+- 日语 (ja)
+- 韩语 (ko)
+
+### 内容结构
+- 研究动机
+- 数据集生成
+- 可视化方法
+- 结果分析
+- 聚类描述
+
+## 技术特点
+
+- **响应式设计**: 适配不同屏幕尺寸
+- **性能优化**: 移除预加载逻辑，直接从接口获取数据
+- **类型安全**: 完整的TypeScript类型定义
+- **状态管理**: 使用Zustand进行高效的状态管理
+- **组件复用**: 复用现有的UMAP可视化组件
+
+## 使用说明
+
+1. 切换到无机分子标签页
+2. 系统自动从接口获取数据
+3. 数据加载完成后显示UMAP可视化图表
+4. 右侧显示详细的无机分子研究内容
+5. 支持多语言切换查看不同语言版本
+
+## 注意事项
+
+- 当前使用有机分子接口作为临时方案
+- 数据格式需要与有机分子保持一致
+- 未来需要实现专门的无机分子接口
+- 聚类分析基于现有的6个聚类结构

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { usePlotDataStore } from "@/models/usePlotData";
+import { useRef, useState, useEffect } from "react";
+import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import { useTranslation } from "react-i18next";
@@ -11,10 +11,17 @@ const InorganicMolecules = () => {
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
-    const { data, loading, error } = usePlotDataStore(); 
+    const { data, loading, error, fetchData } = useInorganicPlotDataStore(); 
 
     const [showMapFooter, setShowMapFooter] = useState(true);
     const [showTooltip, setShowTooltip] = useState(false);
+
+    // 组件挂载时获取数据
+    useEffect(() => {
+        if (data.length === 0) {
+            fetchData();
+        }
+    }, [data.length, fetchData]);
 
     // Generate cluster descriptions dynamically
     const renderClusterDescriptions = () => {
