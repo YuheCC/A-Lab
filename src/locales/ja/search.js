@@ -3,7 +3,7 @@ export default {
     tabs: {
         organic: '有機分子',
         inorganic: '無機分子',
-        third: '第三分子検索'
+        third: '固体電解質'
     },
     
     // Search Input

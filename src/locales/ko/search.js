@@ -3,7 +3,7 @@ export default {
     tabs: {
         organic: '유기 분자',
         inorganic: '무기 분자',
-        third: '제3 분자 검색'
+        third: '고체 전해질'
     },
     
     // Search Input

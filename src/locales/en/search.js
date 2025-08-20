@@ -3,7 +3,7 @@ export default {
     tabs: {
         organic: 'Organic Molecules',
         inorganic: 'Inorganic Molecules',
-        third: 'Third Molecule Search'
+        third: 'Solid-State Electrolyte'
     },
     
     // Search Input
