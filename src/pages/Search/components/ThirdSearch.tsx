@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import './third.css';
 import { authFetch } from '@/utils';
@@ -9,13 +9,15 @@ interface SearchResult {
 }
 
 const ThirdSearch: React.FC = () => {
-    const [molecularFormula, setMolecularFormula] = useState<string>('CoNi');
+    const [molecularFormula, setMolecularFormula] = useState<string>('');
     const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('formula');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(20);
+    const ref = useRef<HTMLDivElement>(null);
+    const [inputShow, setInputShow] = useState<boolean>(false);
 
     const handleFormulaChange = (value: string) => {
         setMolecularFormula(value);
@@ -83,7 +85,8 @@ const ThirdSearch: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
-        borderBottom: '1px solid #ddd'
+        borderBottom: '1px solid #ddd',
+        justifyContent: 'center'
     };
 
     const materialsButtonStyle: React.CSSProperties = {
@@ -221,6 +224,23 @@ const ThirdSearch: React.FC = () => {
         }
     };
 
+    // 触发对应索引的li元素点击事件的函数
+    const triggerLiClick = (index: number) => {
+        setTimeout(() => {
+            const modeSwitcher = ref.current?.querySelector('.mpc-pt-mode-switcher');
+            if (modeSwitcher) {
+                const ul = modeSwitcher.querySelector('ul');
+                if (ul) {
+                    const liElements = ul.querySelectorAll('li');
+                    console.log('liElements', liElements);
+                    if (liElements[index]) {
+                        (liElements[index] as HTMLElement)?.querySelector('a')?.click();
+                    }
+                }
+            }
+        }, 100);
+    };
+
     // 搜索结果表格样式
     const resultsContainerStyle: React.CSSProperties = {
         width: '100%',
@@ -341,7 +361,7 @@ const ThirdSearch: React.FC = () => {
                         style={customInputStyle}
                         value={molecularFormula}
                         onChange={handleInputChange}
-                        placeholder="CoNi"
+                        placeholder=""
                     />
                     
                     <button style={iconButtonStyle} title="Periodic Table">
@@ -374,26 +394,35 @@ const ThirdSearch: React.FC = () => {
                     <div style={tabContainerStyle}>
                         <button 
                             style={activeTab === 'elements' ? activeTabStyle : tabStyle}
-                            onClick={() => setActiveTab('elements')}
+                            onClick={() => {
+                                setActiveTab('elements');
+                                triggerLiClick(0);
+                            }}
                         >
                             Only Elements
                         </button>
                         <button 
                             style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
-                            onClick={() => setActiveTab('atLeastElements')}
+                            onClick={() => {
+                                setActiveTab('atLeastElements');
+                                triggerLiClick(1);
+                            }}
                         >
                             At Least Elements
                         </button>
                         <button 
                             style={activeTab === 'formula' ? activeTabStyle : tabStyle}
-                            onClick={() => setActiveTab('formula')}
+                            onClick={() => {
+                                setActiveTab('formula');
+                                triggerLiClick(2);
+                            }}
                         >
                             Formula
                         </button>
                     </div>
 
                     {/* MaterialsInput组件 - 通过CSS隐藏输入框，只显示周期表 */}
-                    <div style={materialsInputContainerStyle} className="materials-input-container">
+                    <div ref={ref} style={materialsInputContainerStyle} className="materials-input-container">
                         <MaterialsInput
                             value={molecularFormula}
                             onChange={handleFormulaChange}
