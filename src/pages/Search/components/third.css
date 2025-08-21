@@ -1,0 +1,11 @@
+.third-search-container-new .table-transition-wrapper-small {
+    max-height: 10000px;
+}
+
+.third-search-container-new .mpc-pt-mode-switcher .dropdown-container {
+    display: none;
+}
+
+.third-search-container-new .mpc-materials-input .field {
+    display: none;
+}
