@@ -217,10 +217,7 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/search-inorganic`;
-            if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/search-inorganic-35`;
-            }
+            let searchEndpoint = `${API_URL}/api/llm/search-inorganic/`;
 
             // Fetch the searched inorganic molecule's properties 
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
@@ -249,6 +246,7 @@ const InorganicSearch = () => {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
                     const payload = {
+                        is_inorganic: true,
                         smiles: formattedMolecule.smiles.trim(),
                         use_35m: isHighTier,
                         molecule_type: 'inorganic',
@@ -256,7 +254,7 @@ const InorganicSearch = () => {
                     };
 
                     try {
-                        const response = await authFetch(`${API_URL}/find-friend-inorganic`, {
+                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)

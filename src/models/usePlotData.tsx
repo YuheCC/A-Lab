@@ -251,7 +251,7 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set, ge
         try {
             set({ loading: true });
             // 暂时使用有机分子的接口，直到无机分子接口实现
-            const response = await authFetch(`${API_URL}/snowflake-query`);
+            const response = await authFetch(`${API_URL}/snowflake-query?is_inorganic=true`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch inorganic data: ${response.statusText}` });

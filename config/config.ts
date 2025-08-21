@@ -11,7 +11,7 @@ export default defineConfig({
     '@': path.resolve(__dirname, '../src'),
   },
   define: {
-    'BASE_URL': "https://prod-api.ses.ai",
+    'BASE_URL': "http://ec2-52-55-11-145.compute-1.amazonaws.com",
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },
