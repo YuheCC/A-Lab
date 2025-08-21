@@ -6,7 +6,7 @@ export default defineConfig({
     '@': path.resolve(__dirname, '../src'),
   },
   define: {
-    'BASE_URL': "http://ec2-52-55-11-145.compute-1.amazonaws.com",
+    'BASE_URL': "https://dev-sh.ses.ai",
     'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
     'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
   },
