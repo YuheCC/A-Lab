@@ -10,7 +10,7 @@ interface SearchResult {
 
 const ThirdSearch: React.FC = () => {
     const [molecularFormula, setMolecularFormula] = useState<string>('');
-    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('formula');
+    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('atLeastElements');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -23,6 +23,12 @@ const ThirdSearch: React.FC = () => {
         setMolecularFormula(value);
     };
 
+    const matchModelEnums = {
+        "elements": "exact",
+        "atLeastElements": "any",
+        "formula": "formula"
+    }
+
     const handleSearch = async () => {
         if (molecularFormula.trim()) {
             setIsLoading(true);
@@ -31,7 +37,7 @@ const ThirdSearch: React.FC = () => {
             setCurrentPage(1); // 重置到第一页
             
             try {
-                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula)}`);
+                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_model=${matchModelEnums[activeTab]}`);
                 
                 if (!response.ok) {
                     throw new Error(`搜索请求失败: ${response.status}`);
