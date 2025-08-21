@@ -17,7 +17,7 @@ const ThirdSearch: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(20);
     const ref = useRef<HTMLDivElement>(null);
-    const [inputShow, setInputShow] = useState<boolean>(false);
+    const [inputShow, setInputShow] = useState<boolean>(true);
 
     const handleFormulaChange = (value: string) => {
         setMolecularFormula(value);
@@ -364,7 +364,7 @@ const ThirdSearch: React.FC = () => {
                         placeholder=""
                     />
                     
-                    <button style={iconButtonStyle} title="Periodic Table">
+                    <button style={iconButtonStyle} title="Periodic Table" onClick={() => setInputShow(!inputShow)}>
                         <div style={{ 
                             width: '16px', 
                             height: '12px', 
@@ -391,49 +391,55 @@ const ThirdSearch: React.FC = () => {
                 {/* 主要内容 */}
                 <div style={mainContentStyle}>
                     {/* 标签页 */}
-                    <div style={tabContainerStyle}>
-                        <button 
-                            style={activeTab === 'elements' ? activeTabStyle : tabStyle}
-                            onClick={() => {
-                                setActiveTab('elements');
-                                triggerLiClick(0);
-                            }}
-                        >
-                            Only Elements
-                        </button>
-                        <button 
-                            style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
-                            onClick={() => {
-                                setActiveTab('atLeastElements');
-                                triggerLiClick(1);
-                            }}
-                        >
-                            At Least Elements
-                        </button>
-                        <button 
-                            style={activeTab === 'formula' ? activeTabStyle : tabStyle}
-                            onClick={() => {
-                                setActiveTab('formula');
-                                triggerLiClick(2);
-                            }}
-                        >
-                            Formula
-                        </button>
-                    </div>
+                    {
+                        inputShow && (
+                            <>
+                                <div style={tabContainerStyle}>
+                                    <button 
+                                        style={activeTab === 'elements' ? activeTabStyle : tabStyle}
+                                        onClick={() => {
+                                            setActiveTab('elements');
+                                            triggerLiClick(0);
+                                        }}
+                                    >
+                                        Only Elements
+                                    </button>
+                                    <button 
+                                        style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
+                                        onClick={() => {
+                                            setActiveTab('atLeastElements');
+                                            triggerLiClick(1);
+                                        }}
+                                    >
+                                        At Least Elements
+                                    </button>
+                                    <button 
+                                        style={activeTab === 'formula' ? activeTabStyle : tabStyle}
+                                        onClick={() => {
+                                            setActiveTab('formula');
+                                            triggerLiClick(2);
+                                        }}
+                                    >
+                                        Formula
+                                    </button>
+                                </div>
 
-                    {/* MaterialsInput组件 - 通过CSS隐藏输入框，只显示周期表 */}
-                    <div ref={ref} style={materialsInputContainerStyle} className="materials-input-container">
-                        <MaterialsInput
-                            value={molecularFormula}
-                            onChange={handleFormulaChange}
-                            placeholder=""
-                            label=""
-                            allowedInputTypes={['formula', 'elements', 'chemical_system']}
-                            periodicTableMode="toggle"
-                            showTypeDropdown={false}
-                            showSubmitButton={false}
-                        />
-                    </div>
+                                {/* MaterialsInput组件 - 通过CSS隐藏输入框，只显示周期表 */}
+                                <div ref={ref} style={materialsInputContainerStyle} className="materials-input-container">
+                                    <MaterialsInput
+                                        value={molecularFormula}
+                                        onChange={handleFormulaChange}
+                                        placeholder=""
+                                        label=""
+                                        allowedInputTypes={['formula', 'elements', 'chemical_system']}
+                                        periodicTableMode="toggle"
+                                        showTypeDropdown={false}
+                                        showSubmitButton={false}
+                                    />
+                                </div>
+                            </>
+                        )
+                    }   
 
                     {/* 搜索结果展示区域 */}
                     <div style={resultsContainerStyle}>
