@@ -16,6 +16,10 @@ const ChatWelcome: React.FC = () => {
     const userPermissions = useAuthStore(state => state.userPermissions);
     const [inputValue, setInputValue] = useState<string>('');
     const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
+    const [disableLiterature, setDisableLiterature] = useState(false);
+    const [fullDeepSpace, setFullDeepSpace] = useState(false);
+    const [enablePatentRag, setEnablePatentRag] = useState(false);
+    const [disableTools, setDisableTools] = useState(false);
     
     // 从多语言配置获取推荐问题
     const recommendedQuestions = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
@@ -259,7 +263,47 @@ const ChatWelcome: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                
+
+                {/* Shared checkboxes & admin controls (mirrors Ask view) */}
+                <div className="checkbox-group">
+                  {userPermissions === 'admin' && (
+                    <div className="admin-controls">
+                      <div className="admin-controls-label">Admin Controls</div>
+                      <label className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={disableLiterature}
+                          onChange={(e) => setDisableLiterature(e.target.checked)}
+                        />
+                        Disable literature search
+                      </label>
+                      <label className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={enablePatentRag}
+                          onChange={(e) => setEnablePatentRag(e.target.checked)}
+                        />
+                        Enable Patent RAG
+                      </label>
+                      <label className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={disableTools}
+                          onChange={(e) => setDisableTools(e.target.checked)}
+                        />
+                        Disable tools
+                      </label>
+                      <label className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={fullDeepSpace}
+                          onChange={(e) => setFullDeepSpace(e.target.checked)}
+                        />
+                        Full Deep Space
+                      </label>
+                    </div>
+                  )}
+                </div>
                 {/* 推荐问题区域 */}
                 <div className="recommended-questions">
                     {currentQuestions.map((question, index) => {

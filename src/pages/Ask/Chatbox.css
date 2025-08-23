@@ -319,25 +319,42 @@
     margin-left: 10px;
   }
   
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px 0px 20px;
-    width: calc(100% - 40px);
-    box-sizing: border-box;
-  }
+ .checkbox-group {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px 0 20px;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  gap: 10px;                 /* ensure spacing between items */
+  flex-wrap: wrap;           /* allow wrapping instead of clipping */
+  overflow: visible;         /* don't clip overflowing children */
+}
   
-  .admin-controls {
-    display: flex;
-    flex-flow:column;
-    background-color: #ebebeb;
-    border-radius: 4px;
-    padding: 4px 10px;
-  }
+ .admin-controls {
+  display: flex;
+  flex-wrap: wrap;           /* allow multiple rows */
+  align-items: center;
+  gap: 8px;                  /* spacing between checkboxes */
+  background-color: #ebebeb;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 100%;
+}
   .admin-controls-label {
     font-size:10px;
     font-weight: bold;
     color: #727272;
+  }
+
+  .checkbox-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;       /* keep label text with its checkbox */
+  }
+
+  .admin-controls .checkbox-item {
+    margin-right: 4px;
   }
   
   /* Thumbs Feedback */
