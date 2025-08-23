@@ -44,9 +44,22 @@ const ChatWelcome: React.FC = () => {
 
     // 处理发送消息
     const handleSendMessageLocal = useCallback(() => {
-        handleSendMessage(inputValue.trim(), (currentMode === "deep-space" ? "clarify" : currentMode) as ChatMode);
+        const extraPayload: Record<string, any> = {
+            ragEnabled: !disableLiterature,
+            patentRagEnabled: enablePatentRag,
+            toolsEnabled: !disableTools,
+        };
+        if (currentMode === 'deep-space') {
+            extraPayload.dump_state = !!fullDeepSpace;
+        }
+        handleSendMessage(
+            inputValue.trim(),
+            (currentMode === "deep-space" ? "clarify" : currentMode) as ChatMode,
+            undefined,
+            extraPayload
+        );
         setInputValue('');
-    }, [inputValue, currentMode, handleSendMessage]);
+    }, [inputValue, currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace, handleSendMessage]);
 
     // 处理键盘事件
     const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -149,9 +162,17 @@ const ChatWelcome: React.FC = () => {
     // 处理推荐问题点击
     const handleQuestionClick = useCallback((question: string) => {
         if (question && question.trim()) {
-            handleSendMessage(question, currentMode);
+            const extraPayload: Record<string, any> = {
+                ragEnabled: !disableLiterature,
+                patentRagEnabled: enablePatentRag,
+                toolsEnabled: !disableTools,
+            };
+            if (currentMode === 'deep-space') {
+                extraPayload.dump_state = !!fullDeepSpace;
+            }
+            handleSendMessage(question, currentMode, undefined, extraPayload);
         }
-    }, [currentMode, handleSendMessage]);
+    }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace, handleSendMessage]);
 
     // 处理刷新推荐问题
     const handleRefreshQuestions = useCallback(() => {

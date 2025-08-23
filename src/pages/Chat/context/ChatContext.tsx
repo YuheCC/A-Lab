@@ -477,6 +477,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ragEnabled: extra.ragEnabled,
             disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
             fullDeepSpace: extra.dump_state,
+            toolsEnabled: extra.toolsEnabled,
+            patentRagEnabled: extra.patentRagEnabled,
             numRagResults: ragResultsCount
         } : { numRagResults: ragResultsCount };
         
