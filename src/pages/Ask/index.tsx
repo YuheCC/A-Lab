@@ -105,7 +105,7 @@ const MessageContentRenderer = ({ content, onMoleculeClick }: { content: string;
 
 // Dropdown section for displaying supplemental information
 const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; content: string; onMoleculeClick?: (mol: any) => void }) => {
-        const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
 	return (
 		<div className="extra-data-section">
@@ -124,29 +124,29 @@ const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; 
 
 // Top-level section that groups all supplemental data
 const SupplementalData = ({ data, onMoleculeClick }: { data: Record<string, any>; onMoleculeClick?: (mol: any) => void }) => {
-        const [open, setOpen] = useState(false);
-        const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
-        return (
-                <div className="extra-data-section">
-                        <div className="extra-data-header" onClick={() => setOpen(!open)}>
-                                {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                                <span>{t('chatbox.supplementalData')}</span>
-                        </div>
-                        {open && (
-                                <div className="extra-data-wrapper">
-                                        {Object.entries(data).map(([key, value]) => (
-                                                <ExtraDataSection
-                                                        key={key}
-                                                        title={key}
-                                                        content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                                                        onMoleculeClick={onMoleculeClick}
-                                                />
-                                        ))}
-                                </div>
-                        )}
-                </div>
-        );
+  return (
+    <div className="extra-data-section">
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{t('chatbox.supplementalData')}</span>
+      </div>
+      {open && (
+        <div className="extra-data-wrapper">
+          {Object.entries(data).map(([key, value]) => (
+            <ExtraDataSection
+                    key={key}
+                    title={key}
+                    content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                    onMoleculeClick={onMoleculeClick}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // New ChatInput component added for memoized chat input rendering
