@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Message } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { globalWebSocketManager } from '@/services/chat/wsService';
@@ -25,6 +26,7 @@ export const useChat = () => {
   });
 
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const { t } = useTranslation();
 
   const setSocketId = useCallback((socketId: string | undefined) => {
     setState(prev => ({ ...prev, socketId }));
@@ -252,7 +254,7 @@ export const useChat = () => {
         if (!retrySuccess) {
           console.error('sendMessage: 重连后仍然发送失败');
           setIsLoading(false);
-          addBotMessage('抱歉，网络连接出现问题，请检查网络后重试。', false);
+          addBotMessage(t('chatbox.errors.networkIssueCheck'), false);
         }
       }, 2000);
       
@@ -270,7 +272,7 @@ export const useChat = () => {
     if (!success) {
       console.error('sendMessage: WebSocket未连接，消息发送失败');
       setIsLoading(false);
-      addBotMessage('抱歉，网络连接出现问题，请稍后重试。', false);
+      addBotMessage(t('chatbox.errors.networkIssueRetry'), false);
     }
 
     return success;
