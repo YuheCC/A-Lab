@@ -151,6 +151,7 @@ export default {
         copyError: "복사 실패:",
         generalError: "오류"
     },
+    supplementalData: "보충 데이터",
     history: {
         title: "채팅 목록",
         createNewChat: "새 채팅 만들기",

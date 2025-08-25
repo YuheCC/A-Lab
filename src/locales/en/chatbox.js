@@ -153,6 +153,7 @@ export default {
         copyError: "Failed to copy:",
         generalError: "Error"
     },
+    supplementalData: "Supplemental Data",
     history: {
         title: "Your Chats",
         createNewChat: "Create New Chat",
