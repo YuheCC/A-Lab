@@ -3,38 +3,52 @@
     display: flex;
     justify-content: flex-start;
     margin: 0;
-    padding: 10px 20px;
-    background-color: #fff;
+    padding: 0;
+    background-color: #f5f5f5; /* 浅灰色背景，类似浏览器标签栏 */
     border-bottom: 1px solid #e0e0e0;
+    position: relative;
 }
 
 .search-tabs-wrapper {
     display: flex;
-    gap: 18px;
+    gap: 0; /* 移除间隙，让标签重叠 */
     position: relative;
 }
 
 .search-tab-button {
-    padding: 1px 0;
+    padding: 8px 16px 12px 16px;
     border: none;
-    background: none;
-    font-size: 12px;
-    font-weight: 600;
+    background: #ffffff; /* 白色背景 */
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    color: #999;
+    transition: all 0.2s ease;
+    color: #666666; /* 深灰色文字 */
     position: relative;
-    min-width: 45px;
+    min-width: 80px;
     text-align: center;
     outline: none;
-}
-
-.search-tab-button.active {
-    color: #0066cc;
+    border-radius: 8px 8px 0 0; /* 顶部圆角 */
+    margin-right: -2px; /* 创建重叠效果 */
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+    z-index: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
 }
 
 .search-tab-button:hover:not(.active) {
-    color: #666;
+    background: #fafafa;
+    color: #333333;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.search-tab-button.active {
+    background: #ffffff; /* 白色背景 */
+    color: #333333; /* 深灰色文字，与普通状态区分 */
+    z-index: 3;
+    border-color: #e0e0e0; /* 保持普通边框颜色 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* 轻微阴影效果 */
 }
 
 .search-tab-button:focus {
@@ -45,26 +59,17 @@
     transform: translateY(1px);
 }
 
-/* 平滑的下划线动画 */
+/* 移除原有的下划线动画 */
 .search-tab-button::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: #0066cc;
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-}
-
-.search-tab-button.active::after {
-    width: 100%;
+    display: none;
 }
 
 /* Tab内容区域过渡效果 */
 .tab-content {
     transition: opacity 0.3s ease;
+    min-height: 400px;
+    border: 1px solid #e0e0e0;
+    border-top: none;
 }
 
 .tab-content.fade-enter {
@@ -86,9 +91,9 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
     .search-tab-button {
-        padding: 0;
-        font-size: 11px;
-        min-width: 40px;
+        padding: 6px 12px 10px 12px;
+        font-size: 12px;
+        min-width: 60px;
     }
     
     .search-tabs-container {
@@ -96,18 +101,19 @@
     }
     
     .search-tabs-wrapper {
-        gap: 12px;
+        gap: 0;
     }
 }
 
 @media (max-width: 480px) {
     .search-tabs-wrapper {
-        gap: 10px;
+        gap: 0;
     }
     
     .search-tab-button {
-        min-width: 35px;
-        font-size: 10px;
+        min-width: 50px;
+        font-size: 11px;
+        padding: 5px 8px 8px 8px;
     }
 }
 
