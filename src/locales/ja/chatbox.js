@@ -141,6 +141,10 @@ export default {
     },
     errors: {
         networkError: "ネットワーク応答が正常ではありませんでした",
+        connectionTimeout: "接続がタイムアウトしました。ネットワーク状態を確認するか、しばらくしてから再試行してください。",
+        serverConnectionFailed: "サーバーに接続できません。ネットワーク接続を確認してください。",
+        networkIssueCheck: "申し訳ありませんが、ネットワーク接続に問題が発生しました。ネットワークを確認して再試行してください。",
+        networkIssueRetry: "申し訳ありませんが、ネットワーク接続に問題が発生しました。しばらくしてからもう一度お試しください。",
         batteryRelevance: "あなたの質問はバッテリーやバッテリー化学に関連していません。バッテリー関連の質問をしてください。",
         moleculeDetailsError: "分子詳細の取得エラー：",
         similarMoleculesError: "類似分子の検索エラー：",
