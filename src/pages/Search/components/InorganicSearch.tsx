@@ -386,7 +386,7 @@ const InorganicSearch = () => {
                                             <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
                                         </Tooltip>
                                     </div>
-                                    <select
+                                    {/* <select
                                         value={selectedMolType}
                                         onChange={e => setSelectedMolType(e.target.value)}
                                         style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
@@ -395,7 +395,7 @@ const InorganicSearch = () => {
                                         <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
                                         <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
                                         <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select>
+                                    </select> */}
                                 </div>
                                 <div style={{
                                     color: '#555',
