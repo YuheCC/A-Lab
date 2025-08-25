@@ -151,6 +151,7 @@ export default {
         copyError: "コピーに失敗しました：",
         generalError: "エラー"
     },
+    supplementalData: "補足データ",
     history: {
         title: "あなたのチャット",
         createNewChat: "新しいチャットを作成",

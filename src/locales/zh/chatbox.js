@@ -153,6 +153,7 @@ export default {
         copyError: "复制失败：",
         generalError: "错误"
     },
+    supplementalData: "补充数据",
     history: {
         title: "您的聊天",
         createNewChat: "创建新聊天",
