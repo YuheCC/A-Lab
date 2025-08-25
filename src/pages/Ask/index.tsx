@@ -22,9 +22,25 @@ import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/inde
 
 const API_URL = getAPIUrl();
 
+// Normalize various server payload shapes into a renderable "extra outputs" object
+const getRenderableExtraOutputs = (msg: any) => {
+  const unwrap = (obj: any) => {
+    if (!obj || typeof obj !== 'object') return null;
+    // Some payloads wrap an inner "extra_data"
+    const inner = (obj.extra_data ?? obj.extraData ?? obj);
+    return inner;
+  };
+  const root = unwrap(msg?.extraData) ?? unwrap(msg?.extra_data);
+  if (!root) return null;
+  const extra = (root.extra_outputs ?? root.extraOutputs ?? null);
+  if (extra && typeof extra === 'object' && !Array.isArray(extra)) return extra;
+  if (extra != null) return { extra_outputs: extra };
+  return null;
+};
+
 // Helper function to check if content contains inline molecules
 const hasInlineMolecules = (content: string): boolean => {
-  return /<inline_molecule>\{.*?\}<\/inline_molecule>/g.test(content);
+  return /<inline_molecule>\{[\s\S]*?\}<\/inline_molecule>/g.test(content);
 };
 
 // Custom message content renderer that handles both markdown and inline molecules
@@ -1294,15 +1310,18 @@ const handleFindSimilarMolecules = async (details: any) => {
             )} 
           <div className="chat-messages">
             {messages.map((msg, index) => {
-              const normalizedExtraData = (msg.extraData && typeof msg.extraData === 'object')
-                ? (msg.extraData.extra_data ?? msg.extraData)
-                : null;
-
-              // Extract only the extra_outputs subfield and normalize it for rendering
-              const extraOutputs = normalizedExtraData?.extra_outputs;
-                            const renderableExtraOutputs = (extraOutputs && typeof extraOutputs === 'object' && !Array.isArray(extraOutputs))
-                ? extraOutputs
-                : (extraOutputs != null ? { extra_outputs: extraOutputs } : null);
+              const normalizedExtraData = (() => {
+                const fromExtraData = (msg.extraData && typeof msg.extraData === 'object')
+                  ? (msg.extraData.extra_data ?? msg.extraData)
+                  : null;
+                const fromExtra_data = (!fromExtraData && msg.extra_data && typeof msg.extra_data === 'object')
+                  ? (msg.extra_data.extra_data ?? msg.extra_data)
+                  : null;
+                return fromExtraData ?? fromExtra_data ?? null;
+              })();
+              // Extract only the extra_outputs subfield and normalize it for rendering.
+              // Accept both snake_case and camelCase keys, and both historic and new payload shapes.
+              const renderableExtraOutputs = getRenderableExtraOutputs(msg);
  
               const errorRaw = normalizedExtraData?.error;
               const errorReason = (normalizedExtraData?.reason || normalizedExtraData?.message || '').toString();
