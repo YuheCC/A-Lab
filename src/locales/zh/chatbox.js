@@ -143,6 +143,10 @@ export default {
     },
     errors: {
         networkError: "网络响应异常",
+        connectionTimeout: "连接超时，请检查网络状况或稍后重试。",
+        serverConnectionFailed: "无法连接到服务器，请检查网络连接。",
+        networkIssueCheck: "抱歉，网络连接出现问题，请检查网络后重试。",
+        networkIssueRetry: "抱歉，网络连接出现问题，请稍后重试。",
         batteryRelevance: "您的问题与电池或电池化学不相关。请询问与电池相关的问题。",
         moleculeDetailsError: "获取分子详情时出错：",
         similarMoleculesError: "查找相似分子时出错：",

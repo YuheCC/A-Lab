@@ -141,6 +141,10 @@ export default {
     },
     errors: {
         networkError: "네트워크 응답이 정상적이지 않습니다",
+        connectionTimeout: "연결 시간이 초과되었습니다. 네트워크 상태를 확인하거나 나중에 다시 시도하세요.",
+        serverConnectionFailed: "서버에 연결할 수 없습니다. 네트워크 연결을 확인하세요.",
+        networkIssueCheck: "죄송합니다. 네트워크 연결에 문제가 발생했습니다. 네트워크를 확인하고 다시 시도하세요.",
+        networkIssueRetry: "죄송합니다. 네트워크 연결에 문제가 발생했습니다. 잠시 후 다시 시도하세요.",
         batteryRelevance: "귀하의 질문은 배터리나 배터리 화학과 관련이 없습니다. 배터리 관련 질문을 해주세요.",
         moleculeDetailsError: "분자 세부정보 가져오기 오류:",
         similarMoleculesError: "유사한 분자 찾기 오류:",

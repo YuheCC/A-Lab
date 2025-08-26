@@ -143,6 +143,10 @@ export default {
     },
     errors: {
         networkError: "Network response was not ok",
+        connectionTimeout: "Connection timed out. Please check your network status or try again later.",
+        serverConnectionFailed: "Unable to connect to server. Please check your network connection.",
+        networkIssueCheck: "Sorry, there was a network connection issue. Please check your network and try again.",
+        networkIssueRetry: "Sorry, there was a network connection issue. Please try again later.",
         batteryRelevance: "Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.",
         moleculeDetailsError: "Error fetching molecule details:",
         similarMoleculesError: "Error finding similar molecules:",
