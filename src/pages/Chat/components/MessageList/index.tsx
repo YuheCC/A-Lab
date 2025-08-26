@@ -33,6 +33,36 @@ const MessageContentRenderer: React.FC<{ content: string; onMoleculeClick?: (mol
   }
 };
 
+const SupplementalData: React.FC<{ 
+  data: Record<string, any>; 
+  onMoleculeClick?: (moleculeName: string) => void;
+}> = ({ data, onMoleculeClick }) => {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={`extra-data-section ${open ? 'open' : ''}`}>
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{t('chatbox.supplementalData') || 'Supplemental Data'}</span>
+      </div>
+
+      {open && (
+        <div className="extra-data-wrapper">
+          {Object.entries(data).map(([key, value]) => (
+            <ExtraDataSection
+              key={key}
+              title={key}
+              content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+              onMoleculeClick={onMoleculeClick}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ExtraData展开/折叠组件，用于显示补充信息
 const ExtraDataSection: React.FC<{ 
   title: string; 
@@ -42,7 +72,7 @@ const ExtraDataSection: React.FC<{
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="extra-data-section">
+    <div className="extra-data-subsection">
       <div className="extra-data-header" onClick={() => setOpen(!open)}>
         {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         <span>{title}</span>
@@ -410,16 +440,10 @@ const MessageList: FC<MessageListProps> = ({
               <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
               {/* 渲染extraData - 仅助手消息显示 */}
               {isAssistantMessage(message) && message.extraData && Object.keys(message.extraData).length > 0 && (
-                <div className="extra-data-wrapper">
-                  {Object.entries(message.extraData).map(([key, value]) => (
-                    <ExtraDataSection
-                      key={key}
-                      title={key}
-                      content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                      onMoleculeClick={forwardMoleculeClick}
-                    />
-                  ))}
-                </div>
+                <SupplementalData
+                  data={message.extraData as Record<string, any>}
+                  onMoleculeClick={forwardMoleculeClick}
+                />
               )}
             </div>
           )}

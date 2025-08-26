@@ -106,6 +106,34 @@ const MessageContentRenderer = ({ content, onMoleculeClick }: { content: string;
 // Context to ensure ExtraDataSection only renders inside an open SupplementalData
 const SupplementalDataCtx = React.createContext<{ open: boolean } | null>(null);
 
+const SupplementalData: React.FC<{ 
+  data: Record<string, any>; 
+  onMoleculeClick?: (moleculeName: string) => void;
+}> = ({ data, onMoleculeClick }) => {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`extra-data-section ${open ? 'open' : ''}`}>
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{t('chatbox.supplementalData') || 'Supplemental Data'}</span>
+      </div>
+      {open && (
+        <div className="extra-data-wrapper">
+          {Object.entries(data).map(([key, value]) => (
+            <ExtraDataSection
+              key={key}
+              title={key}
+              content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+              onMoleculeClick={onMoleculeClick}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Dropdown section for displaying supplemental information
 const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; content: string; onMoleculeClick?: (mol: any) => void }) => {
   const ctx = useContext(SupplementalDataCtx);
@@ -125,35 +153,6 @@ const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; 
         </div>
       )}
     </div>
-  );
-};
-
-// Top-level section that groups all supplemental data
-const SupplementalData = ({ data, onMoleculeClick }: { data: Record<string, any>; onMoleculeClick?: (mol: any) => void }) => {
-  const [open, setOpen] = useState(false);
-  const { t } = useTranslation();
-
-  return (
-    <SupplementalDataCtx.Provider value={{ open }}>
-      <div className={`extra-data-section ${open ? 'open' : ''}`}>
-        <div className="extra-data-header" onClick={() => setOpen(!open)}>
-          {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          <span>{t('chatbox.supplementalData')}</span>
-        </div>
-        {open && (
-          <div className="extra-data-wrapper">
-            {Object.entries(data).map(([key, value]) => (
-              <ExtraDataSection
-                key={key}
-                title={key}
-                content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                onMoleculeClick={onMoleculeClick}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </SupplementalDataCtx.Provider>
   );
 };
 
