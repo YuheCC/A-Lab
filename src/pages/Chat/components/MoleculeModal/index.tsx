@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -43,6 +43,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
+    const [structureWeight, setStructureWeight] = useState(0.5);
+    const defaultCompute = useMemo(() => (
+        ['research', 'explorer', 'team'].includes(userPermissions || '') ? 'Low' : 'High'
+    ), [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState(defaultCompute);
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
+    const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
     const handleClose = () => {
         onClose?.();
@@ -198,6 +207,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-properties">
                     <div className="molecule-card-property-item">
+                        <span className="molecule-card-property-label">{t('chatbox.llmGrade')}:</span>
+                        <span className="molecule-card-property-value">
+                            {raw?.grade ?? raw?.GRADE ?? '-'}{raw?.grade != null || raw?.GRADE != null ? '/10' : ''}
+                            {(raw?.reasoning || raw?.REASONING) && (
+                                <Info size={14} style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={() => alert(raw?.reasoning || raw?.REASONING)} />
+                            )}
+                        </span>
+                    </div>
+                    <div className="molecule-card-property-item">
                         <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                         <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
                     </div>
@@ -275,8 +293,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 
                 {isOriginal && (
                     <div className="molecule-card-actions">
-                        <select 
-                            className="molecule-type-select" 
+                        <select
+                            className="molecule-type-select"
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
@@ -285,7 +303,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
-                        <button 
+                        <button
                             className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
                             onClick={() => handleFindSimilar(name)}
                             disabled={isSimilarLoading}
@@ -299,6 +317,43 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             )}
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
+                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                            <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                            {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                        </div>
+                        {showAdvancedOptions && (
+                            <div style={{ width: '100%', marginTop: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
+                                    <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={1}
+                                        step={0.01}
+                                        value={structureWeight}
+                                        onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+                                        style={{ margin: '0 4px' }}
+                                    />
+                                    <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
+                                    <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+                                </div>
+                                <div className='checkbox-item'>
+                                    <label>{t('search.intelligentCompute')}:</label>
+                                    <select
+                                        value={computeLevel}
+                                        onChange={e => setComputeLevel(e.target.value)}
+                                        style={{ marginLeft: '8px' }}
+                                    >
+                                        <option value="Disabled">{t('search.computeDisabled')}</option>
+                                        <option value="Low">{t('search.computeLow')}</option>
+                                        <option value="Medium" disabled={userPermissions === 'research'} title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}>{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
+                                        <option value="High" disabled={["research", "explorer", "team"].includes(userPermissions || '')} title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}>{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
+                                        {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -372,10 +427,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<{ list: SimilarMolecule[]; raws: any[] }> => {
         const payload: any = {
             smiles,
-            use_35m: isHighTier
+            use_35m: isHighTier,
+            structure_weight: structureWeight
         };
         if (molType && molType !== 'all') {
             payload.mol_type = molType;
+        }
+        if (computeLevel !== 'Disabled') {
+            payload.llm_compute_power = computeLevel.toLowerCase();
         }
         if (isHighTier && rawOriginal) {
             // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑

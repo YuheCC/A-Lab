@@ -399,8 +399,7 @@ const ChatbotInterface = () => {
   }, [foundMolecules])
   const userPermissions = useAuthStore(state => state.userPermissions);
   const getDefaultCompute = useCallback(() => {
-    if (userPermissions === 'research') return 'Low';
-    if (userPermissions === 'explorer' || userPermissions === 'team') return 'Medium';
+    if (['research', 'explorer', 'team'].includes(userPermissions || '')) return 'Low';
     return 'High';
   }, [userPermissions]);
   const [computeLevel, setComputeLevel] = useState(getDefaultCompute());
@@ -1532,6 +1531,11 @@ const handleFindSimilarMolecules = async (details: any) => {
                 large={true}
                 style={{ margin: 5 }}
                 propGroups={[
+                  { label: t('chatbox.llmGrade'), value: details.grade, span: 2, suffix: '/10', action: (details.reasoning ? (
+                    <IconButton onClick={() => setReasoningText(details.reasoning)} size="small">
+                      <Info size={18} style={{ margin: 2 }} />
+                    </IconButton>
+                  ) : null), show: details.grade !== null && details.grade !== undefined },
                   { label: 'SMILES', value: details.SMILES, span: 2, wrap: true },
                   { label: 'Molecular Weight', value: details.molecular_weight, span: 2, suffix: ' g/mol' },
                   { label: 'Predicted Melting Point', value: details.predicted_MP_celsius, span: 2, suffix: ' °C',
@@ -1570,33 +1574,29 @@ const handleFindSimilarMolecules = async (details: any) => {
                       errorMessage={moleculeFavoriteStatus[details.SMILES]?.error}>
                       {t('chatbox.buttons.addToFavorites')}
                     </CustomButton>
-                    <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                      <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(details)}
-                        fullWidth
-                        loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
-                        loadingText={t('chatbox.molecules.searchingForFriends')}
-                        style={{ flexGrow: 1 }}>
-                        {t('chatbox.buttons.findSimilarMolecules')}
-                      </CustomButton>
-                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
-                        <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
-                        {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                      </div>
+                    <select
+                      value={molTypeSelections[details.SMILES] || ""}
+                      onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
+                      style={{ marginTop: '8px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                    >
+                      <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                      <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                      <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                      <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                    </select>
+                    <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(details)}
+                      fullWidth
+                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === details.SMILES}
+                      loadingText={t('chatbox.molecules.searchingForFriends')}
+                      style={{ marginTop: '8px' }}>
+                      {t('chatbox.buttons.findSimilarMolecules')}
+                    </CustomButton>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                      <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                      {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
                     </div>
                     {showAdvancedOptions && (
                       <div style={{ width: '100%', marginTop: '8px' }}>
-                        <div style={{ marginBottom: '8px' }}>
-                          <select
-                            value={molTypeSelections[details.SMILES] || ""}
-                            onChange={e => handleMolTypeChange(details.SMILES, e.target.value)}
-                            style={{ backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                          >
-                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                          </select>
-                        </div>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                           <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
                           <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
@@ -1658,9 +1658,14 @@ const handleFindSimilarMolecules = async (details: any) => {
               name={selectedMolecule.name}
               large={true}
               style={{ margin: 5 }}
-                            propGroups={[
-                  { label: 'SMILES', value: selectedMolecule.SMILES, span: 2, wrap: true },
-                  { label: 'Molecular Weight', value: selectedMolecule.molecular_weight, span: 2, suffix: ' g/mol' },
+              propGroups={[
+                { label: t('chatbox.llmGrade'), value: selectedMolecule.grade, span: 2, suffix: '/10', action: (selectedMolecule.reasoning ? (
+                  <IconButton onClick={() => setReasoningText(selectedMolecule.reasoning)} size="small">
+                    <Info size={18} style={{ margin: 2 }} />
+                  </IconButton>
+                ) : null), show: selectedMolecule.grade !== null && selectedMolecule.grade !== undefined },
+                { label: 'SMILES', value: selectedMolecule.SMILES, span: 2, wrap: true },
+                { label: 'Molecular Weight', value: selectedMolecule.molecular_weight, span: 2, suffix: ' g/mol' },
                 { label: 'Predicted Melting Point', value: selectedMolecule.predicted_MP_celsius, span: 2, suffix: ' °C',
                   show: userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint'
                  },
@@ -1697,28 +1702,26 @@ const handleFindSimilarMolecules = async (details: any) => {
                     errorMessage={moleculeFavoriteStatus[selectedMolecule.SMILES]?.error}>
                     { t('chatbox.buttons.addToFavorites')}
                   </CustomButton>
-                  <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                    <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(selectedMolecule)}
-                      fullWidth
-                      loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
-                      loadingText={t('chatbox.molecules.searchingForFriends')}
-                      style={{ flexGrow: 1 }}>
-                      {t('chatbox.buttons.findSimilarMolecules')}
-                    </CustomButton>
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
-                      <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
-                      {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                    </div>
-                    <select
-                      value={molTypeSelections[selectedMolecule.SMILES] || ""}
-                      onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
-                      style={{ marginLeft: '5px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
-                    >
-                      <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                      <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                      <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                      <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                    </select>
+                  <select
+                    value={molTypeSelections[selectedMolecule.SMILES] || ""}
+                    onChange={e => handleMolTypeChange(selectedMolecule.SMILES, e.target.value)}
+                    style={{ marginTop: '8px', backgroundColor: '#FFA500', color: '#000', border: '1px solid #FFA500', borderRadius: '4px', padding: '4px' }}
+                  >
+                    <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                    <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                    <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                    <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                  </select>
+                  <CustomButton Icon={Search as any} color={"secondary" as any} variant={undefined as any} onClick={() => handleFindSimilarMolecules(selectedMolecule)}
+                    fullWidth
+                    loading={similarMoleculesLoading && activeMolecule && activeMolecule.SMILES === selectedMolecule.SMILES}
+                    loadingText={t('chatbox.molecules.searchingForFriends')}
+                    style={{ marginTop: '8px' }}>
+                    {t('chatbox.buttons.findSimilarMolecules')}
+                  </CustomButton>
+                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
+                    <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
+                    {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
                   </div>
                   {showAdvancedOptions && (
                     <div style={{ width: '100%', marginTop: '8px' }}>
