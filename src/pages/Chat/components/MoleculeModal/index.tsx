@@ -292,37 +292,53 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 
                 {isOriginal && (
-                    <div className="molecule-card-actions">
-                        <select
-                            className="molecule-type-select"
-                            value={selectedMoleculeType}
-                            onChange={handleMoleculeTypeChange}
+                    <div
+                        className="molecule-card-actions"
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}
+                    >
+                        <div
+                            className="molecule-actions-row"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                flexWrap: 'wrap'
+                            }}
                         >
-                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
-                            <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
-                            <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
-                            <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
-                        </select>
-                        <button
-                            className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
-                            onClick={() => handleFindSimilar(name)}
-                            disabled={isSimilarLoading}
+                            <select
+                                className="molecule-type-select"
+                                value={selectedMoleculeType}
+                                onChange={handleMoleculeTypeChange}
+                            >
+                                <option value="all">{t('molecular.moleculeModal.types.all')}</option>
+                                <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                                <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                                <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                            </select>
+                            <button
+                                className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
+                                onClick={() => handleFindSimilar(name)}
+                                disabled={isSimilarLoading}
+                            >
+                                {isSimilarLoading ? (
+                                    <div className="loading-spinner-small"></div>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                                    </svg>
+                                )}
+                                <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
+                            </button>
+                        </div>
+                        <div
+                            style={{ display: 'flex', alignItems: 'center', marginTop: '5px', cursor: 'pointer' }}
+                            onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
                         >
-                            {isSimilarLoading ? (
-                                <div className="loading-spinner-small"></div>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-                                </svg>
-                            )}
-                            <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
-                        </button>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px', cursor: 'pointer' }} onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
                             <span style={{ fontSize: '12px' }}>{t('search.advancedOptions')}</span>
                             {showAdvancedOptions ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
                         </div>
                         {showAdvancedOptions && (
-                            <div style={{ width: '100%', marginTop: '8px' }}>
+                            <div style={{ width: '100%', marginTop: '8px', display: 'block' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                                     <span style={{ fontSize: '10px', marginRight: '8px' }}>{t('search.searchRange')}:</span>
                                     <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
