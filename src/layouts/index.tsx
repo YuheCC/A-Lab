@@ -1,4 +1,4 @@
-import { Outlet } from "umi";
+import { Outlet, useLocation } from "umi";
 import Header from "@/components/Header";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useEffect, useState, createContext } from "react";
@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
-import { MessageProvider } from "@/components/MessageProvider";
+import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
 
 const API_URL = getAPIUrl();
@@ -15,11 +15,15 @@ const API_URL = getAPIUrl();
 export const FavoriteContext = createContext<any>(null);
 export const PricingContext = createContext<any>(null);
 
-const FullNavLayout = () => {
+const FullNavLayoutInner = () => {
+    const location = useLocation();
+    const pathname = location.pathname;
+    const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
     const { verifyAuth } = useAuthStore();
+    const message = useMessage();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
     const showPricingFromQuery = queryParams.get('showPricing') === 'true';
@@ -44,7 +48,9 @@ const FullNavLayout = () => {
         try {
           const token = localStorage.getItem('token');
           if (!token) {
-            throw new Error(t('chatbox.errors.loginRequired'));
+            const msg = t('chatbox.errors.loginRequired');
+            message.error(msg);
+            throw new Error(msg);
           }
     
           // Get the raw commercial score (numeric 0-3)
@@ -95,12 +101,14 @@ const FullNavLayout = () => {
               ...prev,
               [smiles]: { loading: false, success: t('chatbox.success.alreadyInFavorites'), error: null }
             }));
+            message.info(t('chatbox.success.alreadyInFavorites'));
           } else {
             // Set success for this specific molecule
             setMoleculeFavoriteStatus((prev: any) => ({
               ...prev,
               [smiles]: { loading: false, success: t('chatbox.success.addedToFavorites'), error: null }
             }));
+            message.success(t('chatbox.success.addedToFavorites'));
           }
     
           // Hide success message after 3 seconds
@@ -119,6 +127,7 @@ const FullNavLayout = () => {
             ...prev,
             [smiles]: { loading: false, success: null, error: (error as any)?.message || t('chatbox.errors.addToFavoritesError') }
           }));
+          message.error((error as any)?.message || t('chatbox.errors.addToFavoritesError'));
     
           // Hide error message after 3 seconds
           setTimeout(() => {
@@ -134,24 +143,36 @@ const FullNavLayout = () => {
         fetchInitialData();
         fetchData();
     }, []);
+    const getMainContainerClassName = () => {
+        if (isChatPage) {
+            return 'main-container chat-container';
+        }
+        return 'main-container';
+    }
+    return (
+        <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
+          <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
+              <Header />
+              <div className={getMainContainerClassName()}>
+                  <Outlet />
+              </div>
+              <PricingOverlay 
+                  visible={showPricingOverlay}
+                  onClose={() => {
+                    setShowPricingOverlay(false)
+                    setPermission(null)
+                  }}
+                  permission={permission}
+              />
+          </FavoriteContext.Provider>
+        </PricingContext.Provider>
+    );
+}
+
+const FullNavLayout = () => {
     return (
         <MessageProvider>
-          <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
-            <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
-                <Header />
-                <div className='main-container'>
-                    <Outlet />
-                </div>
-                <PricingOverlay 
-                    visible={showPricingOverlay}
-                    onClose={() => {
-                      setShowPricingOverlay(false)
-                      setPermission(null)
-                    }}
-                    permission={permission}
-                />
-            </FavoriteContext.Provider>
-          </PricingContext.Provider>
+            <FullNavLayoutInner />
         </MessageProvider>
     );
 }

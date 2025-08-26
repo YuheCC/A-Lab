@@ -307,10 +307,15 @@ const SearchPage = () => {
                     }
 
                     const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
-                    const queryString = extraRequests.trim()
-                        ? `${baseQuery} User's additional requests: ${extraRequests.trim()}`
-                        : baseQuery;
-                    const includeQuery = optionsSpecified || extraRequests.trim();
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
                     const payload: any = {
                         smiles: formattedMolecule.smiles.trim(),
@@ -457,21 +462,22 @@ const SearchPage = () => {
 
                     {/* Add "Find closest friends" checkbox and advanced options */}
                     <div className="search-options">
-                        <label className="search-option">
+                        <div className="search-option">
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <input
+                                            id="find-friends-checkbox"
                                             type="checkbox"
                                             checked={findClosestFriends}
                                             onChange={(e) => setFindClosestFriends(e.target.checked)}
                                         />
-                                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}>
+                                        <label htmlFor="find-friends-checkbox" style={{ display: 'flex', alignItems: 'center', marginLeft: '4px', cursor: 'pointer' }}>
                                             <span>{t('search.findFriendsLabel')}</span>
                                             <Tooltip title={t('search.findFriendsDescription')} placement="top">
                                                 <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
                                             </Tooltip>
-                                        </div>
+                                        </label>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
                                         <span>{t('search.advancedOptions')}</span>
@@ -480,6 +486,18 @@ const SearchPage = () => {
                                 </div>
                                 <div style={{ color: '#555', fontSize: '14px' }}>
                                     {t('search.findFriendsDescription')}
+                                </div>
+                                <div style={{ marginTop: '8px' }}>
+                                    <select
+                                        value={selectedMolType}
+                                        onChange={e => setSelectedMolType(e.target.value)}
+                                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                    >
+                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
+                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                                    </select>
                                 </div>
                                 <div style={{ maxHeight: showAdvanced ? '1000px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
                                     <div style={{ marginTop: '8px' }}>
@@ -498,18 +516,6 @@ const SearchPage = () => {
                                             <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
                                             <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
                                         </div>
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <select
-                                            value={selectedMolType}
-                                            onChange={e => setSelectedMolType(e.target.value)}
-                                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                            <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                            <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                            <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                        </select>
                                     </div>
                                     <div style={{ marginTop: '8px' }}>
                                         <label>{t('search.intelligentCompute')}:</label>
@@ -533,96 +539,100 @@ const SearchPage = () => {
                                             {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
                                         </select>
                                     </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.cathode')}:</label>
-                                        <select
-                                            value={cathode}
-                                            onChange={e => setCathode(e.target.value)}
-                                            disabled={computeLevel === 'Disabled'}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value=""></option>
-                                            {cathodeOptions.map(opt => (
-                                                <option key={opt} value={opt}>{opt}</option>
-                                            ))}
-                                            <option value="custom">{t('search.custom')}</option>
-                                        </select>
-                                        {cathode === 'custom' && (
-                                            <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                        )}
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.anode')}:</label>
-                                        <select
-                                            value={anode}
-                                            onChange={e => setAnode(e.target.value)}
-                                            disabled={computeLevel === 'Disabled'}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value=""></option>
-                                            {anodeOptions.map(opt => (
-                                                <option key={opt} value={opt}>{opt}</option>
-                                            ))}
-                                            <option value="custom">{t('search.custom')}</option>
-                                        </select>
-                                        {anode === 'custom' && (
-                                            <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                        )}
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.salt')}:</label>
-                                        <select
-                                            value={salt}
-                                            onChange={e => setSalt(e.target.value)}
-                                            disabled={computeLevel === 'Disabled'}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value=""></option>
-                                            {saltOptions.map(opt => (
-                                                <option key={opt} value={opt}>{opt}</option>
-                                            ))}
-                                            <option value="custom">{t('search.custom')}</option>
-                                        </select>
-                                        {salt === 'custom' && (
-                                            <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                        )}
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.solvent')}:</label>
-                                        <select
-                                            value={solvent}
-                                            onChange={e => setSolvent(e.target.value)}
-                                            disabled={computeLevel === 'Disabled'}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value=""></option>
-                                            {solventOptions.map(opt => (
-                                                <option key={opt} value={opt}>{opt}</option>
-                                            ))}
-                                            <option value="custom">{t('search.custom')}</option>
-                                        </select>
-                                        {solvent === 'custom' && (
-                                            <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                        )}
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.performanceMetric')}:</label>
-                                        <select
-                                            value={metric}
-                                            onChange={e => setMetric(e.target.value)}
-                                            disabled={computeLevel === 'Disabled'}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value=""></option>
-                                            {performanceOptions.map(opt => (
-                                                <option key={opt} value={opt}>{opt}</option>
-                                            ))}
-                                            <option value="custom">{t('search.custom')}</option>
-                                        </select>
-                                        {metric === 'custom' && (
-                                            <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                        )}
-                                    </div>
+                                    {userPermissions === 'admin' && (
+                                        <>
+                                            <div style={{ marginTop: '8px' }}>
+                                                <label>{t('search.cathode')}:</label>
+                                                <select
+                                                    value={cathode}
+                                                    onChange={e => setCathode(e.target.value)}
+                                                    disabled={computeLevel === 'Disabled'}
+                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                                >
+                                                    <option value=""></option>
+                                                    {cathodeOptions.map(opt => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                    <option value="custom">{t('search.custom')}</option>
+                                                </select>
+                                                {cathode === 'custom' && (
+                                                    <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                                )}
+                                            </div>
+                                            <div style={{ marginTop: '8px' }}>
+                                                <label>{t('search.anode')}:</label>
+                                                <select
+                                                    value={anode}
+                                                    onChange={e => setAnode(e.target.value)}
+                                                    disabled={computeLevel === 'Disabled'}
+                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                                >
+                                                    <option value=""></option>
+                                                    {anodeOptions.map(opt => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                    <option value="custom">{t('search.custom')}</option>
+                                                </select>
+                                                {anode === 'custom' && (
+                                                    <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                                )}
+                                            </div>
+                                            <div style={{ marginTop: '8px' }}>
+                                                <label>{t('search.salt')}:</label>
+                                                <select
+                                                    value={salt}
+                                                    onChange={e => setSalt(e.target.value)}
+                                                    disabled={computeLevel === 'Disabled'}
+                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                                >
+                                                    <option value=""></option>
+                                                    {saltOptions.map(opt => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                    <option value="custom">{t('search.custom')}</option>
+                                                </select>
+                                                {salt === 'custom' && (
+                                                    <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                                )}
+                                            </div>
+                                            <div style={{ marginTop: '8px' }}>
+                                                <label>{t('search.solvent')}:</label>
+                                                <select
+                                                    value={solvent}
+                                                    onChange={e => setSolvent(e.target.value)}
+                                                    disabled={computeLevel === 'Disabled'}
+                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                                >
+                                                    <option value=""></option>
+                                                    {solventOptions.map(opt => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                    <option value="custom">{t('search.custom')}</option>
+                                                </select>
+                                                {solvent === 'custom' && (
+                                                    <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                                )}
+                                            </div>
+                                            <div style={{ marginTop: '8px' }}>
+                                                <label>{t('search.performanceMetric')}:</label>
+                                                <select
+                                                    value={metric}
+                                                    onChange={e => setMetric(e.target.value)}
+                                                    disabled={computeLevel === 'Disabled'}
+                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                                >
+                                                    <option value=""></option>
+                                                    {performanceOptions.map(opt => (
+                                                        <option key={opt} value={opt}>{opt}</option>
+                                                    ))}
+                                                    <option value="custom">{t('search.custom')}</option>
+                                                </select>
+                                                {metric === 'custom' && (
+                                                    <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                     <div style={{ marginTop: '8px' }}>
                                         <label>{t('search.extraRequests')}:</label>
                                         <textarea
@@ -643,7 +653,7 @@ const SearchPage = () => {
                                     </div>
                                 </div>
                             </div>
-                        </label>
+                        </div>
                     </div>
 
                     <div className="search-results">

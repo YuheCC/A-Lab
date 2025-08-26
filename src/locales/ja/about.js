@@ -149,6 +149,6 @@ export default {
     requires_rd: "実現可能性を評価するために研究開発が必要",
     likely_synthesizable_but_not_commercially_available: "合成可能と思われるが、おそらく市販されていない",
     likely_synthesizable_may_be_commercially_available: "合成可能と思われ、市販されている可能性がある",
-    likely_commercially_available: "市販されている可能性が高い"
+    likely_commercially_available: "商業的に利用可能"
   }
 }; 

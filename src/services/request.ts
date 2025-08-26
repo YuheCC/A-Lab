@@ -57,10 +57,11 @@ interface RequestOptions {
     data?: any;
     params?: any;
     headers?: Record<string, string>;
+    onUploadProgress?: (progressEvent: any) => void; // 支持上传进度
 }
 
 const request = async (url: string, options: RequestOptions = {}) => {
-    const { method = 'GET', data, params, headers, ...restOptions } = options;
+    const { method = 'GET', data, params, headers, onUploadProgress, ...restOptions } = options;
     
     const config: AxiosRequestConfig = {
         url,
@@ -68,6 +69,7 @@ const request = async (url: string, options: RequestOptions = {}) => {
         data,
         params,
         headers,
+        onUploadProgress, // 传递给 axios
         ...restOptions,
     };
     

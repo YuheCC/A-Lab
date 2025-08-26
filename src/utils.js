@@ -7,7 +7,7 @@ export const COMMERCIAL_SCORE_MAP = {
   0: 'Requires R&D to assess viability',
   1: 'Likely synthesizable but probably not commercially available',
   2: 'Likely synthesizable, may be commercially available',
-  3: 'Likely commercially available'
+  3: 'Commercially available'
 }
 
 /**

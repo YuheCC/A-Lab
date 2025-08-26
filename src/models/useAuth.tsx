@@ -12,6 +12,7 @@ interface AuthState {
     token: string | null;
     error: string | null;
     userInfo: any | null;
+    isAdvancedTier: boolean;
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
@@ -31,6 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     token: null,
     error: null,
     userInfo: {},
+    isAdvancedTier: false,
     verifyAuth: async () => {
         const token = localStorage.getItem('token');
         const permissions = localStorage.getItem('permissions') || '';
@@ -55,6 +57,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             localStorage.setItem('username', data.username);
             localStorage.setItem('permissions', data.permissions || 'research');
+            const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(data.permissions);
+            localStorage.setItem('isAdvancedTier', isAdvancedTier ? 'true' : 'false');
 
             set({
                 isAuthenticated: true,
@@ -62,7 +66,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 userPermissions: data.permissions || 'research',
                 isLoading: false,
                 initialAuthLoaded: true,
-                userInfo: data
+                userInfo: data,
+                isAdvancedTier: isAdvancedTier,
             });
         } catch (err) {
             console.error('Auth verification error:', err);
@@ -84,6 +89,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             const response: any = await loginService({ username, password });
             const data = response.data;
+            const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(data.permissions);
 
             set({
                 isAuthenticated: true,
@@ -91,13 +97,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 token: data.access_token,
                 userName: data.username,
                 userPermissions: data.permissions || '',
-                userInfo: data
+                userInfo: data,
+                isAdvancedTier: isAdvancedTier,
             });
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('username', data.username);
-            localStorage.setItem('permissions', data.permissions);
-
+            localStorage.setItem('permissions', data.permissions);            
+            localStorage.setItem('isAdvancedTier', isAdvancedTier ? 'true' : 'false');
             return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
             
         } catch (error) {
