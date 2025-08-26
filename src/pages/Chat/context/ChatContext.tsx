@@ -224,9 +224,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsLoading(false);
             let errorMessage = t('chatbox.chat.sendFailed');
             if ((error as any).message && (error as any).message.includes('timeout')) {
-                errorMessage = '连接超时，请检查网络状况或稍后重试。';
+                errorMessage = t('chatbox.errors.connectionTimeout');
             } else if ((error as any).message && (error as any).message.includes('connect')) {
-                errorMessage = '无法连接到服务器，请检查网络连接。';
+                errorMessage = t('chatbox.errors.serverConnectionFailed');
             }
             addBotMessage(errorMessage, false);
         });
@@ -477,6 +477,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ragEnabled: extra.ragEnabled,
             disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
             fullDeepSpace: extra.dump_state,
+            toolsEnabled: extra.toolsEnabled,
+            patentRagEnabled: extra.patentRagEnabled,
             numRagResults: ragResultsCount
         } : { numRagResults: ragResultsCount };
         
@@ -718,5 +720,3 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 export default ChatProvider;
-
-

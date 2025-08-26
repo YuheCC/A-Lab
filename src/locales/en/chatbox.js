@@ -78,7 +78,8 @@ export default {
         enterDeepSpace: "Enter Deep Space (BETA)",
         deepSpaceTooltip: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
         admin: "ADMIN",
-        fullDeepSpace: "Full Deep Space"
+        fullDeepSpace: "Full Deep Space",
+        disableTools: "Disable tools"
     },
     queryLimit: {
         queriesRemaining: "Queries remaining today:",
@@ -142,6 +143,10 @@ export default {
     },
     errors: {
         networkError: "Network response was not ok",
+        connectionTimeout: "Connection timed out. Please check your network status or try again later.",
+        serverConnectionFailed: "Unable to connect to server. Please check your network connection.",
+        networkIssueCheck: "Sorry, there was a network connection issue. Please check your network and try again.",
+        networkIssueRetry: "Sorry, there was a network connection issue. Please try again later.",
         batteryRelevance: "Your question isn't relevant to batteries or battery chemistry. Please ask a battery-related question.",
         moleculeDetailsError: "Error fetching molecule details:",
         similarMoleculesError: "Error finding similar molecules:",
@@ -152,6 +157,7 @@ export default {
         copyError: "Failed to copy:",
         generalError: "Error"
     },
+    supplementalData: "Supplemental Data",
     history: {
         title: "Your Chats",
         createNewChat: "Create New Chat",
