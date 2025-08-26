@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import streamSSE from "@/components/StreamSSE/index.js";
 import './Chatbox.css';
 import FeedbackBox from '@/components/FeedbackBox/index.js';
@@ -103,23 +103,29 @@ const MessageContentRenderer = ({ content, onMoleculeClick }: { content: string;
 	}
 };
 
+// Context to ensure ExtraDataSection only renders inside an open SupplementalData
+const SupplementalDataCtx = React.createContext<{ open: boolean } | null>(null);
+
 // Dropdown section for displaying supplemental information
 const ExtraDataSection = ({ title, content, onMoleculeClick }: { title: string; content: string; onMoleculeClick?: (mol: any) => void }) => {
+  const ctx = useContext(SupplementalDataCtx);
+  // If not inside SupplementalData or the parent is closed, don't render at all
+  if (!ctx || !ctx.open) return null;
   const [open, setOpen] = useState(false);
 
-	return (
-		<div className="extra-data-section">
-			<div className="extra-data-header" onClick={() => setOpen(!open)}>
-				{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-				<span>{title}</span>
-			</div>
-			{open && (
-				<div className="extra-data-content">
-					<MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
-				</div>
-			)}
-		</div>
-        );
+  return (
+    <div className="extra-data-subsection">
+      <div className="extra-data-header" onClick={() => setOpen(!open)}>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <span>{title}</span>
+      </div>
+      {open && (
+        <div className="extra-data-content">
+          <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 // Top-level section that groups all supplemental data
@@ -128,24 +134,26 @@ const SupplementalData = ({ data, onMoleculeClick }: { data: Record<string, any>
   const { t } = useTranslation();
 
   return (
-    <div className="extra-data-section">
-      <div className="extra-data-header" onClick={() => setOpen(!open)}>
-        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        <span>{t('chatbox.supplementalData')}</span>
-      </div>
-      {open && (
-        <div className="extra-data-wrapper">
-          {Object.entries(data).map(([key, value]) => (
-            <ExtraDataSection
-                    key={key}
-                    title={key}
-                    content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                    onMoleculeClick={onMoleculeClick}
-            />
-          ))}
+    <SupplementalDataCtx.Provider value={{ open }}>
+      <div className={`extra-data-section ${open ? 'open' : ''}`}>
+        <div className="extra-data-header" onClick={() => setOpen(!open)}>
+          {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          <span>{t('chatbox.supplementalData')}</span>
         </div>
-      )}
-    </div>
+        {open && (
+          <div className="extra-data-wrapper">
+            {Object.entries(data).map(([key, value]) => (
+              <ExtraDataSection
+                key={key}
+                title={key}
+                content={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+                onMoleculeClick={onMoleculeClick}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </SupplementalDataCtx.Provider>
   );
 };
 
@@ -1481,9 +1489,10 @@ const handleFindSimilarMolecules = async (details: any) => {
           {/* Supplemental table (collapsible) mirroring Deep Space extra_outputs */}
           {showSimilarMolecules && similarMolecules && similarMolecules.length > 0 && similarMoleculesTableMd && (
             <div style={{ margin: '12px 0' }}>
-              <ExtraDataSection 
-                title={`Similar Molecules to ${(activeMolecule?.name || activeMolecule?.SMILES || '').toLowerCase()}`}
-                content={similarMoleculesTableMd}
+              <SupplementalData
+                data={{
+                  [`Similar Molecules to ${(activeMolecule?.name || activeMolecule?.SMILES || '').toLowerCase()}`]: similarMoleculesTableMd
+                }}
                 onMoleculeClick={handleMoleculeClick}
               />
             </div>

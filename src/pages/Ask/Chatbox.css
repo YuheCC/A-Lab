@@ -725,3 +725,29 @@
 @media (max-width: 600px) {
   .message-timestamp { font-size: 11px; }
 }
+
+
+/* Nested subsections inside the Supplemental Data group */
+.extra-data-subsection {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin: 6px 8px;
+  background-color: #fafafa;
+}
+
+.extra-data-subsection .extra-data-header {
+  padding: 4px 8px;
+}
+
+.extra-data-subsection .extra-data-content {
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}
+
+/* Only reveal nested subsections when the top-level Supplemental Data is open */
+.extra-data-subsection {
+  display: none;
+}
+.extra-data-section.open .extra-data-subsection {
+  display: block;
+}
