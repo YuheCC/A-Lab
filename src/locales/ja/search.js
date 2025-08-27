@@ -67,8 +67,16 @@ export default {
     moleculeTypes: {
         selectMolType: "分子タイプ",
         solvent: "溶媒",
+        cosolvent: "共溶媒",
         diluent: "希釈剤",
-        additive: "添加剤"
+        additive: "添加剤",
+        additiveSubtype: "添加剤サブカテゴリ",
+        additiveOptions: {
+            seiPromoter: "SEI促進剤",
+            sideReactionSuppressor: "副反応抑制剤",
+            dendriteSuppressor: "デンドライト抑制剤",
+            interfacialStabilityImprover: "界面安定性向上剤"
+        }
     },
 
     // Buttons and Actions

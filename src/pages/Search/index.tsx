@@ -81,7 +81,8 @@ const SearchPage = () => {
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
-    const [selectedMolType, setSelectedMolType] = useState("");
+    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [additiveSubtype, setAdditiveSubtype] = useState('A');
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
@@ -317,11 +318,12 @@ const SearchPage = () => {
                     const queryString = parts.join(' ');
                     const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
+                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
                     const payload: any = {
                         smiles: formattedMolecule.smiles.trim(),
                         use_35m: isHighTier,
                         structure_weight: structureWeight,
-                        ...(selectedMolType && { mol_type: selectedMolType }),
+                        ...(molTypeToSend && { mol_type: molTypeToSend }),
                         ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
                         ...(computeEnabled && includeQuery && {
                             query: queryString,
@@ -493,11 +495,26 @@ const SearchPage = () => {
                                         onChange={e => setSelectedMolType(e.target.value)}
                                         style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
                                     >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
                                         <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                                        <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
                                         <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
                                         <option value="additive">{t('search.moleculeTypes.additive')}</option>
                                     </select>
+                                    {selectedMolType === 'additive' && (
+                                        <div style={{ marginTop: '8px' }}>
+                                            <label style={{ marginRight: '4px' }}>{t('search.moleculeTypes.additiveSubtype')}</label>
+                                            <select
+                                                value={additiveSubtype}
+                                                onChange={e => setAdditiveSubtype(e.target.value)}
+                                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                            >
+                                                <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
+                                                <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
+                                                <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
+                                                <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
                                 <div style={{ maxHeight: showAdvanced ? '1000px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
                                     <div style={{ marginTop: '8px' }}>
