@@ -34,7 +34,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
@@ -120,7 +121,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 raw = original?.raw;
             }
             if (smilesToUse) {
-                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
+                const molType = selectedMoleculeType === 'additive' ? selectedAdditiveSubtype : selectedMoleculeType;
+                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, molType);
                 setSimilarMolecules(list);
                 setSimilarRawList(raws);
                 setShowSimilar(true);
@@ -133,7 +135,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value;
         setSelectedMoleculeType(newType);
+        if (newType === 'additive') {
+            setSelectedAdditiveSubtype('A');
+        }
         onUpdateMoleculeType?.(moleculeName, newType);
+    };
+
+    const handleAdditiveSubtypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAdditiveSubtype(event.target.value);
     };
 
     const toggleFunctionalGroups = () => {
@@ -310,11 +319,26 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                                 value={selectedMoleculeType}
                                 onChange={handleMoleculeTypeChange}
                             >
-                                <option value="all">{t('molecular.moleculeModal.types.all')}</option>
                                 <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                                <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
                                 <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                                 <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                             </select>
+                            {selectedMoleculeType === 'additive' && (
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <label style={{ fontSize: '12px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
+                                    <select
+                                        className="molecule-type-select"
+                                        value={selectedAdditiveSubtype}
+                                        onChange={handleAdditiveSubtypeChange}
+                                    >
+                                        <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
+                                        <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
+                                        <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
+                                        <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
+                                    </select>
+                                </div>
+                            )}
                             <button
                                 className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
                                 onClick={() => handleFindSimilar(name)}
@@ -446,7 +470,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             use_35m: isHighTier,
             structure_weight: structureWeight
         };
-        if (molType && molType !== 'all') {
+        if (molType) {
             payload.mol_type = molType;
         }
         if (computeLevel !== 'Disabled') {

@@ -28,10 +28,17 @@ export default {
     functionalGroupList: "醚、缩酮、碳酸酯、酯",
     unknown: "未知",
     types: {
-      all: "所有类型",
       solvent: "溶剂",
+      cosolvent: "共溶剂",
       diluent: "稀释剂",
       additive: "添加剂"
+    },
+    additiveSubtypes: {
+      title: "添加剂子类别",
+      seiPromoter: "SEI 促进剂",
+      sideReactionSuppressor: "副反应抑制剂",
+      dendriteSuppressor: "枝晶抑制剂",
+      interfacialStabilityImprover: "界面稳定性改善剂"
     },
     properties: {
       predictedFp: "预测闪点",
