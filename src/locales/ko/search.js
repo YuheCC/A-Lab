@@ -67,8 +67,16 @@ export default {
     moleculeTypes: {
         selectMolType: "분자 유형",
         solvent: "용매",
+        cosolvent: "공용매",
         diluent: "희석제",
-        additive: "첨가제"
+        additive: "첨가제",
+        additiveSubtype: "첨가제 하위 분류",
+        additiveOptions: {
+            seiPromoter: "SEI 촉진제",
+            sideReactionSuppressor: "부반응 억제제",
+            dendriteSuppressor: "덴드라이트 억제제",
+            interfacialStabilityImprover: "계면 안정성 향상제"
+        }
     },
     
     // Buttons and Actions

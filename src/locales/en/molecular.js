@@ -28,10 +28,17 @@ export default {
     functionalGroupList: "Ether, ketal, carbonate, ester",
     unknown: "Unknown",
     types: {
-      all: "All Types",
       solvent: "Solvent",
+      cosolvent: "Cosolvent",
       diluent: "Diluent",
       additive: "Additive"
+    },
+    additiveSubtypes: {
+      title: "Additive subcategory",
+      seiPromoter: "SEI Promoter",
+      sideReactionSuppressor: "Side reaction suppressor",
+      dendriteSuppressor: "Dendrite suppressor",
+      interfacialStabilityImprover: "Interfacial stability improver"
     },
     properties: {
       predictedFp: "Predicted Flash Point",

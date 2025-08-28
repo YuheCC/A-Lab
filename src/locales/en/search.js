@@ -67,8 +67,16 @@ export default {
     moleculeTypes: {
         selectMolType: "Molecule Type",
         solvent: "Solvent",
+        cosolvent: "Cosolvent",
         diluent: "Diluent",
-        additive: "Additive"
+        additive: "Additive",
+        additiveSubtype: "Additive subcategory",
+        additiveOptions: {
+            seiPromoter: "SEI Promoter",
+            sideReactionSuppressor: "Side reaction suppressor",
+            dendriteSuppressor: "Dendrite suppressor",
+            interfacialStabilityImprover: "Interfacial stability improver"
+        }
     },
     
     // Buttons and Actions
