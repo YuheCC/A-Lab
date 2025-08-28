@@ -7,7 +7,7 @@ import './MoleculeFeedbackBox.css';
 
 const API_URL = getAPIUrl();
 
-export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType }) => {
+export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, contextContent1, contextContent2, contextContent3, queryType, useMultiAgent }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackType, setFeedbackType] = useState(null); // 'up' or 'down'
   const [submitting, setSubmitting] = useState(false);
@@ -31,15 +31,37 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
     try {
       setSubmitting(true);
 
+      // Determine queryType based on explicit prop, useMultiAgent prop, or response content
+      let determinedQueryType = queryType;
+      if (!queryType) {
+        // Only use detection logic when no explicit queryType is provided
+        // Check if response contains multi-agent indicators
+        const responseContent = molecule.SMILES || molecule.smiles || '';
+        const lastSearchText = typeof lastSearch === 'string' ? lastSearch : (lastSearch ? JSON.stringify(lastSearch) : '');
+        const isMultiAgentResponse = !!useMultiAgent || 
+          (!!lastSearchText && (
+            lastSearchText.includes('Query_Planning_Agent') ||
+            lastSearchText.includes('Plan_Review_Agent') ||
+            lastSearchText.includes('Battery_Agent') ||
+            lastSearchText.includes('Chemical_Prop_Expert') ||
+            lastSearchText.includes('## Query_Planning_Agent') ||
+            lastSearchText.includes('## Plan_Review_Agent') ||
+            lastSearchText.includes('## Battery_Agent') ||
+            lastSearchText.includes('## Chemical_Prop_Expert')
+          ));
+        
+        determinedQueryType = isMultiAgentResponse ? "deep_space" : "normal_ask";
+      }
+
       // Submit feedback to backend
-      await authFetch(`${API_URL}/api/feedback`, {
+      const response = await authFetch(`${API_URL}/api/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           isPositive: feedbackType === 'up',
-          feedbackText: feedbackText.trim(),
+          feedbackText: (feedbackText || '').trim(),
           inputContent: lastSearch ? (typeof lastSearch === 'object' ? JSON.stringify(lastSearch) : lastSearch) : '',
           responseContent: molecule.SMILES || molecule.smiles || '',
           contextContent1: '',
@@ -47,9 +69,20 @@ export const MoleculeFeedbackBox = ({ fullWidth, molecule, lastSearch, onClose, 
           contextContent3: '',
           timestamp: new Date().toISOString(),
           collection: 'friends-feedback',
-          queryType: queryType || 'normal_ask',
+          queryType: determinedQueryType,
         }),
       });
+
+      // Handle non-2xx responses explicitly
+      if (!response.ok) {
+        let detail = '';
+        try {
+          const data = await response.json();
+          detail = data?.detail || '';
+        } catch (_) {}
+        setStatusMessage(detail || t('chatbox.success.feedbackSubmitted'));
+        return;
+      }
 
       setStatusMessage(t('chatbox.feedback.thankYou'));
       setTimeout(() => onClose(), 1500);

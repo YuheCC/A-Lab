@@ -53,7 +53,8 @@ export default {
       homo: "HOMO",
       lumo: "LUMO",
       predictedMp: "Predicted MP",
-      predictedBp: "Predicted BP"
+      predictedBp: "Predicted BP",
+      llmGrade: "LLM Grade"
     },
     units: {
       gPerMol: " g/mol",
