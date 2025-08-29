@@ -103,6 +103,7 @@ const OrganicMolecules = () => {
                         <UMAPClusterPlotDeck
                             data={data}
                             userPermissions={userPermissions}
+                            molecularType="organic"
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();
@@ -115,7 +116,7 @@ const OrganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef}/>
+            <NodePopup node={node} ref={nodePopupRef} molecularType="organic"/>
         </>
     )
 };

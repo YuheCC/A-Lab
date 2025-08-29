@@ -110,6 +110,7 @@ const InorganicMolecules = () => {
                         <UMAPClusterPlotDeck
                             data={data}
                             userPermissions={userPermissions}
+                            molecularType="inorganic"
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();
@@ -122,7 +123,7 @@ const InorganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef}/>
+            <NodePopup node={node} ref={nodePopupRef} molecularType="inorganic"/>
         </>
     )
 };

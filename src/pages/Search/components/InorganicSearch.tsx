@@ -327,6 +327,7 @@ const InorganicSearch = () => {
                                 highlightedData={highlightedMolecules}
                                 highlightedSimilarData={highlightedSimilarMolecules}
                                 userPermissions={userPermissions}
+                                molecularType="inorganic"
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -614,7 +615,7 @@ const InorganicSearch = () => {
                     </div>
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node}/>
+            <NodePopup ref={nodePopupRef} node={node} molecularType="inorganic"/>
         </>
     );
 };
