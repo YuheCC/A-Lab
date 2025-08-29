@@ -4,6 +4,12 @@ export default {
     resetAllButton: "すべてリセット",
     resetFilterButton: "リセット",
 
+    // Filter Tabs
+    filterTabs: {
+        organic: "有機分子",
+        inorganic: "無機分子"
+    },
+
     // Loading and Status Messages
     loadingMap: "Molecular Universeのマップを読み込み中",
     errorLoadingData: "データの読み込みエラー",

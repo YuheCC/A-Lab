@@ -28,10 +28,17 @@ export default {
     functionalGroupList: "에테르, 케탈, 탄산에스터, 에스터",
     unknown: "알 수 없음",
     types: {
-      all: "모든 유형",
       solvent: "용매",
+      cosolvent: "공용매",
       diluent: "희석제",
       additive: "첨가제"
+    },
+    additiveSubtypes: {
+      title: "첨가제 하위 분류",
+      seiPromoter: "SEI 촉진제",
+      sideReactionSuppressor: "부반응 억제제",
+      dendriteSuppressor: "덴드라이트 억제제",
+      interfacialStabilityImprover: "계면 안정성 향상제"
     },
     properties: {
       predictedFp: "예상 인화점",
@@ -53,7 +60,8 @@ export default {
       homo: "HOMO",
       lumo: "LUMO",
       predictedMp: "예상 녹는점",
-      predictedBp: "예상 끓는점"
+      predictedBp: "예상 끓는점",
+      llmGrade: "LLM Grade"
     },
     units: {
       gPerMol: " g/mol",

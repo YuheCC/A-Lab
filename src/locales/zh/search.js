@@ -1,4 +1,11 @@
 export default {
+    // Search Tabs
+    tabs: {
+        organic: '有机分子',
+        inorganic: '无机分子',
+        third: '固态电解质'
+    },
+    
     // Search Input
     searchPlaceholder: "输入SMILES字符串、分子名称或查询条件",
     searchButton: "搜索",
@@ -67,8 +74,16 @@ export default {
     moleculeTypes: {
         selectMolType: "分子类型",
         solvent: "溶剂",
+        cosolvent: "共溶剂",
         diluent: "稀释剂",
-        additive: "添加剂"
+        additive: "添加剂",
+        additiveSubtype: "添加剂子类别",
+        additiveOptions: {
+            seiPromoter: "SEI 促进剂",
+            sideReactionSuppressor: "副反应抑制剂",
+            dendriteSuppressor: "枝晶抑制剂",
+            interfacialStabilityImprover: "界面稳定性改善剂"
+        }
     },
     
     // Buttons and Actions

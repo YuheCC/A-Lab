@@ -1,4 +1,11 @@
 export default {
+    // Search Tabs
+    tabs: {
+        organic: 'Organic Molecules',
+        inorganic: 'Inorganic Molecules',
+        third: 'Solid-State Electrolyte'
+    },
+    
     // Search Input
     searchPlaceholder: "Enter SMILES string, molecule name, or query",
     searchButton: "Search",
@@ -67,8 +74,16 @@ export default {
     moleculeTypes: {
         selectMolType: "Molecule Type",
         solvent: "Solvent",
+        cosolvent: "Cosolvent",
         diluent: "Diluent",
-        additive: "Additive"
+        additive: "Additive",
+        additiveSubtype: "Additive subcategory",
+        additiveOptions: {
+            seiPromoter: "SEI Promoter",
+            sideReactionSuppressor: "Side reaction suppressor",
+            dendriteSuppressor: "Dendrite suppressor",
+            interfacialStabilityImprover: "Interfacial stability improver"
+        }
     },
     
     // Buttons and Actions

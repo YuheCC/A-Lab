@@ -488,4 +488,3 @@ export class ChatService {
 }
 
 export const chatService = ChatService.getInstance();
-

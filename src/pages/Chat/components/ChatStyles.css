@@ -1,41 +1,42 @@
 /* === Checkbox & Admin Controls (shared with Ask) === */
 .checkbox-group {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;           /* allow all checkboxes to wrap */
-  gap: 10px;
-  padding: 6px 0 0 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;           /* allow all checkboxes to wrap */
+    gap: 10px;
+    padding: 6px 0 0 0;
 }
 
 .admin-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  background-color: #ebebeb;
-  border-radius: 4px;
-  padding: 6px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    background-color: #ebebeb;
+    border-radius: 4px;
+    padding: 6px 10px;
 }
 
 .admin-controls-label {
-  font-size: 10px;
-  font-weight: bold;
-  color: #727272;
-  margin-right: 6px;
-  flex-basis: 100%;          /* put label on its own line when wrapping */
+    font-size: 10px;
+    font-weight: bold;
+    color: #727272;
+    margin-right: 6px;
+    flex-basis: 100%;          /* put label on its own line when wrapping */
 }
 
 .checkbox-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 @media (max-width: 768px) {
-  .checkbox-group { gap: 8px; }
-  .admin-controls { gap: 6px; }
+    .checkbox-group { gap: 8px; }
+    .admin-controls { gap: 6px; }
 }
+
 /* ==============================================
    聊天页面专用样式
    提取自原始Chat.css文件
