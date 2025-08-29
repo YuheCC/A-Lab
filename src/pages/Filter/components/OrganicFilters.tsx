@@ -331,6 +331,7 @@ const OrganicFilters = () => {
                 highlightedData={[]}
                 highlightedSimilarData={[]}
                 userPermissions={userPermissions}
+                molecularType="organic"
                 onClick={(node: Node) => {
                     console.log(node);
                     setNode(node);
@@ -449,6 +450,7 @@ const OrganicFilters = () => {
             <NodePopup
                 node={node}
                 ref={nodePopupRef}
+                molecularType="organic"
             />
         </>
     );

@@ -327,6 +327,7 @@ const OrganicSearch = () => {
                                 highlightedData={highlightedMolecules}
                                 highlightedSimilarData={highlightedSimilarMolecules}
                                 userPermissions={userPermissions}
+                                molecularType="organic"
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -650,7 +651,7 @@ const OrganicSearch = () => {
                     </div>
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node}/>
+            <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
         </>
     );
 };

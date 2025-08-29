@@ -289,6 +289,7 @@ const InorganicFilters = () => {
                 highlightedData={[]}
                 highlightedSimilarData={[]}
                 userPermissions={userPermissions}
+                molecularType="inorganic"
                 onClick={(node: Node) => {
                     console.log(node);
                     setNode(node);
@@ -357,7 +358,7 @@ const InorganicFilters = () => {
                                 </div>
                             );
                         })}
-                        <div className="functional-group-filter">
+                        {/* <div className="functional-group-filter">
                             <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>
                                 {t('explorer.functionalGroupFilter.title')}
                                 <span
@@ -400,13 +401,14 @@ const InorganicFilters = () => {
                                     }}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
             <NodePopup
                 node={node}
                 ref={nodePopupRef}
+                molecularType="inorganic"
             />
         </>
     );

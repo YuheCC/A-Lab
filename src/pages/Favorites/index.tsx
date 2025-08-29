@@ -1466,6 +1466,7 @@ const FavoritesGrid = () => {
       <NodePopup
         node={node}
         ref={nodePopupRef}
+        molecularType="organic"
       />
     </div>
   );
