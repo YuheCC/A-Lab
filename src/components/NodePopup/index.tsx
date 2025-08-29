@@ -17,6 +17,7 @@ interface NodePopupProps {
 
 // NodePopup component for displaying molecule information
 const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupProps, ref) => {
+  console.log(node);
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const userPermissions = useAuthStore(state => state.userPermissions);
@@ -90,7 +91,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                     return false;
                   }
 
-                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups')) {
+                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
                     return false;
                   }
                   
