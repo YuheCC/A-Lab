@@ -35,7 +35,7 @@ const Map = () => {
                     ) : (
                         <InorganicMolecules />
                     )}
-                    <MoleculeInfo />
+                    <MoleculeInfo activeTab={activeTab} />
                 </div>
                 
             </div>
