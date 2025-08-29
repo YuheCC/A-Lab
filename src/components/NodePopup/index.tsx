@@ -12,10 +12,12 @@ const API_URL = getAPIUrl();
 
 interface NodePopupProps {
   node: any;
+  molecularType?: 'organic' | 'inorganic';
 }
 
 // NodePopup component for displaying molecule information
-const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
+const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupProps, ref) => {
+  console.log(node);
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const userPermissions = useAuthStore(state => state.userPermissions);
@@ -86,6 +88,10 @@ const NodePopup = forwardRef(({ node }: NodePopupProps, ref) => {
                   // Hide predicted properties for users without proper permissions
                   if (!canSeePredictedProperties && 
                       (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
+                    return false;
+                  }
+
+                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
                     return false;
                   }
                   
