@@ -4,6 +4,12 @@ export default {
     resetAllButton: "Reset All",
     resetFilterButton: "Reset",
     
+    // Filter Tabs
+    filterTabs: {
+        organic: "Organic Molecules",
+        inorganic: "Inorganic Molecules"
+    },
+    
     // Loading and Status Messages
     loadingMap: "Loading Map of the Molecular Universe",
     errorLoadingData: "Error loading data",

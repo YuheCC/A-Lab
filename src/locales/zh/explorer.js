@@ -4,6 +4,12 @@ export default {
     resetAllButton: "重置全部",
     resetFilterButton: "重置",
     
+    // Filter Tabs
+    filterTabs: {
+        organic: "有机分子",
+        inorganic: "无机分子"
+    },
+    
     // Loading and Status Messages
     loadingMap: "正在加载分子宇宙地图",
     errorLoadingData: "数据加载错误",

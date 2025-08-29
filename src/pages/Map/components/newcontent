@@ -1,0 +1,44 @@
+About Molecular Universe 
+Molecular Universe MU-0.5 is a battery material discovery software and service platform. It maps more battery-relevant properties of small molecules than ever before and powers a navigation system driven by a battery-specific LLM—like having world-renowned battery scientists at your fingertips. Through MU-0.5, we provide tiered joint-development services for customers working on Li-metal, silicon Li-ion, LFP, and other chemistries.
+Within the Molecular Universe, we use 2D maps to visualize a 512-dimensional molecular space through the UMAP (Uniform Manifold Approximation and Projection) algorithm. Our integrated datasets form what we believe to be the world’s largest and continuously growing database of battery-relevant molecules and properties. Users can interact with the map to filter, search, and ask natural-language questions that accelerate next-generation battery development.
+The MAP feature currently presents two molecular maps: organic and inorganic. Most known battery solvents are organic, while inorganic solvents—largely unexplored—hold promise for unique SEI film formation, improved stability, and enhanced electrochemical performance. At SES, we are expanding the inorganic space to aid the search for stable inorganic solvents and additives that could advance battery technologies.
+To build the inorganic map, we employ a rule-based generation approach: constructing linear, cyclic, and polycyclic backbones, introducing branches and structural variations, populating them with inorganic atoms, assigning bond orders, and attaching terminal groups to complete the structures.
+Finally, the MU-1 organic map organizes 25 molecular clusters, as labeled below. This map will continue to expand as we probe deeper into the Molecular Universe.
+{pic}
+Cluster Descriptions: 
+Cluster 1: is characterized by Sulfone, Alkyne, NitroSulfonylFluoride functional groups.
+Cluster 2: is characterized by Heterocyclic-P-CO-1, Amide, Amine functional groups.
+Cluster 3: is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.
+Cluster 4: is characterized by FluoroSulfonyl, Sulfone, Alkene functional groups.
+Cluster 5: is characterized by Ether, Heterocyclic-P-CN-2, Thioketone functional groups.
+Cluster 6: is characterized by Pyridine, Ketone, Thioketone functional groups.
+Cluster 7: is characterized by Heterocyclic-P-CS-1, Amide, Amine functional groups.
+Cluster 8: is characterized by Heterocyclic-P-CO-1, Amide, Thioamide functional groups.
+Cluster 9: is characterized by Sulfone, Amide, FluoroSulfonyl functional groups.
+Cluster 10: is characterized by Amino carbonyl, Imide, Amine functional groups.
+Cluster 11: is characterized by Amine, Ether, Ketal functional groups.
+Cluster 12: is characterized by Arene, Amide, Halogen functional groups.
+Cluster 13: is characterized by Arene, Ketal, Ether functional groups.
+Cluster 14: is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.
+Cluster 15: is characterized by Amide, Amine, Alkene functional groups.
+Cluster 16: is characterized by Amide, Amine, Disulfide functional groups.
+Cluster 17: is characterized by Amine, Amide, Heterocyclic-P-CO-1 functional groups.
+Cluster 18: is characterized by Sulfonate ester, Sulfone, BoronicAcid functional groups. (This cluster contains DTD.)
+Cluster 19: is characterized by Arene, Amide, Halogen functional groups.
+Cluster 20: is characterized by Ketone, Sulfone, Halogen functional groups. (This cluster contains EC, PC, FEC, DEC, DMC, DME, and F5DEE.)
+Cluster 21: is characterized by Amide, Amine, Heterocyclic-P-CO-1 functional groups.
+Cluster 22: is characterized by Heterocyclic-P-CO-1, Ketone, Heterocyclic-P-CS-1 functional groups.
+Cluster 23: is characterized by Arene, Imide, Amide functional groups.
+Cluster 24: is characterized by Amine, Nitro, Pyridine functional groups.
+Cluster 25: is characterized by Amide, Amine, Ether functional groups.
+The MU-1 inorganic map consists of 7 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.
+{pic}
+Cluster 1: Cyclic, bridged molecules with double-bonding present in the ring structure, but no sulfur atoms.
+Cluster 2: Cyclic, bridged molecules with no double-bonding present in the core ring, and no sulfur atoms.
+Cluster 3: Linear molecules with no sulfur atoms.
+Cluster 4: Cylic/bridged molecules containing S=O functional groups, but lacking double-bonding in the core ring structure.
+Cluster 5: Linear molecules with S=O functional groups present.
+Cluster 6: Cyclic molecules with double-bonding present in the core ring structure, where sulfur atoms are generally present in double-bonded motifs.
+Cluster 7: Cyclic molecules with double-bonding present in the core ring structure, where sulfur atoms are present in a range of bonding patterns.
+
+
