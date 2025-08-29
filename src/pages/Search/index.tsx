@@ -24,12 +24,12 @@ const Search = () => {
                     >
                         {t('search.tabs.inorganic')}
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
                     >
                         {t('search.tabs.third')}
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
