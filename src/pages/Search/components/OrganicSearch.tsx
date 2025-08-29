@@ -62,7 +62,7 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const SearchPage = () => {
+const OrganicSearch = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const nodePopupRef = useRef<any>(null);
