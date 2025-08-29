@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicMolecules, InorganicMolecules } from "./components";
+import { OrganicMolecules, InorganicMolecules, MoleculeInfo } from "./components";
 import "./Map.css";
 
 const Map = () => {
@@ -29,11 +29,15 @@ const Map = () => {
 
             {/* Tab Content */}
             <div className="tab-content">
-                {activeTab === 'organic' ? (
-                    <OrganicMolecules />
-                ) : (
-                    <InorganicMolecules />
-                )}
+                <div className="search-umap-container">
+                    {activeTab === 'organic' ? (
+                        <OrganicMolecules />
+                    ) : (
+                        <InorganicMolecules />
+                    )}
+                    <MoleculeInfo />
+                </div>
+                
             </div>
         </div>
     );
