@@ -269,6 +269,7 @@ const UMAPClusterPlotDeck = ({
     highlightedSimilarData = [],
     userPermissions,
     onClick,
+    molecularType = 'organic'
 }) => {
     const { t } = useTranslation();
 
@@ -596,17 +597,17 @@ const UMAPClusterPlotDeck = ({
                     {
                         label: t('molecular.umapPlot.properties.predictedMp'), value: hoveredObject.object.properties.predicted_mp,
                         suffix: t('molecular.umapPlot.units.celsius'),
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     },
                     {
                         label: t('molecular.umapPlot.properties.predictedBp'), value: hoveredObject.object.properties.predicted_bp,
                         suffix: t('molecular.umapPlot.units.celsius'),
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     },
                     {
                         label: 'Predicted FP', value: hoveredObject.object.properties.predicted_fp,
                         suffix: ' °C',
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
                     },
                     {
                         label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',

@@ -901,6 +901,44 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
       // Add proper spacing for horizontal rules
       hr: ({ node, ...props }) => (
         <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+      ),
+      
+      a: ({ node, children, ...props }) => (
+        <a {...props} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      ),
+      
+      // Fix code tags to allow line wrapping
+      code: ({ node, children, ...props }) => (
+        <code {...props} style={{ 
+          whiteSpace: 'pre-wrap', 
+          wordWrap: 'break-word', 
+          overflowWrap: 'break-word',
+          backgroundColor: '#f1f5f9',
+          padding: '2px 4px',
+          borderRadius: '3px',
+          fontSize: '0.9em',
+          fontFamily: 'monospace'
+        }}>
+          {children}
+        </code>
+      ),
+      
+      // Fix pre tags to allow line wrapping
+      pre: ({ node, children, ...props }) => (
+        <pre {...props} style={{ 
+          whiteSpace: 'pre-wrap', 
+          wordWrap: 'break-word', 
+          overflowWrap: 'break-word',
+          backgroundColor: '#f1f5f9',
+          borderRadius: '6px',
+          overflow: 'auto',
+          fontSize: '0.9em',
+          margin: '0.5em 0'
+        }}>
+          {children}
+        </pre>
       )
     };
   };

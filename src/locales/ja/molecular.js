@@ -60,7 +60,8 @@ export default {
       homo: "HOMO",
       lumo: "LUMO",
       predictedMp: "予測融点",
-      predictedBp: "予測沸点"
+      predictedBp: "予測沸点",
+      llmGrade: "LLM Grade"
     },
     units: {
       gPerMol: " g/mol",

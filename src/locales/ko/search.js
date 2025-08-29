@@ -1,14 +1,21 @@
 export default {
+    // Search Tabs
+    tabs: {
+        organic: '유기 분자',
+        inorganic: '무기 분자',
+        third: '고체 전해질'
+    },
+    
     // Search Input
     searchPlaceholder: "SMILES 문자열, 분자명 또는 쿼리를 입력하세요",
     searchButton: "검색",
-    searchTooltip: `<p>유효한 쿼리는 분자의 모든 수치 속성을 검색할 수 있습니다. 예를 들어:</p><p>- "HOMO가 -8 이하인 모든 분자 찾기"</p><p>- "LUMO가 -2 이상이고 분자량이 200 이하인 모든 분자 찾기"</p><p>더 열린 질문에 대해서는 Ask를 사용하세요.</p><p>SMILES 문자열을 그리고 조회하려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>를 방문하세요.</p>`,
+    searchTooltip: '<p>유효한 쿼리는 분자의 모든 수치적 특성을 검색할 수 있습니다. 예시:</p><p>- "HOMO가 최대 -8인 모든 분자 찾기"<br/>- "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"</p><p>더 개방적인 쿼리의 경우 Ask를 사용하세요.</p><p>SMILES 문자열을 그리거나 찾으려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>을 방문하세요</p>',
     drawMolecule: "분자 그리기",
     
     // Search Options
-    findFriendsLabel: '"친구들" 찾기',
-    findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들."친구들"에는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들이 포함됩니다. 목록은 질의한 분자와 물리화학적 속성이 얼마나 유사한지에 따라 정렬됩니다.',
-
+    findFriendsLabel: '"친구" 찾기',
+    findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들. "친구"는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들을 모두 포함합니다. 목록은 물리화학적 특성이 쿼리 분자와 얼마나 유사한지에 따라 정렬됩니다.',
+    
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
     distantFriends: '먼 친구들',
@@ -30,36 +37,37 @@ export default {
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',
     computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+
     
     // Loading and Status Messages
     searching: "검색 중...",
-    loadingMap: "분자 우주 지도 로딩 중",
+    loadingMap: "분자 우주의 지도를 로딩 중",
     errorLoadingData: "데이터 로딩 오류",
     noDataAvailable: "사용 가능한 데이터가 없습니다",
-    tooManyRequests: "요청이 너무 많습니다. 잠시 기다린 후 다시 시도해주세요.",
+    tooManyRequests: "요청이 너무 많습니다. 잠시 기다린 후 다시 시도하세요.",
     
     // Search Results
     searchedMolecules: "검색된 분자",
     moleculeNumber: "분자 {{number}}",
-    similarMolecules: "유사 분자",
-    similarMoleculeNumber: "유사 분자 번호 #{{number}}",
-    selectMolType: "최적의 결과를 얻기 위해 분자 유형을 선택하세요",
+    similarMolecules: "유사한 분자",
+    similarMoleculeNumber: "유사한 분자 #{{number}}",
+    selectMolType: "최상의 결과를 위해 분자 유형을 선택하세요",
     
     // Property Names (Professional terms - not translated according to rules)
     properties: {
         smiles: "SMILES",
         chemicalFormula: "Chemical Formula",
-        molecularWeight: "분자량",
+        molecularWeight: "Molecular Weight",
         homo: "HOMO",
         lumo: "LUMO",
-        espMin: "ESP 최소값:",
-        espMax: "ESP 최대값:",
-        predictedMp: "예상 녹는점:",
-        predictedBp: "예상 끓는점:",
-        predictedFp: "예상 화재점:",
-        combustionEnthalpy: "연소 엔탈피:",
-        commercialScore: "상업적 가치:",
-        functionalGroups: "작용기",
+        espMin: "ESP Min",
+        espMax: "ESP Max",
+        predictedMp: "Predicted Melting Point",
+        predictedBp: "Predicted Boiling Point",
+        predictedFp: "Predicted Flash Point",
+        combustionEnthalpy: "Combustion Enthalpy",
+        commercialScore: "Commercial Score",
+        functionalGroups: "Functional Groups",
         umapX: "UMAP_X",
         umapY: "UMAP_Y"
     },
@@ -84,24 +92,24 @@ export default {
     saving: "저장 중...",
     
     // Warning and Error Messages
-    multipleMoleculesWarning: "검색 기준과 일치하는 여러 분자가 발견되었습니다. 친구 찾기가 비활성화되었습니다.",
-    findFriendError: "유사한 분자를 찾는데 실패했습니다. 다시 시도해주세요.",
-    searchError: "분자 검색 중 오류가 발생했습니다. 다시 시도해주세요.",
+    multipleMoleculesWarning: "검색 조건과 일치하는 여러 분자가 발견되었습니다. 친구 찾기 기능이 비활성화되었습니다.",
+    findFriendError: "유사한 분자 찾기에 실패했습니다. 다시 시도하세요.",
+    searchError: "분자 검색 중 오류가 발생했습니다. 다시 시도하세요.",
     
     // Not Found Message
     moleculeNotFound: {
-        title: "쿼리가 어떤 분자도 반환하지 않았습니다. 다음과 같은 가능성이 있습니다:",
+        title: "쿼리에서 분자가 반환되지 않았습니다. 다음과 같은 가능성이 있습니다:",
         reasons: [
-            "쿼리가 배터리와 관련이 없거나 오류가 있을 수 있습니다. 확인해주세요.",
-            "결과 분자들이 프리미엄 레벨인 Enterprise 및 Joint Development에 포함되어 있습니다. 업그레이드해주세요.",
-            "쿼리가 저희의 숨겨진 보물 분자 은하 중 하나에 도달했습니다. 저희에게 연락해주세요.",
-            "쿼리가 염 또는 음이온 분자와 관련이 있을 수 있는데, 현재 데이터베이스에서는 아직 지원하지 않습니다. 곧 있을 업데이트에서 음이온을 추가할 예정입니다."
+            "쿼리가 배터리와 관련이 없거나 오류가 있을 수 있습니다. 확인해보세요.",
+            "결과 분자가 Enterprise와 Joint Development의 프리미엄 레벨에 포함되어 있습니다. 업그레이드하세요.",
+            "쿼리가 숨겨진 보물 분자 은하 중 하나에 도달했습니다. 문의해주세요.",
+            "쿼리에 염이나 음이온 분자가 포함되어 있을 수 있지만, 현재 데이터베이스에서는 아직 지원하지 않습니다. 향후 업데이트에서 음이온을 추가할 예정입니다."
         ],
-        contactSales: "영업팀 연락"
+        contactSales: "영업팀에 문의"
     },
 
     // Ambiguous Query Message
     ambiguousQuery: {
-        message: "질의가 모호합니다. 약어 {{query}}는 다음 분자들 중 하나에 해당할 수 있습니다: {{options}}. 질의를 더 구체화해주세요."
+        message: "쿼리가 모호합니다. 약어 {{query}}는 다음 분자 중 하나에 해당할 수 있습니다: {{options}}. 쿼리를 구체화해주세요."
     }
 }; 
