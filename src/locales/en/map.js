@@ -10,10 +10,15 @@ export default {
   },
   about: {
     title: 'About Molecular Universe',
-    description1: 'Molecular Universe MU-0.5 is a battery material discovery software and service platform. We mapped more battery relevant properties of more battery relevant small molecules than ever before and trained a navigation system powered by a battery-specific llm that\'s like having world-renowned battery scientists at your fingertips. Now we can offer different levels of joint development services to customers across Li-Metal, silicon Li-ion, LFP, and many others.',
-    description2: 'This 2D map visualizes a 512 dimensional universe of small molecules through a dimension reduction algorithm called UMAP (Uniform Manifold Approximation and Projection). It\'s the world\'s largest database of battery relevant molecules and properties that we know of, and constantly growing. Users can interact, filter, search and ask questions in natural language to accelerate their next generation battery development.',
-    description3: 'In MU-0.5, the map consists of 25 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.',
-    clusterTitle: 'Cluster Descriptions'
+    description1: 'Molecular Universe MU-0.5 is a battery material discovery software and service platform. It maps more battery-relevant properties of small molecules than ever before and powers a navigation system driven by a battery-specific LLM—like having world-renowned battery scientists at your fingertips. Through MU-0.5, we provide tiered joint-development services for customers working on Li-metal, silicon Li-ion, LFP, and other chemistries.',
+    description2: 'Within the Molecular Universe, we use 2D maps to visualize a 512-dimensional molecular space through the UMAP (Uniform Manifold Approximation and Projection) algorithm. Our integrated datasets form what we believe to be the world\'s largest and continuously growing database of battery-relevant molecules and properties. Users can interact with the map to filter, search, and ask natural-language questions that accelerate next-generation battery development.',
+    description3: 'The MAP feature currently presents two molecular maps: organic and inorganic. Most known battery solvents are organic, while inorganic solvents—largely unexplored—hold promise for unique SEI film formation, improved stability, and enhanced electrochemical performance. At SES, we are expanding the inorganic space to aid the search for stable inorganic solvents and additives that could advance battery technologies.',
+    description4: 'To build the inorganic map, we employ a rule-based generation approach: constructing linear, cyclic, and polycyclic backbones, introducing branches and structural variations, populating them with inorganic atoms, assigning bond orders, and attaching terminal groups to complete the structures.',
+    description5: 'Finally, the MU-1 organic map organizes 25 molecular clusters, as labeled below. This map will continue to expand as we probe deeper into the Molecular Universe.',
+    description6: 'The MU-1 inorganic map consists of 7 molecular clusters, they are labeled as below. We will be updating this map as we explore deeper into the Molecular Universe.',
+    clusterTitle: 'Cluster Descriptions',
+    organicTitle: 'Organic Molecule Clusters',
+    inorganicTitle: 'Inorganic Molecule Clusters'
   },
   clusters: {
     clusterName: 'Cluster',
@@ -42,6 +47,15 @@ export default {
     cluster22: 'is characterized by Arene, Imide, Amide functional groups.',
     cluster23: 'is characterized by Amine, Nitro, Pyridine functional groups.',
     cluster24: 'is characterized by Amide, Amine, Ether functional groups.'
+  },
+  inorganicClusters: {
+    cluster1: 'Cyclic, bridged molecules with double-bonding present in the ring structure, but no sulfur atoms.',
+    cluster2: 'Cyclic, bridged molecules with no double-bonding present in the core ring, and no sulfur atoms.',
+    cluster3: 'Linear molecules with no sulfur atoms.',
+    cluster4: 'Cylic/bridged molecules containing S=O functional groups, but lacking double-bonding in the core ring structure.',
+    cluster5: 'Linear molecules with S=O functional groups present.',
+    cluster6: 'Cyclic molecules with double-bonding present in the core ring structure, where sulfur atoms are generally present in double-bonded motifs.',
+    cluster7: 'Cyclic molecules with double-bonding present in the core ring structure, where sulfur atoms are present in a range of bonding patterns.'
   },
   inorganic: {
     title: 'Visualizing the Inorganic Molecular Universe',
