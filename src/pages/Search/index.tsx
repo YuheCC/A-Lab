@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
+import { OrganicSearch, InorganicSearch } from "./components";
 import "./Search.css";
 
 const Search = () => {
