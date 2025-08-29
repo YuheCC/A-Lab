@@ -1,4 +1,11 @@
 export default {
+    // Search Tabs
+    tabs: {
+        organic: '有机分子',
+        inorganic: '无机分子',
+        third: '固态电解质'
+    },
+    
     // Search Input
     searchPlaceholder: "输入SMILES字符串、分子名称或查询条件",
     searchButton: "搜索",
