@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import './third.css';
-import { authFetch } from '@/utils';
+import { authFetch, getAPIUrl } from '@/utils';
+
+const BASE_URL = getAPIUrl();
 
 // 定义搜索结果的数据类型
 interface SearchResult {
@@ -18,6 +20,8 @@ const ThirdSearch: React.FC = () => {
     const [pageSize] = useState<number>(20);
     const ref = useRef<HTMLDivElement>(null);
     const [inputShow, setInputShow] = useState<boolean>(true);
+    const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
+    const [selectedRecord, setSelectedRecord] = useState<SearchResult | null>(null);
 
     const handleFormulaChange = (value: string) => {
         setMolecularFormula(value);
@@ -196,13 +200,43 @@ const ThirdSearch: React.FC = () => {
     const endIndex = startIndex + pageSize;
     const currentPageData = searchResults.slice(startIndex, endIndex);
 
-    // 动态获取表头列
+    // 默认显示的列
+    const defaultDisplayColumns = [
+        'sse_id',
+        'integer_formula',
+        'formula_std',
+        'chemical_system',
+        'abbreviation_std',
+        'phase',
+        'framework',
+        'polymorph',
+        'space_group',
+        'electrolyte_chemistry',
+        'ionic_conductivity_value (S/cm)',
+        'conductivity_temperature(°C)',
+        'activation_energy_value (eV)',
+        'electrochemical_window_value (V)'
+    ];
+
+    // 获取要显示的表头列（默认列 + 操作列）
     const getTableHeaders = (): string[] => {
         if (searchResults.length === 0) return [];
         
-        // 获取第一条数据的所有键作为表头
+        // 获取第一条数据的所有键
         const firstResult = searchResults[0];
-        return Object.keys(firstResult);
+        const allKeys = Object.keys(firstResult);
+        
+        // 筛选出存在的默认列
+        const availableDefaultColumns = defaultDisplayColumns.filter(col => allKeys.includes(col));
+        
+        // 返回默认列 + 操作列
+        return [...availableDefaultColumns, 'actions'];
+    };
+
+    // 获取所有可用的列（用于详情弹窗）
+    const getAllAvailableColumns = (): string[] => {
+        if (searchResults.length === 0) return [];
+        return Object.keys(searchResults[0]);
     };
 
     // 分页处理函数
@@ -350,6 +384,84 @@ const ThirdSearch: React.FC = () => {
         margin: '0 16px'
     };
 
+    // 操作按钮样式
+    const actionButtonStyle: React.CSSProperties = {
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        padding: '6px 12px',
+        fontSize: '12px',
+        cursor: 'pointer',
+        fontWeight: '500'
+    };
+
+    // 模态框样式
+    const modalOverlayStyle: React.CSSProperties = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000
+    };
+
+    const modalContentStyle: React.CSSProperties = {
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        padding: '24px',
+        maxWidth: '800px',
+        maxHeight: '80vh',
+        width: '90%',
+        overflow: 'auto',
+        position: 'relative'
+    };
+
+    const modalHeaderStyle: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        borderBottom: '1px solid #eee',
+        paddingBottom: '12px'
+    };
+
+    const modalCloseButtonStyle: React.CSSProperties = {
+        backgroundColor: 'transparent',
+        border: 'none',
+        fontSize: '24px',
+        cursor: 'pointer',
+        color: '#666'
+    };
+
+    const modalBodyStyle: React.CSSProperties = {
+        maxHeight: '60vh',
+        overflow: 'auto'
+    };
+
+    const detailItemStyle: React.CSSProperties = {
+        display: 'flex',
+        marginBottom: '12px',
+        padding: '8px',
+        borderRadius: '4px',
+        backgroundColor: '#f8f9fa'
+    };
+
+    const detailLabelStyle: React.CSSProperties = {
+        fontWeight: '600',
+        minWidth: '180px',
+        color: '#333'
+    };
+
+    const detailValueStyle: React.CSSProperties = {
+        color: '#555',
+        wordBreak: 'break-all'
+    };
+
     return (
         <>
             <div style={containerStyle} className="third-search-container-new">
@@ -479,14 +591,31 @@ const ThirdSearch: React.FC = () => {
                                     <tbody>
                                         {currentPageData.map((result, index) => (
                                             <tr key={startIndex + index}>
-                                                {getTableHeaders().map((header) => (
-                                                    <td key={header} style={tdStyle}>
-                                                        {typeof result[header] === 'object' && result[header] !== null
-                                                            ? JSON.stringify(result[header])
-                                                            : String(result[header] || '-')
-                                                        }
-                                                    </td>
-                                                ))}
+                                                {getTableHeaders().map((header) => {
+                                                    if (header === 'actions') {
+                                                        return (
+                                                            <td key={header} style={tdStyle}>
+                                                                <button 
+                                                                    style={actionButtonStyle}
+                                                                    onClick={() => {
+                                                                        setSelectedRecord(result);
+                                                                        setShowDetailModal(true);
+                                                                    }}
+                                                                >
+                                                                    查看详情
+                                                                </button>
+                                                            </td>
+                                                        );
+                                                    }
+                                                    return (
+                                                        <td key={header} style={tdStyle}>
+                                                            {typeof result[header] === 'object' && result[header] !== null
+                                                                ? JSON.stringify(result[header])
+                                                                : String(result[header] || '-')
+                                                            }
+                                                        </td>
+                                                    );
+                                                })}
                                             </tr>
                                         ))}
                                     </tbody>
@@ -555,6 +684,36 @@ const ThirdSearch: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 详情弹窗 */}
+            {showDetailModal && selectedRecord && (
+                <div style={modalOverlayStyle} onClick={() => setShowDetailModal(false)}>
+                    <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+                        <div style={modalHeaderStyle}>
+                            <h3 style={{ margin: 0, color: '#333' }}>详细信息</h3>
+                            <button 
+                                style={modalCloseButtonStyle}
+                                onClick={() => setShowDetailModal(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div style={modalBodyStyle}>
+                            {getAllAvailableColumns().map((key) => (
+                                <div key={key} style={detailItemStyle}>
+                                    <div style={detailLabelStyle}>{key}:</div>
+                                    <div style={detailValueStyle}>
+                                        {typeof selectedRecord[key] === 'object' && selectedRecord[key] !== null
+                                            ? JSON.stringify(selectedRecord[key], null, 2)
+                                            : String(selectedRecord[key] || '-')
+                                        }
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
