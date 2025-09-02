@@ -20,6 +20,7 @@ const ThirdSearch: React.FC = () => {
     const [error, setError] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(20);
+    const [totalCount, setTotalCount] = useState<number>(0);
     const ref = useRef<HTMLDivElement>(null);
     const [inputShow, setInputShow] = useState<boolean>(true);
     const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
@@ -43,7 +44,7 @@ const ThirdSearch: React.FC = () => {
             setCurrentPage(1); // 重置到第一页
             
             try {
-                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_model=${matchModelEnums[activeTab]}`);
+                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_model=${matchModelEnums[activeTab]}&page=${currentPage}&page_size=${pageSize}`);
                 
                 if (!response.ok) {
                     throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
@@ -51,12 +52,19 @@ const ThirdSearch: React.FC = () => {
                 
                 const data = await response.json();
                 
-                // 假设接口返回的数据结构包含 results 字段
-                if (data.results && Array.isArray(data.results)) {
+                // 新的分页响应格式：data包含data和total_count
+                if (data && data.data && Array.isArray(data.data)) {
+                    setSearchResults(data.data);
+                    setTotalCount(data.total_count || 0);
+                } else if (data.results && Array.isArray(data.results)) {
+                    // 兼容旧格式
                     setSearchResults(data.results);
+                    setTotalCount(data.results.length);
                 } else {
                     // 如果接口直接返回数组
-                    setSearchResults(Array.isArray(data) ? data : []);
+                    const results = Array.isArray(data) ? data : [];
+                    setSearchResults(results);
+                    setTotalCount(results.length);
                 }
                 
             } catch (err) {
@@ -196,11 +204,9 @@ const ThirdSearch: React.FC = () => {
         width: '60%'
     };
 
-    // 分页相关计算
-    const totalPages = Math.ceil(searchResults.length / pageSize);
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const currentPageData = searchResults.slice(startIndex, endIndex);
+    // 分页相关计算 - 使用服务器端总数
+    const totalPages = Math.ceil(totalCount / pageSize);
+    const currentPageData = searchResults; // 服务器已返回当前页数据
 
     // 默认显示的列
     const defaultDisplayColumns = [
@@ -230,8 +236,16 @@ const ThirdSearch: React.FC = () => {
         const firstResult = searchResults[0];
         const allKeys = Object.keys(firstResult);
         
-        // 筛选出存在的默认列
-        const availableDefaultColumns = defaultDisplayColumns.filter(col => allKeys.includes(col));
+        // 创建小写映射用于比较
+        const lowerCaseKeysMap = new Map<string, string>();
+        allKeys.forEach(key => {
+            lowerCaseKeysMap.set(key.toLowerCase(), key);
+        });
+        
+        // 筛选出存在的默认列（小写比较，返回实际key）
+        const availableDefaultColumns = defaultDisplayColumns
+            .map(col => lowerCaseKeysMap.get(col.toLowerCase()))
+            .filter(Boolean) as string[];
         
         // 返回默认列 + 操作列
         return [...availableDefaultColumns, 'actions'];
@@ -248,16 +262,52 @@ const ThirdSearch: React.FC = () => {
         return Object.keys(searchResults[0]);
     };
 
-    // 分页处理函数
-    const handlePageChange = (page: number) => {
+    // 分页处理函数 - 重新请求数据
+    const handlePageChange = async (page: number) => {
+        if (page === currentPage) return;
+        
         setCurrentPage(page);
-        // 滚动到表格顶部
-        const container = document.querySelector('.third-search-container-new');
-        if (container) {
-            window.scrollTo({
-                top: (container as HTMLElement).offsetTop,
-                behavior: 'smooth'
-            });
+        setIsLoading(true);
+        setError('');
+        
+        try {
+            const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_model=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
+            
+            if (!response.ok) {
+                throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
+            }
+            
+            const data = await response.json();
+            
+            // 新的分页响应格式：data包含data和total_count
+            if (data && data.data && Array.isArray(data.data)) {
+                setSearchResults(data.data);
+                setTotalCount(data.total_count || 0);
+            } else if (data.results && Array.isArray(data.results)) {
+                // 兼容旧格式
+                setSearchResults(data.results);
+                setTotalCount(data.results.length);
+            } else {
+                // 如果接口直接返回数组
+                const results = Array.isArray(data) ? data : [];
+                setSearchResults(results);
+                setTotalCount(results.length);
+            }
+            
+            // 滚动到表格顶部
+            const container = document.querySelector('.third-search-container-new');
+            if (container) {
+                window.scrollTo({
+                    top: (container as HTMLElement).offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+            
+        } catch (err) {
+            console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
+            setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -651,7 +701,7 @@ const ThirdSearch: React.FC = () => {
                                     </thead>
                                     <tbody>
                                         {currentPageData.map((result, index) => (
-                                            <tr key={startIndex + index}>
+                                            <tr key={index}>
                                                 {getTableHeaders().map((header) => {
                                                     if (header === 'actions') {
                                                         return (
@@ -698,7 +748,7 @@ const ThirdSearch: React.FC = () => {
 
                                 {/* 页码信息 */}
                                 <div style={pageInfoStyle}>
-                                    {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })}
+                                    {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })} ({totalCount} {t('thirdSearch.totalItems', { count: totalCount })})
                                 </div>
 
                                 {/* 页码按钮 */}
