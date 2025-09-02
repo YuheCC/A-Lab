@@ -403,63 +403,123 @@ const ThirdSearch: React.FC = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1000
+        zIndex: 1000,
+        backdropFilter: 'blur(2px)',
+        animation: 'fadeIn 0.2s ease-out'
     };
 
     const modalContentStyle: React.CSSProperties = {
         backgroundColor: 'white',
-        borderRadius: '8px',
-        padding: '24px',
-        maxWidth: '800px',
-        maxHeight: '80vh',
+        borderRadius: '12px',
+        padding: '0',
+        maxWidth: '900px',
+        maxHeight: '85vh',
         width: '90%',
-        overflow: 'auto',
-        position: 'relative'
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(0, 0, 0, 0.1)',
+        transform: 'scale(1)',
+        animation: 'modalSlideIn 0.3s ease-out'
     };
 
     const modalHeaderStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '20px',
-        borderBottom: '1px solid #eee',
-        paddingBottom: '12px'
+        padding: '20px 24px',
+        backgroundColor: '#f8f9fa',
+        borderBottom: '1px solid #e9ecef',
+        margin: '0'
+    };
+
+    const modalTitleStyle: React.CSSProperties = {
+        margin: 0,
+        color: '#2c3e50',
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
     };
 
     const modalCloseButtonStyle: React.CSSProperties = {
         backgroundColor: 'transparent',
         border: 'none',
-        fontSize: '24px',
+        fontSize: '28px',
         cursor: 'pointer',
-        color: '#666'
+        color: '#6c757d',
+        padding: '4px',
+        borderRadius: '50%',
+        width: '36px',
+        height: '36px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.2s ease',
+        ':hover': {
+            backgroundColor: '#e9ecef',
+            color: '#495057'
+        }
     };
 
     const modalBodyStyle: React.CSSProperties = {
-        maxHeight: '60vh',
-        overflow: 'auto'
+        padding: '24px',
+        maxHeight: '70vh',
+        overflow: 'auto',
+        backgroundColor: 'white'
+    };
+
+    const detailGridStyle: React.CSSProperties = {
+        display: 'grid',
+        gap: '16px'
     };
 
     const detailItemStyle: React.CSSProperties = {
-        display: 'flex',
-        marginBottom: '12px',
-        padding: '8px',
-        borderRadius: '4px',
-        backgroundColor: '#f8f9fa'
+        display: 'grid',
+        gridTemplateColumns: '200px 1fr',
+        gap: '16px',
+        padding: '16px',
+        borderRadius: '8px',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e9ecef',
+        transition: 'all 0.2s ease',
+        ':hover': {
+            backgroundColor: '#f8f9fa',
+            borderColor: '#dee2e6'
+        }
     };
 
     const detailLabelStyle: React.CSSProperties = {
         fontWeight: '600',
-        minWidth: '180px',
-        color: '#333'
+        color: '#495057',
+        fontSize: '14px',
+        lineHeight: '1.4',
+        display: 'flex',
+        alignItems: 'flex-start',
+        paddingTop: '2px'
     };
 
     const detailValueStyle: React.CSSProperties = {
-        color: '#555',
-        wordBreak: 'break-all'
+        color: '#6c757d',
+        fontSize: '14px',
+        lineHeight: '1.5',
+        wordBreak: 'break-word',
+        whiteSpace: 'pre-wrap',
+        backgroundColor: '#f8f9fa',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        fontFamily: 'Monaco, "Lucida Console", monospace',
+        border: '1px solid #e9ecef'
+    };
+
+    const iconStyle: React.CSSProperties = {
+        width: '20px',
+        height: '20px',
+        fill: '#007bff'
     };
 
     return (
@@ -690,26 +750,41 @@ const ThirdSearch: React.FC = () => {
                 <div style={modalOverlayStyle} onClick={() => setShowDetailModal(false)}>
                     <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
                         <div style={modalHeaderStyle}>
-                            <h3 style={{ margin: 0, color: '#333' }}>详细信息</h3>
+                            <h3 style={modalTitleStyle}>
+                                <svg style={iconStyle} viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                材料详细信息
+                            </h3>
                             <button 
                                 style={modalCloseButtonStyle}
                                 onClick={() => setShowDetailModal(false)}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#e9ecef';
+                                    e.currentTarget.style.color = '#495057';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = '#6c757d';
+                                }}
                             >
                                 ×
                             </button>
                         </div>
                         <div style={modalBodyStyle}>
-                            {getAllAvailableColumns().map((key) => (
-                                <div key={key} style={detailItemStyle}>
-                                    <div style={detailLabelStyle}>{key}:</div>
-                                    <div style={detailValueStyle}>
-                                        {typeof selectedRecord[key] === 'object' && selectedRecord[key] !== null
-                                            ? JSON.stringify(selectedRecord[key], null, 2)
-                                            : String(selectedRecord[key] || '-')
-                                        }
+                            <div style={detailGridStyle}>
+                                {getAllAvailableColumns().map((key) => (
+                                    <div key={key} style={detailItemStyle}>
+                                        <div style={detailLabelStyle}>{key}</div>
+                                        <div style={detailValueStyle}>
+                                            {typeof selectedRecord[key] === 'object' && selectedRecord[key] !== null
+                                                ? JSON.stringify(selectedRecord[key], null, 2)
+                                                : String(selectedRecord[key] || '-')
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
