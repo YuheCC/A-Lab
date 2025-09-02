@@ -25,6 +25,7 @@ export default {
     previousPage: "上一页",
     nextPage: "下一页",
     pageInfo: "第 {{current}} 页，共 {{total}} 页",
+    totalItems: "{{count}} 个项目",
     
     // Modal
     materialDetails: "材料详细信息",

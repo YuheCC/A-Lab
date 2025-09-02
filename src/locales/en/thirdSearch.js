@@ -25,6 +25,7 @@ export default {
     previousPage: "Previous",
     nextPage: "Next",
     pageInfo: "Page {{current}} of {{total}}",
+    totalItems: "{{count}} items",
     
     // Modal
     materialDetails: "Material Details",

@@ -25,6 +25,7 @@ export default {
     previousPage: "이전",
     nextPage: "다음",
     pageInfo: "{{current}} / {{total}} 페이지",
+    totalItems: "{{count}} 개 항목",
     
     // Modal
     materialDetails: "재료 상세 정보",

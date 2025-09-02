@@ -748,7 +748,7 @@ const ThirdSearch: React.FC = () => {
 
                                 {/* 页码信息 */}
                                 <div style={pageInfoStyle}>
-                                    {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })} ({totalCount} {t('thirdSearch.totalItems', { count: totalCount })})
+                                    {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })} ({t('thirdSearch.totalItems', { count: totalCount })})
                                 </div>
 
                                 {/* 页码按钮 */}
