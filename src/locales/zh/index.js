@@ -5,6 +5,7 @@ import molecular from './molecular';
 import about from './about';
 import pricing from './pricing';
 import search from './search';
+import thirdSearch from './thirdSearch';
 import explorer from './explorer';
 import feedback from './feedback';
 import chatbox from './chatbox';
@@ -20,6 +21,7 @@ export default {
     about,
     pricing,
     search,
+    thirdSearch,
     explorer,
     feedback,
     chatbox,

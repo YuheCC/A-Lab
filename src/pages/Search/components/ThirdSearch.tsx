@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
+import { useTranslation } from 'react-i18next';
 import './third.css';
 import { authFetch, getAPIUrl } from '@/utils';
 
@@ -11,6 +12,7 @@ interface SearchResult {
 }
 
 const ThirdSearch: React.FC = () => {
+    const { t } = useTranslation();
     const [molecularFormula, setMolecularFormula] = useState<string>('');
     const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('atLeastElements');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -44,7 +46,7 @@ const ThirdSearch: React.FC = () => {
                 const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_model=${matchModelEnums[activeTab]}`);
                 
                 if (!response.ok) {
-                    throw new Error(`搜索请求失败: ${response.status}`);
+                    throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
                 }
                 
                 const data = await response.json();
@@ -58,8 +60,8 @@ const ThirdSearch: React.FC = () => {
                 }
                 
             } catch (err) {
-                console.error('搜索出错:', err);
-                setError(err instanceof Error ? err.message : '搜索过程中发生未知错误');
+                console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
+                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
             } finally {
                 setIsLoading(false);
             }
@@ -218,6 +220,8 @@ const ThirdSearch: React.FC = () => {
         'electrochemical_window_value (V)'
     ];
 
+
+
     // 获取要显示的表头列（默认列 + 操作列）
     const getTableHeaders = (): string[] => {
         if (searchResults.length === 0) return [];
@@ -231,6 +235,11 @@ const ThirdSearch: React.FC = () => {
         
         // 返回默认列 + 操作列
         return [...availableDefaultColumns, 'actions'];
+    };
+
+    // 获取操作列的中文显示名称
+    const getActionColumnDisplayName = (): string => {
+        return t('thirdSearch.viewDetails');
     };
 
     // 获取所有可用的列（用于详情弹窗）
@@ -459,11 +468,7 @@ const ThirdSearch: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'all 0.2s ease',
-        ':hover': {
-            backgroundColor: '#e9ecef',
-            color: '#495057'
-        }
+        transition: 'all 0.2s ease'
     };
 
     const modalBodyStyle: React.CSSProperties = {
@@ -486,11 +491,7 @@ const ThirdSearch: React.FC = () => {
         borderRadius: '8px',
         backgroundColor: '#ffffff',
         border: '1px solid #e9ecef',
-        transition: 'all 0.2s ease',
-        ':hover': {
-            backgroundColor: '#f8f9fa',
-            borderColor: '#dee2e6'
-        }
+        transition: 'all 0.2s ease'
     };
 
     const detailLabelStyle: React.CSSProperties = {
@@ -527,12 +528,12 @@ const ThirdSearch: React.FC = () => {
             <div style={containerStyle} className="third-search-container-new">
                 {/* 顶部说明条 */}
                 <div style={headerBannerStyle}>
-                    Search for materials information by chemistry, composition, or property.
+                    {t('thirdSearch.headerBanner')}
                 </div>
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>
-                    <button style={materialsButtonStyle}>Materials</button>
+                    <button style={materialsButtonStyle}>{t('thirdSearch.materialsButton')}</button>
                     
                     {/* 自定义输入框，替代库的输入框 */}
                     <input
@@ -542,7 +543,7 @@ const ThirdSearch: React.FC = () => {
                         placeholder=""
                     />
                     
-                    <button style={iconButtonStyle} title="Periodic Table" onClick={() => setInputShow(!inputShow)}>
+                    <button style={iconButtonStyle} title={t('thirdSearch.periodicTableTooltip')} onClick={() => setInputShow(!inputShow)}>
                         <div style={{ 
                             width: '16px', 
                             height: '12px', 
@@ -562,7 +563,7 @@ const ThirdSearch: React.FC = () => {
                     </button>
                     
                     <button style={searchButtonStyle} onClick={handleSearch} disabled={isLoading}>
-                        {isLoading ? '搜索中...' : 'Search'}
+                        {isLoading ? t('thirdSearch.searchButtonLoading') : t('thirdSearch.searchButton')}
                     </button>
                 </div>
 
@@ -580,7 +581,7 @@ const ThirdSearch: React.FC = () => {
                                             triggerLiClick(0);
                                         }}
                                     >
-                                        Only Elements
+                                        {t('thirdSearch.tabs.onlyElements')}
                                     </button>
                                     <button 
                                         style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
@@ -589,7 +590,7 @@ const ThirdSearch: React.FC = () => {
                                             triggerLiClick(1);
                                         }}
                                     >
-                                        At Least Elements
+                                        {t('thirdSearch.tabs.atLeastElements')}
                                     </button>
                                     <button 
                                         style={activeTab === 'formula' ? activeTabStyle : tabStyle}
@@ -598,7 +599,7 @@ const ThirdSearch: React.FC = () => {
                                             triggerLiClick(2);
                                         }}
                                     >
-                                        Formula
+                                        {t('thirdSearch.tabs.formula')}
                                     </button>
                                 </div>
 
@@ -624,7 +625,7 @@ const ThirdSearch: React.FC = () => {
                         {/* 加载状态 */}
                         {isLoading && (
                             <div style={loadingStyle}>
-                                <div>正在搜索中，请稍候...</div>
+                                <div>{t('thirdSearch.loadingMessage')}</div>
                             </div>
                         )}
 
@@ -643,7 +644,7 @@ const ThirdSearch: React.FC = () => {
                                         <tr>
                                             {getTableHeaders().map((header) => (
                                                 <th key={header} style={thStyle}>
-                                                    {header}
+                                                    {header === 'actions' ? getActionColumnDisplayName() : header}
                                                 </th>
                                             ))}
                                         </tr>
@@ -662,7 +663,7 @@ const ThirdSearch: React.FC = () => {
                                                                         setShowDetailModal(true);
                                                                     }}
                                                                 >
-                                                                    查看详情
+                                                                    {t('thirdSearch.viewDetails')}
                                                                 </button>
                                                             </td>
                                                         );
@@ -671,7 +672,7 @@ const ThirdSearch: React.FC = () => {
                                                         <td key={header} style={tdStyle}>
                                                             {typeof result[header] === 'object' && result[header] !== null
                                                                 ? JSON.stringify(result[header])
-                                                                : String(result[header] || '-')
+                                                                : String(result[header] || t('thirdSearch.noData'))
                                                             }
                                                         </td>
                                                     );
@@ -692,12 +693,12 @@ const ThirdSearch: React.FC = () => {
                                     onClick={handlePrevPage}
                                     disabled={currentPage === 1}
                                 >
-                                    上一页
+                                    {t('thirdSearch.previousPage')}
                                 </button>
 
                                 {/* 页码信息 */}
                                 <div style={pageInfoStyle}>
-                                    第 {currentPage} 页，共 {totalPages} 页
+                                    {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })}
                                 </div>
 
                                 {/* 页码按钮 */}
@@ -730,7 +731,7 @@ const ThirdSearch: React.FC = () => {
                                     onClick={handleNextPage}
                                     disabled={currentPage === totalPages}
                                 >
-                                    下一页
+                                    {t('thirdSearch.nextPage')}
                                 </button>
                             </div>
                         )}
@@ -738,7 +739,7 @@ const ThirdSearch: React.FC = () => {
                         {/* 无搜索结果 */}
                         {!isLoading && !error && searchResults.length === 0 && searchResults.length !== 0 && (
                             <div style={noResultsStyle}>
-                                未找到相关结果
+                                {t('thirdSearch.noResultsFound')}
                             </div>
                         )}
                     </div>
@@ -752,9 +753,9 @@ const ThirdSearch: React.FC = () => {
                         <div style={modalHeaderStyle}>
                             <h3 style={modalTitleStyle}>
                                 <svg style={iconStyle} viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-9 9z"/>
                                 </svg>
-                                材料详细信息
+                                {t('thirdSearch.materialDetails')}
                             </h3>
                             <button 
                                 style={modalCloseButtonStyle}
@@ -779,7 +780,7 @@ const ThirdSearch: React.FC = () => {
                                         <div style={detailValueStyle}>
                                             {typeof selectedRecord[key] === 'object' && selectedRecord[key] !== null
                                                 ? JSON.stringify(selectedRecord[key], null, 2)
-                                                : String(selectedRecord[key] || '-')
+                                                : String(selectedRecord[key] || t('thirdSearch.noData'))
                                             }
                                         </div>
                                     </div>
