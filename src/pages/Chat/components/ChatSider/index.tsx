@@ -4,6 +4,7 @@ import ChatHistory from "../History";
 import ChatSearchModal from "../ChatSearchModal";
 import type { ChatHistoryItem } from "../History";
 import { useChatContext } from '../../context/ChatContext';
+import { useAuthStore } from '@/models/useAuth';
 
 interface ChatSiderProps {
     onNewChat?: () => void;
@@ -34,6 +35,11 @@ const ChatSider: React.FC<ChatSiderProps> = ({
     const ctx = useChatContext();
     const { isSidebarCollapsed, handleToggleSidebar } = ctx;
     const searchModalRef = useRef<any>(null);
+    const { organization_name } = useAuthStore();
+    
+    // Blacklist array for organizations that should not see history and search
+    const organizationBlacklist = ['CATL 21C', 'CATL', 'LGES', 'KAIST'];
+    const isBlacklisted = organization_name && organizationBlacklist.includes(organization_name);
     
     const handleSearchClick = () => {
         searchModalRef.current.show();
@@ -67,23 +73,28 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 </svg>
                 </a>
                 {/* Mini模式下的搜索按钮 */}
+                {!isBlacklisted && (
                 <a href="#" className="mini-search-btn" id="miniSearchBtn" title={t('chatbox.chat.searchChat')} onClick={handleSearchClick}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
                     <path d="M12.5 12.5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
                 </a>
+                )}
                 <div className="sidebar-actions">
                 <a href="#" className="new-chat-btn" id="mainNewChatBtn" onClick={(e) => { e.preventDefault(); (onNewChat || ctx.handleNewChat)(); }}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>
                     <span>{t('chatbox.chat.newChat')}</span>
                 </a>
+                {!isBlacklisted && (
                 <a href="#" className="new-chat-btn" id="searchChatBtn" onClick={handleSearchClick}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/><path d="M12.5 12.5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
                     <span>{t('chatbox.chat.searchChat')}</span>
                 </a>
+                )}
                 </div>
             </div>
+            {!isBlacklisted && (
             <ChatHistory 
                 history={chatHistory || ctx.chatHistory}
                 onSelectChat={onSelectChat || ctx.handleSelectChat}
@@ -96,11 +107,14 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 hasMore={!!(hasMoreHistory ?? ctx.hasMoreHistory)}
                 loadingMore={!!(loadingMoreHistory ?? ctx.loadingMoreHistory)}
             />
+            )}
+            {!isBlacklisted && (
             <ChatSearchModal 
                 ref={searchModalRef} 
                 onSelectChat={onSelectChat || ctx.handleSelectChat}
                 onNewChat={onNewChat || ctx.handleNewChat}
             />
+            )}
         </aside>
     )
 }
