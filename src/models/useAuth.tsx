@@ -13,6 +13,7 @@ interface AuthState {
     error: string | null;
     userInfo: any | null;
     isAdvancedTier: boolean;
+    organization_name: string | null;
     login: (data: { username: string, password: string }) => Promise<{ success: boolean, error?: string | undefined, data?: any }>;
     register: (data: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
     verifyCode: (data: { verify_id: string, code: string }) => Promise<{ success: boolean, message?: any, error?: string, data?: any }>;
@@ -33,10 +34,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     error: null,
     userInfo: {},
     isAdvancedTier: false,
+    organization_name: null,
     verifyAuth: async () => {
         const token = localStorage.getItem('token');
         const permissions = localStorage.getItem('permissions') || '';
-        set({ userPermissions: permissions, isLoading: true });
+        const organizationName = localStorage.getItem('organization_name');
+        set({ userPermissions: permissions, organization_name: organizationName, isLoading: true });
 
         if (!token) {
             set({
@@ -59,6 +62,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem('permissions', data.permissions || 'research');
             const isAdvancedTier = ['admin', 'enterprise', 'joint'].includes(data.permissions);
             localStorage.setItem('isAdvancedTier', isAdvancedTier ? 'true' : 'false');
+            if (data.organization_name) {
+                localStorage.setItem('organization_name', data.organization_name);
+            }
 
             set({
                 isAuthenticated: true,
@@ -68,12 +74,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 initialAuthLoaded: true,
                 userInfo: data,
                 isAdvancedTier: isAdvancedTier,
+                organization_name: data.organization_name || null,
             });
         } catch (err) {
             console.error('Auth verification error:', err);
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
+            localStorage.removeItem('organization_name');
             set({
                 isAuthenticated: false,
                 userPermissions: 'research',
@@ -99,12 +107,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 userPermissions: data.permissions || '',
                 userInfo: data,
                 isAdvancedTier: isAdvancedTier,
+                organization_name: data.organization_name || null,
             });
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('username', data.username);
             localStorage.setItem('permissions', data.permissions);            
             localStorage.setItem('isAdvancedTier', isAdvancedTier ? 'true' : 'false');
+            if (data.organization_name) {
+                localStorage.setItem('organization_name', data.organization_name);
+            }
             return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
             
         } catch (error) {
@@ -118,13 +130,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('permissions');
+        localStorage.removeItem('organization_name');
         set({ 
             isAuthenticated: false, 
             token: null, 
             userPermissions: null, 
             userName: null,
             isLoading: false,
-            error: null
+            error: null,
+            organization_name: null
         });
         const current = window.location.pathname + window.location.search;
         window.location.href = '/login?redirect=' + encodeURIComponent(current);
