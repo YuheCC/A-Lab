@@ -80,9 +80,23 @@ const OrganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [structureWeight, setStructureWeight] = useState(0.5);
+    const [structureWeight, setStructureWeight] = useState(0.75);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
     const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
@@ -181,66 +195,80 @@ const OrganicSearch = () => {
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
 
     // Update handleSearch function
-    const handleSearchedMolecules = async (response: Response, select_first = false): Promise<MoleculeData[] | null> => {
+    const handleSearchedMolecules = async (
+        response: Response,
+        select_first = false
+    ): Promise<{ formattedMolecules: MoleculeData[] | null; ambiguity: any }> => {
         let formattedMolecules: MoleculeData[] | null = null;
-        let ambiguity = null;
+        let ambiguity: any = null;
         try {
             const data = await response.json();
-            if (data.found) {
-                if (data.molecule_details && data.molecule_details.length > 0) {
-                    formattedMolecules = data.molecule_details.map((mol: any) => {
-                        return {
-                            smiles: mol.SMILES,
-                            x: mol.UMAP_0,
-                            y: mol.UMAP_1,
-                            image: mol.image, // Add image to the molecule data
-                            grade: mol.grade,
-                            reasoning: mol.reasoning,
-                            properties: {
-                                molwt: mol.molecular_weight,
-                                homo_eV: mol.HOMO_eV,
-                                lumo_eV: mol.LUMO_eV,
-                                esp_min_eV: mol.ESP_min_eV,
-                                esp_max_eV: mol.ESP_max_eV,
-                                functional_groups: mol.functional_groups,
-                                predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius,
-                                predicted_fp_celsius: mol.predicted_FP_celsius,
-                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
-                                commercial_score: mol.COMMERCIAL_SCORE,
-                                commercial_link: mol.COMMERCIAL_LINK
-                            },
-                            rawData: mol
-                        };
-                    });
-                    if (select_first && formattedMolecules) {
-                        // Only store the first molecule (as a list of one) and its image
-                        const formattedMolecule = formattedMolecules[0];
-                        setsearchedMolecules([formattedMolecule]);
-                        setsearchResults([formattedMolecule.image || '']);
-                        
-                        if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
-                            formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
-                            setHighlightedMolecules([formattedMolecule]);
-                        }
-                    } else if (formattedMolecules) {
-                        // Store all molecules and their images
-                        setsearchedMolecules(formattedMolecules);
-                        setsearchResults(formattedMolecules.map((mol) => mol.image || ''));
 
-                        // Don't filter out null values for highlightedMolecules as that messes up indexing
-                        // - deckgl handles null values gracefully
-                        if (formattedMolecules.length > 0) {
-                            setHighlightedMolecules(formattedMolecules);
-                        }
+            // Normalize to an array of result envelopes
+            const envelopes: any[] = Array.isArray(data) ? data : [data];
+
+            // If any envelope reports ambiguity, capture it
+            const ambiguousEnv = envelopes.find((env) => env && env.message === 'Ambiguous molecule abbreviation');
+            if (ambiguousEnv) {
+                ambiguity = ambiguousEnv.options ?? null;
+            }
+
+            // Collect all molecule_details from all successful envelopes
+            const allDetails: any[] = envelopes
+                .filter((env) => env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0)
+                .flatMap((env) => env.molecule_details);
+
+            if (allDetails.length > 0) {
+                const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
+                    smiles: mol.SMILES,
+                    x: mol.UMAP_0,
+                    y: mol.UMAP_1,
+                    image: mol.image,
+                    grade: mol.grade,
+                    reasoning: mol.reasoning,
+                    properties: {
+                        molwt: mol.molecular_weight,
+                        homo_eV: mol.HOMO_eV,
+                        lumo_eV: mol.LUMO_eV,
+                        esp_min_eV: mol.ESP_min_eV,
+                        esp_max_eV: mol.ESP_max_eV,
+                        functional_groups: mol.functional_groups,
+                        predicted_mp: mol.predicted_MP_celsius,
+                        predicted_bp: mol.predicted_BP_celsius,
+                        predicted_fp_celsius: mol.predicted_FP_celsius,
+                        combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: mol.COMMERCIAL_SCORE,
+                        commercial_link: mol.COMMERCIAL_LINK,
+                    },
+                    rawData: mol,
+                }));
+
+                if (select_first) {
+                    const first = mapped[0];
+                    setsearchedMolecules([first]);
+                    setsearchResults([first.image || '']);
+                    if (
+                        first.x !== null &&
+                        first.y !== null &&
+                        first.x !== undefined &&
+                        first.y !== undefined
+                    ) {
+                        setHighlightedMolecules([first]);
+                    }
+                } else {
+                    setsearchedMolecules(mapped);
+                    setsearchResults(mapped.map((m) => m.image || ''));
+                    if (mapped.length > 0) {
+                        setHighlightedMolecules(mapped);
                     }
                 }
-            } else if (data.message === 'Ambiguous molecule abbreviation') {
-                ambiguity = data.options;
+
+                formattedMolecules = mapped;
             }
         } catch (error) {
             console.error('Error processing searched molecules:', error);
         }
+
         return { formattedMolecules, ambiguity };
     };
 
@@ -283,13 +311,14 @@ const OrganicSearch = () => {
             }
 
             if (formattedMolecules && findClosestFriends) {
-                // check if formattedMolecules has length > 1 - if so display warning
-                if (formattedMolecules.length > 1) {
-                    setSearchWarning(t('search.multipleMoleculesWarning'));
-                } else {
-                    const formattedMolecule = formattedMolecules[0];
+                // Build an array of seed SMILES from all returned molecules
+                const smilesArray = formattedMolecules
+                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                    .filter((s) => !!s);
 
-                    // Then fetch similar molecules
+                if (smilesArray.length === 0) {
+                    setSearchWarning(t('search.moleculeNotFound.title'));
+                } else {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
                     const cVal = cathode === 'custom' ? cathodeCustom : cathode;
@@ -320,22 +349,22 @@ const OrganicSearch = () => {
 
                     const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
                     const payload: any = {
-                        smiles: formattedMolecule.smiles.trim(),
+                        smiles: smilesArray, // <-- pass an array of SMILES
                         use_35m: isHighTier,
                         structure_weight: structureWeight,
                         ...(molTypeToSend && { mol_type: molTypeToSend }),
                         ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
                         ...(computeEnabled && includeQuery && {
                             query: queryString,
-                            response: "No additional context is available for this query."
-                        })
+                            response: 'No additional context is available for this query.',
+                        }),
                     };
 
                     try {
                         const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify(payload),
                         });
                         if (!response.ok) {
                             throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
@@ -347,15 +376,13 @@ const OrganicSearch = () => {
                             setHighlightedSimilarMolecules(molecules);
                         }
 
-                        // Fetch molecule visualizations for all similar molecules
                         const imageResults = molecules.map((molecule: SimilarMolecule, index: number) => {
                             const moleculeImageUrl = molecule.image;
                             return { index, imageUrl: moleculeImageUrl };
                         });
 
-                        // Create a map of molecule index to image URL
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
+                        const imageMap: { [key: number]: string } = {};
+                        imageResults.forEach((result) => {
                             if (result.imageUrl) {
                                 imageMap[result.index] = result.imageUrl;
                             }
