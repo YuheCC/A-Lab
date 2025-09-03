@@ -34,6 +34,8 @@ const ChatInput: FC<ChatInputProps> = ({
   const [ignoreChatHistory, setIgnoreChatHistory] = useState<boolean>(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState<boolean>(false);
   const [fullDeepSpace, setFullDeepSpace] = useState<boolean>(false);
+  const [enablePatentRag, setEnablePatentRag] = useState<boolean>(false);
+  const [disableTools, setDisableTools] = useState<boolean>(false);
 
   // 更新按钮状态
   React.useEffect(() => {
@@ -82,6 +84,8 @@ const ChatInput: FC<ChatInputProps> = ({
       const extraPayload: Record<string, any> = {
         ignoreChatHistory,
         ragEnabled: !disableLiteratureSearch,
+        patentRagEnabled: enablePatentRag,
+        toolsEnabled: !disableTools,
       };
       if (currentMode === 'deep-space') {
         extraPayload.dump_state = !!fullDeepSpace;
@@ -308,6 +312,24 @@ const ChatInput: FC<ChatInputProps> = ({
                 disabled={disabled || currentMode !== 'deep-space'}
               />
               <span>{t('chatbox.checkboxes.fullDeepSpace')}</span>
+            </label>
+            <label className="option-item">
+              <input
+                type="checkbox"
+                checked={enablePatentRag}
+                onChange={(e) => setEnablePatentRag(e.target.checked)}
+                disabled={disabled}
+              />
+              <span>Enable Patent RAG</span>
+            </label>
+            <label className="option-item">
+              <input
+                type="checkbox"
+                checked={disableTools}
+                onChange={(e) => setDisableTools(e.target.checked)}
+                disabled={disabled}
+              />
+              <span>{t('chatbox.checkboxes.disableTools')}</span>
             </label>
           </div>
         )}

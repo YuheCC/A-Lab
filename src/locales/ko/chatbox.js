@@ -76,7 +76,8 @@ export default {
         enterDeepSpace: "딥 스페이스 진입 (BETA)",
         deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
         admin: "관리자",
-        fullDeepSpace: "전체 딥 스페이스"
+        fullDeepSpace: "전체 딥 스페이스",
+        disableTools: "도구 비활성화"
     },
     queryLimit: {
         queriesRemaining: "오늘 조회 횟수:",
@@ -140,6 +141,10 @@ export default {
     },
     errors: {
         networkError: "네트워크 응답이 정상적이지 않습니다",
+        connectionTimeout: "연결이 시간 초과되었습니다. 네트워크 상태를 확인하거나 나중에 다시 시도해주세요.",
+        serverConnectionFailed: "서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.",
+        networkIssueCheck: "죄송합니다. 네트워크 연결 문제가 발생했습니다. 네트워크를 확인하고 다시 시도해주세요.",
+        networkIssueRetry: "죄송합니다. 네트워크 연결 문제가 발생했습니다. 나중에 다시 시도해주세요.",  
         batteryRelevance: "귀하의 질문은 배터리나 배터리 화학과 관련이 없습니다. 배터리 관련 질문을 해주세요.",
         moleculeDetailsError: "분자 세부정보 가져오기 오류:",
         similarMoleculesError: "유사한 분자 찾기 오류:",
@@ -150,6 +155,7 @@ export default {
         copyError: "복사 실패:",
         generalError: "오류"
     },
+    supplementalData: "부가 데이터",
     history: {
         title: "채팅 목록",
         createNewChat: "새 채팅 만들기",

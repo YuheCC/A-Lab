@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
@@ -247,15 +248,21 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       >
         {text}
       </span>
-      {hoveredObject && propGroups.length > 0 && (
-        <div style={position} onMouseEnter={clearHideTimer} onMouseLeave={scheduleHide}>
-          <MolCard
-            ref={hoverRef}
-            showMoreDetails={true}
-            propGroups={propGroups}
-          />
-        </div>
-      )}
+      {hoveredObject && propGroups.length > 0 &&
+        createPortal(
+          <div style={position}>
+            <MolCard
+              ref={hoverRef}
+              showMoreDetails={true}
+              propGroups={propGroups}
+              onMouseEnter={() => {
+                // Keep popup open when hovering over it
+              }}
+              onMouseLeave={handleMouseLeave}
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 };
@@ -891,7 +898,11 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         return <ul {...props}>{processedChildren}</ul>;
       },
       
-      // Add target="_blank" to all links
+      // Add proper spacing for horizontal rules
+      hr: ({ node, ...props }) => (
+        <hr {...props} style={{ margin: '1.5em 0', border: 'none', borderTop: '1px solid #ccc' }} />
+      ),
+      
       a: ({ node, children, ...props }) => (
         <a {...props} target="_blank" rel="noopener noreferrer">
           {children}

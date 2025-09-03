@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { Plus, Info } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -43,6 +43,13 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
+    const defaultCompute = useMemo(() => (
+        ['research', 'explorer', 'team'].includes(userPermissions || '') ? 'Low' : 'High'
+    ), [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState(defaultCompute);
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     const handleClose = () => {
         onClose?.();
@@ -197,6 +204,19 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                 </div>
                 <div className="molecule-card-properties">
+                    {
+                        (raw?.grade != null || raw?.GRADE != null) && (
+                            <div className="molecule-card-property-item">
+                                <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.llmGrade')}:</span>
+                                <span className="molecule-card-property-value">
+                                    {raw?.grade ?? raw?.GRADE ?? '-'}{raw?.grade != null || raw?.GRADE != null ? '/10' : ''}
+                                    {(raw?.reasoning || raw?.REASONING) && (
+                                        <Info size={14} style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={() => alert(raw?.reasoning || raw?.REASONING)} />
+                                    )}
+                                </span>
+                            </div>
+                        )
+                    }
                     <div className="molecule-card-property-item">
                         <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                         <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
@@ -275,30 +295,30 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 
                 {isOriginal && (
                     <div className="molecule-card-actions">
-                        <select 
-                            className="molecule-type-select" 
-                            value={selectedMoleculeType}
-                            onChange={handleMoleculeTypeChange}
-                        >
-                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
-                            <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
-                            <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
-                            <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
-                        </select>
-                        <button 
-                            className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
-                            onClick={() => handleFindSimilar(name)}
-                            disabled={isSimilarLoading}
-                        >
-                            {isSimilarLoading ? (
-                                <div className="loading-spinner-small"></div>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-                                </svg>
-                            )}
-                            <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
-                        </button>
+                            <select
+                                className="molecule-type-select"
+                                value={selectedMoleculeType}
+                                onChange={handleMoleculeTypeChange}
+                            >
+                                <option value="all">{t('molecular.moleculeModal.types.all')}</option>
+                                <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                                <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                                <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                            </select>
+                            <button
+                                className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
+                                onClick={() => handleFindSimilar(name)}
+                                disabled={isSimilarLoading}
+                            >
+                                {isSimilarLoading ? (
+                                    <div className="loading-spinner-small"></div>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                                    </svg>
+                                )}
+                                <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
+                            </button>
                     </div>
                 )}
             </div>
@@ -376,6 +396,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         };
         if (molType && molType !== 'all') {
             payload.mol_type = molType;
+        }
+        if (computeLevel !== 'Disabled') {
+            payload.llm_compute_power = computeLevel.toLowerCase();
         }
         if (isHighTier && rawOriginal) {
             // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑

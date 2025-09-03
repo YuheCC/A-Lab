@@ -76,7 +76,8 @@ export default {
         enterDeepSpace: "ディープスペースに入る (ベータ版)",
         deepSpaceTooltip: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
         admin: "管理者",
-        fullDeepSpace: "フルディープスペース"
+        fullDeepSpace: "フルディープスペース",
+        disableTools: "ツールを無効にする"
     },
     queryLimit: {
         queriesRemaining: "今日の残りクエリ数：",
@@ -140,6 +141,10 @@ export default {
     },
     errors: {
         networkError: "ネットワーク応答が正常ではありませんでした",
+        connectionTimeout: "接続がタイムアウトしました。ネットワーク状態を確認するか、後でもう一度お試しください。",
+        serverConnectionFailed: "サーバーへの接続に失敗しました。ネットワーク接続を確認してください。",
+        networkIssueCheck: "申し訳ありませんが、ネットワーク接続の問題が発生しました。ネットワークを確認してからもう一度お試しください。",
+        networkIssueRetry: "申し訳ありませんが、ネットワーク接続の問題が発生しました。後でもう一度お試しください。",
         batteryRelevance: "あなたの質問はバッテリーやバッテリー化学に関連していません。バッテリー関連の質問をしてください。",
         moleculeDetailsError: "分子詳細の取得エラー：",
         similarMoleculesError: "類似分子の検索エラー：",
@@ -150,6 +155,7 @@ export default {
         copyError: "コピーに失敗しました：",
         generalError: "エラー"
     },
+    supplementalData: "補足データ",
     history: {
         title: "あなたのチャット",
         createNewChat: "新しいチャットを作成",
