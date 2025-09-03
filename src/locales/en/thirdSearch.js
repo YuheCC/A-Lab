@@ -19,7 +19,7 @@ export default {
     loadingMessage: "Searching, please wait...",
     noResultsFound: "No results found",
     viewDetails: "View Details",
-    noData: "No Data",
+    noData: "N/A",
     
     // Pagination
     previousPage: "Previous",

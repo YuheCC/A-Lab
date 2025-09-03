@@ -19,7 +19,7 @@ export default {
     loadingMessage: "검색 중입니다. 잠시 기다려 주세요...",
     noResultsFound: "결과를 찾을 수 없습니다",
     viewDetails: "상세 보기",
-    noData: "데이터 없음",
+    noData: "N/A",
     
     // Pagination
     previousPage: "이전",

@@ -19,7 +19,7 @@ export default {
     loadingMessage: "検索中です。お待ちください...",
     noResultsFound: "結果が見つかりません",
     viewDetails: "詳細を表示",
-    noData: "データなし",
+    noData: "N/A",
     
     // Pagination
     previousPage: "前へ",

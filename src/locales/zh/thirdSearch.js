@@ -19,7 +19,7 @@ export default {
     loadingMessage: "正在搜索中，请稍候...",
     noResultsFound: "未找到相关结果",
     viewDetails: "查看详情",
-    noData: "无数据",
+    noData: "N/A",
     
     // Pagination
     previousPage: "上一页",
