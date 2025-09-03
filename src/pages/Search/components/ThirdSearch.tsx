@@ -32,7 +32,7 @@ const ThirdSearch: React.FC = () => {
 
     const matchModelEnums = {
         "elements": "exact",
-        "atLeastElements": "any",
+        "atLeastElements": "all",
         "formula": "formula"
     }
 
