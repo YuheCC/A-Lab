@@ -87,6 +87,7 @@ export default {
         reachedLimit: "You have reached your monthly query limit. Please contact an administrator for assistance."
     },
     status: {
+        connectingToServer: "Connecting to server...",
         thinking: "thinking",
         searching: "searching",
         searchingDatabase: "searching our database",
