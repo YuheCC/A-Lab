@@ -211,22 +211,20 @@ const ThirdSearch: React.FC = () => {
     // 默认显示的列
     const defaultDisplayColumns = [
         'sse_id',
+        'formula',
         'integer_formula',
-        'formula_std',
         'chemical_system',
-        'abbreviation_std',
+        'abbreviation',
         'phase',
         'framework',
         'polymorph',
-        'space_group',
+        'spacegroup_symbol',
         'electrolyte_chemistry',
-        'ionic_conductivity_value (S/cm)',
-        'conductivity_temperature(°C)',
-        'activation_energy_value (eV)',
-        'electrochemical_window_value (V)'
+        'ionic_conductivity',
+        'conductivity_temperature',
+        'activation_energy',
+        'electrochemical_window'
     ];
-
-
 
     // 获取要显示的表头列（默认列 + 操作列）
     const getTableHeaders = (): string[] => {
