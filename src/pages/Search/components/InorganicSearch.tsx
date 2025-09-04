@@ -217,7 +217,7 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-inorganic/`;
+            let searchEndpoint = `${API_URL}/api/llm/search-inorganic`;
 
             // Fetch the searched inorganic molecule's properties 
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
