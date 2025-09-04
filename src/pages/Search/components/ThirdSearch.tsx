@@ -458,9 +458,9 @@ const ThirdSearch: React.FC = () => {
         backgroundColor: 'white',
         borderRadius: '12px',
         padding: '0',
-        maxWidth: '900px',
+        maxWidth: '1200px',
         maxHeight: '85vh',
-        width: '90%',
+        width: '95%',
         overflow: 'hidden',
         position: 'relative',
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(0, 0, 0, 0.1)',
@@ -518,7 +518,7 @@ const ThirdSearch: React.FC = () => {
 
     const detailItemStyle: React.CSSProperties = {
         display: 'grid',
-        gridTemplateColumns: '200px 1fr',
+        gridTemplateColumns: '400px 1fr',
         gap: '16px',
         padding: '16px',
         borderRadius: '8px',
