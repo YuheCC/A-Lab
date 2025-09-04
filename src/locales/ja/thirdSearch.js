@@ -18,6 +18,7 @@ export default {
     // Search Results
     loadingMessage: "検索中です。お待ちください...",
     noResultsFound: "結果が見つかりません",
+    noExperimentalData: "実験的な固体電解質データが見つかりませんでした",
     viewDetails: "詳細を表示",
     noData: "N/A",
     

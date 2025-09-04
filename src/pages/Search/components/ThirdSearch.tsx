@@ -430,9 +430,15 @@ const ThirdSearch: React.FC = () => {
 
     const noResultsStyle: React.CSSProperties = {
         textAlign: 'center',
-        padding: '20px',
+        padding: '60px 40px',
         color: '#666',
-        fontStyle: 'italic'
+        fontSize: '16px',
+        fontStyle: 'italic',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '12px',
+        border: '2px dashed #dee2e6',
+        margin: '40px 0',
+        lineHeight: '1.6'
     };
 
     // 分页组件样式
@@ -804,9 +810,9 @@ const ThirdSearch: React.FC = () => {
                         )}
 
                         {/* 无搜索结果 */}
-                        {!isLoading && !error && searchResults.length === 0 && searchResults.length !== 0 && (
+                        {!isLoading && !error && searchResults.length === 0 && molecularFormula.trim() !== '' && (
                             <div style={noResultsStyle}>
-                                {t('thirdSearch.noResultsFound')}
+                                {t('thirdSearch.noExperimentalData')}
                             </div>
                         )}
                     </div>

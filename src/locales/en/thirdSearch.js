@@ -18,6 +18,7 @@ export default {
     // Search Results
     loadingMessage: "Searching, please wait...",
     noResultsFound: "No results found",
+    noExperimentalData: "No experimental solid-state electrolyte data found",
     viewDetails: "View Details",
     noData: "N/A",
     

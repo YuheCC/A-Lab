@@ -18,6 +18,7 @@ export default {
     // Search Results
     loadingMessage: "正在搜索中，请稍候...",
     noResultsFound: "未找到相关结果",
+    noExperimentalData: "未查询到实验性固态电解质数据",
     viewDetails: "查看详情",
     noData: "N/A",
     

@@ -18,6 +18,7 @@ export default {
     // Search Results
     loadingMessage: "검색 중입니다. 잠시 기다려 주세요...",
     noResultsFound: "결과를 찾을 수 없습니다",
+    noExperimentalData: "실험적 고체 전해질 데이터를 찾을 수 없습니다",
     viewDetails: "상세 보기",
     noData: "N/A",
     
