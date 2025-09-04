@@ -208,6 +208,47 @@ const ThirdSearch: React.FC = () => {
     const totalPages = Math.ceil(totalCount / pageSize);
     const currentPageData = searchResults; // 服务器已返回当前页数据
 
+    const sseColumnMap: { [key: string]: string } = {
+        'SSE_ID': 'sseId',
+        'FORMULA': 'formula',
+        'INTEGER_FORMULA': 'integerFormula',
+        'CHEMICAL_SYSTEM': 'chemicalSystem',
+        'ABBREVIATION': 'abbreviation',
+        'PHASE': 'phase',
+        'FRAMEWORK': 'framework',
+        'POLYMORPH': 'polymorph',
+        'SPACEGROUP_SYMBOL': 'spacegroupSymbol',
+        'ELECTROLYTE_CHEMISTRY': 'electrolyteChemistry',
+        'IONIC_CONDUCTIVITY': 'ionicConductivity (S/cm)',
+        'CONDUCTIVITY_TEMPERATURE': 'conductivityTemperature (°C)',
+        'ACTIVATION_ENERGY': 'activationEnergy (eV)',
+        'ELECTROCHEMICAL_WINDOW': 'electrochemicalWindow (V)',
+        'DOI': 'doi',
+        'ELECTROLYTE_NAME': 'electrolyteName',
+        'LATTICE_PARAMETER_A': 'latticeParameterA (Å)',
+        'LATTICE_PARAMETER_B': 'latticeParameterB (Å)',
+        'LATTICE_PARAMETER_C': 'latticeParameterC (Å)',
+        'IONIC_CONDUCTIVITY_TEMPERATURE_C': 'ionicConductivityTemperatureC',
+        'IONIC_CONDUCTIVITY_METHOD': 'ionicConductivityMethod',
+        'RELATIVE_DENSITY_PERCENT': 'relativeDensityPercent',
+        'ELECTROCHEMICAL_WINDOW_MEASUREMENT_CONTEXT': 'electrochemicalWindowMeasurementContext',
+        'THERMAL_STABILITY_VALUE': 'thermalStabilityValue',
+        'THERMAL_STABILITY_SOURCE_TYPE': 'thermalStabilitySourceType',
+        'MECHANICAL_STABILITY_VALUE': 'mechanicalStabilityValue',
+        'MECHANICAL_STABILITY_SOURCE_TYPE': 'mechanicalStabilitySourceType',
+        'BATTERY_SYSTEM': 'batterySystem',
+        'BATTERY_TYPE': 'batteryType',
+        'BATTERY_CONFIGURATION': 'batteryConfiguration',
+        'CATHODE': 'cathode',
+        'ANODE': 'anode',
+        'CUT_OFF_VOLTAGE': 'cutOffVoltage',
+        'C_RATE': 'cRate',
+        'CELL_TEST_TEMPERATURE': 'cellTestTemperature',
+        'CYCLES': 'cycles',
+        'RETENTION': 'retention',
+        'CE': 'ce'
+      };
+
     // 默认显示的列
     const defaultDisplayColumns = [
         'sse_id',
@@ -218,8 +259,6 @@ const ThirdSearch: React.FC = () => {
         'phase',
         'framework',
         'polymorph',
-        'spacegroup_symbol',
-        'electrolyte_chemistry',
         'ionic_conductivity',
         'conductivity_temperature',
         'activation_energy',
@@ -677,7 +716,7 @@ const ThirdSearch: React.FC = () => {
                                         <tr>
                                             {getTableHeaders().map((header) => (
                                                 <th key={header} style={thStyle}>
-                                                    {header}
+                                                    {sseColumnMap[header]}
                                                 </th>
                                             ))}
                                         </tr>
@@ -804,7 +843,7 @@ const ThirdSearch: React.FC = () => {
                             <div style={detailGridStyle}>
                                 {getAllAvailableColumns().map((key) => (
                                     <div key={key} style={detailItemStyle}>
-                                        <div style={detailLabelStyle}>{key}</div>
+                                        <div style={detailLabelStyle}>{sseColumnMap[key]}</div>
                                         <div style={detailValueStyle}>
                                             {typeof selectedRecord[key] === 'object' && selectedRecord[key] !== null
                                                 ? JSON.stringify(selectedRecord[key], null, 2)
