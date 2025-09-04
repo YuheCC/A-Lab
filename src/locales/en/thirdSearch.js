@@ -11,7 +11,7 @@ export default {
     // Tab Labels
     tabs: {
         onlyElements: "Only Elements",
-        atLeastElements: "At Least Elements",
+        atLeastElements: "Must-Have Elements",
         formula: "Formula"
     },
     

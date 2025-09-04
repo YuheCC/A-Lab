@@ -11,7 +11,7 @@ export default {
     // Tab Labels
     tabs: {
         onlyElements: "元素のみ",
-        atLeastElements: "少なくとも元素",
+        atLeastElements: "必須要素",
         formula: "分子式"
     },
     

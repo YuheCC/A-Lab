@@ -226,7 +226,7 @@ const ThirdSearch: React.FC = () => {
         'electrochemical_window'
     ];
 
-    // 获取要显示的表头列（默认列 + 操作列）
+    // 获取要显示的表头列（仅默认列）
     const getTableHeaders = (): string[] => {
         if (searchResults.length === 0) return [];
         
@@ -245,14 +245,10 @@ const ThirdSearch: React.FC = () => {
             .map(col => lowerCaseKeysMap.get(col.toLowerCase()))
             .filter(Boolean) as string[];
         
-        // 返回默认列 + 操作列
-        return [...availableDefaultColumns, 'actions'];
+        // 仅返回默认列
+        return availableDefaultColumns;
     };
 
-    // 获取操作列的中文显示名称
-    const getActionColumnDisplayName = (): string => {
-        return t('thirdSearch.viewDetails');
-    };
 
     // 获取所有可用的列（用于详情弹窗）
     const getAllAvailableColumns = (): string[] => {
@@ -441,17 +437,6 @@ const ThirdSearch: React.FC = () => {
         margin: '0 16px'
     };
 
-    // 操作按钮样式
-    const actionButtonStyle: React.CSSProperties = {
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        padding: '6px 12px',
-        fontSize: '12px',
-        cursor: 'pointer',
-        fontWeight: '500'
-    };
 
     // 模态框样式
     const modalOverlayStyle: React.CSSProperties = {
@@ -692,7 +677,7 @@ const ThirdSearch: React.FC = () => {
                                         <tr>
                                             {getTableHeaders().map((header) => (
                                                 <th key={header} style={thStyle}>
-                                                    {header === 'actions' ? getActionColumnDisplayName() : header}
+                                                    {header}
                                                 </th>
                                             ))}
                                         </tr>
@@ -701,23 +686,18 @@ const ThirdSearch: React.FC = () => {
                                         {currentPageData.map((result, index) => (
                                             <tr key={index}>
                                                 {getTableHeaders().map((header) => {
-                                                    if (header === 'actions') {
-                                                        return (
-                                                            <td key={header} style={tdStyle}>
-                                                                <button 
-                                                                    style={actionButtonStyle}
-                                                                    onClick={() => {
-                                                                        setSelectedRecord(result);
-                                                                        setShowDetailModal(true);
-                                                                    }}
-                                                                >
-                                                                    {t('thirdSearch.viewDetails')}
-                                                                </button>
-                                                            </td>
-                                                        );
-                                                    }
+                                                    const isClickableColumn = ['SSE_ID', 'FORMULA', 'INTEGER_FORMULA'].includes(header);
+                                                    const cellStyle = isClickableColumn ? { ...tdStyle, cursor: 'pointer', color: '#007bff', textDecoration: 'underline' } : tdStyle;
+                                                    console.log(header, isClickableColumn);
                                                     return (
-                                                        <td key={header} style={tdStyle}>
+                                                        <td 
+                                                            key={header} 
+                                                            style={cellStyle}
+                                                            onClick={isClickableColumn ? () => {
+                                                                setSelectedRecord(result);
+                                                                setShowDetailModal(true);
+                                                            } : undefined}
+                                                        >
                                                             {typeof result[header] === 'object' && result[header] !== null
                                                                 ? JSON.stringify(result[header])
                                                                 : String(result[header] || t('thirdSearch.noData'))
