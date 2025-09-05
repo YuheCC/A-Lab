@@ -6,6 +6,7 @@ export default {
     search: "搜索",
     filter: "筛选",
     favorites: "收藏",
+    predict: "预测",
     about: "关于"
   },
   

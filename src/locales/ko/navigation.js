@@ -6,6 +6,7 @@ export default {
     search: "검색하기",
     filter: "조건별 검색",
     favorites: "즐겨찾기",
+    predict: "예측",
     about: "소개"
   },
   

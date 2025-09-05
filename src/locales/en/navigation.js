@@ -6,6 +6,7 @@ export default {
     search: "Search",
     filter: "Filter",
     favorites: "Favorites",
+    predict: "Predict",
     about: "About",
   },
   

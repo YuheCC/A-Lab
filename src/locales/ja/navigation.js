@@ -6,6 +6,7 @@ export default {
     search: "検索",
     filter: "フィルター",
     favorites: "お気に入り",
+    predict: "予測",
     about: "概要",
   },
 

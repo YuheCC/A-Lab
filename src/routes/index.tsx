@@ -31,6 +31,10 @@ export default  [
         component: "Favorites"
     },
     {
+        path: "/predict/*",
+        component: "Predict"
+    },
+    {
         path: "/ask",
         redirect: "/ask/new"
     },

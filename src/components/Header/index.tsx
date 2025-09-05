@@ -14,7 +14,7 @@ import { PricingContext } from "@/layouts/index";
 
 const Header = () => {
     const { t } = useTranslation();
-    const { pathname } = useLocation();
+    const { pathname, search } = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,6 +23,11 @@ const Header = () => {
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
+
+    // Helper function to check if a path is active
+    const isPathActive = (path: string) => {
+        return pathname === path;
+    };
 
     // 检查是否为common用户
     const isCommonUser = permissions === 'common';
@@ -107,6 +112,28 @@ const Header = () => {
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search')}
                 {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')}
                 {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')}
+                <div className="nav-dropdown-container">
+                    <NavLink 
+                        to="/predict/performance" 
+                        className={`nav-item ${pathname.startsWith('/predict') ? 'active' : ''}`}
+                    >
+                        {t('navigation.header.predict')}
+                    </NavLink>
+                    <div className="nav-dropdown">
+                        <NavLink 
+                            to="/predict/performance" 
+                            className={`dropdown-item ${isPathActive('/predict/performance') ? 'active' : ''}`}
+                        >
+                            Cell performance prediction with additive molecules
+                        </NavLink>
+                        <NavLink 
+                            to="/predict/early-life" 
+                            className={`dropdown-item ${isPathActive('/predict/early-life') ? 'active' : ''}`}
+                        >
+                            电池早期生命预测工具
+                        </NavLink>
+                    </div>
+                </div>
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
