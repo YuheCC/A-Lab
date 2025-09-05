@@ -9,12 +9,12 @@ import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { IconButton } from "@mui/material";
 import FindFriendOptions from "./FindFriendOptions";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import '../index.css';
 
 const API_URL = getAPIUrl();
@@ -105,6 +105,8 @@ const OrganicSearch = () => {
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -373,21 +375,7 @@ const OrganicSearch = () => {
     return (
         // SEARCH PAGE CONTENT:
         <>
-            {reasoningText && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button
-                            className="modal-close-button"
-                            onClick={() => setReasoningText(null)}
-                        >
-                            ×
-                        </button>
-                        <pre className="modal-pre">
-                            {reasoningText}
-                        </pre>
-                    </div>
-                </div>
-            )}
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
             <div
                 className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
@@ -532,18 +520,14 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
-                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
-                                                            <Info size={18} style={{ margin: 2 }} />
-                                                        </IconButton>
-                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
+                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                     },
                                                     {
@@ -629,11 +613,7 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
-                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
-                                                            <Info size={18} style={{ margin: 2 }} />
-                                                        </IconButton>
-                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'

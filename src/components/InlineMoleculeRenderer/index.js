@@ -6,6 +6,7 @@ import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
 import rehypeRaw from 'rehype-raw';
+import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
 import './InlineMoleculeRenderer.css';
 
 // Component for individual clickable citation numbers
@@ -94,6 +95,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
   const hoverRef = useRef(null);
   const hideTimerRef = useRef(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const [reasoningText, setReasoningText] = useState(null);
 
   const handleMouseEnter = (e) => {
     if (data && data.length > 0) {
@@ -146,7 +148,9 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         COMMERCIAL_LINK: moleculeData.COMMERCIAL_LINK,
         functional_groups: moleculeData.functional_groups || "[]",
         UMAP_0: moleculeData.UMAP_0,
-        UMAP_1: moleculeData.UMAP_1
+        UMAP_1: moleculeData.UMAP_1,
+        grade: moleculeData.grade,
+        reasoning: moleculeData.reasoning
       };
       onMoleculeClick(transformedMolecule);
     }
@@ -229,6 +233,10 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       });
     }
 
+    if (moleculeData.grade !== undefined && moleculeData.grade !== null) {
+      propGroups.unshift(createLlmGradeProp(moleculeData.grade, moleculeData.reasoning, setReasoningText));
+    }
+
     return propGroups.filter(prop => prop.value !== undefined && prop.value !== null);
   };
 
@@ -263,6 +271,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
           </div>,
           document.body
         )}
+      <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
     </>
   );
 };
