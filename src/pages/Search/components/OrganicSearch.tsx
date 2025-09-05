@@ -213,9 +213,9 @@ const OrganicSearch = () => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/search`;
+            let searchEndpoint = `${API_URL}/api/llm/search`;
             if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/search-35`;
+                searchEndpoint = `${API_URL}/api/llm/search-35`;
             }
 
             // Fetch the searched molecule's properties 
@@ -253,7 +253,7 @@ const OrganicSearch = () => {
                     };
 
                     try {
-                        const response = await authFetch(`${API_URL}/find-friend-with-image`, {
+                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
