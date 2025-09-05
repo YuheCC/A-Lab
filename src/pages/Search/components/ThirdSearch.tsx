@@ -209,7 +209,7 @@ const ThirdSearch: React.FC = () => {
     const currentPageData = searchResults; // 服务器已返回当前页数据
 
     const sseColumnMap: { [key: string]: string } = {
-        'SSE_ID': 'SseId',
+        'SSE_ID': 'SSEId',
         'FORMULA': 'Formula',
         'INTEGER_FORMULA': 'IntegerFormula',
         'CHEMICAL_SYSTEM': 'ChemicalSystem',
@@ -246,7 +246,7 @@ const ThirdSearch: React.FC = () => {
         'CELL_TEST_TEMPERATURE': 'CellTestTemperature',
         'CYCLES': 'Cycles',
         'RETENTION': 'Retention',
-        'CE': 'Ce'
+        'CE': 'CE'
       };
 
     // 默认显示的列
