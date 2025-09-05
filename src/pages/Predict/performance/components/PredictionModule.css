@@ -142,6 +142,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+  display: block;
+  margin: 0 auto;
 }
 
 .calculate-btn:hover {
@@ -159,8 +161,14 @@
 
 .results-section {
   margin-top: 32px;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 32px;
+}
+
+.results-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  background: #ffffff;
+  margin-top: 16px;
 }
 
 .results-section h2 {
@@ -310,7 +318,7 @@
   color: #1f2937;
 }
 
-.llm-analysis-section {
+.llm-button-section {
   display: flex;
   justify-content: center;
   margin-top: 24px;
@@ -330,4 +338,97 @@
 
 .llm-analysis-btn:hover {
   background: #111827;
+}
+
+.llm-analysis-section {
+  margin-top: 32px;
+}
+
+.llm-analysis-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.llm-analysis-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+
+.llm-content {
+  padding: 32px;
+}
+
+.llm-analysis-item {
+  margin-bottom: 32px;
+}
+
+.llm-analysis-item:last-of-type {
+  margin-bottom: 24px;
+}
+
+.llm-analysis-item h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.llm-analysis-item p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+.llm-analysis-item ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.llm-analysis-item li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+  position: relative;
+  padding-left: 12px;
+}
+
+.llm-analysis-item li::before {
+  content: '•';
+  color: #6b7280;
+  position: absolute;
+  left: 0;
+}
+
+.llm-references {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 24px;
+  margin-top: 8px;
+}
+
+.llm-references p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+}
+
+.llm-references a {
+  color: #f59e0b;
+  text-decoration: none;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+
+.llm-references a:hover {
+  color: #d97706;
+  text-decoration: underline;
 }

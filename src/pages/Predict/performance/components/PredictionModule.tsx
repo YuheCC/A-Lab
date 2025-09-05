@@ -14,6 +14,7 @@ const PredictionModule: React.FC = () => {
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
+  const [showLLMAnalysis, setShowLLMAnalysis] = useState(false);
 
   const systemSpecs: Record<string, SystemSpec> = {
     'NCM811 - 12%Si/graphite - Carbonate electrolyte': {
@@ -126,7 +127,8 @@ const PredictionModule: React.FC = () => {
           <div className="results-section">
             <h2>Cell Performance Prediction</h2>
             
-            <div className="temperature-tabs" data-active={activeTab}>
+            <div className="results-card">
+              <div className="temperature-tabs" data-active={activeTab}>
               <button 
                 className={`temp-tab ${activeTab === '25c' ? 'active' : ''}`}
                 onClick={() => setActiveTab('25c')}
@@ -221,10 +223,75 @@ const PredictionModule: React.FC = () => {
               )}
             </div>
 
-            <div className="llm-analysis-section">
-              <button className="llm-analysis-btn">
-                LLM Analysis
-              </button>
+              <div className="llm-button-section">
+                <button 
+                  className="llm-analysis-btn"
+                  onClick={() => setShowLLMAnalysis(true)}
+                >
+                  LLM Analysis
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showLLMAnalysis && (
+          <div className="llm-analysis-section">
+            <h2>LLM Analysis</h2>
+            
+            <div className="llm-analysis-card">
+              <div className="llm-content">
+              <div className="llm-analysis-item">
+                <h3>1. Nickel Dehydrogenation Optimization</h3>
+                <ul>
+                  <li>
+                    The dimethyl dicarbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in 
+                    nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under 
+                    voltage. During the CE optimization process, when generating this structure with electrical nickel, it 
+                    is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize 
+                    aging CE display improvement patterns.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="llm-analysis-item">
+                <h3>2. 4°C Cycling Optimization</h3>
+                <p>
+                  The rolling disc approach involves enhanced material comparison and LiFe distribution optimization 
+                  for secondary reactions. This biochemical nickel enhancement process addresses charge-
+                  discharge cycles under nickel conditions, improving efficiency through systematic laboratory 
+                  validation at 4°C conditions with simplified testing protocols.
+                </p>
+              </div>
+
+              <div className="llm-analysis-item">
+                <h3>3. Comprehensive Recommendations</h3>
+                <ul>
+                  <li>
+                    Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling 
+                    performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade 
+                    electrolyte systems are recommended for material state optimization.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="llm-references">
+                <p><strong>References</strong> [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020.</p>
+                <a href="https://doi.org/10.1002/aenm.202002704" target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.1002/aenm.202002704
+                </a>
+                
+                <p>[2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020.</p>
+                <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.1016/j.jpowsour.2020.227833
+                </a>
+                
+                <p>[3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018.</p>
+                <a href="https://doi.org/10.1021/acsami.8b04743" target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.1021/acsami.8b04743
+                </a>
+              </div>
+              </div>
             </div>
           </div>
         )}
