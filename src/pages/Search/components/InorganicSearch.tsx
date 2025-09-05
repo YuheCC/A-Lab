@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
@@ -240,47 +241,25 @@ const InorganicSearch = () => {
                 if (formattedMolecules.length > 1) {
                     setSearchWarning(t('search.multipleMoleculesWarning'));
                 } else {
-                    const formattedMolecule = formattedMolecules[0];
-
-                    // 使用无机分子的find-friend接口
+                    const smilesArray = formattedMolecules
+                        .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                        .filter((s) => !!s);
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
-
-                    const payload = {
-                        is_inorganic: true,
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        molecule_type: 'inorganic',
-                        ...(selectedMolType && { mol_type: selectedMolType })
-                    };
+                    const structureWeight = 0.75;
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<InorganicSimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: selectedMolType,
+                            computeLevel: 'Disabled',
+                            isInorganic: true,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar inorganic molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: InorganicSimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: InorganicSimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {

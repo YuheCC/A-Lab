@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
@@ -348,45 +349,21 @@ const OrganicSearch = () => {
                     const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
                     const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
-                    const payload: any = {
-                        smiles: smilesArray, // <-- pass an array of SMILES
-                        use_35m: isHighTier,
-                        structure_weight: structureWeight,
-                        ...(molTypeToSend && { mol_type: molTypeToSend }),
-                        ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
-                        ...(computeEnabled && includeQuery && {
-                            query: queryString,
-                            response: 'No additional context is available for this query.',
-                        }),
-                    };
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload),
+                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            includeQuery,
+                            queryString,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: SimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        const imageResults = molecules.map((molecule: SimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        const imageMap: { [key: number]: string } = {};
-                        imageResults.forEach((result) => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
