@@ -31,9 +31,17 @@ export default  [
         component: "Favorites"
     },
     {
+        path: "/predict/performance",
+        component: "Predict/performance",
+    },
+    {
         path: "/predict/*",
         component: "Predict"
     },
+    // {
+    //     path: "/predict/early-life",
+    //     component: "Predict/early-life"
+    // },
     {
         path: "/ask",
         redirect: "/ask/new"

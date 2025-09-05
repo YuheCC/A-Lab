@@ -18,7 +18,7 @@ export const PricingContext = createContext<any>(null);
 const FullNavLayoutInner = () => {
     const location = useLocation();
     const pathname = location.pathname;
-    const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
+    const isChatPage = pathname.includes('/chat') || pathname.includes('/ask') || pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
