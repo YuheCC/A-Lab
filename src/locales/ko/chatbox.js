@@ -85,6 +85,7 @@ export default {
         reachedLimit: "월간 쿼리 한도에 도달했습니다. 도움이 필요하시면 관리자에게 문의하세요."
     },
     status: {
+        connectingToServer: "서버에 연결하는 중...",
         thinking: "사고 중",
         searching: "검색 중",
         searchingDatabase: "데이터베이스 검색 중",
