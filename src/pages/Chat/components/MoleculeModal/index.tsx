@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
+import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
@@ -44,10 +45,38 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => {
+        if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
+        if (["team", "explorer"].includes(userPermissions || '')) return 'Medium';
+        return 'Low';
+    }, [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showAdvanced, setShowAdvanced] = useState(false);
 
     const handleClose = () => {
         onClose?.();
     };
+
+    useEffect(() => {
+        switch (selectedMoleculeType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMoleculeType]);
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     const favoriteCtx = useContext(FavoriteContext);
     const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
@@ -283,9 +312,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 
                 {isOriginal && (
+                    <>
                     <div className="molecule-card-actions">
-                        <select 
-                            className="molecule-type-select" 
+                        <select
+                            className="molecule-type-select"
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
@@ -294,7 +324,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
-                        <button 
+                        <button
                             className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
                             onClick={() => handleFindSimilar(name)}
                             disabled={isSimilarLoading}
@@ -309,6 +339,27 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+                        <span>{t('search.advancedOptions')}</span>
+                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                    </div>
+                    {showAdvanced && (
+                        <FindFriendAdvancedOptions
+                            extraRequests={extraRequests}
+                            setExtraRequests={setExtraRequests}
+                            selectedMolType={selectedMoleculeType}
+                            setSelectedMolType={setSelectedMoleculeType}
+                            additiveSubtype={selectedAdditiveSubtype}
+                            setAdditiveSubtype={setSelectedAdditiveSubtype}
+                            computeLevel={computeLevel}
+                            setComputeLevel={setComputeLevel}
+                            structureWeight={structureWeight}
+                            setStructureWeight={setStructureWeight}
+                            userPermissions={userPermissions || undefined}
+                            showBatteryFields={false}
+                        />
+                    )}
+                    </>
                 )}
             </div>
         );
@@ -390,6 +441,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         if (computeLevel !== 'Disabled') {
             payload.llm_compute_power = computeLevel.toLowerCase();
         }
+        if (extraRequests.trim()) {
+            payload.extra_requests = extraRequests;
+        }
         if (isHighTier && rawOriginal) {
             // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
             let originalQuery: string | undefined = undefined;
@@ -428,7 +482,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.response = llmResponse;
         }
 
-        const resp = await authFetch(`${API_URL}/find-friend-with-image`, {
+        const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
