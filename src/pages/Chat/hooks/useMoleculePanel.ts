@@ -19,6 +19,8 @@ export interface MoleculeData {
   functional_groups?: string;
   UMAP_0?: number;
   UMAP_1?: number;
+  grade?: number;
+  reasoning?: string;
 }
 
 export interface MoleculePanelState {

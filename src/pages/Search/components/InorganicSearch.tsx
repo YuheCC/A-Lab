@@ -2,16 +2,19 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip } from "@mui/material";
+import FindFriendOptions from "./FindFriendOptions";
+import { buildQueryString } from "@/services/buildQueryString";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 
 const API_URL = getAPIUrl();
 
@@ -21,6 +24,8 @@ interface InorganicMoleculeData {
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -49,6 +54,8 @@ interface InorganicSimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     cluster: number;
     // 无机分子特有的属性
     sulfur_content?: number;
@@ -76,7 +83,51 @@ const InorganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<InorganicSimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({});
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [selectedMolType, setSelectedMolType] = useState("");
+    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => 'Disabled', []);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const [cathode, setCathode] = useState('');
+    const [cathodeCustom, setCathodeCustom] = useState('');
+    const [anode, setAnode] = useState('');
+    const [anodeCustom, setAnodeCustom] = useState('');
+    const [salt, setSalt] = useState('');
+    const [saltCustom, setSaltCustom] = useState('');
+    const [solvent, setSolvent] = useState('');
+    const [solventCustom, setSolventCustom] = useState('');
+    const [metric, setMetric] = useState('');
+    const [metricCustom, setMetricCustom] = useState('');
+
+    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
+    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
+    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
+    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
+    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
+
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -157,6 +208,8 @@ const InorganicSearch = () => {
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image,
+                            grade: mol.grade,
+                            reasoning: mol.reasoning,
                             properties: {
                                 molwt: mol.molecular_weight,
                                 homo_eV: mol.HOMO_eV,
@@ -240,47 +293,54 @@ const InorganicSearch = () => {
                 if (formattedMolecules.length > 1) {
                     setSearchWarning(t('search.multipleMoleculesWarning'));
                 } else {
-                    const formattedMolecule = formattedMolecules[0];
-
-                    // 使用无机分子的find-friend接口
+                    const smilesArray = formattedMolecules
+                        .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                        .filter((s) => !!s);
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const payload = {
-                        is_inorganic: true,
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        molecule_type: 'inorganic',
-                        ...(selectedMolType && { mol_type: selectedMolType })
-                    };
+                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
+                    const aVal = anode === 'custom' ? anodeCustom : anode;
+                    const sVal = salt === 'custom' ? saltCustom : salt;
+                    const svVal = solvent === 'custom' ? solventCustom : solvent;
+                    const mVal = metric === 'custom' ? metricCustom : metric;
+                    const computeEnabled = computeLevel !== 'Disabled';
+                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+
+                    let computeToSend = computeLevel;
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
+                        setSearchWarning(t('search.computeWarning'));
+                        computeToSend = 'Low';
+                        setComputeLevel('Low');
+                    }
+
+                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
+
+                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<InorganicSimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            includeQuery,
+                            queryString,
+                            isInorganic: true,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar inorganic molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: InorganicSimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: InorganicSimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
@@ -300,8 +360,9 @@ const InorganicSearch = () => {
 
     return (
         <>
-            <div 
-                className="search-umap-container" 
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+            <div
+                className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
@@ -369,44 +430,48 @@ const InorganicSearch = () => {
                     />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <div className="search-options">
-                        <label className="search-option">
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={findClosestFriends}
-                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                    />
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span>{t('search.findFriendsLabel')}</span>
-                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                        </Tooltip>
-                                    </div>
-                                    {/* <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select> */}
-                                </div>
-                                <div style={{
-                                    color: '#555',
-                                    fontSize: '14px',
-                                }}>
-                                {t('search.findFriendsDescription')}
-                                </div>
-                            </div>
-                        </label>
-                    </div>
+                    <FindFriendOptions
+                        findClosestFriends={findClosestFriends}
+                        setFindClosestFriends={setFindClosestFriends}
+                        extraRequests={extraRequests}
+                        setExtraRequests={setExtraRequests}
+                        showAdvanced={showAdvanced}
+                        setShowAdvanced={setShowAdvanced}
+                        selectedMolType={selectedMolType}
+                        setSelectedMolType={setSelectedMolType}
+                        additiveSubtype={additiveSubtype}
+                        setAdditiveSubtype={setAdditiveSubtype}
+                        computeLevel={computeLevel}
+                        setComputeLevel={setComputeLevel}
+                        structureWeight={structureWeight}
+                        setStructureWeight={setStructureWeight}
+                        cathode={cathode}
+                        setCathode={setCathode}
+                        cathodeCustom={cathodeCustom}
+                        setCathodeCustom={setCathodeCustom}
+                        anode={anode}
+                        setAnode={setAnode}
+                        anodeCustom={anodeCustom}
+                        setAnodeCustom={setAnodeCustom}
+                        salt={salt}
+                        setSalt={setSalt}
+                        saltCustom={saltCustom}
+                        setSaltCustom={setSaltCustom}
+                        solvent={solvent}
+                        setSolvent={setSolvent}
+                        solventCustom={solventCustom}
+                        setSolventCustom={setSolventCustom}
+                        metric={metric}
+                        setMetric={setMetric}
+                        metricCustom={metricCustom}
+                        setMetricCustom={setMetricCustom}
+                        cathodeOptions={cathodeOptions}
+                        anodeOptions={anodeOptions}
+                        saltOptions={saltOptions}
+                        solventOptions={solventOptions}
+                        performanceOptions={performanceOptions}
+                        userPermissions={userPermissions}
+                    />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -441,6 +506,7 @@ const InorganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
@@ -516,6 +582,7 @@ const InorganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },

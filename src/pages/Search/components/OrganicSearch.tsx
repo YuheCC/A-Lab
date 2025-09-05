@@ -2,16 +2,19 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
+import { buildQueryString } from "@/services/buildQueryString";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip, IconButton } from "@mui/material";
+import FindFriendOptions from "./FindFriendOptions";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import '../index.css';
 
 const API_URL = getAPIUrl();
@@ -80,14 +83,30 @@ const OrganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [structureWeight, setStructureWeight] = useState(0.5);
+    const [structureWeight, setStructureWeight] = useState(0.75);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
     const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -164,83 +183,84 @@ const OrganicSearch = () => {
         };
     }, []);
 
-    const buildQueryString = (c: string, a: string, s: string, sv: string, m: string) => {
-        const introParts: string[] = [];
-        if (s) introParts.push(s);
-        if (sv) introParts.push(`in ${sv}`);
-        const intro = introParts.length ? `I have ${introParts.join(' ')} in a battery` : 'I have a battery';
-        let rest = '';
-        if (c && a) rest = ` with ${c} cathode and ${a} anode`;
-        else if (c) rest = ` with ${c} cathode`;
-        else if (a) rest = ` with ${a} anode`;
-        const question = m ? ` How can I improve ${m}?` : ' How can I improve it?';
-        return `${intro}${rest}.${question}`;
-    };
-
     // Store ambiguous search options when backend indicates ambiguity
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
 
     // Update handleSearch function
-    const handleSearchedMolecules = async (response: Response, select_first = false): Promise<MoleculeData[] | null> => {
+    const handleSearchedMolecules = async (
+        response: Response,
+        select_first = false
+    ): Promise<{ formattedMolecules: MoleculeData[] | null; ambiguity: any }> => {
         let formattedMolecules: MoleculeData[] | null = null;
-        let ambiguity = null;
+        let ambiguity: any = null;
         try {
             const data = await response.json();
-            if (data.found) {
-                if (data.molecule_details && data.molecule_details.length > 0) {
-                    formattedMolecules = data.molecule_details.map((mol: any) => {
-                        return {
-                            smiles: mol.SMILES,
-                            x: mol.UMAP_0,
-                            y: mol.UMAP_1,
-                            image: mol.image, // Add image to the molecule data
-                            grade: mol.grade,
-                            reasoning: mol.reasoning,
-                            properties: {
-                                molwt: mol.molecular_weight,
-                                homo_eV: mol.HOMO_eV,
-                                lumo_eV: mol.LUMO_eV,
-                                esp_min_eV: mol.ESP_min_eV,
-                                esp_max_eV: mol.ESP_max_eV,
-                                functional_groups: mol.functional_groups,
-                                predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius,
-                                predicted_fp_celsius: mol.predicted_FP_celsius,
-                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
-                                commercial_score: mol.COMMERCIAL_SCORE,
-                                commercial_link: mol.COMMERCIAL_LINK
-                            },
-                            rawData: mol
-                        };
-                    });
-                    if (select_first && formattedMolecules) {
-                        // Only store the first molecule (as a list of one) and its image
-                        const formattedMolecule = formattedMolecules[0];
-                        setsearchedMolecules([formattedMolecule]);
-                        setsearchResults([formattedMolecule.image || '']);
-                        
-                        if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
-                            formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
-                            setHighlightedMolecules([formattedMolecule]);
-                        }
-                    } else if (formattedMolecules) {
-                        // Store all molecules and their images
-                        setsearchedMolecules(formattedMolecules);
-                        setsearchResults(formattedMolecules.map((mol) => mol.image || ''));
 
-                        // Don't filter out null values for highlightedMolecules as that messes up indexing
-                        // - deckgl handles null values gracefully
-                        if (formattedMolecules.length > 0) {
-                            setHighlightedMolecules(formattedMolecules);
-                        }
+            // Normalize to an array of result envelopes
+            const envelopes: any[] = Array.isArray(data) ? data : [data];
+
+            // If any envelope reports ambiguity, capture it
+            const ambiguousEnv = envelopes.find((env) => env && env.message === 'Ambiguous molecule abbreviation');
+            if (ambiguousEnv) {
+                ambiguity = ambiguousEnv.options ?? null;
+            }
+
+            // Collect all molecule_details from all successful envelopes
+            const allDetails: any[] = envelopes
+                .filter((env) => env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0)
+                .flatMap((env) => env.molecule_details);
+
+            if (allDetails.length > 0) {
+                const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
+                    smiles: mol.SMILES,
+                    x: mol.UMAP_0,
+                    y: mol.UMAP_1,
+                    image: mol.image,
+                    grade: mol.grade,
+                    reasoning: mol.reasoning,
+                    properties: {
+                        molwt: mol.molecular_weight,
+                        homo_eV: mol.HOMO_eV,
+                        lumo_eV: mol.LUMO_eV,
+                        esp_min_eV: mol.ESP_min_eV,
+                        esp_max_eV: mol.ESP_max_eV,
+                        functional_groups: mol.functional_groups,
+                        predicted_mp: mol.predicted_MP_celsius,
+                        predicted_bp: mol.predicted_BP_celsius,
+                        predicted_fp_celsius: mol.predicted_FP_celsius,
+                        combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: mol.COMMERCIAL_SCORE,
+                        commercial_link: mol.COMMERCIAL_LINK,
+                    },
+                    rawData: mol,
+                }));
+
+                if (select_first) {
+                    const first = mapped[0];
+                    setsearchedMolecules([first]);
+                    setsearchResults([first.image || '']);
+                    if (
+                        first.x !== null &&
+                        first.y !== null &&
+                        first.x !== undefined &&
+                        first.y !== undefined
+                    ) {
+                        setHighlightedMolecules([first]);
+                    }
+                } else {
+                    setsearchedMolecules(mapped);
+                    setsearchResults(mapped.map((m) => m.image || ''));
+                    if (mapped.length > 0) {
+                        setHighlightedMolecules(mapped);
                     }
                 }
-            } else if (data.message === 'Ambiguous molecule abbreviation') {
-                ambiguity = data.options;
+
+                formattedMolecules = mapped;
             }
         } catch (error) {
             console.error('Error processing searched molecules:', error);
         }
+
         return { formattedMolecules, ambiguity };
     };
 
@@ -283,13 +303,14 @@ const OrganicSearch = () => {
             }
 
             if (formattedMolecules && findClosestFriends) {
-                // check if formattedMolecules has length > 1 - if so display warning
-                if (formattedMolecules.length > 1) {
-                    setSearchWarning(t('search.multipleMoleculesWarning'));
-                } else {
-                    const formattedMolecule = formattedMolecules[0];
+                // Build an array of seed SMILES from all returned molecules
+                const smilesArray = formattedMolecules
+                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                    .filter((s) => !!s);
 
-                    // Then fetch similar molecules
+                if (smilesArray.length === 0) {
+                    setSearchWarning(t('search.moleculeNotFound.title'));
+                } else {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
                     const cVal = cathode === 'custom' ? cathodeCustom : cathode;
@@ -319,47 +340,21 @@ const OrganicSearch = () => {
                     const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
                     const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
-                    const payload: any = {
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        structure_weight: structureWeight,
-                        ...(molTypeToSend && { mol_type: molTypeToSend }),
-                        ...(computeEnabled && { llm_compute_power: computeToSend.toLowerCase() }),
-                        ...(computeEnabled && includeQuery && {
-                            query: queryString,
-                            response: "No additional context is available for this query."
-                        })
-                    };
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            includeQuery,
+                            queryString,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: SimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: SimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        // Create a map of molecule index to image URL
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
@@ -380,21 +375,7 @@ const OrganicSearch = () => {
     return (
         // SEARCH PAGE CONTENT:
         <>
-            {reasoningText && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button
-                            className="modal-close-button"
-                            onClick={() => setReasoningText(null)}
-                        >
-                            ×
-                        </button>
-                        <pre className="modal-pre">
-                            {reasoningText}
-                        </pre>
-                    </div>
-                </div>
-            )}
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
             <div
                 className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
@@ -463,216 +444,48 @@ const OrganicSearch = () => {
                         disabled={searchLoading}
                     />
 
-                    {/* Add "Find closest friends" checkbox and advanced options */}
-                    <div className="search-options">
-                        <div className="search-option">
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <input
-                                            id="find-friends-checkbox"
-                                            type="checkbox"
-                                            checked={findClosestFriends}
-                                            onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                        />
-                                        <label htmlFor="find-friends-checkbox" style={{ display: 'flex', alignItems: 'center', marginLeft: '4px', cursor: 'pointer' }}>
-                                            <span>{t('search.findFriendsLabel')}</span>
-                                            <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                                <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                            </Tooltip>
-                                        </label>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
-                                        <span>{t('search.advancedOptions')}</span>
-                                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                                    </div>
-                                </div>
-                                <div style={{ color: '#555', fontSize: '14px' }}>
-                                    {t('search.findFriendsDescription')}
-                                </div>
-                                <div style={{ marginTop: '8px' }}>
-                                    <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select>
-                                    {selectedMolType === 'additive' && (
-                                        <div style={{ marginTop: '8px' }}>
-                                            <label style={{ marginRight: '4px' }}>{t('search.moleculeTypes.additiveSubtype')}</label>
-                                            <select
-                                                value={additiveSubtype}
-                                                onChange={e => setAdditiveSubtype(e.target.value)}
-                                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                            >
-                                                <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
-                                                <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
-                                                <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
-                                                <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
-                                            </select>
-                                        </div>
-                                    )}
-                                </div>
-                                <div style={{ maxHeight: showAdvanced ? '1000px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
-                                            <input
-                                                type="range"
-                                                min={0}
-                                                max={1}
-                                                step={0.01}
-                                                value={structureWeight}
-                                                onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
-                                                style={{ margin: '0 4px' }}
-                                            />
-                                            <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
-                                            <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.intelligentCompute')}:</label>
-                                        <select
-                                            value={computeLevel}
-                                            onChange={e => setComputeLevel(e.target.value)}
-                                            style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                        >
-                                            <option value="Disabled">{t('search.computeDisabled')}</option>
-                                            <option value="Low">{t('search.computeLow')}</option>
-                                            <option
-                                                value="Medium"
-                                                disabled={userPermissions === 'research'}
-                                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
-                                            >{t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}</option>
-                                            <option
-                                                value="High"
-                                                disabled={["research", "explorer", "team"].includes(userPermissions || '')}
-                                                title={["research", "explorer", "team"].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
-                                            >{t('search.computeHigh')}{["research", "explorer", "team"].includes(userPermissions || '') ? ' 🔒' : ''}</option>
-                                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
-                                        </select>
-                                    </div>
-                                    {userPermissions === 'admin' && (
-                                        <>
-                                            <div style={{ marginTop: '8px' }}>
-                                                <label>{t('search.cathode')}:</label>
-                                                <select
-                                                    value={cathode}
-                                                    onChange={e => setCathode(e.target.value)}
-                                                    disabled={computeLevel === 'Disabled'}
-                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                                >
-                                                    <option value=""></option>
-                                                    {cathodeOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                    <option value="custom">{t('search.custom')}</option>
-                                                </select>
-                                                {cathode === 'custom' && (
-                                                    <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                                )}
-                                            </div>
-                                            <div style={{ marginTop: '8px' }}>
-                                                <label>{t('search.anode')}:</label>
-                                                <select
-                                                    value={anode}
-                                                    onChange={e => setAnode(e.target.value)}
-                                                    disabled={computeLevel === 'Disabled'}
-                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                                >
-                                                    <option value=""></option>
-                                                    {anodeOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                    <option value="custom">{t('search.custom')}</option>
-                                                </select>
-                                                {anode === 'custom' && (
-                                                    <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                                )}
-                                            </div>
-                                            <div style={{ marginTop: '8px' }}>
-                                                <label>{t('search.salt')}:</label>
-                                                <select
-                                                    value={salt}
-                                                    onChange={e => setSalt(e.target.value)}
-                                                    disabled={computeLevel === 'Disabled'}
-                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                                >
-                                                    <option value=""></option>
-                                                    {saltOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                    <option value="custom">{t('search.custom')}</option>
-                                                </select>
-                                                {salt === 'custom' && (
-                                                    <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                                )}
-                                            </div>
-                                            <div style={{ marginTop: '8px' }}>
-                                                <label>{t('search.solvent')}:</label>
-                                                <select
-                                                    value={solvent}
-                                                    onChange={e => setSolvent(e.target.value)}
-                                                    disabled={computeLevel === 'Disabled'}
-                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                                >
-                                                    <option value=""></option>
-                                                    {solventOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                    <option value="custom">{t('search.custom')}</option>
-                                                </select>
-                                                {solvent === 'custom' && (
-                                                    <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                                )}
-                                            </div>
-                                            <div style={{ marginTop: '8px' }}>
-                                                <label>{t('search.performanceMetric')}:</label>
-                                                <select
-                                                    value={metric}
-                                                    onChange={e => setMetric(e.target.value)}
-                                                    disabled={computeLevel === 'Disabled'}
-                                                    style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                                >
-                                                    <option value=""></option>
-                                                    {performanceOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                    <option value="custom">{t('search.custom')}</option>
-                                                </select>
-                                                {metric === 'custom' && (
-                                                    <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-                                                )}
-                                            </div>
-                                        </>
-                                    )}
-                                    <div style={{ marginTop: '8px' }}>
-                                        <label>{t('search.extraRequests')}:</label>
-                                        <textarea
-                                            value={extraRequests}
-                                            onChange={e => setExtraRequests(e.target.value)}
-                                            disabled={!findClosestFriends}
-                                            placeholder={t('search.extraRequestsPlaceholder')}
-                                            style={{
-                                                marginLeft: '8px',
-                                                width: '100%',
-                                                boxSizing: 'border-box',
-                                                backgroundColor: 'white',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '4px',
-                                                padding: '4px'
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <FindFriendOptions
+                        findClosestFriends={findClosestFriends}
+                        setFindClosestFriends={setFindClosestFriends}
+                        extraRequests={extraRequests}
+                        setExtraRequests={setExtraRequests}
+                        showAdvanced={showAdvanced}
+                        setShowAdvanced={setShowAdvanced}
+                        selectedMolType={selectedMolType}
+                        setSelectedMolType={setSelectedMolType}
+                        additiveSubtype={additiveSubtype}
+                        setAdditiveSubtype={setAdditiveSubtype}
+                        computeLevel={computeLevel}
+                        setComputeLevel={setComputeLevel}
+                        structureWeight={structureWeight}
+                        setStructureWeight={setStructureWeight}
+                        cathode={cathode}
+                        setCathode={setCathode}
+                        cathodeCustom={cathodeCustom}
+                        setCathodeCustom={setCathodeCustom}
+                        anode={anode}
+                        setAnode={setAnode}
+                        anodeCustom={anodeCustom}
+                        setAnodeCustom={setAnodeCustom}
+                        salt={salt}
+                        setSalt={setSalt}
+                        saltCustom={saltCustom}
+                        setSaltCustom={setSaltCustom}
+                        solvent={solvent}
+                        setSolvent={setSolvent}
+                        solventCustom={solventCustom}
+                        setSolventCustom={setSolventCustom}
+                        metric={metric}
+                        setMetric={setMetric}
+                        metricCustom={metricCustom}
+                        setMetricCustom={setMetricCustom}
+                        cathodeOptions={cathodeOptions}
+                        anodeOptions={anodeOptions}
+                        saltOptions={saltOptions}
+                        solventOptions={solventOptions}
+                        performanceOptions={performanceOptions}
+                        userPermissions={userPermissions}
+                    />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -707,18 +520,14 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
-                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
-                                                            <Info size={18} style={{ margin: 2 }} />
-                                                        </IconButton>
-                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
+                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                     },
                                                     {
@@ -804,11 +613,7 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                    { label: 'LLM Grade', value: molecule.grade, span: 2, suffix: '/10', action: (molecule.reasoning ? (
-                                                        <IconButton onClick={() => setReasoningText(molecule.reasoning)} size="small">
-                                                            <Info size={18} style={{ margin: 2 }} />
-                                                        </IconButton>
-                                                    ) : null), show: molecule.grade !== null && molecule.grade !== undefined },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
