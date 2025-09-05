@@ -92,23 +92,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
 
   return (
     <>
-      <div style={{ marginTop: '8px' }}>
-        <label>{t('search.extraRequests')}</label>
-        <textarea
-          value={extraRequests}
-          onChange={e => setExtraRequests(e.target.value)}
-          placeholder={t('search.extraRequestsPlaceholder')}
-          style={{
-            marginLeft: '8px',
-            width: '100%',
-            boxSizing: 'border-box',
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            padding: '4px'
-          }}
-        />
-      </div>
       <div className="search-options">
         <div className="search-option">
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -180,6 +163,23 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                     <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
                     <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
                   </div>
+                </div>
+                <div style={{ marginTop: '8px' }}>
+                  <label>{t('search.extraRequests')}</label>
+                  <textarea
+                    value={extraRequests}
+                    onChange={e => setExtraRequests(e.target.value)}
+                    placeholder={t('search.extraRequestsPlaceholder')}
+                    style={{
+                      marginLeft: '8px',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      backgroundColor: 'white',
+                      border: '1px solid #ccc',
+                      borderRadius: '4px',
+                      padding: '4px'
+                    }}
+                  />
                 </div>
                 <div style={{ marginTop: '8px' }}>
                   <label style={{ marginRight: '4px' }}>{t('search.intelligentCompute')}</label>

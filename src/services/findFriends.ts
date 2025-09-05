@@ -30,6 +30,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
 
   const API_URL = getAPIUrl();
   const computeEnabled = computeLevel !== 'Disabled';
+  const hasQuery = !!(queryString && queryString.trim().length > 0);
 
   const payload: any = {
     smiles,
@@ -38,7 +39,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(molType && { mol_type: molType }),
     ...(isInorganic && { is_inorganic: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
-    ...(computeEnabled && includeQuery && {
+    ...(hasQuery && {
       query: queryString,
       response: 'No additional context is available for this query.',
     }),
@@ -66,4 +67,3 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
 
   return { molecules, imageMap };
 }
-
