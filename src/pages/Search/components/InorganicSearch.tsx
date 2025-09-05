@@ -14,6 +14,7 @@ import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { buildQueryString } from "@/services/buildQueryString";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 
 const API_URL = getAPIUrl();
 
@@ -23,6 +24,8 @@ interface InorganicMoleculeData {
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -51,6 +54,8 @@ interface InorganicSimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     cluster: number;
     // 无机分子特有的属性
     sulfur_content?: number;
@@ -85,6 +90,9 @@ const InorganicSearch = () => {
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -200,6 +208,8 @@ const InorganicSearch = () => {
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image,
+                            grade: mol.grade,
+                            reasoning: mol.reasoning,
                             properties: {
                                 molwt: mol.molecular_weight,
                                 homo_eV: mol.HOMO_eV,
@@ -350,8 +360,9 @@ const InorganicSearch = () => {
 
     return (
         <>
-            <div 
-                className="search-umap-container" 
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+            <div
+                className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
@@ -495,6 +506,7 @@ const InorganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
@@ -570,6 +582,7 @@ const InorganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
