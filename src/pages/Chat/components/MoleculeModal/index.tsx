@@ -482,7 +482,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.response = llmResponse;
         }
 
-        const resp = await authFetch(`${API_URL}/find-friend-with-image`, {
+        const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
