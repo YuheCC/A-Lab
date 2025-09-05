@@ -5,11 +5,11 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  border: 1px solid #e5e7eb;
 }
 
 .history-header {
   padding: 20px 20px 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
 }
 
 .header-content {
