@@ -7,6 +7,7 @@ import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
 import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
+import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
@@ -54,6 +55,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
 
     const handleClose = () => {
         onClose?.();
@@ -188,7 +190,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return [];
     };
 
-    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false, raw?: any) => {
+    const renderMoleculeCard = (
+        name: string,
+        properties: MoleculeProperties | Record<string, unknown>,
+        isOriginal = false,
+        raw?: any,
+        grade?: number,
+        reasoning?: string
+    ) => {
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -235,6 +244,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                 </div>
                 <div className="molecule-card-properties">
+                    {grade !== undefined && grade !== null && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">LLM Grade:</span>
+                            <span className="molecule-card-property-value">
+                                {grade}
+                                <ReasoningButton reasoning={reasoning} onShow={setReasoningText} />
+                            </span>
+                        </div>
+                    )}
                     <div className="molecule-card-property-item">
                         <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                         <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
@@ -542,6 +560,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
     return (
+        <>
         <div className="molecule-panel expanded" style={{ display: 'block', opacity: 1, transform: 'translateX(0px)', transition: '0.3s' }}>
             <div className="molecule-panel-header">
                 <div className="molecule-panel-title">
@@ -558,7 +577,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
                             <h4 style={{fontWeight: '400'}} className="section-title">{t('molecular.moleculeModal.original')}</h4>
-                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
+                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal, molecule?.grade, molecule?.reasoning)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
@@ -571,7 +590,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index])}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning)}
                                     </div>
                                 ))}
                             </div>
@@ -582,6 +601,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
             </div>
         </div>
+        <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+        </>
     );
 };
 
