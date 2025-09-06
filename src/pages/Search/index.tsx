@@ -18,12 +18,12 @@ const Search = () => {
                     >
                         {t('search.tabs.organic')}
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('inorganic')}
                         className={`search-tab-button ${activeTab === 'inorganic' ? 'active' : ''}`}
                     >
                         {t('search.tabs.inorganic')}
-                    </button>
+                    </button> */}
                     <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
