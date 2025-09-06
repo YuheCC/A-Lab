@@ -70,7 +70,7 @@ const MoleculeInfo = ({ activeTab }: MoleculeInfoProps) => {
 
     return (
         <div
-            ref={containerRef}
+            // ref={containerRef}
             className="search-interface-section"
             style={{
                 flex: '0.8',
@@ -142,9 +142,9 @@ const MoleculeInfo = ({ activeTab }: MoleculeInfoProps) => {
                 </picture>
             </div>
 
-                <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.inorganicTitle')}</h3>
-                <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
-                    {renderInorganicClusterDescriptions()}
+            <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>{t('map.about.inorganicTitle')}</h3>
+            <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>
+                {renderInorganicClusterDescriptions()}
             </div>
         </div>
     )

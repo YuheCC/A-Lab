@@ -18,12 +18,12 @@ const Map = () => {
                     >
                         {t('map.tabs.organic')}
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('inorganic')}
                         className={`map-tab-button ${activeTab === 'inorganic' ? 'active' : ''}`}
                     >
                         {t('map.tabs.inorganic')}
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
