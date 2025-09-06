@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicMolecules, InorganicMolecules, MoleculeInfo } from "./components";
 import "./Map.css";
+import MoleculeInfo05 from "./components/MoleculeInfo05";
 
 const Map = () => {
     const { t } = useTranslation();
@@ -35,7 +36,7 @@ const Map = () => {
                     ) : (
                         <InorganicMolecules />
                     )}
-                    <MoleculeInfo activeTab={activeTab} />
+                    <MoleculeInfo05 />
                 </div>
                 
             </div>
