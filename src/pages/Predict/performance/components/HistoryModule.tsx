@@ -30,11 +30,17 @@ interface HistoryModuleProps {
 
 const HistoryModule: React.FC<HistoryModuleProps> = ({ historyData, onViewDetails }) => {
   const getStatusColor = (status: string) => {
-    return status === 'Positive' ? '#10b981' : '#ef4444';
+    if (status === 'Positive') return '#10b981';
+    if (status === 'Negative') return '#ef4444';
+    if (status === 'Neutral') return '#f59e0b';
+    return '#6b7280';
   };
 
   const getStatusBg = (status: string) => {
-    return status === 'Positive' ? '#ecfdf5' : '#fef2f2';
+    if (status === 'Positive') return '#ecfdf5';
+    if (status === 'Negative') return '#fef2f2';
+    if (status === 'Neutral') return '#fffbeb';
+    return '#f9fafb';
   };
 
   return (

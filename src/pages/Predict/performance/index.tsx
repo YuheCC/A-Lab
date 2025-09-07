@@ -94,6 +94,27 @@ const PerformancePage: React.FC = () => {
         optimization: 'Electrolyte Optimization',
         cycling: 'Capacity Retention Optimization'
       }
+    },
+    {
+      id: '4',
+      date: '2025/9/1 16:16:06',
+      batterySystem: 'LFP - 10%Si/graphite - Solid electrolyte',
+      additive: 'CCC(C)OC(C)C',
+      results: {
+        temp25: {
+          cycleLife: 'Neutral',
+          ce: 'Positive',
+          ratePerformance: 'Neutral'
+        },
+        temp45: {
+          cycleLife: 'Neutral',
+          ce: 'Negative'
+        }
+      },
+      llmAnalysis: {
+        optimization: 'Balanced Performance',
+        cycling: '50% Efficiency Target'
+      }
     }
   ];
 
