@@ -42,7 +42,10 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   };
 
   const getStatusColor = (status: string) => {
-    return status === 'Positive' ? '#10b981' : '#ef4444';
+    if (status === 'Positive') return '#10b981';
+    if (status === 'Negative') return '#ef4444';
+    if (status === 'Neutral') return '#f59e0b';
+    return '#6b7280';
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -61,7 +64,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
           </button>
         </div>
 
-        <div className="modal-content">
+        <div className="result-modal-content">
           <div className="result-section">
             <h3>Battery System Selection</h3>
             <div className="system-info">
@@ -125,7 +128,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
             <div className="temperature-section">
               <h4>45°C Performance</h4>
-              <div className="performance-grid">
+              <div className="performance-grid two-columns">
                 <div className="performance-item">
                   <div className="perf-header">
                     <span className="perf-label">45 °C Cycle life</span>
