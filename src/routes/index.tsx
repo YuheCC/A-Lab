@@ -35,13 +35,9 @@ export default  [
         component: "Predict/performance",
     },
     {
-        path: "/predict/*",
-        component: "Predict"
+        path: "/predict/prediction-tool",
+        component: "Predict/predictionTool"
     },
-    // {
-    //     path: "/predict/early-life",
-    //     component: "Predict/early-life"
-    // },
     {
         path: "/ask",
         redirect: "/ask/new"

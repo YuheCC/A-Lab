@@ -127,8 +127,8 @@ const Header = () => {
                             Cell performance prediction with additive molecules
                         </NavLink>
                         <NavLink 
-                            to="/predict/early-life" 
-                            className={`dropdown-item ${isPathActive('/predict/early-life') ? 'active' : ''}`}
+                            to="/predict/prediction-tool" 
+                            className={`dropdown-item ${isPathActive('/predict/prediction-tool') ? 'active' : ''}`}
                         >
                             电池早期生命预测工具
                         </NavLink>
