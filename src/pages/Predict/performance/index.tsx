@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PredictionModule from './components/PredictionModule';
-import HistoryModule from './components/HistoryModule';
+import UniversalHistoryModule from '../components/UniversalHistoryModule';
+import { renderPerformanceCard } from './components/PerformanceCardRenderer';
 import ResultModal from './components/ResultModal';
 import './index.css';
 
@@ -141,9 +142,12 @@ const PerformancePage: React.FC = () => {
         </div>
         
         <div className="history-section">
-          <HistoryModule 
-            historyData={historyData}
+          <UniversalHistoryModule
+            title="Prediction Records"
+            data={historyData}
+            cardRenderer={renderPerformanceCard}
             onViewDetails={handleViewDetails}
+            newPredictionText="New Prediction"
           />
         </div>
       </div>

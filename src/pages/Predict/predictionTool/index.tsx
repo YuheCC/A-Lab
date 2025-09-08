@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Upload, Activity, BarChart3 } from 'lucide-react';
 import StepContent from './components/StepContent';
-import HistoryList from './components/HistoryList';
+import UniversalHistoryModule from '../components/UniversalHistoryModule';
+import { renderPredictionCard } from './components/PredictionCardRenderer';
+import HistoryModal from './components/HistoryModal';
 import './PredictionTool.css';
 
 interface FileRecord {
@@ -38,6 +40,8 @@ const mockFiles: FileRecord[] = [
 
 const PredictionTool: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const steps = [
     { 
@@ -65,6 +69,20 @@ const PredictionTool: React.FC = () => {
 
   const handleNewPrediction = () => {
     setCurrentStep(0);
+  };
+
+  const handleViewDetails = (file: FileRecord) => {
+    setSelectedFile(file);
+    setShowModal(true);
+  };
+
+  const handleDeleteFile = (fileId: string) => {
+    console.log('Delete file:', fileId);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedFile(null);
   };
 
   return (
@@ -106,11 +124,25 @@ const PredictionTool: React.FC = () => {
         </div>
 
         {/* Right - History Area */}
-        <HistoryList 
-          files={mockFiles} 
+        <UniversalHistoryModule
+          title="预测记录"
+          data={mockFiles}
+          cardRenderer={renderPredictionCard}
           onNewPrediction={handleNewPrediction}
+          onViewDetails={handleViewDetails}
+          onDeleteItem={handleDeleteFile}
+          newPredictionText="新增预测"
+          filterConfig={{
+            smilesSearchPlaceholder: "Search by file name..."
+          }}
         />
       </div>
+
+      <HistoryModal
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        fileRecord={selectedFile}
+      />
     </div>
   );
 };
