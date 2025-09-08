@@ -119,9 +119,18 @@ const PerformancePage: React.FC = () => {
     }
   ];
 
+  const handleNewPrediction = () => {
+    // Handle new prediction action - could scroll to prediction form or reset it
+    console.log('New prediction clicked');
+  };
+
   const handleViewDetails = (result: PredictionResult) => {
     setSelectedResult(result);
     setShowModal(true);
+  };
+
+  const handleDeleteItem = (itemId: string) => {
+    console.log('Delete item:', itemId);
   };
 
   const handleCloseModal = () => {
@@ -146,8 +155,13 @@ const PerformancePage: React.FC = () => {
             title="Prediction Records"
             data={historyData}
             cardRenderer={renderPerformanceCard}
+            onNewPrediction={handleNewPrediction}
             onViewDetails={handleViewDetails}
+            onDeleteItem={handleDeleteItem}
             newPredictionText="New Prediction"
+            filterConfig={{
+              smilesSearchPlaceholder: "Search by file name..."
+            }}
           />
         </div>
       </div>
