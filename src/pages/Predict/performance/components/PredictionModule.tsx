@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import './PredictionModule.css';
 
 interface SystemSpec {
@@ -15,6 +16,11 @@ const PredictionModule: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
   const [showLLMAnalysis, setShowLLMAnalysis] = useState(false);
+  
+  // 新增状态：分子详情相关
+  const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
+  const [moleculeError, setMoleculeError] = useState<string | null>(null);
+  const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
 
   const systemSpecs: Record<string, SystemSpec> = {
     'NCM811 - 12%Si/graphite - Carbonate electrolyte': {
@@ -26,6 +32,41 @@ const PredictionModule: React.FC = () => {
   };
 
   const currentSpec = systemSpecs[selectedSystem];
+
+  // 处理 SMILES 输入框失焦事件
+  const handleSmilesBlur = async () => {
+    const trimmedAdditive = additive.trim();
+    if (!trimmedAdditive) {
+      setMoleculeDetails(null);
+      setMoleculeError(null);
+      return;
+    }
+
+    setIsMoleculeLoading(true);
+    setMoleculeError(null);
+    setMoleculeDetails(null);
+
+    try {
+      const details = await moleculeService.getMoleculeDetails(trimmedAdditive);
+      
+      // 检查是否是实际的分子数据还是mock数据
+      // 如果 smiles 与输入不匹配，可能是mock数据或错误
+      if (details && details.properties.smiles && 
+          details.properties.smiles !== trimmedAdditive &&
+          details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
+        // 这是默认的mock数据，表示没有找到
+        setMoleculeError('查询的 SMILES 字符串在我们的数据库中未找到。');
+      } else {
+        // 有效的分子数据
+        setMoleculeDetails(details);
+      }
+    } catch (error) {
+      console.error('获取分子详情失败:', error);
+      setMoleculeError('查询的 SMILES 字符串在我们的数据库中未找到。');
+    } finally {
+      setIsMoleculeLoading(false);
+    }
+  };
 
   const handleCalculate = () => {
     if (!additive.trim()) {
@@ -111,10 +152,149 @@ const PredictionModule: React.FC = () => {
             type="text"
             value={additive}
             onChange={(e) => setAdditive(e.target.value)}
+            onBlur={handleSmilesBlur}
             placeholder="Enter SMILES molecular formula"
             className="additive-input"
           />
         </div>
+
+        {/* 分子详情显示区域 */}
+        {isMoleculeLoading && (
+          <div className="molecule-loading">
+            <p>正在查询分子详情...</p>
+          </div>
+        )}
+
+        {moleculeDetails && (
+          <div className="molecule-information">
+            <div className="molecule-header">
+              <h3>Molecule Information</h3>
+              <button 
+                className="molecule-close-btn"
+                onClick={() => setMoleculeDetails(null)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="molecule-content">
+              <div className="molecule-structure">
+                <div className="structure-placeholder">
+                  <div className="structure-circle">
+                    <span>Molecule</span>
+                    <span>Structure</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="molecule-properties">
+                <div className="properties-grid">
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>SMILES:</label>
+                      <span>{moleculeDetails.properties.smiles || '-'}</span>
+                    </div>
+                    <div className="property-item">
+                      <label>ESP MIN:</label>
+                      <span>{moleculeDetails.properties.espMin || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>MOL WEIGHT:</label>
+                      <span>{moleculeDetails.properties.molecularWeight || '-'}</span>
+                    </div>
+                    <div className="property-item">
+                      <label>PREDICTED MP:</label>
+                      <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>UMAP X:</label>
+                      <span>-</span>
+                    </div>
+                    <div className="property-item">
+                      <label>PREDICTED BP:</label>
+                      <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>UMAP Y:</label>
+                      <span>-</span>
+                    </div>
+                    <div className="property-item">
+                      <label>PREDICTED FP:</label>
+                      <span>{moleculeDetails.properties.flashPoint || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>HOMO:</label>
+                      <span>{moleculeDetails.properties.homo || '-'}</span>
+                    </div>
+                    <div className="property-item">
+                      <label>COMBUSTION ENTHALPY:</label>
+                      <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>LUMO:</label>
+                      <span>{moleculeDetails.properties.lumo || '-'}</span>
+                    </div>
+                    <div className="property-item">
+                      <label>COMMERCIAL VIABILITY:</label>
+                      <span>{moleculeDetails.properties.commercialViability || '-'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="property-row">
+                    <div className="property-item">
+                      <label>ESP MAX:</label>
+                      <span>{moleculeDetails.properties.espMax || '-'}</span>
+                    </div>
+                    <div className="property-item"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {moleculeError && (
+          <div className="smiles-not-found">
+            <div className="error-header">
+              <h3>SMILES Not Found</h3>
+              <button 
+                className="molecule-close-btn"
+                onClick={() => setMoleculeError(null)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="error-content">
+              <p>The SMILES string you entered is not found in our database.</p>
+              <p>Please re-enter a valid SMILES string or try this example:</p>
+              
+              <div className="example-smiles">
+                <div className="example-item">
+                  <strong>O=c1occo1</strong> - ethylene carbonate
+                </div>
+                <div className="example-item">
+                  <strong>H2O</strong> - water
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <button 
           className={`calculate-btn ${showResults ? 'calculated' : ''}`}

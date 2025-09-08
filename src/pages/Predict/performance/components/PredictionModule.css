@@ -432,3 +432,185 @@
   color: #d97706;
   text-decoration: underline;
 }
+
+/* 分子详情和错误提示样式 */
+.molecule-loading {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.molecule-loading p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.molecule-information,
+.smiles-not-found {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.molecule-header,
+.error-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.molecule-header h3,
+.error-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.molecule-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.molecule-close-btn:hover {
+  color: #6b7280;
+}
+
+.molecule-content {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.molecule-structure {
+  flex-shrink: 0;
+}
+
+.structure-placeholder {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.structure-circle {
+  width: 100px;
+  height: 100px;
+  background: #ffffff;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.structure-circle span {
+  font-size: 12px;
+  color: #3b82f6;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.molecule-properties {
+  flex: 1;
+}
+
+.properties-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.property-row {
+  display: flex;
+  gap: 32px;
+}
+
+.property-item {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 20px;
+}
+
+.property-item label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.property-item span {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.error-content {
+  padding: 20px;
+}
+
+.error-content p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.error-content p:last-of-type {
+  margin-bottom: 20px;
+}
+
+.example-smiles {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.example-item {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.example-item:last-child {
+  margin-bottom: 0;
+}
+
+.example-item strong {
+  color: #78350f;
+  font-family: 'Courier New', monospace;
+  background: #ffffff;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
