@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Activity, BarChart3, Filter, Plus, FileText, Calendar, Battery, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Upload, Activity, BarChart3 } from 'lucide-react';
 import StepContent from './components/StepContent';
+import HistoryList from './components/HistoryList';
 import './PredictionTool.css';
 
 interface FileRecord {
@@ -35,32 +36,8 @@ const mockFiles: FileRecord[] = [
   }
 ];
 
-interface FilterState {
-  smilesSearch: string;
-  timeRange: 'all' | 'today' | 'week' | 'month';
-  status: 'all' | 'completed' | 'pending' | 'failed';
-}
-
 const PredictionTool: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [filters, setFilters] = useState<FilterState>({
-    smilesSearch: '',
-    timeRange: 'all',
-    status: 'all'
-  });
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowFilterDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const steps = [
     { 
@@ -86,23 +63,8 @@ const PredictionTool: React.FC = () => {
     return 'pending';
   };
 
-  const filteredData = mockFiles.filter((record) => {
-    if (filters.smilesSearch && !record.name.toLowerCase().includes(filters.smilesSearch.toLowerCase())) {
-      return false;
-    }
-    return true;
-  });
-
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      smilesSearch: '',
-      timeRange: 'all',
-      status: 'all'
-    });
+  const handleNewPrediction = () => {
+    setCurrentStep(0);
   };
 
   return (
@@ -144,115 +106,10 @@ const PredictionTool: React.FC = () => {
         </div>
 
         {/* Right - History Area */}
-        <div className="history-area">
-          <div className="history-header">
-            <h3 className="history-title">预测记录</h3>
-            <div className="filter-container" ref={dropdownRef}>
-              <Filter 
-                className="filter-icon" 
-                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              />
-              
-              {showFilterDropdown && (
-                <div className="filter-dropdown">
-                  <div className="filter-section">
-                    <label className="filter-label">SMILES Search</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="Search by SMILES..."
-                      value={filters.smilesSearch}
-                      onChange={(e) => handleFilterChange('smilesSearch', e.target.value)}
-                    />
-                  </div>
-                  
-                  <div className="filter-section">
-                    <label className="filter-label">Time Range</label>
-                    <select
-                      className="filter-select"
-                      value={filters.timeRange}
-                      onChange={(e) => handleFilterChange('timeRange', e.target.value)}
-                    >
-                      <option value="all">All Time</option>
-                      <option value="today">Today</option>
-                      <option value="week">This Week</option>
-                      <option value="month">This Month</option>
-                    </select>
-                  </div>
-                  
-                  <div className="filter-section">
-                    <label className="filter-label">Status</label>
-                    <select
-                      className="filter-select"
-                      value={filters.status}
-                      onChange={(e) => handleFilterChange('status', e.target.value)}
-                    >
-                      <option value="all">All Status</option>
-                      <option value="completed">Completed</option>
-                      <option value="pending">Pending</option>
-                      <option value="failed">Failed</option>
-                    </select>
-                  </div>
-                  
-                  <div className="filter-actions">
-                    <button 
-                      className="clear-filters-btn"
-                      onClick={clearFilters}
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <button className="new-prediction-btn">
-            <Plus />
-            新增预测
-          </button>
-
-          <div className="file-list">
-            {filteredData.length === 0 ? (
-              <div className="no-results">
-                <p>No prediction records found matching your filters.</p>
-                <button 
-                  className="clear-filters-link"
-                  onClick={clearFilters}
-                >
-                  Clear all filters
-                </button>
-              </div>
-            ) : (
-              filteredData.map((file) => (
-                <div key={file.id} className="file-item">
-                  <div className="file-name">
-                    <FileText />
-                    {file.name}
-                  </div>
-                  <div className="file-date">
-                    <Calendar />
-                    {file.date}
-                  </div>
-                  <div className="file-stats">
-                    <div className="file-stat">
-                      <Battery />
-                      电芯数量: {file.batteryCount}
-                    </div>
-                    <div className="file-stat">
-                      <TrendingUp />
-                      平均循环: {file.avgCirculation}
-                    </div>
-                  </div>
-                  <div className="file-actions">
-                    <button className="file-action-btn view-btn">查看</button>
-                    <button className="file-action-btn delete-btn">删除</button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        <HistoryList 
+          files={mockFiles} 
+          onNewPrediction={handleNewPrediction}
+        />
       </div>
     </div>
   );
