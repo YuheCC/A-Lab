@@ -89,6 +89,7 @@ const InorganicSearch = () => {
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
@@ -333,6 +334,7 @@ const InorganicSearch = () => {
                             structureWeight,
                             molType: molTypeToSend,
                             computeLevel: computeToSend,
+                            showHypothetical,
                             includeQuery,
                             queryString,
                             isInorganic: true,
@@ -445,6 +447,8 @@ const InorganicSearch = () => {
                         setComputeLevel={setComputeLevel}
                         structureWeight={structureWeight}
                         setStructureWeight={setStructureWeight}
+                        showHypothetical={showHypothetical}
+                        setShowHypothetical={setShowHypothetical}
                         cathode={cathode}
                         setCathode={setCathode}
                         cathodeCustom={cathodeCustom}

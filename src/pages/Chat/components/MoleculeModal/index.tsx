@@ -54,6 +54,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return 'Low';
     }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
 
@@ -373,6 +374,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setComputeLevel={setComputeLevel}
                             structureWeight={structureWeight}
                             setStructureWeight={setStructureWeight}
+                            showHypothetical={showHypothetical}
+                            setShowHypothetical={setShowHypothetical}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
                         />
@@ -451,7 +454,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const payload: any = {
             smiles,
             use_35m: isHighTier,
-            structure_weight: structureWeight
+            structure_weight: structureWeight,
+            commercial_viability_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
         };
         if (molType) {
             payload.mol_type = molType;

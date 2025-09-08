@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
+import { Tooltip } from '@mui/material';
+import { Info } from 'lucide-react';
 
 interface AdvancedProps {
   extraRequests: string;
@@ -12,6 +14,8 @@ interface AdvancedProps {
   setComputeLevel: (v: string) => void;
   structureWeight: number;
   setStructureWeight: (v: number) => void;
+  showHypothetical: boolean;
+  setShowHypothetical: (v: boolean) => void;
   userPermissions?: string;
   // Admin/battery-specific fields
   cathode?: string; setCathode?: (v: string) => void;
@@ -43,6 +47,8 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   setComputeLevel,
   structureWeight,
   setStructureWeight,
+  showHypothetical,
+  setShowHypothetical,
   userPermissions,
   cathode = '',
   setCathode = () => {},
@@ -108,6 +114,19 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
             padding: '4px'
           }}
         />
+      </div>
+      <div style={{ marginTop: '8px' }}>
+        <label style={{ display: 'flex', alignItems: 'center' }}>
+          <input
+            type="checkbox"
+            checked={showHypothetical}
+            onChange={e => setShowHypothetical(e.target.checked)}
+          />
+          <span style={{ marginLeft: '4px' }}>{t('search.showHypothetical')}</span>
+          <Tooltip title={t('search.showHypotheticalTooltip')} placement="top">
+            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
+          </Tooltip>
+        </label>
       </div>
       <div style={{ marginTop: '8px' }}>
         <label style={{ marginRight: '4px' }}>{t('search.intelligentCompute')}</label>

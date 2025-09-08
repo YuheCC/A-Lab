@@ -21,6 +21,8 @@ export default {
     distantFriends: '远处的朋友',
     advancedOptions: '高级选项',
     intelligentCompute: '智能找朋友计算',
+    showHypothetical: '显示假想分子',
+    showHypotheticalTooltip: '包括由我们的算法生成但未收录于公开目录的候选分子；其可用性和可合成性无法确定。',
     computeDisabled: '禁用',
     computeLow: '低',
     computeMedium: '中',

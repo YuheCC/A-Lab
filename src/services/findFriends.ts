@@ -9,6 +9,7 @@ interface FindFriendsOptions {
   includeQuery?: boolean;
   queryString?: string;
   isInorganic?: boolean;
+  showHypothetical?: boolean;
 }
 
 export interface FindFriendsResult<T = any> {
@@ -26,6 +27,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     includeQuery,
     queryString,
     isInorganic = false,
+    showHypothetical = false,
   } = options;
 
   const API_URL = getAPIUrl();
@@ -39,6 +41,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(molType && { mol_type: molType }),
     ...(isInorganic && { is_inorganic: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
+    commercial_viability_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
     ...(hasQuery && {
       query: queryString,
       response: 'No additional context is available for this query.',
