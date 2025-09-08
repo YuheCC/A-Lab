@@ -124,18 +124,20 @@ const PredictionTool: React.FC = () => {
         </div>
 
         {/* Right - History Area */}
-        <UniversalHistoryModule
-          title="预测记录"
-          data={mockFiles}
-          cardRenderer={renderPredictionCard}
-          onNewPrediction={handleNewPrediction}
-          onViewDetails={handleViewDetails}
-          onDeleteItem={handleDeleteFile}
-          newPredictionText="新增预测"
-          filterConfig={{
-            smilesSearchPlaceholder: "Search by file name..."
-          }}
-        />
+        <div className="history-area">
+          <UniversalHistoryModule
+            title="预测记录"
+            data={mockFiles}
+            cardRenderer={renderPredictionCard}
+            onNewPrediction={handleNewPrediction}
+            onViewDetails={handleViewDetails}
+            onDeleteItem={handleDeleteFile}
+            newPredictionText="新增预测"
+            filterConfig={{
+              smilesSearchPlaceholder: "Search by file name..."
+            }}
+          />
+        </div>
       </div>
 
       <HistoryModal

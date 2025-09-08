@@ -130,18 +130,18 @@ const PerformancePage: React.FC = () => {
   };
 
   return (
-    <div className="performance-page">
-      <div className="page-header">
-        <h1>Cell performance prediction with additive molecules</h1>
-        <span className="beta-badge">BETA</span>
+    <div className="prediction-tool">
+      <div className="prediction-header">
+        <h1 className="prediction-title">Cell performance prediction with additive molecules</h1>
+        <span className="beta-tag">BETA</span>
       </div>
       
-      <div className="page-content">
-        <div className="prediction-section">
+      <div className="prediction-content">
+        <div className="operation-area">
           <PredictionModule />
         </div>
         
-        <div className="history-section">
+        <div className="history-area">
           <UniversalHistoryModule
             title="Prediction Records"
             data={historyData}

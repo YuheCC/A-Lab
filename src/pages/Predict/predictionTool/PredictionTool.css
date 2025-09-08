@@ -1,15 +1,17 @@
 .prediction-tool {
-  height: 100vh;
+  padding: 24px;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #f8fafc;
+  background: #ffffff;
 }
 
 .prediction-header {
-  padding: 20px 24px;
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 24px;
 }
 
 .prediction-title {
@@ -20,14 +22,12 @@
 }
 
 .beta-tag {
-  background: #dbeafe;
-  color: #1d4ed8;
-  font-size: 12px;
-  font-weight: 500;
+  background: #e5e7eb;
+  color: #6b7280;
   padding: 4px 8px;
   border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .prediction-content {
@@ -35,13 +35,17 @@
   display: flex;
   overflow: hidden;
   gap: 24px;
-  padding: 0 24px 24px 24px;
 }
 
 .operation-area {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.history-area {
+  width: 400px;
+  flex-shrink: 0;
 }
 
 .steps-container {

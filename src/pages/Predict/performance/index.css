@@ -1,4 +1,4 @@
-.performance-page {
+.prediction-tool {
   padding: 24px;
   height: 100%;
   overflow: hidden;
@@ -7,21 +7,21 @@
   background: #ffffff;
 }
 
-.page-header {
+.prediction-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
 }
 
-.page-header h1 {
+.prediction-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1e293b;
   margin: 0;
 }
 
-.beta-badge {
+.beta-tag {
   background: #e5e7eb;
   color: #6b7280;
   padding: 4px 8px;
@@ -30,19 +30,20 @@
   font-weight: 500;
 }
 
-.page-content {
+.prediction-content {
   flex: 1;
   display: flex;
   gap: 24px;
   overflow: hidden;
 }
 
-.prediction-section {
+.operation-area {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.history-section {
+.history-area {
   width: 400px;
   flex-shrink: 0;
 }
