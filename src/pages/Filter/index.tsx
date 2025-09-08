@@ -18,12 +18,12 @@ const Filter = () => {
                     >
                         {t('explorer.filterTabs.organic')}
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('inorganic')}
                         className={`filter-tab-button ${activeTab === 'inorganic' ? 'active' : ''}`}
                     >
                         {t('explorer.filterTabs.inorganic')}
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
