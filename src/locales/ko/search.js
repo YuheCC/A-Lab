@@ -21,6 +21,8 @@ export default {
     distantFriends: '먼 친구들',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
+    showHypothetical: '가상 분자 표시',
+    showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
     computeDisabled: '비활성화',
     computeLow: '낮음',
     computeMedium: '중간',

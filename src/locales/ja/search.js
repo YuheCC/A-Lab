@@ -21,6 +21,8 @@ export default {
     distantFriends: '遠くの友達',
     advancedOptions: '詳細オプション',
     intelligentCompute: 'インテリジェント友達検索計算',
+    showHypothetical: '仮想分子を表示',
+    showHypotheticalTooltip: '公開カタログにないアルゴリズム生成候補を含めます。入手可能性と合成可能性は不確かです。',
     computeDisabled: '無効',
     computeLow: '低',
     computeMedium: '中',
