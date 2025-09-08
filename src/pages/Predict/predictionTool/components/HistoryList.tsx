@@ -78,32 +78,32 @@ const HistoryList: React.FC<HistoryListProps> = ({ files, onNewPrediction }) => 
   };
 
   return (
-    <div className="history-area">
-      <div className="history-header">
-        <h3 className="history-title">预测记录</h3>
-        <div className="filter-container" ref={dropdownRef}>
+    <div className="prediction-history-area">
+      <div className="prediction-history-header">
+        <h3 className="prediction-history-title">预测记录</h3>
+        <div className="prediction-filter-container" ref={dropdownRef}>
           <Filter 
-            className="filter-icon" 
+            className="prediction-filter-icon" 
             onClick={() => setShowFilterDropdown(!showFilterDropdown)}
           />
           
           {showFilterDropdown && (
-            <div className="filter-dropdown">
-              <div className="filter-section">
-                <label className="filter-label">SMILES Search</label>
+            <div className="prediction-filter-dropdown">
+              <div className="prediction-filter-section">
+                <label className="prediction-filter-label">SMILES Search</label>
                 <input
                   type="text"
-                  className="filter-input"
+                  className="prediction-filter-input"
                   placeholder="Search by SMILES..."
                   value={filters.smilesSearch}
                   onChange={(e) => handleFilterChange('smilesSearch', e.target.value)}
                 />
               </div>
               
-              <div className="filter-section">
-                <label className="filter-label">Time Range</label>
+              <div className="prediction-filter-section">
+                <label className="prediction-filter-label">Time Range</label>
                 <select
-                  className="filter-select"
+                  className="prediction-filter-select"
                   value={filters.timeRange}
                   onChange={(e) => handleFilterChange('timeRange', e.target.value)}
                 >
@@ -114,10 +114,10 @@ const HistoryList: React.FC<HistoryListProps> = ({ files, onNewPrediction }) => 
                 </select>
               </div>
               
-              <div className="filter-section">
-                <label className="filter-label">Status</label>
+              <div className="prediction-filter-section">
+                <label className="prediction-filter-label">Status</label>
                 <select
-                  className="filter-select"
+                  className="prediction-filter-select"
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
                 >
@@ -128,9 +128,9 @@ const HistoryList: React.FC<HistoryListProps> = ({ files, onNewPrediction }) => 
                 </select>
               </div>
               
-              <div className="filter-actions">
+              <div className="prediction-filter-actions">
                 <button 
-                  className="clear-filters-btn"
+                  className="prediction-clear-filters-btn"
                   onClick={clearFilters}
                 >
                   Clear Filters
@@ -141,17 +141,17 @@ const HistoryList: React.FC<HistoryListProps> = ({ files, onNewPrediction }) => 
         </div>
       </div>
 
-      <button className="new-prediction-btn" onClick={onNewPrediction}>
+      <button className="prediction-new-prediction-btn" onClick={onNewPrediction}>
         <Plus />
         新增预测
       </button>
 
-      <div className="file-list">
+      <div className="prediction-file-list">
         {filteredData.length === 0 ? (
-          <div className="no-results">
+          <div className="prediction-no-results">
             <p>No prediction records found matching your filters.</p>
             <button 
-              className="clear-filters-link"
+              className="prediction-clear-filters-link"
               onClick={clearFilters}
             >
               Clear all filters
