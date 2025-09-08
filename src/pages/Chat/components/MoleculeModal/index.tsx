@@ -455,7 +455,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             smiles,
             use_35m: isHighTier,
             structure_weight: structureWeight,
-            commercial_viability_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
         };
         if (molType) {
             payload.mol_type = molType;
