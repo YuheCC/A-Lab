@@ -40,7 +40,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
           </button>
         </div>
         
-        <div className="modal-content">
+        <div className="prediction-modal-content">
           <div className="modal-section">
             <h4 className="section-title">上传数据</h4>
             <div className="uploaded-file-info">
@@ -53,41 +53,43 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
           <div className="modal-section">
             <h4 className="section-title">预测结果</h4>
             
-            <div className="results-stats-card">
-              <div className="results-stats">
-                <div className="stats-card">
-                  <div className="stats-label">电芯数量</div>
-                  <div className="stats-value">{fileRecord.batteryCount}个</div>
-                </div>
-                <div className="stats-card">
-                  <div className="stats-label">平均循环寿命</div>
-                  <div className="stats-value">{fileRecord.avgCirculation}</div>
-                </div>
-                <div className="stats-card">
-                  <div className="stats-label">预测时间</div>
-                  <div className="stats-value">{fileRecord.date}</div>
+            <div className="results-display">
+              <div className="results-stats-card">
+                <div className="results-stats">
+                  <div className="stats-card">
+                    <div className="stats-label">电芯数量</div>
+                    <div className="stats-value">{fileRecord.batteryCount}个</div>
+                  </div>
+                  <div className="stats-card">
+                    <div className="stats-label">平均循环寿命</div>
+                    <div className="stats-value">{fileRecord.avgCirculation}</div>
+                  </div>
+                  <div className="stats-card">
+                    <div className="stats-label">预测时间</div>
+                    <div className="stats-value">{fileRecord.date}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="results-table-card">
-              <div className="results-table">
-                <table className="prediction-table">
-                  <thead>
-                    <tr>
-                      <th>Barcode</th>
-                      <th>Predicted Cycle Life</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockPredictionResults.map((result, index) => (
-                      <tr key={index}>
-                        <td>{result.barcode}</td>
-                        <td>{result.predictedCycleLife}</td>
+              
+              <div className="results-table-card">
+                <div className="results-table">
+                  <table className="prediction-table">
+                    <thead>
+                      <tr>
+                        <th>Barcode</th>
+                        <th>Predicted Cycle Life</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {mockPredictionResults.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.barcode}</td>
+                          <td>{result.predictedCycleLife}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
