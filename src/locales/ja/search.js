@@ -7,14 +7,14 @@ export default {
     },
     
     // Search Input
-    searchPlaceholder: "SMILES文字列、分子名、またはクエリを入力してください",
+    searchPlaceholder: "SMILES文字列、分子名、または特性クエリを入力してください",
     searchButton: "検索",
     searchTooltip: '<p>有効なクエリは分子の任意の数値特性を検索できます。例：</p><p>- "HOMOが最大-8のすべての分子を検索"<br/>- "LUMOが最小-2で分子量が最大200のすべての分子を検索"</p><p>よりオープンなクエリについては、Askを使用してください。</p><p>SMILES文字列を描画して検索するには、このアイコンをクリックするか、<a>{{pubChemUrl}}</a>にアクセスしてください</p>',
     drawMolecule: "分子を描画",
     
     // Search Options
     findFriendsLabel: '"友達"を探す',
-    findFriendsDescription: '類似の物理化学的特性を持つ分子。"友達"には、意図的に類似した構造を持つ分子と多様な構造を持つ分子の両方が含まれています。リストは、クエリ分子との物理化学的特性の類似度順にソートされています。',
+    findFriendsDescription: '入力した分子と類似した構造を持ち、以下のバッテリー用途に理論的に適合する物理化学特性を備えた分子：',
 
     searchRange: '検索範囲',
     nearbyFriends: '近くの友達',
@@ -111,4 +111,4 @@ export default {
     ambiguousQuery: {
         message: "クエリが曖昧です。略語 {{query}} は以下の分子のいずれかに対応する可能性があります：{{options}}。クエリを絞り込んでください。"
     }
-}; 
+};

@@ -7,14 +7,14 @@ export default {
     },
     
     // Search Input
-    searchPlaceholder: "Enter SMILES string, molecule name, or query",
+    searchPlaceholder: "Enter SMILES string(s), molecule name(s), or property query",
     searchButton: "Search",
     searchTooltip: '<p>Valid queries can search over any numerical properties of molecules. For example:</p><p>- "Find all molecules with HOMO at most -8"<br/>- "Find all molecules with LUMO at least -2 and molecular weight at most 200"</p><p>For more open-ended queries, use Ask.</p><p>To draw and look up SMILES strings, please click this icon or visit <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "Draw molecule",
     
     // Search Options
     findFriendsLabel: 'Find "friends"',
-    findFriendsDescription: 'Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.',
+    findFriendsDescription: 'Molecules with similar structures to your input molecules and physicochemical properties that are theoretically compatible with the following battery use case:',
 
     searchRange: 'Search range',
     nearbyFriends: 'nearby friends',
