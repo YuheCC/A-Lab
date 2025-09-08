@@ -7,20 +7,22 @@ export default {
     },
     
     // Search Input
-    searchPlaceholder: "SMILES 문자열, 분자명 또는 쿼리를 입력하세요",
+    searchPlaceholder: "SMILES 문자열, 분자명 또는 특성 쿼리를 입력하세요",
     searchButton: "검색",
     searchTooltip: '<p>유효한 쿼리는 분자의 모든 수치적 특성을 검색할 수 있습니다. 예시:</p><p>- "HOMO가 최대 -8인 모든 분자 찾기"<br/>- "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"</p><p>더 개방적인 쿼리의 경우 Ask를 사용하세요.</p><p>SMILES 문자열을 그리거나 찾으려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>을 방문하세요</p>',
     drawMolecule: "분자 그리기",
     
     // Search Options
     findFriendsLabel: '"친구" 찾기',
-    findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들. "친구"는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들을 모두 포함합니다. 목록은 물리화학적 특성이 쿼리 분자와 얼마나 유사한지에 따라 정렬됩니다.',
+    findFriendsDescription: '입력한 분자와 유사한 구조를 가지며, 아래의 배터리 사용 사례에 이론적으로 호환되는 물리화학적 특성을 가진 분자:',
     
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
     distantFriends: '먼 친구들',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
+    showHypothetical: '가상 분자 표시',
+    showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
     computeDisabled: '비활성화',
     computeLow: '낮음',
     computeMedium: '중간',
@@ -112,4 +114,4 @@ export default {
     ambiguousQuery: {
         message: "쿼리가 모호합니다. 약어 {{query}}는 다음 분자 중 하나에 해당할 수 있습니다: {{options}}. 쿼리를 구체화해주세요."
     }
-}; 
+};
