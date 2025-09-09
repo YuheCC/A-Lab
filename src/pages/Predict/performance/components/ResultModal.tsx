@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './ResultModal.css';
 
 interface PredictionResult {
@@ -29,6 +30,7 @@ interface ResultModalProps {
 }
 
 const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
+  const { t } = useTranslation();
   const mockPercentages = {
     temp25: {
       cycleLife: '98.5%',
@@ -58,7 +60,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     <div className="result-modal-overlay" onClick={handleBackdropClick}>
       <div className="result-modal">
         <div className="modal-header">
-          <h2>Calculation Results</h2>
+          <h2>{t('performance.results.title')}</h2>
           <button className="close-btn" onClick={onClose}>
             ×
           </button>
@@ -66,28 +68,28 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
         <div className="result-modal-content">
           <div className="result-section">
-            <h3>Battery System Selection</h3>
+            <h3>{t('performance.batterySystemSelection.title')}</h3>
             <div className="system-info">
               <div className="info-row">
-                <span className="label">Battery System:</span>
+                <span className="label">{t('performance.batterySystemSelection.label')}:</span>
                 <span className="value">{result.batterySystem}</span>
               </div>
               <div className="info-row">
-                <span className="label">Additive:</span>
+                <span className="label">{t('performance.additive.label')}:</span>
                 <span className="value additive-value">{result.additive}</span>
               </div>
             </div>
           </div>
 
           <div className="result-section">
-            <h3>Cell Performance Prediction</h3>
+            <h3>{t('performance.results.title')}</h3>
             
             <div className="temperature-section">
-              <h4>25°C Performance</h4>
+              <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
               <div className="performance-grid">
                 <div className="performance-item">
                   <div className="perf-header">
-                    <span className="perf-label">25 °C Cycle life</span>
+                    <span className="perf-label">{t('performance.results.performance.cycleLife25')}</span>
                     <span 
                       className="perf-status"
                       style={{ color: getStatusColor(result.results.temp25.cycleLife) }}
@@ -100,7 +102,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
                 <div className="performance-item">
                   <div className="perf-header">
-                    <span className="perf-label">25 °C CE</span>
+                    <span className="perf-label">{t('performance.results.performance.ce25')}</span>
                     <span 
                       className="perf-status"
                       style={{ color: getStatusColor(result.results.temp25.ce) }}
@@ -113,7 +115,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
                 <div className="performance-item">
                   <div className="perf-header">
-                    <span className="perf-label">25 °C Rate performance</span>
+                    <span className="perf-label">{t('performance.results.performance.ratePerformance25')}</span>
                     <span 
                       className="perf-status"
                       style={{ color: getStatusColor(result.results.temp25.ratePerformance) }}
@@ -127,11 +129,11 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             </div>
 
             <div className="temperature-section">
-              <h4>45°C Performance</h4>
+              <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
               <div className="performance-grid two-columns">
                 <div className="performance-item">
                   <div className="perf-header">
-                    <span className="perf-label">45 °C Cycle life</span>
+                    <span className="perf-label">{t('performance.results.performance.cycleLife45')}</span>
                     <span 
                       className="perf-status"
                       style={{ color: getStatusColor(result.results.temp45.cycleLife) }}
@@ -144,7 +146,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
                 <div className="performance-item">
                   <div className="perf-header">
-                    <span className="perf-label">45 °C CE</span>
+                    <span className="perf-label">{t('performance.results.performance.ce45')}</span>
                     <span 
                       className="perf-status"
                       style={{ color: getStatusColor(result.results.temp45.ce) }}
@@ -159,7 +161,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
           </div>
 
           <div className="result-section">
-            <h3>LLM Analysis</h3>
+            <h3>{t('performance.llmAnalysis.title')}</h3>
             <div className="analysis-content">
               <div className="analysis-item">
                 <h5>1. {result.llmAnalysis.optimization}</h5>

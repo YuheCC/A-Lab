@@ -124,7 +124,7 @@ const Header = () => {
                             to="/predict/performance" 
                             className={`dropdown-item ${isPathActive('/predict/performance') ? 'active' : ''}`}
                         >
-                            Cell performance prediction with additive molecules
+                            电芯性能预测
                         </NavLink>
                         <NavLink 
                             to="/predict/prediction-tool" 

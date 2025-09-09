@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PredictionModule from './components/PredictionModule';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPerformanceCard } from './components/PerformanceCardRenderer';
@@ -28,6 +29,7 @@ interface PredictionResult {
 }
 
 const PerformancePage: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedResult, setSelectedResult] = useState<PredictionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -141,8 +143,8 @@ const PerformancePage: React.FC = () => {
   return (
     <div className="prediction-tool">
       <div className="prediction-header">
-        <h1 className="prediction-title">Cell performance prediction with additive molecules</h1>
-        <span className="beta-tag">BETA</span>
+        <h1 className="prediction-title">{t('performance.title')}</h1>
+        <span className="beta-tag">{t('performance.beta')}</span>
       </div>
       
       <div className="prediction-content">
@@ -152,15 +154,15 @@ const PerformancePage: React.FC = () => {
         
         <div className="history-area">
           <UniversalHistoryModule
-            title="Prediction Records"
+            title={t('performance.history.title')}
             data={historyData}
             cardRenderer={renderPerformanceCard}
             onNewPrediction={handleNewPrediction}
             onViewDetails={handleViewDetails}
             onDeleteItem={handleDeleteItem}
-            newPredictionText="New Prediction"
+            newPredictionText={t('performance.history.newPrediction')}
             filterConfig={{
-              smilesSearchPlaceholder: "Search by file name..."
+              smilesSearchPlaceholder: t('performance.history.searchPlaceholder')
             }}
           />
         </div>

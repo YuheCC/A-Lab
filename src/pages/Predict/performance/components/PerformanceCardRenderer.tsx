@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PredictionResult {
   id: string;
@@ -41,12 +42,14 @@ export const renderPerformanceCard = (
   onView?: (item: PredictionResult) => void,
   onDelete?: (itemId: string) => void
 ) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="history-item">
       <div className="item-header">
         <div className="date-status">
           <span className="date">{record.date}</span>
-          <span className="status completed">Completed</span>
+          <span className="status completed">{t('performance.history.status.completed')}</span>
         </div>
       </div>
       
@@ -88,13 +91,13 @@ export const renderPerformanceCard = (
           className="view-details-btn"
           onClick={() => onView && onView(record)}
         >
-          View Details
+          {t('performance.history.actions.viewDetails')}
         </button>
         <button 
           className="delete-btn"
           onClick={() => onDelete && onDelete(record.id)}
         >
-          Delete
+          {t('performance.history.actions.delete')}
         </button>
       </div>
     </div>

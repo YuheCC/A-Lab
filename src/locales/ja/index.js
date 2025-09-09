@@ -11,6 +11,7 @@ import chatbox from './chatbox';
 import favorites from './favorites';
 import settings from './settings';
 import role from './role';
+import performance from './performance';
 
 export default {
     map,
@@ -25,5 +26,6 @@ export default {
     chatbox,
     favorites,
     settings,
-    role
+    role,
+    performance
 }; 

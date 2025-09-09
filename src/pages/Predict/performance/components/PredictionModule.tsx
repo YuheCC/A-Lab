@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList } from '@/services/prediction/performance';
 import './PredictionModule.css';
@@ -22,6 +23,7 @@ interface BatterySystem {
 }
 
 const PredictionModule: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
@@ -99,14 +101,14 @@ const PredictionModule: React.FC = () => {
           details.properties.smiles !== trimmedAdditive &&
           details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
         // 这是默认的mock数据，表示没有找到
-        setMoleculeError('查询的 SMILES 字符串在我们的数据库中未找到。');
+        setMoleculeError(t('performance.smilesNotFound.description'));
       } else {
         // 有效的分子数据
         setMoleculeDetails(details);
       }
     } catch (error) {
       console.error('获取分子详情失败:', error);
-      setMoleculeError('查询的 SMILES 字符串在我们的数据库中未找到。');
+      setMoleculeError(t('performance.smilesNotFound.description'));
     } finally {
       setIsMoleculeLoading(false);
     }
@@ -114,7 +116,7 @@ const PredictionModule: React.FC = () => {
 
   const handleCalculate = () => {
     if (!additive.trim()) {
-      alert('Please enter SMILES molecular formula');
+      alert(t('performance.additive.placeholder'));
       return;
     }
     // Show results after calculation
@@ -137,10 +139,10 @@ const PredictionModule: React.FC = () => {
   return (
     <div className="prediction-module">
       <div className="module-section">
-        <h2>Battery System Selection</h2>
+        <h2>{t('performance.batterySystemSelection.title')}</h2>
         
         <div className="form-group">
-          <label>Battery System</label>
+          <label>{t('performance.batterySystemSelection.label')}</label>
           <select 
             value={selectedSystem} 
             onChange={(e) => setSelectedSystem(e.target.value)}
@@ -148,7 +150,7 @@ const PredictionModule: React.FC = () => {
             disabled={isBatterySystemLoading}
           >
             {isBatterySystemLoading ? (
-              <option value="">Loading...</option>
+              <option value="">{t('performance.batterySystemSelection.loading')}</option>
             ) : (
               batterySystemOptions.map((system) => (
                 <option key={system.id} value={system.name}>
@@ -162,7 +164,7 @@ const PredictionModule: React.FC = () => {
         {showSpecs && currentSpec && (
           <div className="system-specs">
             <div className="specs-header">
-              <span>System Specifications</span>
+              <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
               <button 
                 className="close-specs"
                 onClick={() => setShowSpecs(false)}
@@ -173,22 +175,22 @@ const PredictionModule: React.FC = () => {
             
             <div className="specs-grid">
               <div className="spec-item">
-                <label>Cathode:</label>
+                <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
                 <span>{currentSpec.cathode}</span>
               </div>
               
               <div className="spec-item">
-                <label>Anode:</label>
+                <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
                 <span>{currentSpec.anode}</span>
               </div>
               
               <div className="spec-item">
-                <label>Benchmark Electrolyte:</label>
+                <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
                 <span>{currentSpec.electrolyte}</span>
               </div>
               
               <div className="spec-item">
-                <label>Cell design:</label>
+                <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
                 <span>{currentSpec.cellDesign}</span>
               </div>
             </div>
@@ -197,14 +199,14 @@ const PredictionModule: React.FC = () => {
 
         <div className="form-group">
           <label>
-            Additive (SMILES) <span className="required">*</span>
+            {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
           </label>
           <input
             type="text"
             value={additive}
             onChange={(e) => setAdditive(e.target.value)}
             onBlur={handleSmilesBlur}
-            placeholder="Enter SMILES molecular formula"
+            placeholder={t('performance.additive.placeholder')}
             className="additive-input"
           />
         </div>
@@ -212,14 +214,14 @@ const PredictionModule: React.FC = () => {
         {/* 分子详情显示区域 */}
         {isMoleculeLoading && (
           <div className="molecule-loading">
-            <p>正在查询分子详情...</p>
+            <p>{t('performance.moleculeInfo.loading')}</p>
           </div>
         )}
 
         {moleculeDetails && (
           <div className="molecule-information">
             <div className="molecule-header">
-              <h3>Molecule Information</h3>
+              <h3>{t('performance.moleculeInfo.title')}</h3>
               <button 
                 className="molecule-close-btn"
                 onClick={() => setMoleculeDetails(null)}
@@ -232,8 +234,8 @@ const PredictionModule: React.FC = () => {
               <div className="molecule-structure">
                 <div className="structure-placeholder">
                   <div className="structure-circle">
-                    <span>Molecule</span>
-                    <span>Structure</span>
+                    <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
+                    <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
                   </div>
                 </div>
               </div>
@@ -242,73 +244,73 @@ const PredictionModule: React.FC = () => {
                 <div className="properties-grid">
                   <div className="property-row">
                     <div className="property-item">
-                      <label>SMILES:</label>
+                      <label>{t('performance.moleculeInfo.properties.smiles')}</label>
                       <span>{moleculeDetails.properties.smiles || '-'}</span>
                     </div>
                     <div className="property-item">
-                      <label>ESP MIN:</label>
+                      <label>{t('performance.moleculeInfo.properties.espMin')}</label>
                       <span>{moleculeDetails.properties.espMin || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>MOL WEIGHT:</label>
+                      <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
                       <span>{moleculeDetails.properties.molecularWeight || '-'}</span>
                     </div>
                     <div className="property-item">
-                      <label>PREDICTED MP:</label>
+                      <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
                       <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>UMAP X:</label>
+                      <label>{t('performance.moleculeInfo.properties.umapX')}</label>
                       <span>-</span>
                     </div>
                     <div className="property-item">
-                      <label>PREDICTED BP:</label>
+                      <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
                       <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>UMAP Y:</label>
+                      <label>{t('performance.moleculeInfo.properties.umapY')}</label>
                       <span>-</span>
                     </div>
                     <div className="property-item">
-                      <label>PREDICTED FP:</label>
+                      <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
                       <span>{moleculeDetails.properties.flashPoint || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>HOMO:</label>
+                      <label>{t('performance.moleculeInfo.properties.homo')}</label>
                       <span>{moleculeDetails.properties.homo || '-'}</span>
                     </div>
                     <div className="property-item">
-                      <label>COMBUSTION ENTHALPY:</label>
+                      <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
                       <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>LUMO:</label>
+                      <label>{t('performance.moleculeInfo.properties.lumo')}</label>
                       <span>{moleculeDetails.properties.lumo || '-'}</span>
                     </div>
                     <div className="property-item">
-                      <label>COMMERCIAL VIABILITY:</label>
+                      <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
                       <span>{moleculeDetails.properties.commercialViability || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
-                      <label>ESP MAX:</label>
+                      <label>{t('performance.moleculeInfo.properties.espMax')}</label>
                       <span>{moleculeDetails.properties.espMax || '-'}</span>
                     </div>
                     <div className="property-item"></div>
@@ -322,7 +324,7 @@ const PredictionModule: React.FC = () => {
         {moleculeError && (
           <div className="smiles-not-found">
             <div className="error-header">
-              <h3>SMILES Not Found</h3>
+              <h3>{t('performance.smilesNotFound.title')}</h3>
               <button 
                 className="molecule-close-btn"
                 onClick={() => setMoleculeError(null)}
@@ -332,15 +334,15 @@ const PredictionModule: React.FC = () => {
             </div>
             
             <div className="error-content">
-              <p>The SMILES string you entered is not found in our database.</p>
-              <p>Please re-enter a valid SMILES string or try this example:</p>
+              <p>{t('performance.smilesNotFound.description')}</p>
+              <p>{t('performance.smilesNotFound.suggestion')}</p>
               
               <div className="example-smiles">
                 <div className="example-item">
-                  <strong>O=c1occo1</strong> - ethylene carbonate
+                  <strong>O=c1occo1</strong> - {t('performance.smilesNotFound.examples.ec')}
                 </div>
                 <div className="example-item">
-                  <strong>H2O</strong> - water
+                  <strong>H2O</strong> - {t('performance.smilesNotFound.examples.water')}
                 </div>
               </div>
             </div>
@@ -351,12 +353,12 @@ const PredictionModule: React.FC = () => {
           className={`calculate-btn ${showResults ? 'calculated' : ''}`}
           onClick={handleCalculate}
         >
-          {showResults ? 'Calculated' : 'Calculate'}
+          {showResults ? t('performance.calculate.calculated') : t('performance.calculate.button')}
         </button>
 
         {showResults && (
           <div className="results-section">
-            <h2>Cell Performance Prediction</h2>
+            <h2>{t('performance.results.title')}</h2>
             
             <div className="results-card">
               <div className="temperature-tabs" data-active={activeTab}>
@@ -364,13 +366,13 @@ const PredictionModule: React.FC = () => {
                 className={`temp-tab ${activeTab === '25c' ? 'active' : ''}`}
                 onClick={() => setActiveTab('25c')}
               >
-                25°C Performance
+                {t('performance.results.temperatureTabs.temp25')}
               </button>
               <button 
                 className={`temp-tab ${activeTab === '45c' ? 'active' : ''}`}
                 onClick={() => setActiveTab('45c')}
               >
-                45°C Performance
+                {t('performance.results.temperatureTabs.temp45')}
               </button>
             </div>
 
@@ -378,7 +380,7 @@ const PredictionModule: React.FC = () => {
               {activeTab === '25c' && (
                 <div className="performance-results">
                   <div className="result-item">
-                    <div className="result-label">25 °C Cycle life</div>
+                    <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
                     <div className={`result-badge ${mockResults['25c'].cycleLife.status.toLowerCase()}`}>
                       <span className="result-icon">
                         {mockResults['25c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
@@ -386,13 +388,13 @@ const PredictionModule: React.FC = () => {
                       {mockResults['25c'].cycleLife.status}
                     </div>
                     <div className="result-confidence">
-                      <span className="confidence-label">CONFIDENCE</span>
+                      <span className="confidence-label">{t('performance.results.confidence')}</span>
                       <span className="confidence-value">{mockResults['25c'].cycleLife.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
-                    <div className="result-label">25 °C CE</div>
+                    <div className="result-label">{t('performance.results.performance.ce25')}</div>
                     <div className={`result-badge ${mockResults['25c'].ce.status.toLowerCase()}`}>
                       <span className="result-icon">
                         {mockResults['25c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
@@ -400,13 +402,13 @@ const PredictionModule: React.FC = () => {
                       {mockResults['25c'].ce.status}
                     </div>
                     <div className="result-confidence">
-                      <span className="confidence-label">CONFIDENCE</span>
+                      <span className="confidence-label">{t('performance.results.confidence')}</span>
                       <span className="confidence-value">{mockResults['25c'].ce.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
-                    <div className="result-label">25 °C Rate performance</div>
+                    <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
                     <div className={`result-badge ${mockResults['25c'].ratePerformance.status.toLowerCase()}`}>
                       <span className="result-icon">
                         {mockResults['25c'].ratePerformance.status === 'POSITIVE' ? '✓' : '✕'}
@@ -414,7 +416,7 @@ const PredictionModule: React.FC = () => {
                       {mockResults['25c'].ratePerformance.status}
                     </div>
                     <div className="result-confidence">
-                      <span className="confidence-label">CONFIDENCE</span>
+                      <span className="confidence-label">{t('performance.results.confidence')}</span>
                       <span className="confidence-value">{mockResults['25c'].ratePerformance.confidence}</span>
                     </div>
                   </div>
@@ -424,7 +426,7 @@ const PredictionModule: React.FC = () => {
               {activeTab === '45c' && (
                 <div className="performance-results">
                   <div className="result-item">
-                    <div className="result-label">45 °C Cycle Life</div>
+                    <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
                     <div className={`result-badge ${mockResults['45c'].cycleLife.status.toLowerCase()}`}>
                       <span className="result-icon">
                         {mockResults['45c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
@@ -432,13 +434,13 @@ const PredictionModule: React.FC = () => {
                       {mockResults['45c'].cycleLife.status}
                     </div>
                     <div className="result-confidence">
-                      <span className="confidence-label">CONFIDENCE</span>
+                      <span className="confidence-label">{t('performance.results.confidence')}</span>
                       <span className="confidence-value">{mockResults['45c'].cycleLife.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
-                    <div className="result-label">45 °C CE</div>
+                    <div className="result-label">{t('performance.results.performance.ce45')}</div>
                     <div className={`result-badge ${mockResults['45c'].ce.status.toLowerCase()}`}>
                       <span className="result-icon">
                         {mockResults['45c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
@@ -446,7 +448,7 @@ const PredictionModule: React.FC = () => {
                       {mockResults['45c'].ce.status}
                     </div>
                     <div className="result-confidence">
-                      <span className="confidence-label">CONFIDENCE</span>
+                      <span className="confidence-label">{t('performance.results.confidence')}</span>
                       <span className="confidence-value">{mockResults['45c'].ce.confidence}</span>
                     </div>
                   </div>
@@ -459,7 +461,7 @@ const PredictionModule: React.FC = () => {
                   className="llm-analysis-btn"
                   onClick={() => setShowLLMAnalysis(true)}
                 >
-                  LLM Analysis
+                  {t('performance.llmAnalysis.button')}
                 </button>
               </div>
             </div>
@@ -468,12 +470,12 @@ const PredictionModule: React.FC = () => {
 
         {showLLMAnalysis && (
           <div className="llm-analysis-section">
-            <h2>LLM Analysis</h2>
+            <h2>{t('performance.llmAnalysis.title')}</h2>
             
             <div className="llm-analysis-card">
               <div className="llm-content">
               <div className="llm-analysis-item">
-                <h3>1. Nickel Dehydrogenation Optimization</h3>
+                <h3>{t('performance.llmAnalysis.sections.nickelOptimization')}</h3>
                 <ul>
                   <li>
                     The dimethyl dicarbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in 
@@ -486,7 +488,7 @@ const PredictionModule: React.FC = () => {
               </div>
 
               <div className="llm-analysis-item">
-                <h3>2. 4°C Cycling Optimization</h3>
+                <h3>{t('performance.llmAnalysis.sections.cyclingOptimization')}</h3>
                 <p>
                   The rolling disc approach involves enhanced material comparison and LiFe distribution optimization 
                   for secondary reactions. This biochemical nickel enhancement process addresses charge-
@@ -496,7 +498,7 @@ const PredictionModule: React.FC = () => {
               </div>
 
               <div className="llm-analysis-item">
-                <h3>3. Comprehensive Recommendations</h3>
+                <h3>{t('performance.llmAnalysis.sections.recommendations')}</h3>
                 <ul>
                   <li>
                     Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling 
@@ -507,7 +509,7 @@ const PredictionModule: React.FC = () => {
               </div>
 
               <div className="llm-references">
-                <p><strong>References</strong> [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020.</p>
+                <p><strong>{t('performance.llmAnalysis.references')}</strong> [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020.</p>
                 <a href="https://doi.org/10.1002/aenm.202002704" target="_blank" rel="noopener noreferrer">
                   https://doi.org/10.1002/aenm.202002704
                 </a>
