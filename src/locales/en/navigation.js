@@ -8,6 +8,8 @@ export default {
     favorites: "Favorites",
     predict: "Predict",
     about: "About",
+    predictPerformance: "Cell Performance Prediction",
+    predictionTool: "Early-life Battery Prediction Tool",
   },
   
   // Navbar links

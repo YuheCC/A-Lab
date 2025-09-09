@@ -124,14 +124,14 @@ const Header = () => {
                             to="/predict/performance" 
                             className={`dropdown-item ${isPathActive('/predict/performance') ? 'active' : ''}`}
                         >
-                            电芯性能预测
+                            {t('navigation.header.predictPerformance')}
                         </NavLink>
-                        <NavLink 
+                        {/* <NavLink 
                             to="/predict/prediction-tool" 
                             className={`dropdown-item ${isPathActive('/predict/prediction-tool') ? 'active' : ''}`}
                         >
-                            电池早期生命预测工具
-                        </NavLink>
+                            {t('navigation.header.predictionTool')}
+                        </NavLink> */}
                     </div>
                 </div>
             </nav>
