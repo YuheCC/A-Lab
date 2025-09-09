@@ -23,6 +23,7 @@ interface PredictionResult {
     optimization: string;
     cycling: string;
   };
+  rawApiData?: PerformanceHistoryItem;
 }
 
 interface FilterState {
@@ -48,6 +49,46 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 分别统计25°C和45°C的正向结果
+  const calculateTemperatureStats = (apiData: PerformanceHistoryItem) => {
+    // 25°C metrics
+    const temp25Metrics = [
+      parseInt(apiData.temperature_25_CE_label || '1'), // CE 25°C
+      parseInt(apiData.temperature_25_CL_label || '1'), // CL 25°C  
+      parseInt(apiData.temperature_25_CR_label || '1')  // CR 25°C
+    ];
+    
+    // 45°C metrics  
+    const temp45Metrics = [
+      parseInt(apiData.temperature_45_CE_label || '1'), // CE 45°C
+      parseInt(apiData.temperature_45_CL_label || '1')  // CL 45°C
+    ];
+    
+    const temp25PositiveCount = temp25Metrics.filter(label => label === 0).length;
+    const temp25TotalCount = temp25Metrics.length;
+    const temp25Ratio = temp25PositiveCount / temp25TotalCount;
+    
+    const temp45PositiveCount = temp45Metrics.filter(label => label === 0).length;
+    const temp45TotalCount = temp45Metrics.length;
+    const temp45Ratio = temp45PositiveCount / temp45TotalCount;
+    
+    return {
+      temp25: { positiveCount: temp25PositiveCount, totalCount: temp25TotalCount, ratio: temp25Ratio },
+      temp45: { positiveCount: temp45PositiveCount, totalCount: temp45TotalCount, ratio: temp45Ratio }
+    };
+  };
+
+  // 获取状态颜色和类名
+  const getStatusColorAndClass = (ratio: number) => {
+    if (ratio < 0.5) {
+      return { color: '#ef4444', backgroundColor: '#fef2f2', className: 'negative' }; // 红色
+    } else if (ratio === 0.5) {
+      return { color: '#f59e0b', backgroundColor: '#fffbeb', className: 'neutral' }; // 黄色
+    } else {
+      return { color: '#10b981', backgroundColor: '#ecfdf5', className: 'positive' }; // 绿色
+    }
+  };
 
   // 将API数据转换为组件需要的格式
   const transformAPIDataToPredictionResult = (apiData: PerformanceHistoryItem): PredictionResult & { rawApiData?: PerformanceHistoryItem } => {
@@ -143,19 +184,6 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
     fetchHistoryData();
   }, []);
 
-  const getStatusColor = (status: string) => {
-    if (status === 'Positive') return '#10b981';
-    if (status === 'Negative') return '#ef4444';
-    if (status === 'Neutral') return '#f59e0b';
-    return '#6b7280';
-  };
-
-  const getStatusBg = (status: string) => {
-    if (status === 'Positive') return '#ecfdf5';
-    if (status === 'Negative') return '#fef2f2';
-    if (status === 'Neutral') return '#fffbeb';
-    return '#f9fafb';
-  };
 
   const filteredData = historyData.filter((record) => {
     // SMILES search filter
@@ -209,14 +237,14 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
         <div className="header-content">
           <h2>{t('performance.history.title')}</h2>
           <div className="filter-container" ref={dropdownRef}>
-            <button 
+            {/* <button 
               className={`filter-btn ${showFilterDropdown ? 'active' : ''}`}
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
               </svg>
-            </button>
+            </button> */}
             
             {showFilterDropdown && (
               <div className="filter-dropdown">
@@ -305,91 +333,74 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
             </button>
           </div>
         ) : (
-          filteredData.map((record) => (
-          <div key={record.id} className="history-item">
-            <div className="item-header">
-              <div className="date-status">
-                <span className="date">{record.date}</span>
-                <span className="status completed">{t('performance.history.status.completed')}</span>
-              </div>
-            </div>
+          filteredData.map((record) => {
+            // Calculate separate temperature statistics for this record
+            const stats = record.rawApiData ? calculateTemperatureStats(record.rawApiData) : { 
+              temp25: { positiveCount: 0, totalCount: 3, ratio: 0 },
+              temp45: { positiveCount: 0, totalCount: 2, ratio: 0 }
+            };
+            const temp25Style = getStatusColorAndClass(stats.temp25.ratio);
+            const temp45Style = getStatusColorAndClass(stats.temp45.ratio);
             
-            <div className="item-content">
-              <div className="battery-system">
-                <span className="system-name">{record.batterySystem}</span>
-              </div>
-              
-              <div className="additive">
-                <span className="additive-formula">{record.additive}</span>
-              </div>
-              
-              <div className="results-preview">
-                <div className="result-tags">
-                  <span 
-                    className="result-tag"
-                    style={{ 
-                      color: getStatusColor(record.results.temp25.cycleLife),
-                      backgroundColor: getStatusBg(record.results.temp25.cycleLife)
-                    }}
-                  >
-                    25°C CL: {record.results.temp25.cycleLife}
-                  </span>
-                  <span 
-                    className="result-tag"
-                    style={{ 
-                      color: getStatusColor(record.results.temp25.ce),
-                      backgroundColor: getStatusBg(record.results.temp25.ce)
-                    }}
-                  >
-                    25°C CE: {record.results.temp25.ce}
-                  </span>
-                  <span 
-                    className="result-tag"
-                    style={{ 
-                      color: getStatusColor(record.results.temp25.ratePerformance),
-                      backgroundColor: getStatusBg(record.results.temp25.ratePerformance)
-                    }}
-                  >
-                    25°C CR: {record.results.temp25.ratePerformance}
-                  </span>
-                  <span 
-                    className="result-tag"
-                    style={{ 
-                      color: getStatusColor(record.results.temp45.cycleLife),
-                      backgroundColor: getStatusBg(record.results.temp45.cycleLife)
-                    }}
-                  >
-                    45°C CL: {record.results.temp45.cycleLife}
-                  </span>
-                  <span 
-                    className="result-tag"
-                    style={{ 
-                      color: getStatusColor(record.results.temp45.ce),
-                      backgroundColor: getStatusBg(record.results.temp45.ce)
-                    }}
-                  >
-                    45°C CE: {record.results.temp45.ce}
-                  </span>
+            return (
+            <div key={record.id} className="history-item">
+              <div className="item-header">
+                <div className="date-status">
+                  <span className="date">{record.date}</span>
+                  {/* <span className="status completed">{t('performance.history.status.completed')}</span> */}
                 </div>
               </div>
+              
+              <div className="item-content">
+                <div className="battery-system">
+                  <span className="system-name">{record.batterySystem}</span>
+                </div>
+                
+                <div className="additive">
+                  <span className="additive-formula">{record.additive}</span>
+                </div>
+                
+                <div className="results-preview">
+                  <div className="result-tags">
+                    <span 
+                      className="result-tag"
+                      style={{ 
+                        color: temp25Style.color,
+                        backgroundColor: temp25Style.backgroundColor
+                      }}
+                    >
+                      25°C: {stats.temp25.positiveCount}/{stats.temp25.totalCount} {t('performance.results.status.positive')}
+                    </span>
+                    <span 
+                      className="result-tag"
+                      style={{ 
+                        color: temp45Style.color,
+                        backgroundColor: temp45Style.backgroundColor
+                      }}
+                    >
+                      45°C: {stats.temp45.positiveCount}/{stats.temp45.totalCount} {t('performance.results.status.positive')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="item-actions">
+                <button 
+                  className="view-details-btn"
+                  onClick={() => handleViewDetails(record)}
+                >
+                  {t('performance.history.actions.viewDetails')}
+                </button>
+                <button 
+                  className="delete-btn"
+                  onClick={() => handleDeleteRecord(record.id)}
+                >
+                  {t('performance.history.actions.delete')}
+                </button>
+              </div>
             </div>
-            
-            <div className="item-actions">
-              <button 
-                className="view-details-btn"
-                onClick={() => handleViewDetails(record)}
-              >
-                {t('performance.history.actions.viewDetails')}
-              </button>
-              <button 
-                className="delete-btn"
-                onClick={() => handleDeleteRecord(record.id)}
-              >
-                {t('performance.history.actions.delete')}
-              </button>
-            </div>
-          </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
