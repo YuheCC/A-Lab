@@ -238,159 +238,161 @@ const PredictionModule: React.FC = () => {
         </div>
 
         {/* 分子详情显示区域 */}
-        {isMoleculeLoading && (
-          <div className="molecule-loading">
-            <p>{t('performance.moleculeInfo.loading')}</p>
-          </div>
-        )}
-
-        {moleculeDetails && (
-          <div className="molecule-information">
-            <div className="molecule-header">
-              <h3>{t('performance.moleculeInfo.title')}</h3>
-              <button 
-                className="molecule-close-btn"
-                onClick={() => setMoleculeDetails(null)}
-              >
-                ×
-              </button>
+        <div className="molecule-details-section" style={{ marginBottom: '20px' }}>
+          {isMoleculeLoading && (
+            <div className="molecule-loading">
+              <p>{t('performance.moleculeInfo.loading')}</p>
             </div>
-            
-            <div className="molecule-content">
-              <div className="molecule-structure">
-                {moleculeDetails.properties.smiles ? (
-                  <MolViewer2D 
-                    smile={moleculeDetails.properties.smiles} 
-                    theme="light"
-                  />
-                ) : (
-                  <div className="structure-placeholder">
-                    <div className="structure-circle">
-                      <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
-                      <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
-                    </div>
-                  </div>
-                )}
+          )}
+
+          {moleculeDetails && (
+            <div className="molecule-information">
+              <div className="molecule-header">
+                <h3>{t('performance.moleculeInfo.title')}</h3>
+                <button 
+                  className="molecule-close-btn"
+                  onClick={() => setMoleculeDetails(null)}
+                >
+                  ×
+                </button>
               </div>
               
-              <div className="molecule-properties">
-                <div className="properties-grid">
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.smiles')}</label>
-                      <span>{moleculeDetails.properties.smiles || '-'}</span>
+              <div className="molecule-content">
+                <div className="molecule-structure">
+                  {moleculeDetails.properties.smiles ? (
+                    <MolViewer2D 
+                      smile={moleculeDetails.properties.smiles} 
+                      theme="light"
+                    />
+                  ) : (
+                    <div className="structure-placeholder">
+                      <div className="structure-circle">
+                        <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
+                        <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
+                      </div>
                     </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.espMin')}</label>
-                      <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
+                  )}
+                </div>
+                
+                <div className="molecule-properties">
+                  <div className="properties-grid">
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.smiles')}</label>
+                        <span>{moleculeDetails.properties.smiles || '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.espMin')}</label>
+                        <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
-                      <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
+                        <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
+                        <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
+                      </div>
                     </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
-                      <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.umapX')}</label>
+                        <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
+                        <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.umapX')}</label>
-                      <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.umapY')}</label>
+                        <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
+                        <span>{moleculeDetails.properties.flashPoint || '-'}</span>
+                      </div>
                     </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
-                      <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.homo')}</label>
+                        <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
+                        <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.umapY')}</label>
-                      <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.lumo')}</label>
+                        <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
+                        <span>{moleculeDetails.properties.commercialViability || '-'}</span>
+                      </div>
                     </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
-                      <span>{moleculeDetails.properties.flashPoint || '-'}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.homo')}</label>
-                      <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
-                    </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
-                      <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.lumo')}</label>
-                      <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
-                    </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
-                      <span>{moleculeDetails.properties.commercialViability || '-'}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.espMax')}</label>
-                      <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
-                    </div>
-                    <div className="property-item">
-                      <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
-                      <span>{moleculeDetails.properties.functionalGroups ? (() => {
-                        try {
-                          const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
-                          return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
-                        } catch {
-                          return moleculeDetails.properties.functionalGroups;
-                        }
-                      })() : '-'}</span>
+                    
+                    <div className="property-row">
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.espMax')}</label>
+                        <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
+                      </div>
+                      <div className="property-item">
+                        <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
+                        <span>{moleculeDetails.properties.functionalGroups ? (() => {
+                          try {
+                            const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
+                            return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
+                          } catch {
+                            return moleculeDetails.properties.functionalGroups;
+                          }
+                        })() : '-'}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {moleculeError && (
-          <div className="smiles-not-found">
-            <div className="error-header">
-              <h3>{t('performance.smilesNotFound.title')}</h3>
-              <button 
-                className="molecule-close-btn"
-                onClick={() => setMoleculeError(null)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="error-content">
-              <p>{t('performance.smilesNotFound.description')}</p>
-              <p>{t('performance.smilesNotFound.suggestion')}</p>
+          {moleculeError && (
+            <div className="smiles-not-found">
+              <div className="error-header">
+                <h3>{t('performance.smilesNotFound.title')}</h3>
+                <button 
+                  className="molecule-close-btn"
+                  onClick={() => setMoleculeError(null)}
+                >
+                  ×
+                </button>
+              </div>
               
-              <div className="example-smiles">
-                <div className="example-item">
-                  <strong>O=c1occo1</strong> - {t('performance.smilesNotFound.examples.ec')}
-                </div>
-                <div className="example-item">
-                  <strong>H2O</strong> - {t('performance.smilesNotFound.examples.water')}
+              <div className="error-content">
+                <p>{t('performance.smilesNotFound.description')}</p>
+                <p>{t('performance.smilesNotFound.suggestion')}</p>
+                
+                <div className="example-smiles">
+                  <div className="example-item">
+                    <strong>O=c1occo1</strong> - {t('performance.smilesNotFound.examples.ec')}
+                  </div>
+                  <div className="example-item">
+                    <strong>H2O</strong> - {t('performance.smilesNotFound.examples.water')}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <button 
           className={`calculate-btn ${showResults ? 'calculated' : ''}`}
