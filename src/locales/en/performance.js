@@ -112,11 +112,18 @@ export default {
     actions: {
       viewDetails: "View Details",
       delete: "Delete",
-      deleteConfirm: "Are you sure you want to delete this record?"
+      deleteConfirm: "Are you sure you want to delete this record?",
+      deleteFailed: "Failed to delete record"
     },
     noResults: {
       message: "No prediction records found matching your filters.",
       clearFilters: "Clear all filters"
+    },
+    loading: {
+      message: "Loading history data...",
+      error: "Error",
+      retry: "Retry",
+      failedToLoad: "Failed to load history data"
     }
   }
 }

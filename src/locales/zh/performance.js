@@ -112,11 +112,18 @@ export default {
     actions: {
       viewDetails: "查看详情",
       delete: "删除",
-      deleteConfirm: "确定要删除这条记录吗？"
+      deleteConfirm: "确定要删除这条记录吗？",
+      deleteFailed: "删除记录失败"
     },
     noResults: {
       message: "未找到符合筛选条件的预测记录。",
       clearFilters: "清除所有筛选条件"
+    },
+    loading: {
+      message: "正在加载历史数据...",
+      error: "错误",
+      retry: "重试",
+      failedToLoad: "加载历史数据失败"
     }
   }
 }

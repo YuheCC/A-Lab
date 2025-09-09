@@ -112,11 +112,18 @@ export default {
     actions: {
       viewDetails: "詳細を見る",
       delete: "削除",
-      deleteConfirm: "この記録を削除してもよろしいですか？"
+      deleteConfirm: "この記録を削除してもよろしいですか？",
+      deleteFailed: "記録の削除に失敗しました"
     },
     noResults: {
       message: "フィルターに一致する予測記録が見つかりません。",
       clearFilters: "すべてのフィルターをクリア"
+    },
+    loading: {
+      message: "履歴データを読み込み中...",
+      error: "エラー",
+      retry: "再試行",
+      failedToLoad: "履歴データの読み込みに失敗しました"
     }
   }
 }

@@ -112,11 +112,18 @@ export default {
     actions: {
       viewDetails: "세부사항 보기",
       delete: "삭제",
-      deleteConfirm: "이 기록을 삭제하시겠습니까?"
+      deleteConfirm: "이 기록을 삭제하시겠습니까?",
+      deleteFailed: "기록 삭제에 실패했습니다"
     },
     noResults: {
       message: "필터에 일치하는 예측 기록을 찾을 수 없습니다.",
       clearFilters: "모든 필터 지우기"
+    },
+    loading: {
+      message: "히스토리 데이터 로딩 중...",
+      error: "오류",
+      retry: "재시도",
+      failedToLoad: "히스토리 데이터 로드에 실패했습니다"
     }
   }
 }

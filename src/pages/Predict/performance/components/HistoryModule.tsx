@@ -87,7 +87,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       }
     } catch (err) {
       console.error('获取历史数据失败:', err);
-      setError('Failed to load history data');
+      setError(t('performance.history.loading.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       fetchHistoryData();
     } catch (err) {
       console.error('删除记录失败:', err);
-      alert('Failed to delete record');
+      alert(t('performance.history.actions.deleteFailed'));
     }
   };
 
@@ -280,16 +280,16 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       <div className="history-list">
         {loading ? (
           <div className="loading-state">
-            <p>Loading history data...</p>
+            <p>{t('performance.history.loading.message')}</p>
           </div>
         ) : error ? (
           <div className="error-state">
-            <p>Error: {error}</p>
+            <p>{t('performance.history.loading.error')}: {error}</p>
             <button 
               className="retry-btn"
               onClick={fetchHistoryData}
             >
-              Retry
+              {t('performance.history.loading.retry')}
             </button>
           </div>
         ) : filteredData.length === 0 ? (
