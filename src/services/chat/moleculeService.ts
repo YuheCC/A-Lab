@@ -1,20 +1,44 @@
 export type MoleculeProperties = {
   smiles?: string;
-  molecularWeight?: string;
+  molecularWeight?: string | number;
   meltingPoint?: string;
   boilingPoint?: string;
   flashPoint?: string;
   combustionEnthalpy?: string;
-  homo?: string;
-  lumo?: string;
-  espMax?: string;
-  espMin?: string;
+  homo?: string | number;
+  lumo?: string | number;
+  espMax?: string | number;
+  espMin?: string | number;
   commercialViability?: string;
+  umapX?: number;
+  umapY?: number;
+  functionalGroups?: string;
+  commercialLink?: string;
+  commercialScore?: number;
 };
 
 export interface MoleculeDetails {
   name: string;
   properties: MoleculeProperties;
+}
+
+export interface APIMoleculeDetail {
+  SMILES: string;
+  UMAP_0: number;
+  UMAP_1: number;
+  HOMO_eV: number;
+  LUMO_eV: number;
+  ESP_max_eV: number;
+  ESP_min_eV: number;
+  molecular_weight: number;
+  functional_groups: string;
+  COMMERCIAL_LINK?: string;
+  COMMERCIAL_SCORE?: number;
+}
+
+export interface APIResponse {
+  found: boolean;
+  molecule_details: APIMoleculeDetail[];
 }
 
 export interface SimilarMolecule {
@@ -39,6 +63,39 @@ class MoleculeService {
     return MoleculeService.instance;
   }
 
+  private mapAPIResponseToMoleculeDetails(apiData: APIMoleculeDetail, name: string): MoleculeDetails {
+    return {
+      name,
+      properties: {
+        smiles: apiData.SMILES,
+        molecularWeight: apiData.molecular_weight,
+        homo: apiData.HOMO_eV,
+        lumo: apiData.LUMO_eV,
+        espMax: apiData.ESP_max_eV,
+        espMin: apiData.ESP_min_eV,
+        umapX: apiData.UMAP_0,
+        umapY: apiData.UMAP_1,
+        functionalGroups: apiData.functional_groups,
+        commercialLink: apiData.COMMERCIAL_LINK,
+        commercialScore: apiData.COMMERCIAL_SCORE,
+        commercialViability: this.getCommercialViabilityText(apiData.COMMERCIAL_SCORE),
+        // Keep existing fields as fallback
+        meltingPoint: '-',
+        boilingPoint: '-',
+        flashPoint: '-',
+        combustionEnthalpy: '-'
+      }
+    };
+  }
+
+  private getCommercialViabilityText(score?: number): string {
+    if (!score) return 'Unknown';
+    if (score >= 8) return 'Highly commercially available';
+    if (score >= 5) return 'Commercially available';
+    if (score >= 3) return 'Limited commercial availability';
+    return 'Research compound only';
+  }
+
   async getMoleculeDetails(name: string): Promise<MoleculeDetails> {
     try {
       const { default: request } = await import('@/services/request');
@@ -46,24 +103,42 @@ class MoleculeService {
         method: 'GET',
         params: { molecule: name },
       });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
-      return resp.data as MoleculeDetails;
+      
+      if ((resp as any).ok === false || resp.status >= 400) {
+        throw new Error(`HTTP ${resp.status}`);
+      }
+      
+      const apiResponse = resp.data as APIResponse;
+      
+      // 检查是否找到分子数据
+      if (!apiResponse.found || !apiResponse.molecule_details || apiResponse.molecule_details.length === 0) {
+        throw new Error('Molecule not found');
+      }
+      
+      // 使用第一个结果
+      const moleculeData = apiResponse.molecule_details[0];
+      return this.mapAPIResponseToMoleculeDetails(moleculeData, name);
+      
     } catch (err) {
-      // mock fallback
+      // mock fallback - 使用与实际API结构相似的mock数据
       return {
         name,
         properties: {
           smiles: 'F[P-](F)(F)(F)(F)F.[Li+]',
-          molecularWeight: '151.91 g/mol',
+          molecularWeight: 151.91,
           meltingPoint: '-',
           boilingPoint: '-',
           flashPoint: '-',
-          combustionEnthalpy: '-12.34 eV',
-          homo: '-10.2 eV',
-          lumo: '-2.1 eV',
-          espMax: '1.8 eV',
-          espMin: '-3.2 eV',
-          commercialViability: 'Commercially available'
+          combustionEnthalpy: '-',
+          homo: -10.2,
+          lumo: -2.1,
+          espMax: 1.8,
+          espMin: -3.2,
+          umapX: 0,
+          umapY: 0,
+          functionalGroups: '["Salt"]',
+          commercialViability: 'Commercially available',
+          commercialScore: 3
         }
       };
     }
@@ -165,9 +240,6 @@ class MoleculeService {
     }
   }
 
-  private getAuthToken(): string {
-    return localStorage.getItem('authToken') || '';
-  }
 }
 
 export const moleculeService = MoleculeService.getInstance();

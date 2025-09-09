@@ -41,7 +41,8 @@ export default {
       combustionEnthalpy: "연소 엔탈피:",
       lumo: "LUMO:",
       commercialViability: "상업적 실행가능성:",
-      espMax: "ESP MAX:"
+      espMax: "ESP MAX:",
+      functionalGroups: "기능기:"
     },
     structurePlaceholder: {
       line1: "분자",

@@ -41,7 +41,8 @@ export default {
       combustionEnthalpy: "燃烧焓:",
       lumo: "LUMO:",
       commercialViability: "商业可行性:",
-      espMax: "ESP MAX:"
+      espMax: "ESP MAX:",
+      functionalGroups: "功能性基团:"
     },
     structurePlaceholder: {
       line1: "分子",

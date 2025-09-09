@@ -41,7 +41,8 @@ export default {
       combustionEnthalpy: "COMBUSTION ENTHALPY:",
       lumo: "LUMO:",
       commercialViability: "COMMERCIAL VIABILITY:",
-      espMax: "ESP MAX:"
+      espMax: "ESP MAX:",
+      functionalGroups: "FUNCTIONAL GROUPS:"
     },
     structurePlaceholder: {
       line1: "Molecule",

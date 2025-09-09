@@ -295,7 +295,7 @@
 .view-details-btn {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: #717182;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -304,14 +304,13 @@
 }
 
 .view-details-btn:hover {
-  background: #eff6ff;
-  color: #2563eb;
+  color: oklch(14.5% 0 0);
 }
 
 .delete-btn {
   background: none;
   border: none;
-  color: #ef4444;
+  color: #717182;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -320,6 +319,5 @@
 }
 
 .delete-btn:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  color: oklch(14.5% 0 0);
 }

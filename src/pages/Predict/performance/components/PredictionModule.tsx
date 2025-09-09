@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList } from '@/services/prediction/performance';
+import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 
 interface SystemSpec {
@@ -35,6 +36,7 @@ const PredictionModule: React.FC = () => {
   const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
   const [moleculeError, setMoleculeError] = useState<string | null>(null);
   const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
+  const [lastQueriedSmiles, setLastQueriedSmiles] = useState<string | null>(null);
   
   // 新增状态：电池系统相关
   const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
@@ -82,9 +84,17 @@ const PredictionModule: React.FC = () => {
   // 处理 SMILES 输入框失焦事件
   const handleSmilesBlur = async () => {
     const trimmedAdditive = additive.trim();
+    
+    // 如果输入为空，清除所有状态
     if (!trimmedAdditive) {
       setMoleculeDetails(null);
       setMoleculeError(null);
+      setLastQueriedSmiles(null);
+      return;
+    }
+
+    // 如果分子式没有变化，且已经有查询结果（无论成功或失败），则不重新查询
+    if (trimmedAdditive === lastQueriedSmiles && (moleculeDetails || moleculeError)) {
       return;
     }
 
@@ -96,9 +106,7 @@ const PredictionModule: React.FC = () => {
       const details = await moleculeService.getMoleculeDetails(trimmedAdditive);
       
       // 检查是否是实际的分子数据还是mock数据
-      // 如果 smiles 与输入不匹配，可能是mock数据或错误
       if (details && details.properties.smiles && 
-          details.properties.smiles !== trimmedAdditive &&
           details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
         // 这是默认的mock数据，表示没有找到
         setMoleculeError(t('performance.smilesNotFound.description'));
@@ -106,9 +114,14 @@ const PredictionModule: React.FC = () => {
         // 有效的分子数据
         setMoleculeDetails(details);
       }
+      
+      // 记录已查询的分子式
+      setLastQueriedSmiles(trimmedAdditive);
     } catch (error) {
       console.error('获取分子详情失败:', error);
       setMoleculeError(t('performance.smilesNotFound.description'));
+      // 即使查询失败，也记录已查询的分子式
+      setLastQueriedSmiles(trimmedAdditive);
     } finally {
       setIsMoleculeLoading(false);
     }
@@ -204,7 +217,20 @@ const PredictionModule: React.FC = () => {
           <input
             type="text"
             value={additive}
-            onChange={(e) => setAdditive(e.target.value)}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setAdditive(newValue);
+              
+              // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
+              const trimmedValue = newValue.trim();
+              if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
+                setMoleculeDetails(null);
+                setMoleculeError(null);
+                if (!trimmedValue) {
+                  setLastQueriedSmiles(null);
+                }
+              }
+            }}
             onBlur={handleSmilesBlur}
             placeholder={t('performance.additive.placeholder')}
             className="additive-input"
@@ -232,12 +258,19 @@ const PredictionModule: React.FC = () => {
             
             <div className="molecule-content">
               <div className="molecule-structure">
-                <div className="structure-placeholder">
-                  <div className="structure-circle">
-                    <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
-                    <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
+                {moleculeDetails.properties.smiles ? (
+                  <MolViewer2D 
+                    smile={moleculeDetails.properties.smiles} 
+                    theme="light"
+                  />
+                ) : (
+                  <div className="structure-placeholder">
+                    <div className="structure-circle">
+                      <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
+                      <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               
               <div className="molecule-properties">
@@ -249,14 +282,14 @@ const PredictionModule: React.FC = () => {
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.espMin')}</label>
-                      <span>{moleculeDetails.properties.espMin || '-'}</span>
+                      <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
                     </div>
                   </div>
                   
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
-                      <span>{moleculeDetails.properties.molecularWeight || '-'}</span>
+                      <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
@@ -267,7 +300,7 @@ const PredictionModule: React.FC = () => {
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.umapX')}</label>
-                      <span>-</span>
+                      <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
@@ -278,7 +311,7 @@ const PredictionModule: React.FC = () => {
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.umapY')}</label>
-                      <span>-</span>
+                      <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
@@ -289,7 +322,7 @@ const PredictionModule: React.FC = () => {
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.homo')}</label>
-                      <span>{moleculeDetails.properties.homo || '-'}</span>
+                      <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
@@ -300,7 +333,7 @@ const PredictionModule: React.FC = () => {
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.lumo')}</label>
-                      <span>{moleculeDetails.properties.lumo || '-'}</span>
+                      <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
                     </div>
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
@@ -311,9 +344,19 @@ const PredictionModule: React.FC = () => {
                   <div className="property-row">
                     <div className="property-item">
                       <label>{t('performance.moleculeInfo.properties.espMax')}</label>
-                      <span>{moleculeDetails.properties.espMax || '-'}</span>
+                      <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
                     </div>
-                    <div className="property-item"></div>
+                    <div className="property-item">
+                      <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
+                      <span>{moleculeDetails.properties.functionalGroups ? (() => {
+                        try {
+                          const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
+                          return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
+                        } catch {
+                          return moleculeDetails.properties.functionalGroups;
+                        }
+                      })() : '-'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
