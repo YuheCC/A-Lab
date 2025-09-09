@@ -31,17 +31,67 @@ interface ResultModalProps {
 
 const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   const { t } = useTranslation();
-  const mockPercentages = {
-    temp25: {
-      cycleLife: '98.5%',
-      ce: '95.2%',
-      ratePerformance: '94.3%'
-    },
-    temp45: {
-      cycleLife: '96.8%',
-      ce: '92.1%'
+
+  // Same processing logic as in PredictionModule
+  const processPerformanceMetric = (propValue: string, labelValue: string) => {
+    // Parse string values to numbers
+    const prob = parseFloat(propValue || '0');
+    const label = parseInt(labelValue || '0');
+    
+    // Determine status based on label
+    let status: string;
+    if (label === 0) {
+      status = 'Positive';  // Positive
+    } else if (label === 1) {
+      status = 'Negative';  // Negative
+    } else {
+      status = 'UNKNOWN';
+    }
+    
+    // Format confidence percentage
+    const confidence = parseFloat((prob * 100).toFixed(1));
+    const displayConfidence = label === 0 ? 100 - confidence : 0 - confidence;
+    return {
+      status,
+      confidence: displayConfidence,
+      rawProb: prob,
+      rawLabel: label
+    };
+  };
+
+  // Try to extract raw API data if available, otherwise use transformed data
+  const getProcessedResults = () => {
+    // If the result object has raw API data, use it for processing
+    if ((result as any).rawApiData) {
+      const apiData = (result as any).rawApiData;
+      return {
+        temp25: {
+          cycleLife: processPerformanceMetric(apiData.temperature_25_CL_prob, apiData.temperature_25_CL_label),
+          ce: processPerformanceMetric(apiData.temperature_25_CE_prob, apiData.temperature_25_CE_label),
+          ratePerformance: processPerformanceMetric(apiData.temperature_25_CR_prob, apiData.temperature_25_CR_label)
+        },
+        temp45: {
+          cycleLife: processPerformanceMetric(apiData.temperature_45_CL_prob, apiData.temperature_45_CL_label),
+          ce: processPerformanceMetric(apiData.temperature_45_CE_prob, apiData.temperature_45_CE_label)
+        }
+      };
+    } else {
+      // Fallback to mock data with proper processing
+      return {
+        temp25: {
+          cycleLife: { status: result.results.temp25.cycleLife, confidence: 98.5 },
+          ce: { status: result.results.temp25.ce, confidence: 95.2 },
+          ratePerformance: { status: result.results.temp25.ratePerformance, confidence: 94.3 }
+        },
+        temp45: {
+          cycleLife: { status: result.results.temp45.cycleLife, confidence: 96.8 },
+          ce: { status: result.results.temp45.ce, confidence: 92.1 }
+        }
+      };
     }
   };
+
+  const processedResults = getProcessedResults();
 
   const getStatusColor = (status: string) => {
     if (status === 'Positive') return '#10b981';
@@ -92,12 +142,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     <span className="perf-label">{t('performance.results.performance.cycleLife25')}</span>
                     <span 
                       className="perf-status"
-                      style={{ color: getStatusColor(result.results.temp25.cycleLife) }}
+                      style={{ color: getStatusColor(processedResults.temp25.cycleLife.status) }}
                     >
-                      {result.results.temp25.cycleLife}
+                      {processedResults.temp25.cycleLife.status === 'Positive' ? t('performance.results.status.positive') : 
+                       processedResults.temp25.cycleLife.status === 'Negative' ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral')}
                     </span>
                   </div>
-                  <div className="perf-value">{mockPercentages.temp25.cycleLife}</div>
+                  <div className="perf-value">{processedResults.temp25.cycleLife.confidence}%</div>
                 </div>
 
                 <div className="performance-item">
@@ -105,12 +157,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     <span className="perf-label">{t('performance.results.performance.ce25')}</span>
                     <span 
                       className="perf-status"
-                      style={{ color: getStatusColor(result.results.temp25.ce) }}
+                      style={{ color: getStatusColor(processedResults.temp25.ce.status) }}
                     >
-                      {result.results.temp25.ce}
+                      {processedResults.temp25.ce.status === 'Positive' ? t('performance.results.status.positive') : 
+                       processedResults.temp25.ce.status === 'Negative' ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral')}
                     </span>
                   </div>
-                  <div className="perf-value">{mockPercentages.temp25.ce}</div>
+                  <div className="perf-value">{processedResults.temp25.ce.confidence}%</div>
                 </div>
 
                 <div className="performance-item">
@@ -118,12 +172,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     <span className="perf-label">{t('performance.results.performance.ratePerformance25')}</span>
                     <span 
                       className="perf-status"
-                      style={{ color: getStatusColor(result.results.temp25.ratePerformance) }}
+                      style={{ color: getStatusColor(processedResults.temp25.ratePerformance.status) }}
                     >
-                      {result.results.temp25.ratePerformance}
+                      {processedResults.temp25.ratePerformance.status === 'Positive' ? t('performance.results.status.positive') : 
+                       processedResults.temp25.ratePerformance.status === 'Negative' ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral')}
                     </span>
                   </div>
-                  <div className="perf-value">{mockPercentages.temp25.ratePerformance}</div>
+                  <div className="perf-value">{processedResults.temp25.ratePerformance.confidence}%</div>
                 </div>
               </div>
             </div>
@@ -136,12 +192,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     <span className="perf-label">{t('performance.results.performance.cycleLife45')}</span>
                     <span 
                       className="perf-status"
-                      style={{ color: getStatusColor(result.results.temp45.cycleLife) }}
+                      style={{ color: getStatusColor(processedResults.temp45.cycleLife.status) }}
                     >
-                      {result.results.temp45.cycleLife}
+                      {processedResults.temp45.cycleLife.status === 'Positive' ? t('performance.results.status.positive') : 
+                       processedResults.temp45.cycleLife.status === 'Negative' ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral')}
                     </span>
                   </div>
-                  <div className="perf-value">{mockPercentages.temp45.cycleLife}</div>
+                  <div className="perf-value">{processedResults.temp45.cycleLife.confidence}%</div>
                 </div>
 
                 <div className="performance-item">
@@ -149,12 +207,14 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     <span className="perf-label">{t('performance.results.performance.ce45')}</span>
                     <span 
                       className="perf-status"
-                      style={{ color: getStatusColor(result.results.temp45.ce) }}
+                      style={{ color: getStatusColor(processedResults.temp45.ce.status) }}
                     >
-                      {result.results.temp45.ce}
+                      {processedResults.temp45.ce.status === 'Positive' ? t('performance.results.status.positive') : 
+                       processedResults.temp45.ce.status === 'Negative' ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral')}
                     </span>
                   </div>
-                  <div className="perf-value">{mockPercentages.temp45.ce}</div>
+                  <div className="perf-value">{processedResults.temp45.ce.confidence}%</div>
                 </div>
               </div>
             </div>

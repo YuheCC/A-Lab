@@ -50,7 +50,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 将API数据转换为组件需要的格式
-  const transformAPIDataToPredictionResult = (apiData: PerformanceHistoryItem): PredictionResult => {
+  const transformAPIDataToPredictionResult = (apiData: PerformanceHistoryItem): PredictionResult & { rawApiData?: PerformanceHistoryItem } => {
     return {
       id: apiData.id.toString(),
       date: new Date(apiData.created_at).toLocaleString(),
@@ -70,7 +70,9 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       llmAnalysis: {
         optimization: apiData.llm_analysis_result || 'No Analysis Available',
         cycling: apiData.llm_analysis_result ? 'Available' : 'Not Available'
-      }
+      },
+      // Include raw API data for proper processing in ResultModal
+      rawApiData: apiData
     };
   };
 
