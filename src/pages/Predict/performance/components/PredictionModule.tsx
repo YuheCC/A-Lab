@@ -174,8 +174,36 @@ const PredictionModule: React.FC = () => {
     }
   };
 
+  // Unified processing function based on Python logic
+  const processPerformanceMetric = (propValue: string, labelValue: string) => {
+    // Parse string values to numbers
+    const prob = parseFloat(propValue || '0');
+    const label = parseInt(labelValue || '0');
+    
+    // Determine status based on label
+    let status: string;
+    if (label === 0) {
+      status = 'Positive';  // Positive
+    } else if (label === 1) {
+      status = 'Negative';  // Negative
+    } else {
+      status = 'UNKNOWN';
+    }
+    
+    // Format confidence percentage
+    const confidence = parseFloat((prob * 100).toFixed(1));
+    const displayConfidence = label === 0 ? 100 - confidence : 0 - confidence;
+    return {
+      status,
+      confidence: displayConfidence,
+      rawProb: prob,
+      rawLabel: label
+    };
+  };
+
   // Transform API response to results format
   const getResultsData = () => {
+    console.log('predictionResults', predictionResults);
     if (!predictionResults) {
       // Return mock data if no API results
       return {
@@ -191,35 +219,64 @@ const PredictionModule: React.FC = () => {
       };
     }
 
+    // Process each metric using unified logic
+    const temp25_CE = processPerformanceMetric(
+      predictionResults.temperature_25_CE_prob,
+      predictionResults.temperature_25_CE_label
+    );
+    
+    const temp25_CL = processPerformanceMetric(
+      predictionResults.temperature_25_CL_prob,
+      predictionResults.temperature_25_CL_label
+    );
+    
+    const temp25_CR = processPerformanceMetric(
+      predictionResults.temperature_25_CR_prob,
+      predictionResults.temperature_25_CR_label
+    );
+    
+    const temp45_CE = processPerformanceMetric(
+      predictionResults.temperature_45_CE_prob,
+      predictionResults.temperature_45_CE_label
+    );
+    
+    const temp45_CL = processPerformanceMetric(
+      predictionResults.temperature_45_CL_prob,
+      predictionResults.temperature_45_CL_label
+    );
+
     return {
       '25c': {
-        cycleLife: { 
-          status: predictionResults.temperature_25_CL_label || 'UNKNOWN', 
-          confidence: predictionResults.temperature_25_CL_prop || '0%'
-        },
-        ce: { 
-          status: predictionResults.temperature_25_CE_label || 'UNKNOWN', 
-          confidence: predictionResults.temperature_25_CE_prop || '0%'
-        },
-        ratePerformance: { 
-          status: predictionResults.temperature_25_CR_label || 'UNKNOWN', 
-          confidence: predictionResults.temperature_25_CR_prop || '0%'
-        }
+        cycleLife: temp25_CL,
+        ce: temp25_CE,
+        ratePerformance: temp25_CR
       },
       '45c': {
-        cycleLife: { 
-          status: predictionResults.temperature_45_CL_label || 'UNKNOWN', 
-          confidence: predictionResults.temperature_45_CL_prop || '0%'
-        },
-        ce: { 
-          status: predictionResults.temperature_45_CE_label || 'UNKNOWN', 
-          confidence: predictionResults.temperature_45_CE_prop || '0%'
-        }
+        cycleLife: temp45_CL,
+        ce: temp45_CE
       }
     };
   };
 
   const resultsData = getResultsData();
+
+  // Helper function to render result badge
+  const renderResultBadge = (metric: any) => {
+    const isPositive = metric.status === 'Positive';
+    const isNegative = metric.status === 'Negative';
+    const badgeClass = isPositive ? 'positive' : isNegative ? 'negative' : 'unknown';
+    const icon = isPositive ? '✓' : isNegative ? '✕' : '?';
+    const statusText = isPositive ? t('performance.results.status.positive') : 
+                       isNegative ? t('performance.results.status.negative') : 
+                       t('performance.results.status.neutral');
+
+    return (
+      <div className={`result-badge ${badgeClass}`}>
+        <span className="result-icon">{icon}</span>
+        {statusText}
+      </div>
+    );
+  };
 
   return (
     <div className="prediction-module">
@@ -505,43 +562,28 @@ const PredictionModule: React.FC = () => {
                 <div className="performance-results">
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                    <div className={`result-badge ${resultsData['25c'].cycleLife.status.toLowerCase()}`}>
-                      <span className="result-icon">
-                        {resultsData['25c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
-                      </span>
-                      {resultsData['25c'].cycleLife.status}
-                    </div>
+                    {renderResultBadge(resultsData['25c'].cycleLife)}
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].cycleLife.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].cycleLife.confidence}%</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                    <div className={`result-badge ${resultsData['25c'].ce.status.toLowerCase()}`}>
-                      <span className="result-icon">
-                        {resultsData['25c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
-                      </span>
-                      {resultsData['25c'].ce.status}
-                    </div>
+                    {renderResultBadge(resultsData['25c'].ce)}
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ce.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].ce.confidence}%</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                    <div className={`result-badge ${resultsData['25c'].ratePerformance.status.toLowerCase()}`}>
-                      <span className="result-icon">
-                        {resultsData['25c'].ratePerformance.status === 'POSITIVE' ? '✓' : '✕'}
-                      </span>
-                      {resultsData['25c'].ratePerformance.status}
-                    </div>
+                    {renderResultBadge(resultsData['25c'].ratePerformance)}
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ratePerformance.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].ratePerformance.confidence}%</span>
                     </div>
                   </div>
                 </div>
@@ -551,29 +593,19 @@ const PredictionModule: React.FC = () => {
                 <div className="performance-results">
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                    <div className={`result-badge ${resultsData['45c'].cycleLife.status.toLowerCase()}`}>
-                      <span className="result-icon">
-                        {resultsData['45c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
-                      </span>
-                      {resultsData['45c'].cycleLife.status}
-                    </div>
+                    {renderResultBadge(resultsData['45c'].cycleLife)}
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].cycleLife.confidence}</span>
+                      <span className="confidence-value">{resultsData['45c'].cycleLife.confidence}%</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                    <div className={`result-badge ${resultsData['45c'].ce.status.toLowerCase()}`}>
-                      <span className="result-icon">
-                        {resultsData['45c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
-                      </span>
-                      {resultsData['45c'].ce.status}
-                    </div>
+                    {renderResultBadge(resultsData['45c'].ce)}
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].ce.confidence}</span>
+                      <span className="confidence-value">{resultsData['45c'].ce.confidence}%</span>
                     </div>
                   </div>
                 </div>
