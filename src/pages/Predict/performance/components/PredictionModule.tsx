@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
-import { getBatterySystemList, predictPerformance, type PerformancePredictionResponse } from '@/services/prediction/performance';
+import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
+import { globalWebSocketManager } from '@/services/chat/wsService';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 
@@ -46,6 +47,12 @@ const PredictionModule: React.FC = () => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState<string | null>(null);
   const [predictionResults, setPredictionResults] = useState<PerformancePredictionResponse | null>(null);
+  
+  // 新增状态：LLM分析相关
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisContent, setAnalysisContent] = useState<string>('');
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | undefined>();
 
   // 从选中的电池系统中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
@@ -84,6 +91,53 @@ const PredictionModule: React.FC = () => {
     };
 
     fetchBatterySystemOptions();
+  }, []);
+
+  // WebSocket初始化和消息处理
+  useEffect(() => {
+    console.log('PredictionModule: 初始化WebSocket连接');
+    globalWebSocketManager.initialize();
+
+    // 生成session_id
+    const newSessionId = `performance_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    setSessionId(newSessionId);
+    globalWebSocketManager.setSessionId(newSessionId);
+
+    // 监听WebSocket消息
+    const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
+      console.log('PredictionModule收到WebSocket消息:', data);
+      
+      try {
+        // 处理不同格式的数据
+        let parsedData = data;
+        if (typeof data === 'string') {
+          parsedData = JSON.parse(data);
+        }
+        
+        // 检查是否是LLM分析的响应
+        if (parsedData?.event_name === 'cell-performance-events') {
+          const eventData = parsedData.data;
+          console.log('收到LLM分析事件:', eventData);
+          
+          if (eventData?.content) {
+            setAnalysisContent(prev => prev + eventData.content);
+          }
+          
+          // 检查是否完成
+          if (eventData?.finished === true) {
+            setIsAnalyzing(false);
+            console.log('LLM分析完成');
+          }
+        }
+      } catch (error) {
+        console.error('处理WebSocket消息失败:', error);
+      }
+    });
+
+    return () => {
+      console.log('PredictionModule: 清理WebSocket监听');
+      unsubscribeMessage && unsubscribeMessage();
+    };
   }, []);
 
   // 处理 SMILES 输入框失焦事件
@@ -171,6 +225,49 @@ const PredictionModule: React.FC = () => {
       setCalculationError('Failed to calculate performance prediction. Please try again.');
     } finally {
       setIsCalculating(false);
+    }
+  };
+
+  // LLM分析处理函数
+  const handleLLMAnalysis = async () => {
+    if (!predictionResults) {
+      alert('Please run prediction first before requesting LLM analysis');
+      return;
+    }
+
+    if (!sessionId) {
+      alert('Session not initialized. Please refresh the page and try again.');
+      return;
+    }
+
+    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    if (!selectedBatterySystem) {
+      alert('Invalid battery system selected');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+    setAnalysisContent('');
+
+    try {
+      const analysisParams: LLMAnalysisRequest = {
+        id: predictionResults.id,
+        battery_system_id: parseInt(selectedBatterySystem.id),
+        session_id: sessionId,
+        lang: 'en' // You can make this dynamic based on user preference
+      };
+
+      console.log('发送LLM分析请求:', analysisParams);
+      
+      const response = await requestLLMAnalysis(analysisParams);
+      console.log('LLM分析API响应:', response);
+      
+      // API调用成功后，等待WebSocket消息
+    } catch (error) {
+      console.error('LLM分析请求失败:', error);
+      setAnalysisError('Failed to start LLM analysis. Please try again.');
+      setIsAnalyzing(false);
     }
   };
 
@@ -614,72 +711,70 @@ const PredictionModule: React.FC = () => {
 
               <div className="llm-button-section">
                 <button 
-                  className="llm-analysis-btn"
-                  onClick={() => setShowLLMAnalysis(true)}
+                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''}`}
+                  onClick={handleLLMAnalysis}
+                  disabled={isAnalyzing || !predictionResults}
                 >
-                  {t('performance.llmAnalysis.button')}
+                  {isAnalyzing ? 'Analyzing...' : t('performance.llmAnalysis.button')}
                 </button>
+                
+                {analysisError && (
+                  <div className="analysis-error">
+                    <p>{analysisError}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
 
-        {showLLMAnalysis && (
+        {(analysisContent || isAnalyzing || showLLMAnalysis) && (
           <div className="llm-analysis-section">
-            <h2>{t('performance.llmAnalysis.title')}</h2>
+            <div className="llm-analysis-header">
+              <h2>{t('performance.llmAnalysis.title')}</h2>
+              {(analysisContent || isAnalyzing) && (
+                <button 
+                  className="close-analysis-btn"
+                  onClick={() => {
+                    setShowLLMAnalysis(false);
+                    setAnalysisContent('');
+                    setIsAnalyzing(false);
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
             
             <div className="llm-analysis-card">
               <div className="llm-content">
-              <div className="llm-analysis-item">
-                <h3>{t('performance.llmAnalysis.sections.nickelOptimization')}</h3>
-                <ul>
-                  <li>
-                    The dimethyl dicarbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in 
-                    nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under 
-                    voltage. During the CE optimization process, when generating this structure with electrical nickel, it 
-                    is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize 
-                    aging CE display improvement patterns.
-                  </li>
-                </ul>
-              </div>
-
-              <div className="llm-analysis-item">
-                <h3>{t('performance.llmAnalysis.sections.cyclingOptimization')}</h3>
-                <p>
-                  The rolling disc approach involves enhanced material comparison and LiFe distribution optimization 
-                  for secondary reactions. This biochemical nickel enhancement process addresses charge-
-                  discharge cycles under nickel conditions, improving efficiency through systematic laboratory 
-                  validation at 4°C conditions with simplified testing protocols.
-                </p>
-              </div>
-
-              <div className="llm-analysis-item">
-                <h3>{t('performance.llmAnalysis.sections.recommendations')}</h3>
-                <ul>
-                  <li>
-                    Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling 
-                    performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade 
-                    electrolyte systems are recommended for material state optimization.
-                  </li>
-                </ul>
-              </div>
-
-              <div className="llm-references">
-                <p><strong>{t('performance.llmAnalysis.references')}</strong> [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020.</p>
-                <a href="https://doi.org/10.1002/aenm.202002704" target="_blank" rel="noopener noreferrer">
-                  https://doi.org/10.1002/aenm.202002704
-                </a>
+                {isAnalyzing && !analysisContent && (
+                  <div className="analysis-loading">
+                    <p>Starting LLM analysis...</p>
+                    <div className="loading-spinner"></div>
+                  </div>
+                )}
                 
-                <p>[2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020.</p>
-                <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" target="_blank" rel="noopener noreferrer">
-                  https://doi.org/10.1016/j.jpowsour.2020.227833
-                </a>
+                {analysisContent && (
+                  <div className="analysis-content">
+                    <div 
+                      className="analysis-text"
+                      dangerouslySetInnerHTML={{ 
+                        __html: analysisContent.replace(/\n/g, '<br/>') 
+                      }}
+                    />
+                    
+                    {isAnalyzing && (
+                      <div className="analysis-cursor">|</div>
+                    )}
+                  </div>
+                )}
                 
-                <p>[3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018.</p>
-                <a href="https://doi.org/10.1021/acsami.8b04743" target="_blank" rel="noopener noreferrer">
-                  https://doi.org/10.1021/acsami.8b04743
-                </a>
-              </div>
+                {!analysisContent && !isAnalyzing && showLLMAnalysis && (
+                  <div className="analysis-placeholder">
+                    <p>Click "LLM Analysis" button to start generating analysis for your prediction results.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

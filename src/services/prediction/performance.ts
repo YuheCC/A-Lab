@@ -110,3 +110,26 @@ export async function predictPerformance(params: PerformancePredictionRequest) {
         data: params,
     });
 }
+
+// LLM Analysis API
+export interface LLMAnalysisRequest {
+    id: number;
+    battery_system_id: number;
+    session_id: string;
+    lang: string;
+}
+
+export interface LLMAnalysisResponse {
+    session_id: string;
+    // WebSocket will provide streaming data
+}
+
+export async function requestLLMAnalysis(params: LLMAnalysisRequest) {
+    return request("/api/cellPerformance/llm_analysis", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: params,
+    });
+}
