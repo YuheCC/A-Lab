@@ -20,6 +20,8 @@ export interface MoleculeDetails {
 export interface SimilarMolecule {
   name: string;
   properties: MoleculeProperties;
+  grade?: number;
+  reasoning?: string;
 }
 
 class MoleculeService {
