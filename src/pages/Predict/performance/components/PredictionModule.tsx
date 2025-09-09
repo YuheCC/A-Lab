@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
+import { getBatterySystemList } from '@/services/prediction/performance';
 import './PredictionModule.css';
 
 interface SystemSpec {
@@ -9,8 +10,19 @@ interface SystemSpec {
   cellDesign: string;
 }
 
+interface BatterySystem {
+  id: string;
+  name: string;
+  cathode: string;
+  anode: string;
+  benchmark_electrolyte: string;
+  cell_design: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const PredictionModule: React.FC = () => {
-  const [selectedSystem, setSelectedSystem] = useState('NCM811 - 12%Si/graphite - Carbonate electrolyte');
+  const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
@@ -21,17 +33,49 @@ const PredictionModule: React.FC = () => {
   const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
   const [moleculeError, setMoleculeError] = useState<string | null>(null);
   const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
+  
+  // 新增状态：电池系统相关
+  const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
+  const [isBatterySystemLoading, setIsBatterySystemLoading] = useState(true);
 
-  const systemSpecs: Record<string, SystemSpec> = {
-    'NCM811 - 12%Si/graphite - Carbonate electrolyte': {
-      cathode: 'Polycrystal NCM811, 4 mAh/cm²',
-      anode: '12% SiC + Graphite',
-      electrolyte: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/FEC',
-      cellDesign: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
-    }
+  // 从选中的电池系统中获取规格信息
+  const getCurrentSpec = (): SystemSpec | null => {
+    if (!selectedSystem) return null;
+    const system = batterySystemOptions.find(s => s.name === selectedSystem);
+    if (!system) return null;
+    
+    return {
+      cathode: system.cathode,
+      anode: system.anode,
+      electrolyte: system.benchmark_electrolyte,
+      cellDesign: system.cell_design
+    };
   };
 
-  const currentSpec = systemSpecs[selectedSystem];
+  const currentSpec = getCurrentSpec();
+
+  // 获取电池系统选项
+  useEffect(() => {
+    const fetchBatterySystemOptions = async () => {
+      try {
+        setIsBatterySystemLoading(true);
+        const response = await getBatterySystemList();
+        if (response?.data) {
+          setBatterySystemOptions(response.data);
+          // 如果有选项，默认选择第一个
+          if (response.data.length > 0) {
+            setSelectedSystem(response.data[0].name);
+          }
+        }
+      } catch (error) {
+        console.error('获取电池系统选项失败:', error);
+      } finally {
+        setIsBatterySystemLoading(false);
+      }
+    };
+
+    fetchBatterySystemOptions();
+  }, []);
 
   // 处理 SMILES 输入框失焦事件
   const handleSmilesBlur = async () => {
@@ -101,10 +145,17 @@ const PredictionModule: React.FC = () => {
             value={selectedSystem} 
             onChange={(e) => setSelectedSystem(e.target.value)}
             className="system-select"
+            disabled={isBatterySystemLoading}
           >
-            <option value="NCM811 - 12%Si/graphite - Carbonate electrolyte">
-              NCM811 - 12%Si/graphite - Carbonate electrolyte
-            </option>
+            {isBatterySystemLoading ? (
+              <option value="">Loading...</option>
+            ) : (
+              batterySystemOptions.map((system) => (
+                <option key={system.id} value={system.name}>
+                  {system.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
 

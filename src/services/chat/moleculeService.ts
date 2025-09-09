@@ -42,9 +42,9 @@ class MoleculeService {
   async getMoleculeDetails(name: string): Promise<MoleculeDetails> {
     try {
       const { default: request } = await import('@/services/request');
-      const resp = await request('/molecule/details', {
+      const resp = await request('/api/molecule_details', {
         method: 'GET',
-        params: { name },
+        params: { molecule: name },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
       return resp.data as MoleculeDetails;
