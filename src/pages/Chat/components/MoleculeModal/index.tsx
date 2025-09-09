@@ -514,7 +514,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const items = Array.isArray(data?.similar_molecules) ? data.similar_molecules : [];
         const mapped: SimilarMolecule[] = items.map((it: any) => ({
             name: it?.name || it?.SMILES || 'Unknown',
-            properties: mapDetailsToProperties(it)
+            properties: mapDetailsToProperties(it),
+            grade: it?.grade,
+            reasoning: it?.reasoning,
         }));
         return { list: mapped, raws: items };
     };
@@ -594,7 +596,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning)}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], molecule.grade, molecule.reasoning)}
                                     </div>
                                 ))}
                             </div>
