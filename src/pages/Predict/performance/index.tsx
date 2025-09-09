@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PredictionModule from './components/PredictionModule';
-import UniversalHistoryModule from '../components/UniversalHistoryModule';
-import { renderPerformanceCard } from './components/PerformanceCardRenderer';
+import HistoryModule from './components/HistoryModule';
 import ResultModal from './components/ResultModal';
 import './index.css';
 
@@ -33,94 +32,6 @@ const PerformancePage: React.FC = () => {
   const [selectedResult, setSelectedResult] = useState<PredictionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Mock history data
-  const historyData: PredictionResult[] = [
-    {
-      id: '1',
-      date: '2025/9/4 16:16:06',
-      batterySystem: 'NCM811 - 12%Si/graphite - Carbonate electrolyte',
-      additive: 'CC(C)(C)OCCOC(C)(C)C',
-      results: {
-        temp25: {
-          cycleLife: 'Positive',
-          ce: 'Positive',
-          ratePerformance: 'Positive'
-        },
-        temp45: {
-          cycleLife: 'Positive',
-          ce: 'Positive'
-        }
-      },
-      llmAnalysis: {
-        optimization: 'Nickel Dehydrogenation Optimization',
-        cycling: '4°C Cycling Optimization'
-      }
-    },
-    {
-      id: '2',
-      date: '2025/9/3 16:16:06',
-      batterySystem: 'NCM811 - 100%Si - Carbonate electrolyte',
-      additive: 'CCOCC',
-      results: {
-        temp25: {
-          cycleLife: 'Positive',
-          ce: 'Positive',
-          ratePerformance: 'Positive'
-        },
-        temp45: {
-          cycleLife: 'Positive',
-          ce: 'Positive'
-        }
-      },
-      llmAnalysis: {
-        optimization: 'Silicon Electrode Optimization',
-        cycling: 'Temperature Cycling Optimization'
-      }
-    },
-    {
-      id: '3',
-      date: '2025/9/2 16:16:06',
-      batterySystem: 'NCM811 - 12%Si/graphite - Carbonate electrolyte',
-      additive: 'O=C1OCCO1',
-      results: {
-        temp25: {
-          cycleLife: 'Positive',
-          ce: 'Negative',
-          ratePerformance: 'Positive'
-        },
-        temp45: {
-          cycleLife: 'Negative',
-          ce: 'Negative'
-        }
-      },
-      llmAnalysis: {
-        optimization: 'Electrolyte Optimization',
-        cycling: 'Capacity Retention Optimization'
-      }
-    },
-    {
-      id: '4',
-      date: '2025/9/1 16:16:06',
-      batterySystem: 'LFP - 10%Si/graphite - Solid electrolyte',
-      additive: 'CCC(C)OC(C)C',
-      results: {
-        temp25: {
-          cycleLife: 'Neutral',
-          ce: 'Positive',
-          ratePerformance: 'Neutral'
-        },
-        temp45: {
-          cycleLife: 'Neutral',
-          ce: 'Negative'
-        }
-      },
-      llmAnalysis: {
-        optimization: 'Balanced Performance',
-        cycling: '50% Efficiency Target'
-      }
-    }
-  ];
-
   const handleNewPrediction = () => {
     // Handle new prediction action - could scroll to prediction form or reset it
     console.log('New prediction clicked');
@@ -129,10 +40,6 @@ const PerformancePage: React.FC = () => {
   const handleViewDetails = (result: PredictionResult) => {
     setSelectedResult(result);
     setShowModal(true);
-  };
-
-  const handleDeleteItem = (itemId: string) => {
-    console.log('Delete item:', itemId);
   };
 
   const handleCloseModal = () => {
@@ -153,17 +60,9 @@ const PerformancePage: React.FC = () => {
         </div>
         
         <div className="history-area">
-          <UniversalHistoryModule
-            title={t('performance.history.title')}
-            data={historyData}
-            cardRenderer={renderPerformanceCard}
-            onNewPrediction={handleNewPrediction}
+          <HistoryModule
             onViewDetails={handleViewDetails}
-            onDeleteItem={handleDeleteItem}
-            newPredictionText={t('performance.history.newPrediction')}
-            filterConfig={{
-              smilesSearchPlaceholder: t('performance.history.searchPlaceholder')
-            }}
+            onNewPrediction={handleNewPrediction}
           />
         </div>
       </div>

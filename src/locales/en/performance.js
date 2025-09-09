@@ -111,7 +111,12 @@ export default {
     },
     actions: {
       viewDetails: "View Details",
-      delete: "Delete"
+      delete: "Delete",
+      deleteConfirm: "Are you sure you want to delete this record?"
+    },
+    noResults: {
+      message: "No prediction records found matching your filters.",
+      clearFilters: "Clear all filters"
     }
   }
 }

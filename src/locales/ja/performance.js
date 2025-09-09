@@ -111,7 +111,12 @@ export default {
     },
     actions: {
       viewDetails: "詳細を見る",
-      delete: "削除"
+      delete: "削除",
+      deleteConfirm: "この記録を削除してもよろしいですか？"
+    },
+    noResults: {
+      message: "フィルターに一致する予測記録が見つかりません。",
+      clearFilters: "すべてのフィルターをクリア"
     }
   }
 }

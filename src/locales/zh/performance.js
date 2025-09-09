@@ -111,7 +111,12 @@ export default {
     },
     actions: {
       viewDetails: "查看详情",
-      delete: "删除"
+      delete: "删除",
+      deleteConfirm: "确定要删除这条记录吗？"
+    },
+    noResults: {
+      message: "未找到符合筛选条件的预测记录。",
+      clearFilters: "清除所有筛选条件"
     }
   }
 }

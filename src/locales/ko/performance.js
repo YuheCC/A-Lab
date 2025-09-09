@@ -111,7 +111,12 @@ export default {
     },
     actions: {
       viewDetails: "세부사항 보기",
-      delete: "삭제"
+      delete: "삭제",
+      deleteConfirm: "이 기록을 삭제하시겠습니까?"
+    },
+    noResults: {
+      message: "필터에 일치하는 예측 기록을 찾을 수 없습니다.",
+      clearFilters: "모든 필터 지우기"
     }
   }
 }
