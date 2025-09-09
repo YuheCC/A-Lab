@@ -75,3 +75,38 @@ export async function deletePerformanceHistory(id: number) {
         data: { id },
     });
 }
+
+// Performance calculation API
+export interface PerformancePredictionRequest {
+    smiles: string;
+    battery_system_id: number;
+}
+
+export interface PerformancePredictionResponse {
+    id: number;
+    battery_system_id: number;
+    smiles: string;
+    temperature_25_CE_prop: string;
+    temperature_25_CE_label: string;
+    temperature_25_CL_prop: string;
+    temperature_25_CL_label: string;
+    temperature_25_CR_prop: string;
+    temperature_25_CR_label: string;
+    temperature_45_CE_prop: string;
+    temperature_45_CE_label: string;
+    temperature_45_CL_prop: string;
+    temperature_45_CL_label: string;
+    llm_analysis_result: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function predictPerformance(params: PerformancePredictionRequest) {
+    return request("/api/cellPerformance/model_predict", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: params,
+    });
+}

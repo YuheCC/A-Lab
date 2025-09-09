@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
-import { getBatterySystemList } from '@/services/prediction/performance';
+import { getBatterySystemList, predictPerformance, type PerformancePredictionResponse } from '@/services/prediction/performance';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 
@@ -41,6 +41,11 @@ const PredictionModule: React.FC = () => {
   // 新增状态：电池系统相关
   const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
   const [isBatterySystemLoading, setIsBatterySystemLoading] = useState(true);
+  
+  // 新增状态：计算相关
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationError, setCalculationError] = useState<string | null>(null);
+  const [predictionResults, setPredictionResults] = useState<PerformancePredictionResponse | null>(null);
 
   // 从选中的电池系统中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
@@ -127,27 +132,94 @@ const PredictionModule: React.FC = () => {
     }
   };
 
-  const handleCalculate = () => {
+  const handleCalculate = async () => {
     if (!additive.trim()) {
       alert(t('performance.additive.placeholder'));
       return;
     }
-    // Show results after calculation
-    setShowResults(true);
-    console.log('Calculating with:', { selectedSystem, additive });
-  };
+    
+    if (!selectedSystem) {
+      alert('Please select a battery system');
+      return;
+    }
 
-  const mockResults = {
-    '25c': {
-      cycleLife: { status: 'POSITIVE', confidence: '98.5%' },
-      ce: { status: 'NEGATIVE', confidence: '102.5%' },
-      ratePerformance: { status: 'NEGATIVE', confidence: '94.3%' }
-    },
-    '45c': {
-      cycleLife: { status: 'POSITIVE', confidence: '96.8%' },
-      ce: { status: 'NEGATIVE', confidence: '92.1%' }
+    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    if (!selectedBatterySystem) {
+      alert('Invalid battery system selected');
+      return;
+    }
+
+    setIsCalculating(true);
+    setCalculationError(null);
+    setPredictionResults(null);
+
+    try {
+      const response = await predictPerformance({
+        smiles: additive.trim(),
+        battery_system_id: parseInt(selectedBatterySystem.id)
+      });
+
+      if (response?.data) {
+        setPredictionResults(response.data);
+        setShowResults(true);
+        console.log('Prediction results:', response.data);
+      } else {
+        throw new Error('No data received from prediction API');
+      }
+    } catch (error) {
+      console.error('Prediction failed:', error);
+      setCalculationError('Failed to calculate performance prediction. Please try again.');
+    } finally {
+      setIsCalculating(false);
     }
   };
+
+  // Transform API response to results format
+  const getResultsData = () => {
+    if (!predictionResults) {
+      // Return mock data if no API results
+      return {
+        '25c': {
+          cycleLife: { status: 'POSITIVE', confidence: '98.5%' },
+          ce: { status: 'NEGATIVE', confidence: '102.5%' },
+          ratePerformance: { status: 'NEGATIVE', confidence: '94.3%' }
+        },
+        '45c': {
+          cycleLife: { status: 'POSITIVE', confidence: '96.8%' },
+          ce: { status: 'NEGATIVE', confidence: '92.1%' }
+        }
+      };
+    }
+
+    return {
+      '25c': {
+        cycleLife: { 
+          status: predictionResults.temperature_25_CL_label || 'UNKNOWN', 
+          confidence: predictionResults.temperature_25_CL_prop || '0%'
+        },
+        ce: { 
+          status: predictionResults.temperature_25_CE_label || 'UNKNOWN', 
+          confidence: predictionResults.temperature_25_CE_prop || '0%'
+        },
+        ratePerformance: { 
+          status: predictionResults.temperature_25_CR_label || 'UNKNOWN', 
+          confidence: predictionResults.temperature_25_CR_prop || '0%'
+        }
+      },
+      '45c': {
+        cycleLife: { 
+          status: predictionResults.temperature_45_CL_label || 'UNKNOWN', 
+          confidence: predictionResults.temperature_45_CL_prop || '0%'
+        },
+        ce: { 
+          status: predictionResults.temperature_45_CE_label || 'UNKNOWN', 
+          confidence: predictionResults.temperature_45_CE_prop || '0%'
+        }
+      }
+    };
+  };
+
+  const resultsData = getResultsData();
 
   return (
     <div className="prediction-module">
@@ -395,11 +467,18 @@ const PredictionModule: React.FC = () => {
         </div>
 
         <button 
-          className={`calculate-btn ${showResults ? 'calculated' : ''}`}
+          className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
           onClick={handleCalculate}
+          disabled={isCalculating}
         >
-          {showResults ? t('performance.calculate.calculated') : t('performance.calculate.button')}
+          {isCalculating ? 'Calculating...' : (showResults ? t('performance.calculate.calculated') : t('performance.calculate.button'))}
         </button>
+
+        {calculationError && (
+          <div className="calculation-error">
+            <p>{calculationError}</p>
+          </div>
+        )}
 
         {showResults && (
           <div className="results-section">
@@ -426,43 +505,43 @@ const PredictionModule: React.FC = () => {
                 <div className="performance-results">
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                    <div className={`result-badge ${mockResults['25c'].cycleLife.status.toLowerCase()}`}>
+                    <div className={`result-badge ${resultsData['25c'].cycleLife.status.toLowerCase()}`}>
                       <span className="result-icon">
-                        {mockResults['25c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
+                        {resultsData['25c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
                       </span>
-                      {mockResults['25c'].cycleLife.status}
+                      {resultsData['25c'].cycleLife.status}
                     </div>
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{mockResults['25c'].cycleLife.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].cycleLife.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                    <div className={`result-badge ${mockResults['25c'].ce.status.toLowerCase()}`}>
+                    <div className={`result-badge ${resultsData['25c'].ce.status.toLowerCase()}`}>
                       <span className="result-icon">
-                        {mockResults['25c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
+                        {resultsData['25c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
                       </span>
-                      {mockResults['25c'].ce.status}
+                      {resultsData['25c'].ce.status}
                     </div>
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{mockResults['25c'].ce.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].ce.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                    <div className={`result-badge ${mockResults['25c'].ratePerformance.status.toLowerCase()}`}>
+                    <div className={`result-badge ${resultsData['25c'].ratePerformance.status.toLowerCase()}`}>
                       <span className="result-icon">
-                        {mockResults['25c'].ratePerformance.status === 'POSITIVE' ? '✓' : '✕'}
+                        {resultsData['25c'].ratePerformance.status === 'POSITIVE' ? '✓' : '✕'}
                       </span>
-                      {mockResults['25c'].ratePerformance.status}
+                      {resultsData['25c'].ratePerformance.status}
                     </div>
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{mockResults['25c'].ratePerformance.confidence}</span>
+                      <span className="confidence-value">{resultsData['25c'].ratePerformance.confidence}</span>
                     </div>
                   </div>
                 </div>
@@ -472,29 +551,29 @@ const PredictionModule: React.FC = () => {
                 <div className="performance-results">
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                    <div className={`result-badge ${mockResults['45c'].cycleLife.status.toLowerCase()}`}>
+                    <div className={`result-badge ${resultsData['45c'].cycleLife.status.toLowerCase()}`}>
                       <span className="result-icon">
-                        {mockResults['45c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
+                        {resultsData['45c'].cycleLife.status === 'POSITIVE' ? '✓' : '✕'}
                       </span>
-                      {mockResults['45c'].cycleLife.status}
+                      {resultsData['45c'].cycleLife.status}
                     </div>
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{mockResults['45c'].cycleLife.confidence}</span>
+                      <span className="confidence-value">{resultsData['45c'].cycleLife.confidence}</span>
                     </div>
                   </div>
 
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                    <div className={`result-badge ${mockResults['45c'].ce.status.toLowerCase()}`}>
+                    <div className={`result-badge ${resultsData['45c'].ce.status.toLowerCase()}`}>
                       <span className="result-icon">
-                        {mockResults['45c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
+                        {resultsData['45c'].ce.status === 'POSITIVE' ? '✓' : '✕'}
                       </span>
-                      {mockResults['45c'].ce.status}
+                      {resultsData['45c'].ce.status}
                     </div>
                     <div className="result-confidence">
                       <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{mockResults['45c'].ce.confidence}</span>
+                      <span className="confidence-value">{resultsData['45c'].ce.confidence}</span>
                     </div>
                   </div>
                 </div>
