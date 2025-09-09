@@ -25,7 +25,7 @@ interface BatterySystem {
 }
 
 const PredictionModule: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
@@ -228,6 +228,14 @@ const PredictionModule: React.FC = () => {
     }
   };
 
+  // 获取当前语言设置
+  const getCurrentLanguage = () => {
+    const currentLang = i18n.language || 'en';
+    
+    // 如果是中文（包括zh、zh-CN、zh-TW等），返回'zh'，其他都返回'en'
+    return currentLang.startsWith('zh') ? 'zh' : 'en';
+  };
+
   // LLM分析处理函数
   const handleLLMAnalysis = async () => {
     if (!predictionResults) {
@@ -251,11 +259,12 @@ const PredictionModule: React.FC = () => {
     setAnalysisContent('');
 
     try {
+      const currentLang = getCurrentLanguage();
       const analysisParams: LLMAnalysisRequest = {
         id: predictionResults.id,
         battery_system_id: parseInt(selectedBatterySystem.id),
         session_id: sessionId,
-        lang: 'en' // You can make this dynamic based on user preference
+        lang: currentLang
       };
 
       console.log('发送LLM分析请求:', analysisParams);
