@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getPerformanceHistoryList, deletePerformanceHistory, getPerformanceHistoryDetail, type PerformanceHistoryItem } from '@/services/prediction/performance';
 import './HistoryModule.css';
+import { normalizeServerDate } from '@/utils/messageUtils';
 
 interface PredictionResult {
   id: string;
@@ -94,7 +95,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   const transformAPIDataToPredictionResult = (apiData: PerformanceHistoryItem): PredictionResult & { rawApiData?: PerformanceHistoryItem } => {
     return {
       id: apiData.id.toString(),
-      date: new Date(apiData.created_at).toLocaleString(),
+      date: normalizeServerDate(apiData.created_at).toLocaleString(),
       batterySystem: `Battery System ${apiData.battery_system_id}`,
       additive: apiData.smiles,
       results: {
