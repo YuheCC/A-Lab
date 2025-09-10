@@ -39,6 +39,7 @@ export default {
     upgradeEnterprise: 'Upgrade to an enterprise-tier account',
     upgradeAccount: 'Upgrade your account',
     computeWarning: 'Additional context is necessary for high performance of Intelligent find-a-friend. Compute power has been set to Low.',
+    batteryInfoRecommendation: 'Recommended battery information to help intelligent find-a-friend find the most relevant molecules for you:',
     
     // Loading and Status Messages
     searching: "Searching...",
