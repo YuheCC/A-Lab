@@ -27,8 +27,16 @@ export default {
         modes: {
             regular: "Regular Ask",
             deepSpace: "Deep Space",
+            lightning: "Lightning",
+            fast: "Fast",
+            ask: "Ask",
+            fastDeepSpace: "Fast Deep Space",
             regularDescription: "Basic Q&A mode, suitable for daily battery-related questions. Provides accurate and concise answers.",
             deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
+            lightningDescription: "Lowest compute power for quick replies.",
+            fastDescription: "Medium compute for balanced speed and accuracy.",
+            askDescription: "Highest compute power for best quality.",
+            fastDeepSpaceDescription: "Multi-agent research with lower compute power.",
             regularRemaining: "Remaining today: {{count}} times",
             deepSpaceRemaining: "Remaining monthly: {{count}} times",
             betaBadge: "Beta"

@@ -27,8 +27,16 @@ export default {
         modes: {
             regular: "常规问答",
             deepSpace: "深度搜索",
+            lightning: "闪电",
+            fast: "快速",
+            ask: "Ask",
+            fastDeepSpace: "快速 Deep Space",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
             deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+            lightningDescription: "最低算力，极速回复。",
+            fastDescription: "中等算力，速度与准确性平衡。",
+            askDescription: "高算力，提供最佳答案。",
+            fastDeepSpaceDescription: "较低算力的多智能体研究模式。",
             regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
             betaBadge: "Beta"
