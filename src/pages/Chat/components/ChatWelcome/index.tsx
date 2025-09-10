@@ -85,10 +85,18 @@ const ChatWelcome: React.FC = () => {
         setCurrentMode(mode);
     }, []);
 
+    const translationKeyMap: Record<string, string> = {
+        'deep-space': 'deepSpace',
+        'fast-deep-space': 'fastDeepSpace',
+    };
+
+    const getTranslationKey = (mode: ChatMode) => translationKeyMap[mode] || mode;
+
     // 创建tooltip内容的辅助函数
     const getModeTooltipContent = (mode: ChatMode) => {
-        const title = t(`chatbox.chat.modes.${mode}` as any);
-        const desc = t(`chatbox.chat.modes.${mode}Description` as any);
+        const key = getTranslationKey(mode);
+        const title = t(`chatbox.chat.modes.${key}` as any);
+        const desc = t(`chatbox.chat.modes.${key}Description` as any);
         let remaining: string | undefined;
         if (mode === 'regular' && userPermissions === 'research') {
             remaining = t('chatbox.chat.modes.regularRemaining', { count: remainingQueries });
@@ -223,7 +231,7 @@ const ChatWelcome: React.FC = () => {
                                             onClick={() => handleModeChange(modeKey as ChatMode)}
                                             type="button"
                                         >
-                                            <span>{t(`chatbox.chat.modes.${modeKey}` as any)}</span>
+                                            <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey as ChatMode)}` as any)}</span>
                                             {['deep-space','fast-deep-space'].includes(modeKey) && (
                                                 <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
                                             )}
