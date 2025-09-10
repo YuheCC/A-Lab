@@ -338,8 +338,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
-                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
                             <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                            <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
                             <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
@@ -358,6 +358,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
+                    {selectedMoleculeType === 'additive' && (
+                        <div style={{ marginTop: '8px' }}>
+                            <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
+                            <select
+                                value={selectedAdditiveSubtype}
+                                onChange={handleAdditiveSubtypeChange}
+                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            >
+                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
+                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
+                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
+                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
+                            </select>
+                        </div>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
                         <span>{t('search.advancedOptions')}</span>
                         {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
