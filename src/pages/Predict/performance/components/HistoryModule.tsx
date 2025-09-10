@@ -1,12 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getPerformanceHistoryList, deletePerformanceHistory, getPerformanceHistoryDetail, type PerformanceHistoryItem } from '@/services/prediction/performance';
+import { getPerformanceHistoryList, deletePerformanceHistory, getPerformanceHistoryDetail, getBatterySystemList, type PerformanceHistoryItem } from '@/services/prediction/performance';
 import './HistoryModule.css';
 import { normalizeServerDate } from '@/utils/messageUtils';
+
+interface BatterySystem {
+  id: string;
+  name: string;
+  cathode: string;
+  anode: string;
+  benchmark_electrolyte: string;
+  cell_design: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface PredictionResult {
   id: string;
   date: string;
+  battery_system_id: number;
   batterySystem: string;
   additive: string;
   results: {
@@ -49,6 +61,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   const [historyData, setHistoryData] = useState<PredictionResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 分别统计25°C和45°C的正向结果
@@ -91,12 +104,19 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
     }
   };
 
+  // 根据电池系统ID获取电池系统名称
+  const getBatterySystemNameById = (batterySystemId: number): string => {
+    const batterySystem = batterySystemOptions.find(system => parseInt(system.id) === batterySystemId);
+    return batterySystem ? batterySystem.name : `Battery System ${batterySystemId}`;
+  };
+
   // 将API数据转换为组件需要的格式
   const transformAPIDataToPredictionResult = (apiData: PerformanceHistoryItem): PredictionResult & { rawApiData?: PerformanceHistoryItem } => {
     return {
       id: apiData.id.toString(),
       date: normalizeServerDate(apiData.created_at).toLocaleString(),
-      batterySystem: `Battery System ${apiData.battery_system_id}`,
+      batterySystem: getBatterySystemNameById(apiData.battery_system_id),
+      battery_system_id: apiData.battery_system_id,
       additive: apiData.smiles,
       results: {
         temp25: {
@@ -116,6 +136,18 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       // Include raw API data for proper processing in ResultModal
       rawApiData: apiData
     };
+  };
+
+  // 获取电池系统列表
+  const fetchBatterySystemOptions = async () => {
+    try {
+      const response = await getBatterySystemList();
+      if (response?.data) {
+        setBatterySystemOptions(response.data);
+      }
+    } catch (error) {
+      console.error('获取电池系统选项失败:', error);
+    }
   };
 
   // 获取历史数据
@@ -178,6 +210,11 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // 组件加载时获取电池系统列表
+  useEffect(() => {
+    fetchBatterySystemOptions();
   }, []);
 
   // 组件加载时获取数据
@@ -354,7 +391,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
               
               <div className="item-content">
                 <div className="battery-system">
-                  <span className="system-name">{record.batterySystem}</span>
+                  <span className="system-name">{getBatterySystemNameById(record.battery_system_id)}</span>
                 </div>
                 
                 <div className="additive">
