@@ -88,6 +88,31 @@ class MoleculeService {
     };
   }
 
+  private mapSearchResponseToMoleculeDetails(searchData: any, name: string): MoleculeDetails {
+    return {
+      name,
+      properties: {
+        smiles: searchData.SMILES,
+        molecularWeight: searchData.molecular_weight,
+        homo: searchData.HOMO_eV,
+        lumo: searchData.LUMO_eV,
+        espMax: searchData.ESP_max_eV,
+        espMin: searchData.ESP_min_eV,
+        umapX: searchData.UMAP_0,
+        umapY: searchData.UMAP_1,
+        functionalGroups: searchData.functional_groups,
+        commercialLink: searchData.COMMERCIAL_LINK,
+        commercialScore: searchData.COMMERCIAL_SCORE,
+        commercialViability: this.getCommercialViabilityText(searchData.COMMERCIAL_SCORE),
+        // 从search接口获取额外的数据
+        meltingPoint: searchData.predicted_MP_celsius ? `${searchData.predicted_MP_celsius}°C` : '-',
+        boilingPoint: searchData.predicted_BP_celsius ? `${searchData.predicted_BP_celsius}°C` : '-',
+        flashPoint: searchData.predicted_FP_celsius ? `${searchData.predicted_FP_celsius}°C` : '-',
+        combustionEnthalpy: searchData.COMBUSTION_ENTHALPY_EV ? `${searchData.COMBUSTION_ENTHALPY_EV} eV` : '-'
+      }
+    };
+  }
+
   private getCommercialViabilityText(score?: number): string {
     if (!score) return 'Unknown';
     if (score >= 8) return 'Highly commercially available';
@@ -96,23 +121,21 @@ class MoleculeService {
     return 'Research compound only';
   }
 
-  async getMoleculeDetails(name: string): Promise<MoleculeDetails> {
+  async getMoleculeDetails(name: string, userPermissions?: string): Promise<MoleculeDetails> {
     try {
-      const { default: request } = await import('@/services/request');
-      const resp = await request('/api/molecule_details', {
-        method: 'GET',
-        params: { 
-          molecule: encodeURIComponent(name),
-          query_type: 'molecule',
-          use_35m: true
-        },
-      });
+      const { authFetch } = await import('@/utils');
       
-      if ((resp as any).ok === false || resp.status >= 400) {
+      // 根据用户权限选择接口
+      const isHighTier = userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint';
+      const searchEndpoint = isHighTier ? '/api/llm/search-35' : '/api/llm/search';
+      
+      const resp = await authFetch(`${this.baseUrl}${searchEndpoint}?query=${encodeURIComponent(name.trim())}`);
+      
+      if (!resp.ok || resp.status >= 400) {
         throw new Error(`HTTP ${resp.status}`);
       }
       
-      const apiResponse = resp.data as APIResponse;
+      const apiResponse = await resp.json();
       
       // 检查是否找到分子数据
       if (!apiResponse.found || !apiResponse.molecule_details || apiResponse.molecule_details.length === 0) {
@@ -121,7 +144,7 @@ class MoleculeService {
       
       // 使用第一个结果
       const moleculeData = apiResponse.molecule_details[0];
-      return this.mapAPIResponseToMoleculeDetails(moleculeData, name);
+      return this.mapSearchResponseToMoleculeDetails(moleculeData, name);
       
     } catch (err) {
       // mock fallback - 使用与实际API结构相似的mock数据

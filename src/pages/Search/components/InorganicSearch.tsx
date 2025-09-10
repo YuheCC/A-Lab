@@ -217,7 +217,7 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-inorganic/`;
+            let searchEndpoint = `${API_URL}/api/llm/search-inorganic`;
 
             // Fetch the searched inorganic molecule's properties 
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
@@ -369,7 +369,7 @@ const InorganicSearch = () => {
                     />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <div className="search-options">
+                    {/* <div className="search-options">
                         <label className="search-option">
                             <div style={{
                                 display: 'flex',
@@ -387,16 +387,7 @@ const InorganicSearch = () => {
                                             <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
                                         </Tooltip>
                                     </div>
-                                    {/* <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select> */}
+                                    
                                 </div>
                                 <div style={{
                                     color: '#555',
@@ -406,7 +397,7 @@ const InorganicSearch = () => {
                                 </div>
                             </div>
                         </label>
-                    </div>
+                    </div> */}
 
                     <div className="search-results">
                         {searchLoading && (

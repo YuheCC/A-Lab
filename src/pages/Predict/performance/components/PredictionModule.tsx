@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
+import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
@@ -31,6 +32,7 @@ interface PredictionModuleProps {
 
 const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const { t, i18n } = useTranslation();
+  const userPermissions = useAuthStore(state => state.userPermissions);
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
@@ -284,7 +286,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setMoleculeDetails(null);
 
     try {
-      const details = await moleculeService.getMoleculeDetails(trimmedAdditive);
+      const details = await moleculeService.getMoleculeDetails(trimmedAdditive, userPermissions || undefined);
       
       // 检查是否是实际的分子数据还是mock数据
       if (details && details.properties.smiles && 

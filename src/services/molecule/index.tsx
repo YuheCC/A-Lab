@@ -8,7 +8,7 @@ export async function getMoleculeList(params?: any) {
 }
 
 export async function findMoleculeFriends(params?: any) {
-    return request("/api/find-friend-with-image", {
+    return request("/api/llm/find-friend-with-image", {
         method: "POST",
         data: params,
     });
