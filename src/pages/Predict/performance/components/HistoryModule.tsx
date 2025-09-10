@@ -107,7 +107,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   // 根据电池系统ID获取电池系统名称
   const getBatterySystemNameById = (batterySystemId: number): string => {
     const batterySystem = batterySystemOptions.find(system => parseInt(system.id) === batterySystemId);
-    return batterySystem ? batterySystem.name : `Battery System ${batterySystemId}`;
+    return batterySystem ? batterySystem.name : `${t('performance.batterySystemFallback')} ${batterySystemId}`;
   };
 
   // 将API数据转换为组件需要的格式
@@ -130,8 +130,8 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
         }
       },
       llmAnalysis: {
-        optimization: apiData.llm_analysis_result || 'No Analysis Available',
-        cycling: apiData.llm_analysis_result ? 'Available' : 'Not Available'
+        optimization: apiData.llm_analysis_result || t('performance.analysisStatus.noAnalysis'),
+        cycling: apiData.llm_analysis_result ? t('performance.analysisStatus.available') : t('performance.analysisStatus.notAvailable')
       },
       // Include raw API data for proper processing in ResultModal
       rawApiData: apiData
@@ -287,7 +287,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
             {showFilterDropdown && (
               <div className="filter-dropdown">
                 <div className="filter-section">
-                  <label className="filter-label">SMILES Search</label>
+                  <label className="filter-label">{t('performance.filters.smilesSearch')}</label>
                   <input
                     type="text"
                     className="filter-input"
@@ -298,30 +298,30 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
                 </div>
                 
                 <div className="filter-section">
-                  <label className="filter-label">Time Range</label>
+                  <label className="filter-label">{t('performance.filters.timeRange')}</label>
                   <select
                     className="filter-select"
                     value={filters.timeRange}
                     onChange={(e) => handleFilterChange('timeRange', e.target.value)}
                   >
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
+                    <option value="all">{t('performance.filters.timeOptions.allTime')}</option>
+                    <option value="today">{t('performance.filters.timeOptions.today')}</option>
+                    <option value="week">{t('performance.filters.timeOptions.thisWeek')}</option>
+                    <option value="month">{t('performance.filters.timeOptions.thisMonth')}</option>
                   </select>
                 </div>
                 
                 <div className="filter-section">
-                  <label className="filter-label">Status</label>
+                  <label className="filter-label">{t('performance.filters.status')}</label>
                   <select
                     className="filter-select"
                     value={filters.status}
                     onChange={(e) => handleFilterChange('status', e.target.value)}
                   >
-                    <option value="all">All Status</option>
-                    <option value="completed">Completed</option>
-                    <option value="pending">Pending</option>
-                    <option value="failed">Failed</option>
+                    <option value="all">{t('performance.filters.statusOptions.allStatus')}</option>
+                    <option value="completed">{t('performance.filters.statusOptions.completed')}</option>
+                    <option value="pending">{t('performance.filters.statusOptions.pending')}</option>
+                    <option value="failed">{t('performance.filters.statusOptions.failed')}</option>
                   </select>
                 </div>
                 
@@ -330,7 +330,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
                     className="clear-filters-btn"
                     onClick={clearFilters}
                   >
-                    Clear Filters
+                    {t('performance.filters.clearFilters')}
                   </button>
                 </div>
               </div>

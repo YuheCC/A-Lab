@@ -101,6 +101,47 @@ export default {
     references: "참고문헌"
   },
   
+  // General UI text
+  ui: {
+    calculating: "계산 중...",
+    analyzing: "분석 중...",
+    startingAnalysis: "LLM 분석을 시작하고 있습니다...",
+    analysisPlaceholder: "예측 결과에 대한 분석을 시작하려면 \"LLM 분석\" 버튼을 클릭하세요.",
+    pleaseSelectBattery: "배터리 시스템을 선택해주세요",
+    invalidBatterySystem: "잘못된 배터리 시스템이 선택되었습니다",
+    calculationFailed: "성능 예측 계산에 실패했습니다. 다시 시도해주세요.",
+    analysisFailed: "LLM 분석 시작에 실패했습니다. 다시 시도해주세요.",
+    sessionNotInitialized: "세션이 초기화되지 않았습니다. 페이지를 새로고침한 후 다시 시도해주세요.",
+    predictionFirst: "LLM 분석을 요청하기 전에 먼저 예측을 실행해주세요"
+  },
+  
+  // Analysis status
+  analysisStatus: {
+    noAnalysis: "분석 결과 없음",
+    available: "사용 가능",
+    notAvailable: "사용 불가"
+  },
+  
+  // Filter options
+  filters: {
+    smilesSearch: "SMILES 검색",
+    timeRange: "시간 범위",
+    status: "상태",
+    clearFilters: "필터 지우기",
+    timeOptions: {
+      allTime: "모든 시간",
+      today: "오늘",
+      thisWeek: "이번 주",
+      thisMonth: "이번 달"
+    },
+    statusOptions: {
+      allStatus: "모든 상태",
+      completed: "완료",
+      pending: "대기 중",
+      failed: "실패"
+    }
+  },
+  
   // History
   history: {
     title: "예측 기록",
@@ -125,5 +166,8 @@ export default {
       retry: "재시도",
       failedToLoad: "히스토리 데이터 로드에 실패했습니다"
     }
-  }
+  },
+  
+  // Battery system fallback
+  batterySystemFallback: "배터리 시스템"
 }

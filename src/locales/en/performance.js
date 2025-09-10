@@ -101,6 +101,47 @@ export default {
     references: "References"
   },
   
+  // General UI text
+  ui: {
+    calculating: "Calculating...",
+    analyzing: "Analyzing...",
+    startingAnalysis: "Starting LLM analysis...",
+    analysisPlaceholder: "Click \"LLM Analysis\" button to start generating analysis for your prediction results.",
+    pleaseSelectBattery: "Please select a battery system",
+    invalidBatterySystem: "Invalid battery system selected",
+    calculationFailed: "Failed to calculate performance prediction. Please try again.",
+    analysisFailed: "Failed to start LLM analysis. Please try again.",
+    sessionNotInitialized: "Session not initialized. Please refresh the page and try again.",
+    predictionFirst: "Please run prediction first before requesting LLM analysis"
+  },
+  
+  // Analysis status
+  analysisStatus: {
+    noAnalysis: "No Analysis Available",
+    available: "Available",
+    notAvailable: "Not Available"
+  },
+  
+  // Filter options
+  filters: {
+    smilesSearch: "SMILES Search",
+    timeRange: "Time Range",
+    status: "Status",
+    clearFilters: "Clear Filters",
+    timeOptions: {
+      allTime: "All Time",
+      today: "Today",
+      thisWeek: "This Week",
+      thisMonth: "This Month"
+    },
+    statusOptions: {
+      allStatus: "All Status",
+      completed: "Completed",
+      pending: "Pending",
+      failed: "Failed"
+    }
+  },
+  
   // History
   history: {
     title: "Prediction Records",
@@ -125,5 +166,8 @@ export default {
       retry: "Retry",
       failedToLoad: "Failed to load history data"
     }
-  }
+  },
+  
+  // Battery system fallback
+  batterySystemFallback: "Battery System"
 }

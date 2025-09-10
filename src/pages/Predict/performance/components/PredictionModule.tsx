@@ -317,13 +317,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
     
     if (!selectedSystem) {
-      alert('Please select a battery system');
+      alert(t('performance.ui.pleaseSelectBattery'));
       return;
     }
 
     const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
-      alert('Invalid battery system selected');
+      alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
 
@@ -346,7 +346,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       }
     } catch (error) {
       console.error('Prediction failed:', error);
-      setCalculationError('Failed to calculate performance prediction. Please try again.');
+      setCalculationError(t('performance.ui.calculationFailed'));
     } finally {
       setIsCalculating(false);
     }
@@ -363,13 +363,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // LLM分析处理函数
   const handleLLMAnalysis = async () => {
     if (!predictionResults) {
-      alert('Please run prediction first before requesting LLM analysis');
+      alert(t('performance.ui.predictionFirst'));
       return;
     }
 
     if (!sessionId) {
       console.error('LLM分析失败: sessionId未设置');
-      alert('Session not initialized. Please refresh the page and try again.');
+      alert(t('performance.ui.sessionNotInitialized'));
       return;
     }
 
@@ -377,7 +377,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
-      alert('Invalid battery system selected');
+      alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
 
@@ -402,7 +402,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       // API调用成功后，等待WebSocket消息
     } catch (error) {
       console.error('LLM分析请求失败:', error);
-      setAnalysisError('Failed to start LLM analysis. Please try again.');
+      setAnalysisError(t('performance.ui.analysisFailed'));
       setIsAnalyzing(false);
     }
   };
@@ -801,7 +801,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           onClick={handleCalculate}
           disabled={isCalculating}
         >
-          {isCalculating ? 'Calculating...' : (showResults ? t('performance.calculate.calculated') : t('performance.calculate.button'))}
+          {isCalculating ? t('performance.ui.calculating') : (showResults ? t('performance.calculate.calculated') : t('performance.calculate.button'))}
         </button>
 
         {calculationError && (
@@ -891,7 +891,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   onClick={handleLLMAnalysis}
                   disabled={isAnalyzing || !predictionResults}
                 >
-                  {isAnalyzing ? 'Analyzing...' : t('performance.llmAnalysis.button')}
+                  {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
                 </button>
                 
                 {analysisError && (
@@ -926,7 +926,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               <div className="llm-content">
                 {isAnalyzing && !analysisContent && (
                   <div className="analysis-loading">
-                    <p>Starting LLM analysis...</p>
+                    <p>{t('performance.ui.startingAnalysis')}</p>
                     <div className="loading-spinner"></div>
                   </div>
                 )}
@@ -939,7 +939,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 
                 {!analysisContent && !isAnalyzing && showLLMAnalysis && (
                   <div className="analysis-placeholder">
-                    <p>Click "LLM Analysis" button to start generating analysis for your prediction results.</p>
+                    <p>{t('performance.ui.analysisPlaceholder')}</p>
                   </div>
                 )}
               </div>

@@ -101,6 +101,47 @@ export default {
     references: "参考文献"
   },
   
+  // General UI text
+  ui: {
+    calculating: "計算中...",
+    analyzing: "分析中...",
+    startingAnalysis: "LLM分析を開始しています...",
+    analysisPlaceholder: "予測結果の分析を開始するには\"LLM分析\"ボタンをクリックしてください。",
+    pleaseSelectBattery: "バッテリーシステムを選択してください",
+    invalidBatterySystem: "無効なバッテリーシステムが選択されました",
+    calculationFailed: "性能予測の計算に失敗しました。再試行してください。",
+    analysisFailed: "LLM分析の開始に失敗しました。再試行してください。",
+    sessionNotInitialized: "セッションが初期化されていません。ページを更新して再試行してください。",
+    predictionFirst: "LLM分析をリクエストする前に、まず予測を実行してください"
+  },
+  
+  // Analysis status
+  analysisStatus: {
+    noAnalysis: "分析結果なし",
+    available: "利用可能",
+    notAvailable: "利用不可"
+  },
+  
+  // Filter options
+  filters: {
+    smilesSearch: "SMILES検索",
+    timeRange: "時間範囲",
+    status: "ステータス",
+    clearFilters: "フィルターをクリア",
+    timeOptions: {
+      allTime: "すべての時間",
+      today: "今日",
+      thisWeek: "今週",
+      thisMonth: "今月"
+    },
+    statusOptions: {
+      allStatus: "すべてのステータス",
+      completed: "完了",
+      pending: "保留中",
+      failed: "失敗"
+    }
+  },
+  
   // History
   history: {
     title: "予測記録",
@@ -125,5 +166,8 @@ export default {
       retry: "再試行",
       failedToLoad: "履歴データの読み込みに失敗しました"
     }
-  }
+  },
+  
+  // Battery system fallback
+  batterySystemFallback: "バッテリーシステム"
 }

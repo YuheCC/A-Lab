@@ -101,6 +101,47 @@ export default {
     references: "参考文献"
   },
   
+  // General UI text
+  ui: {
+    calculating: "计算中...",
+    analyzing: "分析中...",
+    startingAnalysis: "开始LLM分析...",
+    analysisPlaceholder: "点击 \"LLM 分析\" 按钮开始为您的预测结果生成分析。",
+    pleaseSelectBattery: "请选择一个电池系统",
+    invalidBatterySystem: "选择的电池系统无效",
+    calculationFailed: "性能预测计算失败。请重试。",
+    analysisFailed: "启动LLM分析失败。请重试。",
+    sessionNotInitialized: "会话未初始化。请刷新页面后重试。",
+    predictionFirst: "请先运行预测，然后再请求LLM分析"
+  },
+  
+  // Analysis status
+  analysisStatus: {
+    noAnalysis: "无可用分析",
+    available: "可用",
+    notAvailable: "不可用"
+  },
+  
+  // Filter options
+  filters: {
+    smilesSearch: "SMILES 搜索",
+    timeRange: "时间范围",
+    status: "状态",
+    clearFilters: "清除筛选条件",
+    timeOptions: {
+      allTime: "所有时间",
+      today: "今天",
+      thisWeek: "本周",
+      thisMonth: "本月"
+    },
+    statusOptions: {
+      allStatus: "所有状态",
+      completed: "已完成",
+      pending: "进行中",
+      failed: "失败"
+    }
+  },
+  
   // History
   history: {
     title: "预测记录",
@@ -125,5 +166,8 @@ export default {
       retry: "重试",
       failedToLoad: "加载历史数据失败"
     }
-  }
+  },
+  
+  // Battery system fallback
+  batterySystemFallback: "电池系统"
 }
