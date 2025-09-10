@@ -34,7 +34,7 @@ export default {
             lightningDescription: "最低計算量で素早い回答。",
             fastDescription: "中程度の計算量で速度と精度のバランス。",
             askDescription: "最大計算量で最高品質の回答。",
-            fastDeepSpaceDescription: "低計算量のマルチエージェント研究モード。",
+            fastDeepSpaceDescription: "少ない計算リソースでより迅速な結果を得るためのマルチエージェント研究。",
             regularRemaining: "今日の残り: {{count}}回",
             deepSpaceRemaining: "今月の残り: {{count}}回",
             betaBadge: "ベータ"

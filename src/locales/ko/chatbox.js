@@ -34,8 +34,7 @@ export default {
             lightningDescription: "최소 연산으로 빠른 응답",
             fastDescription: "중간 연산으로 속도와 정확성의 균형",
             askDescription: "최대 연산으로 최고의 품질 제공",
-            fastDeepSpaceDescription: "낮은 연산의 다중 에이전트 연구 모드",
-            regularRemaining: "오늘 남은 횟수: {{count}}회",
+            fastDeepSpaceDescription: "낮은 연산 자원으로 더 빠른 결과를 제공하는 다중 에이전트 연구.",            regularRemaining: "오늘 남은 횟수: {{count}}회",
             deepSpaceRemaining: "이번 달 남은 횟수: {{count}}회",
             betaBadge: "베타"
         },

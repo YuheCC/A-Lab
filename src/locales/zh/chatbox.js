@@ -36,8 +36,7 @@ export default {
             lightningDescription: "最低算力，极速回复。",
             fastDescription: "中等算力，速度与准确性平衡。",
             askDescription: "高算力，提供最佳答案。",
-            fastDeepSpaceDescription: "较低算力的多智能体研究模式。",
-            regularRemaining: "今日剩余: {{count}}次",
+            fastDeepSpaceDescription: "较低算力的多智能体研究，可实现更快速的结果。",            regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
             betaBadge: "Beta"
         },

@@ -36,7 +36,7 @@ export default {
             lightningDescription: "Lowest compute power for quick replies.",
             fastDescription: "Medium compute for balanced speed and accuracy.",
             askDescription: "Highest compute power for best quality.",
-            fastDeepSpaceDescription: "Multi-agent research with lower compute power.",
+            fastDeepSpaceDescription: "Multi-agent research with lower compute power for faster results.",
             regularRemaining: "Remaining today: {{count}} times",
             deepSpaceRemaining: "Remaining monthly: {{count}} times",
             betaBadge: "Beta"
