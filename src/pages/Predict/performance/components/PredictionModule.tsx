@@ -25,7 +25,11 @@ interface BatterySystem {
   updated_at: string;
 }
 
-const PredictionModule: React.FC = () => {
+interface PredictionModuleProps {
+  onResetRef?: (resetFn: () => void) => void;
+}
+
+const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const { t, i18n } = useTranslation();
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
@@ -177,6 +181,7 @@ const PredictionModule: React.FC = () => {
           return;
         }else{
           console.log('收到其他类型事件:', parsedData);
+          setIsAnalyzing(false);
           if(parsedData?.data)setAnalysisContent(prev => prev + parsedData?.data);
           else setAnalysisContent(prev => prev + parsedData);
         }
@@ -428,6 +433,46 @@ const PredictionModule: React.FC = () => {
   };
 
   const resultsData = getResultsData();
+
+  // Reset function to clear all state
+  const resetPredictionState = () => {
+    // Clear form inputs
+    setAdditive('');
+    
+    // Reset display states
+    setShowSpecs(true);
+    setShowResults(false);
+    setActiveTab('25c');
+    setShowLLMAnalysis(false);
+    
+    // Clear molecule details
+    setMoleculeDetails(null);
+    setMoleculeError(null);
+    setIsMoleculeLoading(false);
+    setLastQueriedSmiles(null);
+    
+    // Clear calculation states
+    setIsCalculating(false);
+    setCalculationError(null);
+    setPredictionResults(null);
+    
+    // Clear LLM analysis states
+    setIsAnalyzing(false);
+    setAnalysisContent('');
+    setAnalysisError(null);
+    
+    // Reset to first battery system if available
+    if (batterySystemOptions.length > 0) {
+      setSelectedSystem(batterySystemOptions[0].name);
+    }
+  };
+
+  // Expose reset function to parent component
+  useEffect(() => {
+    if (onResetRef) {
+      onResetRef(resetPredictionState);
+    }
+  }, [onResetRef, batterySystemOptions]);
 
   // Helper function to render result badge
   const renderResultBadge = (metric: any) => {

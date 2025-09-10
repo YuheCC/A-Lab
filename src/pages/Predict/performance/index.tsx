@@ -31,10 +31,20 @@ const PerformancePage: React.FC = () => {
   const { t } = useTranslation();
   const [selectedResult, setSelectedResult] = useState<PredictionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [resetPredictionFn, setResetPredictionFn] = useState<(() => void) | null>(null);
 
   const handleNewPrediction = () => {
-    // Handle new prediction action - could scroll to prediction form or reset it
-    console.log('New prediction clicked');
+    // Call the reset function to clear current prediction state
+    if (resetPredictionFn) {
+      resetPredictionFn();
+      console.log('Prediction state reset');
+    } else {
+      console.log('Reset function not available yet');
+    }
+  };
+
+  const handleResetRef = (resetFn: () => void) => {
+    setResetPredictionFn(() => resetFn);
   };
 
   const handleViewDetails = (result: PredictionResult) => {
@@ -56,7 +66,7 @@ const PerformancePage: React.FC = () => {
       
       <div className="prediction-content">
         <div className="operation-area">
-          <PredictionModule />
+          <PredictionModule onResetRef={handleResetRef} />
         </div>
         
         <div className="history-area">
