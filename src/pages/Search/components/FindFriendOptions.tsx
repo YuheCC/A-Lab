@@ -23,29 +23,14 @@ interface FindFriendOptionsProps {
   setShowHypothetical: (v: boolean) => void;
   cathode: string;
   setCathode: (v: string) => void;
-  cathodeCustom: string;
-  setCathodeCustom: (v: string) => void;
   anode: string;
   setAnode: (v: string) => void;
-  anodeCustom: string;
-  setAnodeCustom: (v: string) => void;
   salt: string;
   setSalt: (v: string) => void;
-  saltCustom: string;
-  setSaltCustom: (v: string) => void;
   solvent: string;
   setSolvent: (v: string) => void;
-  solventCustom: string;
-  setSolventCustom: (v: string) => void;
   metric: string;
   setMetric: (v: string) => void;
-  metricCustom: string;
-  setMetricCustom: (v: string) => void;
-  cathodeOptions: string[];
-  anodeOptions: string[];
-  saltOptions: string[];
-  solventOptions: string[];
-  performanceOptions: string[];
   userPermissions?: string;
 }
 
@@ -68,29 +53,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setShowHypothetical,
   cathode,
   setCathode,
-  cathodeCustom,
-  setCathodeCustom,
   anode,
   setAnode,
-  anodeCustom,
-  setAnodeCustom,
   salt,
   setSalt,
-  saltCustom,
-  setSaltCustom,
   solvent,
   setSolvent,
-  solventCustom,
-  setSolventCustom,
   metric,
   setMetric,
-  metricCustom,
-  setMetricCustom,
-  cathodeOptions,
-  anodeOptions,
-  saltOptions,
-  solventOptions,
-  performanceOptions,
   userPermissions,
 }) => {
   const { t } = useTranslation();
@@ -167,29 +137,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 userPermissions={userPermissions}
                 cathode={cathode}
                 setCathode={setCathode}
-                cathodeCustom={cathodeCustom}
-                setCathodeCustom={setCathodeCustom}
                 anode={anode}
                 setAnode={setAnode}
-                anodeCustom={anodeCustom}
-                setAnodeCustom={setAnodeCustom}
                 salt={salt}
                 setSalt={setSalt}
-                saltCustom={saltCustom}
-                setSaltCustom={setSaltCustom}
                 solvent={solvent}
                 setSolvent={setSolvent}
-                solventCustom={solventCustom}
-                setSolventCustom={setSolventCustom}
                 metric={metric}
                 setMetric={setMetric}
-                metricCustom={metricCustom}
-                setMetricCustom={setMetricCustom}
-                cathodeOptions={cathodeOptions}
-                anodeOptions={anodeOptions}
-                saltOptions={saltOptions}
-                solventOptions={solventOptions}
-                performanceOptions={performanceOptions}
                 showBatteryFields
               />
             )}

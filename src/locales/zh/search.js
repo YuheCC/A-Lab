@@ -39,6 +39,7 @@ export default {
     upgradeEnterprise: '升级到企业级账户',
     upgradeAccount: '升级账户',
     computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
+    batteryInfoRecommendation: '推荐的电池信息可帮助智能找朋友为您找到最相关的分子：',
     
     // Loading and Status Messages
     searching: "搜索中...",

@@ -39,6 +39,7 @@ export default {
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',
     computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+    batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보:',
 
     
     // Loading and Status Messages

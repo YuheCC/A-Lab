@@ -26,7 +26,10 @@ export default {
         function: "기능",
         functionOptions: {
             map: "지도",
-            regularAsk: "일반 질문",
+            lightning: "라이트닝",
+            fast: "빠른",
+            ask: "Ask",
+            fastDeepSpace: "빠른 딥 스페이스",
             deepSpace: "딥 스페이스",
             search: "검색",
             filter: "필터",

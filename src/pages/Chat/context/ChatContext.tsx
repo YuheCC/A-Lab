@@ -11,7 +11,15 @@ import { useMoleculePanel } from '../hooks/useMoleculePanel';
 import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify';
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space';
+
+const extractExtraData = (payload: any) => {
+    let extraData = payload?.extra_outputs ?? payload?.extra_output ?? payload?.extraData ?? payload?.extra_data;
+    if (extraData && typeof extraData === 'object' && 'extra_data' in extraData) {
+        extraData = extraData.extra_data;
+    }
+    return extraData;
+};
 
 interface ChatContextType {
     messages: Message[];
@@ -248,6 +256,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // 统一拿 chat_id 与消息体
             const incomingChatId = data?.chat_id ?? data?.chatId;
             const messageBody = data?.data ?? data;
+            const extraData = extractExtraData(messageBody);
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -287,16 +296,33 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
                 
                 // 如果找到现有消息，保持其原有的时间戳和其他属性
-                const updatedMessage = existingMessage 
+                const updatedMessage = existingMessage
                     ? {
                         ...existingMessage,
                         content: botChunksRef.current[key],
-                        showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage
+                        showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
+                        ...(extraData ? { extraData } : {})
                     } as Message
                     : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
+                if (extraData) {
+                    (updatedMessage as Message).extraData = extraData;
+                }
+
                 // 使用精确更新，避免全量刷新
                 upsertMessage(updatedMessage);
+            }
+
+            if (extraData && !(isChunk && chunk) && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, extraData });
+                        break;
+                    }
+                }
             }
 
             if (isDone) {
@@ -357,11 +383,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             numRagResults: ragResultsCount 
         };
         
-        if(mode === 'regular'){
+        if (['regular','lightning','fast','ask'].includes(mode)) {
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        }else if(mode === 'deep-space'){
+        } else if (['deep-space','fast-deep-space'].includes(mode)) {
             await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        }else if(mode === 'clarify'){
+        } else if (mode === 'clarify') {
             await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }
     }, [ragResultsCount, ragModel]);
@@ -479,8 +505,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             fullDeepSpace: extra.dump_state,
             toolsEnabled: extra.toolsEnabled,
             patentRagEnabled: extra.patentRagEnabled,
+            llmComputePower: extra.llmComputePower,
             numRagResults: ragResultsCount
-        } : { numRagResults: ragResultsCount };
+        } : { numRagResults: ragResultsCount, llmComputePower: extra?.llmComputePower };
         
         if (chatId) {
             // 将包含新用户消息的历史传递给后端

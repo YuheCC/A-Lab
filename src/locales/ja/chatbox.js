@@ -25,8 +25,16 @@ export default {
         modes: {
             regular: "通常の質問",
             deepSpace: "ディープスペース",
+            lightning: "ライトニング",
+            fast: "高速",
+            ask: "Ask",
+            fastDeepSpace: "高速ディープスペース",
             regularDescription: "基本的なQ&Aモード。日常的なバッテリー関連の質問に適しています。正確で簡潔な回答を提供します。",
             deepSpaceDescription: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
+            lightningDescription: "最低計算量で素早い回答。",
+            fastDescription: "中程度の計算量で速度と精度のバランス。",
+            askDescription: "最大計算量で最高品質の回答。",
+            fastDeepSpaceDescription: "少ない計算リソースでより迅速な結果を得るためのマルチエージェント研究。",
             regularRemaining: "今日の残り: {{count}}回",
             deepSpaceRemaining: "今月の残り: {{count}}回",
             betaBadge: "ベータ"

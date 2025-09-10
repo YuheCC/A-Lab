@@ -11,7 +11,7 @@ export interface ChatResponse {
 
 export interface ChatRequest {
   message: string;
-  mode: 'regular' | 'deep-space';
+  mode: 'regular' | 'deep-space' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space' | 'clarify';
   chatId?: string;
 }
 
@@ -66,7 +66,7 @@ export class ChatService {
     };
   }
 
-  async sendMessage(message: string, mode: 'regular' | 'deep-space' = 'regular', chatId?: string): Promise<ChatResponse> {
+  async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
       const resp = await request('/chat/send', {
         method: 'POST',
@@ -110,7 +110,7 @@ export class ChatService {
   openChatStream(options: {
     chatId?: string;
     message?: string;
-    mode?: 'regular' | 'deep-space';
+    mode?: 'regular' | 'deep-space' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space' | 'clarify';
     path?: string;
     protocols?: string[];
     websocketOnly?: boolean; // 新增选项：是否仅使用WebSocket
@@ -326,6 +326,7 @@ export class ChatService {
           numRagResults: extraOptions?.numRagResults,
           toolsEnabled: extraOptions?.toolsEnabled,
           patentRagEnabled: extraOptions?.patentRagEnabled,
+          llm_compute_power: extraOptions?.llmComputePower,
         },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
@@ -353,6 +354,7 @@ export class ChatService {
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
         patentRagEnabled: extraOptions?.patentRagEnabled,
+        llm_compute_power: extraOptions?.llmComputePower,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数
@@ -389,6 +391,7 @@ export class ChatService {
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
         patentRagEnabled: extraOptions?.patentRagEnabled,
+        llm_compute_power: extraOptions?.llmComputePower,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数
