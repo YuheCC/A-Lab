@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
@@ -435,7 +435,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const resultsData = getResultsData();
 
   // Reset function to clear all state
-  const resetPredictionState = () => {
+  const resetPredictionState = useCallback(() => {
     // Clear form inputs
     setAdditive('');
     
@@ -465,14 +465,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     if (batterySystemOptions.length > 0) {
       setSelectedSystem(batterySystemOptions[0].name);
     }
-  };
+  }, [batterySystemOptions]);
 
   // Expose reset function to parent component
   useEffect(() => {
     if (onResetRef) {
       onResetRef(resetPredictionState);
     }
-  }, [onResetRef, batterySystemOptions]);
+  }, [onResetRef, resetPredictionState]);
 
   // Helper function to render result badge
   const renderResultBadge = (metric: any) => {
