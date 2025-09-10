@@ -346,6 +346,13 @@ class GlobalWebSocketManager {
       this.messageCallbacks.forEach(callback => callback(payload));
     });
 
+    // 监听 cell-performance-events 事件
+    this.socket.on('cell-performance-events', (...args: any[]) => {
+      console.log('全局WebSocket收到 cell-performance-events 事件:', ...args);
+      const payload = args.length > 1 ? args : args[0];
+      this.messageCallbacks.forEach(callback => callback(payload));
+    });
+
     this.socket.on('connect_error', (error: any) => {
       console.error('全局WebSocket连接错误:', error);
       this.isConnected = false;

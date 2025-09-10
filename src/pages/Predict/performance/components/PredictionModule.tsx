@@ -5,6 +5,7 @@ import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type Perf
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
+import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 
 interface SystemSpec {
   cathode: string;
@@ -98,19 +99,23 @@ const PredictionModule: React.FC = () => {
     console.log('PredictionModule: 初始化WebSocket连接');
     globalWebSocketManager.initialize();
 
+    // 检查初始连接状态
+    const initialInfo = globalWebSocketManager.getConnectionInfo();
+    console.log('PredictionModule: 初始连接状态:', initialInfo);
+
     // 从WebSocket连接信息中获取sessionId
     const updateSessionId = () => {
       const info = globalWebSocketManager.getConnectionInfo();
+      console.log('PredictionModule: 获取连接信息:', info);
       const sid = info?.socketId as string;
       if (sid) {
         setSessionId(sid);
         globalWebSocketManager.setSessionId(sid);
         console.log('PredictionModule: 设置sessionId:', sid);
+      } else {
+        console.log('PredictionModule: 未获取到socketId');
       }
     };
-
-    // 如果已经连接，立即获取sessionId
-    updateSessionId();
 
     // 监听WebSocket连接成功事件，获取sessionId
     const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
@@ -118,7 +123,33 @@ const PredictionModule: React.FC = () => {
       updateSessionId();
     });
 
+    // 检查是否已经连接，如果已连接则立即获取sessionId
+    const initialConnectionHealth = globalWebSocketManager.checkConnectionHealth();
+    console.log('PredictionModule: 初始连接健康状态:', initialConnectionHealth);
+    if (initialConnectionHealth) {
+      console.log('PredictionModule: WebSocket已连接，立即获取sessionId');
+      updateSessionId();
+    }
+
+    // 添加连接状态监控（类似chat页面）
+    const checkConnection = () => {
+      const connectionInfo = globalWebSocketManager.getConnectionInfo();
+      console.log('PredictionModule: WebSocket连接状态:', connectionInfo);
+      
+      if (!globalWebSocketManager.checkConnectionHealth()) {
+        console.warn('PredictionModule: WebSocket连接异常，尝试重连...');
+        globalWebSocketManager.reconnect();
+      }
+    };
+
+    // 立即检查一次连接状态
+    checkConnection();
+
+    // 每30秒检查一次连接状态
+    const healthCheckInterval = setInterval(checkConnection, 30000);
+
     // 监听WebSocket消息
+    console.log('PredictionModule: 注册WebSocket消息监听器');
     const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
       console.log('PredictionModule收到WebSocket消息:', data);
       
@@ -129,13 +160,13 @@ const PredictionModule: React.FC = () => {
           parsedData = JSON.parse(data);
         }
         
-        // 检查是否是LLM分析的响应
-        if (parsedData?.event_name === 'cell-performance-events') {
-          const eventData = parsedData.data;
-          console.log('收到LLM分析事件:', eventData);
+        // 处理数组格式: ["cell-performance-events", {...}]
+        if (Array.isArray(parsedData) && parsedData.length >= 2 && parsedData[0] === 'cell-performance-events') {
+          const eventData = parsedData[1];
+          console.log('收到LLM分析事件 (数组格式):', eventData);
           
-          if (eventData?.content) {
-            setAnalysisContent(prev => prev + eventData.content);
+          if (eventData?.data) {
+            setAnalysisContent(prev => prev + eventData.data);
           }
           
           // 检查是否完成
@@ -143,6 +174,18 @@ const PredictionModule: React.FC = () => {
             setIsAnalyzing(false);
             console.log('LLM分析完成');
           }
+          return;
+        }else{
+          console.log('收到其他类型事件:', parsedData);
+          if(parsedData?.data)setAnalysisContent(prev => prev + parsedData?.data);
+          else setAnalysisContent(prev => prev + parsedData);
+        }
+        
+        // 处理其他格式的消息（非cell-performance-events）
+        // cell-performance-events已在上面的数组格式中处理，这里只处理其他类型的消息
+        if (parsedData && typeof parsedData === 'object' && parsedData.event_name && parsedData.event_name !== 'cell-performance-events') {
+          console.log('收到其他类型事件:', parsedData.event_name, parsedData);
+          // 可以在这里添加对其他事件类型的处理
         }
       } catch (error) {
         console.error('处理WebSocket消息失败:', error);
@@ -153,6 +196,7 @@ const PredictionModule: React.FC = () => {
       console.log('PredictionModule: 清理WebSocket监听');
       unsubscribeMessage && unsubscribeMessage();
       unsubscribeConnect && unsubscribeConnect();
+      clearInterval(healthCheckInterval);
     };
   }, []);
 
@@ -260,9 +304,12 @@ const PredictionModule: React.FC = () => {
     }
 
     if (!sessionId) {
+      console.error('LLM分析失败: sessionId未设置');
       alert('Session not initialized. Please refresh the page and try again.');
       return;
     }
+
+    console.log('LLM分析开始: sessionId =', sessionId);
 
     const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
@@ -757,7 +804,7 @@ const PredictionModule: React.FC = () => {
           <div className="llm-analysis-section">
             <div className="llm-analysis-header">
               <h2>{t('performance.llmAnalysis.title')}</h2>
-              {(analysisContent || isAnalyzing) && (
+              {/* {(analysisContent || isAnalyzing) && (
                 <button 
                   className="close-analysis-btn"
                   onClick={() => {
@@ -768,7 +815,7 @@ const PredictionModule: React.FC = () => {
                 >
                   ×
                 </button>
-              )}
+              )} */}
             </div>
             
             <div className="llm-analysis-card">
@@ -782,16 +829,7 @@ const PredictionModule: React.FC = () => {
                 
                 {analysisContent && (
                   <div className="analysis-content">
-                    <div 
-                      className="analysis-text"
-                      dangerouslySetInnerHTML={{ 
-                        __html: analysisContent.replace(/\n/g, '<br/>') 
-                      }}
-                    />
-                    
-                    {isAnalyzing && (
-                      <div className="analysis-cursor">|</div>
-                    )}
+                    <InlineMoleculeRenderer content={analysisContent} onMoleculeClick={() => {}} />
                   </div>
                 )}
                 
