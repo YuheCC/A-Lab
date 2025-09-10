@@ -98,10 +98,25 @@ const PredictionModule: React.FC = () => {
     console.log('PredictionModule: 初始化WebSocket连接');
     globalWebSocketManager.initialize();
 
-    // 生成session_id
-    const newSessionId = `performance_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    setSessionId(newSessionId);
-    globalWebSocketManager.setSessionId(newSessionId);
+    // 从WebSocket连接信息中获取sessionId
+    const updateSessionId = () => {
+      const info = globalWebSocketManager.getConnectionInfo();
+      const sid = info?.socketId as string;
+      if (sid) {
+        setSessionId(sid);
+        globalWebSocketManager.setSessionId(sid);
+        console.log('PredictionModule: 设置sessionId:', sid);
+      }
+    };
+
+    // 如果已经连接，立即获取sessionId
+    updateSessionId();
+
+    // 监听WebSocket连接成功事件，获取sessionId
+    const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
+      console.log('PredictionModule: WebSocket连接成功，获取sessionId');
+      updateSessionId();
+    });
 
     // 监听WebSocket消息
     const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
@@ -137,6 +152,7 @@ const PredictionModule: React.FC = () => {
     return () => {
       console.log('PredictionModule: 清理WebSocket监听');
       unsubscribeMessage && unsubscribeMessage();
+      unsubscribeConnect && unsubscribeConnect();
     };
   }, []);
 

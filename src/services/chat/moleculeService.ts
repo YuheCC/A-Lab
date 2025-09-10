@@ -101,7 +101,11 @@ class MoleculeService {
       const { default: request } = await import('@/services/request');
       const resp = await request('/api/molecule_details', {
         method: 'GET',
-        params: { molecule: name },
+        params: { 
+          molecule: encodeURIComponent(name),
+          query_type: 'molecule',
+          use_35m: true
+        },
       });
       
       if ((resp as any).ok === false || resp.status >= 400) {

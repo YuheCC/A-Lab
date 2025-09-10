@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './ResultModal.css';
+import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 
 interface PredictionResult {
   id: string;
@@ -224,20 +225,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             <h3>{t('performance.llmAnalysis.title')}</h3>
             <div className="analysis-content">
               <div className="analysis-item">
-                <h5>1. {result.llmAnalysis.optimization}</h5>
-                <p>
-                  The dimethyl carbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in nickel-catalyzed denitrogenation products. 
-                  This reaction can improve CE degradation under voltage. During the CE optimization process, when generating this structure with electrical nickel, 
-                  it is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize aging CE display improvement patterns.
-                </p>
-              </div>
-              
-              <div className="analysis-item">
-                <h5>2. {result.llmAnalysis.cycling}</h5>
-                <p>
-                  The rolling disc approach involves enhanced material comparison and LiFe distribution optimization for secondary reactions. 
-                  This biochemical nickel enhancement process addresses charge-discharge cycles under nickel enhancement.
-                </p>
+                <InlineMoleculeRenderer content={result.llmAnalysis.optimization} onMoleculeClick={() => {}} />
               </div>
             </div>
           </div>
