@@ -171,27 +171,84 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           
           if (eventData?.data) {
             setAnalysisContent(prev => prev + eventData.data);
+            // 确保在接收数据时分析状态为进行中
+            setIsAnalyzing(prevState => {
+              if (!prevState) {
+                console.log('设置分析状态为进行中 (数组格式)');
+              }
+              return true;
+            });
           }
           
           // 检查是否完成
-          if (eventData?.finished === true) {
+          if (eventData?.finished === true || eventData?.complete === true || eventData?.done === true) {
             setIsAnalyzing(false);
-            console.log('LLM分析完成');
+            console.log('LLM分析完成 (数组格式)');
           }
           return;
-        }else{
-          console.log('收到其他类型事件:', parsedData);
-          setIsAnalyzing(false);
-          if(parsedData?.data)setAnalysisContent(prev => prev + parsedData?.data);
-          else setAnalysisContent(prev => prev + parsedData);
         }
         
-        // 处理其他格式的消息（非cell-performance-events）
-        // cell-performance-events已在上面的数组格式中处理，这里只处理其他类型的消息
-        if (parsedData && typeof parsedData === 'object' && parsedData.event_name && parsedData.event_name !== 'cell-performance-events') {
-          console.log('收到其他类型事件:', parsedData.event_name, parsedData);
-          // 可以在这里添加对其他事件类型的处理
+        // 处理非数组格式: 对象包含 data 和 history_id 字段
+        if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+          // 检查是否为 cell-performance-events 相关的对象格式
+          if (parsedData.history_id !== undefined && parsedData.data !== undefined) {
+            console.log('收到LLM分析事件 (对象格式):', parsedData);
+            
+            // 使用函数式更新获取最新的 predictionResults
+            setPredictionResults(currentPredictionResults => {
+              console.log('当前 predictionResults:', currentPredictionResults);
+              
+              // 验证 history_id 是否匹配当前预测结果的 id
+              if (currentPredictionResults && currentPredictionResults.id !== undefined && parsedData.history_id === currentPredictionResults.id) {
+                // 如果有数据内容，追加到分析内容中
+                if (typeof parsedData.data === 'string' && parsedData.data.trim()) {
+                  setAnalysisContent(prev => prev + parsedData.data);
+                }
+                
+                // 只要收到对应 history_id 的消息就标记分析完成
+                setIsAnalyzing(false);
+                console.log('LLM分析完成 (对象格式)，history_id:', parsedData.history_id);
+              } else {
+                console.log('收到的消息 history_id 不匹配当前预测结果，忽略:', {
+                  'received_history_id': parsedData.history_id,
+                  'current_prediction_id': currentPredictionResults?.id,
+                  'has_predictionResults': !!currentPredictionResults,
+                  'prediction_id_defined': currentPredictionResults?.id !== undefined
+                });
+              }
+              
+              // 返回原有的 predictionResults，不修改
+              return currentPredictionResults;
+            });
+            return;
+          }
+          
+          // 处理其他对象格式消息
+          if (parsedData.event_name && parsedData.event_name !== 'cell-performance-events') {
+            console.log('收到其他类型事件:', parsedData.event_name, parsedData);
+            // 可以在这里添加对其他事件类型的处理
+            return;
+          }
+          
+          // 兜底处理：如果有 data 字段但格式不明确
+          if (parsedData.data !== undefined) {
+            console.log('收到未识别格式的消息，尝试处理 data 字段:', parsedData);
+            if (typeof parsedData.data === 'string' && parsedData.data.trim()) {
+              setAnalysisContent(prev => prev + parsedData.data);
+              // 确保分析状态正确
+              setIsAnalyzing(prevState => prevState || true);
+            }
+            // 如果没有明确的结束标识，保持分析状态
+            return;
+          }
         }
+        
+        // 处理其他格式或纯字符串消息
+        console.log('收到其他格式消息:', parsedData);
+        if (typeof parsedData === 'string') {
+          setAnalysisContent(prev => prev + parsedData);
+        }
+        
       } catch (error) {
         console.error('处理WebSocket消息失败:', error);
       }
@@ -336,7 +393,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       };
 
       console.log('发送LLM分析请求:', analysisParams);
-      
+      console.log('predictionResults', predictionResults);
       const response = await requestLLMAnalysis(analysisParams);
       console.log('LLM分析API响应:', response);
       
