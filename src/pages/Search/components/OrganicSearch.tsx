@@ -109,21 +109,10 @@ const OrganicSearch = () => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const [cathode, setCathode] = useState('');
-    const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
-    const [anodeCustom, setAnodeCustom] = useState('');
     const [salt, setSalt] = useState('');
-    const [saltCustom, setSaltCustom] = useState('');
     const [solvent, setSolvent] = useState('');
-    const [solventCustom, setSolventCustom] = useState('');
     const [metric, setMetric] = useState('');
-    const [metricCustom, setMetricCustom] = useState('');
-
-    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
-    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
-    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
-    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
-    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
 
     useEffect(() => {
         setComputeLevel(defaultCompute);
@@ -314,13 +303,8 @@ const OrganicSearch = () => {
                 } else {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
-                    const aVal = anode === 'custom' ? anodeCustom : anode;
-                    const sVal = salt === 'custom' ? saltCustom : salt;
-                    const svVal = solvent === 'custom' ? solventCustom : solvent;
-                    const mVal = metric === 'custom' ? metricCustom : metric;
                     const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
 
                     let computeToSend = computeLevel;
                     if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -329,7 +313,7 @@ const OrganicSearch = () => {
                         setComputeLevel('Low');
                     }
 
-                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
                     const parts: string[] = [baseQuery];
                     if (selectedMolType) {
                         parts.push(`I am looking for ${selectedMolType} molecules.`);
@@ -465,29 +449,14 @@ const OrganicSearch = () => {
                         setShowHypothetical={setShowHypothetical}
                         cathode={cathode}
                         setCathode={setCathode}
-                        cathodeCustom={cathodeCustom}
-                        setCathodeCustom={setCathodeCustom}
                         anode={anode}
                         setAnode={setAnode}
-                        anodeCustom={anodeCustom}
-                        setAnodeCustom={setAnodeCustom}
                         salt={salt}
                         setSalt={setSalt}
-                        saltCustom={saltCustom}
-                        setSaltCustom={setSaltCustom}
                         solvent={solvent}
                         setSolvent={setSolvent}
-                        solventCustom={solventCustom}
-                        setSolventCustom={setSolventCustom}
                         metric={metric}
                         setMetric={setMetric}
-                        metricCustom={metricCustom}
-                        setMetricCustom={setMetricCustom}
-                        cathodeOptions={cathodeOptions}
-                        anodeOptions={anodeOptions}
-                        saltOptions={saltOptions}
-                        solventOptions={solventOptions}
-                        performanceOptions={performanceOptions}
                         userPermissions={userPermissions}
                     />
 

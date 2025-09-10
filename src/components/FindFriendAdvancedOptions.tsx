@@ -19,20 +19,10 @@ interface AdvancedProps {
   userPermissions?: string;
   // Admin/battery-specific fields
   cathode?: string; setCathode?: (v: string) => void;
-  cathodeCustom?: string; setCathodeCustom?: (v: string) => void;
   anode?: string; setAnode?: (v: string) => void;
-  anodeCustom?: string; setAnodeCustom?: (v: string) => void;
   salt?: string; setSalt?: (v: string) => void;
-  saltCustom?: string; setSaltCustom?: (v: string) => void;
   solvent?: string; setSolvent?: (v: string) => void;
-  solventCustom?: string; setSolventCustom?: (v: string) => void;
   metric?: string; setMetric?: (v: string) => void;
-  metricCustom?: string; setMetricCustom?: (v: string) => void;
-  cathodeOptions?: string[];
-  anodeOptions?: string[];
-  saltOptions?: string[];
-  solventOptions?: string[];
-  performanceOptions?: string[];
   showBatteryFields?: boolean;
 }
 
@@ -52,29 +42,14 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   userPermissions,
   cathode = '',
   setCathode = () => {},
-  cathodeCustom = '',
-  setCathodeCustom = () => {},
   anode = '',
   setAnode = () => {},
-  anodeCustom = '',
-  setAnodeCustom = () => {},
   salt = '',
   setSalt = () => {},
-  saltCustom = '',
-  setSaltCustom = () => {},
   solvent = '',
   setSolvent = () => {},
-  solventCustom = '',
-  setSolventCustom = () => {},
   metric = '',
   setMetric = () => {},
-  metricCustom = '',
-  setMetricCustom = () => {},
-  cathodeOptions = [],
-  anodeOptions = [],
-  saltOptions = [],
-  solventOptions = [],
-  performanceOptions = [],
   showBatteryFields = true,
 }) => {
   const { t } = useTranslation();
@@ -154,97 +129,57 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
           {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
         </select>
       </div>
-      {showBatteryFields && userPermissions === 'admin' && (
+      {userPermissions === 'admin' && computeLevel !== 'Disabled' && (
+        <div style={{ marginTop: '8px', fontSize: '12px' }}>
+          {t('search.batteryInfoRecommendation')}
+        </div>
+      )}
+      {showBatteryFields && userPermissions === 'admin' && computeLevel !== 'Disabled' && (
         <>
           <div style={{ marginTop: '8px' }}>
             <label>{t('search.cathode')}:</label>
-            <select
+            <input
+              type="text"
               value={cathode}
               onChange={e => setCathode(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {cathodeOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {cathode === 'custom' && (
-              <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+              style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+            />
           </div>
           <div style={{ marginTop: '8px' }}>
             <label>{t('search.anode')}:</label>
-            <select
+            <input
+              type="text"
               value={anode}
               onChange={e => setAnode(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {anodeOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {anode === 'custom' && (
-              <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+              style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+            />
           </div>
           <div style={{ marginTop: '8px' }}>
             <label>{t('search.salt')}:</label>
-            <select
+            <input
+              type="text"
               value={salt}
               onChange={e => setSalt(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {saltOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {salt === 'custom' && (
-              <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+              style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+            />
           </div>
           <div style={{ marginTop: '8px' }}>
             <label>{t('search.solvent')}:</label>
-            <select
+            <input
+              type="text"
               value={solvent}
               onChange={e => setSolvent(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {solventOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {solvent === 'custom' && (
-              <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+              style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+            />
           </div>
           <div style={{ marginTop: '8px' }}>
             <label>{t('search.performanceMetric')}:</label>
-            <select
+            <input
+              type="text"
               value={metric}
               onChange={e => setMetric(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {performanceOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {metric === 'custom' && (
-              <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+              style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+            />
           </div>
         </>
       )}
