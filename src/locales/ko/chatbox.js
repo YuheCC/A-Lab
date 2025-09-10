@@ -25,8 +25,16 @@ export default {
         modes: {
             regular: "일반 문답",
             deepSpace: "딥 스페이스",
+            lightning: "라이트닝",
+            fast: "빠른",
+            ask: "Ask",
+            fastDeepSpace: "빠른 딥 스페이스",
             regularDescription: "기본 Q&A 모드로, 일상적인 배터리 관련 질문에 적합합니다. 정확하고 간결한 답변을 제공합니다.",
             deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+            lightningDescription: "최소 연산으로 빠른 응답",
+            fastDescription: "중간 연산으로 속도와 정확성의 균형",
+            askDescription: "최대 연산으로 최고의 품질 제공",
+            fastDeepSpaceDescription: "낮은 연산의 다중 에이전트 연구 모드",
             regularRemaining: "오늘 남은 횟수: {{count}}회",
             deepSpaceRemaining: "이번 달 남은 횟수: {{count}}회",
             betaBadge: "베타"
