@@ -129,7 +129,7 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
           {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
         </select>
       </div>
-      {userPermissions === 'admin' && computeLevel !== 'Disabled' && (
+      {showBatteryFields && userPermissions === 'admin' && computeLevel !== 'Disabled' && (
         <div style={{ marginTop: '8px', fontSize: '12px' }}>
           {t('search.batteryInfoRecommendation')}
         </div>
