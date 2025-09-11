@@ -9,6 +9,7 @@ import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
+import { usePageCleanup } from "@/hooks/usePageCleanup";
 
 const API_URL = getAPIUrl();
 
@@ -18,7 +19,8 @@ export const PricingContext = createContext<any>(null);
 const FullNavLayoutInner = () => {
     const location = useLocation();
     const pathname = location.pathname;
-    const isChatPage = pathname.includes('/chat') || pathname.includes('/ask') || pathname.includes('/predict');
+    const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
+    const isPredictPage = pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t } = useTranslation();
@@ -30,6 +32,9 @@ const FullNavLayoutInner = () => {
     const permissionFromQuery = queryParams.get('permission');
     const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
     const [permission, setPermission] = useState(permissionFromQuery);
+
+    // 使用页面清理hook
+    usePageCleanup(pathname);
 
     useEffect(() => {
         verifyAuth();
@@ -146,6 +151,9 @@ const FullNavLayoutInner = () => {
     const getMainContainerClassName = () => {
         if (isChatPage) {
             return 'main-container chat-container';
+        }
+        if (isPredictPage) {
+            return 'main-container predict-container';
         }
         return 'main-container';
     }

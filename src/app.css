@@ -352,7 +352,7 @@
   }
   
   /* Chat Layout Styles */
-  .chat-container {
+  .chat-container, .predict-container {
     display: flex;
     height: calc(100vh - 64px); /* Full height minus header */
   }
