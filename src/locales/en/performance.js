@@ -61,6 +61,13 @@ export default {
     }
   },
   
+  // Invalid SMILES
+  invalidSmiles: {
+    title: "Invalid SMILES Format",
+    description: "The input does not appear to be a valid SMILES molecular formula.",
+    suggestion: "Please enter a valid SMILES string."
+  },
+  
   // Calculate button
   calculate: {
     button: "Calculate",

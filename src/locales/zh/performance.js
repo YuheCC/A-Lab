@@ -61,6 +61,13 @@ export default {
     }
   },
   
+  // Invalid SMILES
+  invalidSmiles: {
+    title: "无效的 SMILES 格式",
+    description: "输入的内容不是有效的 SMILES 分子式。",
+    suggestion: "请输入有效的 SMILES 字符串。"
+  },
+  
   // Calculate button
   calculate: {
     button: "计算",

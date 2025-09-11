@@ -61,6 +61,13 @@ export default {
     }
   },
   
+  // Invalid SMILES
+  invalidSmiles: {
+    title: "無効なSMILESフォーマット",
+    description: "入力された内容は有効なSMILES分子式ではありません。",
+    suggestion: "有効なSMILES文字列を入力してください。"
+  },
+  
   // Calculate button
   calculate: {
     button: "計算",

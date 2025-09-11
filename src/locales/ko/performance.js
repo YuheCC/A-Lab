@@ -61,6 +61,13 @@ export default {
     }
   },
   
+  // Invalid SMILES
+  invalidSmiles: {
+    title: "잘못된 SMILES 형식",
+    description: "입력된 내용이 유효한 SMILES 분자식이 아닌 것 같습니다.",
+    suggestion: "유효한 SMILES 문자열을 입력해주세요."
+  },
+  
   // Calculate button
   calculate: {
     button: "계산",

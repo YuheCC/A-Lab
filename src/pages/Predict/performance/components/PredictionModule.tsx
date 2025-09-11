@@ -327,7 +327,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     
     // 检查是否为无效的 SMILES
     if (isInvalidSmiles) {
-      alert('请输入有效的 SMILES 分子式');
+      alert(t('performance.invalidSmiles.suggestion'));
       return;
     }
     
@@ -787,12 +787,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           {isInvalidSmiles && (
             <div className="molecule-information">
               <div className="molecule-header">
-                <h3>Invalid SMILES Format</h3>
+                <h3>{t('performance.invalidSmiles.title')}</h3>
               </div>
               
               <div className="molecule-content">
-                <p>The input does not appear to be a valid SMILES molecular formula.</p>
-                <p>Please enter a valid SMILES string.</p>
+                <p>{t('performance.invalidSmiles.description')}</p>
+                <p>{t('performance.invalidSmiles.suggestion')}</p>
               </div>
             </div>
           )}
