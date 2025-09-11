@@ -509,10 +509,17 @@
   font-size: 14px;
 }
 
-.molecule-information,
-.smiles-not-found {
+.molecule-information {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.smiles-error-display {
+  border: 1px solid #fecaca;
   border-radius: 8px;
   margin-top: 16px;
   margin-bottom: 16px;
@@ -559,6 +566,8 @@
 .molecule-content {
   padding: 20px;
   font-size: 14px;
+  display: flex;
+  gap: 20px;
 }
 
 .molecule-structure {
@@ -646,6 +655,22 @@
 
 .error-content p:last-of-type {
   margin-bottom: 20px;
+}
+
+.smiles-error-content {
+  padding: 20px;
+}
+
+.smiles-error-content p {
+  margin: 0 0 16px 0;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.smiles-error-content p:last-child {
+  margin-bottom: 0;
 }
 
 .example-smiles {

@@ -804,12 +804,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           )}
 
           {isInvalidSmiles && (
-            <div className="molecule-information">
-              <div className="molecule-header">
+            <div className="smiles-error-display">
+              <div className="error-header">
                 <h3>{t('performance.invalidSmiles.title')}</h3>
               </div>
               
-              <div className="molecule-content">
+              <div className="smiles-error-content">
                 <p>{t('performance.invalidSmiles.description')}</p>
                 <p>{t('performance.invalidSmiles.suggestion')}</p>
               </div>
