@@ -179,12 +179,7 @@ class MoleculeService {
       }
       
       // 其他错误使用 mock fallback - 使用与实际API结构相似的mock数据
-      return {
-        name: name,
-        properties: {
-          
-        }
-      };
+      throw err;
     }
   }
 
