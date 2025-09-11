@@ -29,9 +29,17 @@ export default {
     unknown: "Unknown",
     types: {
       all: "All Types",
+      cosolvent: "Cosolvent",
       solvent: "Solvent",
       diluent: "Diluent",
       additive: "Additive"
+    },
+    additiveSubtypes: {
+      title: "Additive subcategory",
+      seiPromoter: "SEI Promoter",
+      sideReactionSuppressor: "Side reaction suppressor",
+      dendriteSuppressor: "Dendrite suppressor",
+      interfacialStabilityImprover: "Interfacial stability improver"
     },
     properties: {
       predictedFp: "Predicted Flash Point",

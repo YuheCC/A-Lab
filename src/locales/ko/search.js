@@ -16,6 +16,28 @@ export default {
     findFriendsLabel: '"친구" 찾기',
     findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들. "친구"는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들을 모두 포함합니다. 목록은 물리화학적 특성이 쿼리 분자와 얼마나 유사한지에 따라 정렬됩니다.',
     
+    searchRange: '검색 범위',
+    nearbyFriends: '가까운 친구들',
+    distantFriends: '먼 친구들',
+    advancedOptions: '고급 옵션',
+    intelligentCompute: '지능형 친구 찾기 연산',
+    computeDisabled: '비활성화',
+    computeLow: '낮음',
+    computeMedium: '중간',
+    computeHigh: '높음',
+    computeExtreme: '극대',
+    cathode: '양극',
+    anode: '음극',
+    salt: '염',
+    solvent: '주요 용매',
+    performanceMetric: '원하는 성능 지표',
+    extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
+    extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',
+    custom: '사용자 정의',
+    upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
+    upgradeAccount: '계정을 업그레이드',
+    computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+
     // Loading and Status Messages
     searching: "검색 중...",
     loadingMap: "분자 우주의 지도를 로딩 중",
@@ -52,8 +74,16 @@ export default {
     moleculeTypes: {
         selectMolType: "분자 유형",
         solvent: "용매",
+        cosolvent: "공용매",
         diluent: "희석제",
-        additive: "첨가제"
+        additive: "첨가제",
+        additiveSubtype: "첨가제 서브카테고리",
+        additiveOptions: {
+            seiPromoter: "SEI 활성화제",
+            sideReactionSuppressor: "부사상 반응 억제제",
+            dendriteSuppressor: "덴드리트 억제제",
+            interfacialStabilityImprover: "표면 안정성 향상제"
+        }
     },
     
     // Buttons and Actions

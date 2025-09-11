@@ -30,8 +30,16 @@ export default {
     types: {
       all: "모든 유형",
       solvent: "용매",
+      cosolvent: "공용매",
       diluent: "희석제",
       additive: "첨가제"
+    },
+    additiveSubtypes: {
+      title: "첨가제 서브카테고리",
+      seiPromoter: "SEI 활성화제",
+      sideReactionSuppressor: "부사상 반응 억제제",
+      dendriteSuppressor: "덴드리트 억제제",
+      interfacialStabilityImprover: "표면 안정성 향상제"
     },
     properties: {
       predictedFp: "예상 인화점",

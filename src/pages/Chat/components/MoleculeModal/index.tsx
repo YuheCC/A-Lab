@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Info } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
+import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
+import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
@@ -34,7 +36,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
@@ -43,17 +46,39 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
-    const defaultCompute = useMemo(() => (
-        ['research', 'explorer', 'team'].includes(userPermissions || '') ? 'Low' : 'High'
-    ), [userPermissions]);
-    const [computeLevel, setComputeLevel] = useState(defaultCompute);
-    useEffect(() => {
-        setComputeLevel(defaultCompute);
-    }, [defaultCompute]);
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => {
+        if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
+        if (["team", "explorer"].includes(userPermissions || '')) return 'Medium';
+        return 'Low';
+    }, [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
 
     const handleClose = () => {
         onClose?.();
     };
+
+    useEffect(() => {
+        switch (selectedMoleculeType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMoleculeType]);
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     const favoriteCtx = useContext(FavoriteContext);
     const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
@@ -118,7 +143,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 raw = original?.raw;
             }
             if (smilesToUse) {
-                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
+                const molType = selectedMoleculeType === 'additive' ? selectedAdditiveSubtype : selectedMoleculeType;
+                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, molType);
                 setSimilarMolecules(list);
                 setSimilarRawList(raws);
                 setShowSimilar(true);
@@ -131,7 +157,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value;
         setSelectedMoleculeType(newType);
+        if (newType === 'additive') {
+            setSelectedAdditiveSubtype('A');
+        }
         onUpdateMoleculeType?.(moleculeName, newType);
+    };
+
+    const handleAdditiveSubtypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAdditiveSubtype(event.target.value);
     };
 
     const toggleFunctionalGroups = () => {
@@ -157,7 +190,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return [];
     };
 
-    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false, raw?: any) => {
+    const renderMoleculeCard = (
+        name: string,
+        properties: MoleculeProperties | Record<string, unknown>,
+        isOriginal = false,
+        raw?: any,
+        grade?: number,
+        reasoning?: string
+    ) => {
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -204,19 +244,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                 </div>
                 <div className="molecule-card-properties">
-                    {
-                        (raw?.grade != null || raw?.GRADE != null) && (
-                            <div className="molecule-card-property-item">
-                                <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.llmGrade')}:</span>
-                                <span className="molecule-card-property-value">
-                                    {raw?.grade ?? raw?.GRADE ?? '-'}{raw?.grade != null || raw?.GRADE != null ? '/10' : ''}
-                                    {(raw?.reasoning || raw?.REASONING) && (
-                                        <Info size={14} style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={() => alert(raw?.reasoning || raw?.REASONING)} />
-                                    )}
-                                </span>
-                            </div>
-                        )
-                    }
+                    {grade !== undefined && grade !== null && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">LLM Grade:</span>
+                            <span className="molecule-card-property-value">
+                                {grade}
+                                <ReasoningButton reasoning={reasoning} onShow={setReasoningText} />
+                            </span>
+                        </div>
+                    )}
                     <div className="molecule-card-property-item">
                         <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                         <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
@@ -294,32 +330,54 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 
                 {isOriginal && (
+                    <>
                     <div className="molecule-card-actions">
-                            <select
-                                className="molecule-type-select"
-                                value={selectedMoleculeType}
-                                onChange={handleMoleculeTypeChange}
-                            >
-                                <option value="all">{t('molecular.moleculeModal.types.all')}</option>
-                                <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
-                                <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
-                                <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
-                            </select>
-                            <button
-                                className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
-                                onClick={() => handleFindSimilar(name)}
-                                disabled={isSimilarLoading}
-                            >
-                                {isSimilarLoading ? (
-                                    <div className="loading-spinner-small"></div>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-                                    </svg>
-                                )}
-                                <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
-                            </button>
+                        <select
+                            className="molecule-type-select"
+                            value={selectedMoleculeType}
+                            onChange={handleMoleculeTypeChange}
+                        >
+                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
+                            <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                            <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                            <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                        </select>
+                        <button
+                            className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
+                            onClick={() => handleFindSimilar(name)}
+                            disabled={isSimilarLoading}
+                        >
+                            {isSimilarLoading ? (
+                                <div className="loading-spinner-small"></div>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                                </svg>
+                            )}
+                            <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
+                        </button>
                     </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+                        <span>{t('search.advancedOptions')}</span>
+                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                    </div>
+                    {showAdvanced && (
+                        <FindFriendAdvancedOptions
+                            extraRequests={extraRequests}
+                            setExtraRequests={setExtraRequests}
+                            selectedMolType={selectedMoleculeType}
+                            setSelectedMolType={setSelectedMoleculeType}
+                            additiveSubtype={selectedAdditiveSubtype}
+                            setAdditiveSubtype={setSelectedAdditiveSubtype}
+                            computeLevel={computeLevel}
+                            setComputeLevel={setComputeLevel}
+                            structureWeight={structureWeight}
+                            setStructureWeight={setStructureWeight}
+                            userPermissions={userPermissions || undefined}
+                            showBatteryFields={false}
+                        />
+                    )}
+                    </>
                 )}
             </div>
         );
@@ -392,13 +450,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<{ list: SimilarMolecule[]; raws: any[] }> => {
         const payload: any = {
             smiles,
-            use_35m: isHighTier
+            use_35m: isHighTier,
+            structure_weight: structureWeight
         };
-        if (molType && molType !== 'all') {
+        if (molType) {
             payload.mol_type = molType;
         }
         if (computeLevel !== 'Disabled') {
             payload.llm_compute_power = computeLevel.toLowerCase();
+        }
+        if (extraRequests.trim()) {
+            payload.extra_requests = extraRequests;
         }
         if (isHighTier && rawOriginal) {
             // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
@@ -498,6 +560,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
     return (
+        <>
         <div className="molecule-panel expanded" style={{ display: 'block', opacity: 1, transform: 'translateX(0px)', transition: '0.3s' }}>
             <div className="molecule-panel-header">
                 <div className="molecule-panel-title">
@@ -514,7 +577,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
                             <h4 style={{fontWeight: '400'}} className="section-title">{t('molecular.moleculeModal.original')}</h4>
-                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
+                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal, molecule?.grade, molecule?.reasoning)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
@@ -527,7 +590,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index])}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning)}
                                     </div>
                                 ))}
                             </div>
@@ -538,6 +601,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
             </div>
         </div>
+        <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+        </>
     );
 };
 

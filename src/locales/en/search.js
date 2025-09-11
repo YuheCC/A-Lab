@@ -16,6 +16,28 @@ export default {
     findFriendsLabel: 'Find "friends"',
     findFriendsDescription: 'Molecules with similar physicochemical properties. "Friends" intentionally includes some molecules with similar structures and some molecules with diverse structures. The list is sorted by how similar physicochemical properties are to the query molecule.',
     
+    searchRange: 'Search range',
+    nearbyFriends: 'nearby friends',
+    distantFriends: 'distant friends',
+    advancedOptions: 'Advanced options',
+    intelligentCompute: 'Intelligent find-a-friend compute',
+    computeDisabled: 'Disabled',
+    computeLow: 'Low',
+    computeMedium: 'Medium',
+    computeHigh: 'High',
+    computeExtreme: 'Extreme',
+    cathode: 'Cathode',
+    anode: 'Anode',
+    salt: 'Salt',
+    solvent: 'Primary Solvent',
+    performanceMetric: 'Desired Performance Metric',
+    extraRequests: 'Custom molecule constraints (for best results, enable Intelligent Find-a-Friend):',
+    extraRequestsPlaceholder: 'Display only molecules with Ether functional groups.',
+    custom: 'Custom',
+    upgradeEnterprise: 'Upgrade to an enterprise-tier account',
+    upgradeAccount: 'Upgrade your account',
+    computeWarning: 'Additional context is necessary for high performance of Intelligent find-a-friend. Compute power has been set to Low.',
+
     // Loading and Status Messages
     searching: "Searching...",
     loadingMap: "Loading Map of the Molecular Universe",
@@ -52,8 +74,16 @@ export default {
     moleculeTypes: {
         selectMolType: "Molecule Type",
         solvent: "Solvent",
+        cosolvent: "Cosolvent",
         diluent: "Diluent",
-        additive: "Additive"
+        additive: "Additive",
+        additiveSubtype: "Additive subcategory",
+        additiveOptions: {
+            seiPromoter: "SEI Promoter",
+            sideReactionSuppressor: "Side reaction suppressor",
+            dendriteSuppressor: "Dendrite suppressor",
+            interfacialStabilityImprover: "Interfacial stability improver"
+        }
     },
     
     // Buttons and Actions

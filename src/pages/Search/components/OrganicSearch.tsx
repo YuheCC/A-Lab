@@ -2,16 +2,20 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
+import { buildQueryString } from "@/services/buildQueryString";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip } from "@mui/material";
+import FindFriendOptions from "./FindFriendOptions";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import '../index.css';
 
 const API_URL = getAPIUrl();
 
@@ -21,6 +25,8 @@ interface MoleculeData {
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -55,6 +61,8 @@ interface SimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
 }
 
 const OrganicSearch = () => {
@@ -75,7 +83,50 @@ const OrganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [selectedMolType, setSelectedMolType] = useState("");
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => 'Disabled', []);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const [cathode, setCathode] = useState('');
+    const [cathodeCustom, setCathodeCustom] = useState('');
+    const [anode, setAnode] = useState('');
+    const [anodeCustom, setAnodeCustom] = useState('');
+    const [salt, setSalt] = useState('');
+    const [saltCustom, setSaltCustom] = useState('');
+    const [solvent, setSolvent] = useState('');
+    const [solventCustom, setSolventCustom] = useState('');
+    const [metric, setMetric] = useState('');
+    const [metricCustom, setMetricCustom] = useState('');
+
+    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
+    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
+    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
+    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
+    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -136,64 +187,80 @@ const OrganicSearch = () => {
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
 
     // Update handleSearch function
-    const handleSearchedMolecules = async (response: Response, select_first = false): Promise<MoleculeData[] | null> => {
+    const handleSearchedMolecules = async (
+        response: Response,
+        select_first = false
+    ): Promise<{ formattedMolecules: MoleculeData[] | null; ambiguity: any }> => {
         let formattedMolecules: MoleculeData[] | null = null;
-        let ambiguity = null;
+        let ambiguity: any = null;
         try {
             const data = await response.json();
-            if (data.found) {
-                if (data.molecule_details && data.molecule_details.length > 0) {
-                    formattedMolecules = data.molecule_details.map((mol: any) => {
-                        return {
-                            smiles: mol.SMILES,
-                            x: mol.UMAP_0,
-                            y: mol.UMAP_1,
-                            image: mol.image, // Add image to the molecule data
-                            properties: {
-                                molwt: mol.molecular_weight,
-                                homo_eV: mol.HOMO_eV,
-                                lumo_eV: mol.LUMO_eV,
-                                esp_min_eV: mol.ESP_min_eV,
-                                esp_max_eV: mol.ESP_max_eV,
-                                functional_groups: mol.functional_groups,
-                                predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius,
-                                predicted_fp_celsius: mol.predicted_FP_celsius,
-                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
-                                commercial_score: mol.COMMERCIAL_SCORE,
-                                commercial_link: mol.COMMERCIAL_LINK
-                            },
-                            rawData: mol
-                        };
-                    });
-                    if (select_first && formattedMolecules) {
-                        // Only store the first molecule (as a list of one) and its image
-                        const formattedMolecule = formattedMolecules[0];
-                        setsearchedMolecules([formattedMolecule]);
-                        setsearchResults([formattedMolecule.image || '']);
-                        
-                        if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
-                            formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
-                            setHighlightedMolecules([formattedMolecule]);
-                        }
-                    } else if (formattedMolecules) {
-                        // Store all molecules and their images
-                        setsearchedMolecules(formattedMolecules);
-                        setsearchResults(formattedMolecules.map((mol) => mol.image || ''));
 
-                        // Don't filter out null values for highlightedMolecules as that messes up indexing
-                        // - deckgl handles null values gracefully
-                        if (formattedMolecules.length > 0) {
-                            setHighlightedMolecules(formattedMolecules);
-                        }
+            // Normalize to an array of result envelopes
+            const envelopes: any[] = Array.isArray(data) ? data : [data];
+
+            // If any envelope reports ambiguity, capture it
+            const ambiguousEnv = envelopes.find((env) => env && env.message === 'Ambiguous molecule abbreviation');
+            if (ambiguousEnv) {
+                ambiguity = ambiguousEnv.options ?? null;
+            }
+
+            // Collect all molecule_details from all successful envelopes
+            const allDetails: any[] = envelopes
+                .filter((env) => env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0)
+                .flatMap((env) => env.molecule_details);
+
+            if (allDetails.length > 0) {
+                const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
+                    smiles: mol.SMILES,
+                    x: mol.UMAP_0,
+                    y: mol.UMAP_1,
+                    image: mol.image,
+                    grade: mol.grade,
+                    reasoning: mol.reasoning,
+                    properties: {
+                        molwt: mol.molecular_weight,
+                        homo_eV: mol.HOMO_eV,
+                        lumo_eV: mol.LUMO_eV,
+                        esp_min_eV: mol.ESP_min_eV,
+                        esp_max_eV: mol.ESP_max_eV,
+                        functional_groups: mol.functional_groups,
+                        predicted_mp: mol.predicted_MP_celsius,
+                        predicted_bp: mol.predicted_BP_celsius,
+                        predicted_fp_celsius: mol.predicted_FP_celsius,
+                        combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: mol.COMMERCIAL_SCORE,
+                        commercial_link: mol.COMMERCIAL_LINK,
+                    },
+                    rawData: mol,
+                }));
+
+                if (select_first) {
+                    const first = mapped[0];
+                    setsearchedMolecules([first]);
+                    setsearchResults([first.image || '']);
+                    if (
+                        first.x !== null &&
+                        first.y !== null &&
+                        first.x !== undefined &&
+                        first.y !== undefined
+                    ) {
+                        setHighlightedMolecules([first]);
+                    }
+                } else {
+                    setsearchedMolecules(mapped);
+                    setsearchResults(mapped.map((m) => m.image || ''));
+                    if (mapped.length > 0) {
+                        setHighlightedMolecules(mapped);
                     }
                 }
-            } else if (data.message === 'Ambiguous molecule abbreviation') {
-                ambiguity = data.options;
+
+                formattedMolecules = mapped;
             }
         } catch (error) {
             console.error('Error processing searched molecules:', error);
         }
+
         return { formattedMolecules, ambiguity };
     };
 
@@ -236,51 +303,58 @@ const OrganicSearch = () => {
             }
 
             if (formattedMolecules && findClosestFriends) {
-                // check if formattedMolecules has length > 1 - if so display warning
-                if (formattedMolecules.length > 1) {
-                    setSearchWarning(t('search.multipleMoleculesWarning'));
-                } else {
-                    const formattedMolecule = formattedMolecules[0];
+                // Build an array of seed SMILES from all returned molecules
+                const smilesArray = formattedMolecules
+                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                    .filter((s) => !!s);
 
-                    // Then fetch similar molecules
-                    // Prepare JSON payload for finding friends (default version, no extra params)
+                if (smilesArray.length === 0) {
+                    setSearchWarning(t('search.moleculeNotFound.title'));
+                } else {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const payload = {
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        ...(selectedMolType && { mol_type: selectedMolType })
-                    };
+                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
+                    const aVal = anode === 'custom' ? anodeCustom : anode;
+                    const sVal = salt === 'custom' ? saltCustom : salt;
+                    const svVal = solvent === 'custom' ? solventCustom : solvent;
+                    const mVal = metric === 'custom' ? metricCustom : metric;
+                    const computeEnabled = computeLevel !== 'Disabled';
+                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+
+                    let computeToSend = computeLevel;
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
+                        setSearchWarning(t('search.computeWarning'));
+                        computeToSend = 'Low';
+                        setComputeLevel('Low');
+                    }
+
+                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
+
+                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            includeQuery,
+                            queryString,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: SimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: SimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        // Create a map of molecule index to image URL
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
@@ -299,9 +373,11 @@ const OrganicSearch = () => {
     };
 
     return (
+        // SEARCH PAGE CONTENT:
         <>
-            <div 
-                className="search-umap-container" 
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+            <div
+                className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
@@ -368,45 +444,48 @@ const OrganicSearch = () => {
                         disabled={searchLoading}
                     />
 
-                    {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <div className="search-options">
-                        <label className="search-option">
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={findClosestFriends}
-                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                    />
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span>{t('search.findFriendsLabel')}</span>
-                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                        </Tooltip>
-                                    </div>
-                                    <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select>
-                                </div>
-                                <div style={{
-                                    color: '#555',
-                                    fontSize: '14px',
-                                }}>
-                                {t('search.findFriendsDescription')}
-                                </div>
-                            </div>
-                        </label>
-                    </div>
+                    <FindFriendOptions
+                        findClosestFriends={findClosestFriends}
+                        setFindClosestFriends={setFindClosestFriends}
+                        extraRequests={extraRequests}
+                        setExtraRequests={setExtraRequests}
+                        showAdvanced={showAdvanced}
+                        setShowAdvanced={setShowAdvanced}
+                        selectedMolType={selectedMolType}
+                        setSelectedMolType={setSelectedMolType}
+                        additiveSubtype={additiveSubtype}
+                        setAdditiveSubtype={setAdditiveSubtype}
+                        computeLevel={computeLevel}
+                        setComputeLevel={setComputeLevel}
+                        structureWeight={structureWeight}
+                        setStructureWeight={setStructureWeight}
+                        cathode={cathode}
+                        setCathode={setCathode}
+                        cathodeCustom={cathodeCustom}
+                        setCathodeCustom={setCathodeCustom}
+                        anode={anode}
+                        setAnode={setAnode}
+                        anodeCustom={anodeCustom}
+                        setAnodeCustom={setAnodeCustom}
+                        salt={salt}
+                        setSalt={setSalt}
+                        saltCustom={saltCustom}
+                        setSaltCustom={setSaltCustom}
+                        solvent={solvent}
+                        setSolvent={setSolvent}
+                        solventCustom={solventCustom}
+                        setSolventCustom={setSolventCustom}
+                        metric={metric}
+                        setMetric={setMetric}
+                        metricCustom={metricCustom}
+                        setMetricCustom={setMetricCustom}
+                        cathodeOptions={cathodeOptions}
+                        anodeOptions={anodeOptions}
+                        saltOptions={saltOptions}
+                        solventOptions={solventOptions}
+                        performanceOptions={performanceOptions}
+                        userPermissions={userPermissions}
+                    />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -441,13 +520,14 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
+                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
                                                     },
                                                     {
@@ -533,6 +613,7 @@ const OrganicSearch = () => {
                                                 large={true}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                         show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
@@ -652,8 +733,7 @@ const OrganicSearch = () => {
                 </div>
             </div>
             <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
-        </>
-    );
+        </>)
 };
 
 export default OrganicSearch;

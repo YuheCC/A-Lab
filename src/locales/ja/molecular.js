@@ -30,8 +30,16 @@ export default {
     types: {
       all: "すべてのタイプ",
       solvent: "溶媒",
+      cosolvent: "共溶媒",
       diluent: "希釈剤",
       additive: "添加剤"
+    },
+    additiveSubtypes: {
+      title: "添加剤サブカテゴリ",
+      seiPromoter: "SEI促進剤",
+      sideReactionSuppressor: "副反応抑制剤",
+      dendriteSuppressor: "デンドライト抑制剤",
+      interfacialStabilityImprover: "界面安定性向上剤"
     },
     properties: {
       predictedFp: "予測引火点",

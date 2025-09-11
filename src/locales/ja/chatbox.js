@@ -85,6 +85,7 @@ export default {
         reachedLimit: "月間クエリ上限に達しました。サポートが必要な場合は管理者に連絡してください。"
     },
     status: {
+        connectingToServer: "サーバーに接続しています...",
         thinking: "考え中",
         searching: "検索中",
         searchingDatabase: "データベースを検索中",

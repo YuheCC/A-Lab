@@ -87,6 +87,7 @@ export default {
         reachedLimit: "您已达到本月查询限制。请联系管理员寻求帮助。"
     },
     status: {
+        connectingToServer: "连接到服务器...",
         thinking: "思考中",
         searching: "搜索中",
         searchingDatabase: "搜索我们的数据库",

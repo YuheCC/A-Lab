@@ -14,8 +14,30 @@ export default {
     
     // Search Options
     findFriendsLabel: '"友達"を検索',
-    findFriendsDescription: '類似の物理化学的特性を持つ分子。"友達"は意図的に類似構造の分子と多様な構造の分子の両方を含みます。リストは物理化学的特性がクエリ分子とどれだけ類似しているかでソートされます。',
+    findFriendsDescription: '類似の物理化学的特性を持つ分子。"友達"には、意図的に類似した構造を持つ分子と多様な構造を持つ分子の両方が含まれています。リストは、クエリ分子との物理化学的特性の類似度順にソートされています。',
     
+    searchRange: '検索範囲',
+    nearbyFriends: '近くの友達',
+    distantFriends: '遠くの友達',
+    advancedOptions: '詳細オプション',
+    intelligentCompute: 'インテリジェント友達検索計算',
+    computeDisabled: '無効',
+    computeLow: '低',
+    computeMedium: '中',
+    computeHigh: '高',
+    computeExtreme: '極限',
+    cathode: 'カソード',
+    anode: 'アノード',
+    salt: '塩',
+    solvent: '主要溶媒',
+    performanceMetric: '望ましい性能指標',
+    extraRequests: 'カスタム分子制約（最良の結果のため、インテリジェント友達探しを有効化してください）：',
+    extraRequestsPlaceholder: 'エーテル官能基を持つ分子のみを表示する。',
+    custom: 'カスタム',
+    upgradeEnterprise: 'エンタープライズアカウントにアップグレード',
+    upgradeAccount: 'アカウントをアップグレード',
+    computeWarning: 'インテリジェント友達検索の高性能には追加のコンテキストが必要です。計算能力は低に設定されました。',
+
     // Loading and Status Messages
     searching: "検索中...",
     loadingMap: "分子宇宙の地図を読み込み中",
@@ -52,8 +74,16 @@ export default {
     moleculeTypes: {
         selectMolType: "分子タイプ",
         solvent: "溶媒",
+        cosolvent: "共溶媒",
         diluent: "希釈剤",
-        additive: "添加剤"
+        additive: "添加剤",
+        additiveSubtype: "添加剤サブカテゴリ",
+        additiveOptions: {
+            seiPromoter: "SEI促進剤",
+            sideReactionSuppressor: "副反応抑制剤",
+            dendriteSuppressor: "デンドライト抑制剤",
+            interfacialStabilityImprover: "界面安定性向上剤"
+        }
     },
     
     // Buttons and Actions
