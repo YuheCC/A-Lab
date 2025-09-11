@@ -49,8 +49,9 @@ const ChatWelcome: React.FC = () => {
             ragEnabled: !disableLiterature,
             patentRagEnabled: enablePatentRag,
             toolsEnabled: !disableTools,
+            originalMode: currentMode,
         };
-        if (currentMode === 'deep-space') {
+        if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
             extraPayload.dump_state = !!fullDeepSpace;
         }
         const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
@@ -63,9 +64,13 @@ const ChatWelcome: React.FC = () => {
             clarify: 'high'
         };
         extraPayload.llmComputePower = powerMap[currentMode];
+        const modeToSend: ChatMode =
+            currentMode === 'deep-space' || currentMode === 'fast-deep-space'
+                ? 'clarify'
+                : currentMode;
         handleSendMessage(
             inputValue.trim(),
-            currentMode as ChatMode,
+            modeToSend,
             undefined,
             extraPayload
         );
@@ -149,6 +154,7 @@ const ChatWelcome: React.FC = () => {
                 ragEnabled: !disableLiterature,
                 patentRagEnabled: enablePatentRag,
                 toolsEnabled: !disableTools,
+                originalMode: currentMode,
             };
             if (currentMode === 'deep-space') {
                 extraPayload.dump_state = !!fullDeepSpace;
@@ -163,7 +169,11 @@ const ChatWelcome: React.FC = () => {
                 clarify: 'high'
             };
             extraPayload.llmComputePower = powerMap[currentMode];
-            handleSendMessage(question, currentMode, undefined, extraPayload);
+            const modeToSend: ChatMode =
+                currentMode === 'deep-space' || currentMode === 'fast-deep-space'
+                    ? 'clarify'
+                    : currentMode;
+            handleSendMessage(question, modeToSend, undefined, extraPayload);
         }
     }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace, handleSendMessage]);
 
@@ -288,7 +298,7 @@ const ChatWelcome: React.FC = () => {
                           type="checkbox"
                           checked={fullDeepSpace}
                           onChange={(e) => setFullDeepSpace(e.target.checked)}
-                          disabled={currentMode !== 'deep-space'}
+                          disabled={!['fast-deep-space', 'deep-space'].includes(currentMode)}
                         />
                         Full Deep Space
                       </label>
