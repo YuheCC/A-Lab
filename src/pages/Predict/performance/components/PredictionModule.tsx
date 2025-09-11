@@ -61,6 +61,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [analysisContent, setAnalysisContent] = useState<string>('');
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | undefined>();
+  const [hasAnalysisResult, setHasAnalysisResult] = useState(false);
 
   // 从选中的电池系统中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
@@ -186,6 +187,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           // 检查是否完成
           if (eventData?.finished === true || eventData?.complete === true || eventData?.done === true) {
             setIsAnalyzing(false);
+            setHasAnalysisResult(true);
             console.log('LLM分析完成 (数组格式)');
           }
           return;
@@ -210,6 +212,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 
                 // 只要收到对应 history_id 的消息就标记分析完成
                 setIsAnalyzing(false);
+                setHasAnalysisResult(true);
                 console.log('LLM分析完成 (对象格式)，history_id:', parsedData.history_id);
               } else {
                 console.log('收到的消息 history_id 不匹配当前预测结果，忽略:', {
@@ -345,6 +348,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setIsCalculating(true);
     setCalculationError(null);
     setPredictionResults(null);
+    // 重置LLM分析状态，因为要进行新的计算
+    setHasAnalysisResult(false);
+    setAnalysisContent('');
+    setIsAnalyzing(false);
 
     try {
       const response = await predictPerformance({
@@ -399,6 +406,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setIsAnalyzing(true);
     setAnalysisError(null);
     setAnalysisContent('');
+    setHasAnalysisResult(false);
 
     try {
       const currentLang = getCurrentLanguage();
@@ -419,6 +427,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       console.error('LLM分析请求失败:', error);
       setAnalysisError(t('performance.ui.analysisFailed'));
       setIsAnalyzing(false);
+      setHasAnalysisResult(false);
     }
   };
 
@@ -535,6 +544,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setIsAnalyzing(false);
     setAnalysisContent('');
     setAnalysisError(null);
+    setHasAnalysisResult(false);
     
     // Reset to first battery system if available
     if (batterySystemOptions.length > 0) {
@@ -648,6 +658,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 if (!trimmedValue) {
                   setLastQueriedSmiles(null);
                 }
+              }
+              
+              // 分子式输入变化时，重置计算结果和LLM分析状态
+              if (predictionResults && trimmedValue !== lastQueriedSmiles) {
+                setShowResults(false);
+                setPredictionResults(null);
+                setHasAnalysisResult(false);
+                setAnalysisContent('');
+                setIsAnalyzing(false);
               }
             }}
             onBlur={handleSmilesBlur}
@@ -801,9 +820,9 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         <button 
           className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
           onClick={handleCalculate}
-          disabled={isCalculating || isInvalidSmiles}
+          disabled={isCalculating || isInvalidSmiles || showResults}
         >
-          {isCalculating ? t('performance.ui.calculating') : (showResults ? t('performance.calculate.calculated') : t('performance.calculate.button'))}
+          {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
         </button>
 
         {calculationError && (
@@ -889,9 +908,9 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
               <div className="llm-button-section">
                 <button 
-                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''}`}
+                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
                   onClick={handleLLMAnalysis}
-                  disabled={isAnalyzing || !predictionResults}
+                  disabled={isAnalyzing || !predictionResults || hasAnalysisResult}
                 >
                   {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
                 </button>

@@ -99,6 +99,7 @@ export default {
   // LLM Analysis
   llmAnalysis: {
     button: "LLM 분석",
+    analyzed: "분석됨",
     title: "LLM 분석",
     sections: {
       nickelOptimization: "1. 니켈 탈수소 최적화",

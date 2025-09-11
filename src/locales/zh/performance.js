@@ -99,6 +99,7 @@ export default {
   // LLM Analysis
   llmAnalysis: {
     button: "LLM 分析",
+    analyzed: "已分析",
     title: "LLM 分析",
     sections: {
       nickelOptimization: "1. 镍脱氢优化",

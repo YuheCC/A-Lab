@@ -99,6 +99,7 @@ export default {
   // LLM Analysis
   llmAnalysis: {
     button: "LLM Analysis",
+    analyzed: "Analyzed",
     title: "LLM Analysis",
     sections: {
       nickelOptimization: "1. Nickel Dehydrogenation Optimization",

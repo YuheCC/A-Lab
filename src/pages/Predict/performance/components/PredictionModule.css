@@ -132,8 +132,9 @@
   color: #9ca3af;
 }
 
+/* 计算按钮基础样式 */
 .calculate-btn {
-  background: #6b7280;
+  background: #1f2937;
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -141,22 +142,50 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
   display: block;
   margin: 0 auto;
+  position: relative;
 }
 
-.calculate-btn:hover {
-  background: #5b6470;
+/* 正常状态可点击 */
+.calculate-btn:hover:not(:disabled) {
+  background: #111827;
 }
 
-.calculate-btn:active {
-  background: #4b5462;
+.calculate-btn:active:not(:disabled) {
+  background: #0f172a;
 }
 
-.calculate-btn.calculated {
+/* Loading状态 */
+.calculate-btn.calculating {
+  background: #1f2937;
+  cursor: not-allowed;
+  color: #ffffff;
+}
+
+.calculate-btn.calculating::after {
+  content: '...';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: dots 1.5s linear infinite;
+}
+
+/* 置灰状态（已计算） */
+.calculate-btn.calculated,
+.calculate-btn.disabled,
+.calculate-btn:disabled {
   background: #6b7280;
-  cursor: default;
+  cursor: not-allowed;
+  color: #ffffff;
+}
+
+@keyframes dots {
+  0%, 20% { opacity: 0; }
+  40% { opacity: 1; }
+  60%, 100% { opacity: 0; }
 }
 
 .results-section {
@@ -324,6 +353,7 @@
   margin-top: 24px;
 }
 
+/* LLM分析按钮基础样式 */
 .llm-analysis-btn {
   background: #1f2937;
   color: #ffffff;
@@ -333,11 +363,41 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
+  position: relative;
 }
 
-.llm-analysis-btn:hover {
+/* 正常状态可点击 */
+.llm-analysis-btn:hover:not(:disabled) {
   background: #111827;
+}
+
+.llm-analysis-btn:active:not(:disabled) {
+  background: #0f172a;
+}
+
+/* Loading状态 */
+.llm-analysis-btn.analyzing {
+  background: #1f2937;
+  cursor: not-allowed;
+  color: #ffffff;
+}
+
+.llm-analysis-btn.analyzing::after {
+  content: '...';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: dots 1.5s linear infinite;
+}
+
+/* 置灰状态（已分析、禁用） */
+.llm-analysis-btn.analyzed,
+.llm-analysis-btn:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+  color: #ffffff;
 }
 
 .llm-analysis-section {
