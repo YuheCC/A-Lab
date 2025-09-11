@@ -156,7 +156,7 @@ const ChatWelcome: React.FC = () => {
                 toolsEnabled: !disableTools,
                 originalMode: currentMode,
             };
-            if (currentMode === 'deep-space') {
+            if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
                 extraPayload.dump_state = !!fullDeepSpace;
             }
             const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
