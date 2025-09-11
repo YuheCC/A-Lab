@@ -45,6 +45,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [moleculeError, setMoleculeError] = useState<string | null>(null);
   const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
   const [lastQueriedSmiles, setLastQueriedSmiles] = useState<string | null>(null);
+  const [isInvalidSmiles, setIsInvalidSmiles] = useState(false);
   
   // 新增状态：电池系统相关
   const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
@@ -272,18 +273,20 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     if (!trimmedAdditive) {
       setMoleculeDetails(null);
       setMoleculeError(null);
+      setIsInvalidSmiles(false);
       setLastQueriedSmiles(null);
       return;
     }
 
     // 如果分子式没有变化，且已经有查询结果（无论成功或失败），则不重新查询
-    if (trimmedAdditive === lastQueriedSmiles && (moleculeDetails || moleculeError)) {
+    if (trimmedAdditive === lastQueriedSmiles && (moleculeDetails || moleculeError || isInvalidSmiles)) {
       return;
     }
 
     setIsMoleculeLoading(true);
     setMoleculeError(null);
     setMoleculeDetails(null);
+    setIsInvalidSmiles(false);
 
     try {
       const details = await moleculeService.getMoleculeDetails(trimmedAdditive, userPermissions || undefined);
@@ -291,8 +294,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       // 检查是否是实际的分子数据还是mock数据
       if (details && details.properties.smiles && 
           details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
-        // 这是默认的mock数据，表示没有找到
-        setMoleculeError(t('performance.smilesNotFound.description'));
+        // 这是默认的mock数据，表示没有找到，但不显示错误信息
+        // 什么都不做，让分子信息区域保持隐藏
       } else {
         // 有效的分子数据
         setMoleculeDetails(details);
@@ -302,8 +305,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       setLastQueriedSmiles(trimmedAdditive);
     } catch (error) {
       console.error('获取分子详情失败:', error);
-      setMoleculeError(t('performance.smilesNotFound.description'));
-      // 即使查询失败，也记录已查询的分子式
+      
+      // 检查是否为无效的 SMILES 错误
+      if (error instanceof Error && error.message === 'Invalid SMILES string') {
+        setIsInvalidSmiles(true);
+      }
+      // 其他错误（如未找到分子）不显示任何错误信息
+      
+      // 记录已查询的分子式
       setLastQueriedSmiles(trimmedAdditive);
     } finally {
       setIsMoleculeLoading(false);
@@ -313,6 +322,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const handleCalculate = async () => {
     if (!additive.trim()) {
       alert(t('performance.additive.placeholder'));
+      return;
+    }
+    
+    // 检查是否为无效的 SMILES
+    if (isInvalidSmiles) {
+      alert('请输入有效的 SMILES 分子式');
       return;
     }
     
@@ -509,6 +524,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setMoleculeError(null);
     setIsMoleculeLoading(false);
     setLastQueriedSmiles(null);
+    setIsInvalidSmiles(false);
     
     // Clear calculation states
     setIsCalculating(false);
@@ -628,6 +644,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
                 setMoleculeDetails(null);
                 setMoleculeError(null);
+                setIsInvalidSmiles(false);
                 if (!trimmedValue) {
                   setLastQueriedSmiles(null);
                 }
@@ -767,39 +784,24 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
           )}
 
-          {moleculeError && (
-            <div className="smiles-not-found">
-              <div className="error-header">
-                <h3>{t('performance.smilesNotFound.title')}</h3>
-                <button 
-                  className="molecule-close-btn"
-                  onClick={() => setMoleculeError(null)}
-                >
-                  ×
-                </button>
+          {isInvalidSmiles && (
+            <div className="molecule-information">
+              <div className="molecule-header">
+                <h3>Invalid SMILES Format</h3>
               </div>
               
-              <div className="error-content">
-                <p>{t('performance.smilesNotFound.description')}</p>
-                <p>{t('performance.smilesNotFound.suggestion')}</p>
-                
-                <div className="example-smiles">
-                  <div className="example-item">
-                    <strong>O=c1occo1</strong> - {t('performance.smilesNotFound.examples.ec')}
-                  </div>
-                  <div className="example-item">
-                    <strong>H2O</strong> - {t('performance.smilesNotFound.examples.water')}
-                  </div>
-                </div>
+              <div className="molecule-content">
+                <p>The input does not appear to be a valid SMILES molecular formula.</p>
+                <p>Please enter a valid SMILES string.</p>
               </div>
             </div>
           )}
         </div>
 
         <button 
-          className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
+          className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
           onClick={handleCalculate}
-          disabled={isCalculating}
+          disabled={isCalculating || isInvalidSmiles}
         >
           {isCalculating ? t('performance.ui.calculating') : (showResults ? t('performance.calculate.calculated') : t('performance.calculate.button'))}
         </button>
