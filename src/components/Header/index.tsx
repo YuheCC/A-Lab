@@ -31,6 +31,7 @@ const Header = () => {
 
     // 检查是否为common用户
     const isCommonUser = permissions === 'common';
+    const isEducationalUser = permissions === 'research';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -53,11 +54,9 @@ const Header = () => {
 
     // 处理受限链接点击，弹出升级确认框
     const handleRestrictedClick = (e: React.MouseEvent) => {
-        if (isCommonUser) {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowUpgradeModal(true);
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        setShowUpgradeModal(true);
     };
 
     // 处理升级确认
@@ -72,12 +71,12 @@ const Header = () => {
     };
 
     // 渲染导航链接
-    const renderNavLink = (to: string, text: string, isActive: boolean) => {
-        if (isCommonUser) {
+    const renderNavLink = (to: string, text: string, isActive: boolean, isDisabled: boolean = false) => {
+        if (isDisabled) {
             return (
                 <NavLink 
                     to={to} 
-                    className={`nav-item ${isActive ? 'active' : ''}`}
+                    className={`nav-item ${isActive ? 'active' : ''} disabled`}
                     onClick={handleRestrictedClick}
                     style={{ display: 'inline-block' }}
                 >
@@ -96,6 +95,30 @@ const Header = () => {
         );
     };
 
+    // 渲染下拉菜单项
+    const renderDropdownItem = (to: string, text: string, isActive: boolean, isDisabled: boolean = false) => {
+        if (isDisabled) {
+            return (
+                <NavLink 
+                    to={to} 
+                    className={`dropdown-item ${isActive ? 'active' : ''} disabled`}
+                    onClick={handleRestrictedClick}
+                >
+                    {text}
+                </NavLink>
+            );
+        }
+
+        return (
+            <NavLink 
+                to={to} 
+                className={`dropdown-item ${isActive ? 'active' : ''}`}
+            >
+                {text}
+            </NavLink>
+        );
+    };
+
     return (
             <header className="main-header">
             <div className="logo-container">
@@ -108,30 +131,15 @@ const Header = () => {
                 >
                     {t('navigation.header.map')}
                 </NavLink>
-                {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask')}
-                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search')}
-                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')}
-                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')}
-                <div className="nav-dropdown-container">
-                    <NavLink 
-                        to="/predict/performance" 
-                        className={`nav-item ${pathname.startsWith('/predict') ? 'active' : ''}`}
-                    >
-                        {t('navigation.header.predict')}
-                    </NavLink>
+                {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
+                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
+                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)}
+                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)}
+                <div className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''}`}>
+                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
                     <div className="nav-dropdown">
-                        <NavLink 
-                            to="/predict/performance" 
-                            className={`dropdown-item ${isPathActive('/predict/performance') ? 'active' : ''}`}
-                        >
-                            {t('navigation.header.predictPerformance')}
-                        </NavLink>
-                        {/* <NavLink 
-                            to="/predict/prediction-tool" 
-                            className={`dropdown-item ${isPathActive('/predict/prediction-tool') ? 'active' : ''}`}
-                        >
-                            {t('navigation.header.predictionTool')}
-                        </NavLink> */}
+                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
+                        {/* {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)} */}
                     </div>
                 </div>
             </nav>

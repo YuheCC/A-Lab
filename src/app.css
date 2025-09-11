@@ -202,6 +202,10 @@
     transform: translateX(-15%) translateY(5px);
   }
   
+  .nav-dropdown-container.disabled:hover .nav-dropdown {
+    display: none !important;
+  }
+  
   .nav-dropdown .dropdown-item {
     display: block;
     padding: 14px 16px;
@@ -230,6 +234,18 @@
     color: #059669;
     font-weight: 500;
     border-color: #d1fae5;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled {
+    color: #9ca3af !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled:hover {
+    background-color: transparent !important;
+    border-color: transparent !important;
   }
   
   .nav-dropdown .dropdown-item:first-child {
