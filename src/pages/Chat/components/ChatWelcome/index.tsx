@@ -51,7 +51,7 @@ const ChatWelcome: React.FC = () => {
             toolsEnabled: !disableTools,
             originalMode: currentMode,
         };
-        if (currentMode === 'deep-space') {
+        if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
             extraPayload.dump_state = !!fullDeepSpace;
         }
         const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
@@ -298,7 +298,7 @@ const ChatWelcome: React.FC = () => {
                           type="checkbox"
                           checked={fullDeepSpace}
                           onChange={(e) => setFullDeepSpace(e.target.checked)}
-                          disabled={currentMode !== 'deep-space'}
+                          disabled={!['fast-deep-space', 'deep-space'].includes(currentMode)}
                         />
                         Full Deep Space
                       </label>
