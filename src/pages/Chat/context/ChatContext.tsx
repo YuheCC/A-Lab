@@ -497,7 +497,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
         addUserMessage(userMsg);
-        
+
+        const originalMode = extra?.originalMode as ChatMode | undefined;
+
         // 从extra参数中提取管理员开关参数
         const extraOptions = extra ? {
             ragEnabled: extra.ragEnabled,
@@ -508,7 +510,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             llmComputePower: extra.llmComputePower,
             numRagResults: ragResultsCount
         } : { numRagResults: ragResultsCount, llmComputePower: extra?.llmComputePower };
-        
+
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
@@ -517,11 +519,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
             const newChatId = await createNewChat(message, mode, extraOptions);
             if (newChatId) {
-                const urlMode = mode === "clarify" ? "deep-space" : mode;
+                const urlMode = originalMode || (mode === "clarify" ? "deep-space" : mode);
                 navigate(`/ask/${newChatId}?mode=${urlMode}`);
             }
         }
-    }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
+    }, [addUserMessage, createNewMessage, messages, createNewChat, navigate, ragResultsCount]);
 
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);
