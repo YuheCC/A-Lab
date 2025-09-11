@@ -89,7 +89,7 @@ const ChatInput: FC<ChatInputProps> = ({
         patentRagEnabled: enablePatentRag,
         toolsEnabled: !disableTools,
       };
-      if (currentMode === 'deep-space') {
+      if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
         extraPayload.dump_state = !!fullDeepSpace;
       }
       const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
@@ -103,7 +103,7 @@ const ChatInput: FC<ChatInputProps> = ({
       };
       extraPayload.llmComputePower = powerMap[currentMode];
       let mode: ChatMode = currentMode;
-      // 如果是deep-space模式且有消息历史，默认使用clarify模式
+      // 如果是deep-space或fast-deep-space模式且有消息历史，默认使用clarify模式
       if((currentMode === 'deep-space' || currentMode === 'fast-deep-space') && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
         mode = 'clarify';
       }
@@ -269,7 +269,7 @@ const ChatInput: FC<ChatInputProps> = ({
                 type="checkbox"
                 checked={fullDeepSpace}
                 onChange={(e) => setFullDeepSpace(e.target.checked)}
-                disabled={disabled || currentMode !== 'deep-space'}
+                disabled={disabled || !['fast-deep-space', 'deep-space'].includes(currentMode)}
               />
               <span>{t('chatbox.checkboxes.fullDeepSpace')}</span>
             </label>
