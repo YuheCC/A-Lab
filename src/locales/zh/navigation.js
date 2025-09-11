@@ -49,7 +49,8 @@ export default {
     title: "升级套餐",
     message: "是否升级套餐以使用更多功能？",
     confirm: "确认",
-    cancel: "取消"
+    cancel: "取消",
+    upgradeViewTitle: "升级套餐查看"
   },
   
   // Action buttons

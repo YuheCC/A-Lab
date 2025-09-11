@@ -49,7 +49,8 @@ export default {
     title: "Upgrade Plan",
     message: "Would you like to upgrade your plan to unlock more features?",
     confirm: "Confirm",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    upgradeViewTitle: "Upgrade Plan To View"
   },
   
   // Action buttons

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
@@ -39,6 +39,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
   const [showLLMAnalysis, setShowLLMAnalysis] = useState(false);
+
+  // 权限判断
+  const isHighTier = useMemo(() => {
+    return ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
+  }, [userPermissions]);
+
   
   // 新增状态：分子详情相关
   const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
@@ -863,7 +869,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     </div>
                   </div>
 
-                  <div className="result-item">
+                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ce25')}</div>
                     {renderResultBadge(resultsData['25c'].ce)}
                     <div className="result-confidence">
@@ -872,7 +878,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     </div>
                   </div>
 
-                  <div className="result-item">
+                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
                     {renderResultBadge(resultsData['25c'].ratePerformance)}
                     <div className="result-confidence">
@@ -885,7 +891,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
               {activeTab === '45c' && (
                 <div className="performance-results">
-                  <div className="result-item">
+                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
                     {renderResultBadge(resultsData['45c'].cycleLife)}
                     <div className="result-confidence">
@@ -894,7 +900,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     </div>
                   </div>
 
-                  <div className="result-item">
+                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ce45')}</div>
                     {renderResultBadge(resultsData['45c'].ce)}
                     <div className="result-confidence">
@@ -910,7 +916,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <button 
                   className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
                   onClick={handleLLMAnalysis}
-                  disabled={isAnalyzing || !predictionResults || hasAnalysisResult}
+                  disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
                 >
                   {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
                 </button>

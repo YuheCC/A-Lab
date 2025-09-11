@@ -49,7 +49,8 @@ export default {
     title: "プランのアップグレード",
     message: "より多くの機能を利用するためにプランをアップグレードしますか？",
     confirm: "確認",
-    cancel: "キャンセル"
+    cancel: "キャンセル",
+    upgradeViewTitle: "プランのアップグレード 表示"
   },
 
   // Action buttons

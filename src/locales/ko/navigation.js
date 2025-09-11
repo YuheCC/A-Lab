@@ -49,7 +49,8 @@ export default {
     title: "플랜 업그레이드",
     message: "더 많은 기능을 사용하려면 플랜을 업그레이드하시겠습니까?",
     confirm: "확인",
-    cancel: "취소"
+    cancel: "취소",
+    upgradeViewTitle: "플랜 업그레이드 보기"
   },
   
   // Action buttons
