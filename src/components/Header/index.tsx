@@ -139,7 +139,7 @@ const Header = () => {
                     {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
                     <div className="nav-dropdown">
                         {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
-                        {/* {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)} */}
+                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
                     </div>
                 </div>
             </nav>
