@@ -5,9 +5,10 @@ import { predict, type HistoryDetailResponse } from '@/services/prediction/predi
 interface StepContentProps {
   activeStep: number;
   onStepChange?: (step: number) => void;
+  onPredictionComplete?: () => void;
 }
 
-const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange }) => {
+const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete }) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -69,6 +70,11 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange }) =
       setPredictionResult(result);
       setIsProcessing(false);
       
+      // 刷新历史记录
+      if (onPredictionComplete) {
+        onPredictionComplete();
+      }
+      
       // 自动跳转到结果页面
       setTimeout(() => {
         if (onStepChange) {
@@ -100,22 +106,52 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange }) =
         }
         
         return (
-          <div className="upload-area">
-            <h4 className="upload-title">点击上传电池数据文件</h4>
-            <p className="upload-subtitle">
-              请按
-              <a href="#" className="upload-link">样例数据</a>
-            </p>
-            <label className="select-file-btn" htmlFor="file-upload">
-              选择文件
-              <input
-                id="file-upload"
-                type="file"
-                accept=".csv,.xlsx,.xls"
-                onChange={handleFileUpload}
-                style={{ display: 'none' }}
-              />
-            </label>
+          <div className="upload-step-container">
+            <div className="upload-area">
+              <h4 className="upload-title">点击上传电池数据文件</h4>
+              <p className="upload-subtitle">
+              </p>
+              <label className="select-file-btn" htmlFor="file-upload">
+                选择文件
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </div>
+            
+            {/* 数据格式要求提示 - 放置在upload区域外部下方靠左 */}
+            <div className="data-format-tip">
+              <div className="tip-header">
+                <span className="tip-title">📋 数据格式要求</span>
+                <span className="tip-sample-link">样例数据</span>
+              </div>
+              
+              <div className="tip-content">
+                <div className="tip-row">
+                  <span className="tip-label">必需字段：</span>
+                  <span className="tip-value">barcode, cycle_id, current (A), voltage (V), time (s)</span>
+                </div>
+                
+                <div className="tip-row">
+                  <span className="tip-label">电流方向：</span>
+                  <span className="tip-value">+为充电，-为放电</span>
+                </div>
+                
+                <div className="tip-row">
+                  <span className="tip-label">单位要求：</span>
+                  <span className="tip-value">电流单位A，电压单位V，时间单位s</span>
+                </div>
+                
+                <div className="tip-row">
+                  <span className="tip-label">数据要求：</span>
+                  <span className="tip-value">上传数据≥100图，数据需按时间顺序排列</span>
+                </div>
+              </div>
+            </div>
           </div>
         );
       

@@ -175,6 +175,82 @@
   background: #334155;
 }
 
+/* Upload step container */
+.upload-step-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Data format tip styles */
+.data-format-tip {
+  margin-top: 24px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left;
+  max-width: 600px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-sample-link {
+  color: #3b82f6;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.tip-sample-link:hover {
+  color: #2563eb;
+}
+
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tip-label {
+  color: #64748b;
+  font-weight: 500;
+  min-width: 64px;
+  flex-shrink: 0;
+}
+
+.tip-value {
+  color: #374151;
+  font-weight: 400;
+}
+
 
 /* Loading animation */
 .loading-icon {

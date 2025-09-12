@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Activity, BarChart3 } from 'lucide-react';
 import StepContent from './components/StepContent';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPredictionCard } from './components/PredictionCardRenderer';
 import HistoryModal from './components/HistoryModal';
+import { getHistoryList, deleteHistory, type PredictResponse } from '@/services/prediction/predictionTool';
 import './PredictionTool.css';
 
 interface FileRecord {
@@ -14,34 +15,59 @@ interface FileRecord {
   avgCirculation: string;
 }
 
-const mockFiles: FileRecord[] = [
-  {
-    id: '1',
-    name: 'Battery_NCM811_Cycle_Data.csv',
-    date: '2024/8/5 16:30:38',
-    batteryCount: 5,
-    avgCirculation: '285次'
-  },
-  {
-    id: '2',
-    name: 'LiFePO4_Degradation_Test.csv',
-    date: '2024/8/5 15:45:22',
-    batteryCount: 3,
-    avgCirculation: '312次'
-  },
-  {
-    id: '3',
-    name: 'Battery_Thermal_Cycling.csv',
-    date: '2024/8/5 14:12:15',
-    batteryCount: 8,
-    avgCirculation: '267次'
-  }
-];
+// Mock数据已移除，使用真实API数据
 
 const PredictionTool: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [historyData, setHistoryData] = useState<FileRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 将API数据转换为FileRecord格式
+  const transformApiDataToFileRecord = (apiData: PredictResponse): FileRecord => {
+    const avgCycleLife1 = apiData.avg_cycle_life_1 || 0;
+    const avgCycleLife2 = apiData.avg_cycle_life_2 || 0;
+    const avgCycleLife = avgCycleLife1 > 0 ? avgCycleLife1 : avgCycleLife2;
+
+    return {
+      id: apiData.id.toString(),
+      name: apiData.file_name,
+      date: new Date(apiData.created_at).toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }),
+      batteryCount: apiData.barcode_count,
+      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}次` : '未知'
+    };
+  };
+
+  // 加载历史记录
+  const loadHistoryData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await getHistoryList({ page: 1, page_size: 20 });
+      const transformedData = response.data.map(transformApiDataToFileRecord);
+      setHistoryData(transformedData);
+    } catch (err: any) {
+      setError(err.message || '加载历史记录失败');
+      console.error('Load history error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 组件加载时获取历史记录
+  useEffect(() => {
+    loadHistoryData();
+  }, []);
 
   const steps = [
     { 
@@ -76,8 +102,19 @@ const PredictionTool: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDeleteFile = (fileId: string) => {
-    console.log('Delete file:', fileId);
+  const handleDeleteFile = async (fileId: string) => {
+    try {
+      setLoading(true);
+      await deleteHistory({ id: parseInt(fileId) });
+      
+      // 删除成功后，重新加载历史记录
+      await loadHistoryData();
+    } catch (err: any) {
+      setError(err.message || '删除失败');
+      console.error('Delete file error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -120,14 +157,30 @@ const PredictionTool: React.FC = () => {
             })}
           </div>
           
-          <StepContent activeStep={currentStep} onStepChange={setCurrentStep} />
+          <StepContent 
+            activeStep={currentStep} 
+            onStepChange={setCurrentStep}
+            onPredictionComplete={loadHistoryData}
+          />
         </div>
 
         {/* Right - History Area */}
         <div className="history-area">
+          {error && (
+            <div style={{
+              color: '#e53e3e',
+              backgroundColor: '#fed7d7',
+              padding: '12px',
+              borderRadius: '6px',
+              margin: '16px 0',
+              fontSize: '14px'
+            }}>
+              {error}
+            </div>
+          )}
           <UniversalHistoryModule
             title="预测记录"
-            data={mockFiles}
+            data={historyData}
             cardRenderer={renderPredictionCard}
             onNewPrediction={handleNewPrediction}
             onViewDetails={handleViewDetails}
@@ -137,6 +190,16 @@ const PredictionTool: React.FC = () => {
               smilesSearchPlaceholder: "Search by file name..."
             }}
           />
+          {loading && (
+            <div style={{
+              textAlign: 'center',
+              padding: '20px',
+              fontSize: '14px',
+              color: '#666'
+            }}>
+              加载中...
+            </div>
+          )}
         </div>
       </div>
 
