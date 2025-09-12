@@ -68,8 +68,8 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 {/* Mini模式下的新聊天按钮 */}
                 <a href="#" className="mini-new-chat-btn" id="miniNewChatBtn" title={t('chatbox.chat.newChat')} onClick={(e) => { e.preventDefault(); (onNewChat || ctx.handleNewChat)(); }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/>
-                    <rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/>
+                    <rect x="7" y="3" width="2" height="10" rx="1" fill="currentColor"/>
+                    <rect x="3" y="7" width="10" height="2" rx="1" fill="currentColor"/>
                 </svg>
                 </a>
                 {/* Mini模式下的搜索按钮 */}
@@ -83,7 +83,7 @@ const ChatSider: React.FC<ChatSiderProps> = ({
                 )}
                 <div className="sidebar-actions">
                 <a href="#" className="new-chat-btn" id="mainNewChatBtn" onClick={(e) => { e.preventDefault(); (onNewChat || ctx.handleNewChat)(); }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/><rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="10" rx="1" fill="currentColor"/><rect x="3" y="7" width="10" height="2" rx="1" fill="currentColor"/></svg>
                     <span>{t('chatbox.chat.newChat')}</span>
                 </a>
                 {!isBlacklisted && (
