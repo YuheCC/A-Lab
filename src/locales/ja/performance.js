@@ -19,9 +19,9 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剤 (SMILES)",
+    label: "添加剤 (SMILES) (1.9wt%)",
     required: "*",
-    placeholder: "SMILES分子式を入力してください"
+    placeholder: "有効なSMILESを入力してください"
   },
   
   // Molecule information

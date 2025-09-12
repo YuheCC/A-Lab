@@ -19,9 +19,9 @@ export default {
   
   // Additive input
   additive: {
-    label: "첨가제 (SMILES)",
+    label: "첨가제 (SMILES) (1.9wt%)",
     required: "*",
-    placeholder: "SMILES 분자식을 입력하세요"
+    placeholder: "유효한 SMILES 첨가제를 입력하세요"
   },
   
   // Molecule information

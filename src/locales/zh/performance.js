@@ -19,9 +19,9 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剂 (SMILES)",
+    label: "添加剂 (SMILES) (1.9wt%)",
     required: "*",
-    placeholder: "输入SMILES分子式"
+    placeholder: "输入有效的SMILES添加剂"
   },
   
   // Molecule information

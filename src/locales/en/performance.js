@@ -19,9 +19,9 @@ export default {
   
   // Additive input
   additive: {
-    label: "Additive (SMILES)",
+    label: "SMILES of Additive (1.9wt%)",
     required: "*",
-    placeholder: "Enter SMILES molecular formula"
+    placeholder: "Enter valid SMILES for additive of interest"
   },
   
   // Molecule information
