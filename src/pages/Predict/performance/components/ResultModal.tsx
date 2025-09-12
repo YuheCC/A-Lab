@@ -51,7 +51,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     
     // Format confidence percentage
     const confidence = parseFloat((prob * 100).toFixed(1));
-    const displayConfidence = label === 0 ? 100 - confidence : 0 - confidence;
+    const displayConfidence = label === 0 ? 100 - confidence : confidence;
     return {
       status,
       confidence: displayConfidence,
