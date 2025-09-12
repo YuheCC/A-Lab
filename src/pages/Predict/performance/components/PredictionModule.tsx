@@ -48,7 +48,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   
   // 新增状态：分子详情相关
   const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
-  const [moleculeError, setMoleculeError] = useState<string | null>(null);
   const [isMoleculeLoading, setIsMoleculeLoading] = useState(false);
   const [lastQueriedSmiles, setLastQueriedSmiles] = useState<string | null>(null);
   const [isInvalidSmiles, setIsInvalidSmiles] = useState(false);
@@ -274,77 +273,69 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
   }, []);
 
-  // 处理 SMILES 输入框失焦事件
-  const handleSmilesBlur = async () => {
+  // 处理 SMILES 输入框失焦事件 (简化版，只清理状态)
+  const handleSmilesBlur = () => {
     const trimmedAdditive = additive.trim();
     
     // 如果输入为空，清除所有状态
     if (!trimmedAdditive) {
       setMoleculeDetails(null);
-      setMoleculeError(null);
       setIsInvalidSmiles(false);
       setLastQueriedSmiles(null);
-      return;
     }
+  };
 
-    // 如果分子式没有变化，且已经有查询结果（无论成功或失败），则不重新查询
-    if (trimmedAdditive === lastQueriedSmiles && (moleculeDetails || moleculeError || isInvalidSmiles)) {
-      return;
+  // 验证SMILES分子式的函数
+  const validateSmiles = async (smilesInput: string): Promise<{isValid: boolean, details: MoleculeDetails | null}> => {
+    // 如果与上次查询相同，直接返回缓存结果
+    if (smilesInput === lastQueriedSmiles) {
+      return { 
+        isValid: !isInvalidSmiles, 
+        details: moleculeDetails 
+      };
     }
 
     setIsMoleculeLoading(true);
-    setMoleculeError(null);
     setMoleculeDetails(null);
     setIsInvalidSmiles(false);
 
     try {
-      const details = await moleculeService.getMoleculeDetails(trimmedAdditive, userPermissions || undefined);
+      const details = await moleculeService.getMoleculeDetails(smilesInput, userPermissions || undefined);
       
       // 检查是否是实际的分子数据还是mock数据
       if (details && details.properties.smiles && 
           details.properties.smiles === 'F[P-](F)(F)(F)(F)F.[Li+]') {
-        // 这是默认的mock数据，表示没有找到，但不显示错误信息
-        // 什么都不做，让分子信息区域保持隐藏
+        // 这是默认的mock数据，表示没有找到，但仍然是有效的
+        setMoleculeDetails(null);
       } else {
         // 有效的分子数据
         setMoleculeDetails(details);
       }
       
       // 记录已查询的分子式
-      setLastQueriedSmiles(trimmedAdditive);
+      setLastQueriedSmiles(smilesInput);
+      return { isValid: true, details: details };
+      
     } catch (error) {
       console.error('获取分子详情失败:', error);
       
       // 检查是否为无效的 SMILES 错误
       if (error instanceof Error && error.message === 'Invalid SMILES string') {
         setIsInvalidSmiles(true);
+        setLastQueriedSmiles(smilesInput);
+        return { isValid: false, details: null };
+      } else {
+        // 其他错误（如未找到分子）仍然被认为是有效的SMILES
+        setLastQueriedSmiles(smilesInput);
+        return { isValid: true, details: null };
       }
-      // 其他错误（如未找到分子）不显示任何错误信息
-      
-      // 记录已查询的分子式
-      setLastQueriedSmiles(trimmedAdditive);
     } finally {
       setIsMoleculeLoading(false);
     }
   };
 
-  const handleCalculate = async () => {
-    if (!additive.trim()) {
-      alert(t('performance.additive.placeholder'));
-      return;
-    }
-    
-    // 检查是否为无效的 SMILES
-    if (isInvalidSmiles) {
-      alert(t('performance.invalidSmiles.suggestion'));
-      return;
-    }
-    
-    if (!selectedSystem) {
-      alert(t('performance.ui.pleaseSelectBattery'));
-      return;
-    }
-
+  // 执行实际的计算逻辑（在验证通过后调用）
+  const performCalculation = async () => {
     const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
@@ -378,6 +369,32 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     } finally {
       setIsCalculating(false);
     }
+  };
+
+  // 计算按钮点击处理函数 - 包含前置验证
+  const handleCalculate = async () => {
+    if (!additive.trim()) {
+      alert(t('performance.additive.placeholder'));
+      return;
+    }
+    
+    if (!selectedSystem) {
+      alert(t('performance.ui.pleaseSelectBattery'));
+      return;
+    }
+
+    const trimmedAdditive = additive.trim();
+    
+    // 执行前置分子验证
+    const validationResult = await validateSmiles(trimmedAdditive);
+    
+    if (!validationResult.isValid) {
+      // 分子式无效，已经显示错误卡片，不允许继续计算
+      return;
+    }
+    
+    // 分子式有效，可以进入计算流程
+    await performCalculation();
   };
 
   // 获取当前语言设置
@@ -536,7 +553,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     
     // Clear molecule details
     setMoleculeDetails(null);
-    setMoleculeError(null);
     setIsMoleculeLoading(false);
     setLastQueriedSmiles(null);
     setIsInvalidSmiles(false);
@@ -660,7 +676,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 const trimmedValue = newValue.trim();
                 if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
                   setMoleculeDetails(null);
-                  setMoleculeError(null);
                   setIsInvalidSmiles(false);
                   if (!trimmedValue) {
                     setLastQueriedSmiles(null);
@@ -827,7 +842,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           <button 
             className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
             onClick={handleCalculate}
-            disabled={isCalculating || isInvalidSmiles || showResults}
+            disabled={isCalculating || showResults}
           >
             {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
           </button>
