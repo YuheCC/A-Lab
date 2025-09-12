@@ -754,7 +754,19 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           return child;
         });
         
-        return <code {...props}>{processedChildren}</code>;
+        return <code 
+        {...props}
+        style={{ 
+          whiteSpace: 'pre-wrap', 
+          wordWrap: 'break-word', 
+          overflowWrap: 'break-word',
+          backgroundColor: '#f1f5f9',
+          padding: '2px 4px',
+          borderRadius: '3px',
+          fontSize: '0.9em',
+          fontFamily: 'monospace'
+        }}
+        >{processedChildren}</code>;
       },
       
       // Process emphasis (italic) content which might contain molecule placeholders
@@ -780,7 +792,21 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
           return child;
         });
         
-        return <pre {...props}>{processedChildren}</pre>;
+        return <pre 
+        {...props}
+        style={{ 
+          whiteSpace: 'pre-wrap', 
+          wordWrap: 'break-word', 
+          overflowWrap: 'break-word',
+          backgroundColor: '#f1f5f9',
+          padding: '12px',
+          borderRadius: '6px',
+          overflow: 'auto',
+          fontSize: '0.9em',
+          fontFamily: 'monospace',
+          margin: '0.5em 0'
+        }}
+        >{processedChildren}</pre>;
       },
       
       // Process ordered lists and add anchor IDs for references
@@ -916,38 +942,6 @@ export const InlineMoleculeRenderer = ({ content, onMoleculeClick }) => {
         <a {...props} target="_blank" rel="noopener noreferrer">
           {children}
         </a>
-      ),
-      
-      // Fix code tags to allow line wrapping
-      code: ({ node, children, ...props }) => (
-        <code {...props} style={{ 
-          whiteSpace: 'pre-wrap', 
-          wordWrap: 'break-word', 
-          overflowWrap: 'break-word',
-          backgroundColor: '#f1f5f9',
-          padding: '2px 4px',
-          borderRadius: '3px',
-          fontSize: '0.9em',
-          fontFamily: 'monospace'
-        }}>
-          {children}
-        </code>
-      ),
-      
-      // Fix pre tags to allow line wrapping
-      pre: ({ node, children, ...props }) => (
-        <pre {...props} style={{ 
-          whiteSpace: 'pre-wrap', 
-          wordWrap: 'break-word', 
-          overflowWrap: 'break-word',
-          backgroundColor: '#f1f5f9',
-          borderRadius: '6px',
-          overflow: 'auto',
-          fontSize: '0.9em',
-          margin: '0.5em 0'
-        }}>
-          {children}
-        </pre>
       )
     };
   };
