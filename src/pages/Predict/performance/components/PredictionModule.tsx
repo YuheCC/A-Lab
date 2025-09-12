@@ -982,7 +982,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 )}
                 
                 {analysisContent && (
-                  <div className="analysis-content" style={{ fontSize: '14px' }}>
+                  <div className="analysis-content" style={{ fontSize: '14px', paddingTop: 0 }}>
                     <InlineMoleculeRenderer content={analysisContent} onMoleculeClick={() => {}} />
                   </div>
                 )}
