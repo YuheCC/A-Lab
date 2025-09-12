@@ -111,10 +111,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                   </Tooltip>
                 </label>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
-                <span>{t('search.advancedOptions')}</span>
-                {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-              </div>
+              {
+                ShowFindFriendsAdvancedOptions && (
+                  <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+                    <span>{t('search.advancedOptions')}</span>
+                    {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                  </div>
+                )
+              }
             </div>
             <div style={{ color: '#555', fontSize: '14px' }}>
               {t('search.findFriendsDescription')}
