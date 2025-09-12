@@ -113,7 +113,7 @@
 }
 
 .additive-value {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  /* font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; */
   background: transparent;
   padding: 0;
   border-radius: 0;
