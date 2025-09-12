@@ -129,9 +129,16 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
 
   // 设置响应式布局监听
   useEffect(() => {
-    const cleanupLayout = setupResponsiveLayout(state.isExpanded, (dimensions) => {
-      setState(prev => ({ ...prev, dimensions }));
-    });
+    const cleanupLayout = setupResponsiveLayout(
+      state.isExpanded, 
+      (dimensions) => {
+        setState(prev => ({ ...prev, dimensions }));
+      },
+      {
+        debounceMs: 150,  // 防抖延迟150ms
+        threshold: 50     // 宽度变化阈值50px
+      }
+    );
 
     return cleanupLayout;
   }, [state.isExpanded]);

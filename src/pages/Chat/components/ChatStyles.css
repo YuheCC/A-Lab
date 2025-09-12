@@ -279,7 +279,8 @@ body.chat-page-body {
     opacity: 1;
 }
 
-.history-nav li a {
+.history-nav li a,
+.history-nav li .recent-chat {
     display: block;
     text-decoration: none;
     color: #374151;
