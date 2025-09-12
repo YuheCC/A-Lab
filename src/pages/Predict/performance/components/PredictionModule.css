@@ -565,18 +565,17 @@
 .molecule-information {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  margin-top: 16px;
-  margin-bottom: 16px;
-  overflow: hidden;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 24px;
 }
 
 .smiles-error-display {
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  margin-top: 16px;
-  margin-bottom: 16px;
-  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 24px;
 }
 
 .molecule-header,
@@ -584,17 +583,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 16px;
 }
 
 .molecule-header h3,
 .error-header h3 {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 500;
+  color: #374151;
 }
 
 .molecule-close-btn {
@@ -617,7 +614,6 @@
 }
 
 .molecule-content {
-  padding: 20px;
   font-size: 14px;
   display: flex;
   gap: 20px;
@@ -695,31 +691,11 @@
   font-weight: 500;
 }
 
-.error-content {
-  padding: 20px;
-}
-
-.error-content p {
-  margin: 0 0 16px 0;
-  color: #6b7280;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.error-content p:last-of-type {
-  margin-bottom: 20px;
-}
-
-.smiles-error-content {
-  padding: 20px;
-}
-
 .smiles-error-content p {
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
   color: #dc2626;
   font-size: 14px;
-  line-height: 1.5;
-  text-align: left;
+  line-height: 1.4;
 }
 
 .smiles-error-content p:last-child {
