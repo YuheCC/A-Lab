@@ -170,7 +170,7 @@ const ChatWelcome: React.FC = () => {
             if (currentMode === 'deep-space') {
                 extraPayload.dump_state = !!fullDeepSpace;
             }
-            handleSendMessage(question, currentMode, undefined, extraPayload);
+            handleSendMessage(question, currentMode === 'deep-space' ? 'clarify' : currentMode, undefined, extraPayload);
         }
     }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace, handleSendMessage]);
 
