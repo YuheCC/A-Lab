@@ -64,14 +64,15 @@ export interface FileDownloadParams {
 }
 
 /**
- * 细胞生命周期预测接口
+ * 细胞生命周期预测接口（异步，带轮询）
  * @param params 包含上传文件的参数
- * @returns Promise<PredictResponse> 预测结果
+ * @returns Promise<HistoryDetailResponse> 预测结果（包含详细数据）
  */
-export const predict = async (params: PredictParams): Promise<PredictResponse> => {
+export const predict = async (params: PredictParams): Promise<HistoryDetailResponse> => {
   const formData = new FormData();
   formData.append('file', params.file);
 
+  // 1. 调用预测接口，获取任务ID
   const response = await request('/api/cellLife/model_predict', {
     method: 'POST',
     data: formData,
@@ -80,7 +81,53 @@ export const predict = async (params: PredictParams): Promise<PredictResponse> =
     },
   });
 
-  return response.data;
+  const taskId = response.data.id;
+  if (!taskId) {
+    throw new Error('预测任务创建失败，未返回任务ID');
+  }
+
+  // 2. 轮询获取结果
+  return pollPredictionResult(taskId);
+};
+
+/**
+ * 轮询预测结果
+ * @param taskId 任务ID
+ * @returns Promise<HistoryDetailResponse> 最终预测结果
+ */
+const pollPredictionResult = async (taskId: number): Promise<HistoryDetailResponse> => {
+  const maxRetries = 60; // 最大重试次数（10分钟，每10秒一次）
+  const pollInterval = 10000; // 轮询间隔：10秒
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // 获取任务详情
+      const result = await getHistoryDetail(taskId);
+      
+      // 检查任务状态
+      if (result.status !== 'running') {
+        // 任务完成（成功或失败）
+        return result;
+      }
+      
+      // 任务仍在运行，等待后继续轮询
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+      }
+      
+    } catch (error) {
+      // 如果是最后一次重试，抛出错误
+      if (attempt === maxRetries - 1) {
+        throw new Error('获取预测结果失败: ' + (error as Error).message);
+      }
+      
+      // 否则等待后重试
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
+  }
+  
+  // 超时
+  throw new Error('预测超时，请稍后查看历史记录');
 };
 
 /**
