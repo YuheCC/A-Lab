@@ -834,6 +834,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="smiles-error-content">
                   <p>{t('performance.invalidSmiles.description')}</p>
                   <p>{t('performance.invalidSmiles.suggestion')}</p>
+                  <div className="example-molecules">
+                    <div className="molecule-examples">
+                      <span className="example-molecule">[Li+].[O-]P(=O)(F)F</span>
+                      <span className="example-molecule">O=C1OC(F)CO1</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

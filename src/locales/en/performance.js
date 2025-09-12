@@ -65,7 +65,7 @@ export default {
   invalidSmiles: {
     title: "Invalid SMILES Format",
     description: "The input does not appear to be a valid SMILES molecular formula.",
-    suggestion: "Please enter a valid SMILES string."
+    suggestion: "Please enter a valid SMILES string or try this example:"
   },
   
   // Calculate button

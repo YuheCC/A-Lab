@@ -65,7 +65,7 @@ export default {
   invalidSmiles: {
     title: "无效的 SMILES 格式",
     description: "输入的内容不是有效的 SMILES 分子式。",
-    suggestion: "请输入有效的 SMILES 字符串。"
+    suggestion: "请输入有效的 SMILES 字符串或尝试以下示例:"
   },
   
   // Calculate button

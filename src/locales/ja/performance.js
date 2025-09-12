@@ -65,7 +65,7 @@ export default {
   invalidSmiles: {
     title: "無効なSMILESフォーマット",
     description: "入力された内容は有効なSMILES分子式ではありません。",
-    suggestion: "有効なSMILES文字列を入力してください。"
+    suggestion: "有効なSMILES文字列を入力してください。または次の例をお試しください："
   },
   
   // Calculate button
