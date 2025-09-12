@@ -223,7 +223,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
 
           <div className="result-section">
             <h3>{t('performance.llmAnalysis.title')}</h3>
-            <div className="analysis-content">
+            <div className="analysis-content" style={{ fontSize: '14px' }}>
               <div className="analysis-item">
                 <InlineMoleculeRenderer content={result.llmAnalysis.optimization} onMoleculeClick={() => {}} />
               </div>
