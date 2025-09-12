@@ -588,254 +588,256 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       <div className="module-section">
         <h2>{t('performance.batterySystemSelection.title')}</h2>
         
-        <div className="form-group">
-          <label>{t('performance.batterySystemSelection.label')}</label>
-          <select 
-            value={selectedSystem} 
-            onChange={(e) => setSelectedSystem(e.target.value)}
-            className="system-select"
-            disabled={isBatterySystemLoading}
-          >
-            {isBatterySystemLoading ? (
-              <option value="">{t('performance.batterySystemSelection.loading')}</option>
-            ) : (
-              batterySystemOptions.map((system) => (
-                <option key={system.id} value={system.name}>
-                  {system.name}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
-
-        {showSpecs && currentSpec && (
-          <div className="system-specs">
-            <div className="specs-header">
-              <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
-              <button 
-                className="close-specs"
-                onClick={() => setShowSpecs(false)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="specs-grid">
-              <div className="spec-item">
-                <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
-                <span>{currentSpec.cathode}</span>
-              </div>
-              
-              <div className="spec-item">
-                <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
-                <span>{currentSpec.anode}</span>
-              </div>
-              
-              <div className="spec-item">
-                <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
-                <span>{currentSpec.electrolyte}</span>
-              </div>
-              
-              <div className="spec-item">
-                <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
-                <span>{currentSpec.cellDesign}</span>
-              </div>
-            </div>
+        <div className="module-content-card">
+          <div className="form-group">
+            <label>{t('performance.batterySystemSelection.label')}</label>
+            <select 
+              value={selectedSystem} 
+              onChange={(e) => setSelectedSystem(e.target.value)}
+              className="system-select"
+              disabled={isBatterySystemLoading}
+            >
+              {isBatterySystemLoading ? (
+                <option value="">{t('performance.batterySystemSelection.loading')}</option>
+              ) : (
+                batterySystemOptions.map((system) => (
+                  <option key={system.id} value={system.name}>
+                    {system.name}
+                  </option>
+                ))
+              )}
+            </select>
           </div>
-        )}
 
-        <div className="form-group">
-          <label>
-            {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
-          </label>
-          <input
-            type="text"
-            value={additive}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setAdditive(newValue);
-              
-              // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
-              const trimmedValue = newValue.trim();
-              if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
-                setMoleculeDetails(null);
-                setMoleculeError(null);
-                setIsInvalidSmiles(false);
-                if (!trimmedValue) {
-                  setLastQueriedSmiles(null);
-                }
-              }
-              
-              // 分子式输入变化时，重置计算结果和LLM分析状态
-              if (predictionResults && trimmedValue !== lastQueriedSmiles) {
-                setShowResults(false);
-                setPredictionResults(null);
-                setHasAnalysisResult(false);
-                setAnalysisContent('');
-                setIsAnalyzing(false);
-              }
-            }}
-            onBlur={handleSmilesBlur}
-            placeholder={t('performance.additive.placeholder')}
-            className="additive-input"
-          />
-        </div>
-
-        {/* 分子详情显示区域 */}
-        <div className="molecule-details-section" style={{ marginBottom: '20px' }}>
-          {isMoleculeLoading && (
-            <div className="molecule-loading">
-              <p>{t('performance.moleculeInfo.loading')}</p>
-            </div>
-          )}
-
-          {moleculeDetails && (
-            <div className="molecule-information">
-              <div className="molecule-header">
-                <h3>{t('performance.moleculeInfo.title')}</h3>
+          {showSpecs && currentSpec && (
+            <div className="system-specs">
+              <div className="specs-header">
+                <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
                 <button 
-                  className="molecule-close-btn"
-                  onClick={() => setMoleculeDetails(null)}
+                  className="close-specs"
+                  onClick={() => setShowSpecs(false)}
                 >
                   ×
                 </button>
               </div>
               
-              <div className="molecule-content">
-                <div className="molecule-structure">
-                  {moleculeDetails.properties.smiles ? (
-                    <MolViewer2D 
-                      smile={moleculeDetails.properties.smiles} 
-                      theme="light"
-                    />
-                  ) : (
-                    <div className="structure-placeholder">
-                      <div className="structure-circle">
-                        <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
-                        <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
-                      </div>
-                    </div>
-                  )}
+              <div className="specs-grid">
+                <div className="spec-item">
+                  <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
+                  <span>{currentSpec.cathode}</span>
                 </div>
                 
-                <div className="molecule-properties">
-                  <div className="properties-grid">
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.smiles')}</label>
-                        <span>{moleculeDetails.properties.smiles || '-'}</span>
+                <div className="spec-item">
+                  <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
+                  <span>{currentSpec.anode}</span>
+                </div>
+                
+                <div className="spec-item">
+                  <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
+                  <span>{currentSpec.electrolyte}</span>
+                </div>
+                
+                <div className="spec-item">
+                  <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
+                  <span>{currentSpec.cellDesign}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label>
+              {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
+            </label>
+            <input
+              type="text"
+              value={additive}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setAdditive(newValue);
+                
+                // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
+                const trimmedValue = newValue.trim();
+                if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
+                  setMoleculeDetails(null);
+                  setMoleculeError(null);
+                  setIsInvalidSmiles(false);
+                  if (!trimmedValue) {
+                    setLastQueriedSmiles(null);
+                  }
+                }
+                
+                // 分子式输入变化时，重置计算结果和LLM分析状态
+                if (predictionResults && trimmedValue !== lastQueriedSmiles) {
+                  setShowResults(false);
+                  setPredictionResults(null);
+                  setHasAnalysisResult(false);
+                  setAnalysisContent('');
+                  setIsAnalyzing(false);
+                }
+              }}
+              onBlur={handleSmilesBlur}
+              placeholder={t('performance.additive.placeholder')}
+              className="additive-input"
+            />
+          </div>
+
+          {/* 分子详情显示区域 */}
+          <div className="molecule-details-section" style={{ marginBottom: '20px' }}>
+            {isMoleculeLoading && (
+              <div className="molecule-loading">
+                <p>{t('performance.moleculeInfo.loading')}</p>
+              </div>
+            )}
+
+            {moleculeDetails && (
+              <div className="molecule-information">
+                <div className="molecule-header">
+                  <h3>{t('performance.moleculeInfo.title')}</h3>
+                  <button 
+                    className="molecule-close-btn"
+                    onClick={() => setMoleculeDetails(null)}
+                  >
+                    ×
+                  </button>
+                </div>
+                
+                <div className="molecule-content">
+                  <div className="molecule-structure">
+                    {moleculeDetails.properties.smiles ? (
+                      <MolViewer2D 
+                        smile={moleculeDetails.properties.smiles} 
+                        theme="light"
+                      />
+                    ) : (
+                      <div className="structure-placeholder">
+                        <div className="structure-circle">
+                          <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
+                          <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
+                        </div>
                       </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.espMin')}</label>
-                        <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
+                    )}
+                  </div>
+                  
+                  <div className="molecule-properties">
+                    <div className="properties-grid">
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.smiles')}</label>
+                          <span>{moleculeDetails.properties.smiles || '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.espMin')}</label>
+                          <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
-                        <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
+                          <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
+                          <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
+                        </div>
                       </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
-                        <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.umapX')}</label>
+                          <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
+                          <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.umapX')}</label>
-                        <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.umapY')}</label>
+                          <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
+                          <span>{moleculeDetails.properties.flashPoint || '-'}</span>
+                        </div>
                       </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
-                        <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.homo')}</label>
+                          <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
+                          <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.umapY')}</label>
-                        <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.lumo')}</label>
+                          <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
+                          <span>{moleculeDetails.properties.commercialViability || '-'}</span>
+                        </div>
                       </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
-                        <span>{moleculeDetails.properties.flashPoint || '-'}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.homo')}</label>
-                        <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
-                      </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
-                        <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.lumo')}</label>
-                        <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
-                      </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
-                        <span>{moleculeDetails.properties.commercialViability || '-'}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="property-row">
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.espMax')}</label>
-                        <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
-                      </div>
-                      <div className="property-item">
-                        <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
-                        <span>{moleculeDetails.properties.functionalGroups ? (() => {
-                          try {
-                            const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
-                            return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
-                          } catch {
-                            return moleculeDetails.properties.functionalGroups;
-                          }
-                        })() : '-'}</span>
+                      
+                      <div className="property-row">
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.espMax')}</label>
+                          <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
+                        </div>
+                        <div className="property-item">
+                          <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
+                          <span>{moleculeDetails.properties.functionalGroups ? (() => {
+                            try {
+                              const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
+                              return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
+                            } catch {
+                              return moleculeDetails.properties.functionalGroups;
+                            }
+                          })() : '-'}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {isInvalidSmiles && (
-            <div className="smiles-error-display">
-              <div className="error-header">
-                <h3>{t('performance.invalidSmiles.title')}</h3>
+            {isInvalidSmiles && (
+              <div className="smiles-error-display">
+                <div className="error-header">
+                  <h3>{t('performance.invalidSmiles.title')}</h3>
+                </div>
+                
+                <div className="smiles-error-content">
+                  <p>{t('performance.invalidSmiles.description')}</p>
+                  <p>{t('performance.invalidSmiles.suggestion')}</p>
+                </div>
               </div>
-              
-              <div className="smiles-error-content">
-                <p>{t('performance.invalidSmiles.description')}</p>
-                <p>{t('performance.invalidSmiles.suggestion')}</p>
-              </div>
+            )}
+          </div>
+
+          <button 
+            className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
+            onClick={handleCalculate}
+            disabled={isCalculating || isInvalidSmiles || showResults}
+          >
+            {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
+          </button>
+
+          {calculationError && (
+            <div className="calculation-error">
+              <p>{calculationError}</p>
             </div>
           )}
         </div>
-
-        <button 
-          className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
-          onClick={handleCalculate}
-          disabled={isCalculating || isInvalidSmiles || showResults}
-        >
-          {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
-        </button>
-
-        {calculationError && (
-          <div className="calculation-error">
-            <p>{calculationError}</p>
-          </div>
-        )}
 
         {showResults && (
           <div className="results-section">
