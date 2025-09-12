@@ -36,7 +36,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
     const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
@@ -357,10 +357,41 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
-                        <span>{t('search.advancedOptions')}</span>
-                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                    </div>
+                    {
+                        ShowFindFriendsAdvancedOptions && (
+                            <div 
+                                className="advanced-options-toggle"
+                                onClick={() => setShowAdvanced(!showAdvanced)}
+                                style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'flex-end', 
+                                    cursor: 'pointer', 
+                                    marginTop: '8px',
+                                    padding: '6px 8px',
+                                    background: '#f1f5f9',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '6px',
+                                    fontSize: '12px',
+                                    fontWeight: '500',
+                                    color: '#64748b',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = '#e2e8f0';
+                                    e.currentTarget.style.color = '#374151';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = '#f1f5f9';
+                                    e.currentTarget.style.color = '#64748b';
+                                }}
+                            >
+                                <span>{t('search.advancedOptions')}</span>
+                                {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                            </div>
+                        )
+                    }
+                    
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
                             extraRequests={extraRequests}

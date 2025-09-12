@@ -12,6 +12,7 @@ export default defineConfig({
   },
   define: {
     'BASE_URL': "https://prod-api.ses.ai",
+    'ShowFindFriendsAdvancedOptions': false,
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },

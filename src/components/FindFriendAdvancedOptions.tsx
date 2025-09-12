@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
+import './FindFriendAdvancedOptions.css';
 
 interface AdvancedProps {
   extraRequests: string;
@@ -74,11 +75,11 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div style={{ marginTop: '8px' }}>
-      <div style={{ marginTop: '8px' }}>
-        <span style={{ fontSize: '10px' }}>{t('search.searchRange')}</span>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ fontSize: '10px' }}>{t('search.distantFriends')}</span>
+    <div className="find-friend-advanced-options">
+      <div className="ff-advanced-section">
+        <label className="ff-advanced-label">{t('search.searchRange')}</label>
+        <div className="ff-range-container">
+          <span className="ff-range-label">{t('search.distantFriends')}</span>
           <input
             type="range"
             min={0}
@@ -86,35 +87,27 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
             step={0.01}
             value={structureWeight}
             onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
-            style={{ margin: '0 4px' }}
+            className="ff-advanced-range"
           />
-          <span style={{ fontSize: '10px' }}>{t('search.nearbyFriends')}</span>
-          <span style={{ fontSize: '10px', marginLeft: '4px' }}>{structureWeight.toFixed(2)}</span>
+          <span className="ff-range-label">{t('search.nearbyFriends')}</span>
+          <span className="ff-range-value">{structureWeight.toFixed(2)}</span>
         </div>
       </div>
-      <div style={{ marginTop: '8px' }}>
-        <label>{t('search.extraRequests')}</label>
+      <div className="ff-advanced-section">
+        <label className="ff-advanced-label">{t('search.extraRequests')}</label>
         <textarea
           value={extraRequests}
           onChange={e => setExtraRequests(e.target.value)}
           placeholder={t('search.extraRequestsPlaceholder')}
-          style={{
-            marginLeft: '8px',
-            width: '100%',
-            boxSizing: 'border-box',
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            padding: '4px'
-          }}
+          className="ff-advanced-textarea"
         />
       </div>
-      <div style={{ marginTop: '8px' }}>
-        <label style={{ marginRight: '4px' }}>{t('search.intelligentCompute')}</label>
+      <div className="ff-advanced-section">
+        <label className="ff-advanced-label">{t('search.intelligentCompute')}</label>
         <select
           value={computeLevel}
           onChange={e => setComputeLevel(e.target.value)}
-          style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+          className="ff-advanced-select"
         >
           <option value="Disabled">{t('search.computeDisabled')}</option>
           <option value="Low">{t('search.computeLow')}</option>
@@ -137,95 +130,135 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
       </div>
       {showBatteryFields && userPermissions === 'admin' && (
         <>
-          <div style={{ marginTop: '8px' }}>
-            <label>{t('search.cathode')}:</label>
-            <select
-              value={cathode}
-              onChange={e => setCathode(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {cathodeOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {cathode === 'custom' && (
-              <input type="text" value={cathodeCustom} onChange={e => setCathodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.cathode')}:</label>
+              <select
+                value={cathode}
+                onChange={e => setCathode(e.target.value)}
+                disabled={computeLevel === 'Disabled'}
+                className="ff-advanced-select"
+              >
+                <option value=""></option>
+                {cathodeOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+                <option value="custom">{t('search.custom')}</option>
+              </select>
+              {cathode === 'custom' && (
+                <input
+                  type="text"
+                  value={cathodeCustom}
+                  onChange={e => setCathodeCustom(e.target.value)}
+                  disabled={computeLevel === 'Disabled'}
+                  className="ff-custom-input"
+                />
+              )}
+            </div>
           </div>
-          <div style={{ marginTop: '8px' }}>
-            <label>{t('search.anode')}:</label>
-            <select
-              value={anode}
-              onChange={e => setAnode(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {anodeOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {anode === 'custom' && (
-              <input type="text" value={anodeCustom} onChange={e => setAnodeCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.anode')}:</label>
+              <select
+                value={anode}
+                onChange={e => setAnode(e.target.value)}
+                disabled={computeLevel === 'Disabled'}
+                className="ff-advanced-select"
+              >
+                <option value=""></option>
+                {anodeOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+                <option value="custom">{t('search.custom')}</option>
+              </select>
+              {anode === 'custom' && (
+                <input
+                  type="text"
+                  value={anodeCustom}
+                  onChange={e => setAnodeCustom(e.target.value)}
+                  disabled={computeLevel === 'Disabled'}
+                  className="ff-custom-input"
+                />
+              )}
+            </div>
           </div>
-          <div style={{ marginTop: '8px' }}>
-            <label>{t('search.salt')}:</label>
-            <select
-              value={salt}
-              onChange={e => setSalt(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {saltOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {salt === 'custom' && (
-              <input type="text" value={saltCustom} onChange={e => setSaltCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.salt')}:</label>
+              <select
+                value={salt}
+                onChange={e => setSalt(e.target.value)}
+                disabled={computeLevel === 'Disabled'}
+                className="ff-advanced-select"
+              >
+                <option value=""></option>
+                {saltOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+                <option value="custom">{t('search.custom')}</option>
+              </select>
+              {salt === 'custom' && (
+                <input
+                  type="text"
+                  value={saltCustom}
+                  onChange={e => setSaltCustom(e.target.value)}
+                  disabled={computeLevel === 'Disabled'}
+                  className="ff-custom-input"
+                />
+              )}
+            </div>
           </div>
-          <div style={{ marginTop: '8px' }}>
-            <label>{t('search.solvent')}:</label>
-            <select
-              value={solvent}
-              onChange={e => setSolvent(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {solventOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {solvent === 'custom' && (
-              <input type="text" value={solventCustom} onChange={e => setSolventCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.solvent')}:</label>
+              <select
+                value={solvent}
+                onChange={e => setSolvent(e.target.value)}
+                disabled={computeLevel === 'Disabled'}
+                className="ff-advanced-select"
+              >
+                <option value=""></option>
+                {solventOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+                <option value="custom">{t('search.custom')}</option>
+              </select>
+              {solvent === 'custom' && (
+                <input
+                  type="text"
+                  value={solventCustom}
+                  onChange={e => setSolventCustom(e.target.value)}
+                  disabled={computeLevel === 'Disabled'}
+                  className="ff-custom-input"
+                />
+              )}
+            </div>
           </div>
-          <div style={{ marginTop: '8px' }}>
-            <label>{t('search.performanceMetric')}:</label>
-            <select
-              value={metric}
-              onChange={e => setMetric(e.target.value)}
-              disabled={computeLevel === 'Disabled'}
-              style={{ marginLeft: '8px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-            >
-              <option value=""></option>
-              {performanceOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-              <option value="custom">{t('search.custom')}</option>
-            </select>
-            {metric === 'custom' && (
-              <input type="text" value={metricCustom} onChange={e => setMetricCustom(e.target.value)} disabled={computeLevel === 'Disabled'} style={{ marginLeft: '8px', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }} />
-            )}
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.performanceMetric')}:</label>
+              <select
+                value={metric}
+                onChange={e => setMetric(e.target.value)}
+                disabled={computeLevel === 'Disabled'}
+                className="ff-advanced-select"
+              >
+                <option value=""></option>
+                {performanceOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+                <option value="custom">{t('search.custom')}</option>
+              </select>
+              {metric === 'custom' && (
+                <input
+                  type="text"
+                  value={metricCustom}
+                  onChange={e => setMetricCustom(e.target.value)}
+                  disabled={computeLevel === 'Disabled'}
+                  className="ff-custom-input"
+                />
+              )}
+            </div>
           </div>
         </>
       )}
