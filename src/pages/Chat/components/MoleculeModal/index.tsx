@@ -484,7 +484,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             use_35m: isHighTier,
             structure_weight: structureWeight
         };
-        if (molType) {
+        if (molType && molType !== 'all') {
             payload.mol_type = molType;
         }
         if (computeLevel !== 'Disabled') {
