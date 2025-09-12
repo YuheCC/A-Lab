@@ -1,10 +1,11 @@
 .prediction-tool {
   padding: 24px;
-  height: 100%;
+  height: calc(100vh - 66px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .prediction-header {
@@ -41,9 +42,17 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 2px;
 }
 
 .history-area {
-  width: 400px;
+  width: 340px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  padding-bottom: 2px;
 }
