@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Calendar, Battery, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FileRecord {
   id: string;
@@ -9,15 +10,19 @@ interface FileRecord {
   avgCirculation: string;
 }
 
-export const renderPredictionCard = (
-  file: FileRecord,
-  onView?: (item: FileRecord) => void,
-  onDelete?: (itemId: string) => void
-) => {
+interface PredictionCardProps {
+  file: FileRecord;
+  onView?: (item: FileRecord) => void;
+  onDelete?: (itemId: string) => void;
+}
+
+const PredictionCard: React.FC<PredictionCardProps> = ({ file, onView, onDelete }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="prediction-history-card">
       <div className="card-content">
-      <div className="info-row">
+        <div className="info-row">
           <FileText size={16} color="#6b7280" />
           <span className="card-title">{file.name}</span>
         </div>
@@ -28,12 +33,12 @@ export const renderPredictionCard = (
 
         <div className="info-row">
           <Battery size={14} color="#6b7280" />
-          <span className="info-text">电芯数量: {file.batteryCount}</span>
+          <span className="info-text">{t('predictionTool.results.batteryCount')}: {file.batteryCount}</span>
         </div>
 
         <div className="info-row">
           <TrendingUp size={14} color="#6b7280" />
-          <span className="info-text">平均循环: {file.avgCirculation}</span>
+          <span className="info-text">{t('predictionTool.results.avgCycleLife')}: {file.avgCirculation}</span>
         </div>
       </div>
 
@@ -42,15 +47,23 @@ export const renderPredictionCard = (
           className="action-btn view-btn"
           onClick={() => onView && onView(file)}
         >
-          查看
+          {t('predictionTool.history.view', '查看')}
         </button>
         <button
           className="action-btn delete-btn"
           onClick={() => onDelete && onDelete(file.id)}
         >
-          删除
+          {t('predictionTool.history.delete', '删除')}
         </button>
       </div>
     </div>
   );
+};
+
+export const renderPredictionCard = (
+  file: FileRecord,
+  onView?: (item: FileRecord) => void,
+  onDelete?: (itemId: string) => void
+) => {
+  return <PredictionCard file={file} onView={onView} onDelete={onDelete} />;
 };

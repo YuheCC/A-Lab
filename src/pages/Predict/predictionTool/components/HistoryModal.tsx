@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getHistoryDetail, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 
 interface HistoryModalProps {
@@ -17,6 +18,7 @@ interface HistoryModalProps {
 // Mock数据已移除，使用真实API数据
 
 const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord }) => {
+  const { t } = useTranslation();
   const [detailData, setDetailData] = useState<HistoryDetailResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
       const detail = await getHistoryDetail(parseInt(fileRecord.id));
       setDetailData(detail);
     } catch (err: any) {
-      setError(err.message || '获取详细数据失败');
+      setError(err.message || t('predictionTool.modal.loadDetailFailed'));
       console.error('Load detail error:', err);
     } finally {
       setLoading(false);
@@ -55,7 +57,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3 className="modal-title">预测记录详情 - 历史数据</h3>
+          <h3 className="modal-title">{t('predictionTool.modal.title')}</h3>
           <button className="modal-close-btn" onClick={onClose}>
             <X size={20} />
           </button>
@@ -63,20 +65,20 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
         
         <div className="prediction-modal-content">
           <div className="modal-section">
-            <h4 className="section-title">上传数据</h4>
+            <h4 className="section-title">{t('predictionTool.modal.uploadedData')}</h4>
             <div className="uploaded-file-info">
               <div className="file-link">
                 {fileRecord.name}
               </div>
             </div>
           </div>
-          
+
           <div className="modal-section">
-            <h4 className="section-title">预测结果</h4>
+            <h4 className="section-title">{t('predictionTool.modal.predictionResults')}</h4>
             
             {loading && (
               <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
-                加载中...
+                {t('predictionTool.modal.loadingDetail')}
               </div>
             )}
             
@@ -98,22 +100,22 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                 <div className="results-stats-card">
                   <div className="results-stats">
                     <div className="stats-card">
-                      <div className="stats-label">电芯数量</div>
-                      <div className="stats-value">{detailData.barcode_count}个</div>
+                      <div className="stats-label">{t('predictionTool.results.batteryCount')}</div>
+                      <div className="stats-value">{detailData.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                     </div>
                     <div className="stats-card">
-                      <div className="stats-label">平均循环寿命</div>
+                      <div className="stats-label">{t('predictionTool.results.avgCycleLife')}</div>
                       <div className="stats-value">
                         {(() => {
                           const avg1 = detailData.avg_cycle_life_1 || 0;
                           const avg2 = detailData.avg_cycle_life_2 || 0;
                           const avgCycleLife = avg1 > 0 ? avg1 : avg2;
-                          return avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}次` : '未知';
+                          return avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown');
                         })()}
                       </div>
                     </div>
                     <div className="stats-card">
-                      <div className="stats-label">预测时间</div>
+                      <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
                       <div className="stats-value">
                         {new Date(detailData.created_at).toLocaleString('zh-CN', {
                           year: 'numeric',
@@ -133,9 +135,9 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     <table className="prediction-table">
                       <thead>
                         <tr>
-                          <th className="barcode-col">Barcode</th>
-                          <th className="cycle-life-col">Cycle Life 1</th>
-                          <th className="cycle-life-col">Cycle Life 2</th>
+                          <th className="barcode-col">{t('predictionTool.results.barcode')}</th>
+                          <th className="cycle-life-col">{t('predictionTool.results.cycleLife1')}</th>
+                          <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -150,7 +152,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                           : (
                               <tr>
                                 <td colSpan={3} style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
-                                  暂无详细条形码数据
+                                  {t('predictionTool.results.noDetailedData')}
                                 </td>
                               </tr>
                             )

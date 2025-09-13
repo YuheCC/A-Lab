@@ -366,6 +366,7 @@
 
 .prediction-history-card .card-content {
   margin-bottom: 0px;
+  gap: 8px;
 }
 
 .prediction-history-card .card-actions {

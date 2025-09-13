@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, Activity, BarChart3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import StepContent from './components/StepContent';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPredictionCard } from './components/PredictionCardRenderer';
 import HistoryModal from './components/HistoryModal';
 import { getHistoryList, deleteHistory, type PredictResponse } from '@/services/prediction/predictionTool';
 import './PredictionTool.css';
+import { normalizeServerDate } from '@/utils/messageUtils';
 
 interface FileRecord {
   id: string;
@@ -18,6 +20,7 @@ interface FileRecord {
 // Mock数据已移除，使用真实API数据
 
 const PredictionTool: React.FC = () => {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -34,7 +37,7 @@ const PredictionTool: React.FC = () => {
     return {
       id: apiData.id.toString(),
       name: apiData.file_name,
-      date: new Date(apiData.created_at).toLocaleString('zh-CN', {
+      date: new Date(normalizeServerDate(apiData.created_at)).toLocaleString('zh-CN', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -43,7 +46,7 @@ const PredictionTool: React.FC = () => {
         second: '2-digit'
       }),
       batteryCount: apiData.barcode_count,
-      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}次` : '未知'
+      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown')
     };
   };
 
@@ -57,7 +60,7 @@ const PredictionTool: React.FC = () => {
       const transformedData = response.data.map(transformApiDataToFileRecord);
       setHistoryData(transformedData);
     } catch (err: any) {
-      setError(err.message || '加载历史记录失败');
+      setError(err.message || t('predictionTool.errors.loadHistoryFailed'));
       console.error('Load history error:', err);
     } finally {
       setLoading(false);
@@ -70,19 +73,19 @@ const PredictionTool: React.FC = () => {
   }, []);
 
   const steps = [
-    { 
-      id: 'upload', 
-      title: '数据上传',
+    {
+      id: 'upload',
+      title: t('predictionTool.steps.upload'),
       icon: Upload
     },
-    { 
-      id: 'ai-predict', 
-      title: 'AI预测',
+    {
+      id: 'ai-predict',
+      title: t('predictionTool.steps.aiPredict'),
       icon: Activity
     },
-    { 
-      id: 'results', 
-      title: '结果展示',
+    {
+      id: 'results',
+      title: t('predictionTool.steps.results'),
       icon: BarChart3
     }
   ];
@@ -110,7 +113,7 @@ const PredictionTool: React.FC = () => {
       // 删除成功后，重新加载历史记录
       await loadHistoryData();
     } catch (err: any) {
-      setError(err.message || '删除失败');
+      setError(err.message || t('predictionTool.history.deleteFailed'));
       console.error('Delete file error:', err);
     } finally {
       setLoading(false);
@@ -126,8 +129,8 @@ const PredictionTool: React.FC = () => {
     <div className="prediction-tool">
       {/* Header */}
       <div className="prediction-header">
-        <h1 className="prediction-title">电池早期生命预测工具</h1>
-        <span className="beta-tag">BETA</span>
+        <h1 className="prediction-title">{t('predictionTool.title')}</h1>
+        <span className="beta-tag">{t('predictionTool.betaTag')}</span>
       </div>
 
       {/* Content */}
@@ -179,15 +182,15 @@ const PredictionTool: React.FC = () => {
             </div>
           )}
           <UniversalHistoryModule
-            title="预测记录"
+            title={t('predictionTool.history.title')}
             data={historyData}
             cardRenderer={renderPredictionCard}
             onNewPrediction={handleNewPrediction}
             onViewDetails={handleViewDetails}
             onDeleteItem={handleDeleteFile}
-            newPredictionText="新增预测"
+            newPredictionText={t('predictionTool.history.newPrediction')}
             filterConfig={{
-              smilesSearchPlaceholder: "Search by file name..."
+              smilesSearchPlaceholder: t('predictionTool.history.searchPlaceholder')
             }}
           />
           {loading && (
@@ -197,7 +200,7 @@ const PredictionTool: React.FC = () => {
               fontSize: '14px',
               color: '#666'
             }}>
-              加载中...
+{t('predictionTool.history.loading')}
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, RefreshCw, Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 
 interface StepContentProps {
@@ -9,6 +10,7 @@ interface StepContentProps {
 }
 
 const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete }) => {
+  const { t } = useTranslation();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -38,7 +40,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
 
   const handleStartPrediction = async () => {
     if (!uploadedFile) {
-      setError('请先上传文件');
+      setError(t('predictionTool.prediction.pleaseUploadFirst'));
       return;
     }
 
@@ -85,7 +87,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     } catch (err: any) {
       setIsProcessing(false);
       setProgress(0);
-      setError(err.message || '预测失败，请重试');
+      setError(err.message || t('predictionTool.errors.predictionFailed'));
       console.error('Prediction error:', err);
     }
   };
@@ -98,8 +100,8 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="upload-area">
               <div className="upload-progress">
                 <RefreshCw className="loading-icon" />
-                <h4 className="upload-title">正在上传文件...</h4>
-                <p className="upload-subtitle">请稍候</p>
+                <h4 className="upload-title">{t('predictionTool.upload.uploading')}</h4>
+                <p className="upload-subtitle">{t('predictionTool.upload.waitText')}</p>
               </div>
             </div>
           );
@@ -108,11 +110,11 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         return (
           <div className="upload-step-container">
             <div className="upload-area">
-              <h4 className="upload-title">点击上传电池数据文件</h4>
+              <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
               <p className="upload-subtitle">
               </p>
               <label className="select-file-btn" htmlFor="file-upload">
-                选择文件
+                {t('predictionTool.upload.selectFile')}
                 <input
                   id="file-upload"
                   type="file"
@@ -126,29 +128,29 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             {/* 数据格式要求提示 - 放置在upload区域外部下方靠左 */}
             <div className="data-format-tip">
               <div className="tip-header">
-                <span className="tip-title">📋 数据格式要求</span>
-                <span className="tip-sample-link">样例数据</span>
+                <span className="tip-title">{t('predictionTool.upload.dataFormatTip')}</span>
+                <span className="tip-sample-link">{t('predictionTool.upload.sampleData')}</span>
               </div>
-              
+
               <div className="tip-content">
                 <div className="tip-row">
-                  <span className="tip-label">必需字段：</span>
-                  <span className="tip-value">barcode, cycle_id, current (A), voltage (V), time (s)</span>
+                  <span className="tip-label">{t('predictionTool.upload.requiredFields')}</span>
+                  <span className="tip-value">{t('predictionTool.upload.requiredFieldsValue')}</span>
                 </div>
-                
+
                 <div className="tip-row">
-                  <span className="tip-label">电流方向：</span>
-                  <span className="tip-value">+为充电，-为放电</span>
+                  <span className="tip-label">{t('predictionTool.upload.currentDirection')}</span>
+                  <span className="tip-value">{t('predictionTool.upload.currentDirectionValue')}</span>
                 </div>
-                
+
                 <div className="tip-row">
-                  <span className="tip-label">单位要求：</span>
-                  <span className="tip-value">电流单位A，电压单位V，时间单位s</span>
+                  <span className="tip-label">{t('predictionTool.upload.unitRequirement')}</span>
+                  <span className="tip-value">{t('predictionTool.upload.unitRequirementValue')}</span>
                 </div>
-                
+
                 <div className="tip-row">
-                  <span className="tip-label">数据要求：</span>
-                  <span className="tip-value">上传数据≥100图，数据需按时间顺序排列</span>
+                  <span className="tip-label">{t('predictionTool.upload.dataRequirement')}</span>
+                  <span className="tip-value">{t('predictionTool.upload.dataRequirementValue')}</span>
                 </div>
               </div>
             </div>
@@ -160,10 +162,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
           <div className="prediction-area">
             <div className="uploaded-files-section">
               <div className="section-header">
-                <h4 className="section-title">已上传数据</h4>
+                <h4 className="section-title">{t('predictionTool.prediction.uploadedData')}</h4>
                 <button className="refresh-btn">
                   <RefreshCw size={12} />
-                  更换文件
+                  {t('predictionTool.prediction.changeFile')}
                 </button>
               </div>
               
@@ -175,7 +177,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                       {uploadedFile?.name || '历史数据_20250110125920_001PE0XT00001DAB0800004_CAB1_1#检测通道.xlsx'}
                     </div>
                     <div className="file-meta">
-                      文件大小: {uploadedFile ? formatFileSize(uploadedFile.size) : '19.15 MB'} · 类型: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+                      {t('predictionTool.prediction.fileSize')}: {uploadedFile ? formatFileSize(uploadedFile.size) : '19.15 MB'} · {t('predictionTool.prediction.fileType')}: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
                     </div>
                   </div>
                 </div>
@@ -185,17 +187,17 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             {isProcessing && (
               <div className="prediction-progress">
                 <div className="progress-header">
-                  <span className="progress-label">分析进度</span>
+                  <span className="progress-label">{t('predictionTool.prediction.progressLabel')}</span>
                   <span className="progress-percentage">{Math.round(progress)}%</span>
                 </div>
                 <div className="progress-bar">
-                  <div 
+                  <div
                     className="progress-fill"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
                 <p className="progress-text">
-                  {progress < 30 ? '正在上传文件并创建预测任务...' : '预测任务正在后台处理，请耐心等待...'}
+                  {progress < 30 ? t('predictionTool.prediction.uploadingFile') : t('predictionTool.prediction.processing')}
                 </p>
               </div>
             )}
@@ -214,12 +216,12 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             )}
             
             {!isProcessing && (
-              <button 
+              <button
                 className="start-prediction-btn"
                 onClick={handleStartPrediction}
               >
                 <Play size={14} />
-                开始预测
+                {t('predictionTool.prediction.startPrediction')}
               </button>
             )}
           </div>
@@ -229,14 +231,14 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         if (!predictionResult) {
           return (
             <div className="results-display">
-              <div className="error-message" style={{ 
-                color: '#e53e3e', 
-                backgroundColor: '#fed7d7', 
-                padding: '12px', 
-                borderRadius: '6px', 
+              <div className="error-message" style={{
+                color: '#e53e3e',
+                backgroundColor: '#fed7d7',
+                padding: '12px',
+                borderRadius: '6px',
                 textAlign: 'center'
               }}>
-                暂无预测结果，请先完成预测
+                {t('predictionTool.results.noResults')}
               </div>
             </div>
           );
@@ -264,15 +266,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="results-stats-card">
               <div className="results-stats">
                 <div className="stats-card">
-                  <div className="stats-label">电芯数量</div>
-                  <div className="stats-value">{predictionResult.barcode_count}个</div>
+                  <div className="stats-label">{t('predictionTool.results.batteryCount')}</div>
+                  <div className="stats-value">{predictionResult.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                 </div>
                 <div className="stats-card">
-                  <div className="stats-label">平均循环寿命</div>
-                  <div className="stats-value">{avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}次` : '未知'}</div>
+                  <div className="stats-label">{t('predictionTool.results.avgCycleLife')}</div>
+                  <div className="stats-value">{avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown')}</div>
                 </div>
                 <div className="stats-card">
-                  <div className="stats-label">预测时间</div>
+                  <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
                   <div className="stats-value">{formatDate(predictionResult.created_at)}</div>
                 </div>
               </div>
@@ -285,9 +287,9 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <table className="prediction-table">
                     <thead>
                       <tr>
-                        <th className="barcode-col">Barcode</th>
-                        <th className="cycle-life-col">Cycle Life 1</th>
-                        <th className="cycle-life-col">Cycle Life 2</th>
+                        <th className="barcode-col">{t('predictionTool.results.barcode')}</th>
+                        <th className="cycle-life-col">{t('predictionTool.results.cycleLife1')}</th>
+                        <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -302,7 +304,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   </table>
                 ) : (
                   <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic' }}>
-                    暂无详细条形码数据
+                    {t('predictionTool.results.noDetailedData')}
                   </p>
                 )}
               </div>
@@ -313,9 +315,9 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       default:
         return (
           <div className="upload-area">
-            <h4 className="upload-title">请选择操作步骤</h4>
+            <h4 className="upload-title">{t('predictionTool.default.selectStep')}</h4>
             <p className="upload-subtitle">
-              请从上方步骤中选择要执行的操作
+              {t('predictionTool.default.selectStepDescription')}
             </p>
           </div>
         );

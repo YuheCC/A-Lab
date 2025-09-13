@@ -13,6 +13,7 @@ import favorites from './favorites';
 import settings from './settings';
 import role from './role';
 import performance from './performance';
+import predictionTool from './predictionTool';
 
 export default {
     map,
@@ -29,5 +30,6 @@ export default {
     favorites,
     settings,
     role,
-    performance
+    performance,
+    predictionTool
 }; 
