@@ -129,7 +129,7 @@
   text-align: center;
   transition: all 0.2s;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -178,7 +178,7 @@
 /* Upload step container */
 .upload-step-container {
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -271,7 +271,7 @@
   border-radius: 12px;
   padding: 32px;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -437,7 +437,7 @@
 /* Results display styles */
 .results-display {
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

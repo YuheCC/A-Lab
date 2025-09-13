@@ -321,3 +321,101 @@
 .delete-btn:hover {
   color: oklch(14.5% 0 0);
 }
+
+/* Prediction History Card Styles - 根据图片设计 */
+.prediction-history-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.prediction-history-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  margin-bottom: 12px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.prediction-history-card .info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.info-text {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.prediction-history-card .info-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.view-btn {
+  color: #6b7280;
+}
+
+.view-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.delete-btn {
+  color: #6b7280;
+}
+
+.delete-btn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
