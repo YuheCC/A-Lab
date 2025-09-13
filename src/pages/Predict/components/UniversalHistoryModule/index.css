@@ -364,6 +364,14 @@
   margin-bottom: 16px;
 }
 
+.prediction-history-card .card-content {
+  margin-bottom: 0px;
+}
+
+.prediction-history-card .card-actions {
+  border-top: none;
+}
+
 .prediction-history-card .info-row {
   display: flex;
   align-items: center;

@@ -18,8 +18,8 @@ export const renderPredictionCard = (
     <div className="prediction-history-card">
       <div className="card-content">
       <div className="info-row">
-          <FileText size={14} color="#6b7280" />
-          <span className="info-text">{file.name}</span>
+          <FileText size={16} color="#6b7280" />
+          <span className="card-title">{file.name}</span>
         </div>
         <div className="info-row">
           <Calendar size={14} color="#6b7280" />
