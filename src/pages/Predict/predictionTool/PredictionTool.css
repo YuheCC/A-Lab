@@ -214,15 +214,16 @@
 }
 
 .tip-sample-link {
-  color: #3b82f6;
+  color: #56B26A;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: underline;
+  transition: color 0.2s ease;
 }
 
 .tip-sample-link:hover {
-  color: #2563eb;
+  color: #4a9d5a;
 }
 
 .tip-content {
@@ -298,7 +299,7 @@
   gap: 4px;
   background: none;
   border: none;
-  color: #3b82f6;
+  color: #56B26A;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -308,7 +309,8 @@
 }
 
 .refresh-btn:hover {
-  background: #eff6ff;
+  background: rgba(86, 178, 106, 0.1);
+  color: #4a9d5a;
 }
 
 .file-info-card {
@@ -515,6 +517,41 @@
 
 .prediction-table tbody tr:hover {
   background: #f8fafc;
+}
+
+/* 表格列宽度设置 */
+.prediction-table .barcode-col {
+  width: auto;
+  min-width: 200px;
+}
+
+.prediction-table .cycle-life-col {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+
+.prediction-table .status-col {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
+/* barcode单元格省略号显示 */
+.prediction-table .barcode-cell {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.prediction-table .cycle-life-cell {
+  text-align: center;
+}
+
+.prediction-table .status-cell {
+  text-align: center;
 }
 
 /* Modal styles */

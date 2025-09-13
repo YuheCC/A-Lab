@@ -27,7 +27,19 @@ export const renderPredictionCard = (
         <div className="battery-system">
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
             <FileText size={14} />
-            <span className="system-name">{file.name}</span>
+            <span 
+              className="system-name"
+              style={{
+                flex: 1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                minWidth: 0
+              }}
+              title={file.name}
+            >
+              {file.name}
+            </span>
           </div>
         </div>
         

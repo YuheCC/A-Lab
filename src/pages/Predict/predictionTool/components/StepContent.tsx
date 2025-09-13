@@ -278,44 +278,23 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             </div>
             
             <div className="results-table-card">
-              <div className="results-table">
-                <div className="file-info" style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
-                  文件名: {predictionResult.file_name}
-                </div>
-                <div className="prediction-status" style={{ marginBottom: '16px' }}>
-                  <span style={{ 
-                    color: predictionResult.status === 'success' ? '#38a169' : '#e53e3e',
-                    fontWeight: '500'
-                  }}>
-                    状态: {predictionResult.status === 'success' ? '预测成功' : '预测失败'}
-                  </span>
-                </div>
-                
+              <div className="results-table">                
                 {/* 显示详细的条形码预测结果 */}
                 {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 ? (
                   <table className="prediction-table">
                     <thead>
                       <tr>
-                        <th>Barcode</th>
-                        <th>Cycle Life 1</th>
-                        <th>Cycle Life 2</th>
-                        <th>Status</th>
+                        <th className="barcode-col">Barcode</th>
+                        <th className="cycle-life-col">Cycle Life 1</th>
+                        <th className="cycle-life-col">Cycle Life 2</th>
                       </tr>
                     </thead>
                     <tbody>
                       {predictionResult.brcode_data.map((item) => (
                         <tr key={item.id}>
-                          <td>{item.barcode}</td>
-                          <td>{item.cycle_life_1}</td>
-                          <td>{item.cycle_life_2}</td>
-                          <td>
-                            <span style={{ 
-                              color: item.status === 'success' ? '#38a169' : '#e53e3e',
-                              fontSize: '12px'
-                            }}>
-                              {item.status}
-                            </span>
-                          </td>
+                          <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
+                          <td className="cycle-life-cell">{parseFloat(item.cycle_life_1.toString()).toFixed(0)}</td>
+                          <td className="cycle-life-cell">{parseFloat(item.cycle_life_2.toString()).toFixed(0)}</td>
                         </tr>
                       ))}
                     </tbody>
