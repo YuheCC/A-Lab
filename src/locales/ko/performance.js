@@ -165,7 +165,7 @@ export default {
       deleteFailed: "기록 삭제에 실패했습니다"
     },
     noResults: {
-      message: "필터에 일치하는 예측 기록을 찾을 수 없습니다.",
+      message: "예측 기록이 없습니다.",
       clearFilters: "모든 필터 지우기"
     },
     loading: {

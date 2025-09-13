@@ -165,7 +165,7 @@ export default {
       deleteFailed: "删除记录失败"
     },
     noResults: {
-      message: "未找到符合筛选条件的预测记录。",
+      message: "暂无预测记录。",
       clearFilters: "清除所有筛选条件"
     },
     loading: {

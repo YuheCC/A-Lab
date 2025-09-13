@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import './index.css';
 
 // 通用的数据项接口
@@ -54,6 +55,7 @@ function UniversalHistoryModule<T extends HistoryItem>({
   className = "",
   customFilterFunction
 }: UniversalHistoryModuleProps<T>) {
+  const { t } = useTranslation();
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     smilesSearch: '',
@@ -234,12 +236,12 @@ function UniversalHistoryModule<T extends HistoryItem>({
       <div className="history-list">
         {filteredData.length === 0 ? (
           <div className="no-results">
-            <p>No prediction records found matching your filters.</p>
-            <button 
+            <p>{t('performance.history.noResults.message')}</p>
+            <button
               className="clear-filters-link"
               onClick={clearFilters}
             >
-              Clear all filters
+              {t('performance.history.noResults.clearFilters')}
             </button>
           </div>
         ) : (

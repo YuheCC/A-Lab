@@ -363,12 +363,12 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
         ) : filteredData.length === 0 ? (
           <div className="no-results">
             <p>{t('performance.history.noResults.message')}</p>
-            <button 
+            {/* <button 
               className="clear-filters-link"
               onClick={clearFilters}
             >
               {t('performance.history.noResults.clearFilters')}
-            </button>
+            </button> */}
           </div>
         ) : (
           filteredData.map((record) => {

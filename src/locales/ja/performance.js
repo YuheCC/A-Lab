@@ -165,7 +165,7 @@ export default {
       deleteFailed: "記録の削除に失敗しました"
     },
     noResults: {
-      message: "フィルターに一致する予測記録が見つかりません。",
+      message: "予測記録がありません。",
       clearFilters: "すべてのフィルターをクリア"
     },
     loading: {

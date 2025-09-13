@@ -165,7 +165,7 @@ export default {
       deleteFailed: "Failed to delete record"
     },
     noResults: {
-      message: "No prediction records found matching your filters.",
+      message: "No prediction records found.",
       clearFilters: "Clear all filters"
     },
     loading: {
