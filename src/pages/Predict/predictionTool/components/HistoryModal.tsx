@@ -133,18 +133,18 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     <table className="prediction-table">
                       <thead>
                         <tr>
-                          <th>Barcode</th>
-                          <th>Predicted Cycle Life</th>
-                          <th>Cycle Life 2</th>
+                          <th className="barcode-col">Barcode</th>
+                          <th className="cycle-life-col">Cycle Life 1</th>
+                          <th className="cycle-life-col">Cycle Life 2</th>
                         </tr>
                       </thead>
                       <tbody>
                         {detailData.brcode_data && detailData.brcode_data.length > 0 
                           ? detailData.brcode_data.map((item) => (
                               <tr key={item.id}>
-                                <td>{item.barcode}</td>
-                                <td>{item.cycle_life_1}</td>
-                                <td>{item.cycle_life_2}</td>
+                                <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
+                                <td className="cycle-life-cell">{parseFloat(item.cycle_life_1.toString()).toFixed(0)}</td>
+                                <td className="cycle-life-cell">{parseFloat(item.cycle_life_2.toString()).toFixed(0)}</td>
                               </tr>
                             ))
                           : (

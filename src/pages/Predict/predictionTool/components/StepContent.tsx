@@ -213,14 +213,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               </div>
             )}
             
-            <button 
-              className="start-prediction-btn"
-              onClick={handleStartPrediction}
-              disabled={isProcessing}
-            >
-              <Play size={14} />
-              {isProcessing ? '分析中...' : '开始预测'}
-            </button>
+            {!isProcessing && (
+              <button 
+                className="start-prediction-btn"
+                onClick={handleStartPrediction}
+              >
+                <Play size={14} />
+                开始预测
+              </button>
+            )}
           </div>
         );
       
