@@ -1,3 +1,37 @@
+/* 修复MUI Autocomplete下拉框z-index被遮挡问题 */
+.MuiAutocomplete-popper {
+    z-index: 9999 !important;
+}
+
+.MuiPopper-root {
+    z-index: 9999 !important;
+}
+
+/* 修复MUI Slider浮层标签z-index被遮挡问题 */
+.MuiSlider-valueLabel {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelOpen {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelContainer {
+    z-index: 10000 !important;
+}
+
+/* 确保过滤器包装器允许浮层显示 */
+.filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保滑块容器不截断浮层 */
+.sliders-container .filter-wrapper {
+    overflow: visible !important;
+    z-index: 1;
+}
+
 /* Search Page Tab Styles */
 .search-tabs-container {
     display: flex;
