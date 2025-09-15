@@ -268,7 +268,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         // 计算平均循环寿命
         const avgCycleLife1 = predictionResult.avg_cycle_life_1 || 0;
         const avgCycleLife2 = predictionResult.avg_cycle_life_2 || 0;
-        const avgCycleLife = avgCycleLife1 > 0 ? avgCycleLife1 : avgCycleLife2;
 
         // 格式化创建时间
         const formatDate = (dateString: string) => {
@@ -291,8 +290,12 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <div className="stats-value">{predictionResult.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                 </div>
                 <div className="stats-card">
-                  <div className="stats-label">{t('predictionTool.results.avgCycleLife')}</div>
-                  <div className="stats-value">{avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown')}</div>
+                  <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
+                  <div className="stats-value">{avgCycleLife1 > 0 ? `${avgCycleLife1.toFixed(0)}` : t('predictionTool.results.unknown')}</div>
+                </div>
+                <div className="stats-card">
+                  <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
+                  <div className="stats-value">{avgCycleLife2 > 0 ? `${avgCycleLife2.toFixed(0)}` : t('predictionTool.results.unknown')}</div>
                 </div>
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>

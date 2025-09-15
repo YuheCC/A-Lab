@@ -7,7 +7,9 @@ interface FileRecord {
   name: string;
   date: string;
   batteryCount: number;
-  avgCirculation: string;
+  avgCirculation: string;  // 保留兼容性
+  avgCycleLife1: number;
+  avgCycleLife2: number;
 }
 
 interface PredictionCardProps {
@@ -38,7 +40,12 @@ const PredictionCard: React.FC<PredictionCardProps> = ({ file, onView, onDelete 
 
         <div className="info-row">
           <TrendingUp size={14} color="#6b7280" />
-          <span className="info-text">{t('predictionTool.results.avgCycleLife')}: {file.avgCirculation}</span>
+          <span className="info-text">{t('predictionTool.results.avgCycleLife1')}: {file.avgCycleLife1 > 0 ? file.avgCycleLife1.toFixed(0) : t('predictionTool.results.unknown')}</span>
+        </div>
+
+        <div className="info-row">
+          <TrendingUp size={14} color="#6b7280" />
+          <span className="info-text">{t('predictionTool.results.avgCycleLife2')}: {file.avgCycleLife2 > 0 ? file.avgCycleLife2.toFixed(0) : t('predictionTool.results.unknown')}</span>
         </div>
       </div>
 

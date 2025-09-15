@@ -47,6 +47,8 @@ export default {
         batteryCount: "Battery Count",
         batteryCountUnit: "pcs",
         avgCycleLife: "Average Cycle Life",
+        avgCycleLife1: "Average Cycle Life 1",
+        avgCycleLife2: "Average Cycle Life 2",
         cycleUnit: "cycles",
         predictionTime: "Prediction Time",
         unknown: "Unknown",

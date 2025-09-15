@@ -104,14 +104,15 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                       <div className="stats-value">{detailData.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                     </div>
                     <div className="stats-card">
-                      <div className="stats-label">{t('predictionTool.results.avgCycleLife')}</div>
+                      <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                       <div className="stats-value">
-                        {(() => {
-                          const avg1 = detailData.avg_cycle_life_1 || 0;
-                          const avg2 = detailData.avg_cycle_life_2 || 0;
-                          const avgCycleLife = avg1 > 0 ? avg1 : avg2;
-                          return avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown');
-                        })()}
+                        {(detailData.avg_cycle_life_1 || 0) > 0 ? `${(detailData.avg_cycle_life_1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
+                      </div>
+                    </div>
+                    <div className="stats-card">
+                      <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
+                      <div className="stats-value">
+                        {(detailData.avg_cycle_life_2 || 0) > 0 ? `${(detailData.avg_cycle_life_2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
                     </div>
                     <div className="stats-card">

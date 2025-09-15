@@ -14,7 +14,9 @@ interface FileRecord {
   name: string;
   date: string;
   batteryCount: number;
-  avgCirculation: string;
+  avgCirculation: string;  // 保留兼容性
+  avgCycleLife1: number;
+  avgCycleLife2: number;
 }
 
 // Mock数据已移除，使用真实API数据
@@ -46,7 +48,9 @@ const PredictionTool: React.FC = () => {
         second: '2-digit'
       }),
       batteryCount: apiData.barcode_count,
-      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown')
+      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown'),
+      avgCycleLife1: avgCycleLife1,
+      avgCycleLife2: avgCycleLife2
     };
   };
 
