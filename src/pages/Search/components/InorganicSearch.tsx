@@ -475,7 +475,7 @@ const InorganicSearch = () => {
                                 borderColor: interfaceMode === 'search' ? '#4CAF50' : '#d1d5db'
                             }}
                         >
-                            {t('search.modes.search', '搜索')}
+                            {t('navigation.header.search', '搜索')}
                         </button>
                         <button
                             className={`mode-switch-btn ${interfaceMode === 'filter' ? 'active' : ''}`}
@@ -493,7 +493,7 @@ const InorganicSearch = () => {
                                 borderColor: interfaceMode === 'filter' ? '#4CAF50' : '#d1d5db'
                             }}
                         >
-                            {t('search.modes.filter', '过滤')}
+                            {t('navigation.header.filter', '过滤')}
                         </button>
                     </div>
 
