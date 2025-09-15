@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
@@ -37,6 +38,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
     const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
@@ -54,8 +56,20 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return 'Low';
     }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+
+    const toggleAdvancedOptions = () => {
+        setShowAdvanced(prev => !prev);
+    };
+
+    const handleAdvancedToggleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleAdvancedOptions();
+        }
+    };
 
     const handleClose = () => {
         onClose?.();
@@ -167,8 +181,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         setSelectedAdditiveSubtype(event.target.value);
     };
 
-    const toggleFunctionalGroups = () => {
-        setIsFunctionalGroupsExpanded(!isFunctionalGroupsExpanded);
+    const toggleFunctionalGroups = (cardId: string) => {
+        setExpandedCards(prev => ({
+            ...prev,
+            [cardId]: !prev[cardId]
+        }));
     };
 
     const renderMoleculeStructure = (smiles?: string) => {
@@ -196,8 +213,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         isOriginal = false,
         raw?: any,
         grade?: number,
-        reasoning?: string
+        reasoning?: string,
+        cardId?: string
     ) => {
+        const uniqueCardId = cardId || (isOriginal ? 'original' : `${name}-${(properties as MoleculeProperties).smiles || Math.random()}`);
+        const isFunctionalGroupsExpanded = expandedCards[uniqueCardId] || false;
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -303,7 +323,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
-                        onClick={toggleFunctionalGroups}
+                        onClick={() => toggleFunctionalGroups(uniqueCardId)}
                     >
                         <svg className={`chevron-icon ${isFunctionalGroupsExpanded ? 'rotated' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
@@ -337,8 +357,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
-                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
                             <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                            <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
                             <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
@@ -357,9 +377,40 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
+                    {selectedMoleculeType === 'additive' && (
+                        <div style={{ marginTop: '8px' }}>
+                            <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
+                            <select
+                                value={selectedAdditiveSubtype}
+                                onChange={handleAdditiveSubtypeChange}
+                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            >
+                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
+                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
+                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
+                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
+                            </select>
+                        </div>
+                    )}
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={showAdvanced}
+                        onClick={toggleAdvancedOptions}
+                        onKeyDown={handleAdvancedToggleKeyDown}
+                        style={{
+                            marginTop: '12px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            cursor: 'pointer',
+                            color: '#2563eb',
+                            fontWeight: 500,
+                            fontSize: '13px'
+                        }}
+                    >
                         <span>{t('search.advancedOptions')}</span>
-                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+                        {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
@@ -373,6 +424,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setComputeLevel={setComputeLevel}
                             structureWeight={structureWeight}
                             setStructureWeight={setStructureWeight}
+                            showHypothetical={showHypothetical}
+                            setShowHypothetical={setShowHypothetical}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
                         />
@@ -451,7 +504,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const payload: any = {
             smiles,
             use_35m: isHighTier,
-            structure_weight: structureWeight
+            structure_weight: structureWeight,
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
         };
         if (molType) {
             payload.mol_type = molType;
@@ -510,7 +564,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const items = Array.isArray(data?.similar_molecules) ? data.similar_molecules : [];
         const mapped: SimilarMolecule[] = items.map((it: any) => ({
             name: it?.name || it?.SMILES || 'Unknown',
-            properties: mapDetailsToProperties(it)
+            properties: mapDetailsToProperties(it),
+            grade: it?.grade,
+            reasoning: it?.reasoning,
         }));
         return { list: mapped, raws: items };
     };
@@ -590,7 +646,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning)}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning, `similar-${index}`)}
                                     </div>
                                 ))}
                             </div>

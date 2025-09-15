@@ -7,8 +7,8 @@ export default {
         sendButton: "Send"
     },
     chat: {
-        newChat: "New Chat",
-        newExpoler: "New Explorer",
+        newChat: "Start New Research",
+        newExpoler: "Research Anything",
         newChatSubtitle: "Start a new conversation and explore the mysteries of the molecular universe",
         searchChat: "Search Chat",
         historyTitle: "Chat History",
@@ -27,8 +27,14 @@ export default {
         modes: {
             regular: "Regular Ask",
             deepSpace: "Deep Space",
+            lightning: "Lightning",
+            ask: "Pro",
+            fastDeepSpace: "Fast Deep Space",
             regularDescription: "Basic Q&A mode, suitable for daily battery-related questions. Provides accurate and concise answers.",
-            deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
+            deepSpaceDescription: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 20-40 minutes.",
+            lightningDescription: "Lowest compute power for quick replies.",
+            askDescription: "Highest compute power for best quality.",
+            fastDeepSpaceDescription: "Multi-agent research with lower compute power for faster results.",
             regularRemaining: "Remaining today: {{count}} times",
             deepSpaceRemaining: "Remaining monthly: {{count}} times",
             betaBadge: "Beta"
@@ -76,7 +82,7 @@ export default {
         ignoreChatHistory: "Ignore chat history",
         disableLiteratureSearch: "Disable literature search",
         enterDeepSpace: "Enter Deep Space (BETA)",
-        deepSpaceTooltip: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.",
+        deepSpaceTooltip: "A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 20-40 minutes.",
         admin: "ADMIN",
         fullDeepSpace: "Full Deep Space",
         disableTools: "Disable tools"
@@ -96,7 +102,7 @@ export default {
         noMoleculesFound: "No molecules found.",
         findMoleculesFailed: "Failed to find molecules. Please try again later.",
         clarifyingQuestions: "We may ask you to reply to a few clarifying questions shortly.",
-        deepSpaceWorking: "The Deep Space Multi-Agent LLM is now working, it may take 10-20 minutes to respond, depending on the complexity of your question."
+        deepSpaceWorking: "The Deep Space Multi-Agent LLM is now working, it may take 20-40 minutes to respond, depending on the complexity of your question."
     },
     buttons: {
         findMolecules: "Find Molecules",
@@ -162,7 +168,7 @@ export default {
     history: {
         title: "Your Chats",
         createNewChat: "Create New Chat",
-        newChat: "New Chat",
+        newChat: "Start New Research",
         confirmDelete: "Are you sure you want to delete this chat?",
         cancel: "Cancel",
         delete: "Delete",

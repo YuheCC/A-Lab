@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicSearch, InorganicSearch } from "./components";
+import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
 import "./Search.css";
 
 const Search = () => {
@@ -18,18 +18,18 @@ const Search = () => {
                     >
                         {t('search.tabs.organic')}
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('inorganic')}
                         className={`search-tab-button ${activeTab === 'inorganic' ? 'active' : ''}`}
                     >
                         {t('search.tabs.inorganic')}
-                    </button>
-                    {/* <button
+                    </button> */}
+                    <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
                     >
                         {t('search.tabs.third')}
-                    </button> */}
+                    </button>
                 </div>
             </div>
 

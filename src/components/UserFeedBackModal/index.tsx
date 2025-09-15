@@ -178,7 +178,8 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                                 onChange={(e) => handleInputChange('feature', e.target.value)} // 字段名从 function 改为 feature
                             >
                                 <option value="map">{t('feedback.feedback.functionOptions.map')}</option>
-                                <option value="regularAsk">{t('feedback.feedback.functionOptions.regularAsk')}</option>
+                                <option value="lightning">{t('feedback.feedback.functionOptions.lightning')}</option>
+                                <option value="ask">{t('feedback.feedback.functionOptions.ask')}</option>
                                 <option value="deepSpace">{t('feedback.feedback.functionOptions.deepSpace')}</option>
                                 <option value="search">{t('feedback.feedback.functionOptions.search')}</option>
                                 <option value="filter">{t('feedback.feedback.functionOptions.filter')}</option>
