@@ -116,6 +116,11 @@ const PredictionTool: React.FC = () => {
   };
 
   const handleDeleteFile = async (fileId: string) => {
+    // 显示确认对话框
+    if (!confirm(t('predictionTool.history.deleteConfirm'))) {
+      return;
+    }
+
     try {
       setLoading(true);
       await deleteHistory({ id: parseInt(fileId) });

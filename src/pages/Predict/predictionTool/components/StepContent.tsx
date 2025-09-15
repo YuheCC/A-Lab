@@ -40,6 +40,16 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
+  const handleDownloadSampleData = () => {
+    // 创建下载链接
+    const link = document.createElement('a');
+    link.href = '/ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
+    link.download = 'ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleResetAll = () => {
     // 重置所有状态
     setUploadedFile(null);
@@ -151,7 +161,13 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="data-format-tip">
               <div className="tip-header">
                 <span className="tip-title">{t('predictionTool.upload.dataFormatTip')}</span>
-                <span className="tip-sample-link">{t('predictionTool.upload.sampleData')}</span>
+                <span 
+                  className="tip-sample-link" 
+                  onClick={handleDownloadSampleData}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {t('predictionTool.upload.sampleData')}
+                </span>
               </div>
 
               <div className="tip-content">
