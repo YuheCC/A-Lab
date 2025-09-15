@@ -11,7 +11,8 @@ export interface ChatResponse {
 
 export interface ChatRequest {
   message: string;
-  mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'fast-deep-space' | 'clarify';
+
+  mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify';
   chatId?: string;
 }
 
@@ -66,7 +67,8 @@ export class ChatService {
     };
   }
 
-  async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'fast-deep-space' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
+
+  async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
       const resp = await request('/chat/send', {
         method: 'POST',
@@ -110,7 +112,8 @@ export class ChatService {
   openChatStream(options: {
     chatId?: string;
     message?: string;
-    mode?: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'fast-deep-space' | 'clarify';
+
+    mode?: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify';
     path?: string;
     protocols?: string[];
     websocketOnly?: boolean; // 新增选项：是否仅使用WebSocket

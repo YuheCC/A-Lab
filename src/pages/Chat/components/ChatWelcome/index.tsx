@@ -8,7 +8,8 @@ import { useAuthStore } from '@/models/useAuth';
 
 // 推荐问题数据将从多语言配置中获取
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask' | 'fast-deep-space';
+
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
@@ -51,20 +52,19 @@ const ChatWelcome: React.FC = () => {
             toolsEnabled: !disableTools,
             originalMode: currentMode,
         };
-        if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
+        if (currentMode === 'deep-space') {
             extraPayload.dump_state = !!fullDeepSpace;
         }
         const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
             lightning: 'medium',
             ask: 'high',
-            'fast-deep-space': 'low',
             'deep-space': 'high',
             regular: 'high',
             clarify: 'high'
         };
         extraPayload.llmComputePower = powerMap[currentMode];
         const modeToSend: ChatMode =
-            currentMode === 'deep-space' || currentMode === 'fast-deep-space'
+            currentMode === 'deep-space'
                 ? 'clarify'
                 : currentMode;
         handleSendMessage(
@@ -91,7 +91,6 @@ const ChatWelcome: React.FC = () => {
 
     const translationKeyMap: Record<string, string> = {
         'deep-space': 'deepSpace',
-        'fast-deep-space': 'fastDeepSpace',
     };
 
     const getTranslationKey = (mode: ChatMode) => translationKeyMap[mode] || mode;
@@ -155,20 +154,19 @@ const ChatWelcome: React.FC = () => {
                 toolsEnabled: !disableTools,
                 originalMode: currentMode,
             };
-            if (['deep-space', 'fast-deep-space'].includes(currentMode)) {
+            if (currentMode === 'deep-space') {
                 extraPayload.dump_state = !!fullDeepSpace;
             }
             const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
                 lightning: 'medium',
                 ask: 'high',
-                'fast-deep-space': 'low',
                 'deep-space': 'high',
                 regular: 'high',
                 clarify: 'high'
             };
             extraPayload.llmComputePower = powerMap[currentMode];
             const modeToSend: ChatMode =
-                currentMode === 'deep-space' || currentMode === 'fast-deep-space'
+                currentMode === 'deep-space'
                     ? 'clarify'
                     : currentMode;
             handleSendMessage(question, modeToSend, undefined, extraPayload);
@@ -211,7 +209,7 @@ const ChatWelcome: React.FC = () => {
                         />
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                {(userPermissions === 'admin' ? ['lightning','ask','fast-deep-space','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
+                                {(userPermissions === 'admin' ? ['lightning','ask','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
                                     <Tooltip
                                         key={modeKey}
                                         title={getModeTooltipContent(modeKey as ChatMode)}
@@ -240,7 +238,7 @@ const ChatWelcome: React.FC = () => {
                                             type="button"
                                         >
                                             <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey as ChatMode)}` as any)}</span>
-                                            {['deep-space','fast-deep-space'].includes(modeKey) && (
+                                            {['deep-space'].includes(modeKey) && (
                                                 <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
                                             )}
                                         </button>
@@ -296,7 +294,7 @@ const ChatWelcome: React.FC = () => {
                           type="checkbox"
                           checked={fullDeepSpace}
                           onChange={(e) => setFullDeepSpace(e.target.checked)}
-                          disabled={!['fast-deep-space', 'deep-space'].includes(currentMode)}
+                          disabled={currentMode !== 'deep-space'}
                         />
                         Full Deep Space
                       </label>
