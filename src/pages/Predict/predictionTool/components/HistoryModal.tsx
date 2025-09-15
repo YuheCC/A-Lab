@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getHistoryDetail, downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
+import { normalizeServerDate } from '@/utils/messageUtils';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -167,7 +168,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
                       <div className="stats-value">
-                        {new Date(detailData.created_at).toLocaleString('zh-CN', {
+                        {new Date(normalizeServerDate(detailData.created_at)).toLocaleString('zh-CN', {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',

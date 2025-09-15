@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FileText, RefreshCw, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
+import { normalizeServerDate } from '@/utils/messageUtils';
 
 interface StepContentProps {
   activeStep: number;
@@ -271,7 +272,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
 
         // 格式化创建时间
         const formatDate = (dateString: string) => {
-          return new Date(dateString).toLocaleString('zh-CN', {
+          return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
