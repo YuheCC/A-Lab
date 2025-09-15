@@ -455,7 +455,7 @@ const OrganicSearch = () => {
 
                 {/* Search interface on the right */}
                 <div
-                    className="search-interface-section"
+                    className={`search-interface-section ${interfaceMode === 'filter' ? 'filter-mode' : ''}`}
                     style={{
                         flex: 1,
                         minWidth: 0

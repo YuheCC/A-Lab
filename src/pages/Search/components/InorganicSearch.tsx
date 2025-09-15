@@ -442,7 +442,7 @@ const InorganicSearch = () => {
 
                 {/* Search interface on the right */}
                 <div 
-                    className="search-interface-section" 
+                    className={`search-interface-section ${interfaceMode === 'filter' ? 'filter-mode' : ''}`} 
                     style={{
                         width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
                         flex: 'none',

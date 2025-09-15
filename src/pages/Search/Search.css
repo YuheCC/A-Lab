@@ -179,6 +179,60 @@
     flex-direction: column;
 }
 
+/* 当在filter模式时，确保浮层不被截断 */
+.search-interface-section:has(.sliders-container) {
+    overflow: visible !important;
+}
+
+/* 为了兼容不支持:has的浏览器，添加特定类 */
+.search-interface-section.filter-mode {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的sliders容器不截断浮层 */
+.search-interface-section.filter-mode .sliders-container {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的filter包装器不截断浮层 */
+.search-interface-section.filter-mode .filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保MUI Autocomplete的popper在filter模式下正确显示 */
+.search-interface-section.filter-mode .MuiAutocomplete-root {
+    position: relative;
+    z-index: 1;
+}
+
+.search-interface-section.filter-mode .functional-group-input-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* 特别针对Search页面filter模式的Slider浮层标签修复 */
+.search-interface-section.filter-mode .MuiSlider-valueLabel {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelOpen {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelContainer {
+    z-index: 10001 !important;
+}
+
+/* 确保Slider的mark标签也不会被截断 */
+.search-interface-section.filter-mode .MuiSlider-mark {
+    z-index: 2 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-markLabel {
+    z-index: 2 !important;
+}
+
 .resize-divider {
     width: 4px;
     background-color: transparent;
