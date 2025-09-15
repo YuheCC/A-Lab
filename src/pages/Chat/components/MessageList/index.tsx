@@ -92,10 +92,10 @@ const ExtraDataSection: React.FC<{
 interface MessageListProps {
   messages?: Message[];
   onCopyMessage?: (content: string) => void;
-  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space') => void;
+  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask') => void;
   onMoleculeClick?: (moleculeName: string) => void;
   onEditMessage?: (messageId: string, newText: string) => void;
-  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space') => Promise<void>;
+  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask') => Promise<void>;
   className?: string;
 }
 
@@ -431,7 +431,6 @@ const MessageList: FC<MessageListProps> = ({
           {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
             <div className="message">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>{t('chatbox.status.thinking') || '思考中'}</span>
                 <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
               </div>
             </div>

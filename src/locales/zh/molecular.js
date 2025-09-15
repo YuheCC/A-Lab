@@ -38,7 +38,7 @@ export default {
       seiPromoter: "SEI 促进剂",
       sideReactionSuppressor: "副反应抑制剂",
       dendriteSuppressor: "枝晶抑制剂",
-      interfacialStabilityImprover: "界面稳定性改善剂"
+      interfacialStabilityImprover: "界面稳定性改进剂"
     },
     properties: {
       predictedFp: "预测闪点",

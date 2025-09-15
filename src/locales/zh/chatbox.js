@@ -28,13 +28,11 @@ export default {
             regular: "常规问答",
             deepSpace: "深度搜索",
             lightning: "闪电",
-            fast: "快速",
-            ask: "Ask",
+            ask: "Pro",
             fastDeepSpace: "快速 Deep Space",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
-            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
             lightningDescription: "最低算力，极速回复。",
-            fastDescription: "中等算力，速度与准确性平衡。",
             askDescription: "高算力，提供最佳答案。",
             fastDeepSpaceDescription: "较低算力的多智能体研究，可实现更快速的结果。",            regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
@@ -83,7 +81,7 @@ export default {
         ignoreChatHistory: "忽略聊天历史",
         disableLiteratureSearch: "禁用文献搜索",
         enterDeepSpace: "进入深度搜索 (BETA)",
-        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
         admin: "管理员",
         fullDeepSpace: "全深度搜索",
         disableTools: "禁用工具"
@@ -94,7 +92,7 @@ export default {
         reachedLimit: "您已达到本月查询限制。请联系管理员寻求帮助。"
     },
     status: {
-        connectingToServer: "正在连接服务器...",
+        connectingToServer: "连接到服务器...",
         thinking: "思考中",
         searching: "搜索中",
         searchingDatabase: "搜索我们的数据库",
@@ -103,7 +101,7 @@ export default {
         noMoleculesFound: "未找到分子。",
         findMoleculesFailed: "查找分子失败。请稍后再试。",
         clarifyingQuestions: "我们可能会要求您稍后回答一些澄清问题。",
-        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要10-20分钟才能响应。"
+        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要20-40分钟才能响应。"
     },
     buttons: {
         findMolecules: "查找分子",

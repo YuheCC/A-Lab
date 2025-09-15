@@ -41,6 +41,28 @@ export default {
     computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
     batteryInfoRecommendation: '推荐的电池信息可帮助智能找朋友为您找到最相关的分子：',
     
+    searchRange: '搜索范围',
+    nearbyFriends: '附近的朋友',
+    distantFriends: '远处的朋友',
+    advancedOptions: '高级选项',
+    intelligentCompute: '智能找朋友计算',
+    computeDisabled: '禁用',
+    computeLow: '低',
+    computeMedium: '中',
+    computeHigh: '高',
+    computeExtreme: '极致',
+    cathode: '正极',
+    anode: '负极',
+    salt: '盐',
+    solvent: '主要溶剂',
+    performanceMetric: '期望性能指标',
+    extraRequests: '自定义分子约束（为了获得最佳结果，请启用智能找朋友）：',
+    extraRequestsPlaceholder: '仅显示含醚官能团的分子。',
+    custom: '自定义',
+    upgradeEnterprise: '升级到企业级账户',
+    upgradeAccount: '升级账户',
+    computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
+    
     // Loading and Status Messages
     searching: "搜索中...",
     loadingMap: "正在加载分子宇宙地图",
@@ -85,7 +107,7 @@ export default {
             seiPromoter: "SEI 促进剂",
             sideReactionSuppressor: "副反应抑制剂",
             dendriteSuppressor: "枝晶抑制剂",
-            interfacialStabilityImprover: "界面稳定性改善剂"
+            interfacialStabilityImprover: "界面稳定性改进剂"
         }
     },
     
