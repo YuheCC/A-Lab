@@ -156,13 +156,13 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                       <div className="stats-value">
-                        {(detailData.avg_cycle_life_1 || 0) > 0 ? `${(detailData.avg_cycle_life_1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
+                        {(detailData.avg_cycle_life_1 || 0) >= 0 ? `${(detailData.avg_cycle_life_1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
                     </div>
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                       <div className="stats-value">
-                        {(detailData.avg_cycle_life_2 || 0) > 0 ? `${(detailData.avg_cycle_life_2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
+                        {(detailData.avg_cycle_life_2 || 0) >= 0 ? `${(detailData.avg_cycle_life_2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
                     </div>
                     <div className="stats-card">
@@ -196,8 +196,8 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                           ? detailData.brcode_data.map((item) => (
                               <tr key={item.id}>
                                 <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
-                                <td className="cycle-life-cell">{parseFloat(item.cycle_life_1.toString()).toFixed(0)}</td>
-                                <td className="cycle-life-cell">{parseFloat(item.cycle_life_2.toString()).toFixed(0)}</td>
+                                <td className="cycle-life-cell">{parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0)}</td>
+                                <td className="cycle-life-cell">{parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0)}</td>
                               </tr>
                             ))
                           : (

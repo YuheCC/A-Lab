@@ -292,11 +292,11 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 </div>
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
-                  <div className="stats-value">{avgCycleLife1 > 0 ? `${avgCycleLife1.toFixed(0)}` : t('predictionTool.results.unknown')}</div>
+                  <div className="stats-value">{avgCycleLife1 >= 0 ? `${(avgCycleLife1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
                 </div>
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
-                  <div className="stats-value">{avgCycleLife2 > 0 ? `${avgCycleLife2.toFixed(0)}` : t('predictionTool.results.unknown')}</div>
+                  <div className="stats-value">{avgCycleLife2 >= 0 ? `${(avgCycleLife2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
                 </div>
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
@@ -321,8 +321,8 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                       {predictionResult.brcode_data.map((item) => (
                         <tr key={item.id}>
                           <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
-                          <td className="cycle-life-cell">{parseFloat(item.cycle_life_1.toString()).toFixed(0)}</td>
-                          <td className="cycle-life-cell">{parseFloat(item.cycle_life_2.toString()).toFixed(0)}</td>
+                          <td className="cycle-life-cell">{parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0)}</td>
+                          <td className="cycle-life-cell">{parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0)}</td>
                         </tr>
                       ))}
                     </tbody>
