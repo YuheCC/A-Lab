@@ -42,6 +42,28 @@ export default {
     batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보:',
 
     
+    searchRange: '검색 범위',
+    nearbyFriends: '가까운 친구들',
+    distantFriends: '먼 친구들',
+    advancedOptions: '고급 옵션',
+    intelligentCompute: '지능형 친구 찾기 연산',
+    computeDisabled: '비활성화',
+    computeLow: '낮음',
+    computeMedium: '중간',
+    computeHigh: '높음',
+    computeExtreme: '극대',
+    cathode: '양극',
+    anode: '음극',
+    salt: '염',
+    solvent: '주요 용매',
+    performanceMetric: '원하는 성능 지표',
+    extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
+    extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',
+    custom: '사용자 정의',
+    upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
+    upgradeAccount: '계정을 업그레이드',
+    computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+
     // Loading and Status Messages
     searching: "검색 중...",
     loadingMap: "분자 우주의 지도를 로딩 중",
@@ -81,12 +103,12 @@ export default {
         cosolvent: "공용매",
         diluent: "희석제",
         additive: "첨가제",
-        additiveSubtype: "첨가제 하위 분류",
+        additiveSubtype: "첨가제 서브카테고리",
         additiveOptions: {
-            seiPromoter: "SEI 촉진제",
-            sideReactionSuppressor: "부반응 억제제",
-            dendriteSuppressor: "덴드라이트 억제제",
-            interfacialStabilityImprover: "계면 안정성 향상제"
+            seiPromoter: "SEI 활성화제",
+            sideReactionSuppressor: "부사상 반응 억제제",
+            dendriteSuppressor: "덴드리트 억제제",
+            interfacialStabilityImprover: "표면 안정성 향상제"
         }
     },
     

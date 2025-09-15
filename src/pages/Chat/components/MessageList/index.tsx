@@ -431,7 +431,6 @@ const MessageList: FC<MessageListProps> = ({
           {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
             <div className="message">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>{t('chatbox.status.thinking') || '思考中'}</span>
                 <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
               </div>
             </div>

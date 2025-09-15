@@ -13,7 +13,7 @@ export default {
     drawMolecule: "分子を描画",
     
     // Search Options
-    findFriendsLabel: '"友達"を探す',
+    findFriendsLabel: '"友達"を検索',
     findFriendsDescription: '入力した分子と類似した構造を持ち、以下のバッテリー用途に理論的に適合する物理化学特性を備えた分子：',
 
     searchRange: '検索範囲',

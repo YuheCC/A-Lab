@@ -37,6 +37,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
     const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
@@ -168,8 +169,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         setSelectedAdditiveSubtype(event.target.value);
     };
 
-    const toggleFunctionalGroups = () => {
-        setIsFunctionalGroupsExpanded(!isFunctionalGroupsExpanded);
+    const toggleFunctionalGroups = (cardId: string) => {
+        setExpandedCards(prev => ({
+            ...prev,
+            [cardId]: !prev[cardId]
+        }));
     };
 
     const renderMoleculeStructure = (smiles?: string) => {
@@ -197,8 +201,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         isOriginal = false,
         raw?: any,
         grade?: number,
-        reasoning?: string
+        reasoning?: string,
+        cardId?: string
     ) => {
+        const uniqueCardId = cardId || (isOriginal ? 'original' : `${name}-${(properties as MoleculeProperties).smiles || Math.random()}`);
+        const isFunctionalGroupsExpanded = expandedCards[uniqueCardId] || false;
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -304,7 +311,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
-                        onClick={toggleFunctionalGroups}
+                        onClick={() => toggleFunctionalGroups(uniqueCardId)}
                     >
                         <svg className={`chevron-icon ${isFunctionalGroupsExpanded ? 'rotated' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
@@ -373,10 +380,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </select>
                         </div>
                     )}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', cursor: 'pointer', marginTop: '8px' }} onClick={() => setShowAdvanced(!showAdvanced)}>
-                        <span>{t('search.advancedOptions')}</span>
-                        {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                    </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
                             extraRequests={extraRequests}
@@ -611,7 +614,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], molecule.grade, molecule.reasoning)}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning, `similar-${index}`)}
                                     </div>
                                 ))}
                             </div>
