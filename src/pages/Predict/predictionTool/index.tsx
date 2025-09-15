@@ -100,6 +100,12 @@ const PredictionTool: React.FC = () => {
     setCurrentStep(0);
   };
 
+  const handleReset = () => {
+    setCurrentStep(0);
+    setSelectedFile(null);
+    setError(null);
+  };
+
   const handleViewDetails = (file: FileRecord) => {
     setSelectedFile(file);
     setShowModal(true);
@@ -164,6 +170,7 @@ const PredictionTool: React.FC = () => {
             activeStep={currentStep} 
             onStepChange={setCurrentStep}
             onPredictionComplete={loadHistoryData}
+            onReset={handleReset}
           />
         </div>
 

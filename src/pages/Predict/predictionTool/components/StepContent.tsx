@@ -7,9 +7,10 @@ interface StepContentProps {
   activeStep: number;
   onStepChange?: (step: number) => void;
   onPredictionComplete?: () => void;
+  onReset?: () => void;
 }
 
-const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete }) => {
+const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete, onReset }) => {
   const { t } = useTranslation();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -36,6 +37,26 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
 
   const formatFileSize = (bytes: number) => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  };
+
+  const handleResetAll = () => {
+    // 重置所有状态
+    setUploadedFile(null);
+    setIsUploading(false);
+    setIsProcessing(false);
+    setProgress(0);
+    setPredictionResult(null);
+    setError(null);
+    
+    // 回到第一步
+    if (onStepChange) {
+      onStepChange(0);
+    }
+    
+    // 调用父组件的重置回调
+    if (onReset) {
+      onReset();
+    }
   };
 
   const handleStartPrediction = async () => {
@@ -163,7 +184,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="uploaded-files-section">
               <div className="section-header">
                 <h4 className="section-title">{t('predictionTool.prediction.uploadedData')}</h4>
-                <button className="refresh-btn">
+                <button className="refresh-btn" onClick={handleResetAll}>
                   <RefreshCw size={12} />
                   {t('predictionTool.prediction.changeFile')}
                 </button>
