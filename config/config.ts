@@ -11,8 +11,8 @@ export default defineConfig({
     '@': path.resolve(__dirname, '../src'),
   },
   define: {
-    'BASE_URL': "https://prod-api.ses.ai",
-    'ShowFindFriendsAdvancedOptions': false,
+    'ShowFindFriendsAdvancedOptions': true,
+    'BASE_URL': "https://demo-api.ses.ai",
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },

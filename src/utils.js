@@ -1,4 +1,4 @@
-export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
+export const getAPIUrl = () => BASE_URL || 'https://demo-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
