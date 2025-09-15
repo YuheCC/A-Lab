@@ -30,7 +30,7 @@ const Map = () => {
 
             {/* Tab Content */}
             <div className="tab-content">
-                <div className="search-umap-container">
+                <div className="map-umap-container">
                     {activeTab === 'organic' ? (
                         <OrganicMolecules />
                     ) : (

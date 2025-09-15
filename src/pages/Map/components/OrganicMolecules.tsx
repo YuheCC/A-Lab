@@ -32,7 +32,7 @@ const OrganicMolecules = () => {
     return (
         <>
             {/* UMAP Visualization in the middle (50%) */}
-            <div className="search-umap-section" style={{ position: 'relative' }}>
+            <div className="map-umap-section" style={{ position: 'relative' }}>
                 {/* Info icon with tooltip */}
                 <div 
                     style={{

@@ -18,7 +18,7 @@ const MoleculeInfo05 = () => {
 
     return (
         <div
-            className="search-interface-section"
+            className="map-interface-section"
             style={{
                 flex: '0.8',
                 overflowY: 'auto',
