@@ -227,7 +227,7 @@ export const useChat = () => {
   const ragResultsCount = useMemo(() => isAdvancedTier ? 10 : 3, [isAdvancedTier]);
 
   // 发送消息函数，使用全局WebSocket连接
-  const sendMessage = useCallback((message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'fast' | 'ask' | 'clarify' = 'regular', extra?: Record<string, any>) => {
+  const sendMessage = useCallback((message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', extra?: Record<string, any>) => {
     console.log('sendMessage: 发送消息', { message, mode, socketSessionId: state.sessionId, chatId: state.currentChatId });
     
     // 检查连接状态

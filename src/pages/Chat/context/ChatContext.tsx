@@ -11,7 +11,8 @@ import { useMoleculePanel } from '../hooks/useMoleculePanel';
 import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask';
+
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
 
 const extractExtraData = (payload: any) => {
     let extraData = payload?.extra_outputs ?? payload?.extra_output ?? payload?.extraData ?? payload?.extra_data;
@@ -383,7 +384,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             numRagResults: ragResultsCount 
         };
         
-        if (['regular','lightning','fast','ask'].includes(mode)) {
+        if (['regular','lightning','ask'].includes(mode)) {
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         } else if (mode === 'deep-space') {
             await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);

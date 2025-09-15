@@ -6,7 +6,7 @@ import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask';
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask'
 
 interface ChatInputProps {
   placeholder?: string;
@@ -48,7 +48,7 @@ const ChatInput: FC<ChatInputProps> = ({
     const searchParams = new URLSearchParams(location.search);
     const urlMode = searchParams.get('mode');
 
-    const allowedModes = ['regular','deep-space','clarify','lightning','fast','ask'];
+    const allowedModes = ['regular','deep-space','clarify','lightning','ask'];
     if (urlMode && allowedModes.includes(urlMode)) {
       console.log('URL mode detected:', urlMode);
       setCurrentMode(urlMode as ChatMode);
@@ -93,8 +93,7 @@ const ChatInput: FC<ChatInputProps> = ({
         extraPayload.dump_state = !!fullDeepSpace;
       }
       const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
-        lightning: 'low',
-        fast: 'medium',
+        lightning: 'medium',
         ask: 'high',
         'deep-space': 'high',
         regular: 'high',
@@ -194,7 +193,8 @@ const ChatInput: FC<ChatInputProps> = ({
         />
         <div className="chat-controls-row">
           <div className="input-mode-switch">
-            {(userPermissions === 'admin' ? ['lightning','fast','ask','deep-space'] : ['regular','deep-space']).map(modeKey => (
+
+            {(userPermissions === 'admin' ? ['lightning','ask','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
               <Tooltip
                 key={modeKey}
                 title={getModeTooltipContent(modeKey as ChatMode)}

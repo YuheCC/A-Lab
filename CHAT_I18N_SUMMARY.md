@@ -30,13 +30,11 @@
 - `regular`: Regular Ask
 - `deepSpace`: Deep Space
 - `lightning`: Lightning
-- `fast`: Fast
-- `ask`: Ask
+- `ask`: Pro
 - `fastDeepSpace`: Fast Deep Space
 - `regularDescription`: 常规模式描述
 - `deepSpaceDescription`: 深度搜索模式描述
 - `lightningDescription`: Lightning模式描述
-- `fastDescription`: Fast模式描述
 - `askDescription`: Ask模式描述
 - `fastDeepSpaceDescription`: Fast Deep Space模式描述
 - `regularRemaining`: 今日剩余次数
