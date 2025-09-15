@@ -93,7 +93,7 @@ const ChatInput: FC<ChatInputProps> = ({
         extraPayload.dump_state = !!fullDeepSpace;
       }
       const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
-        lightning: 'low',
+        lightning: 'medium',
         ask: 'high',
         'fast-deep-space': 'low',
         'deep-space': 'high',
