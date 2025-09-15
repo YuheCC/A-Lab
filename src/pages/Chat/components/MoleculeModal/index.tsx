@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
@@ -58,6 +59,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+
+    const toggleAdvancedOptions = () => {
+        setShowAdvanced(prev => !prev);
+    };
+
+    const handleAdvancedToggleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleAdvancedOptions();
+        }
+    };
 
     const handleClose = () => {
         onClose?.();
@@ -380,6 +392,26 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </select>
                         </div>
                     )}
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={showAdvanced}
+                        onClick={toggleAdvancedOptions}
+                        onKeyDown={handleAdvancedToggleKeyDown}
+                        style={{
+                            marginTop: '12px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            cursor: 'pointer',
+                            color: '#2563eb',
+                            fontWeight: 500,
+                            fontSize: '13px'
+                        }}
+                    >
+                        <span>{t('search.advancedOptions')}</span>
+                        {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
                             extraRequests={extraRequests}
