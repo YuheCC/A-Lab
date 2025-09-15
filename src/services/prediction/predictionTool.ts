@@ -193,6 +193,7 @@ export const downloadFile = async (params: FileDownloadParams): Promise<Blob> =>
     params: {
       filename: params.filename,
     },
+    responseType: 'blob',
   });
 
   return response.data;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getHistoryDetail, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
+import { getHistoryDetail, downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
   const [detailData, setDetailData] = useState<HistoryDetailResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   // 当Modal打开且有fileRecord时，获取详细数据
   useEffect(() => {
@@ -36,10 +37,10 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
 
   const loadDetailData = async () => {
     if (!fileRecord) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const detail = await getHistoryDetail(parseInt(fileRecord.id));
       setDetailData(detail);
@@ -48,6 +49,41 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
       console.error('Load detail error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!detailData?.file_name) return;
+
+    setDownloading(true);
+    try {
+      const data = await downloadFile({ filename: detailData.file_path });
+
+      // 确保数据是Blob类型
+      let blob: Blob;
+      if (data instanceof Blob) {
+        blob = data;
+      } else {
+        // 如果不是Blob，尝试转换
+        blob = new Blob([data], { type: 'application/octet-stream' });
+      }
+
+      // 创建下载链接
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = detailData.file_name;
+      document.body.appendChild(link);
+      link.click();
+
+      // 清理
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error('Download error:', err);
+      setError(err.message || '下载文件失败');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -67,8 +103,21 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
           <div className="modal-section">
             <h4 className="section-title">{t('predictionTool.modal.uploadedData')}</h4>
             <div className="uploaded-file-info">
-              <div className="file-link">
-                {fileRecord.name}
+              <div className="file-link-container">
+                <span className="file-link">
+                  {fileRecord.name}
+                </span>
+                {detailData?.file_name && (
+                  <button
+                    className="download-btn"
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    title="下载文件"
+                  >
+                    <Download size={16} />
+                    {downloading ? '下载中...' : '下载'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
