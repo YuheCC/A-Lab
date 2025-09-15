@@ -29,7 +29,7 @@ export default {
             ask: "Pro",
             fastDeepSpace: "빠른 딥 스페이스",
             regularDescription: "기본 Q&A 모드로, 일상적인 배터리 관련 질문에 적합합니다. 정확하고 간결한 답변을 제공합니다.",
-            deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+            deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 20-40분입니다.",
             lightningDescription: "최소 연산으로 빠른 응답",
             askDescription: "최대 연산으로 최고의 품질 제공",
             fastDeepSpaceDescription: "낮은 연산 자원으로 더 빠른 결과를 제공하는 다중 에이전트 연구.",            regularRemaining: "오늘 남은 횟수: {{count}}회",
@@ -79,7 +79,7 @@ export default {
         ignoreChatHistory: "채팅 기록 무시",
         disableLiteratureSearch: "문헌 검색 비활성화",
         enterDeepSpace: "딥 스페이스 진입 (BETA)",
-        deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+        deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 20-40분입니다.",
         admin: "관리자",
         fullDeepSpace: "전체 딥 스페이스",
         disableTools: "도구 비활성화"
@@ -99,7 +99,7 @@ export default {
         noMoleculesFound: "분자를 찾을 수 없습니다.",
         findMoleculesFailed: "분자 찾기에 실패했습니다. 나중에 다시 시도해주세요.",
         clarifyingQuestions: "곧 몇 가지 명확한 질문에 답변을 요청할 수 있습니다.",
-        deepSpaceWorking: "딥 스페이스 멀티 에이전트 LLM이 작업 중입니다. 질문의 복잡성에 따라 응답하는 데 10-20분이 걸릴 수 있습니다."
+        deepSpaceWorking: "딥 스페이스 멀티 에이전트 LLM이 작업 중입니다. 질문의 복잡성에 따라 응답하는 데 20-40분이 걸릴 수 있습니다."
     },
     buttons: {
         findMolecules: "분자 찾기",
