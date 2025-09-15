@@ -27,8 +27,7 @@ export default {
         functionOptions: {
             map: "Map",
             lightning: "Lightning",
-            fast: "Fast",
-            ask: "Ask",
+            ask: "Pro",
             fastDeepSpace: "Fast Deep Space",
             deepSpace: "Deep Space",
             search: "Search",
