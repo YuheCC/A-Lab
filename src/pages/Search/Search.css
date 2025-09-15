@@ -125,15 +125,12 @@
 }
 
 .search-umap-section {
-    flex: 1;
     position: relative;
     background-color: #f5f5f5;
     border-radius: 8px;
-    margin-right: 10px;
 }
 
 .search-interface-section {
-    flex: 1;
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
