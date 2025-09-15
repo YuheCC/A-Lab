@@ -318,13 +318,30 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                       </tr>
                     </thead>
                     <tbody>
-                      {predictionResult.brcode_data.map((item) => (
-                        <tr key={item.id}>
-                          <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
-                          <td className="cycle-life-cell">{parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0)}</td>
-                          <td className="cycle-life-cell">{parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0)}</td>
-                        </tr>
-                      ))}
+                      {predictionResult.brcode_data.map((item) => {
+                        // 当状态为fail且cycle_life为null时，显示fail_reason
+                        const getCycleLife1Display = () => {
+                          if (predictionResult.status === 'fail' && item.cycle_life_1 === null && predictionResult.fail_reason_1) {
+                            return predictionResult.fail_reason_1;
+                          }
+                          return parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0);
+                        };
+
+                        const getCycleLife2Display = () => {
+                          if (predictionResult.status === 'fail' && item.cycle_life_2 === null && predictionResult.fail_reason_2) {
+                            return predictionResult.fail_reason_2;
+                          }
+                          return parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0);
+                        };
+
+                        return (
+                          <tr key={item.id}>
+                            <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
+                            <td className="cycle-life-cell">{getCycleLife1Display()}</td>
+                            <td className="cycle-life-cell">{getCycleLife2Display()}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 ) : (

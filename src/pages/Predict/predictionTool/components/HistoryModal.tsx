@@ -193,13 +193,30 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                       </thead>
                       <tbody>
                         {detailData.brcode_data && detailData.brcode_data.length > 0 
-                          ? detailData.brcode_data.map((item) => (
-                              <tr key={item.id}>
-                                <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
-                                <td className="cycle-life-cell">{parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0)}</td>
-                                <td className="cycle-life-cell">{parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0)}</td>
-                              </tr>
-                            ))
+                          ? detailData.brcode_data.map((item) => {
+                              // 当状态为fail且cycle_life为null时，显示fail_reason
+                              const getCycleLife1Display = () => {
+                                if (detailData.status === 'fail' && item.cycle_life_1 === null && detailData.fail_reason_1) {
+                                  return detailData.fail_reason_1;
+                                }
+                                return parseFloat((item.cycle_life_1 || 0).toString()).toFixed(0);
+                              };
+
+                              const getCycleLife2Display = () => {
+                                if (detailData.status === 'fail' && item.cycle_life_2 === null && detailData.fail_reason_2) {
+                                  return detailData.fail_reason_2;
+                                }
+                                return parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0);
+                              };
+
+                              return (
+                                <tr key={item.id}>
+                                  <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
+                                  <td className="cycle-life-cell">{getCycleLife1Display()}</td>
+                                  <td className="cycle-life-cell">{getCycleLife2Display()}</td>
+                                </tr>
+                              );
+                            })
                           : (
                               <tr>
                                 <td colSpan={3} style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>

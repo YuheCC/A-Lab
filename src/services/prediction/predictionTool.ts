@@ -35,8 +35,8 @@ export interface HistoryListResponse {
 export interface BarcodeData {
   id: number;
   barcode: string;
-  cycle_life_1: number;
-  cycle_life_2: number;
+  cycle_life_1: number | null;
+  cycle_life_2: number | null;
   history_id: number;
   status: string;
   created_at: string;
@@ -46,6 +46,8 @@ export interface BarcodeData {
 // 历史记录详情响应数据类型
 export interface HistoryDetailResponse extends PredictResponse {
   brcode_data: BarcodeData[];
+  fail_reason_1?: string;
+  fail_reason_2?: string;
 }
 
 // 删除历史记录参数类型
