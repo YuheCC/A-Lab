@@ -25,7 +25,7 @@ export default {
         unitRequirement: "单位要求：",
         unitRequirementValue: "电流单位A，电压单位V，时间单位s",
         dataRequirement: "数据要求：",
-        dataRequirementValue: "上传数据≥100图，数据需按时间顺序排列"
+        dataRequirementValue: "上传数据≥100圈，数据需按时间顺序排列"
     },
 
     // AI Prediction Step
