@@ -378,15 +378,13 @@ const OrganicSearch = () => {
             <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
             <div
                 className="search-umap-container"
-                style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
                 {/* UMAP Visualization on the left */}
-                <div 
+                <div
                     className="search-umap-section"
                     style={{
-                        width: `calc((100% - 120px) * ${leftPanelWidth} / 100)`,
-                        flex: 'none'
+                        flex: `0 0 ${leftPanelWidth}%`
                     }}
                 >
                     <div style={{ 
@@ -427,15 +425,11 @@ const OrganicSearch = () => {
                 />
 
                 {/* Search interface on the right */}
-                <div 
-                    className="search-interface-section" 
+                <div
+                    className="search-interface-section"
                     style={{
-                        width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
-                        flex: 'none',
-                        overflowY: 'auto',
-                        padding: '20px',
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '8px'
+                        flex: 1,
+                        minWidth: 0
                     }}
                 >
                     {/* Search bar container */}
