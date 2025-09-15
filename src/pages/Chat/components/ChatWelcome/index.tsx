@@ -8,7 +8,7 @@ import { useAuthStore } from '@/models/useAuth';
 
 // 推荐问题数据将从多语言配置中获取
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'fast' | 'ask' | 'fast-deep-space';
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask' | 'fast-deep-space';
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
@@ -56,7 +56,6 @@ const ChatWelcome: React.FC = () => {
         }
         const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
             lightning: 'low',
-            fast: 'medium',
             ask: 'high',
             'fast-deep-space': 'low',
             'deep-space': 'high',
@@ -161,7 +160,6 @@ const ChatWelcome: React.FC = () => {
             }
             const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
                 lightning: 'low',
-                fast: 'medium',
                 ask: 'high',
                 'fast-deep-space': 'low',
                 'deep-space': 'high',
@@ -213,7 +211,7 @@ const ChatWelcome: React.FC = () => {
                         />
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                {(userPermissions === 'admin' ? ['lightning','fast','ask','fast-deep-space','deep-space'] : ['regular','deep-space']).map(modeKey => (
+                                {(userPermissions === 'admin' ? ['lightning','ask','fast-deep-space','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
                                     <Tooltip
                                         key={modeKey}
                                         title={getModeTooltipContent(modeKey as ChatMode)}

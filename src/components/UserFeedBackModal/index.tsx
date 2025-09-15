@@ -179,7 +179,6 @@ const UserFeedBackModal = forwardRef((props, ref) => {
                             >
                                 <option value="map">{t('feedback.feedback.functionOptions.map')}</option>
                                 <option value="lightning">{t('feedback.feedback.functionOptions.lightning')}</option>
-                                <option value="fast">{t('feedback.feedback.functionOptions.fast')}</option>
                                 <option value="ask">{t('feedback.feedback.functionOptions.ask')}</option>
                                 <option value="fastDeepSpace">{t('feedback.feedback.functionOptions.fastDeepSpace')}</option>
                                 <option value="deepSpace">{t('feedback.feedback.functionOptions.deepSpace')}</option>
