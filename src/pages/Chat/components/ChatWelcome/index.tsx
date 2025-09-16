@@ -108,33 +108,40 @@ const ChatWelcome: React.FC = () => {
         const getRemainingLabel = () => {
             if (mode === 'lightning') {
                 const info = modeLimits.lightning;
-                if (info && info.limit !== null && info.limit !== undefined) {
-                    const remainingValue = typeof info.remaining === 'number'
-                        ? info.remaining
-                        : (typeof info.limit === 'number' && typeof info.used === 'number' ? Math.max(info.limit - info.used, 0) : undefined);
-                    if (typeof remainingValue === 'number') {
-                        return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: info.limit });
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number'
+                            ? info.remaining
+                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
                     }
                 }
             }
             if (mode === 'ask') {
                 const info = modeLimits.pro;
-                if (info && info.limit !== null && info.limit !== undefined) {
-                    const remainingValue = typeof info.remaining === 'number'
-                        ? info.remaining
-                        : (typeof info.limit === 'number' && typeof info.used === 'number' ? Math.max(info.limit - info.used, 0) : undefined);
-                    if (typeof remainingValue === 'number') {
-                        return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: info.limit });
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number'
+                            ? info.remaining
+                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
                     }
                 }
             }
             if (mode === 'deep-space') {
                 const info = modeLimits.deepSpace;
                 if (info) {
-                    if (info.limit !== null && info.limit !== undefined && typeof info.limit === 'number') {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
                         const remainingValue = typeof info.remaining === 'number' ? info.remaining : undefined;
                         if (typeof remainingValue === 'number') {
-                            return t('chatbox.chat.modes.deepSpaceLimitLabel', { remaining: remainingValue, limit: info.limit });
+                            return t('chatbox.chat.modes.deepSpaceLimitLabel', { remaining: remainingValue, limit: limitValue });
                         }
                     }
                     if (typeof info.remaining === 'number') {
