@@ -27,7 +27,7 @@ export default {
         functionOptions: {
             map: "지도",
             lightning: "라이트닝",
-            ask: "Pro",
+            ask: "프로",
             fastDeepSpace: "빠른 딥 스페이스",
             deepSpace: "딥 스페이스",
             search: "검색",
