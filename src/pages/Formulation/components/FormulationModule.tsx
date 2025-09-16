@@ -66,19 +66,34 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   const getActiveSolventsCount = () => solvents.filter(s => s.smiles.trim() !== '').length;
 
+  // Format ion display
+  const formatIonDisplay = (ionValue: string) => {
+    const ionMap: { [key: string]: string } = {
+      'Li+': 'Li⁺',
+      'Na+': 'Na⁺',
+      'Mg2+': 'Mg²⁺',
+      'Zn2+': 'Zn²⁺',
+      'BF4-': 'BF₄⁻',
+      'PF6-': 'PF₆⁻',
+      'FSI-': 'FSI⁻',
+      'TFSI-': 'TFSI⁻'
+    };
+    return ionMap[ionValue] || ionValue;
+  };
+
   // Available options
   const cationOptions = [
-    { value: 'Li+', label: 'Li+', subLabel: 'Lithium', available: true },
-    { value: 'Na+', label: 'Na+', subLabel: 'Sodium', available: false },
-    { value: 'Mg2+', label: 'Mg2+', subLabel: 'Magnesium', available: false },
-    { value: 'Zn2+', label: 'Zn2+', subLabel: 'Zinc', available: false }
+    { value: 'Li+', label: 'Li⁺', subLabel: 'Lithium', available: true },
+    { value: 'Na+', label: 'Na⁺', subLabel: 'Sodium', available: false },
+    { value: 'Mg2+', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
+    { value: 'Zn2+', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
   ];
 
   const anionOptions = [
-    { value: 'BF4-', label: 'BF4-', subLabel: 'Tetrafluoroborate', available: true },
-    { value: 'PF6-', label: 'PF6-', subLabel: 'Hexafluorophosphate', available: false },
-    { value: 'FSI-', label: 'FSI-', subLabel: 'Bis(fluorosulfonyl)imide', available: false },
-    { value: 'TFSI-', label: 'TFSI-', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: false }
+    { value: 'BF4-', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
+    { value: 'PF6-', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: false },
+    { value: 'FSI-', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: false },
+    { value: 'TFSI-', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: false }
   ];
 
   const handleCalculate = async () => {
@@ -188,7 +203,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
           {/* Anion Fraction */}
           <div className="form-group">
-            <label>{t('formulation.anionFraction.label', 'BF4- Fraction')}</label>
+            <label>{t('formulation.anionFraction.label', 'BF₄⁻ Fraction')}</label>
             <input
               type="number"
               step="0.01"
@@ -229,9 +244,9 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="salt-summary">
             <h3>{t('formulation.saltSummary.title', 'Salt Summary')}</h3>
             <div className="summary-content">
-              <p>{t('formulation.saltSummary.selected', 'Selected')}: {selectedCation} + {selectedAnion}-</p>
+              <p>{t('formulation.saltSummary.selected', 'Selected')}: {formatIonDisplay(selectedCation)} + {formatIonDisplay(selectedAnion)}</p>
               <p>{t('formulation.saltSummary.totalConcentration', 'Total salt concentration')}: {totalSaltConcentration} mol/kg</p>
-              <p>{t('formulation.saltSummary.fractions', 'Fractions')}: {selectedAnion}- ({anionFraction})</p>
+              <p>{t('formulation.saltSummary.fractions', 'Fractions')}: {formatIonDisplay(selectedAnion)} ({anionFraction})</p>
               <p>{t('formulation.saltSummary.fractionType', 'Fraction type')}: {fractionType === 'mole' ? 'Mole fraction' : 'Weight fraction'}</p>
               <p className={`validation-status ${isValidConfiguration() ? 'valid' : 'invalid'}`}>
                 {t('formulation.saltSummary.totalFraction', 'Total fraction')}: {anionFraction}

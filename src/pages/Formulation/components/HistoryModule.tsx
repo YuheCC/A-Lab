@@ -68,6 +68,21 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
     }
   ]);
 
+  // Format ion display
+  const formatIonDisplay = (ionValue: string) => {
+    const ionMap: { [key: string]: string } = {
+      'Li+': 'Li⁺',
+      'Na+': 'Na⁺',
+      'Mg2+': 'Mg²⁺',
+      'Zn2+': 'Zn²⁺',
+      'BF4-': 'BF₄⁻',
+      'PF6-': 'PF₆⁻',
+      'FSI-': 'FSI⁻',
+      'TFSI-': 'TFSI⁻'
+    };
+    return ionMap[ionValue] || ionValue;
+  };
+
   const handleDeleteRecord = async (id: string) => {
     if (!confirm(t('formulation.history.actions.deleteConfirm', 'Are you sure you want to delete this record?'))) {
       return;
@@ -121,7 +136,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
               <div className="item-content">
                 <div className="salt-info">
                   <span className="salt-config">
-                    {t('formulation.history.salt', 'Salt')}: {record.saltConfiguration.cation} + {record.saltConfiguration.anion}-
+                    {t('formulation.history.salt', 'Salt')}: {formatIonDisplay(record.saltConfiguration.cation)} + {formatIonDisplay(record.saltConfiguration.anion)}
                   </span>
                 </div>
 
@@ -137,7 +152,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
                       {record.saltConfiguration.totalConcentration} mol/kg
                     </span>
                     <span className="fraction">
-                      {record.saltConfiguration.anion}- ({record.saltConfiguration.anionFraction})
+                      {formatIonDisplay(record.saltConfiguration.anion)} ({record.saltConfiguration.anionFraction})
                     </span>
                   </div>
                 </div>
