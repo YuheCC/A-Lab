@@ -16,7 +16,7 @@ const ChatWelcome: React.FC = () => {
     const { handleSendMessage, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const [inputValue, setInputValue] = useState<string>('');
-    const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'regular';
+    const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'lightning';
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
     const [disableLiterature, setDisableLiterature] = useState(false);
     const [fullDeepSpace, setFullDeepSpace] = useState(false);
@@ -101,7 +101,7 @@ const ChatWelcome: React.FC = () => {
         const title = t(`chatbox.chat.modes.${key}` as any);
         const desc = t(`chatbox.chat.modes.${key}Description` as any);
         let remaining: string | undefined;
-        if (mode === 'regular' && userPermissions === 'research') {
+        if (mode === 'ask' && userPermissions === 'research') {
             remaining = t('chatbox.chat.modes.regularRemaining', { count: remainingQueries });
         } else if (mode === 'deep-space' && userPermissions !== 'admin') {
             remaining = t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
@@ -209,7 +209,7 @@ const ChatWelcome: React.FC = () => {
                         />
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                {(userPermissions === 'admin' ? ['lightning','ask','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
+                                {(['lightning','ask','deep-space'] as ChatMode[]).map(modeKey => (
                                     <Tooltip
                                         key={modeKey}
                                         title={getModeTooltipContent(modeKey as ChatMode)}
