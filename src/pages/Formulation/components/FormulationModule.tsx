@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import ResultsDisplay from './ResultsDisplay';
 import './FormulationModule.css';
 
 interface FormulationModuleProps {
@@ -27,6 +28,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // Results state
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
 
   // Validation logic
   const isValidConfiguration = () => {
@@ -86,7 +88,14 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setTimeout(() => {
       setIsCalculating(false);
       setShowResults(true);
+      setCurrentView('results');
     }, 2000);
+  };
+
+  const handleNewAnalysis = () => {
+    setCurrentView('configuration');
+    setShowResults(false);
+    setIsCalculating(false);
   };
 
   // Reset function
@@ -104,6 +113,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setSolventFractionType('mole');
     setShowResults(false);
     setIsCalculating(false);
+    setCurrentView('configuration');
   }, []);
 
   // Expose reset function to parent component
@@ -112,6 +122,11 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       onResetRef(resetFormulationState);
     }
   }, [onResetRef, resetFormulationState]);
+
+  // Show results view if in results mode
+  if (currentView === 'results') {
+    return <ResultsDisplay onNewAnalysis={handleNewAnalysis} />;
+  }
 
   return (
     <div className="formulation-module">
