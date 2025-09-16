@@ -28,7 +28,7 @@ export default {
             regular: "常规问答",
             deepSpace: "深度搜索",
             lightning: "闪电",
-            ask: "Pro",
+            ask: "专业版",
             fastDeepSpace: "快速 Deep Space",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
             deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
@@ -36,6 +36,11 @@ export default {
             askDescription: "高算力，提供最佳答案。",
             fastDeepSpaceDescription: "较低算力的多智能体研究，可实现更快速的结果。",            regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
+            lightningLimitLabel: "Ask 闪电今日剩余: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask 专业版今日剩余: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "深度搜索本月剩余: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: "免费版使用较弱的大模型，请升级以使用最强大的模型。",
             betaBadge: "Beta"
         },
         recommendedQuestions: [

@@ -22,7 +22,7 @@ const ChatInput: FC<ChatInputProps> = ({
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { handleSendMessage, currentChatId, messages, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
+  const { handleSendMessage, currentChatId, messages, remainingDeepSpaceQueries, modeLimits } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
@@ -125,13 +125,51 @@ const ChatInput: FC<ChatInputProps> = ({
   const getModeTooltipContent = (mode: ChatMode) => {
     const key = getTranslationKey(mode);
     const title = t(`chatbox.chat.modes.${key}` as any);
-    const desc = t(`chatbox.chat.modes.${key}Description` as any);
-    let remaining: string | undefined;
-    if (mode === 'ask' && userPermissions === 'research') {
-      remaining = t('chatbox.chat.modes.regularRemaining', { count: remainingQueries });
-    } else if (mode === 'deep-space' && userPermissions !== 'admin') {
-      remaining = t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
+    let desc = t(`chatbox.chat.modes.${key}Description` as any);
+    if (userPermissions === 'research' && (mode === 'ask' || mode === 'deep-space')) {
+      const liteNotice = t('chatbox.chat.modes.liteNotice');
+      desc = `${desc}${liteNotice}`;
     }
+
+    const getRemainingLabel = () => {
+      if (mode === 'lightning') {
+        const info = modeLimits.lightning;
+        if (info && info.limit !== null && info.limit !== undefined) {
+          const remainingValue = typeof info.remaining === 'number' ? info.remaining : (typeof info.limit === 'number' && typeof info.used === 'number' ? Math.max(info.limit - info.used, 0) : undefined);
+          if (typeof remainingValue === 'number') {
+            return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: info.limit });
+          }
+        }
+      }
+      if (mode === 'ask') {
+        const info = modeLimits.pro;
+        if (info && info.limit !== null && info.limit !== undefined) {
+          const remainingValue = typeof info.remaining === 'number' ? info.remaining : (typeof info.limit === 'number' && typeof info.used === 'number' ? Math.max(info.limit - info.used, 0) : undefined);
+          if (typeof remainingValue === 'number') {
+            return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: info.limit });
+          }
+        }
+      }
+      if (mode === 'deep-space') {
+        const info = modeLimits.deepSpace;
+        if (info) {
+          if (info.limit !== null && info.limit !== undefined && typeof info.limit === 'number') {
+            const remainingValue = typeof info.remaining === 'number' ? info.remaining : undefined;
+            if (typeof remainingValue === 'number') {
+              return t('chatbox.chat.modes.deepSpaceLimitLabel', { remaining: remainingValue, limit: info.limit });
+            }
+          }
+          if (typeof info.remaining === 'number') {
+            return t('chatbox.chat.modes.deepSpaceRemaining', { count: info.remaining });
+          }
+        } else if (typeof remainingDeepSpaceQueries === 'number') {
+          return t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
+        }
+      }
+      return undefined;
+    };
+
+    const remaining = getRemainingLabel();
     return (
       <div style={{ padding: '4px' }}>
         <div style={{
@@ -224,8 +262,8 @@ const ChatInput: FC<ChatInputProps> = ({
                   type="button"
                 >
                   <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey as ChatMode)}` as any)}</span>
-                  {['deep-space'].includes(modeKey) && (
-                    <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
+                  {userPermissions === 'research' && ['ask', 'deep-space'].includes(modeKey) && (
+                    <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
                   )}
                 </button>
               </Tooltip>
