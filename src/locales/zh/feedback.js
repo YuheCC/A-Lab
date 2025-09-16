@@ -27,7 +27,7 @@ export default {
         functionOptions: {
             map: "地图",
             lightning: "闪电",
-            ask: "Pro",
+            ask: "专业版",
             fastDeepSpace: "快速 Deep Space",
             deepSpace: "深度空间",
             search: "搜索",

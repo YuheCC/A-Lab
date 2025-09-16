@@ -37,6 +37,11 @@ export default {
             fastDeepSpaceDescription: "Multi-agent research with lower compute power for faster results.",
             regularRemaining: "Remaining today: {{count}} times",
             deepSpaceRemaining: "Remaining monthly: {{count}} times",
+            lightningLimitLabel: "Ask Lightning remaining today: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask Pro remaining today: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "Deep Space remaining this month: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: " The free version uses weaker LLMs. Upgrade to use the most powerful models.",
             betaBadge: "Beta"
         },
         recommendedQuestions: [
