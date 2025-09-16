@@ -28,7 +28,7 @@ const ChatInput: FC<ChatInputProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'regular';
+  const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'lightning';
   const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
 
   // 管理员参数（参考 Ask 页）
@@ -48,10 +48,11 @@ const ChatInput: FC<ChatInputProps> = ({
     const searchParams = new URLSearchParams(location.search);
     const urlMode = searchParams.get('mode');
 
-    const allowedModes = ['regular','deep-space','clarify','lightning','ask'];
-    if (urlMode && allowedModes.includes(urlMode)) {
-      console.log('URL mode detected:', urlMode);
-      setCurrentMode(urlMode as ChatMode);
+    const allowedModes: ChatMode[] = ['deep-space','clarify','lightning','ask'];
+    const normalizedMode = (urlMode === 'regular' ? 'ask' : urlMode) as ChatMode | null;
+    if (normalizedMode && allowedModes.includes(normalizedMode)) {
+      console.log('URL mode detected:', normalizedMode);
+      setCurrentMode(normalizedMode);
       
       // 删除 URL 参数
       searchParams.delete('mode');
@@ -126,7 +127,7 @@ const ChatInput: FC<ChatInputProps> = ({
     const title = t(`chatbox.chat.modes.${key}` as any);
     const desc = t(`chatbox.chat.modes.${key}Description` as any);
     let remaining: string | undefined;
-    if (mode === 'regular' && userPermissions === 'research') {
+    if (mode === 'ask' && userPermissions === 'research') {
       remaining = t('chatbox.chat.modes.regularRemaining', { count: remainingQueries });
     } else if (mode === 'deep-space' && userPermissions !== 'admin') {
       remaining = t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
@@ -194,7 +195,7 @@ const ChatInput: FC<ChatInputProps> = ({
         <div className="chat-controls-row">
           <div className="input-mode-switch">
 
-            {(userPermissions === 'admin' ? ['lightning','ask','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
+            {(['lightning','ask','deep-space'] as ChatMode[]).map(modeKey => (
               <Tooltip
                 key={modeKey}
                 title={getModeTooltipContent(modeKey as ChatMode)}
