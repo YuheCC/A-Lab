@@ -13,10 +13,10 @@ type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
-    const { handleSendMessage, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
+    const { handleSendMessage, remainingDeepSpaceQueries, modeLimits } = useChatContext();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const [inputValue, setInputValue] = useState<string>('');
-    const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'regular';
+    const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'lightning';
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
     const [disableLiterature, setDisableLiterature] = useState(false);
     const [fullDeepSpace, setFullDeepSpace] = useState(false);
@@ -99,13 +99,62 @@ const ChatWelcome: React.FC = () => {
     const getModeTooltipContent = (mode: ChatMode) => {
         const key = getTranslationKey(mode);
         const title = t(`chatbox.chat.modes.${key}` as any);
-        const desc = t(`chatbox.chat.modes.${key}Description` as any);
-        let remaining: string | undefined;
-        if (mode === 'regular' && userPermissions === 'research') {
-            remaining = t('chatbox.chat.modes.regularRemaining', { count: remainingQueries });
-        } else if (mode === 'deep-space' && userPermissions !== 'admin') {
-            remaining = t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
+        let desc = t(`chatbox.chat.modes.${key}Description` as any);
+        if (userPermissions === 'research' && (mode === 'ask' || mode === 'deep-space')) {
+            const liteNotice = t('chatbox.chat.modes.liteNotice');
+            desc = `${desc}${liteNotice}`;
         }
+
+        const getRemainingLabel = () => {
+            if (mode === 'lightning') {
+                const info = modeLimits.lightning;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number'
+                            ? info.remaining
+                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                }
+            }
+            if (mode === 'ask') {
+                const info = modeLimits.pro;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number'
+                            ? info.remaining
+                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                }
+            }
+            if (mode === 'deep-space') {
+                const info = modeLimits.deepSpace;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number' ? info.remaining : undefined;
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.deepSpaceLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                    if (typeof info.remaining === 'number') {
+                        return t('chatbox.chat.modes.deepSpaceRemaining', { count: info.remaining });
+                    }
+                } else if (typeof remainingDeepSpaceQueries === 'number') {
+                    return t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
+                }
+            }
+            return undefined;
+        };
+
+        const remaining = getRemainingLabel();
         return (
             <div style={{ padding: '4px' }}>
                 <div style={{
@@ -209,7 +258,7 @@ const ChatWelcome: React.FC = () => {
                         />
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                {(userPermissions === 'admin' ? ['lightning','ask','deep-space'] : ['regular','lightning','deep-space']).map(modeKey => (
+                                {(['lightning','ask','deep-space'] as ChatMode[]).map(modeKey => (
                                     <Tooltip
                                         key={modeKey}
                                         title={getModeTooltipContent(modeKey as ChatMode)}
@@ -238,8 +287,8 @@ const ChatWelcome: React.FC = () => {
                                             type="button"
                                         >
                                             <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey as ChatMode)}` as any)}</span>
-                                            {['deep-space'].includes(modeKey) && (
-                                                <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
+                                            {userPermissions === 'research' && ['ask', 'deep-space'].includes(modeKey) && (
+                                                <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
                                             )}
                                         </button>
                                     </Tooltip>

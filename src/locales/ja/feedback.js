@@ -27,7 +27,7 @@ export default {
         functionOptions: {
             map: "マップ",
             lightning: "ライトニング",
-            ask: "Pro",
+            ask: "プロ",
             fastDeepSpace: "高速ディープスペース",
             deepSpace: "ディープスペース",
             search: "検索",
