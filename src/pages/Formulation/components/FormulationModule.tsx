@@ -225,13 +225,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             </div>
           </div>
 
-          <button
-            className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
-            onClick={handleCalculate}
-            disabled={isCalculating || showResults}
-          >
-            {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.calculate.button', 'Calculate')}
-          </button>
         </div>
       </div>
 
@@ -345,6 +338,17 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Submit Configuration Button */}
+      <div className="submit-section">
+        <button
+          className={`submit-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
+          onClick={handleCalculate}
+          disabled={isCalculating || showResults}
+        >
+          {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
+        </button>
       </div>
     </div>
   );
