@@ -39,6 +39,10 @@ export default  [
         component: "Predict/predictionTool"
     },
     {
+        path: "/formulation",
+        component: "Formulation"
+    },
+    {
         path: "/ask",
         redirect: "/ask/new"
     },

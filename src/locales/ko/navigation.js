@@ -7,6 +7,7 @@ export default {
     filter: "조건별 검색",
     favorites: "즐겨찾기",
     predict: "예측",
+    formulation: "조합",
     about: "소개",
     predictPerformance: "셀 성능 예측",
     predictionTool: "배터리 초기 수명 예측 도구",

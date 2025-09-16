@@ -7,6 +7,7 @@ export default {
     filter: "Filter",
     favorites: "Favorites",
     predict: "Predict",
+    formulation: "Formulation",
     about: "About",
     predictPerformance: "Cell Performance Prediction",
     predictionTool: "Early-life Battery Prediction Tool",

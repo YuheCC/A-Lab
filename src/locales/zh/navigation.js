@@ -7,6 +7,7 @@ export default {
     filter: "筛选",
     favorites: "收藏",
     predict: "预测",
+    formulation: "配方",
     about: "关于",
     predictPerformance: "电芯性能预测",
     predictionTool: "电池早期生命预测工具",
