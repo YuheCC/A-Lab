@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AnalysisDetailModal from './ResultsDisplay/AnalysisDetailModal';
 import './HistoryModule.css';
 
 interface FormulationResult {
@@ -24,6 +25,8 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
   const { t } = useTranslation();
   const [loading] = useState(false);
   const [error] = useState<string | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<FormulationResult | null>(null);
 
   // Mock data for demonstration
   const [historyData] = useState<FormulationResult[]>([
@@ -74,6 +77,8 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
   };
 
   const handleViewDetails = (record: FormulationResult) => {
+    setSelectedRecord(record);
+    setIsDetailModalOpen(true);
     onViewDetails(record);
   };
 
@@ -156,6 +161,14 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
           ))
         )}
       </div>
+
+      <AnalysisDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedRecord(null);
+        }}
+      />
     </div>
   );
 };
