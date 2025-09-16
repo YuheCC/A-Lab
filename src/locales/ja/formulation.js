@@ -1,0 +1,157 @@
+export default {
+  title: '塩と溶媒の構成',
+  subtitle: '電解質を構成してカスタマイズ',
+  comingSoon: '近日対応',
+
+  saltConfiguration: {
+    title: '塩の構成'
+  },
+
+  cationSelection: {
+    label: '陽イオンの選択'
+  },
+
+  anionSelection: {
+    label: '陰イオンの選択（1〜2を選択）'
+  },
+
+  totalSaltConcentration: {
+    label: '総塩濃度（mol/kg）'
+  },
+
+  anionFraction: {
+    label: 'BF₄⁻ 分率'
+  },
+
+  fractionType: {
+    label: '分率の種類',
+    mole: 'モル分率',
+    weight: '重量分率'
+  },
+
+  saltSummary: {
+    title: '塩のサマリー',
+    selected: '選択済み',
+    totalConcentration: '総塩濃度',
+    fractions: '分率',
+    fractionType: '分率の種類',
+    totalFraction: '総分率'
+  },
+
+  solventConfiguration: {
+    title: '溶媒の構成'
+  },
+
+  smilesString: {
+    label: 'SMILES 文字列',
+    placeholder: 'SMILES 文字列を入力'
+  },
+
+  fraction: {
+    label: '分率（最小: 0.05）'
+  },
+
+  removeSolvent: '溶媒を削除',
+  addSmiles: 'SMILES を追加（最大 3）',
+
+  solventSummary: {
+    title: '溶媒サマリー',
+    solvent: '溶媒',
+    fractionType: '分率の種類',
+    totalFraction: '総分率',
+    emptyPlaceholder: '空 (0), 空 (0)'
+  },
+
+  submit: {
+    button: '構成を送信'
+  },
+
+  ui: {
+    calculating: '計算中...'
+  }
+  ,
+  history: {
+    title: '解析記録',
+    newAnalysis: '新規解析',
+    loading: {
+      message: '読み込み中...',
+      error: 'エラー'
+    },
+    noResults: {
+      message: '解析記録が見つかりません'
+    },
+    salt: '塩',
+    solvent: '溶媒',
+    unit: {
+      molPerKg: 'mol/kg'
+    },
+    actions: {
+      viewDetails: '詳細を見る',
+      delete: '削除',
+      deleteConfirm: 'この記録を削除しますか？'
+    }
+  }
+  ,
+  results: {
+    analysisResults: '解析結果',
+    systemProperties: '系の物性',
+    clusterAnalysis: 'クラスター解析',
+    size: 'サイズ',
+    category: 'カテゴリ',
+    fraction: '分率',
+    analysisCharts: '解析チャート',
+    radialDistribution: '動径分布関数と配位数',
+    radialDistributionSubtitle: '動径分布関数と配位数',
+    meanSquareDisplacement: '平均二乗変位',
+    meanSquareDisplacementSubtitle: '平均二乗変位',
+    chartPlaceholder: 'チャートプレースホルダー',
+    analysisFile: '解析ファイル',
+    downloadDescription: 'JSON 形式で解析結果をダウンロード',
+    fileContains: '構成詳細、解析パラメータ、計算結果を含む',
+    downloadJSON: 'JSON をダウンロード',
+    density: '密度 (g/cm³)',
+    viscosity: '粘度 (cP)',
+    conductivity: '電気伝導率 (mS/cm)',
+    SSIP: 'SSIP',
+    CIP: 'CIP',
+    AGG: 'AGG'
+  }
+  ,
+  detail: {
+    title: '解析結果',
+    saltSolventConfig: '塩と溶媒の構成',
+    saltSummary: '塩のサマリー',
+    solventSummary: '溶媒サマリー',
+    selected: '選択済み',
+    weightConcentration: '重量濃度',
+    fractions: '分率：',
+    fractionType: '分率の種類：',
+    totalFraction: '総分率：',
+    solvent: '溶媒：',
+    weightFraction: '重量分率',
+    analysisResults: '解析結果',
+    systemProperties: '系の物性',
+    clusterAnalysis: 'クラスター解析',
+    size: 'サイズ',
+    category: 'カテゴリ',
+    fraction: '分率',
+    analysisCharts: '解析チャート',
+    radialDistribution: '動径分布関数と配位数',
+    radialDistributionSubtitle: '動径分布関数と配位数',
+    meanSquareDisplacement: '平均二乗変位',
+    meanSquareDisplacementSubtitle: '平均二乗変位',
+    chartPlaceholder: 'チャートプレースホルダー',
+    analysisFile: '解析ファイル',
+    downloadDescription: 'JSON 形式で解析結果をダウンロード',
+    fileContains: '構成詳細、解析パラメータ、計算結果を含む',
+    downloadJSON: 'JSON をダウンロード',
+    density: '密度 (g/cm³)',
+    viscosity: '粘度 (cP)',
+    conductivity: '電気伝導率 (mS/cm)',
+    SSIP: 'SSIP',
+    CIP: 'CIP',
+    AGG: 'AGG'
+  }
+};
+
+

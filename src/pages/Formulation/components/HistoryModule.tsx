@@ -149,7 +149,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
                 <div className="config-summary">
                   <div className="config-details">
                     <span className="concentration">
-                      {record.saltConfiguration.totalConcentration} mol/kg
+                      {record.saltConfiguration.totalConcentration} {t('formulation.history.unit.molPerKg', 'mol/kg')}
                     </span>
                     <span className="fraction">
                       {formatIonDisplay(record.saltConfiguration.anion)} ({record.saltConfiguration.anionFraction})

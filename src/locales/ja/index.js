@@ -14,6 +14,8 @@ import settings from './settings';
 import role from './role';
 import performance from './performance';
 import predictionTool from './predictionTool';
+import formulation from './formulation';
+// merged into formulation: results, analysisDetail
 
 export default {
     map,
@@ -31,5 +33,7 @@ export default {
     settings,
     role,
     performance,
-    predictionTool
+    predictionTool,
+    formulation,
+    
 }; 

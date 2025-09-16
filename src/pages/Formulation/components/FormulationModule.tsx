@@ -247,7 +247,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
               <p>{t('formulation.saltSummary.selected', 'Selected')}: {formatIonDisplay(selectedCation)} + {formatIonDisplay(selectedAnion)}</p>
               <p>{t('formulation.saltSummary.totalConcentration', 'Total salt concentration')}: {totalSaltConcentration} mol/kg</p>
               <p>{t('formulation.saltSummary.fractions', 'Fractions')}: {formatIonDisplay(selectedAnion)} ({anionFraction})</p>
-              <p>{t('formulation.saltSummary.fractionType', 'Fraction type')}: {fractionType === 'mole' ? 'Mole fraction' : 'Weight fraction'}</p>
+              <p>{t('formulation.saltSummary.fractionType', 'Fraction type')}: {fractionType === 'mole' ? t('formulation.fractionType.mole', 'Mole fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</p>
               <p className={`validation-status ${isValidConfiguration() ? 'valid' : 'invalid'}`}>
                 {t('formulation.saltSummary.totalFraction', 'Total fraction')}: {anionFraction}
                 <span className="validation-icon">{isValidConfiguration() ? '✓' : '✗'}</span>
@@ -352,12 +352,12 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
               {(() => {
                 const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
                 const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
-                const solventNames = activeSolvents.map(s => s.smiles).join(', ') || 'Empty (0), Empty (0)';
+                const solventNames = activeSolvents.map(s => s.smiles).join(', ') || t('formulation.solventSummary.emptyPlaceholder', 'Empty (0), Empty (0)');
 
                 return (
                   <>
                     <p>{t('formulation.solventSummary.solvent', 'Solvent')}: {solventNames}</p>
-                    <p>{t('formulation.solventSummary.fractionType', 'Fraction type')}: {solventFractionType === 'mole' ? 'Mole fraction' : 'Weight fraction'}</p>
+                    <p>{t('formulation.solventSummary.fractionType', 'Fraction type')}: {solventFractionType === 'mole' ? t('formulation.fractionType.mole', 'Mole fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</p>
                     <p className={`validation-status ${isValidSolventConfiguration() ? 'valid' : 'invalid'}`}>
                       {t('formulation.solventSummary.totalFraction', 'Total fraction')}: {totalFraction.toFixed(2)}
                       <span className="validation-icon">{isValidSolventConfiguration() ? '✓' : '✗'}</span>

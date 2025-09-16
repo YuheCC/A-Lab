@@ -13,31 +13,31 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
   if (!isOpen) return null;
 
   const saltSummary = [
-    { label: 'Selected', value: 'LiTFSI' },
-    { label: 'Weight concentration', value: 'Molar fraction:' },
-    { label: 'Fractions:', value: 'BF4-: 1.00' },
-    { label: 'Fraction type:', value: 'TFSI-: 1.00' },
-    { label: 'Total fraction:', value: '1.00' }
+    { label: t('formulation.detail.selected', 'Selected'), value: 'LiTFSI' },
+    { label: t('formulation.detail.weightConcentration', 'Weight concentration'), value: t('formulation.fractionType.mole', 'Mole fraction') + ':' },
+    { label: t('formulation.detail.fractions', 'Fractions:'), value: 'BF4-: 1.00' },
+    { label: t('formulation.detail.fractionType', 'Fraction type:'), value: 'TFSI-: 1.00' },
+    { label: t('formulation.detail.totalFraction', 'Total fraction:'), value: '1.00' }
   ];
 
   const solventSummary = [
-    { label: 'Solvent:', value: 'CCO: 1.00' },
-    { label: 'Fraction type:', value: 'Weight fraction' },
-    { label: 'Total fraction:', value: '1.00' }
+    { label: t('formulation.detail.solvent', 'Solvent:'), value: 'CCO: 1.00' },
+    { label: t('formulation.detail.fractionType', 'Fraction type:'), value: t('formulation.fractionType.weight', 'Weight fraction') },
+    { label: t('formulation.detail.totalFraction', 'Total fraction:'), value: '1.00' }
   ];
 
   const systemProperties = [
-    { property: 'Density (g/cm³)', value: '1.2000' },
-    { property: 'Viscosity (cP)', value: '2.6600' },
-    { property: 'Conductivity (mS/cm)', value: '5.7500' }
+    { property: t('formulation.detail.density', 'Density (g/cm³)'), value: '1.2000' },
+    { property: t('formulation.detail.viscosity', 'Viscosity (cP)'), value: '2.6600' },
+    { property: t('formulation.detail.conductivity', 'Conductivity (mS/cm)'), value: '5.7500' }
   ];
 
   const clusterAnalysis = [
-    { size: 0, category: 'SSIP', fraction: '20.0%' },
-    { size: 1, category: 'CIP', fraction: '40.0%' },
-    { size: 2, category: 'AGG', fraction: '10.0%' },
-    { size: 3, category: 'AGG', fraction: '5.0%' },
-    { size: 4, category: 'AGG', fraction: '25.0%' }
+    { size: 0, category: t('formulation.detail.SSIP', 'SSIP'), fraction: '20.0%' },
+    { size: 1, category: t('formulation.detail.CIP', 'CIP'), fraction: '40.0%' },
+    { size: 2, category: t('formulation.detail.AGG', 'AGG'), fraction: '10.0%' },
+    { size: 3, category: t('formulation.detail.AGG', 'AGG'), fraction: '5.0%' },
+    { size: 4, category: t('formulation.detail.AGG', 'AGG'), fraction: '25.0%' }
   ];
 
   const getCategoryColor = (category: string) => {
@@ -82,18 +82,18 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{t('analysisDetail.title', 'Analysis Results')}</h2>
+          <h2>{t('formulation.detail.title', 'Analysis Results')}</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
         <div className="modal-body">
           {/* Salt & Solvent Configuration */}
           <div className="configuration-section">
-            <h3>{t('analysisDetail.saltSolventConfig', 'Salt & Solvent Configuration')}</h3>
+            <h3>{t('formulation.detail.saltSolventConfig', 'Salt & Solvent Configuration')}</h3>
 
             <div className="config-grid">
               <div className="config-box">
-                <h4>{t('analysisDetail.saltSummary', 'Salt Summary')}</h4>
+                <h4>{t('formulation.detail.saltSummary', 'Salt Summary')}</h4>
                 <div className="summary-content">
                   {saltSummary.map((item, index) => (
                     <div key={index} className="summary-row">
@@ -105,7 +105,7 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
               </div>
 
               <div className="config-box">
-                <h4>{t('analysisDetail.solventSummary', 'Solvent Summary')}</h4>
+                <h4>{t('formulation.detail.solventSummary', 'Solvent Summary')}</h4>
                 <div className="summary-content">
                   {solventSummary.map((item, index) => (
                     <div key={index} className="summary-row">
@@ -120,11 +120,11 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
 
           {/* Analysis Results */}
           <div className="results-section">
-            <h3>{t('analysisDetail.analysisResults', 'Analysis Results')}</h3>
+            <h3>{t('formulation.detail.analysisResults', 'Analysis Results')}</h3>
 
             <div className="results-grid">
               <div className="result-box">
-                <h4>{t('analysisDetail.systemProperties', 'System Properties')}</h4>
+                <h4>{t('formulation.detail.systemProperties', 'System Properties')}</h4>
                 <div className="properties-list">
                   {systemProperties.map((prop, index) => (
                     <div key={index} className="property-item">
@@ -136,12 +136,12 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
               </div>
 
               <div className="result-box">
-                <h4>{t('analysisDetail.clusterAnalysis', 'Cluster Analysis')}</h4>
+                <h4>{t('formulation.detail.clusterAnalysis', 'Cluster Analysis')}</h4>
                 <div className="cluster-table-modal">
                   <div className="table-header-modal">
-                    <span>{t('analysisDetail.size', 'Size')}</span>
-                    <span>{t('analysisDetail.category', 'Category')}</span>
-                    <span>{t('analysisDetail.fraction', 'Fraction')}</span>
+                    <span>{t('formulation.detail.size', 'Size')}</span>
+                    <span>{t('formulation.detail.category', 'Category')}</span>
+                    <span>{t('formulation.detail.fraction', 'Fraction')}</span>
                   </div>
                   {clusterAnalysis.map((item, index) => (
                     <div key={index} className="table-row-modal">
@@ -165,24 +165,24 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
 
           {/* Analysis Charts */}
           <div className="charts-section">
-            <h3>{t('analysisDetail.analysisCharts', 'Analysis Charts')}</h3>
+            <h3>{t('formulation.detail.analysisCharts', 'Analysis Charts')}</h3>
 
             <div className="charts-grid">
               <div className="chart-box">
-                <h4>{t('analysisDetail.radialDistribution', 'Radial Distribution Function and Coordination Number')}</h4>
+                <h4>{t('formulation.detail.radialDistribution', 'Radial Distribution Function and Coordination Number')}</h4>
                 <div className="chart-placeholder-modal">
                   <div className="chart-icon">📊</div>
-                  <p>{t('analysisDetail.chartPlaceholder', 'Chart placeholder')}</p>
-                  <p className="chart-subtitle">{t('analysisDetail.radialDistributionSubtitle', 'Radial Distribution Function and Coordination Number')}</p>
+                  <p>{t('formulation.detail.chartPlaceholder', 'Chart placeholder')}</p>
+                  <p className="chart-subtitle">{t('formulation.detail.radialDistributionSubtitle', 'Radial Distribution Function and Coordination Number')}</p>
                 </div>
               </div>
 
               <div className="chart-box">
-                <h4>{t('analysisDetail.meanSquareDisplacement', 'Mean Square Displacement')}</h4>
+                <h4>{t('formulation.detail.meanSquareDisplacement', 'Mean Square Displacement')}</h4>
                 <div className="chart-placeholder-modal">
                   <div className="chart-icon">📈</div>
-                  <p>{t('analysisDetail.chartPlaceholder', 'Chart placeholder')}</p>
-                  <p className="chart-subtitle">{t('analysisDetail.meanSquareDisplacementSubtitle', 'Mean Square Displacement')}</p>
+                  <p>{t('formulation.detail.chartPlaceholder', 'Chart placeholder')}</p>
+                  <p className="chart-subtitle">{t('formulation.detail.meanSquareDisplacementSubtitle', 'Mean Square Displacement')}</p>
                 </div>
               </div>
             </div>
@@ -190,17 +190,17 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({ isOpen, onClo
 
           {/* Analysis File */}
           <div className="file-section-modal">
-            <h3>{t('analysisDetail.analysisFile', 'Analysis File')}</h3>
+            <h3>{t('formulation.detail.analysisFile', 'Analysis File')}</h3>
             <div className="file-content-modal">
               <div className="file-text-modal">
-                <p>{t('analysisDetail.downloadDescription', 'Download the complete analysis results in JSON format')}</p>
-                <p className="file-details-modal">{t('analysisDetail.fileContains', 'File contains configuration details, analysis parameters, and computed results')}</p>
+                <p>{t('formulation.detail.downloadDescription', 'Download the complete analysis results in JSON format')}</p>
+                <p className="file-details-modal">{t('formulation.detail.fileContains', 'File contains configuration details, analysis parameters, and computed results')}</p>
               </div>
               <button
                 className="download-btn-modal"
                 onClick={handleDownloadJSON}
               >
-                {t('analysisDetail.downloadJSON', 'Download JSON')}
+                {t('formulation.detail.downloadJSON', 'Download JSON')}
               </button>
             </div>
           </div>
