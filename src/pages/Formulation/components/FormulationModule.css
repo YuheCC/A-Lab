@@ -50,11 +50,16 @@
   background: white;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .formulation-container .ion-option:hover:not(.disabled) {
@@ -74,28 +79,35 @@
 }
 
 .formulation-container .ion-symbol {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 500;
   color: #1e293b;
   margin-bottom: 4px;
 }
 
 .formulation-container .ion-name {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 400;
   color: #6b7280;
 }
 
+.formulation-container .ion-option.selected .ion-symbol {
+  color: #16A34A;
+  font-weight: 300;
+}
+
+.formulation-container .ion-option.selected .ion-name {
+  color: #16A34A;
+  font-weight: 500;
+}
+
 .formulation-container .coming-soon {
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
   font-size: 10px;
   color: #ef4444;
-  background: #fee2e2;
   padding: 2px 6px;
   border-radius: 4px;
   white-space: nowrap;
+  margin-top: 4px;
 }
 
 .formulation-container .concentration-input,
@@ -140,7 +152,7 @@
   margin: 0;
   width: 12px;
   height: 12px;
-  accent-color: #56B26A;
+  accent-color: #16A34A;
   cursor: pointer;
   flex-shrink: 0;
 }
