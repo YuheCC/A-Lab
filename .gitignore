@@ -15,3 +15,4 @@ config/config.staging.ts
 .cursor/
 .cursor
 .code-workspace.code-workspace
+CLAUDE.md

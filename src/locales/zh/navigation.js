@@ -6,7 +6,11 @@ export default {
     search: "搜索",
     filter: "筛选",
     favorites: "收藏",
-    about: "关于"
+    predict: "预测",
+    formulation: "配方",
+    about: "关于",
+    predictPerformance: "电芯性能预测",
+    predictionTool: "电池早期生命预测工具",
   },
   
   // Navbar links
@@ -46,7 +50,8 @@ export default {
     title: "升级套餐",
     message: "是否升级套餐以使用更多功能？",
     confirm: "确认",
-    cancel: "取消"
+    cancel: "取消",
+    upgradeViewTitle: "升级套餐查看"
   },
   
   // Action buttons

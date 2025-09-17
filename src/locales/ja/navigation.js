@@ -6,7 +6,11 @@ export default {
     search: "検索",
     filter: "フィルター",
     favorites: "お気に入り",
+    predict: "予測",
     about: "概要",
+    formulation: "配方",
+    predictPerformance: "セル性能予測",
+    predictionTool: "バッテリー初期寿命予測ツール",
   },
 
   // Navbar links
@@ -46,7 +50,8 @@ export default {
     title: "プランのアップグレード",
     message: "より多くの機能を利用するためにプランをアップグレードしますか？",
     confirm: "確認",
-    cancel: "キャンセル"
+    cancel: "キャンセル",
+    upgradeViewTitle: "プランのアップグレード 表示"
   },
 
   // Action buttons

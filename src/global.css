@@ -3540,7 +3540,7 @@ body.no-select {
   background-color: #0052a3;
 }
 
-.chat-container.main-container {
+.chat-container.main-container, .predict-container.main-container, .formulation-container.main-container {
   margin: 0;
   padding: 0;
 }

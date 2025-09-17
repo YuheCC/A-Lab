@@ -31,6 +31,18 @@ export default  [
         component: "Favorites"
     },
     {
+        path: "/predict/performance",
+        component: "Predict/performance",
+    },
+    {
+        path: "/predict/prediction-tool",
+        component: "Predict/predictionTool"
+    },
+    {
+        path: "/formulation",
+        component: "Formulation"
+    },
+    {
         path: "/ask",
         redirect: "/ask/new"
     },
