@@ -91,9 +91,9 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   const anionOptions = [
     { value: 'BF4-', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
-    { value: 'PF6-', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: false },
-    { value: 'FSI-', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: false },
-    { value: 'TFSI-', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: false }
+    { value: 'PF6-', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
+    { value: 'FSI-', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
+    { value: 'TFSI-', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
   ];
 
   const handleCalculate = async () => {
