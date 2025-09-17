@@ -77,6 +77,11 @@
   background: #f9fafb;
 }
 
+.formulation-container .ion-option.max-selected {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .formulation-container .ion-symbol {
   font-size: 16px;
   font-weight: 500;
@@ -359,6 +364,7 @@
   color: #d1d5db;
   border: 1px dashed #d1d5db;
 }
+
 
 .formulation-container .solvent-summary {
   background: #f8fafc;
