@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@umijs/max';
 import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
@@ -7,11 +7,11 @@ import { normalizeServerDate } from "@/utils/messageUtils";
 interface FormulationTableProps {}
 
 const FormulationNew: React.FC<FormulationTableProps> = () => {
-  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyData, setHistoryData] = useState<MDHistoryItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [pageSize] = useState(20);
 
   // 获取历史记录数据
@@ -108,7 +108,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // 处理新建分析
   const handleNewAnalysis = () => {
-    console.log('Create new analysis');
+    navigate('/formulation/create');
   };
 
   // 处理查看详情

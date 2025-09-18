@@ -43,6 +43,10 @@ export default  [
         component: "FormulationNew"
     },
     {
+        path: "/formulation/create",
+        component: "FormulationNew/create"
+    },
+    {
         path: "/ask",
         redirect: "/ask/new"
     },
