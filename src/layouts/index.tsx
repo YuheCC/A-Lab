@@ -155,11 +155,8 @@ const FullNavLayoutInner = () => {
         if (isPredictPage) {
             return 'main-container predict-container';
         }
-        if (pathname === '/formulation') {
+        if (pathname.startsWith('/formulation')) {
             return 'main-container formulation-container';
-        }
-        if (pathname === '/formulation/create') {
-            return 'main-container formulation-create-container';
         }
         return 'main-container';
     }
