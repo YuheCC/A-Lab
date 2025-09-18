@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
+import { useTranslation } from 'react-i18next';
 import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
@@ -8,6 +9,7 @@ interface FormulationTableProps {}
 
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyData, setHistoryData] = useState<MDHistoryItem[]>([]);
@@ -29,7 +31,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       }
     } catch (err) {
       console.error('Failed to fetch MD history:', err);
-      setError(err instanceof Error ? err.message : '获取历史记录失败');
+      setError(err instanceof Error ? err.message : t('formulation.history.loading.error', '获取历史记录失败'));
       setHistoryData([]);
     } finally {
       setLoading(false);
@@ -89,7 +91,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // 处理删除记录
   const handleDeleteRecord = async (id: number) => {
-    if (!confirm('确定要删除这条记录吗？')) {
+    if (!confirm(t('formulation.history.actions.deleteConfirm', '确定要删除这条记录吗？'))) {
       return;
     }
 
@@ -98,11 +100,11 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       if (response && response.status < 400) {
         await fetchHistoryData(currentPage);
       } else {
-        setError('删除记录失败');
+        setError(t('formulation.history.actions.deleteFailed', '删除记录失败'));
       }
     } catch (err) {
       console.error('Failed to delete MD history:', err);
-      setError(err instanceof Error ? err.message : '删除记录失败');
+      setError(err instanceof Error ? err.message : t('formulation.history.actions.deleteFailed', '删除记录失败'));
     }
   };
 
@@ -113,48 +115,48 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // 处理查看详情
   const handleViewDetails = (record: MDHistoryItem) => {
-    console.log('View details for:', record.id);
+    navigate(`/formulation/detail?id=${record.id}`);
   };
 
   return (
     <div className="formulation-new-container">
       <div className="formulation-header">
-        <h1 className="formulation-title">Salt & Solvent Configuration</h1>
-        <span className="formulation-subtitle">Configure and customize your electrolytes</span>
+        <h1 className="formulation-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
         <button className="new-analysis-button" onClick={handleNewAnalysis}>
-          + New Analysis
+          + {t('formulation.history.newAnalysis', 'New Analysis')}
         </button>
       </div>
 
       <div className="table-container">
         {loading ? (
           <div className="loading-state">
-            <p>Loading...</p>
+            <p>{t('formulation.history.loading.message', 'Loading...')}</p>
           </div>
         ) : error ? (
           <div className="error-state">
-            <p>Error: {error}</p>
+            <p>{t('formulation.history.loading.error', 'Error')}: {error}</p>
           </div>
         ) : (
           <table className="analysis-table">
             <thead>
               <tr>
-                <th>Analysis ID</th>
-                <th>Salt (Fraction)</th>
-                <th>Fraction Type (Salt)</th>
-                <th>Solvent (Fraction)</th>
-                <th>Fraction Type (Solvent)</th>
-                <th>Concentration</th>
-                <th>Created</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{t('formulation.list.columns.analysisId', 'Analysis ID')}</th>
+                <th>{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</th>
+                <th>{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</th>
+                <th>{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</th>
+                <th>{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</th>
+                <th>{t('formulation.list.columns.concentration', 'Concentration')}</th>
+                <th>{t('formulation.list.columns.created', 'Created')}</th>
+                <th>{t('formulation.list.columns.status', 'Status')}</th>
+                <th>{t('formulation.list.columns.actions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody>
               {historyData.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="no-data">
-                    No analysis records found.
+                    {t('formulation.history.noResults.message', 'No analysis records found.')}
                   </td>
                 </tr>
               ) : (
@@ -173,7 +175,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                           ))}
                         </div>
                       </td>
-                      <td>{record.anion_fractions_type === 'mole' ? 'Molar fraction' : 'Weight fraction'}</td>
+                      <td>{record.anion_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
                       <td className="solvent-info">
                         <div className="compound-list">
                           {record.solvent_smiles_list.map((solvent, idx) => (
@@ -183,7 +185,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                           ))}
                         </div>
                       </td>
-                      <td>{record.solvent_fractions_type === 'mole' ? 'Molar fraction' : 'Weight fraction'}</td>
+                      <td>{record.solvent_fractions_type === 'mole' ? t('formulation.fractionType.mole', 'Molar fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</td>
                       <td>{formatConcentration(record.cation_molality)}</td>
                       <td className="created-date">{formatDate(normalizeServerDate(record.created_at).toISOString())}</td>
                       <td>
@@ -196,13 +198,13 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                           className="action-button view-button"
                           onClick={() => handleViewDetails(record)}
                         >
-                          查看
+                          {t('formulation.history.actions.viewDetails', 'View Details')}
                         </button>
                         <button
                           className="action-button delete-button"
                           onClick={() => handleDeleteRecord(record.id)}
                         >
-                          删除
+                          {t('formulation.history.actions.delete', 'Delete')}
                         </button>
                       </td>
                     </tr>

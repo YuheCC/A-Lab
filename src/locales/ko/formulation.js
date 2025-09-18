@@ -2,6 +2,12 @@ export default {
   title: '염 및 용매 구성',
   subtitle: '전해질을 구성하고 사용자 지정하세요',
   comingSoon: '곧 제공 예정',
+  actions: {
+    backToList: '목록으로 돌아가기'
+  },
+  create: {
+    newConfiguration: '새 구성'
+  },
 
   saltConfiguration: {
     title: '염 구성'
@@ -96,7 +102,21 @@ export default {
     actions: {
       viewDetails: '상세 보기',
       delete: '삭제',
-      deleteConfirm: '이 기록을 삭제하시겠습니까?'
+      deleteConfirm: '이 기록을 삭제하시겠습니까?',
+      deleteFailed: '기록 삭제에 실패했습니다'
+    }
+  },
+  list: {
+    columns: {
+      analysisId: '분석 ID',
+      saltFraction: '염 (분율)',
+      saltFractionType: '분율 유형 (염)',
+      solventFraction: '용매 (분율)',
+      solventFractionType: '분율 유형 (용매)',
+      concentration: '농도',
+      created: '생성일',
+      status: '상태',
+      actions: '작업'
     }
   }
   ,
@@ -127,6 +147,10 @@ export default {
   ,
   detail: {
     title: '분석 결과',
+    viewSubtitle: '상세 분석 결과 보기',
+    viewSubtitleWithId: '상세 분석 결과 보기',
+    actionTitle: '분석 세부사항',
+    loading: '분석 세부사항을 로딩 중...',
     saltSolventConfig: '염 및 용매 구성',
     saltSummary: '염 요약',
     solventSummary: '용매 요약',

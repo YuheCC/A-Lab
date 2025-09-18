@@ -2,6 +2,12 @@ export default {
   title: 'Salt & Solvent Configuration',
   subtitle: 'Configure and customize your electrolytes',
   comingSoon: 'Will be available soon',
+  actions: {
+    backToList: 'Back to List'
+  },
+  create: {
+    newConfiguration: 'New Configuration'
+  },
 
   saltConfiguration: {
     title: 'Salt Configuration'
@@ -96,10 +102,23 @@ export default {
     actions: {
       viewDetails: 'View Details',
       delete: 'Delete',
-      deleteConfirm: 'Are you sure you want to delete this record?'
+      deleteConfirm: 'Are you sure you want to delete this record?',
+      deleteFailed: 'Failed to delete record'
     }
-  }
-  ,
+  },
+  list: {
+    columns: {
+      analysisId: 'Analysis ID',
+      saltFraction: 'Salt (Fraction)',
+      saltFractionType: 'Fraction Type (Salt)',
+      solventFraction: 'Solvent (Fraction)',
+      solventFractionType: 'Fraction Type (Solvent)',
+      concentration: 'Concentration',
+      created: 'Created',
+      status: 'Status',
+      actions: 'Actions'
+    }
+  },
   results: {
     analysisResults: 'Analysis Results',
     systemProperties: 'System Properties',
@@ -127,6 +146,10 @@ export default {
   ,
   detail: {
     title: 'Analysis Results',
+    viewSubtitle: 'View detailed analysis results',
+    viewSubtitleWithId: 'View detailed analysis results',
+    actionTitle: 'Analysis Details',
+    loading: 'Loading analysis details...',
     saltSolventConfig: 'Salt & Solvent Configuration',
     saltSummary: 'Salt Summary',
     solventSummary: 'Solvent Summary',

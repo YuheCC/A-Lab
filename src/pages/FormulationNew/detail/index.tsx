@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
+import { useTranslation } from 'react-i18next';
 import { getMDHistoryDetail, MDHistoryDetailResponse } from '@/services/formulation/md';
 import './index.css';
 
@@ -27,6 +28,7 @@ interface ResultData {
 
 const DetailPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ const DetailPage: React.FC = () => {
     if (id) {
       fetchDetailData();
     } else {
-      setError('缺少分析ID参数');
+      setError(t('formulation.detail.missingId', 'Missing analysis ID parameter'));
       setLoading(false);
     }
   }, [id]);
@@ -48,6 +50,7 @@ const DetailPage: React.FC = () => {
     if (!id) return;
 
     setLoading(true);
+    
     setError(null);
 
     try {
@@ -58,11 +61,11 @@ const DetailPage: React.FC = () => {
           setResultData(response.data.result_data);
         }
       } else {
-        setError('获取分析详情失败');
+        setError(t('formulation.detail.fetchError', 'Failed to fetch analysis details'));
       }
     } catch (err) {
       console.error('Failed to fetch detail data:', err);
-      setError(err instanceof Error ? err.message : '获取分析详情失败');
+      setError(err instanceof Error ? err.message : t('formulation.detail.fetchError', 'Failed to fetch analysis details'));
     } finally {
       setLoading(false);
     }
@@ -75,15 +78,15 @@ const DetailPage: React.FC = () => {
   // 动态生成系统属性数据
   const systemProperties = [
     {
-      property: 'Density (g/cm³)',
+      property: t('formulation.detail.density', 'Density (g/cm³)'),
       value: resultData?.system_properties?.density?.toFixed(4) || '1.2000'
     },
     {
-      property: 'Viscosity (cP)',
+      property: t('formulation.detail.viscosity', 'Viscosity (cP)'),
       value: resultData?.system_properties?.viscosity?.toFixed(4) || '2.6600'
     },
     {
-      property: 'Conductivity (mS/cm)',
+      property: t('formulation.detail.conductivity', 'Conductivity (mS/cm)'),
       value: resultData?.system_properties?.conductivity?.toFixed(4) || '5.7600'
     }
   ];
@@ -94,11 +97,11 @@ const DetailPage: React.FC = () => {
     category: item.category,
     fraction: `${(item.fraction * 100).toFixed(1)}%`
   })) || [
-    { size: 0, category: 'SSIP', fraction: '20.0%' },
-    { size: 1, category: 'CIP', fraction: '40.0%' },
-    { size: 2, category: 'AGG', fraction: '10.0%' },
-    { size: 3, category: 'AGG', fraction: '5.0%' },
-    { size: 4, category: 'AGG', fraction: '25.0%' }
+    { size: 0, category: t('formulation.detail.SSIP', 'SSIP'), fraction: '20.0%' },
+    { size: 1, category: t('formulation.detail.CIP', 'CIP'), fraction: '40.0%' },
+    { size: 2, category: t('formulation.detail.AGG', 'AGG'), fraction: '10.0%' },
+    { size: 3, category: t('formulation.detail.AGG', 'AGG'), fraction: '5.0%' },
+    { size: 4, category: t('formulation.detail.AGG', 'AGG'), fraction: '25.0%' }
   ];
 
   const handleDownloadJSON = () => {
@@ -149,19 +152,19 @@ const DetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <h1 className="detail-title">Salt & Solvent Configuration</h1>
-          <span className="detail-subtitle">View detailed analysis results</span>
+      <div className="detail-header">
+        <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
           <div className="detail-actions">
-            <span className="detail-action-title">Analysis Details</span>
+          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
             <button className="back-to-list-button" onClick={handleBackToList}>
-              Back to List
+            {t('formulation.actions.backToList', 'Back to List')}
             </button>
           </div>
         </div>
         <div className="detail-content">
           <div className="loading-state">
-            <p>Loading analysis details...</p>
+            <p>{t('formulation.detail.loading', 'Loading analysis details...')}</p>
           </div>
         </div>
       </div>
@@ -172,12 +175,12 @@ const DetailPage: React.FC = () => {
     return (
       <div className="detail-page-container">
         <div className="detail-header">
-          <h1 className="detail-title">Salt & Solvent Configuration</h1>
-          <span className="detail-subtitle">View detailed analysis results</span>
+          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
           <div className="detail-actions">
-            <span className="detail-action-title">Analysis Details</span>
+            <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
             <button className="back-to-list-button" onClick={handleBackToList}>
-              Back to List
+              {t('formulation.actions.backToList', 'Back to List')}
             </button>
           </div>
         </div>
@@ -193,22 +196,22 @@ const DetailPage: React.FC = () => {
   return (
     <div className="detail-page-container">
       <div className="detail-header">
-        <h1 className="detail-title">Salt & Solvent Configuration</h1>
-        <span className="detail-subtitle">View detailed analysis results - AN-{String(id).padStart(3, '0')}</span>
+          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
         <div className="detail-actions">
-          <span className="detail-action-title">Analysis Details</span>
+          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
           <button className="back-to-list-button" onClick={handleBackToList}>
-            Back to List
+            {t('formulation.actions.backToList', 'Back to List')}
           </button>
         </div>
       </div>
 
       <div className="detail-content">
         <div className="results-section">
-          <h2>Analysis Results</h2>
+          <h2>{t('formulation.results.analysisResults', 'Analysis Results')}</h2>
 
           <div className="system-properties">
-            <h3>System Properties</h3>
+            <h3>{t('formulation.results.systemProperties', 'System Properties')}</h3>
             <div className="properties-table">
               {systemProperties.map((prop, index) => (
                 <div key={index} className="property-row">
@@ -220,12 +223,12 @@ const DetailPage: React.FC = () => {
           </div>
 
           <div className="cluster-analysis">
-            <h3>Cluster Analysis</h3>
+            <h3>{t('formulation.results.clusterAnalysis', 'Cluster Analysis')}</h3>
             <div className="cluster-table">
               <div className="table-header">
-                <span>Size</span>
-                <span>Category</span>
-                <span>Fraction</span>
+                <span>{t('formulation.results.size', 'Size')}</span>
+                <span>{t('formulation.results.category', 'Category')}</span>
+                <span>{t('formulation.results.fraction', 'Fraction')}</span>
               </div>
               {clusterAnalysis.map((item, index) => (
                 <div key={index} className="table-row">
@@ -246,10 +249,10 @@ const DetailPage: React.FC = () => {
           </div>
 
           <div className="analysis-charts">
-            <h3>Analysis Charts</h3>
+            <h3>{t('formulation.results.analysisCharts', 'Analysis Charts')}</h3>
 
             <div className="chart-section">
-              <h4>Radial Distribution Function and Coordination Number</h4>
+              <h4>{t('formulation.results.radialDistribution', 'Radial Distribution Function and Coordination Number')}</h4>
               {resultData?.rdf_cn_plot ? (
                 <div className="chart-image-container">
                   <img
@@ -261,14 +264,14 @@ const DetailPage: React.FC = () => {
               ) : (
                 <div className="chart-placeholder">
                   <div className="chart-icon">📊</div>
-                  <p>Chart placeholder</p>
-                  <p className="chart-subtitle">Radial Distribution Function and Coordination Number</p>
+                  <p>{t('formulation.results.chartPlaceholder', 'Chart placeholder')}</p>
+                  <p className="chart-subtitle">{t('formulation.results.radialDistributionSubtitle', 'Radial Distribution Function and Coordination Number')}</p>
                 </div>
               )}
             </div>
 
             <div className="chart-section">
-              <h4>Mean Square Displacement</h4>
+              <h4>{t('formulation.results.meanSquareDisplacement', 'Mean Square Displacement')}</h4>
               {resultData?.msd_plot ? (
                 <div className="chart-image-container">
                   <img
@@ -280,25 +283,25 @@ const DetailPage: React.FC = () => {
               ) : (
                 <div className="chart-placeholder">
                   <div className="chart-icon">📈</div>
-                  <p>Chart placeholder</p>
-                  <p className="chart-subtitle">Mean Square Displacement</p>
+                  <p>{t('formulation.results.chartPlaceholder', 'Chart placeholder')}</p>
+                  <p className="chart-subtitle">{t('formulation.results.meanSquareDisplacementSubtitle', 'Mean Square Displacement')}</p>
                 </div>
               )}
             </div>
           </div>
 
           <div className="analysis-file">
-            <h3>Analysis File</h3>
+            <h3>{t('formulation.results.analysisFile', 'Analysis File')}</h3>
             <div className="file-content">
               <div className="file-text">
-                <p>Download the complete analysis results in JSON format</p>
-                <p className="file-details">File contains configuration details, analysis parameters, and computed results</p>
+                <p>{t('formulation.results.downloadDescription', 'Download the complete analysis results in JSON format')}</p>
+                <p className="file-details">{t('formulation.results.fileContains', 'File contains configuration details, analysis parameters, and computed results')}</p>
               </div>
               <button
                 className="download-btn"
                 onClick={handleDownloadJSON}
               >
-                Download JSON
+                {t('formulation.results.downloadJSON', 'Download JSON')}
               </button>
             </div>
           </div>
