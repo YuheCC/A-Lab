@@ -89,6 +89,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "お気に入りに追加 ★",
     saving: "保存中...",
+
+    // Favorites
+    favorites: {
+        favorites: "お気に入り",
+        goToFavorites: "お気に入りページに移動"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "検索条件に一致する複数の分子が見つかりました。友達検索は無効です。",

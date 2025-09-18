@@ -7,6 +7,10 @@ const Search = () => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'third'>('organic');
 
+    const handleGoToFavorites = () => {
+        window.location.href = '/favorites';
+    };
+
     return (
         <div>
             {/* Tab Navigation */}
@@ -31,6 +35,13 @@ const Search = () => {
                         {t('search.tabs.third')}
                     </button>
                 </div>
+                <button
+                    className="favorites-button"
+                    onClick={handleGoToFavorites}
+                    title={t('search.favorites.goToFavorites')}
+                >
+                    ⭐ {t('search.favorites.favorites')}
+                </button>
             </div>
 
             {/* Tab Content */}
