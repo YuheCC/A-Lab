@@ -40,7 +40,7 @@ export default  [
     },
     {
         path: "/formulation",
-        component: "Formulation"
+        component: "FormulationNew"
     },
     {
         path: "/ask",
