@@ -1,7 +1,8 @@
 export default {
   tabs: {
     organic: '有機分子',
-    inorganic: '無機分子'
+    inorganic: '無機分子',
+    anions: 'アニオン'
   },
   loading: {
     message: 'Molecular Universeのマップを読み込み中',
