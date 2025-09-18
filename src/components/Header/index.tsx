@@ -144,7 +144,7 @@ const Header = () => {
                 </NavLink>
                 {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
-                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)}
+                {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
                 <div 
                     className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
@@ -162,7 +162,7 @@ const Header = () => {
                         {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
                     </div>
                 </div>
-                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)}
+                {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
