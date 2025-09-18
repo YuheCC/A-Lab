@@ -1,7 +1,8 @@
 export default {
   tabs: {
     organic: '有机分子',
-    inorganic: '无机分子'
+    inorganic: '无机分子',
+    anions: '阴离子'
   },
   loading: {
     message: '正在加载分子宇宙地图',

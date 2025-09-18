@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicMolecules, InorganicMolecules, MoleculeInfo } from "./components";
+import { OrganicMolecules, InorganicMolecules, AnionsMolecules, MoleculeInfo } from "./components";
 import "./Map.css";
 import MoleculeInfo05 from "./components/MoleculeInfo05";
 
 const Map = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions'>('organic');
 
     return (
         <div>
@@ -25,6 +25,12 @@ const Map = () => {
                     >
                         {t('map.tabs.inorganic')}
                     </button> */}
+                    <button
+                        onClick={() => setActiveTab('anions')}
+                        className={`map-tab-button ${activeTab === 'anions' ? 'active' : ''}`}
+                    >
+                        {t('map.tabs.anions')}
+                    </button>
                 </div>
             </div>
 
@@ -33,8 +39,10 @@ const Map = () => {
                 <div className="map-umap-container">
                     {activeTab === 'organic' ? (
                         <OrganicMolecules />
-                    ) : (
+                    ) : activeTab === 'inorganic' ? (
                         <InorganicMolecules />
+                    ) : (
+                        <AnionsMolecules />
                     )}
                     <MoleculeInfo05 />
                 </div>

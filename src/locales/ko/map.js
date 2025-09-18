@@ -1,7 +1,8 @@
 export default {
   tabs: {
     organic: '유기 분자',
-    inorganic: '무기 분자'
+    inorganic: '무기 분자',
+    anions: '음이온'
   },
   loading: {
     message: '분자 우주 지도 로딩 중',

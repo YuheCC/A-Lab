@@ -1,7 +1,8 @@
 export default {
   tabs: {
     organic: 'Organic Molecules',
-    inorganic: 'Inorganic Molecules'
+    inorganic: 'Inorganic Molecules',
+    anions: 'Anions'
   },
   loading: {
     message: 'Loading Map of the Molecular Universe',
