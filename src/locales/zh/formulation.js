@@ -68,6 +68,14 @@ export default {
 
   ui: {
     calculating: '计算中...'
+  },
+
+  result: {
+    processing: '算法模型计算中',
+    description: '系统正在处理您的模型参数，预计需要较长时间，请耐心等待',
+    notice: '模型训练完成后，系统将自动向您发送消息通知',
+    action: '您可以关闭此页面，不会影响后台计算进程',
+    close: '返回配置'
   }
   ,
   history: {

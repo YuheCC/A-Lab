@@ -35,5 +35,5 @@ export default {
     performance,
     predictionTool,
     formulation,
-    
+
 }

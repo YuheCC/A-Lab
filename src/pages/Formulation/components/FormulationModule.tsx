@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
-import ResultsDisplay from './ResultsDisplay';
+import ResultTip from '@/components/ResultTip';
 import './FormulationModule.css';
 
 interface FormulationModuleProps {
@@ -26,7 +26,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const [nextSolventId, setNextSolventId] = useState(2);
 
   // Results state
-  const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
   const [error, setError] = useState<string | null>(null);
@@ -214,7 +213,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       if (response && response.data) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
-        setShowResults(true);
         setCurrentView('results');
       } else {
         throw new Error('Invalid response from MD simulation');
@@ -227,10 +225,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   };
 
   const handleNewAnalysis = () => {
-    setCurrentView('configuration');
-    setShowResults(false);
-    setIsCalculating(false);
-    setError(null);
+    resetFormulationState();
   };
 
   // Reset function
@@ -245,7 +240,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     ]);
     setNextSolventId(2);
     setSolventFractionType('mole');
-    setShowResults(false);
     setIsCalculating(false);
     setCurrentView('configuration');
     setError(null);
@@ -260,7 +254,11 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Show results view if in results mode
   if (currentView === 'results') {
-    return <ResultsDisplay onNewAnalysis={handleNewAnalysis} />;
+    return (
+      <div className="result-tip-page">
+        <ResultTip isVisible={true} onClose={handleNewAnalysis} />
+      </div>
+    );
   }
 
   return (
@@ -503,13 +501,14 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       {/* Submit Configuration Button */}
       <div className="submit-section">
         <button
-          className={`submit-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
+          className={`submit-btn ${isCalculating ? 'calculating' : ''}`}
           onClick={handleCalculate}
-          disabled={isCalculating || showResults || !isValidConfiguration() || !isValidSolventConfiguration()}
+          disabled={isCalculating || !isValidConfiguration() || !isValidSolventConfiguration()}
         >
           {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
         </button>
       </div>
+
     </div>
   );
 };
