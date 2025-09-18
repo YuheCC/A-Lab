@@ -299,10 +299,10 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-inorganic/`;
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched inorganic molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {

@@ -73,7 +73,14 @@ const AnionsSearch = () => {
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
 
-    const { data, loading, error } = useAnionsPlotDataStore();
+    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
+
+    // 组件挂载时获取数据
+    useEffect(() => {
+        if (data.length === 0) {
+            fetchData();
+        }
+    }, [data.length, fetchData]);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
@@ -309,13 +316,10 @@ const AnionsSearch = () => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search`;
-            if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/api/llm/search-35`;
-            }
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched molecule's properties
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=anions`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -516,7 +520,7 @@ const AnionsSearch = () => {
                                 disabled={searchLoading}
                             />
 
-                    <FindFriendOptions
+                    {/* <FindFriendOptions
                         findClosestFriends={findClosestFriends}
                         setFindClosestFriends={setFindClosestFriends}
                         extraRequests={extraRequests}
@@ -557,7 +561,7 @@ const AnionsSearch = () => {
                         solventOptions={solventOptions}
                         performanceOptions={performanceOptions}
                         userPermissions={userPermissions}
-                    />
+                    /> */}
 
                     <div className="search-results">
                         {searchLoading && (
