@@ -1,5 +1,5 @@
 import Slider from "@/components/Slider";
-import { useEffect, useState, useMemo, useRef, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import { Autocomplete, TextField } from "@mui/material";
@@ -124,7 +124,7 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
     useEffect(() => {
         if (data.length === 0) return;
 
-        setFilterRanges(oldFilterRanges => {
+        setFilterRanges(() => {
             const updatedRanges: FilterRanges = {};
             for (const key in anionsFilterLabels) {
                 if (key === 'chemical_formula' || key === 'functional_groups') continue;
@@ -290,7 +290,7 @@ const AnionsFilter = forwardRef<AnionsFilterRef, AnionsFilterProps>(({ onDataFil
                             style={{ backgroundColor: '#fff' }}
                             options={filteredFunctionalGroupOptions}
                             value={functionGroupValue}
-                            onChange={(event, newValue) => {
+                            onChange={(_, newValue) => {
                                 setFunctionalGroupValue(newValue);
                                 setSelectedFunctionalGroup(newValue?.label || '');
                             }}

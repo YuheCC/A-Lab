@@ -309,13 +309,10 @@ const OrganicSearch = () => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search`;
-            if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/api/llm/search-35`;
-            }
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
