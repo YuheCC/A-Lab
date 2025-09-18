@@ -68,6 +68,14 @@ export default {
 
   ui: {
     calculating: 'Calculating...'
+  },
+
+  result: {
+    processing: 'Algorithm Model Computing',
+    description: 'System is processing your model parameters, this may take a while, please be patient',
+    notice: 'The system will automatically send you a notification when model training is complete',
+    action: 'You can close this page, it will not affect the background calculation process',
+    close: 'Back to Configuration'
   }
   ,
   history: {

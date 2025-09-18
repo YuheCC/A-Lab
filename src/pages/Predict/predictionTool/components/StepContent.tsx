@@ -212,7 +212,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <FileText className="file-icon" />
                   <div className="file-details">
                     <div className="file-name-display">
-                      {uploadedFile?.name || '历史数据_20250110125920_001PE0XT00001DAB0800004_CAB1_1#检测通道.xlsx'}
+                      {uploadedFile?.name || ""}
                     </div>
                     <div className="file-meta">
                       {t('predictionTool.prediction.fileSize')}: {uploadedFile ? formatFileSize(uploadedFile.size) : '19.15 MB'} · {t('predictionTool.prediction.fileType')}: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
@@ -310,10 +310,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                   <div className="stats-value">{avgCycleLife1 >= 0 ? `${(avgCycleLife1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
                 </div>
-                <div className="stats-card">
+                {/* <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                   <div className="stats-value">{avgCycleLife2 >= 0 ? `${(avgCycleLife2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
-                </div>
+                </div> */}
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
                   <div className="stats-value">{formatDate(predictionResult.created_at)}</div>
@@ -330,7 +330,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                       <tr>
                         <th className="barcode-col">{t('predictionTool.results.barcode')}</th>
                         <th className="cycle-life-col">{t('predictionTool.results.cycleLife1')}</th>
-                        <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th>
+                        {/* <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -354,7 +354,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                           <tr key={item.id}>
                             <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
                             <td className="cycle-life-cell">{getCycleLife1Display()}</td>
-                            <td className="cycle-life-cell">{getCycleLife2Display()}</td>
+                            {/* <td className="cycle-life-cell">{getCycleLife2Display()}</td> */}
                           </tr>
                         );
                       })}

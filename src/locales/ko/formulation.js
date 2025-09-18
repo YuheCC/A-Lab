@@ -68,6 +68,14 @@ export default {
 
   ui: {
     calculating: '계산 중...'
+  },
+
+  result: {
+    processing: '알고리즘 모델 계산 중',
+    description: '시스템이 모델 매개변수를 처리하고 있습니다. 시간이 걸릴 수 있으니 잠시 기다려 주세요',
+    notice: '모델 훈련이 완료되면 시스템에서 자동으로 알림을 보내드립니다',
+    action: '이 페이지를 닫아도 백그라운드 계산 프로세스에는 영향을 주지 않습니다',
+    close: '구성으로 돌아가기'
   }
   ,
   history: {

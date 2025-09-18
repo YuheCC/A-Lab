@@ -403,3 +403,18 @@
     padding-top: 6px;
   }
 }
+
+/* ResultTip 页面级样式 */
+.result-tip-page {
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 120px 20px 40px 20px;
+}
+
+@media (max-width: 640px) {
+  .result-tip-page {
+    padding: 80px 16px 32px 16px;
+  }
+}

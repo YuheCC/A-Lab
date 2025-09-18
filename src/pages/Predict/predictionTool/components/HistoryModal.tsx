@@ -159,12 +159,12 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                         {(detailData.avg_cycle_life_1 || 0) >= 0 ? `${(detailData.avg_cycle_life_1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
                     </div>
-                    <div className="stats-card">
+                    {/* <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                       <div className="stats-value">
                         {(detailData.avg_cycle_life_2 || 0) >= 0 ? `${(detailData.avg_cycle_life_2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
-                    </div>
+                    </div> */}
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
                       <div className="stats-value">
@@ -188,7 +188,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                         <tr>
                           <th className="barcode-col">{t('predictionTool.results.barcode')}</th>
                           <th className="cycle-life-col">{t('predictionTool.results.cycleLife1')}</th>
-                          <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th>
+                          {/* <th className="cycle-life-col">{t('predictionTool.results.cycleLife2')}</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -213,7 +213,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                                 <tr key={item.id}>
                                   <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
                                   <td className="cycle-life-cell">{getCycleLife1Display()}</td>
-                                  <td className="cycle-life-cell">{getCycleLife2Display()}</td>
+                                  {/* <td className="cycle-life-cell">{getCycleLife2Display()}</td> */}
                                 </tr>
                               );
                             })
