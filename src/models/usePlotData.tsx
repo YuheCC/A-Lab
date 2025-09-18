@@ -140,7 +140,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
         try {
             isFetching = true;
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query`);
+            const response = await authFetch(`${API_URL}/snowflake-query?umap_type=organic`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });
@@ -282,7 +282,7 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
         try {
             set({ loading: true });
             // 暂时使用有机分子的接口，直到无机分子接口实现
-            const response = await authFetch(`${API_URL}/snowflake-query?is_inorganic=true`);
+            const response = await authFetch(`${API_URL}/snowflake-query?is_inorganic=true&umap_type=inorganic`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch inorganic data: ${response.statusText}` });
@@ -349,7 +349,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
     fetchData: async () => {
         try {
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true`);
+            const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true&umap_type=anions`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch anions data: ${response.statusText}` });
