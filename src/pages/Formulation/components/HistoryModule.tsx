@@ -28,6 +28,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | undefined>(undefined);
   const [historyData, setHistoryData] = useState<FormulationResult[]>([]);
 
   // 将MD历史记录转换为FormulationResult格式
@@ -111,6 +112,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
   };
 
   const handleViewDetails = (record: FormulationResult) => {
+    setSelectedRecordId(record.id.toString());
     setIsDetailModalOpen(true);
     onViewDetails(record);
   };
@@ -200,7 +202,9 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
         isOpen={isDetailModalOpen}
         onClose={() => {
           setIsDetailModalOpen(false);
+          setSelectedRecordId(undefined);
         }}
+        detailId={selectedRecordId}
       />
     </div>
   );
