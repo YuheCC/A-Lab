@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: '有機分子',
         inorganic: '無機分子',
+        anions: 'アニオン',
         third: '固体電解質'
     },
     

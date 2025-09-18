@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: 'Organic Molecules',
         inorganic: 'Inorganic Molecules',
+        anions: 'Anions',
         third: 'Solid-State Electrolyte'
     },
     

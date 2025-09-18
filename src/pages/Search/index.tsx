@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
+import AnionsSearch from "./components/AnionsSearch";
 import "./Search.css";
 
 const Search = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'third'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions' | 'third'>('organic');
 
     const handleGoToFavorites = () => {
         window.location.href = '/favorites';
@@ -29,6 +30,12 @@ const Search = () => {
                         {t('search.tabs.inorganic')}
                     </button> */}
                     <button
+                        onClick={() => setActiveTab('anions')}
+                        className={`search-tab-button ${activeTab === 'anions' ? 'active' : ''}`}
+                    >
+                        {t('search.tabs.anions')}
+                    </button>
+                    <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
                     >
@@ -50,6 +57,8 @@ const Search = () => {
                     <OrganicSearch />
                 ) : activeTab === 'inorganic' ? (
                     <InorganicSearch />
+                ) : activeTab === 'anions' ? (
+                    <AnionsSearch />
                 ) : (
                     <ThirdSearch />
                 )}
