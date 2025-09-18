@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultsDisplay from './ResultsDisplay';
 import './FormulationModule.css';
 
@@ -28,6 +29,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
+  const [error, setError] = useState<string | null>(null);
 
   // Validation logic
   const isValidConfiguration = () => {
@@ -96,9 +98,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
     setNextSolventId(prev => prev + 1);
   };
-
-  const getActiveSolventsCount = () => solvents.filter(s => s.smiles.trim() !== '').length;
-
 
 
   // Anion management functions
@@ -184,20 +183,54 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   ];
 
   const handleCalculate = async () => {
-    setIsCalculating(true);
+    if (!isValidConfiguration() || !isValidSolventConfiguration()) {
+      return;
+    }
 
-    // Simulate calculation delay
-    setTimeout(() => {
+    setIsCalculating(true);
+    setError(null);
+
+    try {
+      // 构建MD运行参数
+      const params: MDRunParams = {
+        solvent_smiles_list: solvents
+          .filter(s => s.smiles.trim() !== '')
+          .map(s => s.smiles.trim()),
+        solvent_fractions_type: solventFractionType,
+        solvent_fractions: solvents
+          .filter(s => s.smiles.trim() !== '')
+          .map(s => parseFloat(s.fraction)),
+        anion_name_list: selectedAnions,
+        anion_fractions: selectedAnions.map(anion => parseFloat(anionFractions[anion] || '0')),
+        anion_fractions_type: "mole",
+        cation_name: selectedCation,
+        num_cations: 40, // 默认值，可以根据需要调整
+        cation_molality: parseFloat(totalSaltConcentration),
+        simulation_box_size: 500.0 // 默认值，可以根据需要调整
+      };
+
+      const response = await runMDSimulation(params);
+
+      if (response && response.data) {
+        console.log('MD simulation result:', response.data);
+        setIsCalculating(false);
+        setShowResults(true);
+        setCurrentView('results');
+      } else {
+        throw new Error('Invalid response from MD simulation');
+      }
+    } catch (error) {
+      console.error('MD simulation failed:', error);
+      setError(error instanceof Error ? error.message : 'MD模拟运行失败');
       setIsCalculating(false);
-      setShowResults(true);
-      setCurrentView('results');
-    }, 2000);
+    }
   };
 
   const handleNewAnalysis = () => {
     setCurrentView('configuration');
     setShowResults(false);
     setIsCalculating(false);
+    setError(null);
   };
 
   // Reset function
@@ -215,6 +248,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setShowResults(false);
     setIsCalculating(false);
     setCurrentView('configuration');
+    setError(null);
   }, []);
 
   // Expose reset function to parent component
@@ -457,12 +491,21 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
         </div>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="error-message">
+          <p style={{ color: 'red', padding: '10px', background: '#ffe6e6', borderRadius: '4px' }}>
+            {error}
+          </p>
+        </div>
+      )}
+
       {/* Submit Configuration Button */}
       <div className="submit-section">
         <button
           className={`submit-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
           onClick={handleCalculate}
-          disabled={isCalculating || showResults}
+          disabled={isCalculating || showResults || !isValidConfiguration() || !isValidSolventConfiguration()}
         >
           {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
         </button>
