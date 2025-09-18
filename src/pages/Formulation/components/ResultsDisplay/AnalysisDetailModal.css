@@ -17,7 +17,7 @@
   background: white;
   border-radius: 12px;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -247,6 +247,51 @@
 .chart-placeholder-modal .chart-subtitle {
   font-size: 12px !important;
   color: #9ca3af !important;
+}
+
+.chart-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 16px;
+  min-height: 200px;
+}
+
+.chart-image {
+  max-width: 100%;
+  max-height: 400px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Additional Data Section */
+.additional-data-section {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.additional-data-content {
+  max-height: 300px;
+  overflow-y: auto;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.json-display {
+  font-family: 'Monaco', 'Menlo', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #374151;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* File Section in Modal */

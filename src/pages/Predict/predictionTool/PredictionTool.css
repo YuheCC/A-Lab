@@ -44,7 +44,7 @@
 }
 
 .history-area {
-  width: 400px;
+  width: 350px;
   flex-shrink: 0;
 }
 
@@ -173,7 +173,7 @@
 }
 
 .step-icon.completed {
-  background: #10b981;
+  background: #1e293b;
   color: #ffffff;
 }
 
@@ -187,6 +187,10 @@
   color: #1e293b;
 }
 
+.step-text.completed {
+  color: #1e293b;
+}
+
 .upload-content {
   display: flex;
   align-items: flex-start;
@@ -197,7 +201,7 @@
 .upload-area {
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
-  padding: 50px 60px;
+  padding: 50px 0px;
   text-align: center;
   transition: all 0.2s;
   width: 100%;
@@ -209,19 +213,19 @@
 @media (min-width: 1920px) {
   .upload-area {
     max-width: 900px;
-    padding: 60px 80px;
+    padding: 60px 0px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1919px) {
   .upload-area {
     max-width: 750px;
-    padding: 55px 70px;
+    padding: 55px 0px;
   }
 }
 
 .upload-area:hover {
-  border-color: #3b82f6;
+  border-color: #56B26A;
 }
 
 .upload-title {
@@ -262,7 +266,7 @@
   background: #334155;
 }
 
-/* Upload step container - 响应式设计 */
+/* Upload step container - 响应式设计，与prediction-area保持一致的宽度 */
 .upload-step-container {
   width: 100%;
   max-width: 600px;
@@ -285,13 +289,13 @@
 @media (max-width: 768px) {
   .upload-step-container {
     max-width: 100%;
-    padding: 0 16px;
+    margin: 0 16px;
   }
 }
 
 @media (max-width: 480px) {
   .upload-step-container {
-    padding: 0 12px;
+    margin: 0 12px;
   }
 }
 
@@ -1047,7 +1051,7 @@
   }
   
   .history-area {
-    width: 450px;
+    width: 350px;
   }
   
   .prediction-tool {
@@ -1061,7 +1065,7 @@
   }
   
   .history-area {
-    width: 420px;
+    width: 350px;
   }
   
   .prediction-tool {

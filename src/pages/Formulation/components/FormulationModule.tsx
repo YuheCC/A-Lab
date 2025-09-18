@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultsDisplay from './ResultsDisplay';
 import './FormulationModule.css';
 
@@ -12,35 +13,37 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Salt Configuration State
   const [selectedCation, setSelectedCation] = useState('Li+');
-  const [selectedAnion, setSelectedAnion] = useState('BF4-');
+  const [selectedAnions, setSelectedAnions] = useState<string[]>(['BF4-']);
   const [totalSaltConcentration, setTotalSaltConcentration] = useState('1.00');
-  const [anionFraction, setAnionFraction] = useState('0.50');
+  const [anionFractions, setAnionFractions] = useState<{[key: string]: string}>({'BF4-': '1.00'});
   const [fractionType, setFractionType] = useState<'mole' | 'weight'>('mole');
 
   // Solvent Configuration State
   const [solvents, setSolvents] = useState([
-    { id: 1, smiles: 'CCO', fraction: '1.00' },
-    { id: 2, smiles: '', fraction: '0' },
-    { id: 3, smiles: '', fraction: '0' }
+    { id: 1, smiles: 'CCO', fraction: '1.00' }
   ]);
   const [solventFractionType, setSolventFractionType] = useState<'mole' | 'weight'>('mole');
+  const [nextSolventId, setNextSolventId] = useState(2);
 
   // Results state
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
+  const [error, setError] = useState<string | null>(null);
 
   // Validation logic
   const isValidConfiguration = () => {
     const concentration = parseFloat(totalSaltConcentration);
-    const fraction = parseFloat(anionFraction);
-    return concentration > 0 && fraction >= 0 && fraction <= 1;
+    const totalFraction = selectedAnions.reduce((sum, anion) => {
+      return sum + parseFloat(anionFractions[anion] || '0');
+    }, 0);
+    return concentration > 0 && selectedAnions.length > 0 && Math.abs(totalFraction - 1) < 0.001;
   };
 
   // Solvent validation logic
   const isValidSolventConfiguration = () => {
     const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-    const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+    const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
     return activeSolvents.length > 0 && Math.abs(totalFraction - 1) < 0.001;
   };
 
@@ -52,19 +55,102 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   };
 
   const removeSolvent = (id: number) => {
-    setSolvents(prev => prev.map(s =>
-      s.id === id ? { ...s, smiles: '', fraction: '0' } : s
-    ));
+    setSolvents(prev => {
+      // 真正删除这一条溶剂
+      const remainingSolvents = prev.filter(s => s.id !== id);
+
+      // 如果删除后没有溶剂了，保留至少一个空的溶剂
+      if (remainingSolvents.length === 0) {
+        return [{ id: nextSolventId, smiles: '', fraction: '1.00' }];
+      }
+
+      // 重新分配剩余溶剂的分数
+      const equalFraction = (1 / remainingSolvents.length).toFixed(2);
+      return remainingSolvents.map(s => ({
+        ...s,
+        fraction: equalFraction
+      }));
+    });
   };
 
   const addSolvent = () => {
-    const emptySolvent = solvents.find(s => s.smiles.trim() === '');
-    if (emptySolvent) {
-      updateSolvent(emptySolvent.id, 'fraction', '0');
-    }
+    if (solvents.length >= 3) return; // 限制最多3个溶剂
+
+    setSolvents(prev => {
+      const currentCount = prev.length;
+      const newFraction = (1 / (currentCount + 1)).toFixed(2);
+
+      // 创建新的溶剂
+      const newSolvent = {
+        id: nextSolventId,
+        smiles: '',
+        fraction: newFraction
+      };
+
+      // 重新分配所有现有溶剂的分数
+      const updatedExisting = prev.map(s => ({
+        ...s,
+        fraction: newFraction
+      }));
+
+      return [...updatedExisting, newSolvent];
+    });
+
+    setNextSolventId(prev => prev + 1);
   };
 
-  const getActiveSolventsCount = () => solvents.filter(s => s.smiles.trim() !== '').length;
+
+  // Anion management functions
+  const toggleAnionSelection = (anionValue: string) => {
+    setSelectedAnions(prev => {
+      const isSelected = prev.includes(anionValue);
+      let newSelectedAnions: string[];
+
+      if (isSelected) {
+        // Remove anion if already selected (but keep at least one)
+        if (prev.length > 1) {
+          newSelectedAnions = prev.filter(a => a !== anionValue);
+          // Remove fraction for deselected anion
+          setAnionFractions(prevFractions => {
+            const newFractions = { ...prevFractions };
+            delete newFractions[anionValue];
+            return newFractions;
+          });
+        } else {
+          newSelectedAnions = prev; // Keep the last one
+        }
+      } else {
+        // Add anion if not selected (max 2 anions)
+        if (prev.length < 2) {
+          newSelectedAnions = [...prev, anionValue];
+          // Add default fraction for new anion
+          setAnionFractions(prevFractions => ({
+            ...prevFractions,
+            [anionValue]: '0.50'
+          }));
+          // Adjust existing fractions to maintain total of 1.0
+          if (prev.length === 1) {
+            setAnionFractions(prevFractions => ({
+              ...prevFractions,
+              [prev[0]]: '0.50',
+              [anionValue]: '0.50'
+            }));
+          }
+        } else {
+          newSelectedAnions = prev; // Don't add if already 2 selected
+        }
+      }
+
+      return newSelectedAnions;
+    });
+  };
+
+  const updateAnionFraction = (anion: string, value: string) => {
+    setAnionFractions(prev => ({
+      ...prev,
+      [anion]: value
+    }));
+  };
 
   // Format ion display
   const formatIonDisplay = (ionValue: string) => {
@@ -97,38 +183,72 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   ];
 
   const handleCalculate = async () => {
-    setIsCalculating(true);
+    if (!isValidConfiguration() || !isValidSolventConfiguration()) {
+      return;
+    }
 
-    // Simulate calculation delay
-    setTimeout(() => {
+    setIsCalculating(true);
+    setError(null);
+
+    try {
+      // 构建MD运行参数
+      const params: MDRunParams = {
+        solvent_smiles_list: solvents
+          .filter(s => s.smiles.trim() !== '')
+          .map(s => s.smiles.trim()),
+        solvent_fractions_type: solventFractionType,
+        solvent_fractions: solvents
+          .filter(s => s.smiles.trim() !== '')
+          .map(s => parseFloat(s.fraction)),
+        anion_name_list: selectedAnions,
+        anion_fractions: selectedAnions.map(anion => parseFloat(anionFractions[anion] || '0')),
+        anion_fractions_type: "mole",
+        cation_name: selectedCation,
+        num_cations: 40, // 默认值，可以根据需要调整
+        cation_molality: parseFloat(totalSaltConcentration),
+        simulation_box_size: 500.0 // 默认值，可以根据需要调整
+      };
+
+      const response = await runMDSimulation(params);
+
+      if (response && response.data) {
+        console.log('MD simulation result:', response.data);
+        setIsCalculating(false);
+        setShowResults(true);
+        setCurrentView('results');
+      } else {
+        throw new Error('Invalid response from MD simulation');
+      }
+    } catch (error) {
+      console.error('MD simulation failed:', error);
+      setError(error instanceof Error ? error.message : 'MD模拟运行失败');
       setIsCalculating(false);
-      setShowResults(true);
-      setCurrentView('results');
-    }, 2000);
+    }
   };
 
   const handleNewAnalysis = () => {
     setCurrentView('configuration');
     setShowResults(false);
     setIsCalculating(false);
+    setError(null);
   };
 
   // Reset function
   const resetFormulationState = useCallback(() => {
     setSelectedCation('Li+');
-    setSelectedAnion('BF4-');
+    setSelectedAnions(['BF4-']);
     setTotalSaltConcentration('1.00');
-    setAnionFraction('0.50');
+    setAnionFractions({'BF4-': '1.00'});
     setFractionType('mole');
     setSolvents([
-      { id: 1, smiles: 'CCO', fraction: '1.00' },
-      { id: 2, smiles: '', fraction: '0' },
-      { id: 3, smiles: '', fraction: '0' }
+      { id: 1, smiles: 'CCO', fraction: '1.00' }
     ]);
+    setNextSolventId(2);
     setSolventFractionType('mole');
     setShowResults(false);
     setIsCalculating(false);
     setCurrentView('configuration');
+    setError(null);
   }, []);
 
   // Expose reset function to parent component
@@ -176,8 +296,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
               {anionOptions.map((option) => (
                 <div
                   key={option.value}
-                  className={`ion-option ${selectedAnion === option.value ? 'selected' : ''} ${!option.available ? 'disabled' : ''}`}
-                  onClick={() => option.available && setSelectedAnion(option.value)}
+                  className={`ion-option ${selectedAnions.includes(option.value) ? 'selected' : ''} ${!option.available ? 'disabled' : ''} ${selectedAnions.length >= 2 && !selectedAnions.includes(option.value) ? 'max-selected' : ''}`}
+                  onClick={() => option.available && toggleAnionSelection(option.value)}
                 >
                   <div className="ion-symbol">{option.label}</div>
                   <div className="ion-name">{option.subLabel}</div>
@@ -201,19 +321,21 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             />
           </div>
 
-          {/* Anion Fraction */}
-          <div className="form-group">
-            <label>{t('formulation.anionFraction.label', 'BF₄⁻ Fraction')}</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              max="1"
-              value={anionFraction}
-              onChange={(e) => setAnionFraction(e.target.value)}
-              className="fraction-input"
-            />
-          </div>
+          {/* Anion Fractions */}
+          {selectedAnions.map((anion) => (
+            <div key={anion} className="form-group">
+              <label>{t('formulation.anionFraction.label', `${formatIonDisplay(anion)} Fraction`)}</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={anionFractions[anion] || '0'}
+                onChange={(e) => updateAnionFraction(anion, e.target.value)}
+                className="fraction-input"
+              />
+            </div>
+          ))}
 
           {/* Fraction Type */}
           <div className="form-group">
@@ -244,12 +366,12 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="salt-summary">
             <h3>{t('formulation.saltSummary.title', 'Salt Summary')}</h3>
             <div className="summary-content">
-              <p>{t('formulation.saltSummary.selected', 'Selected')}: {formatIonDisplay(selectedCation)} + {formatIonDisplay(selectedAnion)}</p>
+              <p>{t('formulation.saltSummary.selected', 'Selected')}: {formatIonDisplay(selectedCation)} + {selectedAnions.map(anion => formatIonDisplay(anion)).join(' + ')}</p>
               <p>{t('formulation.saltSummary.totalConcentration', 'Total salt concentration')}: {totalSaltConcentration} mol/kg</p>
-              <p>{t('formulation.saltSummary.fractions', 'Fractions')}: {formatIonDisplay(selectedAnion)} ({anionFraction})</p>
+              <p>{t('formulation.saltSummary.fractions', 'Fractions')}: {selectedAnions.map(anion => `${formatIonDisplay(anion)} (${anionFractions[anion] || '0'})`).join(', ')}</p>
               <p>{t('formulation.saltSummary.fractionType', 'Fraction type')}: {fractionType === 'mole' ? t('formulation.fractionType.mole', 'Mole fraction') : t('formulation.fractionType.weight', 'Weight fraction')}</p>
               <p className={`validation-status ${isValidConfiguration() ? 'valid' : 'invalid'}`}>
-                {t('formulation.saltSummary.totalFraction', 'Total fraction')}: {anionFraction}
+                {t('formulation.saltSummary.totalFraction', 'Total fraction')}: {selectedAnions.reduce((sum, anion) => sum + parseFloat(anionFractions[anion] || '0'), 0).toFixed(2)}
                 <span className="validation-icon">{isValidConfiguration() ? '✓' : '✗'}</span>
               </p>
             </div>
@@ -288,12 +410,11 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                       value={solvent.fraction}
                       onChange={(e) => updateSolvent(solvent.id, 'fraction', e.target.value)}
                       className="fraction-input"
-                      disabled={!solvent.smiles.trim()}
                     />
                   </div>
                 </div>
                 <div className="remove-button-group">
-                  {solvent.smiles.trim() && (
+                  {solvents.length > 1 && (
                     <button
                       type="button"
                       className="remove-solvent-btn"
@@ -312,9 +433,9 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           <div className="form-group">
             <button
               type="button"
-              className={`add-smiles-btn ${getActiveSolventsCount() >= 3 ? 'disabled' : ''}`}
+              className={`add-smiles-btn ${solvents.length >= 3 ? 'disabled' : ''}`}
               onClick={addSolvent}
-              disabled={getActiveSolventsCount() >= 3}
+              disabled={solvents.length >= 3}
             >
               + {t('formulation.addSmiles', 'Add SMILES (Max 3)')}
             </button>
@@ -351,8 +472,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             <div className="summary-content">
               {(() => {
                 const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-                const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
-                const solventNames = activeSolvents.map(s => s.smiles).join(', ') || t('formulation.solventSummary.emptyPlaceholder', 'Empty (0), Empty (0)');
+                const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+                const solventNames = activeSolvents.map(s => s.smiles).join(', ') || t('formulation.solventSummary.emptyPlaceholder', 'Empty (0)');
 
                 return (
                   <>
@@ -370,12 +491,21 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
         </div>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="error-message">
+          <p style={{ color: 'red', padding: '10px', background: '#ffe6e6', borderRadius: '4px' }}>
+            {error}
+          </p>
+        </div>
+      )}
+
       {/* Submit Configuration Button */}
       <div className="submit-section">
         <button
           className={`submit-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''}`}
           onClick={handleCalculate}
-          disabled={isCalculating || showResults}
+          disabled={isCalculating || showResults || !isValidConfiguration() || !isValidSolventConfiguration()}
         >
           {isCalculating ? t('formulation.ui.calculating', 'Calculating...') : t('formulation.submit.button', 'Submit Configuration')}
         </button>

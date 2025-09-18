@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import AnalysisDetailModal from './ResultsDisplay/AnalysisDetailModal';
 import './HistoryModule.css';
 
 interface FormulationResult {
-  id: string;
+  id: number;
   date: string;
   saltConfiguration: {
     cation: string;
-    anion: string;
+    anions: string[];
     totalConcentration: number;
     fractionType: 'mole' | 'weight';
-    anionFraction: number;
+    anionFractions: number[];
   };
-  solventConfiguration: string;
+  solventConfiguration: string[];
+  status: string;
 }
 
 interface HistoryModuleProps {
@@ -23,50 +25,56 @@ interface HistoryModuleProps {
 
 const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormulation }) => {
   const { t } = useTranslation();
-  const [loading] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<FormulationResult | null>(null);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | undefined>(undefined);
+  const [historyData, setHistoryData] = useState<FormulationResult[]>([]);
 
-  // Mock data for demonstration
-  const [historyData] = useState<FormulationResult[]>([
-    {
-      id: '1',
-      date: '2025/1/15 14:30:25',
+  // 将MD历史记录转换为FormulationResult格式
+  const convertMDHistoryToFormulationResult = (mdHistory: MDHistoryItem): FormulationResult => {
+    return {
+      id: mdHistory.id,
+      date: new Date(mdHistory.created_at).toLocaleString('zh-CN'),
       saltConfiguration: {
-        cation: 'Li+',
-        anion: 'BF4-',
-        totalConcentration: 1.0,
-        fractionType: 'mole',
-        anionFraction: 0.5
+        cation: mdHistory.cation_name,
+        anions: mdHistory.anion_name_list,
+        totalConcentration: mdHistory.cation_molality,
+        fractionType: mdHistory.anion_fractions_type as 'mole' | 'weight',
+        anionFractions: mdHistory.anion_fractions
       },
-      solventConfiguration: 'CCO'
-    },
-    {
-      id: '2',
-      date: '2025/1/14 16:45:12',
-      saltConfiguration: {
-        cation: 'Li+',
-        anion: 'TFSI-',
-        totalConcentration: 1.0,
-        fractionType: 'mole',
-        anionFraction: 0.5
-      },
-      solventConfiguration: 'CCOCC'
-    },
-    {
-      id: '3',
-      date: '2025/1/13 09:15:33',
-      saltConfiguration: {
-        cation: 'Li+',
-        anion: 'BF4-',
-        totalConcentration: 1.0,
-        fractionType: 'mole',
-        anionFraction: 0.5
-      },
-      solventConfiguration: 'CCO, CCOCC'
+      solventConfiguration: mdHistory.solvent_smiles_list,
+      status: mdHistory.status
+    };
+  };
+
+  // 获取历史记录数据
+  const fetchHistoryData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getMDHistoryList({ page: 1, page_size: 20 });
+
+      if (response && response.data && response.data.data) {
+        const formattedData = response.data.data.map(convertMDHistoryToFormulationResult);
+        setHistoryData(formattedData);
+      } else {
+        setHistoryData([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch MD history:', err);
+      setError(err instanceof Error ? err.message : '获取历史记录失败');
+      setHistoryData([]);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // 组件挂载时获取数据
+  useEffect(() => {
+    fetchHistoryData();
+  }, []);
 
   // Format ion display
   const formatIonDisplay = (ionValue: string) => {
@@ -83,16 +91,28 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
     return ionMap[ionValue] || ionValue;
   };
 
-  const handleDeleteRecord = async (id: string) => {
+  const handleDeleteRecord = async (id: number) => {
     if (!confirm(t('formulation.history.actions.deleteConfirm', 'Are you sure you want to delete this record?'))) {
       return;
     }
-    // TODO: Implement delete functionality
-    console.log('Delete record:', id);
+
+    try {
+      const response = await deleteMDHistory(id);
+
+      if (response && response.status < 400) {
+        // 删除成功，刷新历史记录列表
+        await fetchHistoryData();
+      } else {
+        setError('删除记录失败');
+      }
+    } catch (err) {
+      console.error('Failed to delete MD history:', err);
+      setError(err instanceof Error ? err.message : '删除记录失败');
+    }
   };
 
   const handleViewDetails = (record: FormulationResult) => {
-    setSelectedRecord(record);
+    setSelectedRecordId(record.id.toString());
     setIsDetailModalOpen(true);
     onViewDetails(record);
   };
@@ -131,30 +151,31 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
                 <div className="date-status">
                   <span className="date">{record.date}</span>
                 </div>
+                {record.status === 'success' && (
+                  <div className="status-indicator">
+                    <span className="status-dot" style={{
+                      display: 'inline-block',
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: '#52c41a',
+                      marginLeft: '8px'
+                    }}></span>
+                  </div>
+                )}
               </div>
 
               <div className="item-content">
                 <div className="salt-info">
                   <span className="salt-config">
-                    {t('formulation.history.salt', 'Salt')}: {formatIonDisplay(record.saltConfiguration.cation)} + {formatIonDisplay(record.saltConfiguration.anion)}
+                    {t('formulation.history.salt', 'Salt')}: {formatIonDisplay(record.saltConfiguration.cation)} + {record.saltConfiguration.anions.map(anion => formatIonDisplay(anion)).join(' + ')}
                   </span>
                 </div>
 
                 <div className="solvent-info">
                   <span className="solvent-config">
-                    {t('formulation.history.solvent', 'Solvent')}: {record.solventConfiguration}
+                    {t('formulation.history.solvent', 'Solvent')}: {record.solventConfiguration.join(', ')}
                   </span>
-                </div>
-
-                <div className="config-summary">
-                  <div className="config-details">
-                    <span className="concentration">
-                      {record.saltConfiguration.totalConcentration} {t('formulation.history.unit.molPerKg', 'mol/kg')}
-                    </span>
-                    <span className="fraction">
-                      {formatIonDisplay(record.saltConfiguration.anion)} ({record.saltConfiguration.anionFraction})
-                    </span>
-                  </div>
                 </div>
               </div>
 
@@ -181,8 +202,9 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewFormu
         isOpen={isDetailModalOpen}
         onClose={() => {
           setIsDetailModalOpen(false);
-          setSelectedRecord(null);
+          setSelectedRecordId(undefined);
         }}
+        detailId={selectedRecordId}
       />
     </div>
   );

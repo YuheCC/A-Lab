@@ -17,8 +17,10 @@ const Header = () => {
     const { pathname, search } = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [isNavDropdownHovered, setIsNavDropdownHovered] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
+    const navDropdownRef = useRef<HTMLDivElement>(null);
     const userFeedBackModalRef = useRef<any>(null);
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
@@ -68,6 +70,15 @@ const Header = () => {
     // 处理升级取消
     const handleUpgradeCancel = () => {
         setShowUpgradeModal(false);
+    };
+
+    // 处理导航下拉菜单hover
+    const handleNavDropdownMouseEnter = () => {
+        setIsNavDropdownHovered(true);
+    };
+
+    const handleNavDropdownMouseLeave = () => {
+        setIsNavDropdownHovered(false);
     };
 
     // 渲染导航链接
@@ -135,9 +146,18 @@ const Header = () => {
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
                 {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
-                <div className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''}`}>
+                <div 
+                    className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
+                    onMouseEnter={handleNavDropdownMouseEnter}
+                    onMouseLeave={handleNavDropdownMouseLeave}
+                    ref={navDropdownRef}
+                >
                     {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
-                    <div className="nav-dropdown">
+                    <div 
+                        className="nav-dropdown"
+                        onMouseEnter={handleNavDropdownMouseEnter}
+                        onMouseLeave={handleNavDropdownMouseLeave}
+                    >
                         {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
                         {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
                     </div>

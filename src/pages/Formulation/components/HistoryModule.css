@@ -84,6 +84,8 @@
 
 .formulation-container .item-header {
   margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .formulation-container .date-status {
