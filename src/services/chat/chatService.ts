@@ -310,7 +310,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -340,7 +340,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -377,7 +377,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);

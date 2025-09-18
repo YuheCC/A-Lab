@@ -6,7 +6,37 @@ import { Tooltip } from '@mui/material';
 import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask'
+type ChatMode =
+  | 'regular'
+  | 'clarify'
+  | 'lightning'
+  | 'ask'
+  | 'ask-oss'
+  | 'deep-space'
+  | 'deep-space-oss';
+
+const ADMIN_MODE_SEQUENCE: ChatMode[] = ['lightning', 'ask', 'ask-oss', 'deep-space', 'deep-space-oss'];
+const STANDARD_MODE_SEQUENCE: ChatMode[] = ['lightning', 'ask', 'deep-space'];
+const DEEP_SPACE_MODES: ChatMode[] = ['deep-space', 'deep-space-oss'];
+const computePowerMap: Record<ChatMode, string> = {
+  lightning: 'medium',
+  ask: 'high',
+  'ask-oss': 'oss-120b',
+  'deep-space': 'high',
+  'deep-space-oss': 'oss-120b',
+  regular: 'high',
+  clarify: 'high'
+};
+const backendModeMap: Record<ChatMode, ChatMode> = {
+  lightning: 'lightning',
+  ask: 'ask',
+  'ask-oss': 'ask',
+  'deep-space': 'deep-space',
+  'deep-space-oss': 'deep-space',
+  regular: 'regular',
+  clarify: 'clarify'
+};
+const isDeepSpaceMode = (mode: ChatMode) => DEEP_SPACE_MODES.includes(mode);
 
 interface ChatInputProps {
   placeholder?: string;
@@ -24,11 +54,12 @@ const ChatInput: FC<ChatInputProps> = ({
   const navigate = useNavigate();
   const { handleSendMessage, currentChatId, messages, remainingDeepSpaceQueries, modeLimits } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const isAdmin = userPermissions === 'admin';
   const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const initialMode: ChatMode = userPermissions === 'admin' ? 'ask' : 'lightning';
+  const initialMode: ChatMode = isAdmin ? 'ask' : 'lightning';
   const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
 
   // 管理员参数（参考 Ask 页）
@@ -48,7 +79,7 @@ const ChatInput: FC<ChatInputProps> = ({
     const searchParams = new URLSearchParams(location.search);
     const urlMode = searchParams.get('mode');
 
-    const allowedModes: ChatMode[] = ['deep-space','clarify','lightning','ask'];
+    const allowedModes: ChatMode[] = ['deep-space', 'deep-space-oss', 'clarify', 'lightning', 'ask', 'ask-oss'];
     const normalizedMode = (urlMode === 'regular' ? 'ask' : urlMode) as ChatMode | null;
     if (normalizedMode && allowedModes.includes(normalizedMode)) {
       console.log('URL mode detected:', normalizedMode);
@@ -89,21 +120,16 @@ const ChatInput: FC<ChatInputProps> = ({
         ragEnabled: !disableLiteratureSearch,
         patentRagEnabled: enablePatentRag,
         toolsEnabled: !disableTools,
+        originalMode: currentMode,
       };
-      if (currentMode === 'deep-space') {
+      if (isDeepSpaceMode(currentMode)) {
         extraPayload.dump_state = !!fullDeepSpace;
       }
-      const powerMap: Record<ChatMode, 'low' | 'medium' | 'high'> = {
-        lightning: 'medium',
-        ask: 'high',
-        'deep-space': 'high',
-        regular: 'high',
-        clarify: 'high'
-      };
-      extraPayload.llmComputePower = powerMap[currentMode];
-      let mode: ChatMode = currentMode;
+      extraPayload.llmComputePower = computePowerMap[currentMode];
+      const backendMode = backendModeMap[currentMode];
+      let mode: ChatMode = backendMode;
       // 如果是deep-space模式且有消息历史，默认使用clarify模式
-      if(currentMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
+      if(backendMode === 'deep-space' && messages.length > 0 && messages[messages.length - 1].msg_type === 'multi-agent-clarify'){
         mode = 'clarify';
       }
       handleSendMessage(inputValue.trim(), mode, currentChatId, extraPayload);
@@ -115,18 +141,22 @@ const ChatInput: FC<ChatInputProps> = ({
     setCurrentMode(mode);
   }, []);
 
-  const translationKeyMap: Record<string, string> = {
+  const translationKeyMap: Partial<Record<ChatMode, string>> = {
     'deep-space': 'deepSpace',
+    'deep-space-oss': 'deepSpaceOss',
+    'ask-oss': 'askOss',
   };
 
   const getTranslationKey = (mode: ChatMode) => translationKeyMap[mode] || mode;
+
+  const modesToRender = isAdmin ? ADMIN_MODE_SEQUENCE : STANDARD_MODE_SEQUENCE;
 
   // 创建 tooltip 内容的辅助函数
   const getModeTooltipContent = (mode: ChatMode) => {
     const key = getTranslationKey(mode);
     const title = t(`chatbox.chat.modes.${key}` as any);
     let desc = t(`chatbox.chat.modes.${key}Description` as any);
-    if (userPermissions === 'research' && (mode === 'ask' || mode === 'deep-space')) {
+    if (userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(mode)) {
       const liteNotice = t('chatbox.chat.modes.liteNotice');
       desc = `${desc}${liteNotice}`;
     }
@@ -144,7 +174,7 @@ const ChatInput: FC<ChatInputProps> = ({
           }
         }
       }
-      if (mode === 'ask') {
+      if (mode === 'ask' || mode === 'ask-oss') {
         const info = modeLimits.pro;
         if (info) {
           const limitValue = typeof info.limit === 'number' ? info.limit : null;
@@ -156,7 +186,7 @@ const ChatInput: FC<ChatInputProps> = ({
           }
         }
       }
-      if (mode === 'deep-space') {
+      if (isDeepSpaceMode(mode)) {
         const info = modeLimits.deepSpace;
         if (info) {
           const limitValue = typeof info.limit === 'number' ? info.limit : null;
@@ -240,10 +270,10 @@ const ChatInput: FC<ChatInputProps> = ({
         <div className="chat-controls-row">
           <div className="input-mode-switch">
 
-            {(['lightning','ask','deep-space'] as ChatMode[]).map(modeKey => (
+            {modesToRender.map(modeKey => (
               <Tooltip
                 key={modeKey}
-                title={getModeTooltipContent(modeKey as ChatMode)}
+                title={getModeTooltipContent(modeKey)}
                 placement="top"
                 arrow
                 PopperProps={{
@@ -265,11 +295,11 @@ const ChatInput: FC<ChatInputProps> = ({
               >
                 <button
                   className={`mode-btn ${currentMode === modeKey ? 'active' : ''}`}
-                  onClick={() => handleModeChange(modeKey as ChatMode)}
+                  onClick={() => handleModeChange(modeKey)}
                   type="button"
                 >
-                  <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey as ChatMode)}` as any)}</span>
-                  {userPermissions === 'research' && ['ask', 'deep-space'].includes(modeKey) && (
+                  <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
+                  {userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
                     <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
                   )}
                 </button>
@@ -313,7 +343,7 @@ const ChatInput: FC<ChatInputProps> = ({
                 type="checkbox"
                 checked={fullDeepSpace}
                 onChange={(e) => setFullDeepSpace(e.target.checked)}
-                disabled={disabled || currentMode !== 'deep-space'}
+                disabled={disabled || !isDeepSpaceMode(currentMode)}
               />
               <span>{t('chatbox.checkboxes.fullDeepSpace')}</span>
             </label>

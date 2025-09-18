@@ -12,7 +12,20 @@ import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
+type ChatMode =
+    | 'regular'
+    | 'clarify'
+    | 'lightning'
+    | 'ask'
+    | 'ask-oss'
+    | 'deep-space'
+    | 'deep-space-oss';
+
+const normalizeModeForBackend = (mode: ChatMode): ChatMode => {
+    if (mode === 'ask-oss') return 'ask';
+    if (mode === 'deep-space-oss') return 'deep-space';
+    return mode;
+};
 
 interface ModeLimitInfo {
     limit?: number | null;
@@ -471,12 +484,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ...extraOptions, 
             numRagResults: ragResultsCount 
         };
+        const normalizedMode = normalizeModeForBackend(mode);
         
-        if (['regular','lightning','ask'].includes(mode)) {
+        if (['regular','lightning','ask'].includes(normalizedMode)) {
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        } else if (mode === 'deep-space') {
+        } else if (normalizedMode === 'deep-space') {
             await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        } else if (mode === 'clarify') {
+        } else if (normalizedMode === 'clarify') {
             await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }
     }, [ragResultsCount, ragModel]);
@@ -588,27 +602,30 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addUserMessage(userMsg);
 
         const originalMode = extra?.originalMode as ChatMode | undefined;
+        const normalizedMode = normalizeModeForBackend(mode);
 
         // 从extra参数中提取管理员开关参数
-        const extraOptions = extra ? {
-            ragEnabled: extra.ragEnabled,
-            disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
-            fullDeepSpace: extra.dump_state,
-            toolsEnabled: extra.toolsEnabled,
-            patentRagEnabled: extra.patentRagEnabled,
-            llmComputePower: extra.llmComputePower,
-            numRagResults: ragResultsCount
-        } : { numRagResults: ragResultsCount, llmComputePower: extra?.llmComputePower };
+        const extraOptions: Record<string, any> = {
+            numRagResults: ragResultsCount,
+            llmComputePower: extra?.llmComputePower,
+        };
+        if (extra) {
+            extraOptions.ragEnabled = extra.ragEnabled;
+            extraOptions.disableLiteratureSearch = !extra.ragEnabled; // ragEnabled是反向的disableLiteratureSearch
+            extraOptions.fullDeepSpace = extra.dump_state;
+            extraOptions.toolsEnabled = extra.toolsEnabled;
+            extraOptions.patentRagEnabled = extra.patentRagEnabled;
+        }
 
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
-            createNewMessage(message, chatId, historyWithNew, mode, extraOptions);
+            createNewMessage(message, chatId, historyWithNew, normalizedMode, extraOptions);
         } else {
             // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
-            const newChatId = await createNewChat(message, mode, extraOptions);
+            const newChatId = await createNewChat(message, normalizedMode, extraOptions);
             if (newChatId) {
-                const urlMode = originalMode || (mode === "clarify" ? "deep-space" : mode);
+                const urlMode = originalMode || (normalizedMode === 'clarify' ? 'deep-space' : normalizedMode);
                 navigate(`/ask/${newChatId}?mode=${urlMode}`);
             }
         }
