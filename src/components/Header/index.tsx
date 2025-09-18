@@ -105,8 +105,8 @@ const Header = () => {
                 </NavLink>
                 {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask')}
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search')}
-                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')}
-                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')}
+                {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')} */}
+                {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')} */}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
