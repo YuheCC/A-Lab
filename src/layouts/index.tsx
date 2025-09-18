@@ -158,6 +158,9 @@ const FullNavLayoutInner = () => {
         if (pathname === '/formulation') {
             return 'main-container formulation-container';
         }
+        if (pathname === '/formulation/create') {
+            return 'main-container formulation-create-container';
+        }
         return 'main-container';
     }
     return (
