@@ -15,7 +15,7 @@ import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
-import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
+import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 
 const API_URL = getAPIUrl();
@@ -112,7 +112,7 @@ const AnionsSearch = () => {
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
-    const organicFilterRef = useRef<OrganicFilterRef>(null);
+    const anionsFilterRef = useRef<AnionsFilterRef>(null);
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -157,7 +157,7 @@ const AnionsSearch = () => {
                 setAmbiguousOptions(null);
             } else {
                 // 重置过滤状态
-                organicFilterRef.current?.resetFilters();
+                anionsFilterRef.current?.resetFilters();
             }
             setInterfaceMode(mode);
         }
@@ -428,9 +428,9 @@ const AnionsSearch = () => {
                             <UMAPClusterPlotDeck
                                 zoomOffset={-0.2}
                                 data={interfaceMode === 'filter' ? filteredPlotData : data}
-                                highlightedData={interfaceMode === 'search' ? highlightedMolecules : undefined}
-                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : undefined}
-                                userPermissions={userPermissions ?? null}
+                                highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
+                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
+                                userPermissions={userPermissions}
                                 molecularType="anions"
                                 onClick={(node: any) => {
                                     setNode(node);
@@ -622,7 +622,7 @@ const AnionsSearch = () => {
                                                 <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
                                                     <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                                         <CustomButton
-                                                            icon={Star}
+                                                            Icon={Star}
                                                             style={{
                                                                 flexGrow: 1,
                                                             }}
@@ -638,7 +638,7 @@ const AnionsSearch = () => {
                                                             {t("chatbox.buttons.addToFavorites")}
                                                         </CustomButton>
                                                         {
-                                                        false && molecule.properties.commercial_link && <CustomButton icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                        false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
                                                             window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
                                                             }}>
                                                                 {t("chatbox.buttons.viewInMolPort")}
@@ -716,7 +716,7 @@ const AnionsSearch = () => {
                                             >
                                                 <div className="molecule-actions">
                                                     <CustomButton
-                                                        icon={Star}
+                                                        Icon={Star}
                                                         style={{
                                                             flexGrow: 1,
                                                         }}
@@ -809,8 +809,8 @@ const AnionsSearch = () => {
                     </div>
                         </>
                     ) : (
-                        <OrganicFilter
-                            ref={organicFilterRef}
+                        <AnionsFilter
+                            ref={anionsFilterRef}
                             onDataFiltered={setFilteredPlotData}
                         />
                     )}
