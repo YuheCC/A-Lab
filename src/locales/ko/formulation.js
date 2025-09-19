@@ -126,6 +126,14 @@ export default {
       status: '상태',
       actions: '작업'
     }
+  },
+
+  status: {
+    completed: '완료',
+    success: '완료',
+    running: '실행 중',
+    failed: '실패',
+    pending: '대기 중'
   }
   ,
   results: {

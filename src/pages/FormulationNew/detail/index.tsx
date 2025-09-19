@@ -216,7 +216,7 @@ const DetailPage: React.FC = () => {
               {systemProperties.map((prop, index) => (
                 <div key={index} className="property-row">
                   <span className="property-name">{prop.property}</span>
-                  <span className="property-value">{prop.value}</span>
+                  <span className="property-value">{Number(prop.value).toFixed(2)}</span>
                 </div>
               ))}
             </div>

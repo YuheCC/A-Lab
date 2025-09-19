@@ -127,6 +127,14 @@ export default {
       actions: 'Actions'
     }
   },
+
+  status: {
+    completed: 'Completed',
+    success: 'Completed',
+    running: 'Running',
+    failed: 'Failed',
+    pending: 'Pending'
+  },
   results: {
     analysisResults: 'Analysis Results',
     systemProperties: 'System Properties',

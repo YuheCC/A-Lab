@@ -126,6 +126,14 @@ export default {
       status: 'ステータス',
       actions: '操作'
     }
+  },
+
+  status: {
+    completed: '完了',
+    success: '完了',
+    running: '実行中',
+    failed: '失敗',
+    pending: '待機中'
   }
   ,
   results: {

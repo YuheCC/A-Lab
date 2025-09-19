@@ -127,6 +127,14 @@ export default {
       actions: '操作'
     }
   },
+
+  status: {
+    completed: '已完成',
+    success: '已完成',
+    running: '运行中',
+    failed: '失败',
+    pending: '等待中'
+  },
   results: {
     analysisResults: '分析结果',
     systemProperties: '体系性质',
