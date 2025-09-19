@@ -3,13 +3,14 @@ import { useTranslation } from "react-i18next";
 import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
 import AnionsSearch from "./components/AnionsSearch";
 import "./Search.css";
+import { useNavigate } from '@umijs/max';
 
 const Search = () => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions' | 'third'>('organic');
-
+    const navigate = useNavigate();
     const handleGoToFavorites = () => {
-        window.location.href = '/favorites';
+        navigate('/favorites');
     };
 
     return (
