@@ -430,7 +430,7 @@ const OrganicSearch = () => {
                         disabled={searchLoading}
                     />
 
-                    <FindFriendOptions
+                        <FindFriendOptions
                         findClosestFriends={findClosestFriends}
                         setFindClosestFriends={setFindClosestFriends}
                         extraRequests={extraRequests}
@@ -439,10 +439,9 @@ const OrganicSearch = () => {
                         setShowAdvanced={setShowAdvanced}
                         selectedMolType={selectedMolType}
                         setSelectedMolType={setSelectedMolType}
-                        additiveSubtype={additiveSubtype}
-                        setAdditiveSubtype={setAdditiveSubtype}
-                        computeLevel={computeLevel}
-                        setComputeLevel={setComputeLevel}
+                            additiveSubtype={additiveSubtype}
+                            setAdditiveSubtype={setAdditiveSubtype}
+                            computeLevel={computeLevel}
                         structureWeight={structureWeight}
                         setStructureWeight={setStructureWeight}
                         showHypothetical={showHypothetical}

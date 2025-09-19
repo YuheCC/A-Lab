@@ -21,6 +21,8 @@ export default {
     distantFriends: '远处的朋友',
     advancedOptions: '高级选项',
     intelligentCompute: '智能找朋友计算',
+    intelligentFindFriendsLabel: '智能找"朋友"',
+    intelligentFindFriendsTooltip: '使用大型语言模型检查数百种分子，为您的应用寻找更相关的候选。提高计算能力，并填写（高级选项中的）电池系统信息，以获得最佳效果。',
     showHypothetical: '显示假想分子',
     showHypotheticalTooltip: '包括由我们的算法生成但未收录于公开目录的候选分子；其可用性和可合成性无法确定。',
     computeDisabled: '禁用',

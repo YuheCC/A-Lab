@@ -21,6 +21,8 @@ export default {
     distantFriends: '먼 친구들',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
+    intelligentFindFriendsLabel: '지능형 "친구" 찾기',
+    intelligentFindFriendsTooltip: 'LLM으로 수백 개의 분자를 살펴보고, 사용 사례에 더 적합한 분자를 찾아보세요. 최상의 결과를 위해 계산 성능을 높이고 (고급 옵션)에서 배터리 시스템 정보를 입력하세요.',
     showHypothetical: '가상 분자 표시',
     showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
     computeDisabled: '비활성화',

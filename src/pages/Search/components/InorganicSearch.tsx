@@ -416,7 +416,7 @@ const InorganicSearch = () => {
                     />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <FindFriendOptions
+                        <FindFriendOptions
                         findClosestFriends={findClosestFriends}
                         setFindClosestFriends={setFindClosestFriends}
                         extraRequests={extraRequests}
@@ -425,10 +425,9 @@ const InorganicSearch = () => {
                         setShowAdvanced={setShowAdvanced}
                         selectedMolType={selectedMolType}
                         setSelectedMolType={setSelectedMolType}
-                        additiveSubtype={additiveSubtype}
-                        setAdditiveSubtype={setAdditiveSubtype}
-                        computeLevel={computeLevel}
-                        setComputeLevel={setComputeLevel}
+                            additiveSubtype={additiveSubtype}
+                            setAdditiveSubtype={setAdditiveSubtype}
+                            computeLevel={computeLevel}
                         structureWeight={structureWeight}
                         setStructureWeight={setStructureWeight}
                         showHypothetical={showHypothetical}

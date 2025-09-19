@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { Tooltip } from '@mui/material';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -392,6 +393,37 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </select>
                         </div>
                     )}
+                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                        <Tooltip title={t('search.intelligentFindFriendsTooltip')} placement="top">
+                            <Info size={16} style={{ cursor: 'help' }} />
+                        </Tooltip>
+                        <select
+                            value={computeLevel}
+                            onChange={(event) => setComputeLevel(event.target.value)}
+                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                        >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option
+                                value="Medium"
+                                disabled={userPermissions === 'research'}
+                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                            >
+                                {t('search.computeMedium')}
+                                {userPermissions === 'research' ? ' 🔒' : ''}
+                            </option>
+                            <option
+                                value="High"
+                                disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                                title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                            >
+                                {t('search.computeHigh')}
+                                {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                            </option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                    </div>
                     <div
                         role="button"
                         tabIndex={0}
@@ -402,11 +434,16 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             marginTop: '12px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '6px',
                             cursor: 'pointer',
                             color: '#2563eb',
                             fontWeight: 500,
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            border: '1px solid #2563eb',
+                            borderRadius: '6px',
+                            padding: '6px 10px',
+                            backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                            transition: 'background-color 0.2s',
                         }}
                     >
                         <span>{t('search.advancedOptions')}</span>
@@ -421,7 +458,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             additiveSubtype={selectedAdditiveSubtype}
                             setAdditiveSubtype={setSelectedAdditiveSubtype}
                             computeLevel={computeLevel}
-                            setComputeLevel={setComputeLevel}
                             structureWeight={structureWeight}
                             setStructureWeight={setStructureWeight}
                             showHypothetical={showHypothetical}
