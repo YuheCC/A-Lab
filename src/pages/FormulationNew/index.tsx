@@ -125,7 +125,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
         <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>
 
-      <div className="table-container">
+      <div className="formulation-new-table-container">
         <button className="new-analysis-button" onClick={handleNewAnalysis}>
           + {t('formulation.history.newAnalysis', 'New Analysis')}
         </button>
