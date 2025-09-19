@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicMolecules, InorganicMolecules, AnionsMolecules, MoleculeInfo } from "./components";
 import "./Map.css";
-import MoleculeInfo05 from "./components/MoleculeInfo05";
+import MoleculeInfo10 from "./components/MoleculeInfo10";
 
 const Map = () => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions'>('organic');
+    // Map activeTab for MoleculeInfo10 (only supports organic and anions)
+    const infoActiveTab: 'organic' | 'anions' = activeTab === 'inorganic' ? 'organic' : activeTab as 'organic' | 'anions';
 
     return (
         <div>
@@ -44,7 +46,7 @@ const Map = () => {
                     ) : (
                         <AnionsMolecules />
                     )}
-                    <MoleculeInfo05 />
+                    <MoleculeInfo10 activeTab={infoActiveTab} />
                 </div>
                 
             </div>
