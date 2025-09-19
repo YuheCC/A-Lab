@@ -47,7 +47,7 @@ export default {
         batteryCount: "电芯数量",
         batteryCountUnit: "个",
         avgCycleLife: "平均循环寿命",
-        avgCycleLife1: "平均循环寿命1",
+        avgCycleLife1: "平均循环寿命",
         avgCycleLife2: "平均循环寿命2",
         cycleUnit: "次",
         predictionTime: "预测时间",
