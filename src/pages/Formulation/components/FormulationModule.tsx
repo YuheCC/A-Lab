@@ -167,6 +167,12 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     return ionMap[ionValue] || ionValue;
   };
 
+  // Remove ionic symbols from ion names for API
+  const cleanIonName = (ionValue: string) => {
+    // 去掉正负离子符号，只保留字母和数字
+    return ionValue.replace(/[⁺⁻+\-]/g, '');
+  };
+
   // Available options
   const cationOptions = [
     { value: 'Li+', label: 'Li⁺', subLabel: 'Lithium', available: true },
@@ -200,10 +206,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
         solvent_fractions: solvents
           .filter(s => s.smiles.trim() !== '')
           .map(s => parseFloat(s.fraction)),
-        anion_name_list: selectedAnions,
+        anion_name_list: selectedAnions.map(anion => cleanIonName(anion)),
         anion_fractions: selectedAnions.map(anion => parseFloat(anionFractions[anion] || '0')),
         anion_fractions_type: "mole",
-        cation_name: selectedCation,
+        cation_name: cleanIonName(selectedCation),
         num_cations: 40, // 默认值，可以根据需要调整
         cation_molality: parseFloat(totalSaltConcentration),
         simulation_box_size: 500.0 // 默认值，可以根据需要调整
