@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: '유기 분자',
         inorganic: '무기 분자',
+        anions: '음이온',
         third: '고체 전해질'
     },
     
@@ -117,6 +118,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "즐겨찾기에 추가 ★",
     saving: "저장 중...",
+
+    // Favorites
+    favorites: {
+        favorites: "즐겨찾기",
+        goToFavorites: "즐겨찾기 페이지로 이동"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "검색 조건과 일치하는 여러 분자가 발견되었습니다. 친구 찾기 기능이 비활성화되었습니다.",

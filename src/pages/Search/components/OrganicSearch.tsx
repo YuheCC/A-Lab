@@ -15,6 +15,7 @@ import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
 
 const API_URL = getAPIUrl();
@@ -108,6 +109,11 @@ const OrganicSearch = () => {
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+
+    // 界面模式切换状态
+    const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
+    const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
+    const organicFilterRef = useRef<OrganicFilterRef>(null);
     const [cathode, setCathode] = useState('');
     const [anode, setAnode] = useState('');
     const [salt, setSalt] = useState('');
@@ -123,6 +129,29 @@ const OrganicSearch = () => {
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
+
+    // 处理界面模式切换
+    const handleModeSwitch = (mode: 'search' | 'filter') => {
+        if (mode !== interfaceMode) {
+            // 重置当前模式的状态
+            if (interfaceMode === 'search') {
+                // 重置搜索状态
+                setsearchResults(null);
+                setsearchedMolecules(null);
+                setHighlightedMolecules([]);
+                setHighlightedSimilarMolecules([]);
+                setSimilarMoleculeImages({});
+                setSearchError(null);
+                setSearchWarning(null);
+                setFindFriendError(null);
+                setAmbiguousOptions(null);
+            } else {
+                // 重置过滤状态
+                organicFilterRef.current?.resetFilters();
+            }
+            setInterfaceMode(mode);
+        }
+    };
 
     // 添加拖拽分隔条的状态
     const [leftPanelWidth, setLeftPanelWidth] = useState(60); // 左侧面板宽度百分比
@@ -270,13 +299,10 @@ const OrganicSearch = () => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search`;
-            if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/api/llm/search-35`;
-            }
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -364,15 +390,13 @@ const OrganicSearch = () => {
             <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
             <div
                 className="search-umap-container"
-                style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
                 {/* UMAP Visualization on the left */}
-                <div 
+                <div
                     className="search-umap-section"
                     style={{
-                        width: `calc((100% - 120px) * ${leftPanelWidth} / 100)`,
-                        flex: 'none'
+                        flex: `0 0 ${leftPanelWidth}%`
                     }}
                 >
                     <div style={{ 
@@ -385,9 +409,10 @@ const OrganicSearch = () => {
                     }}>
                         {data.length > 0 ? (
                             <UMAPClusterPlotDeck
-                                data={data}
-                                highlightedData={highlightedMolecules}
-                                highlightedSimilarData={highlightedSimilarMolecules}
+                                zoomOffset={-0.3}
+                                data={interfaceMode === 'filter' ? filteredPlotData : data}
+                                highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
+                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 molecularType="organic"
                                 onClick={(node: any) => {
@@ -413,22 +438,66 @@ const OrganicSearch = () => {
                 />
 
                 {/* Search interface on the right */}
-                <div 
-                    className="search-interface-section" 
+                <div
+                    className={`search-interface-section ${interfaceMode === 'filter' ? 'filter-mode' : ''}`}
                     style={{
-                        width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
-                        flex: 'none',
-                        overflowY: 'auto',
-                        padding: '20px',
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '8px'
+                        flex: 1,
+                        minWidth: 0
                     }}
                 >
-                    {/* Search bar container */}
-                    <SearchInput
-                        onSearch={handleSearch}
-                        disabled={searchLoading}
-                    />
+                    {/* 模式切换按钮 */}
+                    <div className="mode-switch-container" style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '20px',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'search' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('search')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'search' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'search' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'search' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.search', '搜索')}
+                        </button>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'filter' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('filter')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'filter' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'filter' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'filter' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.filter', '过滤')}
+                        </button>
+                    </div>
+
+                    {/* 根据模式显示不同的界面 */}
+                    {interfaceMode === 'search' ? (
+                        <>
+                            {/* Search bar container */}
+                            <SearchInput
+                                onSearch={handleSearch}
+                                disabled={searchLoading}
+                            />
 
                         <FindFriendOptions
                         findClosestFriends={findClosestFriends}
@@ -702,10 +771,18 @@ const OrganicSearch = () => {
                             )
                         )}
                     </div>
+                        </>
+                    ) : (
+                        <OrganicFilter
+                            ref={organicFilterRef}
+                            onDataFiltered={setFilteredPlotData}
+                        />
+                    )}
                 </div>
             </div>
             <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
-        </>)
+        </>
+    )
 };
 
 export default OrganicSearch;

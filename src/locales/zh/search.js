@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: '有机分子',
         inorganic: '无机分子',
+        anions: '阴离子',
         third: '固态电解质'
     },
     
@@ -116,6 +117,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "添加到收藏 ★",
     saving: "保存中...",
+
+    // Favorites
+    favorites: {
+        favorites: "收藏",
+        goToFavorites: "进入收藏页面"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "找到多个匹配您搜索条件的分子。查找朋友功能已禁用。",

@@ -32,7 +32,7 @@ const OrganicMolecules = () => {
     return (
         <>
             {/* UMAP Visualization in the middle (50%) */}
-            <div className="search-umap-section" style={{ position: 'relative' }}>
+            <div className="map-umap-section" style={{ position: 'relative' }}>
                 {/* Info icon with tooltip */}
                 <div 
                     style={{
@@ -101,6 +101,7 @@ const OrganicMolecules = () => {
                 <div className="graph-container search-graph">
                     {data.length > 0 ? (
                         <UMAPClusterPlotDeck
+                            zoomOffset={-0.3}
                             data={data}
                             userPermissions={userPermissions}
                             molecularType="organic"

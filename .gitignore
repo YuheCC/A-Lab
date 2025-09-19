@@ -16,3 +16,4 @@ config/config.ts
 .cursor/
 .cursor
 .code-workspace.code-workspace
+CLAUDE.md

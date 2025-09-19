@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrganicMolecules, InorganicMolecules, MoleculeInfo } from "./components";
+import { OrganicMolecules, InorganicMolecules, AnionsMolecules, MoleculeInfo } from "./components";
 import "./Map.css";
-import MoleculeInfo05 from "./components/MoleculeInfo05";
+import MoleculeInfo10 from "./components/MoleculeInfo10";
 
 const Map = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions'>('organic');
+    // Map activeTab for MoleculeInfo10 (only supports organic and anions)
+    const infoActiveTab: 'organic' | 'anions' = activeTab === 'inorganic' ? 'organic' : activeTab as 'organic' | 'anions';
 
     return (
         <div>
@@ -25,18 +27,26 @@ const Map = () => {
                     >
                         {t('map.tabs.inorganic')}
                     </button> */}
+                    <button
+                        onClick={() => setActiveTab('anions')}
+                        className={`map-tab-button ${activeTab === 'anions' ? 'active' : ''}`}
+                    >
+                        {t('map.tabs.anions')}
+                    </button>
                 </div>
             </div>
 
             {/* Tab Content */}
             <div className="tab-content">
-                <div className="search-umap-container">
+                <div className="map-umap-container">
                     {activeTab === 'organic' ? (
                         <OrganicMolecules />
-                    ) : (
+                    ) : activeTab === 'inorganic' ? (
                         <InorganicMolecules />
+                    ) : (
+                        <AnionsMolecules />
                     )}
-                    <MoleculeInfo05 />
+                    <MoleculeInfo10 activeTab={infoActiveTab} />
                 </div>
                 
             </div>

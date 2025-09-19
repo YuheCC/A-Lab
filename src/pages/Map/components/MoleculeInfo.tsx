@@ -71,7 +71,7 @@ const MoleculeInfo = ({ activeTab }: MoleculeInfoProps) => {
     return (
         <div
             // ref={containerRef}
-            className="search-interface-section"
+            className="map-interface-section"
             style={{
                 flex: '0.8',
                 overflowY: 'auto',

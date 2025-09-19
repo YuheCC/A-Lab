@@ -1,20 +1,44 @@
 export type MoleculeProperties = {
   smiles?: string;
-  molecularWeight?: string;
+  molecularWeight?: string | number;
   meltingPoint?: string;
   boilingPoint?: string;
   flashPoint?: string;
   combustionEnthalpy?: string;
-  homo?: string;
-  lumo?: string;
-  espMax?: string;
-  espMin?: string;
+  homo?: string | number;
+  lumo?: string | number;
+  espMax?: string | number;
+  espMin?: string | number;
   commercialViability?: string;
+  umapX?: number;
+  umapY?: number;
+  functionalGroups?: string;
+  commercialLink?: string;
+  commercialScore?: number;
 };
 
 export interface MoleculeDetails {
   name: string;
   properties: MoleculeProperties;
+}
+
+export interface APIMoleculeDetail {
+  SMILES: string;
+  UMAP_0: number;
+  UMAP_1: number;
+  HOMO_eV: number;
+  LUMO_eV: number;
+  ESP_max_eV: number;
+  ESP_min_eV: number;
+  molecular_weight: number;
+  functional_groups: string;
+  COMMERCIAL_LINK?: string;
+  COMMERCIAL_SCORE?: number;
+}
+
+export interface APIResponse {
+  found: boolean;
+  molecule_details: APIMoleculeDetail[];
 }
 
 export interface SimilarMolecule {
@@ -41,33 +65,123 @@ class MoleculeService {
     return MoleculeService.instance;
   }
 
-  async getMoleculeDetails(name: string): Promise<MoleculeDetails> {
+  private mapAPIResponseToMoleculeDetails(apiData: APIMoleculeDetail, name: string): MoleculeDetails {
+    return {
+      name,
+      properties: {
+        smiles: apiData.SMILES,
+        molecularWeight: apiData.molecular_weight,
+        homo: apiData.HOMO_eV,
+        lumo: apiData.LUMO_eV,
+        espMax: apiData.ESP_max_eV,
+        espMin: apiData.ESP_min_eV,
+        umapX: apiData.UMAP_0,
+        umapY: apiData.UMAP_1,
+        functionalGroups: apiData.functional_groups,
+        commercialLink: apiData.COMMERCIAL_LINK,
+        commercialScore: apiData.COMMERCIAL_SCORE,
+        commercialViability: this.getCommercialViabilityText(apiData.COMMERCIAL_SCORE),
+        // Keep existing fields as fallback
+        meltingPoint: '-',
+        boilingPoint: '-',
+        flashPoint: '-',
+        combustionEnthalpy: '-'
+      }
+    };
+  }
+
+  // 新的映射方法，处理 molecular_details 接口返回的数据格式
+  private mapMoleculeDetailsToMoleculeDetails(raw: any, originalName: string): MoleculeDetails {
+    const smiles = raw?.SMILES || raw?.smiles || '';
+    const molecularWeight = raw?.molecular_weight != null ? raw.molecular_weight : raw?.molecularWeight;
+    const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
+    const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
+    const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
+    const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+    const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;
+    const lumo = raw?.LUMO_eV ?? raw?.LUMO ?? raw?.lumo;
+    const espMax = raw?.ESP_max_eV ?? raw?.ESP_MAX ?? raw?.espMax;
+    const espMin = raw?.ESP_min_eV ?? raw?.ESP_MIN ?? raw?.espMin;
+    const commercialScore = raw?.commercial_score ?? raw?.COMMERCIAL_SCORE;
+    const functionalGroups = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS;
+    const umapX = raw?.umap_x ?? raw?.x;
+    const umapY = raw?.umap_y ?? raw?.y;
+
+    return {
+      name: originalName,
+      properties: {
+        smiles,
+        molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
+        meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
+        boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
+        flashPoint: predictedFp != null ? `${predictedFp}` : '-',
+        combustionEnthalpy: combustionEnthalpy != null ? `${combustionEnthalpy}` : '-',
+        homo: homo != null ? Number(homo) : undefined,
+        lumo: lumo != null ? Number(lumo) : undefined,
+        espMax: espMax != null ? Number(espMax) : undefined,
+        espMin: espMin != null ? Number(espMin) : undefined,
+        umapX: umapX != null ? Number(umapX) : 0,
+        umapY: umapY != null ? Number(umapY) : 0,
+        functionalGroups: typeof functionalGroups === 'string' ? functionalGroups : JSON.stringify(functionalGroups || []),
+        commercialViability: this.getCommercialViabilityText(commercialScore),
+        commercialScore: commercialScore != null ? Number(commercialScore) : undefined
+      }
+    };
+  }
+
+
+  private getCommercialViabilityText(score?: number): string {
+    if (!score) return 'Unknown';
+    if (score >= 8) return 'Highly commercially available';
+    if (score >= 5) return 'Commercially available';
+    if (score >= 3) return 'Limited commercial availability';
+    return 'Research compound only';
+  }
+
+  async getMoleculeDetails(name: string, userPermissions?: string): Promise<MoleculeDetails> {
     try {
-      const { default: request } = await import('@/services/request');
-      const resp = await request('/molecule/details', {
-        method: 'GET',
-        params: { name },
-      });
-      if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP ${resp.status}`);
-      return resp.data as MoleculeDetails;
-    } catch (err) {
-      // mock fallback
-      return {
-        name,
-        properties: {
-          smiles: 'F[P-](F)(F)(F)(F)F.[Li+]',
-          molecularWeight: '151.91 g/mol',
-          meltingPoint: '-',
-          boilingPoint: '-',
-          flashPoint: '-',
-          combustionEnthalpy: '-12.34 eV',
-          homo: '-10.2 eV',
-          lumo: '-2.1 eV',
-          espMax: '1.8 eV',
-          espMin: '-3.2 eV',
-          commercialViability: 'Commercially available'
+      const { authFetch } = await import('@/utils');
+      
+      // 使用 molecular_details 接口，参考 MoleculeModal 的实现
+      const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
+      let queryUrl = `${this.baseUrl}/api/molecule_details?query_type=smiles&molecule=${encodeURIComponent(name.trim())}`;
+      if (isHighTier) {
+        queryUrl += '&use_35m=true';
+      }
+      
+      const resp = await authFetch(queryUrl, { method: 'GET' });
+      const data = await resp.json();
+      console.log(data);
+      // 检查响应状态和错误信息
+      if (!resp.ok || data.error_type) {
+        // 根据错误内容判断是否为不合法的 SMILES
+        if (data?.message && typeof data.message === 'string') {
+          const errorMsg = data.message.toLowerCase();
+          console.log(errorMsg);
+          if (errorMsg.includes('invalid')) {
+            throw new Error('Invalid SMILES string');
+          }
         }
-      };
+        throw new Error(data?.detail || data?.message || `HTTP ${resp.status}`);
+      }
+      
+      // 检查 found 字段和 molecule_details 数组
+      if (data.found === false || !Array.isArray(data.molecule_details) || data.molecule_details.length === 0) {
+        throw new Error('Molecule not found');
+      }
+      
+      // 使用第一个结果，参考 MoleculeModal 的 mapDetailsToProperties 方法
+      const moleculeData = data.molecule_details[0];
+      return this.mapMoleculeDetailsToMoleculeDetails(moleculeData, name);
+      
+    } catch (err) {
+      // 如果是无效的 SMILES 错误，直接抛出而不使用 mock 数据
+      if (err instanceof Error && err.message === 'Invalid SMILES string') {
+        throw err;
+      }
+      
+      // 其他错误使用 mock fallback - 使用与实际API结构相似的mock数据
+      throw err;
     }
   }
 
@@ -167,9 +281,6 @@ class MoleculeService {
     }
   }
 
-  private getAuthToken(): string {
-    return localStorage.getItem('authToken') || '';
-  }
 }
 
 export const moleculeService = MoleculeService.getInstance();

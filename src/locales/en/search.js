@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: 'Organic Molecules',
         inorganic: 'Inorganic Molecules',
+        anions: 'Anions',
         third: 'Solid-State Electrolyte'
     },
     
@@ -116,6 +117,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "Add to Favorites ★",
     saving: "Saving...",
+
+    // Favorites
+    favorites: {
+        favorites: "Favorites",
+        goToFavorites: "Go to Favorites page"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "Multiple molecules found matching your search criterion. Find friends disabled.",
