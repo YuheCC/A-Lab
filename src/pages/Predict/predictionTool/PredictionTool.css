@@ -201,26 +201,42 @@
 .upload-area {
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
-  padding: 50px 0px;
+  padding: 50px 32px;
   text-align: center;
   transition: all 0.2s;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* 上传区域大屏幕优化 */
 @media (min-width: 1920px) {
   .upload-area {
     max-width: 900px;
-    padding: 60px 0px;
+    padding: 60px 40px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1919px) {
   .upload-area {
     max-width: 750px;
-    padding: 55px 0px;
+    padding: 55px 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .upload-area {
+    max-width: 100%;
+    margin: 0 16px;
+    padding: 40px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-area {
+    margin: 0 12px;
+    padding: 35px 20px;
   }
 }
 
@@ -405,6 +421,7 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* AI预测步骤响应式设计 */
@@ -599,24 +616,25 @@
 /* Results display styles - 响应式设计 */
 .results-display {
   width: 100%;
-  max-width: 900px;
+  max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-sizing: border-box;
 }
 
 /* 结果展示步骤响应式设计 */
 @media (min-width: 1920px) {
   .results-display {
-    max-width: 1200px;
+    max-width: 900px;
     gap: 32px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1919px) {
   .results-display {
-    max-width: 1000px;
+    max-width: 750px;
     gap: 28px;
   }
 }
