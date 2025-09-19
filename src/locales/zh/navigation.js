@@ -4,6 +4,7 @@ export default {
     map: "地图",
     ask: "智能问答",
     search: "搜索",
+    molecule: "分子",
     filter: "筛选",
     favorites: "收藏",
     predict: "预测",

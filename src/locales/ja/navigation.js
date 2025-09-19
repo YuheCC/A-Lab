@@ -4,6 +4,7 @@ export default {
     map: "マップ",
     ask: "尋ねる",
     search: "検索",
+    molecule: "分子",
     filter: "フィルター",
     favorites: "お気に入り",
     predict: "予測",

@@ -4,6 +4,7 @@ export default {
     map: "분자 지도",
     ask: "질문하기",
     search: "검색하기",
+    molecule: "분자",
     filter: "조건별 검색",
     favorites: "즐겨찾기",
     predict: "예측",
