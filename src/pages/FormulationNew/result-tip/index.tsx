@@ -22,12 +22,11 @@ const ResultTip: React.FC<ResultTipProps> = () => {
 
       <div className="result-tip-content">
         <div className="tip-card">
-          <h2 className="tip-title">{t('formulation.tip.calculating', '算法模型计算中')}</h2>
-          <p className="tip-description">{t('formulation.tip.calculatingDesc', '系统正在处理您的模型参数，预计需要较长时间，请耐心等待')}</p>
+          <h2 className="tip-title">{t('formulation.tip.calculating', '计算中')}</h2>
+          <p className="tip-description">{t('formulation.tip.calculatingDesc', '基于极化力场的分子动力学模拟耗时较长（24-48小时），可在预计时间之后查看结果，系统会提醒您计算的状态')}</p>
           <div className="tip-notice">
             <div className="notice-icon">⚠</div>
             <div className="notice-text">
-              <div>{t('formulation.tip.notice1', '模型训练完成后，系统将自动向您发送消息通知')}</div>
               <div>{t('formulation.tip.notice2', '您可以关闭此页面，不会影响后台计算进程')}</div>
             </div>
           </div>

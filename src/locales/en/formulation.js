@@ -86,6 +86,12 @@ export default {
   resultTip: {
     close: 'Close'
   },
+
+  tip: {
+    calculating: 'Computing',
+    calculatingDesc: 'MD simulation using polarizable force field is time consuming (24-48 hr). The system will notify you regarding the job status.',
+    notice2: 'You can close this page without affecting the background calculation process'
+  },
   history: {
     title: 'Analysis Records',
     newAnalysis: 'New Analysis',

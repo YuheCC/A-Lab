@@ -86,6 +86,12 @@ export default {
   resultTip: {
     close: '关闭'
   },
+
+  tip: {
+    calculating: '计算中',
+    calculatingDesc: '基于极化力场的分子动力学模拟耗时较长（24-48小时），可在预计时间之后查看结果，系统会提醒您计算的状态',
+    notice2: '您可以关闭此页面，不会影响后台计算进程'
+  },
   history: {
     title: '分析记录',
     newAnalysis: '新建分析',
