@@ -84,6 +84,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 alignItems: 'flex-start',
                 justifyContent: 'space-between',
                 gap: '12px',
+                width: '100%',
+                flex: '1 1 auto',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: '1 1 auto', minWidth: 0 }}>
