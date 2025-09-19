@@ -493,34 +493,35 @@ const InorganicSearch = () => {
                             />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                        <FindFriendOptions
-                        findClosestFriends={findClosestFriends}
-                        setFindClosestFriends={setFindClosestFriends}
-                        extraRequests={extraRequests}
-                        setExtraRequests={setExtraRequests}
-                        showAdvanced={showAdvanced}
-                        setShowAdvanced={setShowAdvanced}
-                        selectedMolType={selectedMolType}
-                        setSelectedMolType={setSelectedMolType}
-                            additiveSubtype={additiveSubtype}
-                            setAdditiveSubtype={setAdditiveSubtype}
-                            computeLevel={computeLevel}
-                        structureWeight={structureWeight}
-                        setStructureWeight={setStructureWeight}
-                        showHypothetical={showHypothetical}
-                        setShowHypothetical={setShowHypothetical}
-                        cathode={cathode}
-                        setCathode={setCathode}
-                        anode={anode}
-                        setAnode={setAnode}
-                        salt={salt}
-                        setSalt={setSalt}
-                        solvent={solvent}
-                        setSolvent={setSolvent}
-                        metric={metric}
-                        setMetric={setMetric}
-                        userPermissions={userPermissions}
-                    />
+                            <FindFriendOptions
+                                findClosestFriends={findClosestFriends}
+                                setFindClosestFriends={setFindClosestFriends}
+                                extraRequests={extraRequests}
+                                setExtraRequests={setExtraRequests}
+                                showAdvanced={showAdvanced}
+                                setShowAdvanced={setShowAdvanced}
+                                selectedMolType={selectedMolType}
+                                setSelectedMolType={setSelectedMolType}
+                                additiveSubtype={additiveSubtype}
+                                setAdditiveSubtype={setAdditiveSubtype}
+                                computeLevel={computeLevel}
+                                setComputeLevel={setComputeLevel}
+                                structureWeight={structureWeight}
+                                setStructureWeight={setStructureWeight}
+                                showHypothetical={showHypothetical}
+                                setShowHypothetical={setShowHypothetical}
+                                cathode={cathode}
+                                setCathode={setCathode}
+                                anode={anode}
+                                setAnode={setAnode}
+                                salt={salt}
+                                setSalt={setSalt}
+                                solvent={solvent}
+                                setSolvent={setSolvent}
+                                metric={metric}
+                                setMetric={setMetric}
+                                userPermissions={userPermissions}
+                            />
 
                     <div className="search-results">
                         {searchLoading && (
