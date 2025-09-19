@@ -407,9 +407,8 @@
 /* ResultTip 页面级样式 */
 .result-tip-page {
   background: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  width: 100%;
+  min-height: 100vh;
   padding: 120px 20px 40px 20px;
 }
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
 import './FormulationModule.css';
+import { useNavigate } from '@umijs/max';
 
 interface FormulationModuleProps {
   onResetRef?: (resetFn: () => void) => void;
@@ -10,7 +11,7 @@ interface FormulationModuleProps {
 
 const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   // Salt Configuration State
   const [selectedCation, setSelectedCation] = useState('Li+');
   const [selectedAnions, setSelectedAnions] = useState<string[]>(['BF4-']);
@@ -213,6 +214,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       if (response && response.data) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
+        navigate('/formulation/result-tip');
         setCurrentView('results');
       } else {
         throw new Error('Invalid response from MD simulation');
