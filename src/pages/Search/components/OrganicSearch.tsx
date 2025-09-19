@@ -423,6 +423,7 @@ const OrganicSearch = () => {
                     }}>
                         {data.length > 0 ? (
                             <UMAPClusterPlotDeck
+                                zoomOffset={-0.3}
                                 data={interfaceMode === 'filter' ? filteredPlotData : data}
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
