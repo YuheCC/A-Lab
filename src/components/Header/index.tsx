@@ -143,7 +143,7 @@ const Header = () => {
                     {t('navigation.header.map')}
                 </NavLink>
                 {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
-                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
+                {renderNavLink('/search', t('navigation.header.molecule'), pathname === '/search', isCommonUser)}
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
                 <div 
