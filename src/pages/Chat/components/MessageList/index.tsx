@@ -92,10 +92,10 @@ const ExtraDataSection: React.FC<{
 interface MessageListProps {
   messages?: Message[];
   onCopyMessage?: (content: string) => void;
-  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask') => void;
+  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'clarify' | 'lightning' | 'ask' | 'ask-oss' | 'deep-space' | 'deep-space-oss') => void;
   onMoleculeClick?: (moleculeName: string) => void;
   onEditMessage?: (messageId: string, newText: string) => void;
-  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask') => Promise<void>;
+  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'clarify' | 'lightning' | 'ask' | 'ask-oss' | 'deep-space' | 'deep-space-oss') => Promise<void>;
   className?: string;
 }
 
