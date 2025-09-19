@@ -21,6 +21,7 @@ export default {
   // Search and Table
   searchPlaceholder: '分子を検索...',
   loadingImage: '読み込み中...',
+  backToSearch: '検索に戻る',
 
   // Table Headers
   tableHeaders: {

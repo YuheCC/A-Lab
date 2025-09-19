@@ -21,6 +21,7 @@ export default {
   // Search and Table
   searchPlaceholder: '搜索分子...',
   loadingImage: '加载中...',
+  backToSearch: '返回搜索',
   
   // Table Headers
   tableHeaders: {

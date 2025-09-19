@@ -21,6 +21,7 @@ export default {
   // Search and Table
   searchPlaceholder: '분자 검색...',
   loadingImage: '로딩 중...',
+  backToSearch: '검색으로 돌아가기',
   
   // Table Headers
   tableHeaders: {
