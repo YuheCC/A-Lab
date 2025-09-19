@@ -237,12 +237,6 @@ function UniversalHistoryModule<T extends HistoryItem>({
         {filteredData.length === 0 ? (
           <div className="no-results">
             <p>{t('performance.history.noResults.message')}</p>
-            <button
-              className="clear-filters-link"
-              onClick={clearFilters}
-            >
-              {t('performance.history.noResults.clearFilters')}
-            </button>
           </div>
         ) : (
           filteredData.map((item) => (
