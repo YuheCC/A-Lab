@@ -82,8 +82,10 @@ export default {
     notice: '模型训练完成后，系统将自动向您发送消息通知',
     action: '您可以关闭此页面，不会影响后台计算进程',
     close: '返回配置'
-  }
-  ,
+  },
+  resultTip: {
+    close: '关闭'
+  },
   history: {
     title: '分析记录',
     newAnalysis: '新建分析',

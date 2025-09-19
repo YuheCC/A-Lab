@@ -82,8 +82,10 @@ export default {
     notice: '모델 훈련이 완료되면 시스템에서 자동으로 알림을 보내드립니다',
     action: '이 페이지를 닫아도 백그라운드 계산 프로세스에는 영향을 주지 않습니다',
     close: '구성으로 돌아가기'
-  }
-  ,
+  },
+  resultTip: {
+    close: '닫기'
+  },
   history: {
     title: '분석 기록',
     newAnalysis: '새 분석',

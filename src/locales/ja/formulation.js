@@ -82,8 +82,10 @@ export default {
     notice: 'モデルトレーニングが完了すると、システムが自動的に通知を送信します',
     action: 'このページを閉じても、バックグラウンド計算プロセスには影響しません',
     close: '設定に戻る'
-  }
-  ,
+  },
+  resultTip: {
+    close: '閉じる'
+  },
   history: {
     title: '解析記録',
     newAnalysis: '新規解析',

@@ -32,7 +32,7 @@ const ResultTip: React.FC<ResultTipProps> = () => {
             </div>
           </div>
           <button className="result-tip-close-button" onClick={handleClose}>
-            {t('formulation.result.close', '关闭')}
+            {t('formulation.resultTip.close', '关闭')}
           </button>
         </div>
       </div>

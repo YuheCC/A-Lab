@@ -82,8 +82,10 @@ export default {
     notice: 'The system will automatically send you a notification when model training is complete',
     action: 'You can close this page, it will not affect the background calculation process',
     close: 'Back to Configuration'
-  }
-  ,
+  },
+  resultTip: {
+    close: 'Close'
+  },
   history: {
     title: 'Analysis Records',
     newAnalysis: 'New Analysis',
