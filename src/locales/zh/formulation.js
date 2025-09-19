@@ -2,6 +2,12 @@ export default {
   title: '盐与溶剂配置',
   subtitle: '配置并自定义你的电解质',
   comingSoon: '即将提供',
+  actions: {
+    backToList: '返回列表'
+  },
+  create: {
+    newConfiguration: '新建配置'
+  },
 
   saltConfiguration: {
     title: '盐配置'
@@ -96,10 +102,23 @@ export default {
     actions: {
       viewDetails: '查看详情',
       delete: '删除',
-      deleteConfirm: '确认删除该记录？'
+      deleteConfirm: '确认删除该记录？',
+      deleteFailed: '删除记录失败'
     }
-  }
-  ,
+  },
+  list: {
+    columns: {
+      analysisId: '分析 ID',
+      saltFraction: '盐（分数）',
+      saltFractionType: '分数类型（盐）',
+      solventFraction: '溶剂（分数）',
+      solventFractionType: '分数类型（溶剂）',
+      concentration: '浓度',
+      created: '创建时间',
+      status: '状态',
+      actions: '操作'
+    }
+  },
   results: {
     analysisResults: '分析结果',
     systemProperties: '体系性质',
@@ -127,6 +146,10 @@ export default {
   ,
   detail: {
     title: '分析结果',
+    viewSubtitle: '查看详细分析结果',
+    viewSubtitleWithId: '查看详细分析结果',
+    actionTitle: '分析详情',
+    loading: '正在加载分析详情...',
     saltSolventConfig: '盐与溶剂配置',
     saltSummary: '盐配置概览',
     solventSummary: '溶剂概览',

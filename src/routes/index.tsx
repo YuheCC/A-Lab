@@ -40,7 +40,23 @@ export default  [
     },
     {
         path: "/formulation",
-        component: "Formulation"
+        redirect: "/formulation/new"
+    },
+    {
+        path: "/formulation/new",
+        component: "FormulationNew"
+    },
+    {
+        path: "/formulation/result-tip",
+        component: "FormulationNew/result-tip"
+    },
+    {
+        path: "/formulation/create",
+        component: "FormulationNew/create"
+    },
+    {
+        path: "/formulation/detail",
+        component: "FormulationNew/detail"
     },
     {
         path: "/ask",

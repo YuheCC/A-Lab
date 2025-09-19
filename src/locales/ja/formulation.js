@@ -2,6 +2,12 @@ export default {
   title: '塩と溶媒の構成',
   subtitle: '電解質を構成してカスタマイズ',
   comingSoon: '近日対応',
+  actions: {
+    backToList: 'リストに戻る'
+  },
+  create: {
+    newConfiguration: '新規構成'
+  },
 
   saltConfiguration: {
     title: '塩の構成'
@@ -96,7 +102,21 @@ export default {
     actions: {
       viewDetails: '詳細を見る',
       delete: '削除',
-      deleteConfirm: 'この記録を削除しますか？'
+      deleteConfirm: 'この記録を削除しますか？',
+      deleteFailed: '記録の削除に失敗しました'
+    }
+  },
+  list: {
+    columns: {
+      analysisId: '解析ID',
+      saltFraction: '塩（分率）',
+      saltFractionType: '分率タイプ（塩）',
+      solventFraction: '溶媒（分率）',
+      solventFractionType: '分率タイプ（溶媒）',
+      concentration: '濃度',
+      created: '作成日時',
+      status: 'ステータス',
+      actions: '操作'
     }
   }
   ,
@@ -127,6 +147,10 @@ export default {
   ,
   detail: {
     title: '解析結果',
+    viewSubtitle: '詳細な解析結果を表示',
+    viewSubtitleWithId: '詳細な解析結果を表示',
+    actionTitle: '解析詳細',
+    loading: '解析詳細を読み込み中...',
     saltSolventConfig: '塩と溶媒の構成',
     saltSummary: '塩のサマリー',
     solventSummary: '溶媒サマリー',

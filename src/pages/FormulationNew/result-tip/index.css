@@ -1,0 +1,142 @@
+.result-tip-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-tip-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.result-tip-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.result-tip-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.result-tip-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.tip-card {
+  background: transparent;
+  padding: 0;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+}
+
+.tip-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.tip-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+}
+
+.tip-notice {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+
+.notice-icon {
+  background: #f59e0b;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notice-text {
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.notice-text div {
+  margin-bottom: 4px;
+}
+
+.notice-text div:last-child {
+  margin-bottom: 0;
+}
+
+.result-tip-close-button {
+  background: #1f2937;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: auto;
+  align-self: center;
+}
+
+.result-tip-close-button:hover {
+  background: #374151;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .result-tip-container {
+    padding: 16px;
+  }
+
+  .tip-card {
+    padding: 0;
+  }
+
+  .tip-title {
+    font-size: 18px;
+  }
+
+  .tip-description {
+    font-size: 13px;
+  }
+
+  .notice-text {
+    font-size: 12px;
+  }
+}
