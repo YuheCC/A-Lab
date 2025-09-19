@@ -152,17 +152,17 @@ const DetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="detail-page-container">
-      <div className="detail-header">
-        <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-        <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-          <div className="detail-actions">
-          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
-            <button className="back-to-list-button" onClick={handleBackToList}>
-            {t('formulation.actions.backToList', 'Back to List')}
-            </button>
-          </div>
+        <div className="detail-header">
+          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
         </div>
         <div className="detail-content">
+          <div className="detail-actions">
+            <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
+            <button className="back-to-list-button" onClick={handleBackToList}>
+              {t('formulation.actions.backToList', 'Back to List')}
+            </button>
+          </div>
           <div className="loading-state">
             <p>{t('formulation.detail.loading', 'Loading analysis details...')}</p>
           </div>
@@ -177,14 +177,14 @@ const DetailPage: React.FC = () => {
         <div className="detail-header">
           <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
           <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
+        </div>
+        <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
             <button className="back-to-list-button" onClick={handleBackToList}>
               {t('formulation.actions.backToList', 'Back to List')}
             </button>
           </div>
-        </div>
-        <div className="detail-content">
           <div className="error-state">
             <p>Error: {error}</p>
           </div>
@@ -196,17 +196,17 @@ const DetailPage: React.FC = () => {
   return (
     <div className="detail-page-container">
       <div className="detail-header">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
+        <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
+      </div>
+
+      <div className="detail-content">
         <div className="detail-actions">
           <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('formulation.actions.backToList', 'Back to List')}
           </button>
         </div>
-      </div>
-
-      <div className="detail-content">
         <div className="results-section">
           <h2>{t('formulation.results.analysisResults', 'Analysis Results')}</h2>
 
