@@ -102,10 +102,10 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
 
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                     <picture>
-                        <source srcSet="/MU05_Cluster_Numbered.png" type="image/png" />
+                        <source srcSet="/organic.png" type="image/png" />
                         <img
                             loading="lazy"
-                            src="/MU05_Cluster_Numbered.png"
+                            src="/organic.png"
                             alt={t('map.imageAlt')}
                             style={{
                                 maxWidth: '100%',
