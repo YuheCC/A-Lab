@@ -30,7 +30,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-top: 8px;
+  margin-bottom: 20px;
 }
 
 .detail-action-title {
@@ -58,8 +58,8 @@
 
 /* 内容区域样式，继承results组件样式 */
 .detail-content {
-  background: #ffffff;
-  max-width: 1200px;
+  border-radius: 8px;
+  padding: 20px;
   margin: 0 auto;
 }
 

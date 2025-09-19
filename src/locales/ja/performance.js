@@ -159,7 +159,7 @@ export default {
       completed: "完了"
     },
     actions: {
-      viewDetails: "詳細を見る",
+      viewDetails: "見る",
       delete: "削除",
       deleteConfirm: "この記録を削除してもよろしいですか？",
       deleteFailed: "記録の削除に失敗しました"

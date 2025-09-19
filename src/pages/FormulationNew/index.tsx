@@ -123,12 +123,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
       <div className="formulation-header">
         <h1 className="formulation-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
         <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
-        <button className="new-analysis-button" onClick={handleNewAnalysis}>
-          + {t('formulation.history.newAnalysis', 'New Analysis')}
-        </button>
       </div>
 
       <div className="table-container">
+        <button className="new-analysis-button" onClick={handleNewAnalysis}>
+          + {t('formulation.history.newAnalysis', 'New Analysis')}
+        </button>
         {loading ? (
           <div className="loading-state">
             <p>{t('formulation.history.loading.message', 'Loading...')}</p>
