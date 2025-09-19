@@ -159,7 +159,7 @@ export default {
       completed: "Completed"
     },
     actions: {
-      viewDetails: "View Details",
+      viewDetails: "View",
       delete: "Delete",
       deleteConfirm: "Are you sure you want to delete this record?",
       deleteFailed: "Failed to delete record"

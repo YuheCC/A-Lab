@@ -159,7 +159,7 @@ export default {
       completed: "완료됨"
     },
     actions: {
-      viewDetails: "세부사항 보기",
+      viewDetails: "보기",
       delete: "삭제",
       deleteConfirm: "이 기록을 삭제하시겠습니까?",
       deleteFailed: "기록 삭제에 실패했습니다"

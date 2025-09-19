@@ -159,7 +159,7 @@ export default {
       completed: "已完成"
     },
     actions: {
-      viewDetails: "查看详情",
+      viewDetails: "查看",
       delete: "删除",
       deleteConfirm: "确定要删除这条记录吗？",
       deleteFailed: "删除记录失败"
