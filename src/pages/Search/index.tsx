@@ -44,7 +44,7 @@ const Search = () => {
                     </button>
                 </div>
                 <button
-                    className="favorites-button"
+                    className="favorites-enter-button"
                     onClick={handleGoToFavorites}
                     title={t('search.favorites.goToFavorites')}
                 >
