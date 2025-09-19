@@ -53,7 +53,7 @@ export default {
         predictionTime: "予測時間",
         unknown: "不明",
         barcode: "バーコード",
-        cycleLife1: "サイクル寿命 1",
+        cycleLife1: "サイクル寿命",
         cycleLife2: "サイクル寿命 2",
         noDetailedData: "詳細なバーコードデータがありません"
     },

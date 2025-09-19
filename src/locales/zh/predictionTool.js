@@ -53,7 +53,7 @@ export default {
         predictionTime: "预测时间",
         unknown: "未知",
         barcode: "Barcode",
-        cycleLife1: "循环寿命1",
+        cycleLife1: "循环寿命",
         cycleLife2: "循环寿命2",
         noDetailedData: "暂无详细条形码数据"
     },

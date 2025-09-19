@@ -53,7 +53,7 @@ export default {
         predictionTime: "Prediction Time",
         unknown: "Unknown",
         barcode: "Barcode",
-        cycleLife1: "Cycle Life 1",
+        cycleLife1: "Cycle Life",
         cycleLife2: "Cycle Life 2",
         noDetailedData: "No detailed barcode data available"
     },

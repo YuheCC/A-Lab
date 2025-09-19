@@ -53,7 +53,7 @@ export default {
         predictionTime: "예측 시간",
         unknown: "알 수 없음",
         barcode: "바코드",
-        cycleLife1: "사이클 수명 1",
+        cycleLife1: "사이클 수명",
         cycleLife2: "사이클 수명 2",
         noDetailedData: "상세한 바코드 데이터가 없습니다"
     },
