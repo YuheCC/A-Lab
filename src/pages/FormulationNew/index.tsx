@@ -80,11 +80,11 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   // 格式化状态
   const formatStatus = (status: string) => {
     const statusMap: { [key: string]: { text: string; className: string } } = {
-      'completed': { text: 'Completed', className: 'status-completed' },
-      'success': { text: 'Completed', className: 'status-completed' },
-      'running': { text: 'Running', className: 'status-running' },
-      'failed': { text: 'Failed', className: 'status-failed' },
-      'pending': { text: 'Pending', className: 'status-pending' }
+      'completed': { text: t('formulation.status.completed', '已完成'), className: 'status-completed' },
+      'success': { text: t('formulation.status.success', '已完成'), className: 'status-completed' },
+      'running': { text: t('formulation.status.running', '运行中'), className: 'status-running' },
+      'failed': { text: t('formulation.status.failed', '失败'), className: 'status-failed' },
+      'pending': { text: t('formulation.status.pending', '等待中'), className: 'status-pending' }
     };
     return statusMap[status] || { text: status, className: 'status-unknown' };
   };
@@ -194,12 +194,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                         </span>
                       </td>
                       <td className="actions-cell">
+                        {record.status === 'success' && (
                         <button
                           className="action-button view-button"
                           onClick={() => handleViewDetails(record)}
                         >
                           {t('formulation.history.actions.viewDetails', 'View Details')}
                         </button>
+                        )}
                         <button
                           className="action-button delete-button"
                           onClick={() => handleDeleteRecord(record.id)}

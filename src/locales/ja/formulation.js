@@ -86,6 +86,12 @@ export default {
   resultTip: {
     close: '閉じる'
   },
+
+  tip: {
+    calculating: '計算中',
+    calculatingDesc: '偏極力場に基づく分子動力学シミュレーションには長時間（24〜48時間）を要します。予定時間後に結果を確認でき、システムが計算状況をお知らせします',
+    notice2: 'このページを閉じても、バックグラウンド計算プロセスには影響しません'
+  },
   history: {
     title: '解析記録',
     newAnalysis: '新規解析',
@@ -120,6 +126,14 @@ export default {
       status: 'ステータス',
       actions: '操作'
     }
+  },
+
+  status: {
+    completed: '完了',
+    success: '完了',
+    running: '実行中',
+    failed: '失敗',
+    pending: '待機中'
   }
   ,
   results: {
