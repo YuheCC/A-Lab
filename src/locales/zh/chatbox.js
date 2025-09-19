@@ -7,8 +7,8 @@ export default {
         sendButton: "发送"
     },
     chat: {
-        newChat: "新探索",
-        newExpoler: "新探索",
+        newChat: "新聊天",
+        newExpoler: "新聊天",
         newChatSubtitle: "开始一段新的对话，探索分子宇宙的奥秘",
         searchChat: "搜索对话",
         historyTitle: "历史对话",
