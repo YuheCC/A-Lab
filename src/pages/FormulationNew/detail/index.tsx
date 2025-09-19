@@ -256,6 +256,7 @@ const DetailPage: React.FC = () => {
               {resultData?.rdf_cn_plot ? (
                 <div className="chart-image-container">
                   <img
+                    style={{ maxWidth: '60%' }}
                     src={`data:image/png;base64,${resultData.rdf_cn_plot}`}
                     alt="Radial Distribution Function and Coordination Number"
                     className="chart-image"
@@ -275,6 +276,7 @@ const DetailPage: React.FC = () => {
               {resultData?.msd_plot ? (
                 <div className="chart-image-container">
                   <img
+                    style={{ maxWidth: '60%' }}
                     src={`data:image/png;base64,${resultData.msd_plot}`}
                     alt="Mean Square Displacement"
                     className="chart-image"
