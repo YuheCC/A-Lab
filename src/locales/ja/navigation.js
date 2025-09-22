@@ -11,7 +11,7 @@ export default {
     about: "概要",
     formulation: "配方",
     predictPerformance: "セル性能予測",
-    predictionTool: "バッテリー初期寿命予測ツール",
+    predictionTool: "バッテリー寿命予測",
   },
 
   // Navbar links

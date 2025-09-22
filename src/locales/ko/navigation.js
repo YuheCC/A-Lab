@@ -11,7 +11,7 @@ export default {
     formulation: "조합",
     about: "소개",
     predictPerformance: "셀 성능 예측",
-    predictionTool: "배터리 초기 수명 예측 도구",
+    predictionTool: "배터리 수명 예측",
   },
   
   // Navbar links
