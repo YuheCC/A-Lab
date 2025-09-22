@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
+import { formatIonDisplay } from './utils';
 
 interface FormulationTableProps {}
 
@@ -41,24 +42,6 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   useEffect(() => {
     fetchHistoryData(currentPage);
   }, [currentPage]);
-
-  // 格式化离子显示
-  const formatIonDisplay = (ionValue: string) => {
-    const ionMap: { [key: string]: string } = {
-      'Li+': 'Li⁺',
-      'Na+': 'Na⁺',
-      'Mg2+': 'Mg²⁺',
-      'Zn2+': 'Zn²⁺',
-      'BF4-': 'BF₄⁻',
-      'PF6-': 'PF₆⁻',
-      'FSI-': 'FSI⁻',
-      'TFSI-': 'TFSI⁻',
-      'LiPF6': 'LiPF₆',
-      'LiBF4': 'LiBF₄',
-      'LiTFSI': 'LiTFSI'
-    };
-    return ionMap[ionValue] || ionValue;
-  };
 
   // 格式化浓度显示
   const formatConcentration = (value: number) => {

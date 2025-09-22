@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import FormulationModule from '@/pages/Formulation/components/FormulationModule';
+import FormulationModule from '../components/FormulationModule';
 import './index.css';
 
 const CreatePage: React.FC = () => {
