@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剤 (SMILES) (1.9wt%)",
+    label: "添加剤 (SMILES)",
     required: "*",
     placeholder: "有効なSMILESを入力してください"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "重量パーセント (wt%)",
+    tooltip: "カスタム値のサポートは近日公開予定"
   },
   
   // Molecule information

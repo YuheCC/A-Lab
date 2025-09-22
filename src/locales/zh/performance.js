@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剂 (SMILES) (1.9wt%)",
+    label: "添加剂 (SMILES)",
     required: "*",
     placeholder: "输入有效的SMILES添加剂"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "重量百分比 (wt%)",
+    tooltip: "即将支持自定义数值"
   },
   
   // Molecule information

@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "첨가제 (SMILES) (1.9wt%)",
+    label: "첨가제 (SMILES)",
     required: "*",
     placeholder: "유효한 SMILES 첨가제를 입력하세요"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "중량 백분율 (wt%)",
+    tooltip: "사용자 정의 값 지원이 곧 출시됩니다"
   },
   
   // Molecule information

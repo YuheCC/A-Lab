@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "SMILES of Additive (1.9wt%)",
+    label: "SMILES of Additive",
     required: "*",
     placeholder: "Enter valid SMILES for additive of interest"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "Weight percentage (wt%)",
+    tooltip: "Support for custom values coming soon"
   },
   
   // Molecule information
