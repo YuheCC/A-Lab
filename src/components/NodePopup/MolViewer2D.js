@@ -1,20 +1,24 @@
 import { useEffect, useMemo, useRef } from 'react';
 import SmilesDrawer from 'smiles-drawer';
+import { formatSmilesWithCation } from '@/utils';
 
-const MolViewer2D = ({ smile, theme = "light" }) => {
+const MolViewer2D = ({ smile, theme = "light", cation }) => {
     const imageRef = useRef(null);
-    const sd = useMemo(() => new SmilesDrawer.SmiDrawer({ 
+    const sd = useMemo(() => new SmilesDrawer.SmiDrawer({
         width: 400, height: 400,
         compactDrawing: false,
         terminalCarbons: true,
     }, {}), []);
 
+    const smilesToDraw = useMemo(() => formatSmilesWithCation(smile, cation), [smile, cation]);
+
     useEffect(() => {
-        sd.draw(smile, imageRef.current, theme, false);
-    }, [smile, sd, theme])
+        if (!smilesToDraw || !imageRef.current) return;
+        sd.draw(smilesToDraw, imageRef.current, theme, false);
+    }, [smilesToDraw, sd, theme])
 
     return (
-        <svg id="smiles-image-popup" ref={imageRef} width={200} height={200} alt={`Molecule for smile string: ${smile}`} style={{
+        <svg id="smiles-image-popup" ref={imageRef} width={200} height={200} alt={`Molecule for smile string: ${smilesToDraw || smile}`} style={{
             maxWidth: '100%',
         }} />
     )
