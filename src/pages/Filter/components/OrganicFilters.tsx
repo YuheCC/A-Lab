@@ -347,13 +347,13 @@ const OrganicFilters = () => {
 
     return (
         <>
-            <div className="search-umap-container">
-                <div className="search-umap-section">
-                    <div className="graph-container search-graph">
+            <div className="filter-umap-container">
+                <div className="filter-umap-section">
+                    <div className="graph-container filter-graph">
                         {memoizedPlot}
                     </div>
                 </div>
-                <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
+                <div className="filter-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
                     <h2>
                         {t('explorer.filtersTitle')}
                         {activeFilterCount > 0 && (

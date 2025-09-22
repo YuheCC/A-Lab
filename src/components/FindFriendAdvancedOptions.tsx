@@ -12,7 +12,6 @@ interface AdvancedProps {
   additiveSubtype: string;
   setAdditiveSubtype: (v: string) => void;
   computeLevel: string;
-  setComputeLevel: (v: string) => void;
   structureWeight: number;
   setStructureWeight: (v: number) => void;
 
@@ -40,7 +39,6 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   additiveSubtype,
   setAdditiveSubtype,
   computeLevel,
-  setComputeLevel,
   structureWeight,
   setStructureWeight,
 
@@ -104,34 +102,6 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
           placeholder={t('search.extraRequestsPlaceholder')}
           className="ff-advanced-textarea"
         />
-      </div>
-
-      {/* Intelligent compute (keep incoming formatting) */}
-      <div className="ff-advanced-section">
-        <label className="ff-advanced-label">{t('search.intelligentCompute')}</label>
-        <select
-          value={computeLevel}
-          onChange={(e) => setComputeLevel(e.target.value)}
-          className="ff-advanced-select"
-        >
-          <option value="Disabled">{t('search.computeDisabled')}</option>
-          <option value="Low">{t('search.computeLow')}</option>
-          <option
-            value="Medium"
-            disabled={userPermissions === 'research'}
-            title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
-          >
-            {t('search.computeMedium')}{userPermissions === 'research' ? ' 🔒' : ''}
-          </option>
-          <option
-            value="High"
-            disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
-            title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
-          >
-            {t('search.computeHigh')}{['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
-          </option>
-          {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
-        </select>
       </div>
 
       {/* Optional recommendation text when battery fields are relevant */}

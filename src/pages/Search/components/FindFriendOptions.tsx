@@ -64,63 +64,147 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   userPermissions,
 }) => {
   const { t } = useTranslation();
+  const toggleAdvanced = () => setShowAdvanced(!showAdvanced);
+  const handleAdvancedToggleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleAdvanced();
+    }
+  };
 
   return (
     <>
       <div className="search-options">
         <div className="search-option">
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <input
-                  id="find-friends-checkbox"
-                  type="checkbox"
-                  checked={findClosestFriends}
-                  onChange={(e) => setFindClosestFriends(e.target.checked)}
-                />
-                <label htmlFor="find-friends-checkbox" style={{ display: 'flex', alignItems: 'center', marginLeft: '4px', cursor: 'pointer' }}>
-                  <span>{t('search.findFriendsLabel')}</span>
-                  <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                    <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                  </Tooltip>
-                </label>
-              </div>
-              {
-                ShowFindFriendsAdvancedOptions && (
-                  <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowAdvanced(!showAdvanced)}>
-                    <span>{t('search.advancedOptions')}</span>
-                    {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: '12px',
+                width: '100%',
+                flex: '1 1 auto',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: '1 1 auto', minWidth: 0 }}>
+                <div style={{ paddingTop: '2px' }}>
+                  <input
+                    id="find-friends-checkbox"
+                    type="checkbox"
+                    checked={findClosestFriends}
+                    onChange={(e) => setFindClosestFriends(e.target.checked)}
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 auto', minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                    <label
+                      htmlFor="find-friends-checkbox"
+                      style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    >
+                      <span>{t('search.findFriendsLabel')}</span>
+                      <Tooltip title={t('search.findFriendsDescription')} placement="top">
+                        <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
+                      </Tooltip>
+                    </label>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <select
+                        value={selectedMolType}
+                        onChange={(e) => setSelectedMolType(e.target.value)}
+                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                      >
+                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                        <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
+                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                      </select>
+                      {selectedMolType === 'additive' && (
+                        <select
+                          value={additiveSubtype}
+                          onChange={(e) => setAdditiveSubtype(e.target.value)}
+                          style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                          aria-label={t('search.moleculeTypes.additiveSubtype')}
+                        >
+                          <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
+                          <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
+                          <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
+                          <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
-                )
-              }
-            </div>
-            <div style={{ color: '#555', fontSize: '14px' }}>
-              {t('search.findFriendsDescription')}
-            </div>
-            <div style={{ marginTop: '8px' }}>
-              <select
-                value={selectedMolType}
-                onChange={e => setSelectedMolType(e.target.value)}
-                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-              >
-                <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
-                <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                <option value="additive">{t('search.moleculeTypes.additive')}</option>
-              </select>
-              {selectedMolType === 'additive' && (
-                <div style={{ marginTop: '8px' }}>
-                  <label style={{ marginRight: '4px' }}>{t('search.moleculeTypes.additiveSubtype')}</label>
-                  <select
-                    value={additiveSubtype}
-                    onChange={e => setAdditiveSubtype(e.target.value)}
-                    style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                  >
-                    <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
-                    <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
-                    <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
-                    <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
-                  </select>
+                  {findClosestFriends && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                      <Tooltip title={t('search.intelligentFindFriendsTooltip')} placement="top">
+                        <Info size={16} style={{ cursor: 'help' }} />
+                      </Tooltip>
+                      <select
+                        value={computeLevel}
+                        onChange={(e) => setComputeLevel(e.target.value)}
+                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                      >
+                        <option value="Disabled">{t('search.computeDisabled')}</option>
+                        <option value="Low">{t('search.computeLow')}</option>
+                        <option
+                          value="Medium"
+                          disabled={userPermissions === 'research'}
+                          title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                        >
+                          {t('search.computeMedium')}
+                          {userPermissions === 'research' ? ' 🔒' : ''}
+                        </option>
+                        <option
+                          value="High"
+                          disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                          title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                        >
+                          {t('search.computeHigh')}
+                          {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                        </option>
+                        {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {ShowFindFriendsAdvancedOptions && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={showAdvanced}
+                  onClick={toggleAdvanced}
+                  onKeyDown={handleAdvancedToggleKeyDown}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid #2563eb',
+                    borderRadius: '6px',
+                    padding: '4px 8px',
+                    color: '#2563eb',
+                    fontWeight: 500,
+                    fontSize: '13px',
+                    transition: 'background-color 0.2s',
+                    backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                    marginLeft: 'auto',
+                  }}
+                >
+                  <span>{t('search.advancedOptions')}</span>
+                  {showAdvanced ? (
+                    <ChevronUp size={14} style={{ marginLeft: '6px' }} />
+                  ) : (
+                    <ChevronDown size={14} style={{ marginLeft: '6px' }} />
+                  )}
                 </div>
               )}
             </div>
@@ -133,7 +217,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 additiveSubtype={additiveSubtype}
                 setAdditiveSubtype={setAdditiveSubtype}
                 computeLevel={computeLevel}
-                setComputeLevel={setComputeLevel}
                 structureWeight={structureWeight}
                 setStructureWeight={setStructureWeight}
                 showHypothetical={showHypothetical}

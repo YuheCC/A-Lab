@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: '有機分子',
         inorganic: '無機分子',
+        anions: 'アニオン',
         third: '固体電解質'
     },
     
@@ -21,6 +22,8 @@ export default {
     distantFriends: '遠くの友達',
     advancedOptions: '詳細オプション',
     intelligentCompute: 'インテリジェント友達検索計算',
+    intelligentFindFriendsLabel: 'インテリジェント「友達」検索',
+    intelligentFindFriendsTooltip: 'LLM を使って数百種類の分子を調べ、用途にさらに適した分子を見つけます。最良の結果を得るには、計算レベルを上げて（高度なオプション内の）電池システム情報を入力してください。',
     showHypothetical: '仮想分子を表示',
     showHypotheticalTooltip: '公開カタログにないアルゴリズム生成候補を含めます。入手可能性と合成可能性は不確かです。',
     computeDisabled: '無効',
@@ -92,6 +95,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "お気に入りに追加 ★",
     saving: "保存中...",
+
+    // Favorites
+    favorites: {
+        favorites: "お気に入り",
+        goToFavorites: "お気に入りページに移動"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "検索条件に一致する複数の分子が見つかりました。友達検索は無効です。",

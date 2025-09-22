@@ -3,6 +3,7 @@ export default {
     tabs: {
         organic: '유기 분자',
         inorganic: '무기 분자',
+        anions: '음이온',
         third: '고체 전해질'
     },
     
@@ -21,6 +22,8 @@ export default {
     distantFriends: '먼 친구들',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
+    intelligentFindFriendsLabel: '지능형 "친구" 찾기',
+    intelligentFindFriendsTooltip: 'LLM으로 수백 개의 분자를 살펴보고, 사용 사례에 더 적합한 분자를 찾아보세요. 최상의 결과를 위해 계산 성능을 높이고 (고급 옵션)에서 배터리 시스템 정보를 입력하세요.',
     showHypothetical: '가상 분자 표시',
     showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
     computeDisabled: '비활성화',
@@ -115,6 +118,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "즐겨찾기에 추가 ★",
     saving: "저장 중...",
+
+    // Favorites
+    favorites: {
+        favorites: "즐겨찾기",
+        goToFavorites: "즐겨찾기 페이지로 이동"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "검색 조건과 일치하는 여러 분자가 발견되었습니다. 친구 찾기 기능이 비활성화되었습니다.",

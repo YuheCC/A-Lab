@@ -64,7 +64,7 @@ export const PropItem = ({ prop }) => {
 const MolCard = (props) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
+    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, cation, ...domProps } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
@@ -91,7 +91,7 @@ const MolCard = (props) => {
         <div className={`molcard-container ${large ? 'molcard-large': ''} ${vertical ? 'molcard-vertical': ''}`} {...domProps}>
             <div style={{ display: 'flex', flexFlow: vertical ? 'column' : 'row', width: '100%' }}>
                 <div className='molcard-visualization' translate='no'>
-                    {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{
+                    {smileString ? <MolViewer2D smile={smileString} cation={cation} width={200} height={200} /> : <div style={{
                         width: '150px',
                         height: '150px',
                         display: 'flex',

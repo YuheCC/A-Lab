@@ -1,7 +1,8 @@
 export default {
   tabs: {
     organic: '有机分子',
-    inorganic: '无机分子'
+    inorganic: '无机分子',
+    anions: '阴离子'
   },
   loading: {
     message: '正在加载分子宇宙地图',
@@ -54,6 +55,29 @@ export default {
     clusterTitle: '簇描述',
     organicTitle: '有机分子簇',
     inorganicTitle: '无机分子簇'
+  },
+  anionsClusters: {
+    title: '阴离子分子簇',
+    description: '阴离子分子数据集包含19个不同的分子簇，每个簇都具有独特的化学特征和结构特性。',
+    cluster0: '含有2个N和1个S的5元杂环。',
+    cluster1: '含有2个相邻吡啶型N和1个吡咯型N的5元杂环。',
+    cluster2: '含有1个吡啶型N和1个相邻吡咯型N的5元杂环。',
+    cluster3: '存在磺酰基和叔胺。',
+    cluster4: '磺酰胺基团与稠合脂肪族杂环结构。',
+    cluster5: '磺酰胺基团与非稠合脂肪族杂环结构。',
+    cluster6: '含有N、S和O杂原子的稠合芳香族杂环结构。',
+    cluster7: '含有羧基（类EC）和酰胺基团的5/6元杂环结构。',
+    cluster8: '含硼化合物。',
+    cluster9: '含硅化合物。',
+    cluster10: '含有N-O键的5元杂环结构。',
+    cluster11: '含有N-S键的5元杂环结构。',
+    cluster12: '含有N-S键的5元杂环结构（与簇#11非常相似）。',
+    cluster13: '呋喃基团。',
+    cluster14: '咪唑和噻唑基团。',
+    cluster15: '含有胺、醚和酰胺基团的稠合脂肪族杂环结构。',
+    cluster16: '含有N和O的杂环结构。',
+    cluster17: '含有胺、醚和酰胺基团的稠合（1个芳香族+1个脂肪族）杂环结构。',
+    cluster18: '吡啶和嘧啶结构。'
   },
   inorganic: {
     title: '无机分子宇宙可视化',

@@ -68,7 +68,7 @@ const getWelcomeMessage = () => {
 };
 
 const generateNewChat = (): Chat => ({
-    name: i18n.t('chatbox.history.newChat') || "Start New Research",
+    name: i18n.t('chatbox.history.newChat') || "New Chat",
     useMultiAgent: false,
     isInClarifyFlow: false,
     isThinking: false,
@@ -261,7 +261,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         draft.chatMap[chat.id] = {
                             createdAt: normalizeServerDateToISOString(chat.created_at),
                             useMultiAgent: false,
-                            name: chat.chat_name || 'Start New Research',
+                            name: chat.chat_name || 'New Chat',
                             messages: (chat.content as any[]).map((item: any) => ({
                                 role: item.role,
                                 content: item.content || '',
@@ -305,7 +305,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                     draft.chatMap[chat.id] = {
                         createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
                         useMultiAgent: false,
-                        name: chat.chat_name || 'Start New Research',
+                        name: chat.chat_name || 'New Chat',
                         messages: (chat.content || chat.messages || []).map((item: any) => ({
                             role: item.role,
                             content: item.content || '',
@@ -408,7 +408,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
      * - If the existing default chat has messages, preserve it with a temporary ID and open a fresh blank chat.
      * @param {*} name
      */
-    createChat: (name = 'Start New Research') => {
+    createChat: (name = 'New Chat') => {
         set(produce((state: ChatState) => {
             const defaultChat = state.chatMap['-1'];
 
@@ -512,7 +512,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             if (
                 message.role === 'user' &&
                 chat.messages.length === 0 &&
-                chat.name === (i18n.t('chatbox.history.newChat') || 'Start New Research')
+                chat.name === (i18n.t('chatbox.history.newChat') || 'New Chat')
             ) {
                 chat.name = message.content;
             }
