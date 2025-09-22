@@ -4,6 +4,7 @@ import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
 import './FormulationModule.css';
 import { useNavigate } from '@umijs/max';
+import { formatIonDisplay } from '../utils';
 
 interface FormulationModuleProps {
   onResetRef?: (resetFn: () => void) => void;
@@ -13,10 +14,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const { t } = useTranslation();
   const navigate = useNavigate();
   // Salt Configuration State
-  const [selectedCation, setSelectedCation] = useState('Li+');
-  const [selectedAnions, setSelectedAnions] = useState<string[]>(['BF4-']);
+  const [selectedCation, setSelectedCation] = useState('Li');
+  const [selectedAnions, setSelectedAnions] = useState<string[]>(['PF6']);
   const [totalSaltConcentration, setTotalSaltConcentration] = useState('1.00');
-  const [anionFractions, setAnionFractions] = useState<{[key: string]: string}>({'BF4-': '1.00'});
+  const [anionFractions, setAnionFractions] = useState<{[key: string]: string}>({'PF6': '1.00'});
   const [fractionType, setFractionType] = useState<'mole' | 'weight'>('mole');
 
   // Solvent Configuration State
@@ -152,40 +153,25 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     }));
   };
 
-  // Format ion display
-  const formatIonDisplay = (ionValue: string) => {
-    const ionMap: { [key: string]: string } = {
-      'Li+': 'Li⁺',
-      'Na+': 'Na⁺',
-      'Mg2+': 'Mg²⁺',
-      'Zn2+': 'Zn²⁺',
-      'BF4-': 'BF₄⁻',
-      'PF6-': 'PF₆⁻',
-      'FSI-': 'FSI⁻',
-      'TFSI-': 'TFSI⁻'
-    };
-    return ionMap[ionValue] || ionValue;
-  };
-
   // Remove ionic symbols from ion names for API
   const cleanIonName = (ionValue: string) => {
-    // 去掉正负离子符号，只保留字母和数字
-    return ionValue.replace(/[⁺⁻+\-]/g, '');
+    // 值已经不包含符号，直接返回
+    return ionValue;
   };
 
   // Available options
   const cationOptions = [
-    { value: 'Li+', label: 'Li⁺', subLabel: 'Lithium', available: true },
-    { value: 'Na+', label: 'Na⁺', subLabel: 'Sodium', available: false },
-    { value: 'Mg2+', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
-    { value: 'Zn2+', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
+    { value: 'Li', label: 'Li⁺', subLabel: 'Lithium', available: true },
+    { value: 'Na', label: 'Na⁺', subLabel: 'Sodium', available: false },
+    { value: 'Mg2', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
+    { value: 'Zn2', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
   ];
 
   const anionOptions = [
-    { value: 'BF4-', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
-    { value: 'PF6-', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
-    { value: 'FSI-', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
-    { value: 'TFSI-', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
+    { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
+    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
+    { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
+    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
   ];
 
   const handleCalculate = async () => {
@@ -238,10 +224,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Reset function
   const resetFormulationState = useCallback(() => {
-    setSelectedCation('Li+');
-    setSelectedAnions(['BF4-']);
+    setSelectedCation('Li');
+    setSelectedAnions(['PF6']);
     setTotalSaltConcentration('1.00');
-    setAnionFractions({'BF4-': '1.00'});
+    setAnionFractions({'PF6': '1.00'});
     setFractionType('mole');
     setSolvents([
       { id: 1, smiles: 'CCO', fraction: '1.00' }
@@ -330,7 +316,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           {/* Anion Fractions */}
           {selectedAnions.map((anion) => (
             <div key={anion} className="form-group">
-              <label>{t('formulation.anionFraction.label', `${formatIonDisplay(anion)} Fraction`)}</label>
+              <label>{`${formatIonDisplay(anion)} Fraction`}</label>
               <input
                 type="number"
                 step="0.01"
