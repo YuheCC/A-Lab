@@ -275,6 +275,9 @@
 
 .formulation-container .smiles-input-group {
   flex: 1;
+  min-height: 68px; /* 为错误消息预留空间，防止抖动 */
+  display: flex;
+  flex-direction: column;
 }
 
 .formulation-container .fraction-input-group {
@@ -294,6 +297,26 @@
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formulation-container .smiles-input.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.formulation-container .smiles-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.formulation-container .smiles-error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  min-height: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .formulation-container .fraction-input-with-remove {

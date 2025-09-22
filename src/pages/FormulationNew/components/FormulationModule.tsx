@@ -32,6 +32,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
   const [error, setError] = useState<string | null>(null);
 
+  // SMILES validation state
+  const [smilesErrors, setSmilesErrors] = useState<{[key: number]: string}>({});
+  const [showValidation, setShowValidation] = useState(false);
+
   // Validation logic
   const isValidConfiguration = () => {
     const concentration = parseFloat(totalSaltConcentration);
@@ -44,8 +48,57 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // Solvent validation logic
   const isValidSolventConfiguration = () => {
     const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-    const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+    const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
     return activeSolvents.length > 0 && Math.abs(totalFraction - 1) < 0.001;
+  };
+
+  // SMILES validation logic
+  const validateSMILES = (smiles: string): string | null => {
+    if (smiles.trim() === '') {
+      return null; // Empty is allowed
+    }
+
+    // Basic SMILES validation
+    // Check for basic structure and allowed characters
+    const smilesPattern = /^[A-Za-z0-9@+\-\[\]()=#\/\\%.]+$/;
+    if (!smilesPattern.test(smiles)) {
+      return '无效的SMILES格式';
+    }
+
+    // Check for balanced brackets
+    const brackets = smiles.match(/[\[\]]/g) || [];
+    const openBrackets = brackets.filter(b => b === '[').length;
+    const closeBrackets = brackets.filter(b => b === ']').length;
+    if (openBrackets !== closeBrackets) {
+      return '括号不匹配';
+    }
+
+    // Check for balanced parentheses
+    const parentheses = smiles.match(/[()]/g) || [];
+    const openParens = parentheses.filter(p => p === '(').length;
+    const closeParens = parentheses.filter(p => p === ')').length;
+    if (openParens !== closeParens) {
+      return '圆括号不匹配';
+    }
+
+    return null;
+  };
+
+  // Validate all SMILES strings
+  const validateAllSMILES = () => {
+    const errors: {[key: number]: string} = {};
+
+    solvents.forEach(solvent => {
+      if (solvent.smiles.trim() !== '') {
+        const error = validateSMILES(solvent.smiles);
+        if (error) {
+          errors[solvent.id] = error;
+        }
+      }
+    });
+
+    setSmilesErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   // Solvent management functions
@@ -53,6 +106,15 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setSolvents(prev => prev.map(s =>
       s.id === id ? { ...s, [field]: value } : s
     ));
+
+    // Clear error for this solvent when user types
+    if (field === 'smiles' && smilesErrors[id]) {
+      setSmilesErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
   };
 
   const removeSolvent = (id: number) => {
@@ -175,7 +237,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   ];
 
   const handleCalculate = async () => {
-    if (!isValidConfiguration() || !isValidSolventConfiguration()) {
+    // Show validation errors
+    setShowValidation(true);
+
+    // Validate SMILES
+    const smilesValid = validateAllSMILES();
+
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid) {
       return;
     }
 
@@ -237,6 +305,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setIsCalculating(false);
     setCurrentView('configuration');
     setError(null);
+    setSmilesErrors({});
+    setShowValidation(false);
   }, []);
 
   // Expose reset function to parent component
@@ -388,8 +458,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                     placeholder={t('formulation.smilesString.placeholder', 'Enter SMILES string')}
                     value={solvent.smiles}
                     onChange={(e) => updateSolvent(solvent.id, 'smiles', e.target.value)}
-                    className="smiles-input"
+                    className={`smiles-input ${smilesErrors[solvent.id] ? 'error' : ''}`}
                   />
+                  {smilesErrors[solvent.id] && (
+                    <div className="smiles-error-message">
+                      {smilesErrors[solvent.id]}
+                    </div>
+                  )}
                 </div>
                 <div className="fraction-input-group">
                   <label>{t('formulation.fraction.label', 'Fraction (min: 0.05)')}</label>
@@ -464,7 +539,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             <div className="summary-content">
               {(() => {
                 const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-                const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+                const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
                 const solventNames = activeSolvents.map(s => s.smiles).join(', ') || t('formulation.solventSummary.emptyPlaceholder', 'Empty (0)');
 
                 return (
