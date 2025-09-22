@@ -1,8 +1,8 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: 'Organic Molecules',
-        inorganic: 'Inorganic Molecules',
+        organic: 'Organic',
+        inorganic: 'Inorganic',
         anions: 'Anions',
         third: 'Solid-State Electrolyte'
     },
