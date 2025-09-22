@@ -189,9 +189,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         }));
     };
 
-    const renderMoleculeStructure = (smiles?: string) => {
+    const renderMoleculeStructure = (smiles?: string, cation?: string) => {
         return smiles ? (
-            <MolViewer2D smile={smiles} />
+            <MolViewer2D smile={smiles} cation={cation} />
         ) : (
             <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('molecular.molCard.loading')}
@@ -261,7 +261,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">
-                        {renderMoleculeStructure((properties as MoleculeProperties).smiles)}
+                        {renderMoleculeStructure((properties as MoleculeProperties).smiles, (properties as MoleculeProperties).cation)}
                     </div>
                 </div>
                 <div className="molecule-card-properties">
@@ -475,6 +475,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     // 将后端字段映射到面板展示字段
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
+        const cation = raw?.cation ?? raw?.CATION;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -489,6 +490,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles,
+            cation,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
@@ -509,6 +511,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles: moleculeData.SMILES,
+            cation: moleculeData.cation,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,

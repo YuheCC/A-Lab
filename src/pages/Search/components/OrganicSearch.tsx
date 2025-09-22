@@ -23,6 +23,7 @@ const API_URL = getAPIUrl();
 // 定义类型
 interface MoleculeData {
     smiles: string;
+    cation?: string;
     x: number;
     y: number;
     image?: string;
@@ -47,6 +48,7 @@ interface MoleculeData {
 
 interface SimilarMolecule {
     SMILES: string;
+    cation?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -232,6 +234,7 @@ const OrganicSearch = () => {
             if (allDetails.length > 0) {
                 const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
                     smiles: mol.SMILES,
+                    cation: mol.cation ?? mol.CATION,
                     x: mol.UMAP_0,
                     y: mol.UMAP_1,
                     image: mol.image,
@@ -560,6 +563,7 @@ const OrganicSearch = () => {
                                                 name={t('search.moleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
@@ -653,6 +657,7 @@ const OrganicSearch = () => {
                                                 name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),

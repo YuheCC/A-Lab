@@ -22,6 +22,7 @@ const API_URL = getAPIUrl();
 // 定义无机分子数据类型
 interface InorganicMoleculeData {
     smiles: string;
+    cation?: string;
     x: number;
     y: number;
     image?: string;
@@ -46,6 +47,7 @@ interface InorganicMoleculeData {
 
 interface InorganicSimilarMolecule {
     SMILES: string;
+    cation?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -224,6 +226,7 @@ const InorganicSearch = () => {
                     formattedMolecules = data.molecule_details.map((mol: any) => {
                         return {
                             smiles: mol.SMILES,
+                            cation: mol.cation ?? mol.CATION,
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image,
@@ -554,6 +557,7 @@ const InorganicSearch = () => {
                                                 name={t('search.moleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
@@ -630,6 +634,7 @@ const InorganicSearch = () => {
                                                 name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),

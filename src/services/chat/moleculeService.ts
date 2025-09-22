@@ -1,5 +1,6 @@
 export type MoleculeProperties = {
   smiles?: string;
+  cation?: string;
   molecularWeight?: string | number;
   meltingPoint?: string;
   boilingPoint?: string;
@@ -24,6 +25,7 @@ export interface MoleculeDetails {
 
 export interface APIMoleculeDetail {
   SMILES: string;
+  cation?: string;
   UMAP_0: number;
   UMAP_1: number;
   HOMO_eV: number;
@@ -70,6 +72,7 @@ class MoleculeService {
       name,
       properties: {
         smiles: apiData.SMILES,
+        cation: apiData.cation,
         molecularWeight: apiData.molecular_weight,
         homo: apiData.HOMO_eV,
         lumo: apiData.LUMO_eV,
@@ -93,6 +96,7 @@ class MoleculeService {
   // 新的映射方法，处理 molecular_details 接口返回的数据格式
   private mapMoleculeDetailsToMoleculeDetails(raw: any, originalName: string): MoleculeDetails {
     const smiles = raw?.SMILES || raw?.smiles || '';
+    const cation = raw?.cation ?? raw?.CATION;
     const molecularWeight = raw?.molecular_weight != null ? raw.molecular_weight : raw?.molecularWeight;
     const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
     const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -107,11 +111,12 @@ class MoleculeService {
     const umapX = raw?.umap_x ?? raw?.x;
     const umapY = raw?.umap_y ?? raw?.y;
 
-    return {
-      name: originalName,
-      properties: {
-        smiles,
-        molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
+        return {
+          name: originalName,
+          properties: {
+            smiles,
+            cation,
+            molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
         meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
         flashPoint: predictedFp != null ? `${predictedFp}` : '-',

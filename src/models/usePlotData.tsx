@@ -15,6 +15,7 @@ interface PlotDataNode {
     x: number;
     y: number;
     smiles: string;
+    cation?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -40,6 +41,7 @@ interface InorganicPlotDataNode {
     x: number;
     y: number;
     smiles: string;
+    cation?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -65,6 +67,7 @@ interface AnionsPlotDataNode {
     x: number;
     y: number;
     smiles: string;
+    cation?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -160,6 +163,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
                     x: Number(row.UMAP_0),
                     y: Number(row.UMAP_1),
                     smiles: row.SMILES,
+                    cation: row.cation ?? row.CATION ?? undefined,
                     properties: {
                         molwt: row.MOLECULAR_WEIGHT,
                         homo_eV: row.HOMO_EV,
@@ -229,6 +233,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
                     x: Number(row.UMAP_0),
                     y: Number(row.UMAP_1),
                     smiles: row.SMILES,
+                    cation: row.cation ?? row.CATION ?? undefined,
                     properties: {
                         molwt: row.MOLECULAR_WEIGHT,
                         homo_eV: row.HOMO_EV,
@@ -300,6 +305,7 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
                     x: Number(row.UMAP_0),
                     y: Number(row.UMAP_1),
                     smiles: row.SMILES,
+                    cation: row.cation ?? row.CATION ?? undefined,
                     properties: {
                         molwt: row.MOLECULAR_WEIGHT,
                         homo_eV: row.HOMO_EV,
@@ -367,6 +373,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
                     x: Number(row.UMAP_0),
                     y: Number(row.UMAP_1),
                     smiles: row.SMILES,
+                    cation: row.cation ?? row.CATION ?? undefined,
                     properties: {
                         molwt: row.MOLECULAR_WEIGHT,
                         homo_eV: row.HOMO_EV,
