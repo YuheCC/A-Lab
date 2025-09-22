@@ -59,26 +59,28 @@ const PerformancePage: React.FC = () => {
 
   return (
     <div className="prediction-tool">
-      <div className="prediction-header">
-        <h1 className="prediction-title">{t('performance.title')}</h1>
-        <span className="beta-tag">{t('performance.beta')}</span>
-      </div>
-      
-      <div className="prediction-content">
-        <div className="operation-area">
-          <PredictionModule onResetRef={handleResetRef} />
-        </div>
-        
-        <div className="history-area">
+      <div className="prediction-layout">
+        <div className="left-area">
           <HistoryModule
             onViewDetails={handleViewDetails}
             onNewPrediction={handleNewPrediction}
           />
         </div>
+
+        <div className="right-area">
+          <div className="prediction-header">
+            <h1 className="prediction-title">{t('performance.title')}</h1>
+            <span className="beta-tag">{t('performance.beta')}</span>
+          </div>
+
+          <div className="operation-area">
+            <PredictionModule onResetRef={handleResetRef} />
+          </div>
+        </div>
       </div>
 
       {showModal && selectedResult && (
-        <ResultModal 
+        <ResultModal
           result={selectedResult}
           onClose={handleCloseModal}
         />
