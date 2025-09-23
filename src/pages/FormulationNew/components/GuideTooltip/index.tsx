@@ -97,7 +97,7 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
             } as React.CSSProperties : {}}
           >
             <div className="guide-tooltip-header">
-              <h3></h3>
+              <h3>Feature Guide</h3>
               <button
                 className="guide-tooltip-close"
                 onClick={handleClose}
