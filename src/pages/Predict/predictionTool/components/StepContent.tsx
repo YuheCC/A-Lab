@@ -144,6 +144,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="upload-area">
               <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
               <p className="upload-subtitle">
+              {t('predictionTool.upload.subtitle', '目前仅支持CSV格式文件，后续将支持更多文件类型')}
               </p>
               <label className="select-file-btn" htmlFor="file-upload">
                 {t('predictionTool.upload.selectFile')}

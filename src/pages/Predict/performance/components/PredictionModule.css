@@ -266,11 +266,43 @@
   margin-top: 16px;
 }
 
-.results-section h2 {
+.results-title-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.results-section .results-title-container h2 {
   font-size: 20px;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 24px 0;
+  margin: 0;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 24px;
+  width: 24px;
+}
+
+.tip-icon {
+  color: #6b7280;
+  cursor: help;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-icon:hover {
+  color: #374151;
 }
 
 .temperature-tabs {
