@@ -820,7 +820,7 @@ const AnionsSearch = () => {
                     )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} />
+            <NodePopup key="anionsNodePopup" ref={nodePopupRef} node={node} molecularType="anions"/>
         </>
     )
 };

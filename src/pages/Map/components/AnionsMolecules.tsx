@@ -124,7 +124,7 @@ const AnionsMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef} molecularType="anions"/>
+            <NodePopup key="anionsNodePopup" node={node} ref={nodePopupRef} molecularType="anions"/>
         </>
     )
 };
