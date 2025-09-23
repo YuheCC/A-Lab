@@ -45,10 +45,10 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
     // Generate organic cluster descriptions dynamically for 05 version (25 clusters: 0-24)
     const renderOrganicClusterDescriptions = () => {
         const clusters = [];
-        for (let i = 0; i <= 24; i++) {
+        for (let i = 0; i <= 18; i++) {
             clusters.push(
                 <p key={i} style={{ marginBottom: '10px' }}>
-                    <strong>Cluster {i + 1}:</strong> {t(`map.clusters05.cluster${i}`)}
+                    <strong>Cluster {i + 1}:</strong> {t(`map.clusters.cluster${i}`)}
                 </p>
             );
         }
@@ -58,7 +58,7 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
     // Generate anions cluster descriptions dynamically (19 clusters: 0-18)
     const renderAnionsClusterDescriptions = () => {
         const clusters = [];
-        for (let i = 0; i <= 18; i++) {
+        for (let i = 0; i <= 12; i++) {
             clusters.push(
                 <p key={i} style={{ marginBottom: '10px' }}>
                     <strong>Cluster {i + 1}:</strong> {t(`map.anionsClusters.cluster${i}`)}

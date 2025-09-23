@@ -117,7 +117,7 @@ const OrganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef} molecularType="organic"/>
+            <NodePopup key="organicNodePopup" node={node} ref={nodePopupRef} molecularType="organic"/>
         </>
     )
 };

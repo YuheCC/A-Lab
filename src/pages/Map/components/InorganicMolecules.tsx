@@ -123,7 +123,7 @@ const InorganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef} molecularType="inorganic"/>
+            <NodePopup key="inorganicNodePopup" node={node} ref={nodePopupRef} molecularType="inorganic"/>
         </>
     )
 };
