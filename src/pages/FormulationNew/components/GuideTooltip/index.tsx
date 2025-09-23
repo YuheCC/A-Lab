@@ -30,16 +30,28 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
   }, [storageKey]);
 
   const handleClose = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setButtonPosition({ x: rect.left, y: rect.top });
+    if (buttonRef.current && tooltipRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+
+      // Calculate the offset from tooltip center to button center
+      const tooltipCenterX = tooltipRect.left + tooltipRect.width / 2;
+      const tooltipCenterY = tooltipRect.top + tooltipRect.height / 2;
+      const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+      const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+
+      // Calculate the translation needed
+      const translateX = buttonCenterX - tooltipCenterX;
+      const translateY = buttonCenterY - tooltipCenterY;
+
+      setButtonPosition({ x: translateX, y: translateY });
     }
 
     setIsAnimating(true);
     setTimeout(() => {
       setIsVisible(false);
       setIsAnimating(false);
-    }, 300);
+    }, 500);
   };
 
   const handleToggle = () => {
