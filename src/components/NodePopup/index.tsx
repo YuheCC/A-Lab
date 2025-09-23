@@ -94,7 +94,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                     return false;
                   }
 
-                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_ev' || key === 'esp_max_ev')) {
+                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV')) {
                     return false;
                   }
 
