@@ -97,7 +97,20 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
             } as React.CSSProperties : {}}
           >
             <div className="guide-tooltip-header">
-              <h3>Feature Guide</h3>
+              <div className="guide-tooltip-tabs">
+                <button
+                  className={`guide-tooltip-tab ${activeTab === 'introduction' ? 'active' : ''}`}
+                  onClick={() => handleTabChange('introduction')}
+                >
+                  Introduction
+                </button>
+                <button
+                  className={`guide-tooltip-tab ${activeTab === 'standard-properties' ? 'active' : ''}`}
+                  onClick={() => handleTabChange('standard-properties')}
+                >
+                  Properties
+                </button>
+              </div>
               <button
                 className="guide-tooltip-close"
                 onClick={handleClose}
@@ -106,20 +119,6 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-              </button>
-            </div>
-            <div className="guide-tooltip-tabs">
-              <button
-                className={`guide-tooltip-tab ${activeTab === 'introduction' ? 'active' : ''}`}
-                onClick={() => handleTabChange('introduction')}
-              >
-                Introduction
-              </button>
-              <button
-                className={`guide-tooltip-tab ${activeTab === 'standard-properties' ? 'active' : ''}`}
-                onClick={() => handleTabChange('standard-properties')}
-              >
-                Properties
               </button>
             </div>
             <div ref={contentRef} className="guide-tooltip-content">
