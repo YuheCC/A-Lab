@@ -270,7 +270,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr auto;
   gap: 16px;
-  align-items: end;
+  align-items: start;
 }
 
 .formulation-container .smiles-input-group {
@@ -282,6 +282,10 @@
 
 .formulation-container .fraction-input-group {
   flex: 1;
+  min-height: 68px; /* 与smiles-input-group保持一致的高度 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .formulation-container .smiles-input {
@@ -325,8 +329,8 @@
 
 .formulation-container .remove-button-group {
   display: flex;
-  align-items: end;
-  padding-bottom: 6px;
+  align-items: start;
+  padding-top: 32px; /* 与label高度和margin保持一致 */
   width: 32px;
   justify-content: center;
 }

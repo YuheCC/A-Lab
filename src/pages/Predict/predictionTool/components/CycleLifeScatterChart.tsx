@@ -18,17 +18,26 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       return {};
     }
 
-    // 散点图数据：显示最终预测的循环寿命
+    // 第一个散点图：真实容量变化数据（如果有的话）
+    const cycleDataSeries: any[] = [];
+    // 第二个散点图：预测的循环寿命
     const lifePredictionSeries: any[] = [];
 
     brcodeData.forEach((item) => {
       if (item.cycle_life_1 !== null) {
         const cycleLife = item.cycle_life_1;
 
-        // 只显示预测的循环寿命点，不生成模拟的容量变化过程
+        // 如果有真实的容量历史数据，添加到第一个系列
+        if (item.cycle_life_1_cycles_detail && typeof item.cycle_life_1_cycles_detail === 'object') {
+          Object.entries(item.cycle_life_1_cycles_detail).forEach(([cycle, capacity]) => {
+            cycleDataSeries.push([parseInt(cycle), capacity, item.barcode]);
+          });
+        }
+
+        // 预测的循环寿命点添加到第二个系列
         lifePredictionSeries.push([
           cycleLife,
-          item.capacity || 0, // 使用真实容量数据，如果没有则使用默认值
+          1.4, // 使用默认容量值，可以根据需要调整
           item.barcode
         ]);
       }
@@ -39,7 +48,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
 
     return {
       title: {
-        text: '电池循环寿命预测',
+        text: '电池容量随循环次数变化',
         left: 'center',
         textStyle: {
           fontSize: 16,
@@ -49,16 +58,20 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
-          const [cycle] = params.data;
+          const [cycle, capacity, barcode] = params.data;
+          const seriesName = params.seriesName;
           return `
             <div>
+              <strong>条码:</strong> ${barcode}<br/>
               <strong>循环次数:</strong> ${Math.round(cycle)}<br/>
+              <strong>容量:</strong> ${capacity ? capacity.toFixed(2) : 'N/A'}<br/>
+              <strong>类型:</strong> ${seriesName}
             </div>
           `;
         }
       },
       legend: {
-        data: ['预测循环寿命'],
+        data: ['容量变化过程', '预测循环寿命'],
         bottom: 10
       },
       grid: {
@@ -103,6 +116,24 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
         }
       },
       series: [
+        {
+          name: '容量变化过程',
+          type: 'scatter',
+          data: cycleDataSeries,
+          symbolSize: 4,
+          itemStyle: {
+            color: '#5470c6',
+            opacity: 0.7
+          },
+          emphasis: {
+            itemStyle: {
+              color: '#5470c6',
+              opacity: 1,
+              borderColor: '#fff',
+              borderWidth: 2
+            }
+          }
+        },
         {
           name: '预测循环寿命',
           type: 'scatter',
