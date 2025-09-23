@@ -20,6 +20,7 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const hasShown = localStorage.getItem(storageKey);
@@ -59,6 +60,14 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
       handleClose();
     } else {
       setIsVisible(true);
+    }
+  };
+
+  const handleTabChange = (tab: 'introduction' | 'standard-properties') => {
+    setActiveTab(tab);
+    // 重置滚动条位置到顶部
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
     }
   };
 
@@ -102,18 +111,18 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
             <div className="guide-tooltip-tabs">
               <button
                 className={`guide-tooltip-tab ${activeTab === 'introduction' ? 'active' : ''}`}
-                onClick={() => setActiveTab('introduction')}
+                onClick={() => handleTabChange('introduction')}
               >
                 Introduction
               </button>
               <button
                 className={`guide-tooltip-tab ${activeTab === 'standard-properties' ? 'active' : ''}`}
-                onClick={() => setActiveTab('standard-properties')}
+                onClick={() => handleTabChange('standard-properties')}
               >
                 Properties
               </button>
             </div>
-            <div className="guide-tooltip-content">
+            <div ref={contentRef} className="guide-tooltip-content">
               {activeTab === 'introduction' && (
                 <div className="guide-tab-panel">
                   {introductionContent || (
