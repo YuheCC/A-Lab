@@ -3,6 +3,7 @@ import { X, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getHistoryDetail, downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import CycleLifeScatterChart from './CycleLifeScatterChart';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [selectedBarcode, setSelectedBarcode] = useState<string | undefined>();
 
   // 当Modal打开且有fileRecord时，获取详细数据
   useEffect(() => {
@@ -153,12 +155,12 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                       <div className="stats-label">{t('predictionTool.results.batteryCount')}</div>
                       <div className="stats-value">{detailData.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                     </div>
-                    <div className="stats-card">
+                    {/* <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                       <div className="stats-value">
                         {(detailData.avg_cycle_life_1 || 0) >= 0 ? `${(detailData.avg_cycle_life_1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}
                       </div>
-                    </div>
+                    </div> */}
                     {/* <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                       <div className="stats-value">
@@ -180,7 +182,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="results-table-card">
                   <div className="results-table">
                     <table className="prediction-table">
@@ -192,7 +194,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                         </tr>
                       </thead>
                       <tbody>
-                        {detailData.brcode_data && detailData.brcode_data.length > 0 
+                        {detailData.brcode_data && detailData.brcode_data.length > 0
                           ? detailData.brcode_data.map((item) => {
                               // 当状态为fail且cycle_life为null时，显示fail_reason
                               const getCycleLife1Display = () => {
@@ -209,8 +211,15 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                                 return parseFloat((item.cycle_life_2 || 0).toString()).toFixed(0);
                               };
 
+                              const isSelected = selectedBarcode === item.barcode;
+
                               return (
-                                <tr key={item.id}>
+                                <tr
+                                  key={item.id}
+                                  className={isSelected ? 'selected-row' : ''}
+                                  onClick={() => setSelectedBarcode(item.barcode)}
+                                  style={{ cursor: 'pointer' }}
+                                >
                                   <td className="barcode-cell" title={item.barcode}>{item.barcode}</td>
                                   <td className="cycle-life-cell">{getCycleLife1Display()}</td>
                                   {/* <td className="cycle-life-cell">{getCycleLife2Display()}</td> */}
@@ -229,6 +238,25 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     </table>
                   </div>
                 </div>
+
+                {/* 散点图展示区域 */}
+                {detailData.brcode_data && detailData.brcode_data.length > 0 && (
+                  <div className="chart-section" style={{ marginTop: '24px' }}>
+                    <h4 className="section-title">电池容量变化图表</h4>
+                    <div className="chart-container" style={{
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      backgroundColor: '#ffffff'
+                    }}>
+                      <CycleLifeScatterChart
+                        brcodeData={detailData.brcode_data}
+                        selectedBarcode={selectedBarcode}
+                        onBarcodeSelect={setSelectedBarcode}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
