@@ -83,6 +83,10 @@ export default {
   // Results
   results: {
     title: "Cell Performance Prediction",
+    negativeTitle: "Negative",
+    positiveTitle: "Positive",
+    negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     temperatureTabs: {
       temp25: "25°C Performance",

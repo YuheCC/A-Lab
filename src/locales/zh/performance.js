@@ -84,6 +84,10 @@ export default {
   results: {
     title: "电池性能预测",
     titleTip: "负面（Negative）表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。\n正面（Positive）表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
+    negativeTitle: "负面 (Negative)",
+    positiveTitle: "正面 (Positive)",
+    negativeTip: "表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。",
+    positiveTip: "表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
     temperatureTabs: {
       temp25: "25°C 性能",
       temp45: "45°C 性能"
