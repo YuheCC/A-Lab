@@ -80,7 +80,12 @@ export default {
         uploadedData: "업로드된 데이터",
         predictionResults: "예측 결과",
         loadingDetail: "로딩 중...",
-        loadDetailFailed: "상세 데이터 가져오기에 실패했습니다"
+        loadDetailFailed: "상세 데이터 가져오기에 실패했습니다",
+        download: "다운로드",
+        downloading: "다운로드 중...",
+        downloadFile: "파일 다운로드",
+        downloadFailed: "파일 다운로드에 실패했습니다",
+        chartTitle: "배터리 용량 변화 차트"
     },
 
     // Error Messages

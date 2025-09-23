@@ -80,7 +80,12 @@ export default {
         uploadedData: "Uploaded Data",
         predictionResults: "Prediction Results",
         loadingDetail: "Loading...",
-        loadDetailFailed: "Failed to get detailed data"
+        loadDetailFailed: "Failed to get detailed data",
+        download: "Download",
+        downloading: "Downloading...",
+        downloadFile: "Download File",
+        downloadFailed: "Download file failed",
+        chartTitle: "Battery Capacity Change Chart"
     },
 
     // Error Messages

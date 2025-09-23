@@ -80,7 +80,12 @@ export default {
         uploadedData: "上传数据",
         predictionResults: "预测结果",
         loadingDetail: "加载中...",
-        loadDetailFailed: "获取详细数据失败"
+        loadDetailFailed: "获取详细数据失败",
+        download: "下载",
+        downloading: "下载中...",
+        downloadFile: "下载文件",
+        downloadFailed: "下载文件失败",
+        chartTitle: "电池容量变化图表"
     },
 
     // Error Messages

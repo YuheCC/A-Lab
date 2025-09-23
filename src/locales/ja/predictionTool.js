@@ -80,7 +80,12 @@ export default {
         uploadedData: "アップロード済みデータ",
         predictionResults: "予測結果",
         loadingDetail: "読み込み中...",
-        loadDetailFailed: "詳細データの取得に失敗しました"
+        loadDetailFailed: "詳細データの取得に失敗しました",
+        download: "ダウンロード",
+        downloading: "ダウンロード中...",
+        downloadFile: "ファイルダウンロード",
+        downloadFailed: "ファイルダウンロードに失敗しました",
+        chartTitle: "バッテリー容量変化チャート"
     },
 
     // Error Messages
