@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@mui/material';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
@@ -662,39 +663,60 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           )}
 
           <div className="form-group">
-            <label>
-              {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
-            </label>
-            <input
-              type="text"
-              value={additive}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                setAdditive(newValue);
-                
-                // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
-                const trimmedValue = newValue.trim();
-                if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
-                  setMoleculeDetails(null);
-                  setIsInvalidSmiles(false);
-                  if (!trimmedValue) {
-                    setLastQueriedSmiles(null);
-                  }
-                }
-                
-                // 分子式输入变化时，重置计算结果和LLM分析状态
-                if (predictionResults && trimmedValue !== lastQueriedSmiles) {
-                  setShowResults(false);
-                  setPredictionResults(null);
-                  setHasAnalysisResult(false);
-                  setAnalysisContent('');
-                  setIsAnalyzing(false);
-                }
-              }}
-              onBlur={handleSmilesBlur}
-              placeholder={t('performance.additive.placeholder')}
-              className="additive-input"
-            />
+            <div className="dual-input-row">
+              <div className="dual-input-item">
+                <label>
+                  {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
+                </label>
+                <input
+                  type="text"
+                  value={additive}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setAdditive(newValue);
+
+                    // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
+                    const trimmedValue = newValue.trim();
+                    if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
+                      setMoleculeDetails(null);
+                      setIsInvalidSmiles(false);
+                      if (!trimmedValue) {
+                        setLastQueriedSmiles(null);
+                      }
+                    }
+
+                    // 分子式输入变化时，重置计算结果和LLM分析状态
+                    if (predictionResults && trimmedValue !== lastQueriedSmiles) {
+                      setShowResults(false);
+                      setPredictionResults(null);
+                      setHasAnalysisResult(false);
+                      setAnalysisContent('');
+                      setIsAnalyzing(false);
+                    }
+                  }}
+                  onBlur={handleSmilesBlur}
+                  placeholder={t('performance.additive.placeholder')}
+                  className="additive-input"
+                />
+              </div>
+
+              <div className="dual-input-item">
+                <label>
+                  {t('performance.weightPercentage.label')}
+                  <Tooltip title={t('performance.weightPercentage.tooltip')} placement="top">
+                    <span className="info-icon">
+                      ⓘ
+                    </span>
+                  </Tooltip>
+                </label>
+                <input
+                  type="text"
+                  value="1.9"
+                  disabled
+                  className="weight-percentage-input"
+                />
+              </div>
+            </div>
           </div>
 
           {/* 分子详情显示区域 */}

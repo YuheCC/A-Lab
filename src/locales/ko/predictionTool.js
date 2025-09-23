@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "배터리 초기 수명 예측 도구",
+    title: "배터리 수명 예측",
     betaTag: "BETA",
 
     // Steps

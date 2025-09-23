@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "Battery Early Life Prediction Tool",
+    title: "Battery Life Prediction",
     betaTag: "BETA",
 
     // Steps

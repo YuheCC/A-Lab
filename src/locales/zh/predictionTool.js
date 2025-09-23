@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "电池早期生命预测工具",
+    title: "电池寿命预测",
     betaTag: "BETA",
 
     // Steps

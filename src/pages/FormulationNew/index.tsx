@@ -5,6 +5,7 @@ import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/for
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
+import GuideTooltip from './components/GuideTooltip';
 
 interface FormulationTableProps {}
 
@@ -104,7 +105,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   return (
     <div className="formulation-new-container">
       <div className="formulation-header">
-        <h1 className="formulation-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <div className="formulation-title-wrapper">
+          <h1 className="formulation-title">
+            {t('formulation.title', 'Salt & Solvent Configuration')}
+          </h1>
+          <GuideTooltip
+            storageKey="formulation-new-guide-shown"
+          />
+        </div>
         <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>
 

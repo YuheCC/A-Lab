@@ -11,7 +11,7 @@ export default {
     formulation: "配方",
     about: "关于",
     predictPerformance: "电芯性能预测",
-    predictionTool: "电池早期生命预测工具",
+    predictionTool: "电池寿命预测",
   },
   
   // Navbar links
