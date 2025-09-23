@@ -71,12 +71,12 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       },
       legend: {
         data: [t('predictionTool.chart.capacityProcess'), t('predictionTool.chart.predictedCycleLife')],
-        bottom: 10
+        bottom: '10',
       },
       grid: {
-        left: '10%',
-        right: '8%',
-        bottom: '15%',
+        left: '15%',
+        right: '10%',
+        bottom: '22%',
         top: '15%',
         containLabel: true
       },
