@@ -1,7 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@mui/material';
 import './ResultModal.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
+import { Info } from 'lucide-react';
 
 interface PredictionResult {
   id: string;
@@ -133,7 +135,26 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
           </div>
 
           <div className="result-section">
-            <h3>{t('performance.results.title')}</h3>
+            <h3>
+              {t('performance.results.title')}
+              <Tooltip
+                title={
+                  <div style={{ whiteSpace: 'pre-line' }}>
+                    {t('performance.results.titleTip')}
+                  </div>
+                }
+                placement="top"
+                classes={{ tooltip: 'white-tooltip' }}
+                arrow
+              >
+                <div className="tip-icon-container">
+                  <Info
+                    size={16}
+                    className="tip-icon"
+                  />
+                </div>
+              </Tooltip>
+            </h3>
             
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
