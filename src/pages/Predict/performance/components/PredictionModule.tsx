@@ -618,8 +618,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <option value="">{t('performance.batterySystemSelection.loading')}</option>
               ) : (
                 batterySystemOptions.map((system) => (
-                  <option key={system.id} value={system.name}>
-                    {system.name}
+                  <option
+                    key={system.id}
+                    value={Number(system.id) === 1 ? system.name : ""}
+                    disabled={Number(system.id) !== 1}
+                    style={Number(system.id) !== 1 ? { color: '#ccc' } : {}}
+                  >
+                    {system.name}{Number(system.id) !== 1 ? ' (Will be available soon)' : ''}
                   </option>
                 ))
               )}
