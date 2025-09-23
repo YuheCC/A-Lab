@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import type { Message } from '@/utils/messageUtils';
+import type { Message, ToolStats } from '@/utils/messageUtils';
 import { createAssistantMessage, isAssistantMessage, createUserMessage } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { useChat } from '../hooks/useChat';
@@ -45,6 +45,36 @@ const extractExtraData = (payload: any) => {
         extraData = extraData.extra_data;
     }
     return extraData;
+};
+
+const extractToolStats = (payload: any): ToolStats | undefined => {
+    const statsSource = payload?.tool_stats ?? payload?.toolStats;
+    if (!statsSource || typeof statsSource !== 'object') {
+        return undefined;
+    }
+
+    const parseStat = (value: any): number | undefined => {
+        if (value === undefined || value === null) return undefined;
+        if (typeof value === 'number') return value;
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : undefined;
+    };
+
+    const stats: ToolStats = {
+        papers_examined: parseStat(statsSource.papers_examined ?? statsSource.papersExamined),
+        papers_studied: parseStat(statsSource.papers_studied ?? statsSource.papersStudied),
+        molecules_considered: parseStat(statsSource.molecules_considered ?? statsSource.moleculesConsidered)
+    };
+
+    if (
+        stats.papers_examined === undefined &&
+        stats.papers_studied === undefined &&
+        stats.molecules_considered === undefined
+    ) {
+        return undefined;
+    }
+
+    return stats;
 };
 
 interface ChatContextType {
@@ -359,6 +389,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const incomingChatId = data?.chat_id ?? data?.chatId;
             const messageBody = data?.data ?? data;
             const extraData = extractExtraData(messageBody);
+            const toolStats = extractToolStats(messageBody);
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -403,12 +434,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         ...existingMessage,
                         content: botChunksRef.current[key],
                         showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
-                        ...(extraData ? { extraData } : {})
+                        ...(extraData ? { extraData } : {}),
+                        ...(toolStats ? { toolStats } : {})
                     } as Message
                     : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
                 if (extraData) {
                     (updatedMessage as Message).extraData = extraData;
+                }
+                if (toolStats) {
+                    (updatedMessage as Message).toolStats = toolStats;
                 }
 
                 // 使用精确更新，避免全量刷新
@@ -422,6 +457,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
                         upsertMessage({ ...existingMessage, extraData });
+                        break;
+                    }
+                }
+            }
+
+            if (toolStats && !(isChunk && chunk) && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, toolStats });
                         break;
                     }
                 }

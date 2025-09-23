@@ -5,14 +5,15 @@ import MessageEdit from '../MessageEdit';
 import './MessageList.css';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { 
-  Message, 
-  getMessageRole, 
-  isUserMessage, 
-  isAssistantMessage, 
+import {
+  Message,
+  getMessageRole,
+  isUserMessage,
+  isAssistantMessage,
   isSystemMessage,
   normalizeServerDate
 } from '@/utils/messageUtils';
+import type { ToolStats } from '@/utils/messageUtils';
 
 // 检查内容是否包含内联分子的辅助函数
 const hasInlineMolecules = (content: string): boolean => {
@@ -64,9 +65,9 @@ const SupplementalData: React.FC<{
 };
 
 // ExtraData展开/折叠组件，用于显示补充信息
-const ExtraDataSection: React.FC<{ 
-  title: string; 
-  content: string; 
+const ExtraDataSection: React.FC<{
+  title: string;
+  content: string;
   onMoleculeClick?: (moleculeName: string) => void;
 }> = ({ title, content, onMoleculeClick }) => {
   const [open, setOpen] = useState(false);
@@ -82,6 +83,41 @@ const ExtraDataSection: React.FC<{
           <MessageContentRenderer content={content} onMoleculeClick={onMoleculeClick} />
         </div>
       )}
+    </div>
+  );
+};
+
+const ToolStatsDisplay: React.FC<{ toolStats?: ToolStats }> = ({ toolStats }) => {
+  if (!toolStats) return null;
+
+  const statMappings: { key: keyof ToolStats; label: string }[] = [
+    { key: 'papers_examined', label: 'Papers examined' },
+    { key: 'papers_studied', label: 'Papers deeply studied' },
+    { key: 'molecules_considered', label: 'Molecules examined' }
+  ];
+
+  const items: { key: keyof ToolStats; label: string; value: number }[] = [];
+
+  statMappings.forEach(({ key, label }) => {
+    const rawValue = toolStats[key];
+    if (rawValue === undefined || rawValue === null || rawValue === 0) {
+      return;
+    }
+    items.push({ key, label, value: rawValue });
+  });
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="tool-stats">
+      {items.map(({ key, label, value }) => (
+        <div key={String(key)} className="tool-stats__item">
+          <span className="tool-stats__label">{label}</span>
+          <span className="tool-stats__value">{value.toLocaleString()}</span>
+        </div>
+      ))}
     </div>
   );
 };
@@ -436,6 +472,9 @@ const MessageList: FC<MessageListProps> = ({
             </div>
           ) : (
             <div className="message">
+              {isAssistantMessage(message) && (
+                <ToolStatsDisplay toolStats={message.toolStats} />
+              )}
               <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
               {/* 渲染extraData - 仅助手消息显示 */}
               {isAssistantMessage(message) && message.extraData && Object.keys(message.extraData).length > 0 && (
