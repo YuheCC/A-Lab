@@ -93,5 +93,7 @@ export const filterLabels = {
     commercial_score: "Commercial Viability",
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
-    chemical_formula: "Chemical Formula"
+    chemical_formula: "Chemical Formula",
+    vdw_volume_angstroms3: "Molecular Volume Å^3",
+    fluoride_bde_ev: "F Dissociation Energy, eV"
 };

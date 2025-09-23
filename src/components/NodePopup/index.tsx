@@ -99,6 +99,10 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                   if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
                     return false;
                   }
+
+                  if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
+                    return false;
+                  }
                   
                   return true;
                 })

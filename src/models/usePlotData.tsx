@@ -174,6 +174,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
+                        molecular_weight: row.MOLECULAR_WEIGHT,
                         CLUSTER: handleCluster(row.CLUSTER)
                     },
                     rawData: row
@@ -381,6 +382,8 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
+                        vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
+                        fluoride_bde_ev: row.FLUORIDE_BDE_EV,
                         CLUSTER: handleCluster(row.CLUSTER)
                     },
                     rawData: row
