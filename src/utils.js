@@ -106,7 +106,7 @@ export const redirectToLogin = () => {
 
 // Labels for filters
 export const filterLabels = {
-    molwt: "Molecular Weight",
+    molwt: "Molecular Weight（g/mol ）",
     homo_eV: "HOMO (eV)",
     lumo_eV: "LUMO (eV)",
     esp_max_eV: "Max ESP (eV)",
@@ -119,6 +119,6 @@ export const filterLabels = {
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
     chemical_formula: "Chemical Formula",
-    vdw_volume_angstroms3: "Molecular Volume Å^3",
-    fluoride_bde_ev: "F Dissociation Energy, eV"
+    vdw_volume_angstroms3: "Molecular Volume（Å^3）",
+    fluoride_bde_ev: "F Dissociation Energy（eV）"
 };
