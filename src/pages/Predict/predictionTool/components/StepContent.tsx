@@ -3,6 +3,7 @@ import { FileText, RefreshCw, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import CycleLifeScatterChart from './CycleLifeScatterChart';
 
 interface StepContentProps {
   activeStep: number;
@@ -399,6 +400,29 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 </div>
               )}
             </div>
+
+            {/* 散点图展示 */}
+            {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && (
+              <div className="scatter-chart-card" style={{
+                marginTop: '24px',
+                padding: '20px',
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <h4 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                  color: '#2d3748'
+                }}>
+                  {t('predictionTool.chart.title')}
+                </h4>
+                <CycleLifeScatterChart
+                  brcodeData={predictionResult.brcode_data}
+                />
+              </div>
+            )}
           </div>
         );
       

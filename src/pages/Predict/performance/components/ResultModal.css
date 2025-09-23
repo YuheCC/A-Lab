@@ -232,3 +232,47 @@
   margin: 0;
   text-align: justify;
 }
+
+/* Tip icon styles */
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 24px;
+  margin-left: 8px;
+}
+
+.tip-icon {
+  color: #6b7280;
+  cursor: help;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.tip-icon:hover {
+  color: #374151;
+}
+
+/* White tooltip styles */
+.white-tooltip .MuiTooltip-tooltip {
+  background-color: #ffffff !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  padding: 16px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  max-width: 280px !important;
+}
+
+.white-tooltip .MuiTooltip-arrow {
+  color: #ffffff !important;
+}
+
+.white-tooltip .MuiTooltip-arrow::before {
+  border: 1px solid #e5e7eb !important;
+  background-color: #ffffff !important;
+}

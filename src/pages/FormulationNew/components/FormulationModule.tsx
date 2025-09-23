@@ -271,13 +271,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
       const response = await runMDSimulation(params);
 
-      if (response && response.data) {
+      if (response && response.data && response.status < 300) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
         navigate('/formulation/result-tip');
         setCurrentView('results');
       } else {
-        throw new Error('Invalid response from MD simulation');
+        throw new Error(response?.data?.message || response?.data?.detail?.message || 'Invalid response from MD simulation');
       }
     } catch (error) {
       console.error('MD simulation failed:', error);
