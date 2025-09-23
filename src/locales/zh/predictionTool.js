@@ -55,7 +55,9 @@ export default {
         barcode: "Barcode",
         cycleLife1: "循环寿命",
         cycleLife2: "循环寿命2",
-        noDetailedData: "暂无详细条形码数据"
+        noDetailedData: "暂无详细条形码数据",
+        dataRequirementNotMet: "上传数据不符合要求。如需数据处理支持，请",
+        contactSupport: "联系我们"
     },
 
     // History
