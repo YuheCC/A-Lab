@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { getMDHistoryDetail, MDHistoryDetailResponse } from '@/services/formulation/md';
+import GuideTooltip from '../components/GuideTooltip';
 import './index.css';
 
 interface ResultData {
@@ -153,7 +154,12 @@ const DetailPage: React.FC = () => {
     return (
       <div className="detail-page-container">
         <div className="detail-header">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <div className="formulation-title-wrapper">
+            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+            <GuideTooltip
+              storageKey="formulation-new-guide-shown"
+            />
+          </div>
           <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
         </div>
         <div className="detail-content">
@@ -175,7 +181,12 @@ const DetailPage: React.FC = () => {
     return (
       <div className="detail-page-container">
         <div className="detail-header">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <div className="formulation-title-wrapper">
+            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+            <GuideTooltip
+              storageKey="formulation-new-guide-shown"
+            />
+          </div>
           <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
         </div>
         <div className="detail-content">
@@ -196,7 +207,12 @@ const DetailPage: React.FC = () => {
   return (
     <div className="detail-page-container">
       <div className="detail-header">
-        <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <div className="formulation-title-wrapper">
+          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <GuideTooltip
+            storageKey="formulation-new-guide-shown"
+          />
+        </div>
         <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
       </div>
 
