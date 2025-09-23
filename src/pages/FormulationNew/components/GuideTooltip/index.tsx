@@ -20,6 +20,7 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const hasShown = localStorage.getItem(storageKey);
@@ -62,6 +63,14 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
     }
   };
 
+  const handleTabChange = (tab: 'introduction' | 'standard-properties') => {
+    setActiveTab(tab);
+    // 重置滚动条位置到顶部
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  };
+
   return (
     <>
       <button
@@ -88,7 +97,7 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
             } as React.CSSProperties : {}}
           >
             <div className="guide-tooltip-header">
-              <h3>{t('formulation.guide.title', '功能说明')}</h3>
+              <h3></h3>
               <button
                 className="guide-tooltip-close"
                 onClick={handleClose}
@@ -102,18 +111,18 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
             <div className="guide-tooltip-tabs">
               <button
                 className={`guide-tooltip-tab ${activeTab === 'introduction' ? 'active' : ''}`}
-                onClick={() => setActiveTab('introduction')}
+                onClick={() => handleTabChange('introduction')}
               >
-                {t('formulation.guide.tabs.introduction', 'Introduction')}
+                Introduction
               </button>
               <button
                 className={`guide-tooltip-tab ${activeTab === 'standard-properties' ? 'active' : ''}`}
-                onClick={() => setActiveTab('standard-properties')}
+                onClick={() => handleTabChange('standard-properties')}
               >
-                {t('formulation.guide.tabs.standardProperties', 'Standard Properties')}
+                Properties
               </button>
             </div>
-            <div className="guide-tooltip-content">
+            <div ref={contentRef} className="guide-tooltip-content">
               {activeTab === 'introduction' && (
                 <div className="guide-tab-panel">
                   {introductionContent || (
@@ -128,10 +137,6 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
                         <div className="figure-caption">Figure 2. Snapshots of MD simulations at various concentrations</div>
                         <p>In this context, "formulation" refers to liquid electrolytes for Li⁺ batteries, where multiple solvents can be blended with customized additives or diluents. Using the SES MD analysis suite, illustrated in Figure 2, a full simulation run completes in about three days, after which you receive detailed property predictions for your chosen electrolyte mixtures—accelerating your design process with reliable insights.</p>
                       </div>
-                      <div className="guide-content-section">
-                        <img src="/formulation/introduction3.png" alt="Introduction" />
-                        <div className="figure-caption">Figure 3. Workflow for the computation of properties using MD simulations trajectories</div>
-                      </div>
                     </div>
                   )}
                 </div>
@@ -140,6 +145,10 @@ const GuideTooltip: React.FC<GuideTooltipProps> = ({
                 <div className="guide-tab-panel">
                   {standardPropertiesContent || (
                     <div>
+                      <div className="guide-content-section">
+                        <img src="/formulation/introduction3.png" alt="Introduction" />
+                        <div className="figure-caption">Figure 3. Workflow for the computation of properties using MD simulations trajectories</div>
+                      </div>
                       <div className="guide-content-section">
                         <table className="properties-table">
                           <thead>
