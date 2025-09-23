@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "选择文件",
         clickToUpload: "点击上传电池数据文件",
+        subtitle: "目前仅支持CSV格式文件，后续将支持更多文件类型",
         uploading: "正在上传文件...",
         waitText: "请稍候",
         dataFormatTip: "📋 数据格式要求",
