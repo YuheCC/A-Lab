@@ -91,6 +91,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+}
+
+.result-modal-content .info-row {
   margin-bottom: 16px;
 }
 
