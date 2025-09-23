@@ -111,18 +111,6 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
           </h1>
           <GuideTooltip
             storageKey="formulation-new-guide-shown"
-            content={
-              <div>
-                <p>{t('formulation.guide.content.intro', '此页面用于配置和管理电解质配方。')}</p>
-                <ul>
-                  <li>{t('formulation.guide.content.step1', '点击"New Analysis"创建新的分析')}</li>
-                  <li>{t('formulation.guide.content.step2', '配置盐和溶剂的成分及比例')}</li>
-                  <li>{t('formulation.guide.content.step3', '设置浓度参数')}</li>
-                  <li>{t('formulation.guide.content.step4', '查看历史记录和分析结果')}</li>
-                </ul>
-                <p>{t('formulation.guide.content.note', '完成配置后，系统将自动进行分子动力学模拟计算。')}</p>
-              </div>
-            }
           />
         </div>
         <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>

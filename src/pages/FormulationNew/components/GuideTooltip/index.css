@@ -164,3 +164,48 @@
   color: #10b981;
   font-weight: bold;
 }
+
+.guide-tooltip-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.guide-tooltip-tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.guide-tooltip-tab:hover {
+  color: #1e293b;
+}
+
+.guide-tooltip-tab.active {
+  color: #1890ff;
+  border-bottom-color: #1890ff;
+}
+
+.guide-tab-panel {
+  animation: fadeInPanel 0.3s ease-out;
+}
+
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
