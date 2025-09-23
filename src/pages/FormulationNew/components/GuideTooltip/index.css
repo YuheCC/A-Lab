@@ -125,18 +125,10 @@
 
 .guide-tooltip-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.guide-tooltip-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
+  margin-bottom: 8px;
+  padding-bottom: 0;
 }
 
 .guide-tooltip-close {
@@ -151,6 +143,7 @@
   color: #999;
   transition: all 0.2s ease;
   border-radius: 4px;
+  margin-bottom: 16px;
 }
 
 .guide-tooltip-close:hover {
@@ -187,8 +180,9 @@
 .guide-tooltip-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 16px;
 }
 
 .guide-tooltip-tab {
