@@ -196,7 +196,7 @@ const PredictionTool: React.FC = () => {
                   <div
                     key={step.id}
                     className="step-item"
-                    onClick={() => setCurrentStep(index)}
+                    // onClick={() => setCurrentStep(index)}
                     style={{ cursor: 'pointer' }}
                   >
                     <div className={`step-icon ${status}`}>

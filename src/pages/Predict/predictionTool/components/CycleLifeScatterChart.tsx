@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { useTranslation } from 'react-i18next';
 import { BarcodeData } from '@/services/prediction/predictionTool';
 
 interface CycleLifeScatterChartProps {
@@ -13,6 +14,8 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
   selectedBarcode,
   onBarcodeSelect
 }) => {
+  const { t } = useTranslation();
+
   const option = useMemo(() => {
     if (!brcodeData || brcodeData.length === 0) {
       return {};
@@ -48,7 +51,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
 
     return {
       title: {
-        text: '电池容量随循环次数变化',
+        text: t('predictionTool.chart.title'),
         left: 'center',
         textStyle: {
           fontSize: 16,
@@ -58,20 +61,16 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
-          const [cycle, capacity, barcode] = params.data;
-          const seriesName = params.seriesName;
+          const [cycle] = params.data;
           return `
             <div>
-              <strong>条码:</strong> ${barcode}<br/>
-              <strong>循环次数:</strong> ${Math.round(cycle)}<br/>
-              <strong>容量:</strong> ${capacity ? capacity.toFixed(2) : 'N/A'}<br/>
-              <strong>类型:</strong> ${seriesName}
+              <strong>${t('predictionTool.chart.cycleCount')}:</strong> ${Math.round(cycle)}<br/>
             </div>
           `;
         }
       },
       legend: {
-        data: ['容量变化过程', '预测循环寿命'],
+        data: [t('predictionTool.chart.capacityProcess'), t('predictionTool.chart.predictedCycleLife')],
         bottom: 10
       },
       grid: {
@@ -83,7 +82,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       },
       xAxis: {
         type: 'value',
-        name: '循环次数 (Cycle)',
+        name: t('predictionTool.chart.xAxisName'),
         nameLocation: 'center',
         nameGap: 30,
         axisLabel: {
@@ -102,7 +101,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       },
       yAxis: {
         type: 'value',
-        name: '放电容量',
+        name: t('predictionTool.chart.yAxisName'),
         nameLocation: 'center',
         nameGap: 50,
         nameTextStyle: {
@@ -117,7 +116,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       },
       series: [
         {
-          name: '容量变化过程',
+          name: t('predictionTool.chart.capacityProcess'),
           type: 'scatter',
           data: cycleDataSeries,
           symbolSize: 4,
@@ -135,7 +134,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           }
         },
         {
-          name: '预测循环寿命',
+          name: t('predictionTool.chart.predictedCycleLife'),
           type: 'scatter',
           data: adjustedLifePredictionSeries,
           symbolSize: 8,
@@ -156,7 +155,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
         }
       ]
     };
-  }, [brcodeData, selectedBarcode]);
+  }, [brcodeData, selectedBarcode, t]);
 
   const onChartClick = (params: any) => {
     if (params.data && params.data[2] && onBarcodeSelect) {

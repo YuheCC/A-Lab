@@ -91,6 +91,16 @@ export default {
         fileFormatError: "ファイル形式がサポートされていません、CSVまたはExcelファイルをアップロードしてください"
     },
 
+    // Chart
+    chart: {
+        title: "サイクル数によるバッテリー容量変化",
+        cycleCount: "サイクル数",
+        capacityProcess: "容量変化プロセス",
+        predictedCycleLife: "予測サイクル寿命",
+        xAxisName: "サイクル数 (Cycle)",
+        yAxisName: "放電容量"
+    },
+
     // Default Step
     default: {
         selectStep: "操作ステップを選択してください",

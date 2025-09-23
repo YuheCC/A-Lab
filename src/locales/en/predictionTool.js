@@ -91,6 +91,16 @@ export default {
         fileFormatError: "File format not supported, please upload CSV or Excel file"
     },
 
+    // Chart
+    chart: {
+        title: "Battery Capacity vs Cycle Count",
+        cycleCount: "Cycle Count",
+        capacityProcess: "Capacity Change Process",
+        predictedCycleLife: "Predicted Cycle Life",
+        xAxisName: "Cycle Count (Cycle)",
+        yAxisName: "Discharge Capacity"
+    },
+
     // Default Step
     default: {
         selectStep: "Please select operation step",

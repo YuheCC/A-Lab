@@ -91,6 +91,16 @@ export default {
         fileFormatError: "파일 형식이 지원되지 않습니다. CSV 또는 Excel 파일을 업로드해 주세요"
     },
 
+    // Chart
+    chart: {
+        title: "사이클 수에 따른 배터리 용량 변화",
+        cycleCount: "사이클 수",
+        capacityProcess: "용량 변화 과정",
+        predictedCycleLife: "예측 사이클 수명",
+        xAxisName: "사이클 수 (Cycle)",
+        yAxisName: "방전 용량"
+    },
+
     // Default Step
     default: {
         selectStep: "작업 단계를 선택해 주세요",

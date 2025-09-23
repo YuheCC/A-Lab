@@ -91,6 +91,16 @@ export default {
         fileFormatError: "文件格式不支持，请上传CSV或Excel文件"
     },
 
+    // Chart
+    chart: {
+        title: "电池容量随循环次数变化",
+        cycleCount: "循环次数",
+        capacityProcess: "容量变化过程",
+        predictedCycleLife: "预测循环寿命",
+        xAxisName: "循环次数 (Cycle)",
+        yAxisName: "放电容量"
+    },
+
     // Default Step
     default: {
         selectStep: "请选择操作步骤",
