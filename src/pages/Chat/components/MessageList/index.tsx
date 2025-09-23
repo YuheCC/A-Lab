@@ -50,7 +50,9 @@ const SupplementalData: React.FC<{
 
       {open && (
         <div className="extra-data-wrapper">
-          {Object.entries(data).map(([key, value]) => (
+          {Object.entries(data)
+            .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats')
+            .map(([key, value]) => (
             <ExtraDataSection
               key={key}
               title={key}
@@ -477,12 +479,19 @@ const MessageList: FC<MessageListProps> = ({
               )}
               <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
               {/* 渲染extraData - 仅助手消息显示 */}
-              {isAssistantMessage(message) && message.extraData && Object.keys(message.extraData).length > 0 && (
-                <SupplementalData
-                  data={message.extraData as Record<string, any>}
-                  onMoleculeClick={forwardMoleculeClick}
-                />
-              )}
+              {(() => {
+                if (!isAssistantMessage(message) || !message.extraData) return null;
+                const filteredEntries = Object.entries(message.extraData as Record<string, any>)
+                  .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
+                if (filteredEntries.length === 0) return null;
+                const filteredData = Object.fromEntries(filteredEntries);
+                return (
+                  <SupplementalData
+                    data={filteredData as Record<string, any>}
+                    onMoleculeClick={forwardMoleculeClick}
+                  />
+                );
+              })()}
             </div>
           )}
           {renderMessageActions(message)}
