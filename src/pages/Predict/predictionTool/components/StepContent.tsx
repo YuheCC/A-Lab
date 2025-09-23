@@ -307,10 +307,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <div className="stats-label">{t('predictionTool.results.batteryCount')}</div>
                   <div className="stats-value">{predictionResult.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                 </div>
-                <div className="stats-card">
+                {/* <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                   <div className="stats-value">{avgCycleLife1 >= 0 ? `${(avgCycleLife1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
-                </div>
+                </div> */}
                 {/* <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                   <div className="stats-value">{avgCycleLife2 >= 0 ? `${(avgCycleLife2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
@@ -390,7 +390,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                       marginLeft: '2px'
                     }}
                     onClick={() => {
-                      window.location.href = 'mailto:support@example.com?subject=Data Processing Support Request&body=Hello, I need help with data processing for battery life prediction.';
+                      window.location.href = 'mailto:partnership@ses.ai?subject=Data Processing Support Request&body=Hello, I need help with data processing for battery life prediction.';
                     }}
                   >
                     {t('predictionTool.results.contactSupport')}
