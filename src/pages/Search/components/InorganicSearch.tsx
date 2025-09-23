@@ -22,6 +22,7 @@ const API_URL = getAPIUrl();
 // 定义无机分子数据类型
 interface InorganicMoleculeData {
     smiles: string;
+    cation?: string;
     x: number;
     y: number;
     image?: string;
@@ -46,6 +47,7 @@ interface InorganicMoleculeData {
 
 interface InorganicSimilarMolecule {
     SMILES: string;
+    cation?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -90,6 +92,7 @@ const InorganicSearch = () => {
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
@@ -100,21 +103,10 @@ const InorganicSearch = () => {
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
     const inorganicFilterRef = useRef<InorganicFilterRef>(null);
     const [cathode, setCathode] = useState('');
-    const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
-    const [anodeCustom, setAnodeCustom] = useState('');
     const [salt, setSalt] = useState('');
-    const [saltCustom, setSaltCustom] = useState('');
     const [solvent, setSolvent] = useState('');
-    const [solventCustom, setSolventCustom] = useState('');
     const [metric, setMetric] = useState('');
-    const [metricCustom, setMetricCustom] = useState('');
-
-    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
-    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
-    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
-    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
-    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
 
     useEffect(() => {
         switch (selectedMolType) {
@@ -234,6 +226,7 @@ const InorganicSearch = () => {
                     formattedMolecules = data.molecule_details.map((mol: any) => {
                         return {
                             smiles: mol.SMILES,
+                            cation: mol.cation ?? mol.CATION,
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image,
@@ -327,13 +320,8 @@ const InorganicSearch = () => {
                         .filter((s) => !!s);
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
-                    const aVal = anode === 'custom' ? anodeCustom : anode;
-                    const sVal = salt === 'custom' ? saltCustom : salt;
-                    const svVal = solvent === 'custom' ? solventCustom : solvent;
-                    const mVal = metric === 'custom' ? metricCustom : metric;
                     const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
 
                     let computeToSend = computeLevel;
                     if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -342,7 +330,7 @@ const InorganicSearch = () => {
                         setComputeLevel('Low');
                     }
 
-                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
                     const parts: string[] = [baseQuery];
                     if (selectedMolType) {
                         parts.push(`I am looking for ${selectedMolType} molecules.`);
@@ -362,6 +350,7 @@ const InorganicSearch = () => {
                             structureWeight,
                             molType: molTypeToSend,
                             computeLevel: computeToSend,
+                            showHypothetical,
                             includeQuery,
                             queryString,
                             isInorganic: true,
@@ -507,48 +496,35 @@ const InorganicSearch = () => {
                             />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <FindFriendOptions
-                        findClosestFriends={findClosestFriends}
-                        setFindClosestFriends={setFindClosestFriends}
-                        extraRequests={extraRequests}
-                        setExtraRequests={setExtraRequests}
-                        showAdvanced={showAdvanced}
-                        setShowAdvanced={setShowAdvanced}
-                        selectedMolType={selectedMolType}
-                        setSelectedMolType={setSelectedMolType}
-                        additiveSubtype={additiveSubtype}
-                        setAdditiveSubtype={setAdditiveSubtype}
-                        computeLevel={computeLevel}
-                        setComputeLevel={setComputeLevel}
-                        structureWeight={structureWeight}
-                        setStructureWeight={setStructureWeight}
-                        cathode={cathode}
-                        setCathode={setCathode}
-                        cathodeCustom={cathodeCustom}
-                        setCathodeCustom={setCathodeCustom}
-                        anode={anode}
-                        setAnode={setAnode}
-                        anodeCustom={anodeCustom}
-                        setAnodeCustom={setAnodeCustom}
-                        salt={salt}
-                        setSalt={setSalt}
-                        saltCustom={saltCustom}
-                        setSaltCustom={setSaltCustom}
-                        solvent={solvent}
-                        setSolvent={setSolvent}
-                        solventCustom={solventCustom}
-                        setSolventCustom={setSolventCustom}
-                        metric={metric}
-                        setMetric={setMetric}
-                        metricCustom={metricCustom}
-                        setMetricCustom={setMetricCustom}
-                        cathodeOptions={cathodeOptions}
-                        anodeOptions={anodeOptions}
-                        saltOptions={saltOptions}
-                        solventOptions={solventOptions}
-                        performanceOptions={performanceOptions}
-                        userPermissions={userPermissions}
-                    />
+                            <FindFriendOptions
+                                findClosestFriends={findClosestFriends}
+                                setFindClosestFriends={setFindClosestFriends}
+                                extraRequests={extraRequests}
+                                setExtraRequests={setExtraRequests}
+                                showAdvanced={showAdvanced}
+                                setShowAdvanced={setShowAdvanced}
+                                selectedMolType={selectedMolType}
+                                setSelectedMolType={setSelectedMolType}
+                                additiveSubtype={additiveSubtype}
+                                setAdditiveSubtype={setAdditiveSubtype}
+                                computeLevel={computeLevel}
+                                setComputeLevel={setComputeLevel}
+                                structureWeight={structureWeight}
+                                setStructureWeight={setStructureWeight}
+                                showHypothetical={showHypothetical}
+                                setShowHypothetical={setShowHypothetical}
+                                cathode={cathode}
+                                setCathode={setCathode}
+                                anode={anode}
+                                setAnode={setAnode}
+                                salt={salt}
+                                setSalt={setSalt}
+                                solvent={solvent}
+                                setSolvent={setSolvent}
+                                metric={metric}
+                                setMetric={setMetric}
+                                userPermissions={userPermissions}
+                            />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -581,6 +557,7 @@ const InorganicSearch = () => {
                                                 name={t('search.moleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
@@ -657,6 +634,7 @@ const InorganicSearch = () => {
                                                 name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),

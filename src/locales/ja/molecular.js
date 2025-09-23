@@ -28,7 +28,6 @@ export default {
     functionalGroupList: "エーテル、ケタール、炭酸エステル、エステル",
     unknown: "不明",
     types: {
-      all: "すべてのタイプ",
       solvent: "溶媒",
       cosolvent: "共溶媒",
       diluent: "希釈剤",

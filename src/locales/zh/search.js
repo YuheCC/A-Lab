@@ -8,14 +8,41 @@ export default {
     },
     
     // Search Input
-    searchPlaceholder: "输入SMILES字符串、分子名称或查询条件",
+    searchPlaceholder: "输入SMILES字符串、分子名称或性质查询",
     searchButton: "搜索",
     searchTooltip: '<p>有效查询可以搜索分子的任何数值属性。例如：</p><p>- "查找HOMO最多为-8的所有分子"<br/>- "查找LUMO至少为-2且分子量最多为200的所有分子"</p><p>对于更开放式的查询，请使用智能问答功能。</p><p>要绘制和查找SMILES字符串，请点击此图标或访问 <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "绘制分子",
     
     // Search Options
     findFriendsLabel: '查找"朋友"',
-    findFriendsDescription: '具有相似物理化学性质的分子。"朋友"有意包括一些具有相似结构的分子和一些具有不同结构的分子。列表按与查询分子物理化学性质的相似程度排序。',
+    findFriendsDescription: '与您输入的分子具有相似结构，并且在理论上与以下电池使用场景相兼容的物理化学性质的分子：',
+
+    searchRange: '搜索范围',
+    nearbyFriends: '附近的朋友',
+    distantFriends: '远处的朋友',
+    advancedOptions: '高级选项',
+    intelligentCompute: '智能找朋友计算',
+    intelligentFindFriendsLabel: '智能找"朋友"',
+    intelligentFindFriendsTooltip: '使用大型语言模型检查数百种分子，为您的应用寻找更相关的候选。提高计算能力，并填写（高级选项中的）电池系统信息，以获得最佳效果。',
+    showHypothetical: '显示假想分子',
+    showHypotheticalTooltip: '包括由我们的算法生成但未收录于公开目录的候选分子；其可用性和可合成性无法确定。',
+    computeDisabled: '禁用',
+    computeLow: '低',
+    computeMedium: '中',
+    computeHigh: '高',
+    computeExtreme: '极致',
+    cathode: '正极',
+    anode: '负极',
+    salt: '盐',
+    solvent: '主要溶剂',
+    performanceMetric: '期望性能指标',
+    extraRequests: '自定义分子约束（为了获得最佳结果，请启用智能找朋友）：',
+    extraRequestsPlaceholder: '仅显示含醚官能团的分子。',
+    custom: '自定义',
+    upgradeEnterprise: '升级到企业级账户',
+    upgradeAccount: '升级账户',
+    computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
+    batteryInfoRecommendation: '推荐的电池信息可帮助智能找朋友为您找到最相关的分子：',
     
     searchRange: '搜索范围',
     nearbyFriends: '附近的朋友',
@@ -118,4 +145,4 @@ export default {
     ambiguousQuery: {
         message: "您的查询存在歧义。缩写 {{query}} 可能对应以下任一分子：{{options}}。请细化您的查询。"
     }
-}; 
+};

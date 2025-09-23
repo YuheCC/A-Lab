@@ -8,7 +8,7 @@ export default {
     },
     chat: {
         newChat: "新しいチャット",
-        newExpoler: "新しい探索",
+        newExpoler: "新しいチャット",
         newChatSubtitle: "新しい会話を始めて、分子宇宙の神秘を探求しましょう",
         searchChat: "チャット検索",
         historyTitle: "チャット履歴",
@@ -25,10 +25,21 @@ export default {
         modes: {
             regular: "通常の質問",
             deepSpace: "ディープスペース",
+            lightning: "ライトニング",
+            ask: "プロ",
+            fastDeepSpace: "高速ディープスペース",
             regularDescription: "基本的なQ&Aモード。日常的なバッテリー関連の質問に適しています。正確で簡潔な回答を提供します。",
             deepSpaceDescription: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
+            lightningDescription: "最低計算量で素早い回答。",
+            askDescription: "最大計算量で最高品質の回答。",
+            fastDeepSpaceDescription: "少ない計算リソースでより迅速な結果を得るためのマルチエージェント研究。",
             regularRemaining: "今日の残り: {{count}}回",
             deepSpaceRemaining: "今月の残り: {{count}}回",
+            lightningLimitLabel: "Ask Lightning 本日の残り: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask プロ 本日の残り: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "ディープスペース 今月の残り: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: "無料版では性能の低いLLMを使用しています。最も強力なモデルを利用するにはアップグレードしてください。",
             betaBadge: "ベータ"
         },
         recommendedQuestions: [
@@ -76,8 +87,7 @@ export default {
         enterDeepSpace: "ディープスペースに入る (ベータ版)",
         deepSpaceTooltip: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
         admin: "管理者",
-        fullDeepSpace: "フルディープスペース",
-        disableTools: "ツールを無効にする"
+        fullDeepSpace: "フルディープスペース"
     },
     queryLimit: {
         queriesRemaining: "今日の残りクエリ数：",

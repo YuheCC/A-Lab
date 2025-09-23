@@ -748,8 +748,9 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="molecule-content">
                   <div className="molecule-structure">
                     {moleculeDetails.properties.smiles ? (
-                      <MolViewer2D 
-                        smile={moleculeDetails.properties.smiles} 
+                      <MolViewer2D
+                        smile={moleculeDetails.properties.smiles}
+                        cation={moleculeDetails.properties.cation}
                         theme="light"
                       />
                     ) : (

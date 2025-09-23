@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { Tooltip } from '@mui/material';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -35,8 +37,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
+    const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
     const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
     const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
@@ -54,8 +57,20 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return 'Low';
     }, [userPermissions]);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+
+    const toggleAdvancedOptions = () => {
+        setShowAdvanced(prev => !prev);
+    };
+
+    const handleAdvancedToggleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleAdvancedOptions();
+        }
+    };
 
     const handleClose = () => {
         onClose?.();
@@ -174,9 +189,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         }));
     };
 
-    const renderMoleculeStructure = (smiles?: string) => {
+    const renderMoleculeStructure = (smiles?: string, cation?: string) => {
         return smiles ? (
-            <MolViewer2D smile={smiles} />
+            <MolViewer2D smile={smiles} cation={cation} />
         ) : (
             <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('molecular.molCard.loading')}
@@ -246,7 +261,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">
-                        {renderMoleculeStructure((properties as MoleculeProperties).smiles)}
+                        {renderMoleculeStructure((properties as MoleculeProperties).smiles, (properties as MoleculeProperties).cation)}
                     </div>
                 </div>
                 <div className="molecule-card-properties">
@@ -343,8 +358,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             value={selectedMoleculeType}
                             onChange={handleMoleculeTypeChange}
                         >
-                            <option value="all">{t('molecular.moleculeModal.types.all')}</option>
                             <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                            <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
                             <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
                             <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
                         </select>
@@ -363,41 +378,77 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
                         </button>
                     </div>
-                    {
-                        ShowFindFriendsAdvancedOptions && (
-                            <div 
-                                className="advanced-options-toggle"
-                                onClick={() => setShowAdvanced(!showAdvanced)}
-                                style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'flex-end', 
-                                    cursor: 'pointer', 
-                                    marginTop: '8px',
-                                    padding: '6px 8px',
-                                    background: '#f1f5f9',
-                                    border: '1px solid #e2e8f0',
-                                    borderRadius: '6px',
-                                    fontSize: '12px',
-                                    fontWeight: '500',
-                                    color: '#64748b',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = '#e2e8f0';
-                                    e.currentTarget.style.color = '#374151';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = '#f1f5f9';
-                                    e.currentTarget.style.color = '#64748b';
-                                }}
+                    {selectedMoleculeType === 'additive' && (
+                        <div style={{ marginTop: '8px' }}>
+                            <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
+                            <select
+                                value={selectedAdditiveSubtype}
+                                onChange={handleAdditiveSubtypeChange}
+                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
                             >
-                                <span>{t('search.advancedOptions')}</span>
-                                {showAdvanced ? <ChevronUp size={14} style={{ marginLeft: '4px' }} /> : <ChevronDown size={14} style={{ marginLeft: '4px' }} />}
-                            </div>
-                        )
-                    }
-                    
+                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
+                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
+                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
+                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
+                            </select>
+                        </div>
+                    )}
+                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                        <Tooltip title={t('search.intelligentFindFriendsTooltip')} placement="top">
+                            <Info size={16} style={{ cursor: 'help' }} />
+                        </Tooltip>
+                        <select
+                            value={computeLevel}
+                            onChange={(event) => setComputeLevel(event.target.value)}
+                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                        >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option
+                                value="Medium"
+                                disabled={userPermissions === 'research'}
+                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                            >
+                                {t('search.computeMedium')}
+                                {userPermissions === 'research' ? ' 🔒' : ''}
+                            </option>
+                            <option
+                                value="High"
+                                disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                                title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                            >
+                                {t('search.computeHigh')}
+                                {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                            </option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                    </div>
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={showAdvanced}
+                        onClick={toggleAdvancedOptions}
+                        onKeyDown={handleAdvancedToggleKeyDown}
+                        style={{
+                            marginTop: '12px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            cursor: 'pointer',
+                            color: '#2563eb',
+                            fontWeight: 500,
+                            fontSize: '13px',
+                            border: '1px solid #2563eb',
+                            borderRadius: '6px',
+                            padding: '6px 10px',
+                            backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                            transition: 'background-color 0.2s',
+                        }}
+                    >
+                        <span>{t('search.advancedOptions')}</span>
+                        {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
                             extraRequests={extraRequests}
@@ -407,9 +458,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             additiveSubtype={selectedAdditiveSubtype}
                             setAdditiveSubtype={setSelectedAdditiveSubtype}
                             computeLevel={computeLevel}
-                            setComputeLevel={setComputeLevel}
                             structureWeight={structureWeight}
                             setStructureWeight={setStructureWeight}
+                            showHypothetical={showHypothetical}
+                            setShowHypothetical={setShowHypothetical}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
                         />
@@ -423,6 +475,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     // 将后端字段映射到面板展示字段
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
+        const cation = raw?.cation ?? raw?.CATION;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -437,6 +490,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles,
+            cation,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
@@ -457,6 +511,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles: moleculeData.SMILES,
+            cation: moleculeData.cation,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,
@@ -488,9 +543,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const payload: any = {
             smiles,
             use_35m: isHighTier,
-            structure_weight: structureWeight
+            structure_weight: structureWeight,
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
         };
-        if (molType && molType !== 'all') {
+        if (molType) {
             payload.mol_type = molType;
         }
         if (computeLevel !== 'Disabled') {
@@ -547,7 +603,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const items = Array.isArray(data?.similar_molecules) ? data.similar_molecules : [];
         const mapped: SimilarMolecule[] = items.map((it: any) => ({
             name: it?.name || it?.SMILES || 'Unknown',
-            properties: mapDetailsToProperties(it)
+            properties: mapDetailsToProperties(it),
+            grade: it?.grade,
+            reasoning: it?.reasoning,
         }));
         return { list: mapped, raws: items };
     };

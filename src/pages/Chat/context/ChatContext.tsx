@@ -11,7 +11,28 @@ import { useMoleculePanel } from '../hooks/useMoleculePanel';
 import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify';
+
+type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
+
+interface ModeLimitInfo {
+    limit?: number | null;
+    remaining?: number | null;
+    used?: number | null;
+}
+
+interface ModeLimits {
+    lightning?: ModeLimitInfo;
+    pro?: ModeLimitInfo;
+    deepSpace?: ModeLimitInfo;
+}
+
+const extractExtraData = (payload: any) => {
+    let extraData = payload?.extra_outputs ?? payload?.extra_output ?? payload?.extraData ?? payload?.extra_data;
+    if (extraData && typeof extraData === 'object' && 'extra_data' in extraData) {
+        extraData = extraData.extra_data;
+    }
+    return extraData;
+};
 
 interface ChatContextType {
     messages: Message[];
@@ -23,8 +44,10 @@ interface ChatContextType {
     wsConnected: boolean;
     hasMoreHistory: boolean;
     loadingMoreHistory: boolean;
-    remainingQueries: number;
-    remainingDeepSpaceQueries: number;
+    remainingQueries: number | null;
+    remainingLightningQueries: number | null;
+    remainingDeepSpaceQueries: number | null;
+    modeLimits: ModeLimits;
     fetchQueryLimit: () => Promise<void>;
     handleSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
     onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => Promise<void>;
@@ -132,31 +155,105 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const upsertMessage = upsertMessageFromHook;
 
     // 使用次数相关状态
-    const [remainingQueries, setRemainingQueries] = useState(0);
-    const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState(0);
+    const [remainingQueries, setRemainingQueries] = useState<number | null>(null);
+    const [remainingLightningQueries, setRemainingLightningQueries] = useState<number | null>(null);
+    const [remainingDeepSpaceQueries, setRemainingDeepSpaceQueries] = useState<number | null>(null);
+    const [modeLimits, setModeLimits] = useState<ModeLimits>({});
 
     // 获取使用次数限制
     const fetchQueryLimit = useCallback(async () => {
-        if (userPermissions === 'research' || true) {
-            try {
-                const API_URL = getAPIUrl();
-                const response = await authFetch(`${API_URL}/query_limit`, {
-                    method: "GET",
-                    headers: { 
-                        "Content-Type": "application/json"
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    setRemainingQueries(data.query_limit);
-                    setRemainingDeepSpaceQueries(data.ds_limit);
-                } else {
-                    console.error("Failed to fetch query limit");
+        try {
+            const API_URL = getAPIUrl();
+            const response = await authFetch(`${API_URL}/query_limit`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
-            } catch (error) {
-                console.error("Error fetching query limit:", error);
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                const normalizeLimitInfo = (info: any): ModeLimitInfo | undefined => {
+                    if (!info && info !== 0) {
+                        return undefined;
+                    }
+                    const limitValue = typeof info?.limit === 'number' ? info.limit : info?.limit === null ? null : undefined;
+                    const remainingValue = typeof info?.remaining === 'number' ? info.remaining : info?.remaining === 0 ? 0 : undefined;
+                    const usedValue = typeof info?.used === 'number' ? info.used : info?.used === 0 ? 0 : undefined;
+
+                    if (limitValue === undefined && remainingValue === undefined && usedValue === undefined) {
+                        return undefined;
+                    }
+
+                    return {
+                        limit: limitValue ?? null,
+                        remaining: remainingValue ?? null,
+                        used: usedValue ?? null,
+                    };
+                };
+
+                const proLimit = normalizeLimitInfo(data?.ask_limits?.high);
+                const lightningLimit = normalizeLimitInfo(data?.ask_limits?.low);
+
+                const extractDeepSpaceInfo = (): ModeLimitInfo | undefined => {
+                    const possibleContainers = [
+                        data?.deep_space_limits,
+                        data?.ds_limits,
+                        data?.deep_space_limit,
+                    ];
+                    let deepLimit: number | null | undefined;
+                    let deepRemaining: number | null | undefined;
+
+                    for (const container of possibleContainers) {
+                        if (deepLimit === undefined && container && typeof container?.limit === 'number') {
+                            deepLimit = container.limit;
+                        } else if (deepLimit === undefined && container && container?.limit === null) {
+                            deepLimit = null;
+                        }
+                        if (deepRemaining === undefined && container && typeof container?.remaining === 'number') {
+                            deepRemaining = container.remaining;
+                        }
+                    }
+
+                    if (deepRemaining === undefined && typeof data?.ds_limit === 'number') {
+                        deepRemaining = data.ds_limit;
+                    } else if (deepRemaining === undefined && data?.ds_limit === null) {
+                        deepRemaining = null;
+                    }
+
+                    if (deepLimit === undefined && typeof data?.ds_limit_total === 'number') {
+                        deepLimit = data.ds_limit_total;
+                    }
+
+                    if (deepLimit === undefined && deepRemaining === undefined) {
+                        return undefined;
+                    }
+
+                    return {
+                        limit: deepLimit ?? null,
+                        remaining: deepRemaining ?? null,
+                    };
+                };
+
+                const deepSpaceLimit = extractDeepSpaceInfo();
+
+                setModeLimits({
+                    pro: proLimit,
+                    lightning: lightningLimit,
+                    deepSpace: deepSpaceLimit,
+                });
+
+                const fallbackProRemaining = typeof data?.query_limit === 'number' ? data.query_limit : null;
+                setRemainingQueries(proLimit?.remaining ?? fallbackProRemaining);
+                setRemainingLightningQueries(lightningLimit?.remaining ?? null);
+                const deepSpaceRemaining = typeof data?.ds_limit === 'number' ? data.ds_limit : deepSpaceLimit?.remaining ?? null;
+                setRemainingDeepSpaceQueries(deepSpaceRemaining);
+            } else {
+                console.error("Failed to fetch query limit");
             }
+        } catch (error) {
+            console.error("Error fetching query limit:", error);
         }
     }, [userPermissions]);
 
@@ -248,6 +345,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // 统一拿 chat_id 与消息体
             const incomingChatId = data?.chat_id ?? data?.chatId;
             const messageBody = data?.data ?? data;
+            const extraData = extractExtraData(messageBody);
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -287,16 +385,33 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
                 
                 // 如果找到现有消息，保持其原有的时间戳和其他属性
-                const updatedMessage = existingMessage 
+                const updatedMessage = existingMessage
                     ? {
                         ...existingMessage,
                         content: botChunksRef.current[key],
-                        showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage
+                        showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
+                        ...(extraData ? { extraData } : {})
                     } as Message
                     : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
+                if (extraData) {
+                    (updatedMessage as Message).extraData = extraData;
+                }
+
                 // 使用精确更新，避免全量刷新
                 upsertMessage(updatedMessage);
+            }
+
+            if (extraData && !(isChunk && chunk) && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, extraData });
+                        break;
+                    }
+                }
             }
 
             if (isDone) {
@@ -357,11 +472,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             numRagResults: ragResultsCount 
         };
         
-        if(mode === 'regular'){
+        if (['regular','lightning','ask'].includes(mode)) {
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        }else if(mode === 'deep-space'){
+        } else if (mode === 'deep-space') {
             await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        }else if(mode === 'clarify'){
+        } else if (mode === 'clarify') {
             await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }
     }, [ragResultsCount, ragModel]);
@@ -471,7 +586,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // 先本地显示用户消息
         const userMsg = createUserMessage(message);
         addUserMessage(userMsg);
-        
+
+        const originalMode = extra?.originalMode as ChatMode | undefined;
+
         // 从extra参数中提取管理员开关参数
         const extraOptions = extra ? {
             ragEnabled: extra.ragEnabled,
@@ -479,9 +596,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             fullDeepSpace: extra.dump_state,
             toolsEnabled: extra.toolsEnabled,
             patentRagEnabled: extra.patentRagEnabled,
+            llmComputePower: extra.llmComputePower,
             numRagResults: ragResultsCount
-        } : { numRagResults: ragResultsCount };
-        
+        } : { numRagResults: ragResultsCount, llmComputePower: extra?.llmComputePower };
+
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
@@ -490,11 +608,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
             const newChatId = await createNewChat(message, mode, extraOptions);
             if (newChatId) {
-                const urlMode = mode === "clarify" ? "deep-space" : mode;
+                const urlMode = originalMode || (mode === "clarify" ? "deep-space" : mode);
                 navigate(`/ask/${newChatId}?mode=${urlMode}`);
             }
         }
-    }, [addUserMessage, createNewMessage, messages, createNewChat, navigate]);
+    }, [addUserMessage, createNewMessage, messages, createNewChat, navigate, ragResultsCount]);
 
     const handleEditMessage = useCallback((messageId: string, newText: string) => {
         editMessage(messageId, newText);
@@ -676,7 +794,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasMoreHistory,
         loadingMoreHistory,
         remainingQueries,
+        remainingLightningQueries,
         remainingDeepSpaceQueries,
+        modeLimits,
         fetchQueryLimit,
         handleSendMessage,
         onSendMessage: (message: string, mode: ChatMode, chatId?: number, extra?: Record<string, any>) => handleSendMessage(message, mode, chatId, extra),

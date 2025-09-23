@@ -26,7 +26,9 @@ export default {
         function: "機能",
         functionOptions: {
             map: "マップ",
-            regularAsk: "通常の質問",
+            lightning: "ライトニング",
+            ask: "プロ",
+            fastDeepSpace: "高速ディープスペース",
             deepSpace: "ディープスペース",
             search: "検索",
             filter: "フィルター",

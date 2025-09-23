@@ -29,8 +29,14 @@
 #### 模式相关文案 (`chatbox.chat.modes`)
 - `regular`: Regular Ask
 - `deepSpace`: Deep Space
+- `lightning`: Lightning
+- `ask`: Pro
+- `fastDeepSpace`: Fast Deep Space
 - `regularDescription`: 常规模式描述
 - `deepSpaceDescription`: 深度搜索模式描述
+- `lightningDescription`: Lightning模式描述
+- `askDescription`: Ask模式描述
+- `fastDeepSpaceDescription`: Fast Deep Space模式描述
 - `regularRemaining`: 今日剩余次数
 - `deepSpaceRemaining`: 本月剩余次数
 - `betaBadge`: Beta标识

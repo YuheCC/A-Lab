@@ -7,8 +7,8 @@ export default {
         sendButton: "发送"
     },
     chat: {
-        newChat: "新探索",
-        newExpoler: "新探索",
+        newChat: "新聊天",
+        newExpoler: "新聊天",
         newChatSubtitle: "开始一段新的对话，探索分子宇宙的奥秘",
         searchChat: "搜索对话",
         historyTitle: "历史对话",
@@ -27,10 +27,20 @@ export default {
         modes: {
             regular: "常规问答",
             deepSpace: "深度搜索",
+            lightning: "闪电",
+            ask: "专业版",
+            fastDeepSpace: "快速 Deep Space",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
-            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
-            regularRemaining: "今日剩余: {{count}}次",
+            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
+            lightningDescription: "最低算力，极速回复。",
+            askDescription: "高算力，提供最佳答案。",
+            fastDeepSpaceDescription: "较低算力的多智能体研究，可实现更快速的结果。",            regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
+            lightningLimitLabel: "Ask 闪电今日剩余: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask 专业版今日剩余: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "深度搜索本月剩余: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: "免费版使用较弱的大模型，请升级以使用最强大的模型。",
             betaBadge: "Beta"
         },
         recommendedQuestions: [
@@ -76,7 +86,7 @@ export default {
         ignoreChatHistory: "忽略聊天历史",
         disableLiteratureSearch: "禁用文献搜索",
         enterDeepSpace: "进入深度搜索 (BETA)",
-        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
         admin: "管理员",
         fullDeepSpace: "全深度搜索",
         disableTools: "禁用工具"
@@ -96,7 +106,7 @@ export default {
         noMoleculesFound: "未找到分子。",
         findMoleculesFailed: "查找分子失败。请稍后再试。",
         clarifyingQuestions: "我们可能会要求您稍后回答一些澄清问题。",
-        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要10-20分钟才能响应。"
+        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要20-40分钟才能响应。"
     },
     buttons: {
         findMolecules: "查找分子",

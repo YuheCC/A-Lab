@@ -109,16 +109,16 @@ const ThirdSearch: React.FC = () => {
         justifyContent: 'center'
     };
 
-    const materialsButtonStyle: React.CSSProperties = {
-        backgroundColor: '#f8f9fa',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        padding: '8px 16px',
-        fontSize: '14px',
-        color: '#555',
-        cursor: 'pointer',
-        fontWeight: '500'
-    };
+     const materialsButtonStyle: React.CSSProperties = {
+         backgroundColor: '#f8f9fa',
+         border: '1px solid #ddd',
+         borderRadius: '4px',
+         padding: '8px 16px',
+         fontSize: '14px',
+         color: '#555',
+         cursor: 'pointer',
+         fontWeight: '500'
+     };
 
     // 自定义输入框样式，完全覆盖库的样式
     const customInputStyle: React.CSSProperties = {
@@ -428,18 +428,18 @@ const ThirdSearch: React.FC = () => {
         margin: '10px 0'
     };
 
-    const noResultsStyle: React.CSSProperties = {
-        textAlign: 'center',
-        padding: '60px 40px',
-        color: '#666',
-        fontSize: '16px',
-        fontStyle: 'italic',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '12px',
-        border: '2px dashed #dee2e6',
-        margin: '40px 0',
-        lineHeight: '1.6'
-    };
+const noResultsStyle: React.CSSProperties = {
+    textAlign: 'center',
+    padding: '60px 40px',
+    color: '#666',
+    fontSize: '16px',
+    fontStyle: 'italic',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '12px',
+    border: '2px dashed #dee2e6',
+    margin: '40px 0',
+    lineHeight: '1.6'
+};
 
     // 分页组件样式
     const paginationContainerStyle: React.CSSProperties = {
@@ -694,9 +694,9 @@ const ThirdSearch: React.FC = () => {
                                         showSubmitButton={false}
                                     />
                                 </div>
-                            </>
-                        )
-                    }   
+                             </>
+                         )
+                     }   
 
                     {/* 搜索结果展示区域 */}
                     <div style={resultsContainerStyle}>
@@ -774,29 +774,29 @@ const ThirdSearch: React.FC = () => {
                                     {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })} ({t('thirdSearch.totalItems', { count: totalCount })})
                                 </div>
 
-                                {/* 页码按钮 */}
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                    let pageNum;
-                                    if (totalPages <= 5) {
-                                        pageNum = i + 1;
-                                    } else if (currentPage <= 3) {
-                                        pageNum = i + 1;
-                                    } else if (currentPage >= totalPages - 2) {
-                                        pageNum = totalPages - 4 + i;
-                                    } else {
-                                        pageNum = currentPage - 2 + i;
-                                    }
+                                 {/* 页码按钮 */}
+                                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                     let pageNum;
+                                     if (totalPages <= 5) {
+                                         pageNum = i + 1;
+                                     } else if (currentPage <= 3) {
+                                         pageNum = i + 1;
+                                     } else if (currentPage >= totalPages - 2) {
+                                         pageNum = totalPages - 4 + i;
+                                     } else {
+                                         pageNum = currentPage - 2 + i;
+                                     }
 
-                                    return (
-                                        <button
-                                            key={pageNum}
-                                            style={currentPage === pageNum ? activePageButtonStyle : paginationButtonStyle}
-                                            onClick={() => handlePageChange(pageNum)}
-                                        >
-                                            {pageNum}
-                                        </button>
-                                    );
-                                })}
+                                     return (
+                                         <button
+                                             key={pageNum}
+                                             style={currentPage === pageNum ? activePageButtonStyle : paginationButtonStyle}
+                                             onClick={() => handlePageChange(pageNum)}
+                                         >
+                                             {pageNum}
+                                         </button>
+                                     );
+                                 })}
 
                                 {/* 下一页按钮 */}
                                 <button
