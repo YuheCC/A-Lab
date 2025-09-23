@@ -80,7 +80,12 @@ export default {
         uploadedData: "アップロード済みデータ",
         predictionResults: "予測結果",
         loadingDetail: "読み込み中...",
-        loadDetailFailed: "詳細データの取得に失敗しました"
+        loadDetailFailed: "詳細データの取得に失敗しました",
+        download: "ダウンロード",
+        downloading: "ダウンロード中...",
+        downloadFile: "ファイルダウンロード",
+        downloadFailed: "ファイルダウンロードに失敗しました",
+        chartTitle: "バッテリー容量変化チャート"
     },
 
     // Error Messages
@@ -89,6 +94,16 @@ export default {
         predictionFailed: "予測に失敗しました、再試行してください",
         uploadFailed: "ファイルアップロードに失敗しました",
         fileFormatError: "ファイル形式がサポートされていません、CSVまたはExcelファイルをアップロードしてください"
+    },
+
+    // Chart
+    chart: {
+        title: "サイクル数によるバッテリー容量変化",
+        cycleCount: "サイクル数",
+        capacityProcess: "容量変化プロセス",
+        predictedCycleLife: "予測サイクル寿命",
+        xAxisName: "サイクル数 (Cycle)",
+        yAxisName: "放電容量"
     },
 
     // Default Step

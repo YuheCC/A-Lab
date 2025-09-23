@@ -80,7 +80,12 @@ export default {
         uploadedData: "上传数据",
         predictionResults: "预测结果",
         loadingDetail: "加载中...",
-        loadDetailFailed: "获取详细数据失败"
+        loadDetailFailed: "获取详细数据失败",
+        download: "下载",
+        downloading: "下载中...",
+        downloadFile: "下载文件",
+        downloadFailed: "下载文件失败",
+        chartTitle: "电池容量变化图表"
     },
 
     // Error Messages
@@ -89,6 +94,16 @@ export default {
         predictionFailed: "预测失败，请重试",
         uploadFailed: "文件上传失败",
         fileFormatError: "文件格式不支持，请上传CSV或Excel文件"
+    },
+
+    // Chart
+    chart: {
+        title: "电池容量随循环次数变化",
+        cycleCount: "循环次数",
+        capacityProcess: "容量变化过程",
+        predictedCycleLife: "预测循环寿命",
+        xAxisName: "循环次数 (Cycle)",
+        yAxisName: "放电容量"
     },
 
     // Default Step

@@ -84,7 +84,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error('Download error:', err);
-      setError(err.message || '下载文件失败');
+      setError(err.message || t('predictionTool.modal.downloadFailed'));
     } finally {
       setDownloading(false);
     }
@@ -115,10 +115,10 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                     className="download-btn"
                     onClick={handleDownload}
                     disabled={downloading}
-                    title="下载文件"
+                    title={t('predictionTool.modal.downloadFile')}
                   >
                     <Download size={16} />
-                    {downloading ? '下载中...' : '下载'}
+                    {downloading ? t('predictionTool.modal.downloading') : t('predictionTool.modal.download')}
                   </button>
                 )}
               </div>
@@ -242,7 +242,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                 {/* 散点图展示区域 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
                   <div className="chart-section" style={{ marginTop: '24px' }}>
-                    <h4 className="section-title">电池容量变化图表</h4>
+                    <h4 className="section-title">{t('predictionTool.modal.chartTitle')}</h4>
                     <div className="chart-container" style={{
                       border: '1px solid #e5e7eb',
                       borderRadius: '8px',

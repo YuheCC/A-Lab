@@ -80,7 +80,12 @@ export default {
         uploadedData: "Uploaded Data",
         predictionResults: "Prediction Results",
         loadingDetail: "Loading...",
-        loadDetailFailed: "Failed to get detailed data"
+        loadDetailFailed: "Failed to get detailed data",
+        download: "Download",
+        downloading: "Downloading...",
+        downloadFile: "Download File",
+        downloadFailed: "Download file failed",
+        chartTitle: "Battery Capacity Change Chart"
     },
 
     // Error Messages
@@ -89,6 +94,16 @@ export default {
         predictionFailed: "Prediction failed, please try again",
         uploadFailed: "File upload failed",
         fileFormatError: "File format not supported, please upload CSV or Excel file"
+    },
+
+    // Chart
+    chart: {
+        title: "Battery Capacity vs Cycle Count",
+        cycleCount: "Cycle Count",
+        capacityProcess: "Capacity Change Process",
+        predictedCycleLife: "Predicted Cycle Life",
+        xAxisName: "Cycle Count (Cycle)",
+        yAxisName: "Discharge Capacity"
     },
 
     // Default Step

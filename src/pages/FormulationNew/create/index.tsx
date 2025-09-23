@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import FormulationModule from '../components/FormulationModule';
+import GuideTooltip from '../components/GuideTooltip';
 import './index.css';
 
 const CreatePage: React.FC = () => {
@@ -15,7 +16,12 @@ const CreatePage: React.FC = () => {
   return (
     <div className="create-page-container">
       <div className="create-header">
-        <h1 className="create-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+        <div className="formulation-title-wrapper">
+          <h1 className="create-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
+          <GuideTooltip
+            storageKey="formulation-new-guide-shown"
+          />
+        </div>
         <span className="create-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>
 
