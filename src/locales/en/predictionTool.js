@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "Select File",
         clickToUpload: "Click to upload battery data file",
+        subtitle: "Currently only supports CSV format files, more file types will be supported in the future",
         uploading: "Uploading file...",
         waitText: "Please wait",
         dataFormatTip: "📋 Data Format Requirements",

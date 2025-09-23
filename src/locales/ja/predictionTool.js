@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "ファイル選択",
         clickToUpload: "バッテリーデータファイルをクリックしてアップロード",
+        subtitle: "現在はCSV形式ファイルのみサポートしており、今後より多くのファイル形式をサポート予定です",
         uploading: "ファイルをアップロード中...",
         waitText: "お待ちください",
         dataFormatTip: "📋 データフォーマット要件",
