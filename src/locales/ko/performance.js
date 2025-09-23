@@ -83,6 +83,7 @@ export default {
   // Results
   results: {
     title: "셀 성능 예측",
+    titleTip: "부정적(Negative)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
     temperatureTabs: {
       temp25: "25°C 성능",
       temp45: "45°C 성능"

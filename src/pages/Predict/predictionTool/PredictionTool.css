@@ -838,6 +838,15 @@
   background: #f8fafc;
 }
 
+.prediction-table tbody tr.selected-row {
+  background-color: #dbeafe !important;
+  border-left: 3px solid #3b82f6;
+}
+
+.prediction-table tbody tr.selected-row:hover {
+  background-color: #bfdbfe !important;
+}
+
 /* 表格列宽度设置 */
 .prediction-table .barcode-col {
   width: auto;

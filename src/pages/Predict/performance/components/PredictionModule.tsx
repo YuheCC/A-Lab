@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
+import { Info } from 'lucide-react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
@@ -889,7 +890,24 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
         {showResults && (
           <div className="results-section">
-            <h2>{t('performance.results.title')}</h2>
+            <div className="results-title-container">
+              <h2>{t('performance.results.title')}</h2>
+              <Tooltip
+                title={
+                  <div style={{ whiteSpace: 'pre-line' }}>
+                    {t('performance.results.titleTip')}
+                  </div>
+                }
+                placement="top"
+              >
+                <div className="tip-icon-container">
+                  <Info
+                    size={16}
+                    className="tip-icon"
+                  />
+                </div>
+              </Tooltip>
+            </div>
             
             <div className="results-card">
               <div className="temperature-tabs" data-active={activeTab}>
