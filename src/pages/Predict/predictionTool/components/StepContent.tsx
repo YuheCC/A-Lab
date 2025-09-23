@@ -367,6 +367,37 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   </p>
                 )}
               </div>
+              
+              {/* 检查brcode_data中是否有status=fail的数据，如果有则显示提示信息 - 移到table容器外 */}
+              {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && predictionResult.brcode_data.some(item => item.status === 'fail') && (
+                <div className="data-requirement-notice" style={{
+                  color: '#d69e2e',
+                  backgroundColor: '#fefcbf',
+                  border: '1px solid #f6e05e',
+                  padding: '12px 16px',
+                  borderRadius: '6px',
+                  marginTop: '16px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  lineHeight: '1.5'
+                }}>
+                  {t('predictionTool.results.dataRequirementNotMet')}
+                  <span 
+                    style={{
+                      color: '#3182ce',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      marginLeft: '2px'
+                    }}
+                    onClick={() => {
+                      window.location.href = 'mailto:support@example.com?subject=Data Processing Support Request&body=Hello, I need help with data processing for battery life prediction.';
+                    }}
+                  >
+                    {t('predictionTool.results.contactSupport')}
+                  </span>
+                  。
+                </div>
+              )}
             </div>
           </div>
         );

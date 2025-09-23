@@ -55,7 +55,9 @@ export default {
         barcode: "바코드",
         cycleLife1: "사이클 수명",
         cycleLife2: "사이클 수명 2",
-        noDetailedData: "상세한 바코드 데이터가 없습니다"
+        noDetailedData: "상세한 바코드 데이터가 없습니다",
+        dataRequirementNotMet: "업로드된 데이터가 요구 사항을 충족하지 않습니다. 데이터 처리 지원을 받으려면 ",
+        contactSupport: "문의하십시오"
     },
 
     // History

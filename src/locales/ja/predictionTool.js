@@ -55,7 +55,9 @@ export default {
         barcode: "バーコード",
         cycleLife1: "サイクル寿命",
         cycleLife2: "サイクル寿命 2",
-        noDetailedData: "詳細なバーコードデータがありません"
+        noDetailedData: "詳細なバーコードデータがありません",
+        dataRequirementNotMet: "アップロードされたデータが要件を満たしていません。データ処理サポートについては、",
+        contactSupport: "お問い合わせください"
     },
 
     // History
