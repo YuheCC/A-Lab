@@ -178,8 +178,8 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
                 name: '预测容量线',
                 label: {
                   show: true,
-                  position: 'end',
-                  formatter: `80% SOH`
+                  position: 'start',
+                  formatter: `80%\nSOH`
                 },
                 lineStyle: {
                   color: '#ff6b6b',
