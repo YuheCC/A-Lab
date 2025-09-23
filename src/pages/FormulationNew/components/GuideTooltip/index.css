@@ -1,0 +1,166 @@
+.guide-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-left: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+}
+
+.guide-tooltip-trigger svg {
+  width: 18px;
+  height: 18px;
+}
+
+.guide-tooltip-trigger:hover {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.08);
+}
+
+.guide-tooltip-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+  animation: fadeInOverlay 0.3s ease-out;
+}
+
+.guide-tooltip-overlay.closing {
+  animation: fadeOutOverlay 0.3s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutOverlay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.guide-tooltip {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  padding: 32px;
+  min-width: 500px;
+  max-width: 700px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.guide-tooltip.closing {
+  animation: shrinkToButton 0.3s ease-out forwards;
+}
+
+@keyframes shrinkToButton {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(
+      calc(var(--target-x) - 50%),
+      calc(var(--target-y) - 50%)
+    ) scale(0.1);
+  }
+}
+
+.guide-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.guide-tooltip-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.guide-tooltip-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.guide-tooltip-close:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.guide-tooltip-content {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+.guide-tooltip-content p {
+  margin: 12px 0;
+}
+
+.guide-tooltip-content ul {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.guide-tooltip-content li {
+  margin: 10px 0;
+  list-style-type: none;
+  position: relative;
+}
+
+.guide-tooltip-content li:before {
+  content: "✓";
+  position: absolute;
+  left: -20px;
+  color: #10b981;
+  font-weight: bold;
+}
