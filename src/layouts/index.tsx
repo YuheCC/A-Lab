@@ -23,8 +23,9 @@ const FullNavLayoutInner = () => {
     const isPredictPage = pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { verifyAuth } = useAuthStore();
+    const language = i18n.language;
     const message = useMessage();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
@@ -164,7 +165,7 @@ const FullNavLayoutInner = () => {
         <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
               <Header />
-              <div className={getMainContainerClassName()}>
+              <div className={`${getMainContainerClassName()} ${language}-page`}>
                   <Outlet />
               </div>
               <PricingOverlay 

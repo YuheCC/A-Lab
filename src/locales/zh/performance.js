@@ -93,11 +93,11 @@ export default {
       temp45: "45°C 性能"
     },
     performance: {
-      cycleLife25: "25 °C 循环寿命",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C 倍率性能",
-      cycleLife45: "45 °C 循环寿命",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C 循环寿命",
+      ce25: "25°C 库伦效率",
+      ratePerformance25: "25°C 倍率性能",
+      cycleLife45: "45°C 循环寿命",
+      ce45: "45°C 库伦效率"
     },
     status: {
       positive: "正面",

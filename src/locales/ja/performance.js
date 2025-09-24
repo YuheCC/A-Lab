@@ -93,11 +93,11 @@ export default {
       temp45: "45°C性能"
     },
     performance: {
-      cycleLife25: "25 °C サイクル寿命",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C レート性能",
-      cycleLife45: "45 °C サイクル寿命",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C サイクル寿命",
+      ce25: "25°C コロンビック効率",
+      ratePerformance25: "25°C レート性能",
+      cycleLife45: "45°C サイクル寿命",
+      ce45: "45°C コロンビック効率"
     },
     status: {
       positive: "ポジティブ",
