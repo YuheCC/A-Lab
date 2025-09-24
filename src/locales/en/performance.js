@@ -1,27 +1,33 @@
 export default {
   // Page header
-  title: "Cell performance prediction with additive molecules",
+  title: "Impact of additive on the cell performance",
   beta: "BETA",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Battery System Selection",
-    label: "Battery System",
+    title: "Cell chemistry selection",
+    label: "Cell chemistry",
     loading: "Loading...",
     systemSpecs: {
-      title: "System Specifications",
+      title: "Cell specifications",
       cathode: "Cathode:",
-      anode: "Anode:",
-      benchmarkElectrolyte: "Benchmark Electrolyte:",
+      anode: "Anode:",  
+      benchmarkElectrolyte: "Benchmark electrolyte:",
       cellDesign: "Cell design:"
     }
   },
   
   // Additive input
   additive: {
-    label: "SMILES of Additive (1.9wt%)",
+    label: "SMILES of additive",
     required: "*",
     placeholder: "Enter valid SMILES for additive of interest"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "Weight percentage (wt%)",
+    tooltip: "Support for custom values coming soon"
   },
   
   // Molecule information
@@ -77,16 +83,21 @@ export default {
   // Results
   results: {
     title: "Cell Performance Prediction",
+    negativeTitle: "Negative",
+    positiveTitle: "Positive",
+    negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     temperatureTabs: {
       temp25: "25°C Performance",
       temp45: "45°C Performance"
     },
     performance: {
-      cycleLife25: "25 °C Cycle life",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C Rate performance",
-      cycleLife45: "45 °C Cycle Life",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C Cycle life",
+      ce25: "25°C Coulombic efficiency",
+      ratePerformance25: "25°C Rate performance",
+      cycleLife45: "45°C Cycle Life",
+      ce45: "45°C Coulombic efficiency"
     },
     status: {
       positive: "POSITIVE",

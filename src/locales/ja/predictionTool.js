@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "バッテリー初期寿命予測ツール",
+    title: "バッテリー寿命予測ツール",
     betaTag: "BETA",
 
     // Steps
@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "ファイル選択",
         clickToUpload: "バッテリーデータファイルをクリックしてアップロード",
+        subtitle: "現在はCSV形式ファイルのみサポートしており、今後より多くのファイル形式をサポート予定です",
         uploading: "ファイルをアップロード中...",
         waitText: "お待ちください",
         dataFormatTip: "📋 データフォーマット要件",
@@ -55,7 +56,9 @@ export default {
         barcode: "バーコード",
         cycleLife1: "サイクル寿命",
         cycleLife2: "サイクル寿命 2",
-        noDetailedData: "詳細なバーコードデータがありません"
+        noDetailedData: "詳細なバーコードデータがありません",
+        dataRequirementNotMet: "アップロードされたデータが要件を満たしていません。データ処理サポートについては、",
+        contactSupport: "お問い合わせください"
     },
 
     // History
@@ -77,7 +80,12 @@ export default {
         uploadedData: "アップロード済みデータ",
         predictionResults: "予測結果",
         loadingDetail: "読み込み中...",
-        loadDetailFailed: "詳細データの取得に失敗しました"
+        loadDetailFailed: "詳細データの取得に失敗しました",
+        download: "ダウンロード",
+        downloading: "ダウンロード中...",
+        downloadFile: "ファイルダウンロード",
+        downloadFailed: "ファイルダウンロードに失敗しました",
+        chartTitle: "バッテリー容量変化チャート"
     },
 
     // Error Messages
@@ -86,6 +94,16 @@ export default {
         predictionFailed: "予測に失敗しました、再試行してください",
         uploadFailed: "ファイルアップロードに失敗しました",
         fileFormatError: "ファイル形式がサポートされていません、CSVまたはExcelファイルをアップロードしてください"
+    },
+
+    // Chart
+    chart: {
+        title: "サイクル数によるバッテリー容量変化",
+        cycleCount: "サイクル数",
+        capacityProcess: "容量変化プロセス",
+        predictedCycleLife: "予測サイクル寿命",
+        xAxisName: "サイクル数 (Cycle)",
+        yAxisName: "放電容量"
     },
 
     // Default Step

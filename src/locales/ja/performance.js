@@ -1,15 +1,15 @@
 export default {
   // Page header
-  title: "添加剤分子を用いた電池性能予測",
+  title: "添加剤の電池性能への影響",
   beta: "ベータ",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "バッテリーシステム選択",
-    label: "バッテリーシステム",
+    title: "セル化学選択",
+    label: "セル化学",
     loading: "読み込み中...",
     systemSpecs: {
-      title: "システム仕様",
+      title: "セル仕様",
       cathode: "正極:",
       anode: "負極:",
       benchmarkElectrolyte: "ベンチマーク電解液:",
@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剤 (SMILES) (1.9wt%)",
+    label: "添加剤のSMILES",
     required: "*",
     placeholder: "有効なSMILESを入力してください"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "重量パーセント (wt%)",
+    tooltip: "カスタム値のサポートは近日公開予定"
   },
   
   // Molecule information
@@ -77,16 +83,21 @@ export default {
   // Results
   results: {
     title: "セル性能予測",
+    titleTip: "ネガティブは、電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルと同等またはそれ以下になることを意味します。\nポジティブは、電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルより優れることを意味します。",
+    negativeTitle: "ネガティブ (Negative)",
+    positiveTitle: "ポジティブ (Positive)",
+    negativeTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルと同等またはそれ以下になることを意味します。",
+    positiveTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルより優れることを意味します。",
     temperatureTabs: {
       temp25: "25°C性能",
       temp45: "45°C性能"
     },
     performance: {
-      cycleLife25: "25 °C サイクル寿命",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C レート性能",
-      cycleLife45: "45 °C サイクル寿命",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C サイクル寿命",
+      ce25: "25°C コロンビック効率",
+      ratePerformance25: "25°C レート性能",
+      cycleLife45: "45°C サイクル寿命",
+      ce45: "45°C コロンビック効率"
     },
     status: {
       positive: "ポジティブ",

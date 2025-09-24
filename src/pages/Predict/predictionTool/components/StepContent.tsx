@@ -3,6 +3,7 @@ import { FileText, RefreshCw, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import CycleLifeScatterChart from './CycleLifeScatterChart';
 
 interface StepContentProps {
   activeStep: number;
@@ -144,6 +145,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             <div className="upload-area">
               <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
               <p className="upload-subtitle">
+              {t('predictionTool.upload.subtitle')}
               </p>
               <label className="select-file-btn" htmlFor="file-upload">
                 {t('predictionTool.upload.selectFile')}
@@ -306,10 +308,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <div className="stats-label">{t('predictionTool.results.batteryCount')}</div>
                   <div className="stats-value">{predictionResult.barcode_count}{t('predictionTool.results.batteryCountUnit')}</div>
                 </div>
-                <div className="stats-card">
+                {/* <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife1')}</div>
                   <div className="stats-value">{avgCycleLife1 >= 0 ? `${(avgCycleLife1 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
-                </div>
+                </div> */}
                 {/* <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.avgCycleLife2')}</div>
                   <div className="stats-value">{avgCycleLife2 >= 0 ? `${(avgCycleLife2 || 0).toFixed(0)}` : t('predictionTool.results.unknown')}</div>
@@ -366,7 +368,61 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   </p>
                 )}
               </div>
+              
+              {/* 检查brcode_data中是否有status=fail的数据，如果有则显示提示信息 - 移到table容器外 */}
+              {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && predictionResult.brcode_data.some(item => item.status === 'fail') && (
+                <div className="data-requirement-notice" style={{
+                  color: '#d69e2e',
+                  backgroundColor: '#fefcbf',
+                  border: '1px solid #f6e05e',
+                  padding: '12px 16px',
+                  borderRadius: '6px',
+                  marginTop: '16px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  lineHeight: '1.5'
+                }}>
+                  {t('predictionTool.results.dataRequirementNotMet')}
+                  <span 
+                    style={{
+                      color: '#3182ce',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      marginLeft: '2px'
+                    }}
+                    onClick={() => {
+                      window.location.href = 'mailto:partnership@ses.ai?subject=Data Processing Support Request&body=Hello, I need help with data processing for battery life prediction.';
+                    }}
+                  >
+                    {t('predictionTool.results.contactSupport')}
+                  </span>
+                  。
+                </div>
+              )}
             </div>
+
+            {/* 散点图展示 */}
+            {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && (
+              <div className="scatter-chart-card" style={{
+                marginTop: '24px',
+                padding: '20px',
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <h4 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '16px',
+                  color: '#2d3748'
+                }}>
+                  {t('predictionTool.chart.title')}
+                </h4>
+                <CycleLifeScatterChart
+                  brcodeData={predictionResult.brcode_data}
+                />
+              </div>
+            )}
           </div>
         );
       

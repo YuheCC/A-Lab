@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "电池早期生命预测工具",
+    title: "电池寿命预测",
     betaTag: "BETA",
 
     // Steps
@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "选择文件",
         clickToUpload: "点击上传电池数据文件",
+        subtitle: "目前仅支持CSV格式文件，后续将支持更多文件类型",
         uploading: "正在上传文件...",
         waitText: "请稍候",
         dataFormatTip: "📋 数据格式要求",
@@ -55,7 +56,9 @@ export default {
         barcode: "Barcode",
         cycleLife1: "循环寿命",
         cycleLife2: "循环寿命2",
-        noDetailedData: "暂无详细条形码数据"
+        noDetailedData: "暂无详细条形码数据",
+        dataRequirementNotMet: "上传数据不符合要求。如需数据处理支持，请",
+        contactSupport: "联系我们"
     },
 
     // History
@@ -77,7 +80,12 @@ export default {
         uploadedData: "上传数据",
         predictionResults: "预测结果",
         loadingDetail: "加载中...",
-        loadDetailFailed: "获取详细数据失败"
+        loadDetailFailed: "获取详细数据失败",
+        download: "下载",
+        downloading: "下载中...",
+        downloadFile: "下载文件",
+        downloadFailed: "下载文件失败",
+        chartTitle: "电池容量变化图表"
     },
 
     // Error Messages
@@ -86,6 +94,16 @@ export default {
         predictionFailed: "预测失败，请重试",
         uploadFailed: "文件上传失败",
         fileFormatError: "文件格式不支持，请上传CSV或Excel文件"
+    },
+
+    // Chart
+    chart: {
+        title: "电池容量随循环次数变化",
+        cycleCount: "循环次数",
+        capacityProcess: "容量变化过程",
+        predictedCycleLife: "预测循环寿命",
+        xAxisName: "循环次数 (Cycle)",
+        yAxisName: "放电容量"
     },
 
     // Default Step

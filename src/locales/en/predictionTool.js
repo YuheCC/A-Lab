@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "Battery Early Life Prediction Tool",
+    title: "Battery Life Prediction",
     betaTag: "BETA",
 
     // Steps
@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "Select File",
         clickToUpload: "Click to upload battery data file",
+        subtitle: "Currently only supports CSV format files, more file types will be supported in the future",
         uploading: "Uploading file...",
         waitText: "Please wait",
         dataFormatTip: "📋 Data Format Requirements",
@@ -55,7 +56,9 @@ export default {
         barcode: "Barcode",
         cycleLife1: "Cycle Life",
         cycleLife2: "Cycle Life 2",
-        noDetailedData: "No detailed barcode data available"
+        noDetailedData: "No detailed barcode data available",
+        dataRequirementNotMet: "Uploaded data does not meet requirements. For data processing support, please ",
+        contactSupport: "contact us"
     },
 
     // History
@@ -77,7 +80,12 @@ export default {
         uploadedData: "Uploaded Data",
         predictionResults: "Prediction Results",
         loadingDetail: "Loading...",
-        loadDetailFailed: "Failed to get detailed data"
+        loadDetailFailed: "Failed to get detailed data",
+        download: "Download",
+        downloading: "Downloading...",
+        downloadFile: "Download File",
+        downloadFailed: "Download file failed",
+        chartTitle: "Battery Capacity Change Chart"
     },
 
     // Error Messages
@@ -86,6 +94,16 @@ export default {
         predictionFailed: "Prediction failed, please try again",
         uploadFailed: "File upload failed",
         fileFormatError: "File format not supported, please upload CSV or Excel file"
+    },
+
+    // Chart
+    chart: {
+        title: "Battery Capacity vs Cycle Count",
+        cycleCount: "Cycle Count",
+        capacityProcess: "Capacity Change Process",
+        predictedCycleLife: "Predicted Cycle Life",
+        xAxisName: "Cycle Count (Cycle)",
+        yAxisName: "Discharge Capacity"
     },
 
     // Default Step

@@ -789,7 +789,7 @@ const OrganicSearch = () => {
                     )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
+            <NodePopup key="organicNodePopup" ref={nodePopupRef} node={node} molecularType="organic"/>
         </>
     )
 };

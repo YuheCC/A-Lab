@@ -142,49 +142,8 @@ const PredictionTool: React.FC = () => {
 
   return (
     <div className="prediction-tool">
-      {/* Header */}
-      <div className="prediction-header">
-        <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-        <span className="beta-tag">{t('predictionTool.betaTag')}</span>
-      </div>
-
-      {/* Content */}
-      <div className="prediction-content">
-        {/* Left - Operation Area */}
-        <div className="operation-area">
-          <div className="steps-container">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const status = getStepStatus(index);
-              
-              return (
-                <div 
-                  key={step.id} 
-                  className="step-item"
-                  onClick={() => setCurrentStep(index)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className={`step-icon ${status}`}>
-                    <Icon size={16} />
-                  </div>
-                  <span className={`step-text ${status}`}>
-                    {step.title}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          
-          <StepContent 
-            activeStep={currentStep} 
-            onStepChange={setCurrentStep}
-            onPredictionComplete={loadHistoryData}
-            onReset={handleReset}
-          />
-        </div>
-
-        {/* Right - History Area */}
-        <div className="history-area">
+      <div className="prediction-layout">
+        <div className="left-area">
           {error && (
             <div style={{
               color: '#e53e3e',
@@ -216,9 +175,48 @@ const PredictionTool: React.FC = () => {
               fontSize: '14px',
               color: '#666'
             }}>
-{t('predictionTool.history.loading')}
+              {t('predictionTool.history.loading')}
             </div>
           )}
+        </div>
+
+        <div className="right-area">
+          <div className="prediction-header">
+            <h1 className="prediction-title">{t('predictionTool.title')}</h1>
+            <span className="beta-tag">{t('predictionTool.betaTag')}</span>
+          </div>
+
+          <div className="operation-area">
+            <div className="steps-container">
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                const status = getStepStatus(index);
+
+                return (
+                  <div
+                    key={step.id}
+                    className="step-item"
+                    // onClick={() => setCurrentStep(index)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className={`step-icon ${status}`}>
+                      <Icon size={16} />
+                    </div>
+                    <span className={`step-text ${status}`}>
+                      {step.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <StepContent
+              activeStep={currentStep}
+              onStepChange={setCurrentStep}
+              onPredictionComplete={loadHistoryData}
+              onReset={handleReset}
+            />
+          </div>
         </div>
       </div>
 

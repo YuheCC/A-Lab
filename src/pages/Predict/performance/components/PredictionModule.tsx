@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@mui/material';
+import { Info } from 'lucide-react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
@@ -617,8 +619,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <option value="">{t('performance.batterySystemSelection.loading')}</option>
               ) : (
                 batterySystemOptions.map((system) => (
-                  <option key={system.id} value={system.name}>
-                    {system.name}
+                  <option
+                    key={system.id}
+                    value={Number(system.id) === 1 ? system.name : ""}
+                    disabled={Number(system.id) !== 1}
+                    style={Number(system.id) !== 1 ? { color: '#ccc' } : {}}
+                  >
+                    {system.name}{Number(system.id) !== 1 ? ' (Will be available soon)' : ''}
                   </option>
                 ))
               )}
@@ -662,39 +669,60 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           )}
 
           <div className="form-group">
-            <label>
-              {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
-            </label>
-            <input
-              type="text"
-              value={additive}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                setAdditive(newValue);
-                
-                // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
-                const trimmedValue = newValue.trim();
-                if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
-                  setMoleculeDetails(null);
-                  setIsInvalidSmiles(false);
-                  if (!trimmedValue) {
-                    setLastQueriedSmiles(null);
-                  }
-                }
-                
-                // 分子式输入变化时，重置计算结果和LLM分析状态
-                if (predictionResults && trimmedValue !== lastQueriedSmiles) {
-                  setShowResults(false);
-                  setPredictionResults(null);
-                  setHasAnalysisResult(false);
-                  setAnalysisContent('');
-                  setIsAnalyzing(false);
-                }
-              }}
-              onBlur={handleSmilesBlur}
-              placeholder={t('performance.additive.placeholder')}
-              className="additive-input"
-            />
+            <div className="dual-input-row">
+              <div className="dual-input-item">
+                <label>
+                  {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
+                </label>
+                <input
+                  type="text"
+                  value={additive}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setAdditive(newValue);
+
+                    // 如果用户清除了输入或者输入与上次查询的不同，清除分子信息
+                    const trimmedValue = newValue.trim();
+                    if (!trimmedValue || (lastQueriedSmiles && trimmedValue !== lastQueriedSmiles)) {
+                      setMoleculeDetails(null);
+                      setIsInvalidSmiles(false);
+                      if (!trimmedValue) {
+                        setLastQueriedSmiles(null);
+                      }
+                    }
+
+                    // 分子式输入变化时，重置计算结果和LLM分析状态
+                    if (predictionResults && trimmedValue !== lastQueriedSmiles) {
+                      setShowResults(false);
+                      setPredictionResults(null);
+                      setHasAnalysisResult(false);
+                      setAnalysisContent('');
+                      setIsAnalyzing(false);
+                    }
+                  }}
+                  onBlur={handleSmilesBlur}
+                  placeholder={t('performance.additive.placeholder')}
+                  className="additive-input"
+                />
+              </div>
+
+              <div className="dual-input-item">
+                <label>
+                  {t('performance.weightPercentage.label')}
+                  <Tooltip title={t('performance.weightPercentage.tooltip')} placement="top">
+                    <span className="info-icon">
+                      ⓘ
+                    </span>
+                  </Tooltip>
+                </label>
+                <input
+                  type="text"
+                  value="1.9"
+                  disabled
+                  className="weight-percentage-input"
+                />
+              </div>
+            </div>
           </div>
 
           {/* 分子详情显示区域 */}
@@ -863,7 +891,107 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
         {showResults && (
           <div className="results-section">
-            <h2>{t('performance.results.title')}</h2>
+            <div className="results-title-container">
+              <h2>{t('performance.results.title')}</h2>
+              <Tooltip
+                title={
+                  <div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px',
+                      marginBottom: '12px'
+                    }}>
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: '#ef4444',
+                        flexShrink: 0,
+                        marginTop: '6px'
+                      }}></span>
+                      <div>
+                        <div style={{
+                          fontWeight: '600',
+                          fontSize: '14px',
+                          color: '#dc2626',
+                          marginBottom: '4px'
+                        }}>
+                          {t('performance.results.negativeTitle')}
+                        </div>
+                        <div style={{
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#6b7280',
+                          margin: 0
+                        }}>
+                          {t('performance.results.negativeTip')}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: '#10b981',
+                        flexShrink: 0,
+                        marginTop: '6px'
+                      }}></span>
+                      <div>
+                        <div style={{
+                          fontWeight: '600',
+                          fontSize: '14px',
+                          color: '#059669',
+                          marginBottom: '4px'
+                        }}>
+                          {t('performance.results.positiveTitle')}
+                        </div>
+                        <div style={{
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#6b7280',
+                          margin: 0
+                        }}>
+                          {t('performance.results.positiveTip')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                placement="top"
+                arrow
+                PopperProps={{
+                  sx: {
+                    '& .MuiTooltip-tooltip': {
+                      backgroundColor: 'white',
+                      color: 'black',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      fontSize: '14px',
+                      maxWidth: 320,
+                      minWidth: 280,
+                      border: 'none'
+                    },
+                    '& .MuiTooltip-arrow': {
+                      color: 'white',
+                    }
+                  }
+                }}
+              >
+                <div className="tip-icon-container">
+                  <Info
+                    size={16}
+                    className="tip-icon"
+                  />
+                </div>
+              </Tooltip>
+            </div>
             
             <div className="results-card">
               <div className="temperature-tabs" data-active={activeTab}>

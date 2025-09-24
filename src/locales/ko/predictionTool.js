@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "배터리 초기 수명 예측 도구",
+    title: "배터리 수명 예측",
     betaTag: "BETA",
 
     // Steps
@@ -14,6 +14,7 @@ export default {
     upload: {
         selectFile: "파일 선택",
         clickToUpload: "배터리 데이터 파일을 클릭하여 업로드",
+        subtitle: "현재 CSV 형식 파일만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
         uploading: "파일 업로드 중...",
         waitText: "잠시만 기다려 주세요",
         dataFormatTip: "📋 데이터 형식 요구사항",
@@ -55,7 +56,9 @@ export default {
         barcode: "바코드",
         cycleLife1: "사이클 수명",
         cycleLife2: "사이클 수명 2",
-        noDetailedData: "상세한 바코드 데이터가 없습니다"
+        noDetailedData: "상세한 바코드 데이터가 없습니다",
+        dataRequirementNotMet: "업로드된 데이터가 요구 사항을 충족하지 않습니다. 데이터 처리 지원을 받으려면 ",
+        contactSupport: "문의하십시오"
     },
 
     // History
@@ -77,7 +80,12 @@ export default {
         uploadedData: "업로드된 데이터",
         predictionResults: "예측 결과",
         loadingDetail: "로딩 중...",
-        loadDetailFailed: "상세 데이터 가져오기에 실패했습니다"
+        loadDetailFailed: "상세 데이터 가져오기에 실패했습니다",
+        download: "다운로드",
+        downloading: "다운로드 중...",
+        downloadFile: "파일 다운로드",
+        downloadFailed: "파일 다운로드에 실패했습니다",
+        chartTitle: "배터리 용량 변화 차트"
     },
 
     // Error Messages
@@ -86,6 +94,16 @@ export default {
         predictionFailed: "예측에 실패했습니다. 다시 시도해 주세요",
         uploadFailed: "파일 업로드에 실패했습니다",
         fileFormatError: "파일 형식이 지원되지 않습니다. CSV 또는 Excel 파일을 업로드해 주세요"
+    },
+
+    // Chart
+    chart: {
+        title: "사이클 수에 따른 배터리 용량 변화",
+        cycleCount: "사이클 수",
+        capacityProcess: "용량 변화 과정",
+        predictedCycleLife: "예측 사이클 수명",
+        xAxisName: "사이클 수 (Cycle)",
+        yAxisName: "방전 용량"
     },
 
     // Default Step

@@ -11,7 +11,7 @@ export default {
     formulation: "Formulation",
     about: "About",
     predictPerformance: "Cell Performance Prediction",
-    predictionTool: "Early-life Battery Prediction Tool",
+    predictionTool: "Battery Life Prediction",
   },
   
   // Navbar links

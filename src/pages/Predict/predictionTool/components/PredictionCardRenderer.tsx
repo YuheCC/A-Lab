@@ -38,10 +38,10 @@ const PredictionCard: React.FC<PredictionCardProps> = ({ file, onView, onDelete 
           <span className="info-text">{t('predictionTool.results.batteryCount')}: {file.batteryCount}</span>
         </div>
 
-        <div className="info-row">
+        {/* <div className="info-row">
           <TrendingUp size={14} color="#6b7280" />
           <span className="info-text">{t('predictionTool.results.avgCycleLife1')}: {file.avgCycleLife1 >= 0 ? file.avgCycleLife1.toFixed(0) : t('predictionTool.results.unknown')}</span>
-        </div>
+        </div> */}
 
         {/* <div className="info-row">
           <TrendingUp size={14} color="#6b7280" />

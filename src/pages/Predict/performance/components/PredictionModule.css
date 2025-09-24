@@ -108,9 +108,13 @@
 .spec-item label {
   font-weight: 500;
   color: #6b7280;
-  min-width: 140px;
+  min-width: 90px;
   margin: 0;
   font-size: 14px;
+}
+
+.ja-page .spec-item label, .en-page .spec-item label {
+  min-width: 155px;
 }
 
 .spec-item span {
@@ -137,6 +141,65 @@
 
 .additive-input::placeholder {
   color: #9ca3af;
+}
+
+/* 双输入框横向排列样式 */
+.dual-input-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.dual-input-item {
+  flex: 1;
+}
+
+.dual-input-item label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.weight-percentage-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #9ca3af;
+  background: #f9fafb;
+  box-sizing: border-box;
+  cursor: not-allowed;
+}
+
+.weight-percentage-input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+}
+
+/* 信息图标样式 */
+.info-icon {
+  display: inline-block;
+  margin-left: 6px;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: help;
+  transition: color 0.2s ease;
+  vertical-align: middle;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.info-icon:hover {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
 }
 
 /* 计算按钮基础样式 */
@@ -207,11 +270,43 @@
   margin-top: 16px;
 }
 
-.results-section h2 {
+.results-title-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.results-section .results-title-container h2 {
   font-size: 20px;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 24px 0;
+  margin: 0;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 24px;
+  width: 24px;
+}
+
+.tip-icon {
+  color: #6b7280;
+  cursor: help;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-icon:hover {
+  color: #374151;
 }
 
 .temperature-tabs {
