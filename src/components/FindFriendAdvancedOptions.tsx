@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './FindFriendAdvancedOptions.css';
-import { Tooltip } from '@mui/material';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { Info } from 'lucide-react';
 
 interface AdvancedProps {
@@ -29,6 +29,9 @@ interface AdvancedProps {
   metric?: string; setMetric?: (v: string) => void;
 
   showBatteryFields?: boolean;
+
+  showStructureSlider?: boolean;
+  structureSliderTooltip?: React.ReactNode;
 }
 
 const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
@@ -54,29 +57,44 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   metric = '', setMetric = () => {},
 
   showBatteryFields = true,
+  showStructureSlider = true,
+  structureSliderTooltip,
 }) => {
   const { t } = useTranslation();
+  const structureTooltip = structureSliderTooltip ?? (
+    <InfoTooltipContent
+      title={t('search.searchRange')}
+      description={t('search.searchRangeTooltip')}
+    />
+  );
 
   return (
     <div className="find-friend-advanced-options">
       {/* Search range (keep incoming formatting) */}
-      <div className="ff-advanced-section">
-        <label className="ff-advanced-label">{t('search.searchRange')}</label>
-        <div className="ff-range-container">
-          <span className="ff-range-label">{t('search.distantFriends')}</span>
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={structureWeight}
-            onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
-            className="ff-advanced-range"
-          />
-          <span className="ff-range-label">{t('search.nearbyFriends')}</span>
-          <span className="ff-range-value">{structureWeight.toFixed(2)}</span>
+      {showStructureSlider && (
+        <div className="ff-advanced-section">
+          <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>{t('search.searchRange')}</span>
+            <InfoTooltip title={structureTooltip} placement="top">
+              <Info size={16} className="ff-info-icon" />
+            </InfoTooltip>
+          </label>
+          <div className="ff-range-container">
+            <span className="ff-range-label">{t('search.distantFriends')}</span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={structureWeight}
+              onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+              className="ff-advanced-range"
+            />
+            <span className="ff-range-label">{t('search.nearbyFriends')}</span>
+            <span className="ff-range-value">{structureWeight.toFixed(2)}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Show hypothetical molecules (your new checkbox + tooltip) */}
       <div className="ff-advanced-section">
@@ -87,9 +105,9 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
             onChange={(e) => setShowHypothetical(e.target.checked)}
           />
           <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
-          <Tooltip title={t('search.showHypotheticalTooltip')} placement="top">
-            <Info size={16} style={{ marginLeft: 4, cursor: 'help' }} />
-          </Tooltip>
+          <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
+            <Info size={16} className="ff-info-icon" />
+          </InfoTooltip>
         </label>
       </div>
 

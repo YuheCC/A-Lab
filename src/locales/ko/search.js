@@ -20,10 +20,12 @@ export default {
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
     distantFriends: '먼 친구들',
+    searchRangeTooltip: '슬라이더를 왼쪽으로 이동하면 구조와 관계없이 사용 사례에 가장 적합한 물성의 분자를 우선합니다. 오른쪽으로 이동하면 입력한 분자와 구조가 가장 유사한 분자를 우선합니다.',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
     intelligentFindFriendsLabel: '지능형 "친구" 찾기',
     intelligentFindFriendsTooltip: 'LLM으로 수백 개의 분자를 살펴보고, 사용 사례에 더 적합한 분자를 찾아보세요. 최상의 결과를 위해 계산 성능을 높이고 (고급 옵션)에서 배터리 시스템 정보를 입력하세요.',
+    intelligentFindFriendsLimitLabel: '지능형 친구 찾기 월간 잔여 횟수: {{remaining}} / {{limit}}',
     showHypothetical: '가상 분자 표시',
     showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
     computeDisabled: '비활성화',
@@ -48,6 +50,7 @@ export default {
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
     distantFriends: '먼 친구들',
+    searchRangeTooltip: '슬라이더를 왼쪽으로 이동하면 구조와 관계없이 사용 사례에 가장 적합한 물성의 분자를 우선합니다. 오른쪽으로 이동하면 입력한 분자와 구조가 가장 유사한 분자를 우선합니다.',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
     computeDisabled: '비활성화',
@@ -66,6 +69,7 @@ export default {
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',
     computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+    intelligentFindFriendsLimitLabel: '지능형 친구 찾기 월간 잔여 횟수: {{remaining}} / {{limit}}',
 
     // Loading and Status Messages
     searching: "검색 중...",
