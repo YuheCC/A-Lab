@@ -1,25 +1,25 @@
 export default {
   // Page header
-  title: "Cell performance prediction with additive molecules",
+  title: "Impact of additive on the cell performance",
   beta: "BETA",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Battery System Selection",
-    label: "Battery System",
+    title: "Cell chemistry selection",
+    label: "Cell chemistry",
     loading: "Loading...",
     systemSpecs: {
-      title: "System Specifications",
+      title: "Cell specifications",
       cathode: "Cathode:",
-      anode: "Anode:",
-      benchmarkElectrolyte: "Benchmark Electrolyte:",
+      anode: "Anode:",  
+      benchmarkElectrolyte: "Benchmark electrolyte:",
       cellDesign: "Cell design:"
     }
   },
   
   // Additive input
   additive: {
-    label: "SMILES of Additive",
+    label: "SMILES of additive",
     required: "*",
     placeholder: "Enter valid SMILES for additive of interest"
   },
