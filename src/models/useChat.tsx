@@ -4,6 +4,7 @@ import { produce } from 'immer';
 import { authFetch, getAPIUrl } from '@/utils';
 import { updateChatMetadata } from '@/services/chat';
 import i18n from '@/locales/i18n';
+import type { ToolStats } from '@/utils/messageUtils';
 
 const API_URL = getAPIUrl();
 
@@ -27,6 +28,7 @@ interface ChatMessage {
     inputs?: any;
     sources?: any;
     extraData?: any;
+    toolStats?: ToolStats;
 }
 
 // 定义分子类型
@@ -87,6 +89,36 @@ const generateNewChat = (): Chat => ({
 
     createdAt: new Date().toISOString(),
 })
+
+const parseToolStats = (input: any): ToolStats | undefined => {
+    const source = input;
+    if (!source || typeof source !== 'object') {
+        return undefined;
+    }
+
+    const parseValue = (value: any): number | undefined => {
+        if (value === undefined || value === null) return undefined;
+        if (typeof value === 'number') return value;
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : undefined;
+    };
+
+    const stats: ToolStats = {
+        papers_examined: parseValue(source.papers_examined ?? source.papersExamined),
+        papers_studied: parseValue(source.papers_studied ?? source.papersStudied),
+        molecules_considered: parseValue(source.molecules_considered ?? source.moleculesConsidered)
+    };
+
+    if (
+        stats.papers_examined === undefined &&
+        stats.papers_studied === undefined &&
+        stats.molecules_considered === undefined
+    ) {
+        return undefined;
+    }
+
+    return stats;
+};
 
 /**
  * State management for chat functionality using Zustand.
@@ -306,20 +338,33 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
                         useMultiAgent: false,
                         name: chat.chat_name || 'Start New Research',
-                        messages: (chat.content || chat.messages || []).map((item: any) => ({
-                            role: item.role,
-                            content: item.content || '',
-                            molText: (item.molecules || []).join(', '),
-                            molecules: item.molecules || [],
-                            extraData: item.extra_data || null,
-                            inputs: item.inputs,
-                            sources: item.sources,
-                            createdAt: item.created_at
-                                ? (item.created_at.endsWith('Z') ? item.created_at : item.created_at + 'Z')
-                                : (item.createdAt
-                                    ? (item.createdAt.endsWith('Z') ? item.createdAt : item.createdAt + 'Z')
-                                    : undefined),
-                        })),
+                        messages: (chat.content || chat.messages || []).map((item: any) => {
+                            const rawExtraData = item.extraData ?? item.extra_data;
+                            const parsedExtraData = parseMaybeJSON(rawExtraData);
+                            const normalizedExtraData = parsedExtraData && typeof parsedExtraData === 'object' && 'extra_data' in parsedExtraData
+                                ? parsedExtraData.extra_data
+                                : parsedExtraData;
+                            const parsedToolStats = parseToolStats(parseMaybeJSON(item.tool_stats ?? item.toolStats));
+
+                            return {
+                                role: item.role,
+                                content: item.content || '',
+                                molText: (item.molecules || []).join(', '),
+                                molecules: item.molecules || [],
+                                extraData: normalizedExtraData || null,
+                                toolStats: parsedToolStats,
+                                inputs: item.inputs,
+                                sources: item.sources,
+                                createdAt: item.created_at
+                                    ? (item.created_at.endsWith('Z') ? item.created_at : item.created_at + 'Z')
+                                    : (item.createdAt
+                                        ? (item.createdAt.endsWith('Z') ? item.createdAt : item.createdAt + 'Z')
+                                        : undefined),
+                                showRegenerate: item.show_regenerate,
+                                msg_type: item.msg_type,
+                                is_running: item.is_running
+                            };
+                        }),
                         activeMolecule: parseMaybeJSON(chat.meta_active_molecule) || null,
                         foundMolecules: parseMaybeJSON(chat.meta_molecules) || [],
                         similarMolecules: parseMaybeJSON(chat.meta_similar_molecules) || [],
