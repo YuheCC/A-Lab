@@ -1,15 +1,15 @@
 export default {
   // Page header
-  title: "添加剤分子を用いた電池性能予測",
+  title: "添加剤の電池性能への影響",
   beta: "ベータ",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "バッテリーシステム選択",
-    label: "バッテリーシステム",
+    title: "セル化学選択",
+    label: "セル化学",
     loading: "読み込み中...",
     systemSpecs: {
-      title: "システム仕様",
+      title: "セル仕様",
       cathode: "正極:",
       anode: "負極:",
       benchmarkElectrolyte: "ベンチマーク電解液:",
@@ -19,7 +19,7 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剤 (SMILES)",
+    label: "添加剤のSMILES",
     required: "*",
     placeholder: "有効なSMILESを入力してください"
   },
@@ -93,11 +93,11 @@ export default {
       temp45: "45°C性能"
     },
     performance: {
-      cycleLife25: "25 °C サイクル寿命",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C レート性能",
-      cycleLife45: "45 °C サイクル寿命",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C サイクル寿命",
+      ce25: "25°C コロンビック効率",
+      ratePerformance25: "25°C レート性能",
+      cycleLife45: "45°C サイクル寿命",
+      ce45: "45°C コロンビック効率"
     },
     status: {
       positive: "ポジティブ",

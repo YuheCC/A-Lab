@@ -1,15 +1,15 @@
 export default {
   // Page header
-  title: "含添加剂分子的电池性能预测",
+  title: "添加剂对电池性能的影响",
   beta: "测试版",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "电池系统选择",
-    label: "电池系统",
+    title: "电池化学选择",
+    label: "电池化学",
     loading: "加载中...",
     systemSpecs: {
-      title: "系统规格",
+      title: "电池规格",
       cathode: "正极:",
       anode: "负极:",
       benchmarkElectrolyte: "基准电解液:",
@@ -19,7 +19,7 @@ export default {
   
   // Additive input
   additive: {
-    label: "添加剂 (SMILES)",
+    label: "添加剂的SMILES",
     required: "*",
     placeholder: "输入有效的SMILES添加剂"
   },
@@ -93,11 +93,11 @@ export default {
       temp45: "45°C 性能"
     },
     performance: {
-      cycleLife25: "25 °C 循环寿命",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C 倍率性能",
-      cycleLife45: "45 °C 循环寿命",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C 循环寿命",
+      ce25: "25°C 库伦效率",
+      ratePerformance25: "25°C 倍率性能",
+      cycleLife45: "45°C 循环寿命",
+      ce45: "45°C 库伦效率"
     },
     status: {
       positive: "正面",

@@ -108,9 +108,13 @@
 .spec-item label {
   font-weight: 500;
   color: #6b7280;
-  min-width: 140px;
+  min-width: 90px;
   margin: 0;
   font-size: 14px;
+}
+
+.ja-page .spec-item label, .en-page .spec-item label {
+  min-width: 155px;
 }
 
 .spec-item span {

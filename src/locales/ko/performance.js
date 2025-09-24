@@ -1,15 +1,15 @@
 export default {
   // Page header
-  title: "첨가제 분자를 이용한 셀 성능 예측",
+  title: "첨가제가 셀 성능에 미치는 영향",
   beta: "베타",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "배터리 시스템 선택",
-    label: "배터리 시스템",
+    title: "셀 화학 선택",
+    label: "셀 화학",
     loading: "로딩 중...",
     systemSpecs: {
-      title: "시스템 사양",
+      title: "셀 사양",
       cathode: "양극:",
       anode: "음극:",
       benchmarkElectrolyte: "기준 전해액:",
@@ -19,7 +19,7 @@ export default {
   
   // Additive input
   additive: {
-    label: "첨가제 (SMILES)",
+    label: "첨가제의 SMILES",
     required: "*",
     placeholder: "유효한 SMILES 첨가제를 입력하세요"
   },
@@ -93,11 +93,11 @@ export default {
       temp45: "45°C 성능"
     },
     performance: {
-      cycleLife25: "25 °C 사이클 수명",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C 비율 성능",
-      cycleLife45: "45 °C 사이클 수명",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C 사이클 수명",
+      ce25: "25°C 코로나빅 효율",
+      ratePerformance25: "25°C 비율 성능",
+      cycleLife45: "45°C 사이클 수명",
+      ce45: "45°C 코로나빅 효율"
     },
     status: {
       positive: "긍정적",
