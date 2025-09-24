@@ -25,7 +25,7 @@ export default {
     intelligentCompute: 'インテリジェント友達検索計算',
     intelligentFindFriendsLabel: 'インテリジェント「友達」検索',
     intelligentFindFriendsTooltip: 'LLM を使って数百種類の分子を調べ、用途にさらに適した分子を見つけます。最良の結果を得るには、計算レベルを上げて（高度なオプション内の）電池システム情報を入力してください。',
-    intelligentFindFriendsLimitLabel: 'インテリジェント友達検索 今月の残り: {{remaining}} / {{limit}}',
+    intelligentFindFriendsLimitLabel: '今月の残り: {{remaining}} / {{limit}}',
     showHypothetical: '仮想分子を表示',
     showHypotheticalTooltip: '公開カタログにないアルゴリズム生成候補を含めます。入手可能性と合成可能性は不確かです。',
     computeDisabled: '無効',
