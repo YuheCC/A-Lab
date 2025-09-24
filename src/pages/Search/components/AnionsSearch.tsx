@@ -370,6 +370,7 @@ const AnionsSearch = () => {
                             showHypothetical,
                             includeQuery,
                             queryString,
+                            isAnion: true,
                         });
 
                         if (molecules.length > 0) {
