@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useContext } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
-import { Tooltip } from '@mui/material';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -13,6 +13,8 @@ import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
+import { useChatContext } from '../../context/ChatContext';
+import { formatQueryLimitLabel } from '@/utils/queryLimit';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -35,6 +37,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const { modeLimits } = useChatContext();
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
@@ -395,9 +398,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     )}
                     <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
-                        <Tooltip title={t('search.intelligentFindFriendsTooltip')} placement="top">
-                            <Info size={16} style={{ cursor: 'help' }} />
-                        </Tooltip>
+                        <InfoTooltip
+                            title={(
+                                <InfoTooltipContent
+                                    title={t('search.intelligentFindFriendsLabel')}
+                                    description={t('search.intelligentFindFriendsTooltip')}
+                                    remainingLabel={formatQueryLimitLabel(modeLimits.findFriendLLM, t, 'search.intelligentFindFriendsLimitLabel')}
+                                />
+                            )}
+                            placement="top"
+                        >
+                            <Info size={16} className="ff-info-icon" />
+                        </InfoTooltip>
                         <select
                             value={computeLevel}
                             onChange={(event) => setComputeLevel(event.target.value)}

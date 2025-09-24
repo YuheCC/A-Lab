@@ -1,8 +1,10 @@
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';
-import { Tooltip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
+import type { QueryLimitInfo } from '@/types/queryLimit';
+import { formatQueryLimitLabel } from '@/utils/queryLimit';
 
 interface FindFriendOptionsProps {
   findClosestFriends: boolean;
@@ -32,6 +34,11 @@ interface FindFriendOptionsProps {
   metric: string;
   setMetric: (v: string) => void;
   userPermissions?: string;
+  enableMolTypeSelector?: boolean;
+  showStructureSlider?: boolean;
+  structureSliderTooltip?: React.ReactNode;
+  findFriendLimitInfo?: QueryLimitInfo;
+  showBatteryFields?: boolean;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -62,6 +69,11 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   metric,
   setMetric,
   userPermissions,
+  enableMolTypeSelector = true,
+  showStructureSlider = true,
+  structureSliderTooltip,
+  findFriendLimitInfo,
+  showBatteryFields = true,
 }) => {
   const { t } = useTranslation();
   const toggleAdvanced = () => setShowAdvanced(!showAdvanced);
@@ -71,6 +83,12 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
       toggleAdvanced();
     }
   };
+
+  const intelligentLimitLabel = formatQueryLimitLabel(
+    findFriendLimitInfo,
+    t,
+    'search.intelligentFindFriendsLimitLabel',
+  );
 
   return (
     <>
@@ -104,49 +122,68 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', whiteSpace: 'nowrap' }}
                     >
                       <span>{t('search.findFriendsLabel')}</span>
-                      <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                        <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                      </Tooltip>
-                    </label>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <select
-                        value={selectedMolType}
-                        onChange={(e) => setSelectedMolType(e.target.value)}
-                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                      <InfoTooltip
+                        title={(
+                          <InfoTooltipContent
+                            title={t('search.findFriendsLabel')}
+                            description={t('search.findFriendsDescription')}
+                          />
+                        )}
+                        placement="top"
                       >
-                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                        <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
-                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                      </select>
-                      {selectedMolType === 'additive' && (
+                        <Info size={16} className="ff-info-icon" style={{ marginLeft: '4px' }} />
+                      </InfoTooltip>
+                    </label>
+                    {enableMolTypeSelector && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          flexWrap: 'wrap',
+                        }}
+                      >
                         <select
-                          value={additiveSubtype}
-                          onChange={(e) => setAdditiveSubtype(e.target.value)}
+                          value={selectedMolType}
+                          onChange={(e) => setSelectedMolType(e.target.value)}
                           style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                          aria-label={t('search.moleculeTypes.additiveSubtype')}
                         >
-                          <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
-                          <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
-                          <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
-                          <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
+                          <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
+                          <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
+                          <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
+                          <option value="additive">{t('search.moleculeTypes.additive')}</option>
                         </select>
-                      )}
-                    </div>
+                        {selectedMolType === 'additive' && (
+                          <select
+                            value={additiveSubtype}
+                            onChange={(e) => setAdditiveSubtype(e.target.value)}
+                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            aria-label={t('search.moleculeTypes.additiveSubtype')}
+                          >
+                            <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
+                            <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
+                            <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
+                            <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
+                          </select>
+                        )}
+                      </div>
+                    )}
                   </div>
                   {findClosestFriends && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                       <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
-                      <Tooltip title={t('search.intelligentFindFriendsTooltip')} placement="top">
-                        <Info size={16} style={{ cursor: 'help' }} />
-                      </Tooltip>
+                      <InfoTooltip
+                        title={(
+                          <InfoTooltipContent
+                            title={t('search.intelligentFindFriendsLabel')}
+                            description={t('search.intelligentFindFriendsTooltip')}
+                            remainingLabel={intelligentLimitLabel}
+                          />
+                        )}
+                        placement="top"
+                      >
+                        <Info size={16} className="ff-info-icon" />
+                      </InfoTooltip>
                       <select
                         value={computeLevel}
                         onChange={(e) => setComputeLevel(e.target.value)}
@@ -232,7 +269,9 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setSolvent={setSolvent}
                 metric={metric}
                 setMetric={setMetric}
-                showBatteryFields
+                showBatteryFields={showBatteryFields}
+                showStructureSlider={showStructureSlider}
+                structureSliderTooltip={structureSliderTooltip}
               />
             )}
           </div>
