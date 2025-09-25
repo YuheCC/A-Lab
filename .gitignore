@@ -17,3 +17,4 @@ config/config.ts
 .cursor
 .code-workspace.code-workspace
 CLAUDE.md
+.npm-cache
