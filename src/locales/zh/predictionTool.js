@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "电池寿命预测",
+    title: "上传早期循环数据进行寿命预测",
     betaTag: "BETA",
 
     // Steps
@@ -65,7 +65,7 @@ export default {
     history: {
         title: "预测记录",
         newPrediction: "新增预测",
-        searchPlaceholder: "Search by file name...",
+        searchPlaceholder: "按文件名搜索...",
         loading: "加载中...",
         deleteConfirm: "确定要删除这条记录吗？",
         deleteSuccess: "删除成功",

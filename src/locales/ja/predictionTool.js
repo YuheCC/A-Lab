@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "バッテリー寿命予測ツール",
+    title: "早期サイクルデータをアップロードして寿命予測",
     betaTag: "BETA",
 
     // Steps

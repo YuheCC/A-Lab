@@ -1,6 +1,6 @@
 export default {
     // Header
-    title: "Battery Life Prediction",
+    title: "Upload early cycle data for life prediction",
     betaTag: "BETA",
 
     // Steps

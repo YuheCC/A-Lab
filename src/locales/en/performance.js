@@ -1,6 +1,6 @@
 export default {
   // Page header
-  title: "Impact of additive on the cell performance",
+  title: "Impact of additive on cell performances",
   beta: "BETA",
   
   // Battery System Selection
