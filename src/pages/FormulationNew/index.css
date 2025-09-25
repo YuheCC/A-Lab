@@ -53,6 +53,204 @@
   padding: 20px;
 }
 
+/* Tab styles - based on GuideTooltip tab styles */
+.formulation-tabs-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+  padding-bottom: 0;
+}
+
+.formulation-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 16px;
+}
+
+.formulation-tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.formulation-tab:hover {
+  color: #1e293b;
+}
+
+.formulation-tab.active {
+  color: #56B26A;
+  border-bottom-color: #56B26A;
+}
+
+.formulation-tab-content {
+  min-height: 400px;
+}
+
+.formulation-tab-panel {
+  animation: fadeInPanel 0.3s ease-out;
+}
+
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Guide content styles - reused from GuideTooltip */
+.formulation-tab-panel .guide-content-section {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.formulation-tab-panel .guide-content-section h4 {
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.formulation-tab-panel .guide-content-section p {
+  margin: 12px 0;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.formulation-tab-panel .guide-content-section ol {
+  margin: 16px 0;
+  padding-left: 28px;
+}
+
+.formulation-tab-panel .guide-content-section ol li {
+  margin: 12px 0;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.formulation-tab-panel .guide-content-section ol li strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.formulation-tab-panel img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.formulation-tab-panel .figure-caption {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.formulation-tab-panel strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.formulation-tab-panel .properties-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.formulation-tab-panel .properties-table thead {
+  background: transparent;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.formulation-tab-panel .properties-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.formulation-tab-panel .properties-table th:first-child {
+  width: 50px;
+}
+
+.formulation-tab-panel .properties-table th:last-child {
+  width: 140px;
+  text-align: center;
+}
+
+.formulation-tab-panel .properties-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background 0.2s ease;
+}
+
+.formulation-tab-panel .properties-table tbody tr:hover {
+  background: rgba(248, 250, 252, 0.5);
+}
+
+.formulation-tab-panel .properties-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.formulation-tab-panel .properties-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.formulation-tab-panel .properties-table td:first-child {
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+}
+
+.formulation-tab-panel .properties-table td:nth-child(2) {
+  color: #1e293b;
+}
+
+.formulation-tab-panel .properties-table td:nth-child(3) {
+  font-style: italic;
+  color: #64748b;
+}
+
+.formulation-tab-panel .properties-table .time-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #0369a1;
+  vertical-align: middle;
+  border-left: 2px solid #e0f2fe;
+}
+
 .analysis-table {
   width: 100%;
   min-width: 1200px;
