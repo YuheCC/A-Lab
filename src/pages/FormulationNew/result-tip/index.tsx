@@ -31,14 +31,17 @@ const ResultTip: React.FC<ResultTipProps> = () => {
         <div className="tip-card">
           <h2 className="tip-title">{t('formulation.tip.calculating', '计算中')}</h2>
           <p className="tip-description">{t('formulation.tip.calculatingDesc', '基于极化力场的分子动力学模拟耗时较长（24-48小时），可在预计时间之后查看结果，系统会提醒您计算的状态')}</p>
+          <div className="properties-table-section">
+            <PropertiesTable />
+            <div className="properties-tip">
+              The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team via the email md-service@ses.ai
+            </div>
+          </div>
           <div className="tip-notice">
             <div className="notice-icon">⚠</div>
             <div className="notice-text">
               <div>{t('formulation.tip.notice2', '您可以关闭此页面，不会影响后台计算进程')}</div>
             </div>
-          </div>
-          <div className="properties-table-section">
-            <PropertiesTable />
           </div>
           <button className="result-tip-close-button" onClick={handleClose}>
             {t('formulation.resultTip.close', '关闭')}
