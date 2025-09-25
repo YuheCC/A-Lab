@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import GuideTooltip from '../components/GuideTooltip';
+import PropertiesTable from '../components/PropertiesTable';
 import './index.css';
 
 interface ResultTipProps {}
@@ -35,6 +36,9 @@ const ResultTip: React.FC<ResultTipProps> = () => {
             <div className="notice-text">
               <div>{t('formulation.tip.notice2', '您可以关闭此页面，不会影响后台计算进程')}</div>
             </div>
+          </div>
+          <div className="properties-table-section">
+            <PropertiesTable />
           </div>
           <button className="result-tip-close-button" onClick={handleClose}>
             {t('formulation.resultTip.close', '关闭')}
