@@ -28,7 +28,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "重量パーセント (wt%)",
-    tooltip: "カスタム値のサポートは近日公開予定"
+    tooltip: "カスタム値はMU1.5でリリース予定"
   },
   
   // Molecule information
