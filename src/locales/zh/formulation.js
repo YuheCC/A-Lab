@@ -142,8 +142,8 @@ export default {
   results: {
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '簇分析',
-    size: '尺寸',
+    clusterAnalysis: '溶剂化簇类型和分数分析',
+    size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
     analysisCharts: '分析图表',
@@ -161,7 +161,10 @@ export default {
     conductivity: '电导率 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP：溶剂分离离子对*阳离子和阴离子虽有关联，但并不直接接触。相反，一个或多个溶剂分子位于它们之间。典型出现在中等极性溶剂中，溶剂化壳层使离子分离，但静电关联依然存在。例如：Li*-(溶剂)-PF₆⁻',
+    CIPTitle: 'CIP：接触离子对 一个阳离子和一个阴离子直接接触，它们之间没有插入的溶剂分子。常见于低介电常数溶剂或高盐浓度下。比SSIP结合更强。例如：Li⁺·PF₆⁻直接接触。',
+    AGGTitle: 'AGG：离子聚集体 涉及两个以上阳离子和阴离子组合直接接触的较大关联结构。可以是二聚体、三聚体或更大的簇团。通常出现在高浓度、较差溶剂或离子液体中。例如：(Li⁺·PF₆⁻)ₙ簇团，或Li⁺桥接多个阴离子。'
   }
   ,
   detail: {
@@ -182,8 +185,8 @@ export default {
     weightFraction: '质量分数',
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '簇分析',
-    size: '尺寸',
+    clusterAnalysis: '溶剂化簇类型和分数分析',
+    size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
     analysisCharts: '分析图表',
@@ -201,7 +204,10 @@ export default {
     conductivity: '电导率 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP：溶剂分离离子对*阳离子和阴离子虽有关联，但并不直接接触。相反，一个或多个溶剂分子位于它们之间。典型出现在中等极性溶剂中，溶剂化壳层使离子分离，但静电关联依然存在。例如：Li*-(溶剂)-PF₆⁻',
+    CIPTitle: 'CIP：接触离子对 一个阳离子和一个阴离子直接接触，它们之间没有插入的溶剂分子。常见于低介电常数溶剂或高盐浓度下。比SSIP结合更强。例如：Li⁺·PF₆⁻直接接触。',
+    AGGTitle: 'AGG：离子聚集体 涉及两个以上阳离子和阴离子组合直接接触的较大关联结构。可以是二聚体、三聚体或更大的簇团。通常出现在高浓度、较差溶剂或离子液体中。例如：(Li⁺·PF₆⁻)ₙ簇团，或Li⁺桥接多个阴离子。'
   }
 };
 

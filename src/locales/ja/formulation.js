@@ -139,8 +139,8 @@ export default {
   results: {
     analysisResults: '解析結果',
     systemProperties: '系の物性',
-    clusterAnalysis: 'クラスター解析',
-    size: 'サイズ',
+    clusterAnalysis: '溶媒和クラスタータイプと分率解析',
+    size: '第一溶媒和クラスター中のアニオン数',
     category: 'カテゴリ',
     fraction: '分率',
     analysisCharts: '解析チャート',
@@ -158,7 +158,10 @@ export default {
     conductivity: '電気伝導率 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP：溶媒分離イオンペア カチオンとアニオンは関連しているが、直接接触していない。代わりに、1つ以上の溶媒分子がそれらの間に位置している。中程度の極性溶媒に典型的で、溶媒和殻がイオンを分離させるが、静電相関は残る。例：Li⁺-(溶媒)-PF₆⁻',
+    CIPTitle: 'CIP：接触イオンペア 1つのカチオンと1つのアニオンが直接接触し、間に溶媒分子を挟まない。低誘電率溶媒や高塩濃度で一般的。SSIPより強い結合。例：Li⁺·PF₆⁻が直接接触。',
+    AGGTitle: 'AGG：イオン凝集体 2つ以上のカチオンとアニオンの組み合わせによる直接接触を含む、より大きな関連構造。二量体、三量体、またはより大きなクラスターであり得る。高濃度、不良溶媒、またはイオン液体でしばしば現れる。例：(Li⁺·PF₆⁻)ₙクラスター、またはLi⁺が複数のアニオンを架橋。'
   }
   ,
   detail: {
@@ -179,8 +182,8 @@ export default {
     weightFraction: '重量分率',
     analysisResults: '解析結果',
     systemProperties: '系の物性',
-    clusterAnalysis: 'クラスター解析',
-    size: 'サイズ',
+    clusterAnalysis: '溶媒和クラスタータイプと分率解析',
+    size: '第一溶媒和クラスター中のアニオン数',
     category: 'カテゴリ',
     fraction: '分率',
     analysisCharts: '解析チャート',
@@ -198,7 +201,10 @@ export default {
     conductivity: '電気伝導率 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP：溶媒分離イオンペア カチオンとアニオンは関連しているが、直接接触していない。代わりに、1つ以上の溶媒分子がそれらの間に位置している。中程度の極性溶媒に典型的で、溶媒和殻がイオンを分離させるが、静電相関は残る。例：Li⁺-(溶媒)-PF₆⁻',
+    CIPTitle: 'CIP：接触イオンペア 1つのカチオンと1つのアニオンが直接接触し、間に溶媒分子を挟まない。低誘電率溶媒や高塩濃度で一般的。SSIPより強い結合。例：Li⁺·PF₆⁻が直接接触。',
+    AGGTitle: 'AGG：イオン凝集体 2つ以上のカチオンとアニオンの組み合わせによる直接接触を含む、より大きな関連構造。二量体、三量体、またはより大きなクラスターであり得る。高濃度、不良溶媒、またはイオン液体でしばしば現れる。例：(Li⁺·PF₆⁻)ₙクラスター、またはLi⁺が複数のアニオンを架橋。'
   }
 };
 

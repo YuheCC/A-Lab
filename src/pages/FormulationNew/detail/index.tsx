@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@mui/material';
+import { Info } from 'lucide-react';
 import { getMDHistoryDetail, MDHistoryDetailResponse } from '@/services/formulation/md';
 import GuideTooltip from '../components/GuideTooltip';
 import './index.css';
@@ -156,9 +158,9 @@ const DetailPage: React.FC = () => {
         <div className="detail-header">
           <div className="formulation-title-wrapper">
             <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            <GuideTooltip
+            {/* <GuideTooltip
               storageKey="formulation-new-guide-shown"
-            />
+            /> */}
           </div>
           <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
         </div>
@@ -249,14 +251,48 @@ const DetailPage: React.FC = () => {
               {clusterAnalysis.map((item, index) => (
                 <div key={index} className="table-row">
                   <span>{item.size}</span>
-                  <span
-                    className="category-tag"
-                    style={{
-                      backgroundColor: getCategoryColor(item.category),
-                      color: getCategoryTextColor(item.category)
-                    }}
-                  >
-                    {item.category}
+                  <span className="category-cell">
+                    <span
+                      className="category-tag"
+                      style={{
+                        backgroundColor: getCategoryColor(item.category),
+                        color: getCategoryTextColor(item.category)
+                      }}
+                    >
+                      {item.category}
+                    </span>
+                    <Tooltip
+                      title={t(`formulation.results.${item.category}Title`, '')}
+                      placement="top"
+                      arrow
+                      slotProps={{
+                        tooltip: {
+                          sx: {
+                            bgcolor: 'white',
+                            color: 'black',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            fontSize: '14px',
+                            maxWidth: '300px',
+                            whiteSpace: 'pre-line',
+                            '& .MuiTooltip-arrow': {
+                              color: 'white',
+                              '&::before': {
+                                border: '1px solid #e5e7eb'
+                              }
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </span>
                   <span>{item.fraction}</span>
                 </div>

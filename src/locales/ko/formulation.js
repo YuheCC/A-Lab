@@ -139,8 +139,8 @@ export default {
   results: {
     analysisResults: '분석 결과',
     systemProperties: '시스템 속성',
-    clusterAnalysis: '클러스터 분석',
-    size: '크기',
+    clusterAnalysis: '용매화 클러스터 유형 및 분율 분석',
+    size: '첫 번째 용매화 클러스터의 음이온 수',
     category: '범주',
     fraction: '분율',
     analysisCharts: '분석 차트',
@@ -158,7 +158,10 @@ export default {
     conductivity: '전도도 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP: 용매 분리 이온쌍 *양이온과 음이온이 연관되어 있지만 직접 접촉하지 않습니다. 대신 하나 이상의 용매 분자가 그들 사이에 위치합니다. 중간 극성 용매에서 전형적이며, 용매화 껍질이 이온을 분리시키지만 정전기적 상관관계는 유지됩니다. 예: Li⁺-(용매)-PF₆⁻',
+    CIPTitle: 'CIP: 접촉 이온쌍 하나의 양이온과 하나의 음이온이 직접 접촉하며, 사이에 용매 분자가 끼어있지 않습니다. 낮은 유전율 용매나 높은 염 농도에서 일반적입니다. SSIP보다 강한 결합. 예: Li⁺·PF₆⁻ 직접 접촉.',
+    AGGTitle: 'AGG: 이온 응집체 둘 이상의 양이온과 음이온의 조합이 직접 접촉하는 더 큰 연관 구조. 이량체, 삼량체 또는 더 큰 클러스터일 수 있습니다. 고농도, 불량 용매 또는 이온 액체에서 자주 나타납니다. 예: (Li⁺·PF₆⁻)ₙ 클러스터, 또는 Li⁺가 여러 음이온을 연결.'
   }
   ,
   detail: {
@@ -179,8 +182,8 @@ export default {
     weightFraction: '질량 분율',
     analysisResults: '분석 결과',
     systemProperties: '시스템 속성',
-    clusterAnalysis: '클러스터 분석',
-    size: '크기',
+    clusterAnalysis: '용매화 클러스터 유형 및 분율 분석',
+    size: '첫 번째 용매화 클러스터의 음이온 수',
     category: '범주',
     fraction: '분율',
     analysisCharts: '분석 차트',
@@ -198,7 +201,10 @@ export default {
     conductivity: '전도도 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP: 용매 분리 이온쌍 *양이온과 음이온이 연관되어 있지만 직접 접촉하지 않습니다. 대신 하나 이상의 용매 분자가 그들 사이에 위치합니다. 중간 극성 용매에서 전형적이며, 용매화 껍질이 이온을 분리시키지만 정전기적 상관관계는 유지됩니다. 예: Li⁺-(용매)-PF₆⁻',
+    CIPTitle: 'CIP: 접촉 이온쌍 하나의 양이온과 하나의 음이온이 직접 접촉하며, 사이에 용매 분자가 끼어있지 않습니다. 낮은 유전율 용매나 높은 염 농도에서 일반적입니다. SSIP보다 강한 결합. 예: Li⁺·PF₆⁻ 직접 접촉.',
+    AGGTitle: 'AGG: 이온 응집체 둘 이상의 양이온과 음이온의 조합이 직접 접촉하는 더 큰 연관 구조. 이량체, 삼량체 또는 더 큰 클러스터일 수 있습니다. 고농도, 불량 용매 또는 이온 액체에서 자주 나타납니다. 예: (Li⁺·PF₆⁻)ₙ 클러스터, 또는 Li⁺가 여러 음이온을 연결.'
   }
 };
 
