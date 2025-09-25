@@ -98,11 +98,11 @@ export default {
 
     // Chart
     chart: {
-        title: "사이클 수에 따른 배터리 용량 변화",
+        title: "배터리 용량 대 사이클 수",
         cycleCount: "사이클 수",
-        capacityProcess: "용량 변화 과정",
-        predictedCycleLife: "예측 사이클 수명",
-        xAxisName: "사이클 수 (Cycle)",
+        capacityProcess: "용량 열화 (업로드된 데이터)",
+        predictedCycleLife: "80% SOH에 도달하는 예측 사이클 수",
+        xAxisName: "사이클 수",
         yAxisName: "방전 용량"
     },
 

@@ -98,11 +98,11 @@ export default {
 
     // Chart
     chart: {
-        title: "サイクル数によるバッテリー容量変化",
+        title: "バッテリー容量対サイクル数",
         cycleCount: "サイクル数",
-        capacityProcess: "容量変化プロセス",
-        predictedCycleLife: "予測サイクル寿命",
-        xAxisName: "サイクル数 (Cycle)",
+        capacityProcess: "容量劣化（アップロードデータ）",
+        predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
+        xAxisName: "サイクル数",
         yAxisName: "放電容量"
     },
 

@@ -99,10 +99,10 @@ export default {
     // Chart
     chart: {
         title: "Battery Capacity vs Cycle Count",
-        cycleCount: "Cycle Count",
-        capacityProcess: "Capacity Change Process",
-        predictedCycleLife: "Predicted Cycle Life",
-        xAxisName: "Cycle Count (Cycle)",
+        cycleCount: "Cycle Number",
+        capacityProcess: "Capacity degradation (uploaded data)",
+        predictedCycleLife: "Predicted cycle number to reach 80% SOH",
+        xAxisName: "Cycle Number",
         yAxisName: "Discharge Capacity"
     },
 

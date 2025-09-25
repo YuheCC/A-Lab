@@ -22,12 +22,14 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       return {};
     }
 
-    // 第一个散点图：真实容量变化数据（如果有的话）
+    // 数据准备
     const cycleDataSeries: any[] = [];
-    // 第二个散点图：预测的循环寿命
     const lifePredictionSeries: any[] = [];
+    const leftCycleDataSeries: any[] = [];  // 左侧图表的容量数据
+    const rightPredictionSeries: any[] = []; // 右侧图表的预测数据
 
     let markLineYValue: number | null = null;
+    let actualMaxCycleLife = 0;
 
     brcodeData.forEach((item) => {
       if (item.cycle_life_1 !== null) {
@@ -37,12 +39,15 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
         // 如果有真实的容量历史数据，添加到第一个系列
         if (item.cycle_life_1_cycles_detail && typeof item.cycle_life_1_cycles_detail === 'object') {
           Object.entries(item.cycle_life_1_cycles_detail).forEach(([cycle, capacity]) => {
-            cycleDataSeries.push([parseInt(cycle), capacity, parseInt(cycle)]);
+            const cycleNum = parseInt(cycle);
+            cycleDataSeries.push([cycleNum, capacity, cycleNum]);
+            // 分配到左侧图表（历史数据）
+            leftCycleDataSeries.push([cycleNum, capacity, cycleNum]);
           });
         }
 
-        const maxCycleLife = Math.max(...Object.keys(item.cycle_life_1_cycles_detail || {}).map(Number));
-        setMaxCycleLife(maxCycleLife);
+        const maxCycleLifeFromData = Math.max(...Object.keys(item.cycle_life_1_cycles_detail || {}).map(Number));
+        actualMaxCycleLife = Math.max(actualMaxCycleLife, maxCycleLifeFromData);
 
         // 获取用于标记线的 y 值
         const predictValue = cycle_life_1_predict_detail?.[cycleLife];
@@ -50,27 +55,43 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           markLineYValue = predictValue;
         }
 
-        // 预测的循环寿命点添加到第二个系列
+        // 预测的循环寿命点 - 分配到右侧图表
         lifePredictionSeries.push([
-          (maxCycleLife * 1.2 ).toFixed(0),
-          predictValue || 0, // 使用默认容量值，可以根据需要调整
+          cycleLife,
+          predictValue || 0,
+          cycleLife
+        ]);
+        rightPredictionSeries.push([
+          cycleLife,
+          predictValue || 0,
           cycleLife
         ]);
       }
     });
 
+    setMaxCycleLife(actualMaxCycleLife);
+
+    // 计算断点位置 - 在实际数据的最大循环次数和预测值之间留出间隙
+    const breakPoint = actualMaxCycleLife;
+    const minPredictionCycle = Math.min(...lifePredictionSeries.map(item => item[0]));
+    const maxPredictionCycle = Math.max(...lifePredictionSeries.map(item => item[0]));
+
+    // 计算统一的Y轴范围，确保左右图表Y轴对齐
+    const allYValues = [
+      ...leftCycleDataSeries.map(item => item[1]),
+      ...rightPredictionSeries.map(item => item[1])
+    ].filter(val => val !== null && val !== undefined);
+    
+    const minY = Math.min(...allYValues);
+    const maxY = Math.max(...allYValues);
+    const yPadding = (maxY - minY) * 0.1; // 10%的边距
+    const yAxisMin = minY - yPadding;
+    const yAxisMax = maxY + yPadding;
+
     // 直接使用原始的循环寿命数据作为散点图数据
     const adjustedLifePredictionSeries = lifePredictionSeries;
 
     return {
-      title: {
-        text: t('predictionTool.chart.title'),
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
@@ -107,55 +128,165 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
         data: [t('predictionTool.chart.capacityProcess'), t('predictionTool.chart.predictedCycleLife')],
         bottom: '10',
       },
-      grid: {
-        left: '15%',
-        right: '12%',
-        bottom: '22%',
-        top: '15%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'value',
-        name: t('predictionTool.chart.xAxisName'),
-        nameLocation: 'center',
-        nameGap: 30,
-        axisLabel: {
-          formatter: (value: number) => {
-            const roundedValue = Math.round(value);
-            return roundedValue <= maxCycleLife ? roundedValue.toString() : '';
-          }
-        },
-        axisTick: {
-          show: true
-        },
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: '#e5e7eb',
-            type: 'dashed'
+      // 在图表中间添加X轴标签
+      graphic: [
+        {
+          type: 'text',
+          left: 'center',
+          bottom: '13%',
+          style: {
+            text: t('predictionTool.chart.xAxisName'),
+            fontSize: 12,
+            fontWeight: 'normal',
+            fill: '#333'
           }
         }
-      },
-      yAxis: {
-        type: 'value',
-        name: t('predictionTool.chart.yAxisName'),
-        nameLocation: 'center',
-        nameGap: 50,
-        nameTextStyle: {
-          fontSize: 12
+      ],
+      // 使用多个grid系统创建左右两个图表区域
+      grid: [
+        {
+          // 左侧图表区域 - 显示历史容量数据
+          left: '10%',
+          right: '35%',
+          top: '10%',
+          bottom: '22%',
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#e5e7eb'
         },
-        axisLabel: {
-          show: false
-        },
-        axisTick: {
-          show: false
+        {
+          // 右侧图表区域 - 显示预测数据（缩小宽度）
+          left: '67%',
+          right: '10%',
+          top: '10%',
+          bottom: '22%',
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#e5e7eb'
         }
-      },
+      ],
+      // 配置两个X轴
+      xAxis: [
+        {
+          // 左侧X轴 - 显示0到maxCycleLife的历史数据
+          gridIndex: 0,
+          type: 'value',
+          name: '', // 左侧不显示标签
+          nameLocation: 'center',
+          nameGap: 30,
+          min: 0,
+          max: breakPoint + breakPoint * 0.1, // 添加10%的边距
+          axisTick: {
+            show: true
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#e5e7eb',
+              type: 'dashed'
+            }
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#666'
+            }
+          },
+          axisLabel: {
+            show: true,
+            fontSize: 11
+          }
+        },
+        {
+          // 右侧X轴 - 显示预测寿命范围
+          gridIndex: 1,
+          type: 'value',
+          name: '',
+          nameLocation: 'center',
+          nameGap: 30,
+          min: minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1,
+          max: maxPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.1,
+          axisTick: {
+            show: true
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#e5e7eb',
+              type: 'dashed'
+            }
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#666'
+            }
+          },
+          axisLabel: {
+            show: true,
+            fontSize: 11
+          }
+        }
+      ],
+      // 配置两个Y轴
+      yAxis: [
+        {
+          // 左侧Y轴
+          gridIndex: 0,
+          type: 'value',
+          name: t('predictionTool.chart.yAxisName'),
+          nameLocation: 'center',
+          nameGap: 50,
+          nameTextStyle: {
+            fontSize: 12
+          },
+          min: yAxisMin,
+          max: yAxisMax,
+          axisLabel: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          }
+        },
+        {
+          // 右侧Y轴
+          gridIndex: 1,
+          type: 'value',
+          name: '',
+          nameLocation: 'center',
+          nameGap: 50,
+          nameTextStyle: {
+            fontSize: 12
+          },
+          min: yAxisMin,
+          max: yAxisMax,
+          axisLabel: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false  // 隐藏Y轴实线
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#e5e7eb',
+              type: 'dashed'  // 使用虚线样式，与X轴保持一致
+            }
+          }
+        }
+      ],
       series: [
         {
+          // 左侧图表：历史容量数据
           name: t('predictionTool.chart.capacityProcess'),
           type: 'scatter',
-          data: cycleDataSeries,
+          xAxisIndex: 0,
+          yAxisIndex: 0,
+          data: leftCycleDataSeries,
           symbolSize: 4,
           itemStyle: {
             color: '#5470c6',
@@ -191,9 +322,12 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           } : undefined
         },
         {
+          // 右侧图表：预测循环寿命数据
           name: t('predictionTool.chart.predictedCycleLife'),
           type: 'scatter',
-          data: adjustedLifePredictionSeries,
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          data: rightPredictionSeries,
           symbolSize: 8,
           itemStyle: {
             color: '#ee6666',
@@ -208,8 +342,111 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
               shadowColor: '#ee6666',
               shadowBlur: 8
             }
-          }
-        }
+          },
+          // 在右侧图表也显示markline，确保连接性
+          markLine: markLineYValue !== null ? {
+            symbol: 'none',
+            silent: true,
+            data: [
+              {
+                yAxis: markLineYValue,
+                name: '预测容量线',
+                label: {
+                  show: false // 右侧不显示标签，避免重复
+                },
+                lineStyle: {
+                  color: '#ff6b6b',
+                  type: 'dashed',
+                  width: 2
+                }
+              }
+            ]
+          } : undefined
+        },
+        // {
+        //   // 左侧轴线断裂效果
+        //   name: '',
+        //   type: 'line',
+        //   xAxisIndex: 0,
+        //   yAxisIndex: 0,
+        //   data: [],
+        //   silent: true,
+        //   markLine: {
+        //     symbol: 'none',
+        //     silent: true,
+        //     data: [
+        //       {
+        //         xAxis: breakPoint * 0.95,
+        //         lineStyle: {
+        //           color: 'white',
+        //           width: 8,
+        //           type: 'solid'
+        //         }
+        //       }
+        //     ]
+        //   },
+        //   markPoint: {
+        //     symbol: 'path://M0,-8 L4,-4 L8,-8 M0,8 L4,4 L8,8',
+        //     symbolSize: [16, 16],
+        //     symbolOffset: [8, 0],
+        //     itemStyle: {
+        //       color: '#333',
+        //       borderColor: '#333',
+        //       borderWidth: 2
+        //     },
+        //     data: [
+        //       {
+        //         coord: [breakPoint * 0.95, (markLineYValue || 15)],
+        //         value: '',
+        //         label: {
+        //           show: false
+        //         }
+        //       }
+        //     ]
+        //   }
+        // },
+        // {
+        //   // 右侧轴线断裂效果
+        //   name: '',
+        //   type: 'line',
+        //   xAxisIndex: 1,
+        //   yAxisIndex: 1,
+        //   data: [],
+        //   silent: true,
+        //   markLine: {
+        //     symbol: 'none',
+        //     silent: true,
+        //     data: [
+        //       {
+        //         xAxis: minPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.05,
+        //         lineStyle: {
+        //           color: 'white',
+        //           width: 8,
+        //           type: 'solid'
+        //         }
+        //       }
+        //     ]
+        //   },
+        //   markPoint: {
+        //     symbol: 'path://M0,-8 L-4,-4 L-8,-8 M0,8 L-4,4 L-8,8',
+        //     symbolSize: [16, 16],
+        //     symbolOffset: [-8, 0],
+        //     itemStyle: {
+        //       color: '#333',
+        //       borderColor: '#333',
+        //       borderWidth: 2
+        //     },
+        //     data: [
+        //       {
+        //         coord: [minPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.05, (markLineYValue || 15)],
+        //         value: '',
+        //         label: {
+        //           show: false
+        //         }
+        //       }
+        //     ]
+        //   }
+        // }
       ]
     };
   }, [brcodeData, selectedBarcode, t, maxCycleLife]);
