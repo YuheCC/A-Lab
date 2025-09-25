@@ -7,13 +7,13 @@ const Introduction: React.FC = () => {
     <div className="introduction-container">
       <div className="guide-content-section">
         <img src="/formulation/introduction1.png" alt="Introduction" />
-        <div className="figure-caption">Figure 1. Overview of MD workflow for the study of electrolyte formulation</div>
-        <p>Molecular dynamics (MD) simulations connect measurable physicochemical properties with the underlying atomic- and molecular-scale interactions, with typical snapshots illustrated in Figure 1. By integrating SES's advanced polarizable force field, we have streamlined this workflow into a hands-off, easy-access MD platform for formulation design.</p>
+        <div className="figure-caption">Our proprietary Molecular Dynamics (MD) service for electrolyte formulation</div>
+        <p>Molecular dynamics (MD) simulations in SES’s platform uniquely combine advanced polarizable force fields with an automated workflow, capturing ion–solvent interactions with high fidelity. Users simply submit electrolyte formulations through the MU portal, and within days receive quantitative predictions of key properties—delivering faster, more reliable insights than conventional trial-and-error or standard modeling approaches.</p>
       </div>
       <div className="guide-content-section">
         <img src="/formulation/introduction2.png" alt="Introduction" />
-        <div className="figure-caption">Figure 2. Snapshots of MD simulations at various concentrations</div>
-        <p>In this context, "formulation" refers to liquid electrolytes for Li⁺ batteries, where multiple solvents can be blended with customized additives or diluents. Using the SES MD analysis suite, illustrated in Figure 2, a full simulation run completes in about three days, after which you receive detailed property predictions for your chosen electrolyte mixtures—accelerating your design process with reliable insights.</p>
+        <div className="figure-caption">Accelerating electrolyte design with MD simulations across concentrations</div>
+        <p>SES’s proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvents organize at different salt concentrations. Each simulation run completes in ~3 days, after which customers receive quantitative property predictions—delivering fast, reliable insights to guide electrolyte design and optimization beyond traditional trial-anderror approaches.</p>
       </div>
       <div className="guide-content-section">
         <PropertiesTable />
@@ -30,17 +30,17 @@ const Introduction: React.FC = () => {
             <br />The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to ionic conductivity, viscosity, and Li⁺ transport behavior.
             <div className="cluster-illustration">
               <img src="/formulation/cluster-illustration.jpg" alt="Solvation cluster types illustration" />
-              <div className="figure-caption">Figure 3. Illustration of different solvation cluster types (SSIP, CIP, AGG) and their impact on ion transport</div>
+              <div className="figure-caption">Illustration of different solvation cluster types (SSIP, CIP, AGG) and their impact on ion transport</div>
             </div>
           </li>
           <li><strong>Diffusivity</strong>: Rate of particle spreading due to random motion, linked to mobility.</li>
-          <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. Benchmark of ionic conductivity against experiment can be seen in Figure 4</li>
+          <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. As shown in the figure below, our MD-calculated ionic conductivity aligns well with experimental benchmarks, providing reliable predictions for electrolyte design.</li>
           <li><strong>Ion–ion correlation</strong>: Measure of how ionic positions and motions are correlated beyond random distribution.</li>
           <li><strong>Viscosity</strong>: Resistance of a fluid to flow or deformation under shear stress.</li>
           <li><strong>Density</strong>: Mass per unit volume, reflecting system compactness.</li>
         </ol>
         <img src="/formulation/introduction4.png" alt="MD simulation results" />
-        <div className="figure-caption">Figure 4. Summary of MD simulation settings and results</div>
+        <div className="figure-caption">Summary of MD simulation settings and results</div>
       </div>
 
       <div className="guide-content-section">
@@ -56,13 +56,13 @@ const Introduction: React.FC = () => {
         <h4>Group 3. </h4>
         <p>12. <strong>EDL (Electric Double Layer)</strong>: Structured region of ions near a charged surface or electrode. Inferring the formation of SEI compound and redox reactions.</p>
         <img src="/formulation/introduction5.png" alt="Electric Double Layer" />
-        <div className="figure-caption">Figure 5. Electric double layer under well-controlled electrostatic potential. In this MD simulation, electrolyte is created between two electrodes. By mimicking the potential change across the quasi cell, surface structure under electrostatic potential can be studied.</div>
+        <div className="figure-caption">Electric double layer under well-controlled electrostatic potential. In this MD simulation, electrolyte is created between two electrodes. By mimicking the potential change across the quasi cell, surface structure under electrostatic potential can be studied.</div>
 
         <ol start={13}>
           <li><strong>Solubility</strong>: Maximum amount of a substance that can dissolve in a solvent under equilibrium conditions.</li>
         </ol>
         <img src="/formulation/introduction6.png" alt="Solubility calculation" />
-        <div className="figure-caption">Figure 6. Performance in calculation of LiFSI solubility in various solvents.</div>
+        <div className="figure-caption">Performance in calculation of LiFSI solubility in various solvents.</div>
       </div>
     </div>
   );
