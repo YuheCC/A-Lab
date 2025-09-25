@@ -148,3 +148,17 @@
   vertical-align: middle;
   border-left: 2px solid #e0f2fe;
 }
+
+/* Cluster illustration styles */
+.introduction-container .cluster-illustration {
+  margin: 16px 0;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.introduction-container .cluster-illustration img {
+  margin: 8px auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

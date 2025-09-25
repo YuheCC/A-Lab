@@ -101,9 +101,18 @@ const Introduction: React.FC = () => {
         <ol>
           <li><strong>Radial distribution function (RDF)</strong>: Probability of finding a particle at a given distance from a reference particle, describing local structure. This has impacts on solubility, conductivity, dissolution at electrolyte-electrode interphase, and SEI.</li>
           <li><strong>Coordination number (CN)</strong>: Average number of neighboring atoms/ions surrounding a central particle.</li>
-          <li><strong>Solvation cluster type and fraction analysis</strong>: Group of atoms/ions or molecules aggregated through interactions, often used to analyze association.</li>
+          <li><strong>Solvation cluster type and fraction analysis</strong>: Analyzes how cations and anions associate in electrolyte solutions:
+            <br />• <strong>SSIP (Solvent-Separated Ion Pair)</strong>: Cation-anion correlated but at least one solvent molecule sits between. Favored in high-dielectric solvents; supports higher Li⁺ mobility.
+            <br />• <strong>CIP (Contact Ion Pair)</strong>: Cation-anion directly contact, no solvent in between. More common at higher salt concentration; can slow down ion transport.
+            <br />• <strong>AGG (Aggregate)</strong>: Larger clusters with multiple cations/anions linked together. Dominant in concentrated electrolytes; often reduces conductivity.
+            <br />The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to ionic conductivity, viscosity, and Li⁺ transport behavior.
+            <div className="cluster-illustration">
+              <img src="/formulation/cluster-illustration.jpg" alt="Solvation cluster types illustration" />
+              <div className="figure-caption">Figure 3. Illustration of different solvation cluster types (SSIP, CIP, AGG) and their impact on ion transport</div>
+            </div>
+          </li>
           <li><strong>Diffusivity</strong>: Rate of particle spreading due to random motion, linked to mobility.</li>
-          <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. Benchmark of ionic conductivity against experiment can be seen in Figure 3</li>
+          <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. Benchmark of ionic conductivity against experiment can be seen in Figure 4</li>
           <li><strong>Ion–ion correlation</strong>: Measure of how ionic positions and motions are correlated beyond random distribution.</li>
           <li><strong>Viscosity</strong>: Resistance of a fluid to flow or deformation under shear stress.</li>
           <li><strong>Density</strong>: Mass per unit volume, reflecting system compactness.</li>
