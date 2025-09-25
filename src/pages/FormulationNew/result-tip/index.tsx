@@ -19,9 +19,9 @@ const ResultTip: React.FC<ResultTipProps> = () => {
       <div className="result-tip-header">
         <div className="formulation-title-wrapper">
           <h1 className="result-tip-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          <GuideTooltip
+          {/* <GuideTooltip
             storageKey="formulation-new-guide-shown"
-          />
+          /> */}
         </div>
         <span className="result-tip-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>

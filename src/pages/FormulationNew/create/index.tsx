@@ -18,9 +18,9 @@ const CreatePage: React.FC = () => {
       <div className="create-header">
         <div className="formulation-title-wrapper">
           <h1 className="create-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          <GuideTooltip
+          {/* <GuideTooltip
             storageKey="formulation-new-guide-shown"
-          />
+          /> */}
         </div>
         <span className="create-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>

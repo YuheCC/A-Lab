@@ -211,9 +211,9 @@ const DetailPage: React.FC = () => {
       <div className="detail-header">
         <div className="formulation-title-wrapper">
           <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          <GuideTooltip
+          {/* <GuideTooltip
             storageKey="formulation-new-guide-shown"
-          />
+          /> */}
         </div>
         <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
       </div>
