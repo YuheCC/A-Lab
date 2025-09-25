@@ -2,6 +2,10 @@ export default {
   title: 'Salt & Solvent Configuration',
   subtitle: 'Configure and customize your electrolytes',
   comingSoon: 'Will be available soon',
+  tabs: {
+    introduction: 'Introduction',
+    records: 'Records'
+  },
   actions: {
     backToList: 'Back to List'
   },

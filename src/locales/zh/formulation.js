@@ -2,6 +2,10 @@ export default {
   title: '盐与溶剂配置',
   subtitle: '配置并自定义你的电解质',
   comingSoon: '即将提供',
+  tabs: {
+    introduction: '介绍',
+    records: '记录'
+  },
   actions: {
     backToList: '返回列表'
   },
