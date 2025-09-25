@@ -426,6 +426,10 @@
   flex-shrink: 0;
 }
 
+.en-page, .ja-page .tip-label {
+  min-width: 115px;
+}
+
 .tip-value {
   color: #374151;
   font-weight: 400;

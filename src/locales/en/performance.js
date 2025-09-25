@@ -6,28 +6,28 @@ export default {
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Cell chemistry selection",
-    label: "Cell chemistry",
+    title: "Cell Chemistry Selection",
+    label: "Cell Chemistry",
     loading: "Loading...",
     systemSpecs: {
-      title: "Cell specifications",
+      title: "Cell Specifications",
       cathode: "Cathode:",
       anode: "Anode:",  
-      benchmarkElectrolyte: "Benchmark electrolyte:",
-      cellDesign: "Cell design:"
+      benchmarkElectrolyte: "Benchmark Electrolyte:",
+      cellDesign: "Cell Design:"
     }
   },
   
   // Additive input
   additive: {
-    label: "SMILES of additive",
+    label: "SMILES of Additive",
     required: "*",
     placeholder: "Enter valid SMILES for additive of interest"
   },
 
   // Weight percentage
   weightPercentage: {
-    label: "Weight percentage (wt%)",
+    label: "Weight Percentage (wt%)",
     tooltip: "Custom value to be launched in MU1.5"
   },
   
@@ -94,11 +94,11 @@ export default {
       temp45: "45°C Performance"
     },
     performance: {
-      cycleLife25: "25°C Cycle life",
-      ce25: "25°C Coulombic efficiency",
-      ratePerformance25: "25°C Rate performance",
+      cycleLife25: "25°C Cycle Life",
+      ce25: "25°C Coulombic Efficiency",
+      ratePerformance25: "25°C Rate Performance",
       cycleLife45: "45°C Cycle Life",
-      ce45: "45°C Coulombic efficiency"
+      ce45: "45°C Coulombic Efficiency"
     },
     status: {
       positive: "POSITIVE",
@@ -124,8 +124,8 @@ export default {
   // Analysis timing
   analysis: {
     analyzing: "Analyzing",
-    analyzingForSeconds: "analyzing for {{seconds}} s",
-    analyzingForMinutesAndSeconds: "analyzing for {{minutes}} min {{seconds}} s"
+    analyzingForSeconds: "Analyzed for {{seconds}} s",
+    analyzingForMinutesAndSeconds: "Analyzed for {{minutes}} min {{seconds}} s"
   },
   
   // General UI text
