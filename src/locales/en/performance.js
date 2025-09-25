@@ -115,10 +115,17 @@ export default {
     title: "LLM Analysis",
     sections: {
       nickelOptimization: "1. Nickel Dehydrogenation Optimization",
-      cyclingOptimization: "2. 4°C Cycling Optimization", 
+      cyclingOptimization: "2. 4°C Cycling Optimization",
       recommendations: "3. Comprehensive Recommendations"
     },
     references: "References"
+  },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "Analyzing",
+    analyzingForSeconds: "analyzing for {{seconds}} s",
+    analyzingForMinutesAndSeconds: "analyzing for {{minutes}} min {{seconds}} s"
   },
   
   // General UI text

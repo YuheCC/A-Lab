@@ -120,6 +120,13 @@ export default {
     },
     references: "참고문헌"
   },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "분석 중",
+    analyzingForSeconds: "{{seconds}}초 동안 분석 중",
+    analyzingForMinutesAndSeconds: "{{minutes}}분 {{seconds}}초 동안 분석 중"
+  },
   
   // General UI text
   ui: {
