@@ -30,7 +30,7 @@ const Introduction: React.FC = () => {
             <br />The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to ionic conductivity, viscosity, and Li⁺ transport behavior.
             <div className="cluster-illustration">
               <img src="/formulation/cluster-illustration.jpg" alt="Solvation cluster types illustration" />
-              <div className="figure-caption">Illustration of different solvation cluster types (SSIP, CIP, AGG) and their impact on ion transport</div>
+              <div className="figure-caption">Representative Li solvate clusters</div>
             </div>
           </li>
           <li><strong>Diffusivity</strong>: Rate of particle spreading due to random motion, linked to mobility.</li>
