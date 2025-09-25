@@ -69,8 +69,11 @@ const PerformancePage: React.FC = () => {
 
         <div className="right-area">
           <div className="prediction-header">
-            <h1 className="prediction-title">{t('performance.title')}</h1>
-            <span className="beta-tag">{t('performance.beta')}</span>
+            <div className="title-row">
+              <h1 className="prediction-title">{t('performance.title')}</h1>
+              <span className="beta-tag">{t('performance.beta')}</span>
+            </div>
+            <p className="prediction-subtitle">{t('performance.subtitle')}</p>
           </div>
 
           <div className="operation-area">

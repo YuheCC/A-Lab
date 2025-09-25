@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "첨가제가 셀 성능에 미치는 영향",
+  subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
   beta: "베타",
   
   // Battery System Selection

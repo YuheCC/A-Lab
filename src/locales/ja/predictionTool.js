@@ -1,6 +1,7 @@
 export default {
     // Header
     title: "早期サイクルデータをアップロードして寿命予測",
+    subtitle: "SES社内実験データで訓練されたAIモデルを使用して、最少100サイクルのデータでリチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します",
     betaTag: "BETA",
 
     // Steps

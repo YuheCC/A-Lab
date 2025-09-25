@@ -1,6 +1,7 @@
 export default {
     // Header
     title: "Upload early cycle data for life prediction",
+    subtitle: "Predict cycle life (number of cycles to 80% SOH) for lithium-ion batteries using as less as 100 cycle data with an AI model trained on SES internal experimental data",
     betaTag: "BETA",
 
     // Steps

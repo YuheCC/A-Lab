@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "Impact of additive on cell performances",
+  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
   
   // Battery System Selection

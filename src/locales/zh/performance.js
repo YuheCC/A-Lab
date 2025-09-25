@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "添加剂对电池性能的影响",
+  subtitle: "使用基于SES内部实验数据训练的AI模型预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
   beta: "测试版",
   
   // Battery System Selection

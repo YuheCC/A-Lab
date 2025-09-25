@@ -182,8 +182,11 @@ const PredictionTool: React.FC = () => {
 
         <div className="right-area">
           <div className="prediction-header">
-            <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-            <span className="beta-tag">{t('predictionTool.betaTag')}</span>
+            <div className="title-row">
+              <h1 className="prediction-title">{t('predictionTool.title')}</h1>
+              <span className="beta-tag">{t('predictionTool.betaTag')}</span>
+            </div>
+            <p className="prediction-subtitle">{t('predictionTool.subtitle')}</p>
           </div>
 
           <div className="operation-area">

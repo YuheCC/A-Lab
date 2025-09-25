@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "添加剤の電池性能への影響",
+  subtitle: "SES社内実験データで訓練されたAIモデルを使用して、添加剤がセル性能指標（サイクル寿命、コロンビック効率、レート性能）に与える影響を予測します",
   beta: "ベータ",
   
   // Battery System Selection
