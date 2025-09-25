@@ -5,6 +5,7 @@ interface Option {
   id: string | number;
   name: string;
   disabled?: boolean;
+  disabledText?: string;
 }
 
 interface CustomSelectProps {
@@ -102,7 +103,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               aria-selected={value === option.name}
             >
               {option.name}
-              {Number(option.id) !== 1 ? ' (Will be available soon)' : ''}
+              {option.disabled && option.disabledText ? ` (${option.disabledText})` : ''}
             </div>
           ))}
         </div>

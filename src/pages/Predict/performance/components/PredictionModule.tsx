@@ -624,7 +624,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 batterySystemOptions.map(system => ({
                   id: system.id,
                   name: system.name,
-                  disabled: Number(system.id) !== 1
+                  disabled: Number(system.id) !== 1,
+                  disabledText: Number(system.id) !== 1 ? t('formulation.comingSoon', 'Will be available soon') : undefined
                 }))
               }
               className="system-select"

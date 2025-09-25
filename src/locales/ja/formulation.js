@@ -1,7 +1,7 @@
 export default {
   title: '塩と溶媒の構成',
   subtitle: '電解質を構成してカスタマイズ',
-  comingSoon: '近日対応',
+  comingSoon: 'MU1.5で導入予定',
   actions: {
     backToList: 'リストに戻る'
   },
