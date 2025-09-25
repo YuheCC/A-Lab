@@ -95,7 +95,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // 处理新建分析
   const handleNewAnalysis = () => {
-    navigate('/formulation/create');
+    window.open('/formulation/create', '_blank');
   };
 
   // 处理查看详情
@@ -122,6 +122,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
         <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
       </div>
 
+      <div className="formulation-action-section">
+        <button className="new-analysis-button" onClick={handleNewAnalysis}>
+          + {t('formulation.history.newAnalysis', 'New Analysis')}
+        </button>
+      </div>
+
       <div className="formulation-new-table-container">
         <div className="formulation-tabs-header">
           <div className="formulation-tabs">
@@ -138,13 +144,6 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
               {t('formulation.tabs.records', 'Records')}
             </button>
           </div>
-          {activeTab === 'analysis' && (
-            <div className="formulation-action-bar">
-              <button className="new-analysis-button" onClick={handleNewAnalysis}>
-                + {t('formulation.history.newAnalysis', 'New Analysis')}
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="formulation-tab-content">
