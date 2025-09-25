@@ -1,7 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@mui/material';
 import './ResultModal.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
+import { Info } from 'lucide-react';
 
 interface PredictionResult {
   id: string;
@@ -133,7 +135,107 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
           </div>
 
           <div className="result-section">
-            <h3>{t('performance.results.title')}</h3>
+            <h3>
+              {t('performance.results.title')}
+              <Tooltip
+                title={
+                  <div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px',
+                      marginBottom: '12px'
+                    }}>
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: '#ef4444',
+                        flexShrink: 0,
+                        marginTop: '6px'
+                      }}></span>
+                      <div>
+                        <div style={{
+                          fontWeight: '600',
+                          fontSize: '14px',
+                          color: '#dc2626',
+                          marginBottom: '4px'
+                        }}>
+                          {t('performance.results.negativeTitle')}
+                        </div>
+                        <div style={{
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#6b7280',
+                          margin: 0
+                        }}>
+                          {t('performance.results.negativeTip')}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: '#10b981',
+                        flexShrink: 0,
+                        marginTop: '6px'
+                      }}></span>
+                      <div>
+                        <div style={{
+                          fontWeight: '600',
+                          fontSize: '14px',
+                          color: '#059669',
+                          marginBottom: '4px'
+                        }}>
+                          {t('performance.results.positiveTitle')}
+                        </div>
+                        <div style={{
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#6b7280',
+                          margin: 0
+                        }}>
+                          {t('performance.results.positiveTip')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                placement="top"
+                arrow
+                PopperProps={{
+                  sx: {
+                    '& .MuiTooltip-tooltip': {
+                      backgroundColor: 'white',
+                      color: 'black',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      fontSize: '14px',
+                      maxWidth: 320,
+                      minWidth: 280,
+                      border: 'none'
+                    },
+                    '& .MuiTooltip-arrow': {
+                      color: 'white',
+                    }
+                  }
+                }}
+              >
+                <div className="tip-icon-container">
+                  <Info
+                    size={16}
+                    className="tip-icon"
+                  />
+                </div>
+              </Tooltip>
+            </h3>
             
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp25')}</h4>

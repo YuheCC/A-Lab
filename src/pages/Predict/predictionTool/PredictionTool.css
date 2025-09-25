@@ -1,10 +1,36 @@
 .prediction-tool {
   padding: 24px;
-  height: 100%;
+  height: calc(100vh - 66px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  box-sizing: border-box;
+}
+
+.prediction-layout {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  overflow: hidden;
+}
+
+.left-area {
+  width: 350px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  padding-bottom: 2px;
+}
+
+.right-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .prediction-header {
@@ -12,6 +38,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .prediction-title {
@@ -30,22 +57,13 @@
   font-weight: 500;
 }
 
-.prediction-content {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-  gap: 24px;
-}
-
 .operation-area {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.history-area {
-  width: 350px;
-  flex-shrink: 0;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 2px;
 }
 
 .steps-container {
@@ -818,6 +836,15 @@
 
 .prediction-table tbody tr:hover {
   background: #f8fafc;
+}
+
+.prediction-table tbody tr.selected-row {
+  background-color: #dbeafe !important;
+  border-left: 3px solid #3b82f6;
+}
+
+.prediction-table tbody tr.selected-row:hover {
+  background-color: #bfdbfe !important;
 }
 
 /* 表格列宽度设置 */

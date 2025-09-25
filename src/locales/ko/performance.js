@@ -1,15 +1,15 @@
 export default {
   // Page header
-  title: "첨가제 분자를 이용한 셀 성능 예측",
+  title: "첨가제가 셀 성능에 미치는 영향",
   beta: "베타",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "배터리 시스템 선택",
-    label: "배터리 시스템",
+    title: "셀 화학 선택",
+    label: "셀 화학",
     loading: "로딩 중...",
     systemSpecs: {
-      title: "시스템 사양",
+      title: "셀 사양",
       cathode: "양극:",
       anode: "음극:",
       benchmarkElectrolyte: "기준 전해액:",
@@ -19,9 +19,15 @@ export default {
   
   // Additive input
   additive: {
-    label: "첨가제 (SMILES) (1.9wt%)",
+    label: "첨가제의 SMILES",
     required: "*",
     placeholder: "유효한 SMILES 첨가제를 입력하세요"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "중량 백분율 (wt%)",
+    tooltip: "사용자 정의 값 지원이 곧 출시됩니다"
   },
   
   // Molecule information
@@ -77,16 +83,21 @@ export default {
   // Results
   results: {
     title: "셀 성능 예측",
+    titleTip: "부정적(Negative)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    negativeTitle: "부정적 (Negative)",
+    positiveTitle: "긍정적 (Positive)",
+    negativeTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.",
+    positiveTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
     temperatureTabs: {
       temp25: "25°C 성능",
       temp45: "45°C 성능"
     },
     performance: {
-      cycleLife25: "25 °C 사이클 수명",
-      ce25: "25 °C CE",
-      ratePerformance25: "25 °C 비율 성능",
-      cycleLife45: "45 °C 사이클 수명",
-      ce45: "45 °C CE"
+      cycleLife25: "25°C 사이클 수명",
+      ce25: "25°C 코로나빅 효율",
+      ratePerformance25: "25°C 비율 성능",
+      cycleLife45: "45°C 사이클 수명",
+      ce45: "45°C 코로나빅 효율"
     },
     status: {
       positive: "긍정적",

@@ -15,6 +15,7 @@ import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { buildQueryString } from "@/services/buildQueryString";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import { useQueryLimit } from '@/hooks/useQueryLimit';
 import InorganicFilter, { InorganicFilterRef } from './InorganicFilter';
 
 const API_URL = getAPIUrl();
@@ -97,6 +98,7 @@ const InorganicSearch = () => {
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const { limits: queryLimits } = useQueryLimit();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -524,6 +526,7 @@ const InorganicSearch = () => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
+                                findFriendLimitInfo={queryLimits.findFriendLLM}
                             />
 
                     <div className="search-results">
@@ -744,7 +747,7 @@ const InorganicSearch = () => {
                     )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} molecularType="inorganic"/>
+            <NodePopup key="inorganicNodePopup" ref={nodePopupRef} node={node} molecularType="inorganic"/>
         </>
     );
 };

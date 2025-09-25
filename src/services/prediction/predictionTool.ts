@@ -37,6 +37,8 @@ export interface BarcodeData {
   barcode: string;
   cycle_life_1: number | null;
   cycle_life_2: number | null;
+  cycle_life_1_cycles_detail?: Record<string, number>;
+  cycle_life_1_predict_detail?: any;
   history_id: number;
   status: string;
   created_at: string;

@@ -15,6 +15,7 @@ import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import { useQueryLimit } from '@/hooks/useQueryLimit';
 import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
 
@@ -111,6 +112,7 @@ const OrganicSearch = () => {
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const { limits: queryLimits } = useQueryLimit();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -530,6 +532,7 @@ const OrganicSearch = () => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
+                                findFriendLimitInfo={queryLimits.findFriendLLM}
                             />
 
                     <div className="search-results">
@@ -786,7 +789,7 @@ const OrganicSearch = () => {
                     )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
+            <NodePopup key="organicNodePopup" ref={nodePopupRef} node={node} molecularType="organic"/>
         </>
     )
 };

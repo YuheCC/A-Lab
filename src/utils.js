@@ -1,4 +1,4 @@
-export const getAPIUrl = () => BASE_URL || 'https://demo-api.ses.ai';
+export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
 
 const API_URL = getAPIUrl();
 
@@ -106,7 +106,7 @@ export const redirectToLogin = () => {
 
 // Labels for filters
 export const filterLabels = {
-    molwt: "Molecular Weight",
+    molwt: "Molecular Weight（g/mol ）",
     homo_eV: "HOMO (eV)",
     lumo_eV: "LUMO (eV)",
     esp_max_eV: "Max ESP (eV)",
@@ -118,5 +118,7 @@ export const filterLabels = {
     commercial_score: "Commercial Viability",
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
-    chemical_formula: "Chemical Formula"
+    chemical_formula: "Chemical Formula",
+    vdw_volume_angstroms3: "Molecular Volume（Å^3）",
+    fluoride_bde_ev: "F Dissociation Energy（eV）"
 };

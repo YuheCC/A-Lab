@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import InfoTooltip from '@/components/InfoTooltip';
 import { CircleHelp, Pen } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import MolEditor from '../MolEditor';
@@ -53,17 +53,17 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
   return (
     <div className={`search-bar-container ${showMolEditor ? 'open' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
       <div className='search-input-container'>
-        <Tooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
-          <div 
-            className='control-icon pen-icon' 
-            style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
+        <InfoTooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
+          <div
+            className='control-icon pen-icon'
+            style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             onClick={() => {
               setShowMolEditor(!showMolEditor);
             }}
           >
             <NewPenIcon />
           </div>
-        </Tooltip>
+        </InfoTooltip>
         <input
           type="text"
           className="search-input"
@@ -73,7 +73,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           onKeyDown={handleKeyDown}
           disabled={disabled}
         />
-        <Tooltip
+        <InfoTooltip
           title={<>
             <div style={{ whiteSpace: 'pre-line', width: '300px' }} dangerouslySetInnerHTML={{ __html: t('search.searchTooltip', { pubChemUrl }) }} />
           </>}
@@ -84,7 +84,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
             color: '#999',
             cursor: 'pointer',
           }}/>
-        </Tooltip>
+        </InfoTooltip>
         <button
           className="search-button"
           onClick={handleClickSend}

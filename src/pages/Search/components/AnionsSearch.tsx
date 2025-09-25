@@ -17,6 +17,7 @@ import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
+import { useQueryLimit } from '@/hooks/useQueryLimit';
 
 const API_URL = getAPIUrl();
 
@@ -93,30 +94,18 @@ const AnionsSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [structureWeight, setStructureWeight] = useState(1);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
     const [additiveSubtype, setAdditiveSubtype] = useState('A');
-    useEffect(() => {
-        switch (selectedMolType) {
-            case 'diluent':
-                setStructureWeight(0.5);
-                break;
-            case 'additive':
-                setStructureWeight(1.0);
-                break;
-            case 'solvent':
-            case 'cosolvent':
-            default:
-                setStructureWeight(0.75);
-        }
-    }, [selectedMolType]);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const { limits: queryLimits } = useQueryLimit();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -366,26 +355,22 @@ const AnionsSearch = () => {
 
                     const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
                     const parts: string[] = [baseQuery];
-                    if (selectedMolType) {
-                        parts.push(`I am looking for ${selectedMolType} molecules.`);
-                    }
                     if (extraRequests.trim()) {
                         parts.push(`I have the following requirements: ${extraRequests.trim()}`);
                     }
                     const queryString = parts.join(' ');
-                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
-
-                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
+                    const includeQuery = optionsSpecified || !!extraRequests.trim();
 
                     try {
                         const { molecules, imageMap } = await findFriends<SimilarMolecule>({
                             smiles: smilesArray,
                             use35m: isHighTier,
                             structureWeight,
-                            molType: molTypeToSend,
                             computeLevel: computeToSend,
+                            showHypothetical,
                             includeQuery,
                             queryString,
+                            isAnion: true,
                         });
 
                         if (molecules.length > 0) {
@@ -523,48 +508,38 @@ const AnionsSearch = () => {
                                 disabled={searchLoading}
                             />
 
-                    {/* <FindFriendOptions
-                        findClosestFriends={findClosestFriends}
-                        setFindClosestFriends={setFindClosestFriends}
-                        extraRequests={extraRequests}
-                        setExtraRequests={setExtraRequests}
-                        showAdvanced={showAdvanced}
-                        setShowAdvanced={setShowAdvanced}
-                        selectedMolType={selectedMolType}
-                        setSelectedMolType={setSelectedMolType}
-                        additiveSubtype={additiveSubtype}
-                        setAdditiveSubtype={setAdditiveSubtype}
-                        computeLevel={computeLevel}
-                        setComputeLevel={setComputeLevel}
-                        structureWeight={structureWeight}
-                        setStructureWeight={setStructureWeight}
-                        cathode={cathode}
-                        setCathode={setCathode}
-                        cathodeCustom={cathodeCustom}
-                        setCathodeCustom={setCathodeCustom}
-                        anode={anode}
-                        setAnode={setAnode}
-                        anodeCustom={anodeCustom}
-                        setAnodeCustom={setAnodeCustom}
-                        salt={salt}
-                        setSalt={setSalt}
-                        saltCustom={saltCustom}
-                        setSaltCustom={setSaltCustom}
-                        solvent={solvent}
-                        setSolvent={setSolvent}
-                        solventCustom={solventCustom}
-                        setSolventCustom={setSolventCustom}
-                        metric={metric}
-                        setMetric={setMetric}
-                        metricCustom={metricCustom}
-                        setMetricCustom={setMetricCustom}
-                        cathodeOptions={cathodeOptions}
-                        anodeOptions={anodeOptions}
-                        saltOptions={saltOptions}
-                        solventOptions={solventOptions}
-                        performanceOptions={performanceOptions}
-                        userPermissions={userPermissions}
-                    /> */}
+                            <FindFriendOptions
+                                findClosestFriends={findClosestFriends}
+                                setFindClosestFriends={setFindClosestFriends}
+                                extraRequests={extraRequests}
+                                setExtraRequests={setExtraRequests}
+                                showAdvanced={showAdvanced}
+                                setShowAdvanced={setShowAdvanced}
+                                selectedMolType={selectedMolType}
+                                setSelectedMolType={setSelectedMolType}
+                                additiveSubtype={additiveSubtype}
+                                setAdditiveSubtype={setAdditiveSubtype}
+                                computeLevel={computeLevel}
+                                setComputeLevel={setComputeLevel}
+                                structureWeight={structureWeight}
+                                setStructureWeight={setStructureWeight}
+                                showHypothetical={showHypothetical}
+                                setShowHypothetical={setShowHypothetical}
+                                cathode={cathode}
+                                setCathode={setCathode}
+                                anode={anode}
+                                setAnode={setAnode}
+                                salt={salt}
+                                setSalt={setSalt}
+                                solvent={solvent}
+                                setSolvent={setSolvent}
+                                metric={metric}
+                                setMetric={setMetric}
+                                userPermissions={userPermissions}
+                                enableMolTypeSelector={false}
+                                showStructureSlider={false}
+                                findFriendLimitInfo={queryLimits.findFriendLLM}
+                            />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -825,7 +800,7 @@ const AnionsSearch = () => {
                     )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} />
+            <NodePopup key="anionsNodePopup" ref={nodePopupRef} node={node} molecularType="anions"/>
         </>
     )
 };

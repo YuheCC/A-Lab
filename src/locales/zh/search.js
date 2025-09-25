@@ -20,10 +20,12 @@ export default {
     searchRange: '搜索范围',
     nearbyFriends: '附近的朋友',
     distantFriends: '远处的朋友',
+    searchRangeTooltip: '将滑块向左拖动，可优先考虑与您的使用场景在性能上最兼容的分子，即便它们的结构不同。将滑块向右拖动，可优先考虑与您输入分子结构最相似的分子。',
     advancedOptions: '高级选项',
     intelligentCompute: '智能找朋友计算',
     intelligentFindFriendsLabel: '智能找"朋友"',
     intelligentFindFriendsTooltip: '使用大型语言模型检查数百种分子，为您的应用寻找更相关的候选。提高计算能力，并填写（高级选项中的）电池系统信息，以获得最佳效果。',
+    intelligentFindFriendsLimitLabel: '本月剩余：{{remaining}} / {{limit}}',
     showHypothetical: '显示假想分子',
     showHypotheticalTooltip: '包括由我们的算法生成但未收录于公开目录的候选分子；其可用性和可合成性无法确定。',
     computeDisabled: '禁用',
@@ -47,6 +49,7 @@ export default {
     searchRange: '搜索范围',
     nearbyFriends: '附近的朋友',
     distantFriends: '远处的朋友',
+    searchRangeTooltip: '将滑块向左拖动，可优先考虑与您的使用场景在性能上最兼容的分子，即便它们的结构不同。将滑块向右拖动，可优先考虑与您输入分子结构最相似的分子。',
     advancedOptions: '高级选项',
     intelligentCompute: '智能找朋友计算',
     computeDisabled: '禁用',
@@ -65,6 +68,7 @@ export default {
     upgradeEnterprise: '升级到企业级账户',
     upgradeAccount: '升级账户',
     computeWarning: '智能找朋友的高性能需要更多上下文。已将计算能力设置为低。',
+    intelligentFindFriendsLimitLabel: '本月剩余：{{remaining}} / {{limit}}',
     
     // Loading and Status Messages
     searching: "搜索中...",

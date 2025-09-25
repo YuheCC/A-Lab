@@ -4,6 +4,7 @@ import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
 import './FormulationModule.css';
 import { useNavigate } from '@umijs/max';
+import { formatIonDisplay } from '../utils';
 
 interface FormulationModuleProps {
   onResetRef?: (resetFn: () => void) => void;
@@ -13,10 +14,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const { t } = useTranslation();
   const navigate = useNavigate();
   // Salt Configuration State
-  const [selectedCation, setSelectedCation] = useState('Li+');
-  const [selectedAnions, setSelectedAnions] = useState<string[]>(['BF4-']);
+  const [selectedCation, setSelectedCation] = useState('Li');
+  const [selectedAnions, setSelectedAnions] = useState<string[]>(['PF6']);
   const [totalSaltConcentration, setTotalSaltConcentration] = useState('1.00');
-  const [anionFractions, setAnionFractions] = useState<{[key: string]: string}>({'BF4-': '1.00'});
+  const [anionFractions, setAnionFractions] = useState<{[key: string]: string}>({'PF6': '1.00'});
   const [fractionType, setFractionType] = useState<'mole' | 'weight'>('mole');
 
   // Solvent Configuration State
@@ -31,6 +32,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const [currentView, setCurrentView] = useState<'configuration' | 'results'>('configuration');
   const [error, setError] = useState<string | null>(null);
 
+  // SMILES validation state
+  const [smilesErrors, setSmilesErrors] = useState<{[key: number]: string}>({});
+  const [showValidation, setShowValidation] = useState(false);
+
   // Validation logic
   const isValidConfiguration = () => {
     const concentration = parseFloat(totalSaltConcentration);
@@ -43,8 +48,57 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // Solvent validation logic
   const isValidSolventConfiguration = () => {
     const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-    const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+    const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
     return activeSolvents.length > 0 && Math.abs(totalFraction - 1) < 0.001;
+  };
+
+  // SMILES validation logic
+  const validateSMILES = (smiles: string): string | null => {
+    if (smiles.trim() === '') {
+      return null; // Empty is allowed
+    }
+
+    // Basic SMILES validation
+    // Check for basic structure and allowed characters
+    const smilesPattern = /^[A-Za-z0-9@+\-\[\]()=#\/\\%.]+$/;
+    if (!smilesPattern.test(smiles)) {
+      return '无效的SMILES格式';
+    }
+
+    // Check for balanced brackets
+    const brackets = smiles.match(/[\[\]]/g) || [];
+    const openBrackets = brackets.filter(b => b === '[').length;
+    const closeBrackets = brackets.filter(b => b === ']').length;
+    if (openBrackets !== closeBrackets) {
+      return '括号不匹配';
+    }
+
+    // Check for balanced parentheses
+    const parentheses = smiles.match(/[()]/g) || [];
+    const openParens = parentheses.filter(p => p === '(').length;
+    const closeParens = parentheses.filter(p => p === ')').length;
+    if (openParens !== closeParens) {
+      return '圆括号不匹配';
+    }
+
+    return null;
+  };
+
+  // Validate all SMILES strings
+  const validateAllSMILES = () => {
+    const errors: {[key: number]: string} = {};
+
+    solvents.forEach(solvent => {
+      if (solvent.smiles.trim() !== '') {
+        const error = validateSMILES(solvent.smiles);
+        if (error) {
+          errors[solvent.id] = error;
+        }
+      }
+    });
+
+    setSmilesErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   // Solvent management functions
@@ -52,6 +106,15 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setSolvents(prev => prev.map(s =>
       s.id === id ? { ...s, [field]: value } : s
     ));
+
+    // Clear error for this solvent when user types
+    if (field === 'smiles' && smilesErrors[id]) {
+      setSmilesErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
   };
 
   const removeSolvent = (id: number) => {
@@ -152,44 +215,35 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     }));
   };
 
-  // Format ion display
-  const formatIonDisplay = (ionValue: string) => {
-    const ionMap: { [key: string]: string } = {
-      'Li+': 'Li⁺',
-      'Na+': 'Na⁺',
-      'Mg2+': 'Mg²⁺',
-      'Zn2+': 'Zn²⁺',
-      'BF4-': 'BF₄⁻',
-      'PF6-': 'PF₆⁻',
-      'FSI-': 'FSI⁻',
-      'TFSI-': 'TFSI⁻'
-    };
-    return ionMap[ionValue] || ionValue;
-  };
-
   // Remove ionic symbols from ion names for API
   const cleanIonName = (ionValue: string) => {
-    // 去掉正负离子符号，只保留字母和数字
-    return ionValue.replace(/[⁺⁻+\-]/g, '');
+    // 值已经不包含符号，直接返回
+    return ionValue;
   };
 
   // Available options
   const cationOptions = [
-    { value: 'Li+', label: 'Li⁺', subLabel: 'Lithium', available: true },
-    { value: 'Na+', label: 'Na⁺', subLabel: 'Sodium', available: false },
-    { value: 'Mg2+', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
-    { value: 'Zn2+', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
+    { value: 'Li', label: 'Li⁺', subLabel: 'Lithium', available: true },
+    { value: 'Na', label: 'Na⁺', subLabel: 'Sodium', available: false },
+    { value: 'Mg2', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
+    { value: 'Zn2', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
   ];
 
   const anionOptions = [
-    { value: 'BF4-', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
-    { value: 'PF6-', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
-    { value: 'FSI-', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
-    { value: 'TFSI-', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
+    { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
+    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
+    { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
+    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
   ];
 
   const handleCalculate = async () => {
-    if (!isValidConfiguration() || !isValidSolventConfiguration()) {
+    // Show validation errors
+    setShowValidation(true);
+
+    // Validate SMILES
+    const smilesValid = validateAllSMILES();
+
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid) {
       return;
     }
 
@@ -217,13 +271,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
       const response = await runMDSimulation(params);
 
-      if (response && response.data) {
+      if (response && response.data && response.status < 300) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
         navigate('/formulation/result-tip');
         setCurrentView('results');
       } else {
-        throw new Error('Invalid response from MD simulation');
+        throw new Error(response?.data?.message || response?.data?.detail?.message || 'Invalid response from MD simulation');
       }
     } catch (error) {
       console.error('MD simulation failed:', error);
@@ -238,10 +292,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Reset function
   const resetFormulationState = useCallback(() => {
-    setSelectedCation('Li+');
-    setSelectedAnions(['BF4-']);
+    setSelectedCation('Li');
+    setSelectedAnions(['PF6']);
     setTotalSaltConcentration('1.00');
-    setAnionFractions({'BF4-': '1.00'});
+    setAnionFractions({'PF6': '1.00'});
     setFractionType('mole');
     setSolvents([
       { id: 1, smiles: 'CCO', fraction: '1.00' }
@@ -251,6 +305,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setIsCalculating(false);
     setCurrentView('configuration');
     setError(null);
+    setSmilesErrors({});
+    setShowValidation(false);
   }, []);
 
   // Expose reset function to parent component
@@ -330,7 +386,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           {/* Anion Fractions */}
           {selectedAnions.map((anion) => (
             <div key={anion} className="form-group">
-              <label>{t('formulation.anionFraction.label', `${formatIonDisplay(anion)} Fraction`)}</label>
+              <label>{`${formatIonDisplay(anion)} Fraction`}</label>
               <input
                 type="number"
                 step="0.01"
@@ -402,8 +458,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                     placeholder={t('formulation.smilesString.placeholder', 'Enter SMILES string')}
                     value={solvent.smiles}
                     onChange={(e) => updateSolvent(solvent.id, 'smiles', e.target.value)}
-                    className="smiles-input"
+                    className={`smiles-input ${smilesErrors[solvent.id] ? 'error' : ''}`}
                   />
+                  {smilesErrors[solvent.id] && (
+                    <div className="smiles-error-message">
+                      {smilesErrors[solvent.id]}
+                    </div>
+                  )}
                 </div>
                 <div className="fraction-input-group">
                   <label>{t('formulation.fraction.label', 'Fraction (min: 0.05)')}</label>
@@ -478,7 +539,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
             <div className="summary-content">
               {(() => {
                 const activeSolvents = solvents.filter(s => s.smiles.trim() !== '');
-                const totalFraction = solvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
+                const totalFraction = activeSolvents.reduce((sum, s) => sum + parseFloat(s.fraction || '0'), 0);
                 const solventNames = activeSolvents.map(s => s.smiles).join(', ') || t('formulation.solventSummary.emptyPlaceholder', 'Empty (0)');
 
                 return (
