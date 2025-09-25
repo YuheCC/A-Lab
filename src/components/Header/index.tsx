@@ -14,18 +14,26 @@ import { PricingContext } from "@/layouts/index";
 
 const Header = () => {
     const { t } = useTranslation();
-    const { pathname } = useLocation();
+    const { pathname, search } = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [isNavDropdownHovered, setIsNavDropdownHovered] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
+    const navDropdownRef = useRef<HTMLDivElement>(null);
     const userFeedBackModalRef = useRef<any>(null);
     const { logout, userName, userPermissions: permissions } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
 
+    // Helper function to check if a path is active
+    const isPathActive = (path: string) => {
+        return pathname === path;
+    };
+
     // 检查是否为common用户
     const isCommonUser = permissions === 'common';
+    const isEducationalUser = permissions === 'research';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -48,11 +56,9 @@ const Header = () => {
 
     // 处理受限链接点击，弹出升级确认框
     const handleRestrictedClick = (e: React.MouseEvent) => {
-        if (isCommonUser) {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowUpgradeModal(true);
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        setShowUpgradeModal(true);
     };
 
     // 处理升级确认
@@ -66,13 +72,22 @@ const Header = () => {
         setShowUpgradeModal(false);
     };
 
+    // 处理导航下拉菜单hover
+    const handleNavDropdownMouseEnter = () => {
+        setIsNavDropdownHovered(true);
+    };
+
+    const handleNavDropdownMouseLeave = () => {
+        setIsNavDropdownHovered(false);
+    };
+
     // 渲染导航链接
-    const renderNavLink = (to: string, text: string, isActive: boolean) => {
-        if (isCommonUser) {
+    const renderNavLink = (to: string, text: string, isActive: boolean, isDisabled: boolean = false) => {
+        if (isDisabled) {
             return (
                 <NavLink 
                     to={to} 
-                    className={`nav-item ${isActive ? 'active' : ''}`}
+                    className={`nav-item ${isActive ? 'active' : ''} disabled`}
                     onClick={handleRestrictedClick}
                     style={{ display: 'inline-block' }}
                 >
@@ -91,6 +106,30 @@ const Header = () => {
         );
     };
 
+    // 渲染下拉菜单项
+    const renderDropdownItem = (to: string, text: string, isActive: boolean, isDisabled: boolean = false) => {
+        if (isDisabled) {
+            return (
+                <NavLink 
+                    to={to} 
+                    className={`dropdown-item ${isActive ? 'active' : ''} disabled`}
+                    onClick={handleRestrictedClick}
+                >
+                    {text}
+                </NavLink>
+            );
+        }
+
+        return (
+            <NavLink 
+                to={to} 
+                className={`dropdown-item ${isActive ? 'active' : ''}`}
+            >
+                {text}
+            </NavLink>
+        );
+    };
+
     return (
             <header className="main-header">
             <div className="logo-container">
@@ -103,10 +142,27 @@ const Header = () => {
                 >
                     {t('navigation.header.map')}
                 </NavLink>
-                {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask')}
-                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search')}
-                {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter')}
-                {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites')}
+                {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
+                {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
+                {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
+                {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
+                <div 
+                    className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
+                    onMouseEnter={handleNavDropdownMouseEnter}
+                    onMouseLeave={handleNavDropdownMouseLeave}
+                    ref={navDropdownRef}
+                >
+                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
+                    <div 
+                        className="nav-dropdown"
+                        onMouseEnter={handleNavDropdownMouseEnter}
+                        onMouseLeave={handleNavDropdownMouseLeave}
+                    >
+                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
+                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
+                    </div>
+                </div>
+                {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>

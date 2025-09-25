@@ -5,6 +5,7 @@ import { setupResponsiveLayout, toggleMoleculePanelExpansion, type LayoutDimensi
 export interface MoleculeData {
   name: string;
   SMILES: string;
+  cation?: string;
   molecular_weight?: number;
   HOMO_eV?: number;
   LUMO_eV?: number;

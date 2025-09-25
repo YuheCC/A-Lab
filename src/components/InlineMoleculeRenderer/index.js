@@ -135,6 +135,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       const transformedMolecule = {
         name: text,
         SMILES: moleculeData.SMILES,
+        cation: moleculeData.cation ?? moleculeData.CATION,
         molecular_weight: moleculeData.molecular_weight,
         HOMO_eV: moleculeData.HOMO_eV,
         LUMO_eV: moleculeData.LUMO_eV,
@@ -263,6 +264,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
               ref={hoverRef}
               showMoreDetails={true}
               propGroups={propGroups}
+              cation={hoveredObject.data?.cation ?? hoveredObject.data?.CATION}
               onMouseEnter={() => {
                 // Keep popup open when hovering over it
               }}

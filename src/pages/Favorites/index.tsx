@@ -4,6 +4,7 @@ import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import NodePopup from '@/components/NodePopup';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@umijs/max';
 
 const API_URL = getAPIUrl();
 
@@ -89,6 +90,7 @@ interface NodePopupRef {
 const FavoritesGrid = () => {
   const { t } = useTranslation();
   const { isAuthenticated, userPermissions } = useAuthStore();
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -1241,16 +1243,16 @@ const FavoritesGrid = () => {
             
             <div className="favorites-actions">
               {selectedMolecules.length > 0 && (
-                <button 
+                <button
                   className="show-analysis-button"
                   onClick={handleShowAnalysis}
                 >
                   {t('favorites.analyzeSelected')} ({selectedMolecules.length})
                 </button>
               )}
-              
+
               {selectedMolecules.length > 1 && (
-                <button 
+                <button
                   className="bulk-delete-button"
                   onClick={handleBulkDeleteFavorites}
                   disabled={bulkDeleteLoading}
@@ -1269,6 +1271,24 @@ const FavoritesGrid = () => {
                   {bulkDeleteLoading ? t('favorites.bulkDeleting') : `${t('favorites.bulkDelete')} (${selectedMolecules.length})`}
                 </button>
               )}
+
+              <button
+                className="back-to-search-button"
+                onClick={() => navigate('/search')}
+                style={{
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '8px 16px',
+                  cursor: 'pointer',
+                  marginLeft: '10px',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {t('favorites.backToSearch')}
+              </button>
             </div>
           </div>
           

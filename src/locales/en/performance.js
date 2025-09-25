@@ -1,0 +1,192 @@
+export default {
+  // Page header
+  title: "Impact of additive on the cell performance",
+  beta: "BETA",
+  
+  // Battery System Selection
+  batterySystemSelection: {
+    title: "Cell chemistry selection",
+    label: "Cell chemistry",
+    loading: "Loading...",
+    systemSpecs: {
+      title: "Cell specifications",
+      cathode: "Cathode:",
+      anode: "Anode:",  
+      benchmarkElectrolyte: "Benchmark electrolyte:",
+      cellDesign: "Cell design:"
+    }
+  },
+  
+  // Additive input
+  additive: {
+    label: "SMILES of additive",
+    required: "*",
+    placeholder: "Enter valid SMILES for additive of interest"
+  },
+
+  // Weight percentage
+  weightPercentage: {
+    label: "Weight percentage (wt%)",
+    tooltip: "Support for custom values coming soon"
+  },
+  
+  // Molecule information
+  moleculeInfo: {
+    title: "Molecule Information",
+    loading: "Querying molecule details...",
+    properties: {
+      smiles: "SMILES:",
+      espMin: "ESP MIN:",
+      molecularWeight: "MOL WEIGHT:",
+      predictedMp: "PREDICTED MP:",
+      umapX: "UMAP X:",
+      predictedBp: "PREDICTED BP:",
+      umapY: "UMAP Y:",
+      predictedFp: "PREDICTED FP:",
+      homo: "HOMO:",
+      combustionEnthalpy: "COMBUSTION ENTHALPY:",
+      lumo: "LUMO:",
+      commercialViability: "COMMERCIAL VIABILITY:",
+      espMax: "ESP MAX:",
+      functionalGroups: "FUNCTIONAL GROUPS:"
+    },
+    structurePlaceholder: {
+      line1: "Molecule",
+      line2: "Structure"
+    }
+  },
+  
+  // SMILES not found
+  smilesNotFound: {
+    title: "SMILES Not Found",
+    description: "The SMILES string you entered is not found in our database.",
+    suggestion: "Please re-enter a valid SMILES string or try this example:",
+    examples: {
+      ec: "ethylene carbonate",
+      water: "water"
+    }
+  },
+  
+  // Invalid SMILES
+  invalidSmiles: {
+    title: "Invalid SMILES Format",
+    description: "The input does not appear to be a valid SMILES molecular formula.",
+    suggestion: "Please enter a valid SMILES string or try this example:"
+  },
+  
+  // Calculate button
+  calculate: {
+    button: "Calculate",
+    calculated: "Calculated"
+  },
+  
+  // Results
+  results: {
+    title: "Cell Performance Prediction",
+    negativeTitle: "Negative",
+    positiveTitle: "Positive",
+    negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    temperatureTabs: {
+      temp25: "25°C Performance",
+      temp45: "45°C Performance"
+    },
+    performance: {
+      cycleLife25: "25°C Cycle life",
+      ce25: "25°C Coulombic efficiency",
+      ratePerformance25: "25°C Rate performance",
+      cycleLife45: "45°C Cycle Life",
+      ce45: "45°C Coulombic efficiency"
+    },
+    status: {
+      positive: "POSITIVE",
+      negative: "NEGATIVE",
+      neutral: "NEUTRAL"
+    },
+    confidence: "CONFIDENCE"
+  },
+  
+  // LLM Analysis
+  llmAnalysis: {
+    button: "LLM Analysis",
+    analyzed: "Analyzed",
+    title: "LLM Analysis",
+    sections: {
+      nickelOptimization: "1. Nickel Dehydrogenation Optimization",
+      cyclingOptimization: "2. 4°C Cycling Optimization", 
+      recommendations: "3. Comprehensive Recommendations"
+    },
+    references: "References"
+  },
+  
+  // General UI text
+  ui: {
+    calculating: "Calculating...",
+    analyzing: "Analyzing...",
+    startingAnalysis: "Starting LLM analysis...",
+    analysisPlaceholder: "Click \"LLM Analysis\" button to start generating analysis for your prediction results.",
+    pleaseSelectBattery: "Please select a battery system",
+    invalidBatterySystem: "Invalid battery system selected",
+    calculationFailed: "Failed to calculate performance prediction. Please try again.",
+    analysisFailed: "Failed to start LLM analysis. Please try again.",
+    sessionNotInitialized: "Session not initialized. Please refresh the page and try again.",
+    predictionFirst: "Please run prediction first before requesting LLM analysis"
+  },
+  
+  // Analysis status
+  analysisStatus: {
+    noAnalysis: "No Analysis Available",
+    available: "Available",
+    notAvailable: "Not Available"
+  },
+  
+  // Filter options
+  filters: {
+    smilesSearch: "SMILES Search",
+    timeRange: "Time Range",
+    status: "Status",
+    clearFilters: "Clear Filters",
+    timeOptions: {
+      allTime: "All Time",
+      today: "Today",
+      thisWeek: "This Week",
+      thisMonth: "This Month"
+    },
+    statusOptions: {
+      allStatus: "All Status",
+      completed: "Completed",
+      pending: "Pending",
+      failed: "Failed"
+    }
+  },
+  
+  // History
+  history: {
+    title: "Prediction Records",
+    newPrediction: "New Prediction",
+    searchPlaceholder: "Search by file name...",
+    status: {
+      completed: "Completed"
+    },
+    actions: {
+      viewDetails: "View",
+      delete: "Delete",
+      deleteConfirm: "Are you sure you want to delete this record?",
+      deleteFailed: "Failed to delete record"
+    },
+    noResults: {
+      message: "No prediction records found.",
+      clearFilters: "Clear all filters"
+    },
+    loading: {
+      message: "Loading history data...",
+      error: "Error",
+      retry: "Retry",
+      failedToLoad: "Failed to load history data"
+    }
+  },
+  
+  // Battery system fallback
+  batterySystemFallback: "Battery System"
+}

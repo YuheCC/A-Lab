@@ -94,6 +94,8 @@
     height: 64px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
     border-bottom: 1px solid #e2e8f0; /* Subtle border */
+    position: relative;
+    z-index: 1000;
   }
   .logo-container {
     display: flex;
@@ -118,7 +120,7 @@
     transition: color 0.3s;
   }
   .nav-item:hover {
-    color: #2563eb; /* Blue for hover */
+    color: #56B26A; /* Green for hover */
   }
   .nav-item.active {
     font-weight: 600;
@@ -127,7 +129,7 @@
   .nav-item.active::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     right: 0;
     height: 3px;
@@ -141,6 +143,129 @@
   }
   .nav-item.disabled:hover {
     color: #9ca3af !important; /* Keep gray color on hover */
+  }
+  
+  
+  /* Navigation Dropdown Styles */
+  .nav-dropdown-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .nav-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: max-content;
+    max-width: 300px;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    margin-top: 8px;
+    pointer-events: none;
+  }
+
+  /* 添加一个透明的桥接区域，覆盖视觉间隙，防止鼠标移动时失去hover状态 */
+  .nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 8px;
+    background: transparent;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .nav-dropdown-container:hover .nav-dropdown,
+  .nav-dropdown-container.hovered .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0px);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .nav-dropdown:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0px);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  /* 使用更精确的hover状态控制 */
+  .nav-dropdown-container:not(:hover):not(.hovered) .nav-dropdown:not(:hover) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition-delay: 0.15s;
+  }
+  
+  .nav-dropdown-container.disabled:hover .nav-dropdown {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  .nav-dropdown .dropdown-item {
+    display: block;
+    padding: 16px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  
+  .nav-dropdown .dropdown-item:hover {
+    background-color: #f9fafb;
+    color: #111827;
+    border-color: #e5e7eb;
+  }
+  
+  .nav-dropdown .dropdown-item.active {
+    background-color: #ecfdf5;
+    color: #56B26A;
+    font-weight: 500;
+    border-color: #bbf7d0;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled {
+    color: #9ca3af !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .nav-dropdown .dropdown-item.disabled:hover {
+    background-color: transparent !important;
+    border-color: transparent !important;
+  }
+  
+  .nav-dropdown .dropdown-item:first-child {
+    margin-top: 0;
+  }
+  
+  .nav-dropdown .dropdown-item:last-child {
+    margin-bottom: 0;
   }
   
   /* User Actions Styles */
@@ -239,9 +364,9 @@
   }
   
   /* Chat Layout Styles */
-  .chat-container {
+  .chat-container, .predict-container {
     display: flex;
-    height: calc(100vh - 64px); /* Full height minus header */
+    height: calc(100vh - 66px); /* Full height minus header */
   }
   
   .chat-sidebar {
