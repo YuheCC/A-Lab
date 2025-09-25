@@ -75,7 +75,7 @@ const DetailPage: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/formulation');
+    navigate('/formulation/new?tab=analysis');
   };
 
   // 动态生成系统属性数据
@@ -185,9 +185,9 @@ const DetailPage: React.FC = () => {
         <div className="detail-header">
           <div className="formulation-title-wrapper">
             <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            <GuideTooltip
+            {/* <GuideTooltip
               storageKey="formulation-new-guide-shown"
-            />
+            /> */}
           </div>
           <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
         </div>
