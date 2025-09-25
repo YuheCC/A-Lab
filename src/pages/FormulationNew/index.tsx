@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@umijs/max';
+import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
 import './index.css';
@@ -12,12 +12,31 @@ interface FormulationTableProps {}
 const FormulationNew: React.FC<FormulationTableProps> = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyData, setHistoryData] = useState<MDHistoryItem[]>([]);
   const [currentPage] = useState(1);
   const [pageSize] = useState(20);
-  const [activeTab, setActiveTab] = useState<'introduction' | 'analysis'>('introduction');
+
+  // 根据 URL query 参数初始化 activeTab
+  const getInitialTab = (): 'introduction' | 'analysis' => {
+    const tabParam = searchParams.get('tab');
+    return (tabParam === 'analysis' || tabParam === 'introduction') ? tabParam : 'introduction';
+  };
+
+  const [activeTab, setActiveTab] = useState<'introduction' | 'analysis'>(getInitialTab());
+
+  // 处理初始化时的 URL 参数，识别后删除 tab 参数
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && (tabParam === 'analysis' || tabParam === 'introduction')) {
+      // 删除 tab 参数，保持其他参数不变
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('tab');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, []);
 
   // 获取历史记录数据
   const fetchHistoryData = async (page: number = 1) => {
