@@ -15,7 +15,7 @@
 
 /* Guide content styles */
 .introduction-container .guide-content-section {
-  padding: 24px;
+  padding: 50px;
   margin-bottom: 20px;
 }
 
@@ -56,8 +56,6 @@
   height: auto;
   display: block;
   margin: 16px auto;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .introduction-container .figure-caption {
@@ -76,9 +74,9 @@
 }
 
 .introduction-container .properties-table {
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
-  margin: 16px 0;
+  margin: 16px auto;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -153,9 +151,6 @@
 .introduction-container .cluster-illustration {
   margin: 16px 0;
   padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
 }
 
 .introduction-container .cluster-illustration img {
