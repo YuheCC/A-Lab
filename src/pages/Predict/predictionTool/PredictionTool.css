@@ -426,7 +426,7 @@
   flex-shrink: 0;
 }
 
-.en-page, .ja-page .tip-label {
+.en-page .tip-label, .ja-page .tip-label {
   min-width: 115px;
 }
 
