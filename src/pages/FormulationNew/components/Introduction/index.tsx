@@ -1,4 +1,5 @@
 import React from 'react';
+import PropertiesTable from '../PropertiesTable';
 import './index.css';
 
 const Introduction: React.FC = () => {
@@ -15,86 +16,7 @@ const Introduction: React.FC = () => {
         <p>In this context, "formulation" refers to liquid electrolytes for Li⁺ batteries, where multiple solvents can be blended with customized additives or diluents. Using the SES MD analysis suite, illustrated in Figure 2, a full simulation run completes in about three days, after which you receive detailed property predictions for your chosen electrolyte mixtures—accelerating your design process with reliable insights.</p>
       </div>
       <div className="guide-content-section">
-        <table className="properties-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Property</th>
-              <th>Type</th>
-              <th>Estimated Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Radial distribution function (RDF)</td>
-              <td>Structural</td>
-              <td rowSpan={8} className="time-cell">3 Days</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Coordination number</td>
-              <td>Structural</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Solvation cluster type and fraction analysis</td>
-              <td>Structural</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Diffusivity</td>
-              <td>Dynamic</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Conductivity</td>
-              <td>Dynamic</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>Ion–ion correlation</td>
-              <td>Dynamic</td>
-            </tr>
-            <tr>
-              <td>7</td>
-              <td>Viscosity</td>
-              <td>Dynamic</td>
-            </tr>
-            <tr>
-              <td>8</td>
-              <td>Density</td>
-              <td>Structural</td>
-            </tr>
-            <tr>
-              <td>9</td>
-              <td>Structure factor (S(q))</td>
-              <td>Structural</td>
-              <td rowSpan={3} className="time-cell">1 Week</td>
-            </tr>
-            <tr>
-              <td>10</td>
-              <td>Dynamic structure factor (S(q,ω))</td>
-              <td>Structural + Dynamic</td>
-            </tr>
-            <tr>
-              <td>11</td>
-              <td>Residence time</td>
-              <td>Dynamic</td>
-            </tr>
-            <tr>
-              <td>12</td>
-              <td>EDL (Electric Double Layer)</td>
-              <td>Thermodynamic</td>
-              <td rowSpan={2} className="time-cell">1-2 Weeks</td>
-            </tr>
-            <tr>
-              <td>13</td>
-              <td>Solubility</td>
-              <td>Thermodynamic</td>
-            </tr>
-          </tbody>
-        </table>
+        <PropertiesTable />
       </div>
       <div className="guide-content-section">
         <h4>Group 1. Standard properties</h4>
