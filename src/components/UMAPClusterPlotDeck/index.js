@@ -19,7 +19,7 @@ const hexToRgb = (hex) => {
 
 const X_STRETCH = 1.3;
 
-const fitToData = (data, containerDimensions, prevViewState = null) => {
+const fitToData = (data, containerDimensions, prevViewState = null, zoomOffset = 0.3) => {
     if (!data || data.length === 0) {
         return {
             longitude: 3.7,
@@ -80,7 +80,6 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
     const baseZoom = Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1));
     
     // Add zoom offset for more detailed view (increase this value for more zoom)
-    const zoomOffset = 0.3; // 增加1.5个缩放级别
     const zoom = Math.max(0, Math.min(20, baseZoom + zoomOffset));
 
     if (prevViewState) {
@@ -269,7 +268,8 @@ const UMAPClusterPlotDeck = ({
     highlightedSimilarData = [],
     userPermissions,
     onClick,
-    molecularType = 'organic'
+    molecularType = 'organic',
+    zoomOffset = 0.3
 }) => {
     const { t } = useTranslation();
 
@@ -338,12 +338,12 @@ const UMAPClusterPlotDeck = ({
     useEffect(() => {
         if (containerReady) {
             if (isManipulated) {
-                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState));
+                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState, zoomOffset));
             } else {
-                setViewState(fitToData(data, containerDimensions));
+                setViewState(fitToData(data, containerDimensions, null, zoomOffset));
             }
         }
-    }, [containerDimensions, data, containerReady]);
+    }, [containerDimensions, data, containerReady, zoomOffset]);
 
     const layers = [
         useMemo(() =>
@@ -497,7 +497,7 @@ const UMAPClusterPlotDeck = ({
         // Reset view state to initial
         setHoveredObject(null);
         onHover(null);
-        setViewState(fitToData(data, containerDimensions));
+        setViewState(fitToData(data, containerDimensions, null, zoomOffset));
         setIsManipulated(false);
     };
 
@@ -582,6 +582,7 @@ const UMAPClusterPlotDeck = ({
                 ref={hoverRef}
                 style={position}
                 showMoreDetails={true}
+                cation={hoveredObject.object.cation ?? hoveredObject.object.rawData?.cation ?? hoveredObject.object.rawData?.CATION}
                 onMouseEnter={() => {
                     setHoveredObject(null);
                     onHover(null);

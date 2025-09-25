@@ -1,7 +1,7 @@
 import request from "@/services/request";
 
 export async function getMoleculeList(params?: any) {
-    return request("/molecule-list", {
+    return request("/api/molecule-list", {
         method: "GET",
         params,
     });

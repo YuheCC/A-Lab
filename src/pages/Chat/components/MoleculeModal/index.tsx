@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, useContext } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
@@ -12,6 +13,8 @@ import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
+import { useChatContext } from '../../context/ChatContext';
+import { formatQueryLimitLabel } from '@/utils/queryLimit';
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -34,6 +37,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const { modeLimits } = useChatContext();
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
@@ -188,9 +192,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         }));
     };
 
-    const renderMoleculeStructure = (smiles?: string) => {
+    const renderMoleculeStructure = (smiles?: string, cation?: string) => {
         return smiles ? (
-            <MolViewer2D smile={smiles} />
+            <MolViewer2D smile={smiles} cation={cation} />
         ) : (
             <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('molecular.molCard.loading')}
@@ -260,7 +264,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">
-                        {renderMoleculeStructure((properties as MoleculeProperties).smiles)}
+                        {renderMoleculeStructure((properties as MoleculeProperties).smiles, (properties as MoleculeProperties).cation)}
                     </div>
                 </div>
                 <div className="molecule-card-properties">
@@ -392,6 +396,46 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </select>
                         </div>
                     )}
+                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                        <InfoTooltip
+                            title={(
+                                <InfoTooltipContent
+                                    title={t('search.intelligentFindFriendsLabel')}
+                                    description={t('search.intelligentFindFriendsTooltip')}
+                                    remainingLabel={formatQueryLimitLabel(modeLimits.findFriendLLM, t, 'search.intelligentFindFriendsLimitLabel')}
+                                />
+                            )}
+                            placement="top"
+                        >
+                            <Info size={16} className="ff-info-icon" />
+                        </InfoTooltip>
+                        <select
+                            value={computeLevel}
+                            onChange={(event) => setComputeLevel(event.target.value)}
+                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                        >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option
+                                value="Medium"
+                                disabled={userPermissions === 'research'}
+                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                            >
+                                {t('search.computeMedium')}
+                                {userPermissions === 'research' ? ' 🔒' : ''}
+                            </option>
+                            <option
+                                value="High"
+                                disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                                title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                            >
+                                {t('search.computeHigh')}
+                                {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                            </option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                    </div>
                     <div
                         role="button"
                         tabIndex={0}
@@ -402,11 +446,16 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             marginTop: '12px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '6px',
                             cursor: 'pointer',
                             color: '#2563eb',
                             fontWeight: 500,
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            border: '1px solid #2563eb',
+                            borderRadius: '6px',
+                            padding: '6px 10px',
+                            backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                            transition: 'background-color 0.2s',
                         }}
                     >
                         <span>{t('search.advancedOptions')}</span>
@@ -421,7 +470,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             additiveSubtype={selectedAdditiveSubtype}
                             setAdditiveSubtype={setSelectedAdditiveSubtype}
                             computeLevel={computeLevel}
-                            setComputeLevel={setComputeLevel}
                             structureWeight={structureWeight}
                             setStructureWeight={setStructureWeight}
                             showHypothetical={showHypothetical}
@@ -439,6 +487,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     // 将后端字段映射到面板展示字段
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
+        const cation = raw?.cation ?? raw?.CATION;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -453,6 +502,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles,
+            cation,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
@@ -473,6 +523,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles: moleculeData.SMILES,
+            cation: moleculeData.cation,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,

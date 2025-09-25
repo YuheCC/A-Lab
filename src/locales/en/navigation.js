@@ -4,9 +4,14 @@ export default {
     map: "Map",
     ask: "Ask",
     search: "Search",
+    molecule: "Molecule",
     filter: "Filter",
     favorites: "Favorites",
+    predict: "Predict",
+    formulation: "Formulation",
     about: "About",
+    predictPerformance: "Cell Performance Prediction",
+    predictionTool: "Battery Life Prediction",
   },
   
   // Navbar links
@@ -46,7 +51,8 @@ export default {
     title: "Upgrade Plan",
     message: "Would you like to upgrade your plan to unlock more features?",
     confirm: "Confirm",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    upgradeViewTitle: "Upgrade Plan To View"
   },
   
   // Action buttons

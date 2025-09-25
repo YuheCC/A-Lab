@@ -6,7 +6,7 @@ const baseURL = BASE_URL || 'https://prod-api.ses.ai';
 // 创建axios实例
 const axiosInstance: AxiosInstance = axios.create({
     baseURL,
-    timeout: 10000,
+    timeout: 1000000,
     headers: {
         'Content-Type': 'application/json',
     }

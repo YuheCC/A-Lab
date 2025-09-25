@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@mui/material';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { useChatContext } from '../../context/ChatContext';
+import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
 import i18n from '@/locales/i18n';
 import { useAuthStore } from '@/models/useAuth';
 
@@ -137,9 +138,7 @@ const ChatWelcome: React.FC = () => {
                 if (info) {
                     const limitValue = typeof info.limit === 'number' ? info.limit : null;
                     if (limitValue !== null && limitValue > 0) {
-                        const remainingValue = typeof info.remaining === 'number'
-                            ? info.remaining
-                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        const remainingValue = getRemainingFromLimitInfo(info);
                         if (typeof remainingValue === 'number') {
                             return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: limitValue });
                         }
@@ -151,9 +150,7 @@ const ChatWelcome: React.FC = () => {
                 if (info) {
                     const limitValue = typeof info.limit === 'number' ? info.limit : null;
                     if (limitValue !== null && limitValue > 0) {
-                        const remainingValue = typeof info.remaining === 'number'
-                            ? info.remaining
-                            : (typeof info.used === 'number' ? Math.max(limitValue - info.used, 0) : undefined);
+                        const remainingValue = getRemainingFromLimitInfo(info);
                         if (typeof remainingValue === 'number') {
                             return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: limitValue });
                         }
@@ -182,41 +179,7 @@ const ChatWelcome: React.FC = () => {
 
         const remaining = getRemainingLabel();
         return (
-            <div style={{ padding: '4px' }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '8px'
-                }}>
-                    <h4 style={{
-                        margin: 0,
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#111827'
-                    }}>
-                        {title}
-                    </h4>
-                    {remaining && (
-                        <span style={{
-                            fontSize: '12px',
-                            color: '#56B26A',
-                            padding: '2px 6px',
-                            borderRadius: '4px'
-                        }}>
-                            {remaining}
-                        </span>
-                    )}
-                </div>
-                <div style={{
-                    fontSize: '13px',
-                    color: '#4b5563',
-                    lineHeight: '1.5',
-                    fontWeight: '300'
-                }}>
-                    {desc}
-                </div>
-            </div>
+            <InfoTooltipContent title={title} description={desc} remainingLabel={remaining} />
         );
     };
 
@@ -276,27 +239,10 @@ const ChatWelcome: React.FC = () => {
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
                                 {modesToRender.map(modeKey => (
-                                    <Tooltip
+                                    <InfoTooltip
                                         key={modeKey}
                                         title={getModeTooltipContent(modeKey)}
                                         placement="bottom"
-                                        arrow
-                                        PopperProps={{
-                                            sx: {
-                                                '& .MuiTooltip-tooltip': {
-                                                    backgroundColor: 'white',
-                                                    color: 'black',
-                                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                                    borderRadius: '8px',
-                                                    padding: '12px',
-                                                    fontSize: '14px',
-                                                    maxWidth: 280
-                                                },
-                                                '& .MuiTooltip-arrow': {
-                                                    color: 'white',
-                                                }
-                                            }
-                                        }}
                                     >
                                         <button
                                             className={`new-mode-btn ${currentMode === modeKey ? 'active' : ''}`}
@@ -308,7 +254,7 @@ const ChatWelcome: React.FC = () => {
                                                 <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
                                             )}
                                         </button>
-                                    </Tooltip>
+                                    </InfoTooltip>
                                 ))}
                             </div>
                             <button 

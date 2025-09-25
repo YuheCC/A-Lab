@@ -12,7 +12,7 @@ const API_URL = getAPIUrl();
 
 interface NodePopupProps {
   node: any;
-  molecularType?: 'organic' | 'inorganic';
+  molecularType?: 'organic' | 'inorganic' | 'anions';
 }
 
 // NodePopup component for displaying molecule information
@@ -49,6 +49,8 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
   // Check if user has permission to see predicted properties
   const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
 
+  const nodeCation = node?.cation ?? node?.rawData?.cation ?? node?.rawData?.CATION;
+
   const copyToClipboard = () => {
     const nodeData = JSON.stringify(node.rawData, null, 2);
     navigator.clipboard.writeText(nodeData)
@@ -67,7 +69,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
         <h2 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.title')}</h2>
         <div className="popup-data">
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <MolViewer2D smile={node.smiles} theme="dark"/>
+            <MolViewer2D smile={node.smiles} cation={nodeCation} theme="dark"/>
           </div>
           <h3 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.smiles')}</h3>
           <p className="dark-field" style={{ textAlign: 'center' }}>{node.smiles}</p>
@@ -80,6 +82,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
             <tbody>
               {Object.entries(node.properties || {})
                 .filter(([key, value]) => {
+                  console.log(key, value, molecularType);
                   // Hide commercial_link row if value is "N/A"
                   if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
@@ -91,7 +94,15 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                     return false;
                   }
 
-                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV')) {
+                    return false;
+                  }
+
+                  if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                    return false;
+                  }
+
+                  if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
                     return false;
                   }
                   

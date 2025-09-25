@@ -8,7 +8,7 @@ export default {
     },
     chat: {
         newChat: "새 채팅",
-        newExpoler: "새 탐험",
+        newExpoler: "새 채팅",
         newChatSubtitle: "새로운 대화를 시작하고 분자 우주의 신비를 탐험해보세요",
         searchChat: "채팅 검색",
         historyTitle: "채팅 기록",

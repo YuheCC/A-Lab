@@ -9,6 +9,8 @@ import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
 import { authFetch, getAPIUrl } from '@/utils.js';
+import type { QueryLimitInfo, QueryLimitsSummary } from '@/types/queryLimit';
+import { normalizeLimitInfo } from '@/utils/queryLimit';
 import { useAuthStore } from '@/models/useAuth';
 
 
@@ -27,17 +29,7 @@ const normalizeModeForBackend = (mode: ChatMode): ChatMode => {
     return mode;
 };
 
-interface ModeLimitInfo {
-    limit?: number | null;
-    remaining?: number | null;
-    used?: number | null;
-}
-
-interface ModeLimits {
-    lightning?: ModeLimitInfo;
-    pro?: ModeLimitInfo;
-    deepSpace?: ModeLimitInfo;
-}
+type ModeLimits = QueryLimitsSummary;
 
 const extractExtraData = (payload: any) => {
     let extraData = payload?.extra_outputs ?? payload?.extra_output ?? payload?.extraData ?? payload?.extra_data;
@@ -217,29 +209,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (response.ok) {
                 const data = await response.json();
 
-                const normalizeLimitInfo = (info: any): ModeLimitInfo | undefined => {
-                    if (!info && info !== 0) {
-                        return undefined;
-                    }
-                    const limitValue = typeof info?.limit === 'number' ? info.limit : info?.limit === null ? null : undefined;
-                    const remainingValue = typeof info?.remaining === 'number' ? info.remaining : info?.remaining === 0 ? 0 : undefined;
-                    const usedValue = typeof info?.used === 'number' ? info.used : info?.used === 0 ? 0 : undefined;
-
-                    if (limitValue === undefined && remainingValue === undefined && usedValue === undefined) {
-                        return undefined;
-                    }
-
-                    return {
-                        limit: limitValue ?? null,
-                        remaining: remainingValue ?? null,
-                        used: usedValue ?? null,
-                    };
-                };
-
                 const proLimit = normalizeLimitInfo(data?.ask_limits?.high);
                 const lightningLimit = normalizeLimitInfo(data?.ask_limits?.low);
 
-                const extractDeepSpaceInfo = (): ModeLimitInfo | undefined => {
+                const extractDeepSpaceInfo = (): QueryLimitInfo | undefined => {
                     const possibleContainers = [
                         data?.deep_space_limits,
                         data?.ds_limits,
@@ -280,11 +253,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 };
 
                 const deepSpaceLimit = extractDeepSpaceInfo();
+                const findFriendLimit = normalizeLimitInfo(data?.find_friend_llm);
 
                 setModeLimits({
                     pro: proLimit,
                     lightning: lightningLimit,
                     deepSpace: deepSpaceLimit,
+                    findFriendLLM: findFriendLimit,
                 });
 
                 const fallbackProRemaining = typeof data?.query_limit === 'number' ? data.query_limit : null;

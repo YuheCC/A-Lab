@@ -9,6 +9,7 @@ import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
+import { usePageCleanup } from "@/hooks/usePageCleanup";
 
 const API_URL = getAPIUrl();
 
@@ -19,10 +20,12 @@ const FullNavLayoutInner = () => {
     const location = useLocation();
     const pathname = location.pathname;
     const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
+    const isPredictPage = pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { verifyAuth } = useAuthStore();
+    const language = i18n.language;
     const message = useMessage();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
@@ -30,6 +33,9 @@ const FullNavLayoutInner = () => {
     const permissionFromQuery = queryParams.get('permission');
     const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
     const [permission, setPermission] = useState(permissionFromQuery);
+
+    // 使用页面清理hook
+    usePageCleanup(pathname);
 
     useEffect(() => {
         verifyAuth();
@@ -147,13 +153,19 @@ const FullNavLayoutInner = () => {
         if (isChatPage) {
             return 'main-container chat-container';
         }
+        if (isPredictPage) {
+            return 'main-container predict-container';
+        }
+        if (pathname.startsWith('/formulation')) {
+            return 'main-container formulation-container';
+        }
         return 'main-container';
     }
     return (
         <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
               <Header />
-              <div className={getMainContainerClassName()}>
+              <div className={`${getMainContainerClassName()} ${language}-page`}>
                   <Outlet />
               </div>
               <PricingOverlay 

@@ -9,9 +9,11 @@
 /dist
 /build
 config/config.staging.ts
+config/config.ts
 .swc
 .cursorrules
 /.cursor/
 .cursor/
 .cursor
 .code-workspace.code-workspace
+CLAUDE.md

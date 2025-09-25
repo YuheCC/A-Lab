@@ -21,6 +21,7 @@ export default {
   // Search and Table
   searchPlaceholder: 'Search molecules...',
   loadingImage: 'Loading...',
+  backToSearch: 'Back to Search',
   
   // Table Headers
   tableHeaders: {

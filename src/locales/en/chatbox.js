@@ -7,8 +7,8 @@ export default {
         sendButton: "Send"
     },
     chat: {
-        newChat: "Start New Research",
-        newExpoler: "Research Anything",
+        newChat: "New Chat",
+        newExpoler: "New Chat",
         newChatSubtitle: "Start a new conversation and explore the mysteries of the molecular universe",
         searchChat: "Search Chat",
         historyTitle: "Chat History",
@@ -177,7 +177,7 @@ export default {
     history: {
         title: "Your Chats",
         createNewChat: "Create New Chat",
-        newChat: "Start New Research",
+        newChat: "New Chat",
         confirmDelete: "Are you sure you want to delete this chat?",
         cancel: "Cancel",
         delete: "Delete",
