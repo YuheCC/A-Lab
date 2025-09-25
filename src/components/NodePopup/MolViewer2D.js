@@ -3,6 +3,52 @@ import { formatSmilesWithCation } from '@/utils';
 import { loadRDKit } from '@/utils/rdkitLoader';
 
 const DEFAULT_DIMENSION = 200;
+const MAX_CACHE_ENTRIES = 200;
+const svgCache = new Map();
+
+const promoteCacheEntry = (key) => {
+  const entry = svgCache.get(key);
+  if (!entry) return entry;
+  svgCache.delete(key);
+  svgCache.set(key, entry);
+  return entry;
+};
+
+const evictIfNeeded = () => {
+  if (svgCache.size <= MAX_CACHE_ENTRIES) return;
+  const iterator = svgCache.keys();
+  const oldestKey = iterator.next().value;
+  if (typeof oldestKey !== 'undefined') {
+    svgCache.delete(oldestKey);
+  }
+};
+
+const getCachedSvg = (key, creator) => {
+  if (!key) return creator();
+
+  const cached = svgCache.get(key);
+  if (cached) {
+    if (cached.status === 'resolved') {
+      promoteCacheEntry(key);
+      return Promise.resolve(cached.value);
+    }
+    return cached.promise;
+  }
+
+  const promise = creator()
+    .then((value) => {
+      svgCache.set(key, { status: 'resolved', value });
+      evictIfNeeded();
+      return value;
+    })
+    .catch((error) => {
+      svgCache.delete(key);
+      throw error;
+    });
+
+  svgCache.set(key, { status: 'pending', promise });
+  return promise;
+};
 
 const sanitizeSvg = (svg, theme) => {
   if (!svg) return '';
@@ -10,10 +56,18 @@ const sanitizeSvg = (svg, theme) => {
 
   if (theme === 'dark') {
     output = output.replace(
-      /(stroke|fill)([:=])(['"]?)#000000\3/gi,
-      (_match, attribute, separator, quote) => {
+      /stroke([:=])(['"]?)#000000\2/gi,
+      (_match, separator, quote) => {
         const safeQuote = quote || '';
-        return `${attribute}${separator}${safeQuote}#FFFFFF${safeQuote}`;
+        return `stroke${separator}${safeQuote}#FFFFFF${safeQuote}`;
+      },
+    );
+
+    output = output.replace(
+      /(<rect[^>]*?fill=)(['"]?)#FFFFFF\2/i,
+      (_match, prefix, quote) => {
+        const safeQuote = quote || '';
+        return `${prefix}${safeQuote}#000000${safeQuote}`;
       },
     );
   }
@@ -39,74 +93,77 @@ const MolViewer2D = ({
     [smile, cation],
   );
 
+  const cacheKey = useMemo(() => {
+    if (!smilesToDraw) return null;
+    return `${smilesToDraw}|${theme}|${width}x${height}`;
+  }, [smilesToDraw, theme, width, height]);
+
   useEffect(() => {
+    if (!smilesToDraw) {
+      setSvgMarkup('');
+      setRenderState({ status: 'idle', error: null });
+      return () => {};
+    }
+
     let cancelled = false;
-    let mol = null;
-    let disposed = false;
 
-    const disposeMol = () => {
-      if (!mol || disposed) return;
-      const destroy = typeof mol.delete === 'function' ? mol.delete.bind(mol) : null;
-      if (!destroy) {
-        mol = null;
-        disposed = true;
-        return;
-      }
+    const cached = cacheKey ? promoteCacheEntry(cacheKey) : null;
+    if (cached?.status === 'resolved') {
+      setSvgMarkup(cached.value);
+      setRenderState({ status: 'ready', error: null });
+      return () => {
+        cancelled = true;
+      };
+    }
 
-      try {
-        destroy();
-      } catch (error) {
-        console.warn('Failed to dispose RDKit molecule instance', error);
-      } finally {
-        mol = null;
-        disposed = true;
-      }
-    };
+    setRenderState({ status: 'loading', error: null });
 
     const draw = async () => {
-      if (!smilesToDraw) {
-        setSvgMarkup('');
-        setRenderState({ status: 'idle', error: null });
-        return;
-      }
-
-      setRenderState({ status: 'loading', error: null });
-
       try {
-        const RDKit = await loadRDKit();
-        if (cancelled) return;
+        const svg = await getCachedSvg(cacheKey, async () => {
+          const RDKit = await loadRDKit();
+          const mol = RDKit.get_mol(smilesToDraw);
 
-        mol = RDKit.get_mol(smilesToDraw);
-        if (!mol) {
-          throw new Error('Unable to parse SMILES for rendering');
-        }
+          if (!mol) {
+            throw new Error('Unable to parse SMILES for rendering');
+          }
 
-        const drawOptions = {
-          width,
-          height,
-          clearBackground: theme !== 'dark',
-        };
+          try {
+            let svgMarkupResult = null;
 
-        if (theme === 'dark') {
-          drawOptions.backgroundColour = [0, 0, 0];
-        }
+            if (theme === 'dark' && typeof mol.get_svg_with_highlights === 'function') {
+              svgMarkupResult = mol.get_svg_with_highlights(
+                JSON.stringify({
+                  width,
+                  height,
+                  clearBackground: false,
+                  backgroundColour: [0, 0, 0],
+                }),
+              );
+            }
 
-        let svg = null;
+            if (!svgMarkupResult && typeof mol.get_svg === 'function') {
+              svgMarkupResult = mol.get_svg(width, height);
+            }
 
-        if (typeof mol.get_svg_with_highlights === 'function') {
-          svg = mol.get_svg_with_highlights(JSON.stringify(drawOptions));
-        }
+            if (!svgMarkupResult) {
+              throw new Error('RDKit did not return SVG content');
+            }
 
-        if (!svg && typeof mol.get_svg === 'function') {
-          svg = mol.get_svg(width, height);
-        }
-
-        if (!svg) {
-          throw new Error('RDKit did not return SVG content');
-        }
+            return sanitizeSvg(svgMarkupResult, theme);
+          } finally {
+            if (typeof mol.delete === 'function') {
+              try {
+                mol.delete();
+              } catch (error) {
+                console.warn('Failed to dispose RDKit molecule instance', error);
+              }
+            }
+          }
+        });
 
         if (!cancelled) {
-          setSvgMarkup(sanitizeSvg(svg, theme));
+          setSvgMarkup(svg);
           setRenderState({ status: 'ready', error: null });
         }
       } catch (error) {
@@ -118,8 +175,6 @@ const MolViewer2D = ({
             error: error instanceof Error ? error.message : 'Unable to render molecule',
           });
         }
-      } finally {
-        disposeMol();
       }
     };
 
@@ -127,9 +182,8 @@ const MolViewer2D = ({
 
     return () => {
       cancelled = true;
-      disposeMol();
     };
-  }, [height, smilesToDraw, theme, width]);
+  }, [cacheKey, height, smilesToDraw, theme, width]);
 
   const containerStyle = {
     width,
