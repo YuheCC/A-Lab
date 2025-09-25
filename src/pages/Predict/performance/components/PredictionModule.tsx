@@ -9,6 +9,7 @@ import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
+import CustomSelect from './CustomSelect';
 
 interface SystemSpec {
   cathode: string;
@@ -609,27 +610,27 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         <div className="module-content-card">
           <div className="form-group">
             <label>{t('performance.batterySystemSelection.label')}</label>
-            <select 
-              value={selectedSystem} 
-              onChange={(e) => setSelectedSystem(e.target.value)}
+            <CustomSelect
+              value={selectedSystem}
+              onChange={setSelectedSystem}
+              onOptionClick={(option, isSelected) => {
+                if(!showSpecs && selectedSystem) {
+                  setShowSpecs(true);
+                }
+                // 这里可以添加你需要的option点击处理逻辑
+              }}
+              options={isBatterySystemLoading ?
+                [{ id: 'loading', name: t('performance.batterySystemSelection.loading'), disabled: true }] :
+                batterySystemOptions.map(system => ({
+                  id: system.id,
+                  name: system.name,
+                  disabled: Number(system.id) !== 1
+                }))
+              }
               className="system-select"
               disabled={isBatterySystemLoading}
-            >
-              {isBatterySystemLoading ? (
-                <option value="">{t('performance.batterySystemSelection.loading')}</option>
-              ) : (
-                batterySystemOptions.map((system) => (
-                  <option
-                    key={system.id}
-                    value={Number(system.id) === 1 ? system.name : ""}
-                    disabled={Number(system.id) !== 1}
-                    style={Number(system.id) !== 1 ? { color: '#ccc' } : {}}
-                  >
-                    {system.name}{Number(system.id) !== 1 ? ' (Will be available soon)' : ''}
-                  </option>
-                ))
-              )}
-            </select>
+              placeholder={t('performance.batterySystemSelection.loading')}
+            />
           </div>
 
           {showSpecs && currentSpec && (
