@@ -77,7 +77,7 @@ export default {
   },
 
   ui: {
-    calculating: 'Calculating...'
+    calculating: 'validating inputs, prepare calculations…'
   },
 
   result: {
