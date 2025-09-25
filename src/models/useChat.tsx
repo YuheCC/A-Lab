@@ -338,6 +338,7 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
                         createdAt: new Date(chat.created_at.endsWith('Z') ? chat.created_at : chat.created_at + 'Z').toISOString(),
                         useMultiAgent: false,
                         name: chat.chat_name || 'New Chat',
+
                         messages: (chat.content || chat.messages || []).map((item: any) => {
                             const rawExtraData = item.extraData ?? item.extra_data;
                             const parsedExtraData = parseMaybeJSON(rawExtraData);

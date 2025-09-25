@@ -23,6 +23,7 @@ type ChatMode =
     | 'deep-space'
     | 'deep-space-oss';
 
+
 const normalizeModeForBackend = (mode: ChatMode): ChatMode => {
     if (mode === 'ask-oss') return 'ask';
     if (mode === 'deep-space-oss') return 'deep-space';
