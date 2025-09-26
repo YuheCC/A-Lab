@@ -29,6 +29,9 @@ const ChatWelcome: React.FC = () => {
     
     // 随机宽度样式类名数组
     const widthClasses = ['width-xs', 'width-sm', 'width-md', 'width-lg', 'width-xl'];
+    
+    // 为当前问题预分配固定的宽度类名，避免每次渲染时重新计算
+    const [questionWidths, setQuestionWidths] = useState<string[]>([]);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // 处理输入变化
@@ -40,6 +43,12 @@ const ChatWelcome: React.FC = () => {
         const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
         const initialQuestions = shuffled.slice(0, 5);
         setCurrentQuestions(initialQuestions);
+        
+        // 为新的问题分配固定的宽度类名
+        const newWidths = initialQuestions.map(() => 
+            widthClasses[Math.floor(Math.random() * widthClasses.length)]
+        );
+        setQuestionWidths(newWidths);
     }, [i18n.language]);
 
     // 处理发送消息
@@ -189,6 +198,12 @@ const ChatWelcome: React.FC = () => {
         const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
         const newQuestions = shuffled.slice(0, 5);
         setCurrentQuestions(newQuestions);
+        
+        // 为新的问题分配固定的宽度类名
+        const newWidths = newQuestions.map(() => 
+            widthClasses[Math.floor(Math.random() * widthClasses.length)]
+        );
+        setQuestionWidths(newWidths);
     }, [recommendedQuestions]);
 
     const isInputEmpty = inputValue.trim().length === 0;
@@ -328,13 +343,13 @@ const ChatWelcome: React.FC = () => {
                 {/* 推荐问题区域 */}
                 <div className="recommended-questions">
                     {currentQuestions.map((question, index) => {
-                        // 为每个问题分配随机宽度类名，创造错落效果
-                        const randomWidthClass = widthClasses[Math.floor(Math.random() * widthClasses.length)];
+                        // 使用预分配的固定宽度类名，避免每次渲染时重新计算
+                        const widthClass = questionWidths[index] || 'width-md';
                         
                         return (
                             <div 
                                 key={`${question}-${index}`}
-                                className={`recommended-question ${randomWidthClass}`}
+                                className={`recommended-question ${widthClass}`}
                                 onClick={() => handleQuestionClick(question)}
                                 role="button"
                                 tabIndex={0}
