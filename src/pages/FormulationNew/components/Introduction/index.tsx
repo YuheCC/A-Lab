@@ -17,6 +17,9 @@ const Introduction: React.FC = () => {
       </div>
       <div className="guide-content-section">
         <PropertiesTable />
+        <p>
+        The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team via the email md-service@ses.ai
+        </p>
       </div>
       <div className="guide-content-section">
         <h4>Group 1. Standard properties</h4>

@@ -31,7 +31,7 @@ const defaultProperties: PropertyItem[] = [
 
 const PropertiesTable: React.FC<PropertiesTableProps> = ({ properties = defaultProperties }) => {
   return (
-    <table className="properties-table">
+    <table className="md-properties-table">
       <thead>
         <tr>
           <th></th>

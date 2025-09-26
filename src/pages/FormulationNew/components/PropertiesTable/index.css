@@ -1,4 +1,4 @@
-.properties-table {
+.md-properties-table {
   width: 90%;
   border-collapse: collapse;
   margin: 16px auto;
@@ -7,13 +7,13 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.properties-table thead {
+.md-properties-table thead {
   background: transparent;
   color: #1e293b;
   border-bottom: 2px solid #e2e8f0;
 }
 
-.properties-table th {
+.md-properties-table th {
   padding: 14px 16px;
   text-align: left;
   font-weight: 600;
@@ -21,50 +21,50 @@
   letter-spacing: 0.5px;
 }
 
-.properties-table th:first-child {
+.md-properties-table th:first-child {
   width: 50px;
 }
 
-.properties-table th:last-child {
+.md-properties-table th:last-child {
   width: 140px;
   text-align: center;
 }
 
-.properties-table tbody tr {
+.md-properties-table tbody tr {
   border-bottom: 1px solid #e2e8f0;
   transition: background 0.2s ease;
 }
 
-.properties-table tbody tr:hover {
+.md-properties-table tbody tr:hover {
   background: rgba(248, 250, 252, 0.5);
 }
 
-.properties-table tbody tr:last-child {
+.md-properties-table tbody tr:last-child {
   border-bottom: none;
 }
 
-.properties-table td {
+.md-properties-table td {
   padding: 12px 16px;
   font-size: 13px;
   color: #475569;
 }
 
-.properties-table td:first-child {
+.md-properties-table td:first-child {
   font-weight: 600;
   color: #64748b;
   text-align: center;
 }
 
-.properties-table td:nth-child(2) {
+.md-properties-table td:nth-child(2) {
   color: #1e293b;
 }
 
-.properties-table td:nth-child(3) {
+.md-properties-table td:nth-child(3) {
   font-style: italic;
   color: #64748b;
 }
 
-.properties-table .time-cell {
+.md-properties-table .time-cell {
   text-align: center;
   font-weight: 600;
   color: #0369a1;
