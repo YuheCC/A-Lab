@@ -43,13 +43,17 @@ const Search = () => {
                         {t('search.tabs.third')}
                     </button>
                 </div>
-                <button
-                    className="favorites-enter-button"
-                    onClick={handleGoToFavorites}
-                    title={t('search.favorites.goToFavorites')}
-                >
-                    ⭐ {t('search.favorites.favorites')}
-                </button>
+                {
+                    activeTab !== 'third' && (
+                        <button
+                            className="favorites-enter-button"
+                            onClick={handleGoToFavorites}
+                            title={t('search.favorites.goToFavorites')}
+                        >
+                            {t('search.favorites.favorites')}
+                        </button>
+                    )
+                }
             </div>
 
             {/* Tab Content */}

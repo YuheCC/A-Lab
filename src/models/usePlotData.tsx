@@ -140,7 +140,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
         try {
             isFetching = true;
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query?umap_type=organic`);
+            const response = await authFetch(`${API_URL}/snowflake-query?umap_type=organic&simple=true`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });
