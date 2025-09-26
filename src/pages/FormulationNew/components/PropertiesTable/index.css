@@ -12,7 +12,7 @@
 }
 
 .md-properties-table th {
-  padding: 8px 12px;
+  padding: 4px 12px;
   text-align: left;
   font-weight: 600;
   font-size: 14px;
@@ -37,7 +37,7 @@
 
 
 .md-properties-table td {
-  padding: 8px 12px;
+  padding: 4px 12px;
   font-size: 14px;
   color: #374151;
   border-right: 1px solid #e5e7eb;
