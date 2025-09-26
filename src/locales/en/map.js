@@ -1,8 +1,8 @@
 export default {
   tabs: {
-    organic: 'Organic',
-    inorganic: 'Inorganic',
-    anions: 'Anions'
+    organic: 'Solvents, Additives & Diluents',
+    inorganic: 'Inorganic Solvent, Additives & Diluents',
+    anions: 'Salt Anions'
   },
   loading: {
     message: 'Loading Map of the Molecular Universe',

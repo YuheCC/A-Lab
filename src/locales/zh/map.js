@@ -1,8 +1,8 @@
 export default {
   tabs: {
-    organic: '有机分子',
-    inorganic: '无机分子',
-    anions: '阴离子'
+    organic: '溶剂、添加剂和稀释剂',
+    inorganic: '无机溶剂、添加剂和稀释剂',
+    anions: '盐阴离子'
   },
   loading: {
     message: '正在加载分子宇宙地图',

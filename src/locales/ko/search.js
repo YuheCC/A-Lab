@@ -1,9 +1,9 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: '유기 분자',
-        inorganic: '무기 분자',
-        anions: '음이온',
+        organic: '용매, 첨가제 및 희석제',
+        inorganic: '무기 용매, 첨가제 및 희석제',
+        anions: '염 음이온',
         third: '고체 전해질'
     },
     
