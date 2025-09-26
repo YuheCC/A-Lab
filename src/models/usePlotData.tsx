@@ -350,7 +350,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
     fetchData: async () => {
         try {
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true&umap_type=anions`);
+            const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch anions data: ${response.statusText}` });
