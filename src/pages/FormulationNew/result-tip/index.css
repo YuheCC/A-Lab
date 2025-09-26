@@ -152,7 +152,7 @@
 
 /* PropertiesTable 样式调整 */
 .properties-table-section {
-  margin: 16px 0;
+  margin: 0 0 16px 0;
 }
 
 .properties-table-section .properties-table {
