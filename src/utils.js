@@ -94,6 +94,6 @@ export const filterLabels = {
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
     chemical_formula: "Chemical Formula",
-    vdw_volume_angstroms3: "Molecular Volume（Å^3）",
+    vdw_volume_angstroms3: "Molecular Volume（Å³）",
     fluoride_bde_ev: "F Dissociation Energy（eV）"
 };

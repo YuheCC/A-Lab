@@ -631,7 +631,7 @@ const UMAPClusterPlotDeck = ({
                     {
                         label: "Molecular Volume", 
                         value: hoveredObject.object.properties.vdw_volume_angstroms3,
-                        suffix: " Å^3",
+                        suffix: " Å³",
                         show: molecularType === "anions"
                     },
                     {
