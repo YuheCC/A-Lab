@@ -48,7 +48,7 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   showHypothetical,
   setShowHypothetical,
 
-  userPermissions,
+  userPermissions: _userPermissions,
 
   cathode = '', setCathode = () => {},
   anode = '', setAnode = () => {},
@@ -67,6 +67,7 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
       description={t('search.searchRangeTooltip')}
     />
   );
+  const shouldShowBatteryFields = showBatteryFields && computeLevel !== 'Disabled';
 
   return (
     <div className="find-friend-advanced-options">
@@ -123,14 +124,14 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
       </div>
 
       {/* Optional recommendation text when battery fields are relevant */}
-      {showBatteryFields && userPermissions === 'admin' && computeLevel !== 'Disabled' && (
+      {shouldShowBatteryFields && (
         <div className="ff-advanced-section">
           <div style={{ fontSize: '12px' }}>{t('search.batteryInfoRecommendation')}</div>
         </div>
       )}
 
       {/* Battery fields as TEXT INPUTS; only show when IFaF is enabled */}
-      {showBatteryFields && userPermissions === 'admin' && computeLevel !== 'Disabled' && (
+      {shouldShowBatteryFields && (
         <>
           <div className="ff-advanced-section">
             <div className="ff-field-row">
