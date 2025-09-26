@@ -124,8 +124,8 @@ export default {
   // Analysis timing
   analysis: {
     analyzing: "Analyzing",
-    analyzingForSeconds: "Analyzed for {{seconds}} s",
-    analyzingForMinutesAndSeconds: "Analyzed for {{minutes}} min {{seconds}} s"
+    analyzingForSeconds: "{{seconds}} s",
+    analyzingForMinutesAndSeconds: "{{minutes}} min {{seconds}} s"
   },
   
   // General UI text

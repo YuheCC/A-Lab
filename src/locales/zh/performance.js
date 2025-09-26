@@ -124,8 +124,8 @@ export default {
   // Analysis timing
   analysis: {
     analyzing: "LLM分析中",
-    analyzingForSeconds: "分析了{{seconds}}秒",
-    analyzingForMinutesAndSeconds: "分析了{{minutes}}分{{seconds}}秒"
+    analyzingForSeconds: "{{seconds}}秒",
+    analyzingForMinutesAndSeconds: "{{minutes}}分{{seconds}}秒"
   },
   
   // General UI text
