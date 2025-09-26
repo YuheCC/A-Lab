@@ -174,7 +174,6 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
                         combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
                         commercial_score: row.COMMERCIAL_SCORE,
                         commercial_link: row.COMMERCIAL_LINK,
-                        molecular_weight: row.MOLECULAR_WEIGHT,
                         CLUSTER: handleCluster(row.CLUSTER)
                     },
                     rawData: row
