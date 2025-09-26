@@ -147,19 +147,19 @@ const Header = () => {
                 {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
                 <div 
-                    className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
+                    className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
                     onMouseEnter={handleNavDropdownMouseEnter}
                     onMouseLeave={handleNavDropdownMouseLeave}
                     ref={navDropdownRef}
                 >
-                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
+                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser)}
                     <div 
                         className="nav-dropdown"
                         onMouseEnter={handleNavDropdownMouseEnter}
                         onMouseLeave={handleNavDropdownMouseLeave}
                     >
-                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
-                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
+                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser)}
+                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)}
                     </div>
                 </div>
                 {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)}
