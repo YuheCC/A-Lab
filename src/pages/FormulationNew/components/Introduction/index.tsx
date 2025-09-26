@@ -43,7 +43,12 @@ const Introduction: React.FC = () => {
           <li><strong>Density</strong>: Mass per unit volume, reflecting system compactness.</li>
         </ol>
         <img src="/formulation/introduction4.png" alt="MD simulation results" />
-        <div className="figure-caption">Summary of MD simulation settings and results</div>
+        <div className="figure-caption">MD Simulation Accuracy: Predicted vs. Measured Ionic Conductivity</div>
+        <p>
+        Our molecular dynamics simulations demonstrate excellent agreement with experimental ionic conductivity measurements across over 100 
+        electrolyte formulation systems (0-40 mS/cm). Points close to the diagonal line indicate high prediction accuracy, giving you confidence in 
+        simulation-based screening before synthesis.
+        </p>
       </div>
 
       <div className="guide-content-section">
@@ -65,7 +70,9 @@ const Introduction: React.FC = () => {
           <li><strong>Solubility</strong>: Maximum amount of a substance that can dissolve in a solvent under equilibrium conditions.</li>
         </ol>
         <img src="/formulation/introduction6.png" alt="Solubility calculation" />
-        <div className="figure-caption">Performance in calculation of LiFSI solubility in various solvents.</div>
+        <div className="figure-caption">Our MD Simulations Accurately Predict solubility of LiFSI in 19 solvents. Points close to the diagonal 
+line indicate high prediction accuracy, giving you confidence in simulation-based screening before 
+synthesis.</div>
       </div>
     </div>
   );

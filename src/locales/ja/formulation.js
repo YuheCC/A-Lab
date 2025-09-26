@@ -156,20 +156,28 @@ export default {
     density: '密度 (g/cm³)',
     viscosity: '粘度 (cP)',
     conductivity: '電気伝導率 (mS/cm)',
+    diffusionCoefficient: '拡散係数（単位：10⁻¹⁰ m²/秒）全成分',
+    species: '成分',
+    coefficient: '拡散係数（×10⁻¹⁰ m²/s）',
     SSIP: 'SSIP',
     CIP: 'CIP',
     AGG: 'AGG',
     SSIPTitle: 'SSIP：溶媒分離イオンペア カチオンとアニオンは関連しているが、直接接触していない。代わりに、1つ以上の溶媒分子がそれらの間に位置している。中程度の極性溶媒に典型的で、溶媒和殻がイオンを分離させるが、静電相関は残る。例：Li⁺-(溶媒)-PF₆⁻',
     CIPTitle: 'CIP：接触イオンペア 1つのカチオンと1つのアニオンが直接接触し、間に溶媒分子を挟まない。低誘電率溶媒や高塩濃度で一般的。SSIPより強い結合。例：Li⁺·PF₆⁻が直接接触。',
     AGGTitle: 'AGG：イオン凝集体 2つ以上のカチオンとアニオンの組み合わせによる直接接触を含む、より大きな関連構造。二量体、三量体、またはより大きなクラスターであり得る。高濃度、不良溶媒、またはイオン液体でしばしば現れる。例：(Li⁺·PF₆⁻)ₙクラスター、またはLi⁺が複数のアニオンを架橋。'
-  }
-  ,
+  },
+  guide: {
+    help: 'ヘルプ',
+    close: '閉じる'
+  },
   detail: {
     title: '解析結果',
     viewSubtitle: '詳細な解析結果を表示',
     viewSubtitleWithId: '詳細な解析結果を表示',
     actionTitle: '解析詳細',
     loading: '解析詳細を読み込み中...',
+    missingId: '解析IDパラメータが不足',
+    fetchError: '解析詳細の取得に失敗',
     saltSolventConfig: '塩と溶媒の構成',
     saltSummary: '塩のサマリー',
     solventSummary: '溶媒サマリー',

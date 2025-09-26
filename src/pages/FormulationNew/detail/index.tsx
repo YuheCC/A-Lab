@@ -107,6 +107,20 @@ const DetailPage: React.FC = () => {
     { size: 4, category: t('formulation.detail.AGG', 'AGG'), fraction: '25.0%' }
   ];
 
+  // 动态生成扩散系数数据
+  const diffusionData = resultData?.output_json?.diffusion_data ?
+  resultData.output_json.diffusion_data.map((item: any) => ({
+    species: item.species,
+    coefficient: parseFloat(item['diffusion_coefficient_1e-8_m2_s']).toFixed(3)
+  })) : [
+    { species: 'Li', coefficient: '2.856' },
+    { species: 'PF6', coefficient: '3.670' },
+    { species: 'EC', coefficient: '6.522' },
+    { species: 'DMC', coefficient: '8.714' }
+  ];
+
+  console.log(resultData);
+
   const handleDownloadJSON = () => {
     let data;
 
@@ -300,6 +314,22 @@ const DetailPage: React.FC = () => {
             </div>
           </div>
 
+          <div className="diffusion-coefficient">
+            <h3>{t('formulation.results.diffusionCoefficient', 'Diffusion Coefficient (Unit: 10⁻¹⁰ m²/second) for all species')}</h3>
+            <div className="diffusion-table">
+              <div className="table-header">
+                <span>{t('formulation.results.species', 'Species')}</span>
+                <span>{t('formulation.results.coefficient', 'Diffusion Coefficient (×10⁻¹⁰ m²/s)')}</span>
+              </div>
+              {diffusionData.map((item: any, index: number) => (
+                <div key={index} className="table-row">
+                  <span>{item.species}</span>
+                  <span>{item.coefficient}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="analysis-charts">
             <h3>{t('formulation.results.analysisCharts', 'Analysis Charts')}</h3>
 
@@ -323,7 +353,7 @@ const DetailPage: React.FC = () => {
               )}
             </div>
 
-            <div className="chart-section">
+            {/* <div className="chart-section">
               <h4>{t('formulation.results.meanSquareDisplacement', 'Mean Square Displacement')}</h4>
               {resultData?.msd_plot ? (
                 <div className="chart-image-container">
@@ -341,7 +371,7 @@ const DetailPage: React.FC = () => {
                   <p className="chart-subtitle">{t('formulation.results.meanSquareDisplacementSubtitle', 'Mean Square Displacement')}</p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           <div className="analysis-file">

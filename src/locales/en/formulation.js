@@ -159,6 +159,9 @@ export default {
     density: 'Density (g/cm³)',
     viscosity: 'Viscosity (cP)',
     conductivity: 'Conductivity (mS/cm)',
+    diffusionCoefficient: 'Diffusion Coefficient (Unit: 10⁻¹⁰ m²/second) for all species',
+    species: 'Species',
+    coefficient: 'Diffusion Coefficient (×10⁻¹⁰ m²/s)',
     SSIP: 'SSIP',
     CIP: 'CIP',
     AGG: 'AGG',
@@ -166,12 +169,18 @@ export default {
     CIPTitle: 'CIP: Contact lon Pair One cation and one anion are directly in contact, sharing no interceptingsolvent molecules.Common in low-dielectric solvents or at high salt concentration.Strongerassoclation than sSIPExample: Li.PF, directly touching.',
     AGGTitle: 'AGG: lon Aggregate "Largerassoclated structures involving direct contact of more than twocations and anions in combination.Can be dimers, trimers, orlarger clusters.Often appearat high concentration, poor solvent, or in ionic liquids.*Example: (Li* PF.),cluster, or Li* bridging multiple anions.'
   },
+  guide: {
+    help: 'Help',
+    close: 'Close'
+  },
   detail: {
     title: 'Analysis Results',
     viewSubtitle: 'View detailed analysis results',
     viewSubtitleWithId: 'View detailed analysis results',
     actionTitle: 'Analysis Details',
     loading: 'Loading analysis details...',
+    missingId: 'Missing analysis ID parameter',
+    fetchError: 'Failed to fetch analysis details',
     saltSolventConfig: 'Salt & Solvent Configuration',
     saltSummary: 'Salt Summary',
     solventSummary: 'Solvent Summary',

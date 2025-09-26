@@ -159,20 +159,28 @@ export default {
     density: '密度 (g/cm³)',
     viscosity: '黏度 (cP)',
     conductivity: '电导率 (mS/cm)',
+    diffusionCoefficient: '扩散系数（单位：10⁻¹⁰ m²/秒）所有组分',
+    species: '组分',
+    coefficient: '扩散系数（×10⁻¹⁰ m²/s）',
     SSIP: 'SSIP',
     CIP: 'CIP',
     AGG: 'AGG',
     SSIPTitle: 'SSIP：溶剂分离离子对*阳离子和阴离子虽有关联，但并不直接接触。相反，一个或多个溶剂分子位于它们之间。典型出现在中等极性溶剂中，溶剂化壳层使离子分离，但静电关联依然存在。例如：Li*-(溶剂)-PF₆⁻',
     CIPTitle: 'CIP：接触离子对 一个阳离子和一个阴离子直接接触，它们之间没有插入的溶剂分子。常见于低介电常数溶剂或高盐浓度下。比SSIP结合更强。例如：Li⁺·PF₆⁻直接接触。',
     AGGTitle: 'AGG：离子聚集体 涉及两个以上阳离子和阴离子组合直接接触的较大关联结构。可以是二聚体、三聚体或更大的簇团。通常出现在高浓度、较差溶剂或离子液体中。例如：(Li⁺·PF₆⁻)ₙ簇团，或Li⁺桥接多个阴离子。'
-  }
-  ,
+  },
+  guide: {
+    help: '帮助',
+    close: '关闭'
+  },
   detail: {
     title: '分析结果',
     viewSubtitle: '查看详细分析结果',
     viewSubtitleWithId: '查看详细分析结果',
     actionTitle: '分析详情',
     loading: '正在加载分析详情...',
+    missingId: '缺少分析ID参数',
+    fetchError: '获取分析详情失败',
     saltSolventConfig: '盐与溶剂配置',
     saltSummary: '盐配置概览',
     solventSummary: '溶剂概览',
