@@ -105,7 +105,7 @@ const DetailPage: React.FC = () => {
   const diffusionData = resultData?.output_json?.diffusion_data ?
   resultData.output_json.diffusion_data.map((item: any) => ({
     species: item.species,
-    coefficient: parseFloat(item['diffusion_coefficient_1e-10_m2_s-8_m2_s']).toFixed(3)
+    coefficient: parseFloat(item['diffusion_coefficient_1e-10_m2_s']).toFixed(3)
   })) : [];
 
   console.log(resultData);
