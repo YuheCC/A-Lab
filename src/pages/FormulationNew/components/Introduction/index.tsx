@@ -38,7 +38,6 @@ const Introduction: React.FC = () => {
           </li>
           <li><strong>Diffusivity</strong>: Rate of particle spreading due to random motion, linked to mobility.</li>
           <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. As shown in the figure below, our MD-calculated ionic conductivity aligns well with experimental benchmarks, providing reliable predictions for electrolyte design.</li>
-          <li><strong>Ion–ion correlation</strong>: Measure of how ionic positions and motions are correlated beyond random distribution.</li>
           <li><strong>Viscosity</strong>: Resistance of a fluid to flow or deformation under shear stress.</li>
           <li><strong>Density</strong>: Mass per unit volume, reflecting system compactness.</li>
         </ol>
@@ -53,7 +52,8 @@ const Introduction: React.FC = () => {
 
       <div className="guide-content-section">
         <h4>Group 2. Instructions needed</h4>
-        <ol start={9}>
+        <ol start={8}>
+        <li><strong>Ion–ion correlation</strong>: Measure of how ionic positions and motions are correlated beyond random distribution.</li>
           <li><strong>Structure factor (S(q))</strong>: Quantifies how atomic arrangements scatter radiation, revealing ordering in reciprocal space.</li>
           <li><strong>Dynamic structure factor (S(q,ω))</strong>: function describing the space-time correlations of particles.</li>
           <li><strong>Residence time</strong>: Average time an ion/molecule stays bound or in the vicinity of another species.</li>
