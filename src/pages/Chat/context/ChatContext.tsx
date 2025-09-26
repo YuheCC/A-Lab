@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import type { Message } from '@/utils/messageUtils';
+import type { Message, ToolStats } from '@/utils/messageUtils';
 import { createAssistantMessage, isAssistantMessage, createUserMessage } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { useChat } from '../hooks/useChat';
@@ -14,7 +14,21 @@ import { normalizeLimitInfo } from '@/utils/queryLimit';
 import { useAuthStore } from '@/models/useAuth';
 
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask';
+type ChatMode =
+    | 'regular'
+    | 'clarify'
+    | 'lightning'
+    | 'ask'
+    | 'ask-oss'
+    | 'deep-space'
+    | 'deep-space-oss';
+
+
+const normalizeModeForBackend = (mode: ChatMode): ChatMode => {
+    if (mode === 'ask-oss') return 'ask';
+    if (mode === 'deep-space-oss') return 'deep-space';
+    return mode;
+};
 
 type ModeLimits = QueryLimitsSummary;
 
@@ -24,6 +38,36 @@ const extractExtraData = (payload: any) => {
         extraData = extraData.extra_data;
     }
     return extraData;
+};
+
+const extractToolStats = (payload: any): ToolStats | undefined => {
+    const statsSource = payload?.tool_stats ?? payload?.toolStats;
+    if (!statsSource || typeof statsSource !== 'object') {
+        return undefined;
+    }
+
+    const parseStat = (value: any): number | undefined => {
+        if (value === undefined || value === null) return undefined;
+        if (typeof value === 'number') return value;
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : undefined;
+    };
+
+    const stats: ToolStats = {
+        papers_examined: parseStat(statsSource.papers_examined ?? statsSource.papersExamined),
+        papers_studied: parseStat(statsSource.papers_studied ?? statsSource.papersStudied),
+        molecules_considered: parseStat(statsSource.molecules_considered ?? statsSource.moleculesConsidered)
+    };
+
+    if (
+        stats.papers_examined === undefined &&
+        stats.papers_studied === undefined &&
+        stats.molecules_considered === undefined
+    ) {
+        return undefined;
+    }
+
+    return stats;
 };
 
 interface ChatContextType {
@@ -321,6 +365,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const incomingChatId = data?.chat_id ?? data?.chatId;
             const messageBody = data?.data ?? data;
             const extraData = extractExtraData(messageBody);
+            const toolStats = extractToolStats(messageBody);
 
             // 若无 chat_id 或与当前会话不匹配，忽略
             if (!incomingChatId || !currentChatId || Number(incomingChatId) !== currentChatId) {
@@ -365,12 +410,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         ...existingMessage,
                         content: botChunksRef.current[key],
                         showRegenerate: existingMessage.showRegenerate ?? isNewSessionMessage,
-                        ...(extraData ? { extraData } : {})
+                        ...(extraData ? { extraData } : {}),
+                        ...(toolStats ? { toolStats } : {})
                     } as Message
                     : createAssistantMessage(botChunksRef.current[key], targetId, isNewSessionMessage);
 
                 if (extraData) {
                     (updatedMessage as Message).extraData = extraData;
+                }
+                if (toolStats) {
+                    (updatedMessage as Message).toolStats = toolStats;
                 }
 
                 // 使用精确更新，避免全量刷新
@@ -384,6 +433,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
                     if (existingMessage) {
                         upsertMessage({ ...existingMessage, extraData });
+                        break;
+                    }
+                }
+            }
+
+            if (toolStats && !(isChunk && chunk) && messageId !== undefined && messageId !== null) {
+                const key = String(messageId);
+                const possibleIds = [key, `assistant-${key}`];
+                for (const possibleId of possibleIds) {
+                    const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                    if (existingMessage) {
+                        upsertMessage({ ...existingMessage, toolStats });
                         break;
                     }
                 }
@@ -446,12 +507,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ...extraOptions, 
             numRagResults: ragResultsCount 
         };
+        const normalizedMode = normalizeModeForBackend(mode);
         
-        if (['regular','lightning','ask'].includes(mode)) {
+        if (['regular','lightning','ask'].includes(normalizedMode)) {
             await chatService.triggerMessageAsUser(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        } else if (mode === 'deep-space') {
+        } else if (normalizedMode === 'deep-space') {
             await chatService.triggerMessageAsDeepSpace(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
-        } else if (mode === 'clarify') {
+        } else if (normalizedMode === 'clarify') {
             await chatService.triggerMessageAsClarify(chatId, answerId, historyMessages, sessionId, ragModel, finalExtraOptions);
         }
     }, [ragResultsCount, ragModel]);
@@ -563,27 +625,30 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addUserMessage(userMsg);
 
         const originalMode = extra?.originalMode as ChatMode | undefined;
+        const normalizedMode = normalizeModeForBackend(mode);
 
         // 从extra参数中提取管理员开关参数
-        const extraOptions = extra ? {
-            ragEnabled: extra.ragEnabled,
-            disableLiteratureSearch: !extra.ragEnabled, // ragEnabled是反向的disableLiteratureSearch
-            fullDeepSpace: extra.dump_state,
-            toolsEnabled: extra.toolsEnabled,
-            patentRagEnabled: extra.patentRagEnabled,
-            llmComputePower: extra.llmComputePower,
-            numRagResults: ragResultsCount
-        } : { numRagResults: ragResultsCount, llmComputePower: extra?.llmComputePower };
+        const extraOptions: Record<string, any> = {
+            numRagResults: ragResultsCount,
+            llmComputePower: extra?.llmComputePower,
+        };
+        if (extra) {
+            extraOptions.ragEnabled = extra.ragEnabled;
+            extraOptions.disableLiteratureSearch = !extra.ragEnabled; // ragEnabled是反向的disableLiteratureSearch
+            extraOptions.fullDeepSpace = extra.dump_state;
+            extraOptions.toolsEnabled = extra.toolsEnabled;
+            extraOptions.patentRagEnabled = extra.patentRagEnabled;
+        }
 
         if (chatId) {
             // 将包含新用户消息的历史传递给后端
             const historyWithNew = [...messages, userMsg];
-            createNewMessage(message, chatId, historyWithNew, mode, extraOptions);
+            createNewMessage(message, chatId, historyWithNew, normalizedMode, extraOptions);
         } else {
             // 从 Welcome 页面创建新聊天时，通过 URL 参数传递 mode
-            const newChatId = await createNewChat(message, mode, extraOptions);
+            const newChatId = await createNewChat(message, normalizedMode, extraOptions);
             if (newChatId) {
-                const urlMode = originalMode || (mode === "clarify" ? "deep-space" : mode);
+                const urlMode = originalMode || (normalizedMode === 'clarify' ? 'deep-space' : normalizedMode);
                 navigate(`/ask/${newChatId}?mode=${urlMode}`);
             }
         }
