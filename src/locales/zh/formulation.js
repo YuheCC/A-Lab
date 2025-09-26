@@ -2,6 +2,7 @@ export default {
   title: '盐与溶剂配置',
   subtitle: '配置并自定义你的电解质',
   comingSoon: '将在MU1.5中推出',
+  comingSoon2: '将在MU2中推出',
   tabs: {
     introduction: '介绍',
     records: '记录'
