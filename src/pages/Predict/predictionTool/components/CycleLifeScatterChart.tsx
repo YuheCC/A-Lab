@@ -146,7 +146,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
       grid: [
         {
           // 左侧图表区域 - 显示历史容量数据
-          left: '10%',
+          left: '13%',
           right: '35%',
           top: '10%',
           bottom: '22%',

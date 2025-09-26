@@ -242,7 +242,6 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, fileRecord
                 {/* 散点图展示区域 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
                   <div className="chart-section" style={{ marginTop: '24px' }}>
-                    <h4 className="section-title">{t('predictionTool.modal.chartTitle')}</h4>
                     <div className="chart-container" style={{
                       border: '1px solid #e5e7eb',
                       borderRadius: '8px',

@@ -410,14 +410,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 borderRadius: '8px',
                 border: '1px solid #e2e8f0'
               }}>
-                <h4 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  marginBottom: '16px',
-                  color: '#2d3748'
-                }}>
-                  {t('predictionTool.chart.title')}
-                </h4>
                 <CycleLifeScatterChart
                   brcodeData={predictionResult.brcode_data}
                 />
