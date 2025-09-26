@@ -95,17 +95,11 @@ const DetailPage: React.FC = () => {
   ];
 
   // 动态生成集群分析数据
-  const clusterAnalysis = resultData?.cluster_data?.map(item => ({
+  const clusterAnalysis = resultData?.output_json?.cluster?.map(item => ({
     size: item.size,
     category: item.category,
     fraction: `${(item.fraction * 100).toFixed(1)}%`
-  })) || [
-    { size: 0, category: t('formulation.detail.SSIP', 'SSIP'), fraction: '20.0%' },
-    { size: 1, category: t('formulation.detail.CIP', 'CIP'), fraction: '40.0%' },
-    { size: 2, category: t('formulation.detail.AGG', 'AGG'), fraction: '10.0%' },
-    { size: 3, category: t('formulation.detail.AGG', 'AGG'), fraction: '5.0%' },
-    { size: 4, category: t('formulation.detail.AGG', 'AGG'), fraction: '25.0%' }
-  ];
+  })) || [];
 
   // 动态生成扩散系数数据
   const diffusionData = resultData?.output_json?.diffusion_data ?
