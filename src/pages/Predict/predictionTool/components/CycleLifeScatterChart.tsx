@@ -363,90 +363,76 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
             ]
           } : undefined
         },
-        // {
-        //   // 左侧轴线断裂效果
-        //   name: '',
-        //   type: 'line',
-        //   xAxisIndex: 0,
-        //   yAxisIndex: 0,
-        //   data: [],
-        //   silent: true,
-        //   markLine: {
-        //     symbol: 'none',
-        //     silent: true,
-        //     data: [
-        //       {
-        //         xAxis: breakPoint * 0.95,
-        //         lineStyle: {
-        //           color: 'white',
-        //           width: 8,
-        //           type: 'solid'
-        //         }
-        //       }
-        //     ]
-        //   },
-        //   markPoint: {
-        //     symbol: 'path://M0,-8 L4,-4 L8,-8 M0,8 L4,4 L8,8',
-        //     symbolSize: [16, 16],
-        //     symbolOffset: [8, 0],
-        //     itemStyle: {
-        //       color: '#333',
-        //       borderColor: '#333',
-        //       borderWidth: 2
-        //     },
-        //     data: [
-        //       {
-        //         coord: [breakPoint * 0.95, (markLineYValue || 15)],
-        //         value: '',
-        //         label: {
-        //           show: false
-        //         }
-        //       }
-        //     ]
-        //   }
-        // },
-        // {
-        //   // 右侧轴线断裂效果
-        //   name: '',
-        //   type: 'line',
-        //   xAxisIndex: 1,
-        //   yAxisIndex: 1,
-        //   data: [],
-        //   silent: true,
-        //   markLine: {
-        //     symbol: 'none',
-        //     silent: true,
-        //     data: [
-        //       {
-        //         xAxis: minPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.05,
-        //         lineStyle: {
-        //           color: 'white',
-        //           width: 8,
-        //           type: 'solid'
-        //         }
-        //       }
-        //     ]
-        //   },
-        //   markPoint: {
-        //     symbol: 'path://M0,-8 L-4,-4 L-8,-8 M0,8 L-4,4 L-8,8',
-        //     symbolSize: [16, 16],
-        //     symbolOffset: [-8, 0],
-        //     itemStyle: {
-        //       color: '#333',
-        //       borderColor: '#333',
-        //       borderWidth: 2
-        //     },
-        //     data: [
-        //       {
-        //         coord: [minPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.05, (markLineYValue || 15)],
-        //         value: '',
-        //         label: {
-        //           show: false
-        //         }
-        //       }
-        //     ]
-        //   }
-        // }
+        {
+          // 左侧轴线断裂效果 - 斜线组合
+          name: '',
+          type: 'line',
+          xAxisIndex: 0,
+          yAxisIndex: 0,
+          data: [],
+          silent: true,
+          markPoint: {
+            symbol: 'path://M-3,-10 L3,-2 M-3,2 L3,10',
+            symbolSize: [6, 20],
+            symbolOffset: [0, 0],
+            itemStyle: {
+              color: '#333',
+              borderColor: '#333',
+              borderWidth: 2
+            },
+            data: [
+              {
+                coord: [breakPoint + breakPoint * 0.1, yAxisMax],
+                value: '',
+                label: {
+                  show: false
+                }
+              },
+              {
+                coord: [breakPoint + breakPoint * 0.1, yAxisMin],
+                value: '',
+                label: {
+                  show: false
+                }
+              }
+            ]
+          }
+        },
+        {
+          // 右侧轴线断裂效果 - 斜线组合
+          name: '',
+          type: 'line',
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          data: [],
+          silent: true,
+          markPoint: {
+            symbol: 'path://M3,-10 L-3,-2 M3,2 L-3,10',
+            symbolSize: [6, 20],
+            symbolOffset: [0, 0],
+            itemStyle: {
+              color: '#333',
+              borderColor: '#333',
+              borderWidth: 2
+            },
+            data: [
+              {
+                coord: [minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1, yAxisMax],
+                value: '',
+                label: {
+                  show: false
+                }
+              },
+              {
+                coord: [minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1, yAxisMin],
+                value: '',
+                label: {
+                  show: false
+                }
+              }
+            ]
+          }
+        }
       ]
     };
   }, [brcodeData, selectedBarcode, t, maxCycleLife]);
