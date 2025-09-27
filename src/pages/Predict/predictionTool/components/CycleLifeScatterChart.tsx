@@ -73,8 +73,19 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
 
     // 计算断点位置 - 在实际数据的最大循环次数和预测值之间留出间隙
     const breakPoint = actualMaxCycleLife;
-    const minPredictionCycle = Math.min(...lifePredictionSeries.map(item => item[0]));
-    const maxPredictionCycle = Math.max(...lifePredictionSeries.map(item => item[0]));
+
+    // 安全地计算预测循环的范围，处理空数组情况
+    const predictionCycles = lifePredictionSeries.map(item => item[0]).filter(val => !isNaN(val) && isFinite(val));
+    const minPredictionCycle = predictionCycles.length > 0 ? Math.min(...predictionCycles) : breakPoint + 100;
+    const maxPredictionCycle = predictionCycles.length > 0 ? Math.max(...predictionCycles) : breakPoint + 1000;
+
+    console.log('预测范围:', {
+      minPredictionCycle,
+      maxPredictionCycle,
+      数据数量: lifePredictionSeries.length,
+      预测数据: lifePredictionSeries,
+      是否单点: minPredictionCycle === maxPredictionCycle
+    });
 
     // 计算统一的Y轴范围，确保左右图表Y轴对齐
     const allYValues = [
@@ -88,8 +99,6 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
     const yAxisMin = minY - yPadding;
     const yAxisMax = maxY + yPadding;
 
-    // 直接使用原始的循环寿命数据作为散点图数据
-    const adjustedLifePredictionSeries = lifePredictionSeries;
 
     return {
       tooltip: {
@@ -204,8 +213,12 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           name: '',
           nameLocation: 'center',
           nameGap: 30,
-          min: minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1,
-          max: maxPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.1,
+          min: minPredictionCycle === maxPredictionCycle
+            ? minPredictionCycle - Math.max(minPredictionCycle * 0.1, 100)
+            : minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1,
+          max: minPredictionCycle === maxPredictionCycle
+            ? maxPredictionCycle + Math.min(maxPredictionCycle * 0.1, 100)
+            : maxPredictionCycle + (maxPredictionCycle - minPredictionCycle) * 0.1,
           axisTick: {
             show: true
           },
@@ -407,7 +420,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           data: [],
           silent: true,
           markPoint: {
-            symbol: 'path://M3,-10 L-3,-2 M3,2 L-3,10',
+            symbol: 'path://M-3,-10 L3,-2 M-3,2 L3,10',
             symbolSize: [6, 20],
             symbolOffset: [0, 0],
             itemStyle: {
@@ -417,14 +430,24 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
             },
             data: [
               {
-                coord: [minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1, yAxisMax],
+                coord: [
+                  minPredictionCycle === maxPredictionCycle
+                    ? minPredictionCycle - Math.max(minPredictionCycle * 0.1, 50)
+                    : minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1,
+                  yAxisMax
+                ],
                 value: '',
                 label: {
                   show: false
                 }
               },
               {
-                coord: [minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1, yAxisMin],
+                coord: [
+                  minPredictionCycle === maxPredictionCycle
+                    ? minPredictionCycle - Math.max(minPredictionCycle * 0.1, 50)
+                    : minPredictionCycle - (maxPredictionCycle - minPredictionCycle) * 0.1,
+                  yAxisMin
+                ],
                 value: '',
                 label: {
                   show: false
