@@ -1,8 +1,8 @@
 export default {
   title: 'Salt & Solvent Configuration',
   subtitle: 'Configure and customize your electrolytes',
-  comingSoon: 'To be launched in MU1.5',
-  comingSoon2: 'To be launched in MU2',
+  comingSoon: 'to be launched in MU1.5',
+  comingSoon2: 'to be launched in MU2',
   tabs: {
     introduction: 'Introduction',
     records: 'Records'
@@ -15,7 +15,7 @@ export default {
   },
 
   saltConfiguration: {
-    title: 'Salt Configuration'
+    title: 'Salts Configuration'
   },
 
   cationSelection: {
@@ -50,7 +50,7 @@ export default {
   },
 
   solventConfiguration: {
-    title: 'Solvent Configuration'
+    title: 'Solvents Configuration'
   },
 
   smilesString: {
