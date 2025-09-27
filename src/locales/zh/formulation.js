@@ -78,7 +78,7 @@ export default {
   },
 
   ui: {
-    calculating: '验证输入中，准备计算…'
+    calculating: '验证输入中，准备计算'
   },
 
   result: {

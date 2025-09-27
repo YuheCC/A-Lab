@@ -74,7 +74,7 @@ export default {
   },
 
   ui: {
-    calculating: '입력 검증 중, 계산 준비 중…'
+    calculating: '입력 검증 중, 계산 준비 중'
   },
 
   result: {

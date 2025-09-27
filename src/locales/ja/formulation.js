@@ -74,7 +74,7 @@ export default {
   },
 
   ui: {
-    calculating: '入力を検証中、計算準備中…'
+    calculating: '入力を検証中、計算準備中'
   },
 
   result: {
