@@ -4,6 +4,12 @@
  */
 
 // 通用消息接口，同时支持role和type字段
+export interface ToolStats {
+  papers_examined?: number;
+  papers_studied?: number;
+  molecules_considered?: number;
+}
+
 export interface Message {
   id: string;
   role?: 'system' | 'user' | 'assistant';
@@ -18,6 +24,7 @@ export interface Message {
   sources?: string;
   inputs?: any;
   extraData?: any;
+  toolStats?: ToolStats;
 }
 
 /**
