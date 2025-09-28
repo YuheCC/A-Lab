@@ -1,15 +1,33 @@
 /**
  * LoginModal 使用示例
  * 
- * 这个文件展示了如何在不同场景下使用 LoginModal 组件
+ * 这个文件展示了如何在不同场景下使用 LoginModal 组件和Context
  */
 
 import { useState } from 'react';
 import { useNavigate } from 'umi';
+import { useLoginModal } from '@/hooks/useLoginModal';
 import LoginModal from './index';
 
-// 示例1: 基础使用 - 在Header中替换登录按钮
+// 示例1: 使用Context - 在Header中替换登录按钮（推荐方式）
 export const HeaderWithLoginModal = () => {
+  const { openLoginModal } = useLoginModal();
+
+  return (
+    <div className="header">
+      <button 
+        onClick={() => openLoginModal('/dashboard')}
+        className="login-button"
+      >
+        登录
+      </button>
+      {/* 不需要再包含 LoginModal 组件，因为已经在 layout 中全局集成 */}
+    </div>
+  );
+};
+
+// 示例1.1: 传统方式（不推荐，但仍然可用）
+export const HeaderWithLocalModal = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
@@ -30,153 +48,138 @@ export const HeaderWithLoginModal = () => {
   );
 };
 
-// 示例2: 权限拦截 - 在需要登录时自动弹出
+// 示例2: 权限拦截 - 使用Context（推荐方式）
 export const ProtectedComponent = () => {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { requireAuth, withAuth } = useLoginModal();
 
   const handleProtectedAction = () => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-    } else {
+    if (requireAuth('/protected-area')) {
       // 执行需要权限的操作
       console.log('执行保护操作');
     }
   };
 
+  // 或者使用装饰器模式
+  const protectedAction = withAuth(() => {
+    console.log('执行保护操作');
+  }, '/protected-area');
+
   return (
     <div>
       <button onClick={handleProtectedAction}>
-        需要登录的操作
+        需要登录的操作 (方式1)
       </button>
       
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        redirectPath="/protected-area"
-      />
+      <button onClick={protectedAction}>
+        需要登录的操作 (方式2)
+      </button>
     </div>
   );
 };
 
-// 示例3: 全局状态管理（建议使用的模式）
-interface LoginModalState {
-  isOpen: boolean;
-  redirectPath?: string;
-}
+// 示例3: 复杂场景 - 在现有组件中添加登录检查
+export const FavoritesButton = ({ molecule }: { molecule: any }) => {
+  const { withAuth } = useLoginModal();
 
-// 可以在 useAuthStore 或单独的 hook 中管理
-export const useLoginModal = () => {
-  const [modalState, setModalState] = useState<LoginModalState>({
-    isOpen: false,
-    redirectPath: undefined
-  });
+  const handleAddToFavorites = withAuth(async () => {
+    // 添加到收藏夹的逻辑
+    console.log('添加到收藏夹:', molecule);
+  }, '/favorites');
 
-  const openLoginModal = (redirectPath?: string) => {
-    setModalState({ isOpen: true, redirectPath });
-  };
-
-  const closeLoginModal = () => {
-    setModalState({ isOpen: false, redirectPath: undefined });
-  };
-
-  return {
-    ...modalState,
-    openLoginModal,
-    closeLoginModal
-  };
+  return (
+    <button onClick={handleAddToFavorites}>
+      添加到收藏夹
+    </button>
+  );
 };
 
-// 示例4: 与路由守卫集成
-export const AppWithLoginModal = () => {
-  const { isOpen, redirectPath, openLoginModal, closeLoginModal } = useLoginModal();
+// 示例4: 路由守卫集成（现在更简单了，因为LoginModal已在layout中）
+export const NavigationComponent = () => {
+  const { requireAuth } = useLoginModal();
   const navigate = useNavigate();
 
-  // 在路由守卫中使用
-  const checkAuthAndNavigate = (path: string) => {
-    const isAuthenticated = false; // 从 auth store 获取
-    
-    if (isAuthenticated) {
+  const navigateToProtectedPage = (path: string) => {
+    if (requireAuth(path)) {
       navigate(path);
-    } else {
-      openLoginModal(path);
+    }
+    // 如果未认证，requireAuth会自动弹出登录浮层
+  };
+
+  return (
+    <div className="navigation">
+      <button onClick={() => navigateToProtectedPage('/dashboard')}>
+        去仪表板
+      </button>
+      <button onClick={() => navigateToProtectedPage('/favorites')}>
+        我的收藏
+      </button>
+      <button onClick={() => navigateToProtectedPage('/settings')}>
+        设置
+      </button>
+    </div>
+  );
+};
+
+// 示例5: 响应不同的登录触发场景（使用Context简化）
+export const MultiScenarioExample = () => {
+  const { openLoginModal } = useLoginModal();
+
+  return (
+    <div>
+      <button onClick={() => openLoginModal('/favorites')}>
+        查看收藏（需要登录）
+      </button>
+      
+      <button onClick={() => openLoginModal('/search')}>
+        高级搜索（需要登录）
+      </button>
+      
+      <button onClick={() => openLoginModal('/pricing')}>
+        查看定价（需要登录）
+      </button>
+      
+      {/* 不需要再包含LoginModal，因为已在layout中全局集成 */}
+    </div>
+  );
+};
+
+// 示例6: 在现有业务逻辑中集成
+export const SearchComponent = () => {
+  const { requireAuth } = useLoginModal();
+
+  const handleAdvancedSearch = () => {
+    // 检查权限，如果未登录会自动弹出登录浮层
+    if (requireAuth('/search')) {
+      // 执行高级搜索逻辑
+      console.log('执行高级搜索');
+    }
+  };
+
+  const handleSaveSearch = () => {
+    if (requireAuth()) {
+      // 保存搜索，登录后不重定向到特定页面
+      console.log('保存搜索结果');
     }
   };
 
   return (
-    <div className="app">
-      {/* 你的应用内容 */}
-      
-      <LoginModal
-        isOpen={isOpen}
-        onClose={closeLoginModal}
-        redirectPath={redirectPath}
-      />
-    </div>
-  );
-};
-
-// 示例5: 响应不同的登录触发场景
-export const MultiScenarioExample = () => {
-  const [loginConfig, setLoginConfig] = useState<{
-    isOpen: boolean;
-    redirectPath?: string;
-    source?: string;
-  }>({
-    isOpen: false
-  });
-
-  const handleLoginFromFavorites = () => {
-    setLoginConfig({
-      isOpen: true,
-      redirectPath: '/favorites',
-      source: 'favorites'
-    });
-  };
-
-  const handleLoginFromSearch = () => {
-    setLoginConfig({
-      isOpen: true,
-      redirectPath: '/search',
-      source: 'search'
-    });
-  };
-
-  const handleLoginFromPricing = () => {
-    setLoginConfig({
-      isOpen: true,
-      redirectPath: '/pricing',
-      source: 'pricing'
-    });
-  };
-
-  return (
     <div>
-      <button onClick={handleLoginFromFavorites}>
-        查看收藏（需要登录）
+      <button onClick={handleAdvancedSearch}>
+        高级搜索
       </button>
-      
-      <button onClick={handleLoginFromSearch}>
-        高级搜索（需要登录）
+      <button onClick={handleSaveSearch}>
+        保存搜索
       </button>
-      
-      <button onClick={handleLoginFromPricing}>
-        查看定价（需要登录）
-      </button>
-      
-      <LoginModal
-        isOpen={loginConfig.isOpen}
-        onClose={() => setLoginConfig({ isOpen: false })}
-        redirectPath={loginConfig.redirectPath}
-      />
     </div>
   );
 };
 
 export default {
   HeaderWithLoginModal,
+  HeaderWithLocalModal,
   ProtectedComponent,
-  useLoginModal,
-  AppWithLoginModal,
-  MultiScenarioExample
+  FavoritesButton,
+  NavigationComponent,
+  MultiScenarioExample,
+  SearchComponent
 };

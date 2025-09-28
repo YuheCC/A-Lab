@@ -10,6 +10,8 @@ import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
 import { usePageCleanup } from "@/hooks/usePageCleanup";
+import { LoginModalProvider, useLoginModal } from "@/contexts/LoginModalContext";
+import LoginModal from "@/components/LoginModal";
 
 const API_URL = getAPIUrl();
 
@@ -27,6 +29,7 @@ const FullNavLayoutInner = () => {
     const { verifyAuth } = useAuthStore();
     const language = i18n.language;
     const message = useMessage();
+    const { isOpen: isLoginModalOpen, redirectPath, closeLoginModal } = useLoginModal();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
     const showPricingFromQuery = queryParams.get('showPricing') === 'true';
@@ -176,6 +179,11 @@ const FullNavLayoutInner = () => {
                   }}
                   permission={permission}
               />
+              <LoginModal
+                  isOpen={isLoginModalOpen}
+                  onClose={closeLoginModal}
+                  redirectPath={redirectPath}
+              />
           </FavoriteContext.Provider>
         </PricingContext.Provider>
     );
@@ -184,7 +192,9 @@ const FullNavLayoutInner = () => {
 const FullNavLayout = () => {
     return (
         <MessageProvider>
-            <FullNavLayoutInner />
+            <LoginModalProvider>
+                <FullNavLayoutInner />
+            </LoginModalProvider>
         </MessageProvider>
     );
 }

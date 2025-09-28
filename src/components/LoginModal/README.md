@@ -15,7 +15,56 @@
 
 ## 使用示例
 
-### 基础用法
+### 🌟 推荐用法 - 使用Context（已全局集成）
+
+```tsx
+import { useLoginModal } from '@/hooks/useLoginModal';
+
+const MyComponent = () => {
+  const { openLoginModal } = useLoginModal();
+
+  return (
+    <div>
+      <button onClick={() => openLoginModal('/dashboard')}>
+        登录
+      </button>
+      {/* 不需要再包含 LoginModal 组件，已在 layout 中全局集成 */}
+    </div>
+  );
+};
+```
+
+### 权限检查
+
+```tsx
+import { useLoginModal } from '@/hooks/useLoginModal';
+
+const ProtectedComponent = () => {
+  const { requireAuth, withAuth } = useLoginModal();
+
+  // 方式1: 手动检查
+  const handleProtectedAction = () => {
+    if (requireAuth('/protected-page')) {
+      // 执行需要权限的操作
+      console.log('执行保护操作');
+    }
+  };
+
+  // 方式2: 装饰器模式
+  const protectedAction = withAuth(() => {
+    console.log('执行保护操作');
+  }, '/protected-page');
+
+  return (
+    <div>
+      <button onClick={handleProtectedAction}>需要登录的操作</button>
+      <button onClick={protectedAction}>装饰器模式</button>
+    </div>
+  );
+};
+```
+
+### 传统用法（不推荐，但仍可用）
 
 ```tsx
 import { useState } from 'react';
@@ -33,39 +82,39 @@ const MyComponent = () => {
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+        redirectPath="/dashboard"
       />
     </div>
   );
 };
 ```
 
-### 带重定向路径
+## API 接口
 
-```tsx
-<LoginModal
-  isOpen={showLoginModal}
-  onClose={() => setShowLoginModal(false)}
-  redirectPath="/dashboard"
-/>
-```
-
-### 在Header组件中使用
-
-```tsx
-// 替换原有的登录按钮跳转
-const handleLoginClick = () => {
-  setShowLoginModal(true); // 改为显示浮层
-  // navigate('/login'); // 删除页面跳转
-};
-```
-
-## Props 接口
+### LoginModal Props
 
 ```tsx
 interface LoginModalProps {
   isOpen: boolean;        // 控制模态框显示/隐藏
   onClose: () => void;    // 关闭模态框的回调函数
   redirectPath?: string;  // 可选：登录成功后的重定向路径
+}
+```
+
+### useLoginModal Hook
+
+```tsx
+interface LoginModalHook {
+  // Context 原始方法
+  isOpen: boolean;                           // 模态框是否打开
+  redirectPath?: string;                     // 重定向路径
+  openLoginModal: (redirectPath?: string) => void;  // 打开登录浮层
+  closeLoginModal: () => void;               // 关闭登录浮层
+  
+  // 增强方法
+  requireAuth: (redirectPath?: string) => boolean;   // 检查认证状态
+  withAuth: <T>(action: T, redirectPath?: string) => T; // 权限装饰器
+  isAuthenticated: boolean;                  // 当前认证状态
 }
 ```
 
@@ -97,11 +146,32 @@ interface LoginModalProps {
 
 确保相关翻译文件已配置完整。
 
+## 🚀 快速开始
+
+1. **组件已全局集成**：LoginModal已在`layouts/index.tsx`中集成，无需重复添加
+2. **使用Context**：推荐使用`useLoginModal` Hook，简化使用
+3. **替换登录跳转**：将现有的`navigate('/login')`替换为`openLoginModal()`
+
+### 迁移指南
+
+```tsx
+// ❌ 旧方式 - 页面跳转
+const handleLogin = () => {
+  navigate('/login?redirect=' + pathname);
+};
+
+// ✅ 新方式 - 使用浮层
+const { openLoginModal } = useLoginModal();
+const handleLogin = () => {
+  openLoginModal(pathname);
+};
+```
+
 ## 集成建议
 
-1. **替换现有登录跳转**：在需要登录的地方使用此组件替代页面跳转
-2. **权限拦截**：在路由守卫中弹出登录浮层而非跳转登录页
-3. **状态管理**：可以考虑在全局状态中管理登录浮层的显示状态
+1. **全局使用**：已在layout中集成，任何页面都可以直接使用Hook
+2. **权限拦截**：使用`requireAuth`和`withAuth`简化权限检查
+3. **业务集成**：在现有的添加收藏、高级搜索等功能中集成权限检查
 
 ## 注意事项
 
