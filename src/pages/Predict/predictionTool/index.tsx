@@ -5,7 +5,8 @@ import StepContent from './components/StepContent';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPredictionCard } from './components/PredictionCardRenderer';
 import HistoryModal from './components/HistoryModal';
-import { getHistoryList, deleteHistory, type PredictResponse } from '@/services/prediction/predictionTool';
+import { type PredictResponse } from '@/services/prediction/predictionTool';
+import { getHistoryList, deleteHistory, isMockRecord } from './model';
 import './PredictionTool.css';
 import { normalizeServerDate } from '@/utils/messageUtils';
 
@@ -17,6 +18,8 @@ interface FileRecord {
   avgCirculation: string;  // 保留兼容性
   avgCycleLife1: number;
   avgCycleLife2: number;
+  isMock?: boolean;  // 标识是否为mock数据
+  rawData?: any;  // 保存原始数据用于判断
 }
 
 // Mock数据已移除，使用真实API数据
@@ -31,7 +34,7 @@ const PredictionTool: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // 将API数据转换为FileRecord格式
-  const transformApiDataToFileRecord = (apiData: PredictResponse): FileRecord => {
+  const transformApiDataToFileRecord = (apiData: any): FileRecord => {
     const avgCycleLife1 = apiData.avg_cycle_life_1 || 0;
     const avgCycleLife2 = apiData.avg_cycle_life_2 || 0;
     const avgCycleLife = avgCycleLife1 > 0 ? avgCycleLife1 : avgCycleLife2;
@@ -50,7 +53,9 @@ const PredictionTool: React.FC = () => {
       batteryCount: apiData.barcode_count,
       avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown'),
       avgCycleLife1: avgCycleLife1,
-      avgCycleLife2: avgCycleLife2
+      avgCycleLife2: avgCycleLife2,
+      isMock: apiData.isMock || false,
+      rawData: apiData
     };
   };
 
@@ -116,6 +121,13 @@ const PredictionTool: React.FC = () => {
   };
 
   const handleDeleteFile = async (fileId: string) => {
+    // 查找对应的记录
+    const record = historyData.find(h => h.id === fileId);
+    if (record && record.isMock) {
+      alert(t('predictionTool.history.cannotDeleteDemo', 'Cannot delete demo records'));
+      return;
+    }
+
     // 显示确认对话框
     if (!confirm(t('predictionTool.history.deleteConfirm'))) {
       return;
@@ -124,7 +136,7 @@ const PredictionTool: React.FC = () => {
     try {
       setLoading(true);
       await deleteHistory({ id: parseInt(fileId) });
-      
+
       // 删除成功后，重新加载历史记录
       await loadHistoryData();
     } catch (err: any) {
