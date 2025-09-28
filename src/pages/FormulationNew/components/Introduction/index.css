@@ -84,3 +84,49 @@
   margin: 8px auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+.introduction-container .properties-tip-section {
+  text-align: center;
+}
+
+.introduction-container .introduction-properties-tip {
+  margin: 16px 0 0;
+  padding: 16px;
+  font-size: 13px;
+  color: #b45309;
+  background-color: oklch(.987 .026 102.212);
+  border: 1px solid oklch(.945 .129 101.54);
+  border-radius: 6px;
+  line-height: 1.5;
+  text-align: center;
+  display: inline-block;
+  max-width: fit-content;
+}
+
+.introduction-container .email-contact {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.introduction-container .email-button {
+  background-color: #000;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.introduction-container .email-button:hover {
+  background-color: #374151;
+}
+
+.introduction-container .md-properties-table {
+  width: 70%;
+  margin: 0 auto;
+}

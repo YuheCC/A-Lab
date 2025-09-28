@@ -34,7 +34,13 @@ const ResultTip: React.FC<ResultTipProps> = () => {
           <div className="properties-table-section">
             <PropertiesTable />
             <div className="properties-tip">
-              The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team via the email md-service@ses.ai
+              The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team via the email{' '}
+              <span
+                className="email-link"
+                onClick={() => window.open('mailto:md-service@ses.ai')}
+              >
+                md-service@ses.ai
+              </span>
             </div>
           </div>
           <div className="tip-notice">
