@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { setGlobalLoginModalHandler } from '@/utils/authHelpers';
 
 interface LoginModalContextType {
   isOpen: boolean;
@@ -27,6 +28,16 @@ export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
     setRedirectPath(undefined);
   }, []);
 
+  // 设置全局登录浮层处理函数
+  useEffect(() => {
+    setGlobalLoginModalHandler(openLoginModal);
+    
+    // 清理函数
+    return () => {
+      setGlobalLoginModalHandler(() => {});
+    };
+  }, [openLoginModal]);
+
   const value: LoginModalContextType = {
     isOpen,
     redirectPath,
@@ -41,10 +52,10 @@ export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
   );
 };
 
-export const useLoginModal = (): LoginModalContextType => {
+export const useLoginModalContext = (): LoginModalContextType => {
   const context = useContext(LoginModalContext);
   if (context === undefined) {
-    throw new Error('useLoginModal must be used within a LoginModalProvider');
+    throw new Error('useLoginModalContext must be used within a LoginModalProvider');
   }
   return context;
 };

@@ -18,7 +18,7 @@
 ### 🌟 推荐用法 - 使用Context（已全局集成）
 
 ```tsx
-import { useLoginModal } from '@/hooks/useLoginModal';
+import { useLoginModal } from '@/components/LoginModal/hooks';
 
 const MyComponent = () => {
   const { openLoginModal } = useLoginModal();
@@ -37,7 +37,7 @@ const MyComponent = () => {
 ### 权限检查
 
 ```tsx
-import { useLoginModal } from '@/hooks/useLoginModal';
+import { useLoginModal } from '@/components/LoginModal/hooks';
 
 const ProtectedComponent = () => {
   const { requireAuth, withAuth } = useLoginModal();
@@ -149,8 +149,9 @@ interface LoginModalHook {
 ## 🚀 快速开始
 
 1. **组件已全局集成**：LoginModal已在`layouts/index.tsx`中集成，无需重复添加
-2. **使用Context**：推荐使用`useLoginModal` Hook，简化使用
-3. **替换登录跳转**：将现有的`navigate('/login')`替换为`openLoginModal()`
+2. **统一管理**：所有LoginModal相关文件已统一放在`@/components/LoginModal/`目录下
+3. **使用Hook**：推荐使用`useLoginModal` Hook，简化使用
+4. **替换登录跳转**：将现有的`navigate('/login')`替换为`openLoginModal()`
 
 ### 迁移指南
 
@@ -167,11 +168,35 @@ const handleLogin = () => {
 };
 ```
 
+## 🔗 认证系统集成
+
+LoginModal已与项目的认证系统（`useAuth`）深度集成：
+
+### 自动弹出场景
+
+1. **`verifyAuth`失败时**：自动弹出登录浮层而非跳转登录页
+2. **`logout`后**：自动弹出登录浮层提示重新登录
+3. **`ProtectedRoute`拦截时**：受保护路由自动弹出登录浮层
+
+### 无缝集成
+
+```tsx
+// ✅ 现在这些操作会自动弹出登录浮层，无需手动处理
+const { verifyAuth, logout } = useAuthStore();
+
+// 验证失败会自动弹登录浮层
+await verifyAuth();
+
+// 登出后会自动弹登录浮层
+await logout();
+```
+
 ## 集成建议
 
-1. **全局使用**：已在layout中集成，任何页面都可以直接使用Hook
+1. **零配置使用**：认证系统已自动集成，无需额外配置
 2. **权限拦截**：使用`requireAuth`和`withAuth`简化权限检查
 3. **业务集成**：在现有的添加收藏、高级搜索等功能中集成权限检查
+4. **路由保护**：`ProtectedRoute`现在会弹出浮层而非跳转页面
 
 ## 注意事项
 

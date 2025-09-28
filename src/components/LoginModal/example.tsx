@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'umi';
-import { useLoginModal } from '@/hooks/useLoginModal';
+import { useLoginModal } from './hooks';
 import LoginModal from './index';
 
 // 示例1: 使用Context - 在Header中替换登录按钮（推荐方式）

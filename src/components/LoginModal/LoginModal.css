@@ -17,8 +17,8 @@
 .login-modal {
   background: white;
   border-radius: 12px;
-  max-width: 450px;
-  width: 90%;
+  max-width: 500px;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
@@ -124,7 +124,7 @@
 }
 
 .login-modal-form-group label {
-  display: block;
+  display: flex;
   margin-bottom: 6px;
   font-size: 14px;
   font-weight: 500;
@@ -161,7 +161,7 @@
 
 .login-modal-checkbox-label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   cursor: pointer;
   gap: 12px;
   font-size: 13px;
@@ -173,7 +173,6 @@
   margin: 0;
   padding: 0;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .login-modal-terms-text {
@@ -262,6 +261,7 @@
     width: 95%;
     margin: 10px;
     border-radius: 8px;
+    max-width: none;
   }
   
   .login-modal-body {
@@ -292,13 +292,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Improved focus visibility */
-.login-modal input:focus,
-.login-modal button:focus {
-  outline: 2px solid #4CAF50;
-  outline-offset: 2px;
-  border-color: #4CAF50;
-}
+/* Focus styles are handled by specific component styles to avoid conflicts */
 
 /* Remove redundant focus trap styling since we have specific focus styles above */
 

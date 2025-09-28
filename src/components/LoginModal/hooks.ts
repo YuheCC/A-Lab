@@ -1,14 +1,15 @@
-import { useLoginModal as useLoginModalContext } from '@/contexts/LoginModalContext';
+import { useLoginModalContext } from './context';
 import { useAuthStore } from '@/models/useAuth';
 
 /**
  * 用于在组件中方便地使用登录浮层的Hook
+ * 集成了useAuth的认证状态
  * 
  * @returns 登录浮层相关的方法和状态
  */
 export const useLoginModal = () => {
   const loginModal = useLoginModalContext();
-  const { isAuthenticated } = useAuthStore();
+  const authStore = useAuthStore();
 
   /**
    * 检查认证状态，如果未登录则弹出登录浮层
@@ -16,7 +17,7 @@ export const useLoginModal = () => {
    * @returns 是否已认证
    */
   const requireAuth = (redirectPath?: string): boolean => {
-    if (!isAuthenticated) {
+    if (!authStore.isAuthenticated) {
       loginModal.openLoginModal(redirectPath);
       return false;
     }
@@ -44,7 +45,12 @@ export const useLoginModal = () => {
     ...loginModal,
     requireAuth,
     withAuth,
-    isAuthenticated,
+    isAuthenticated: authStore.isAuthenticated,
+    // 也提供auth store的其他有用属性
+    isLoading: authStore.isLoading,
+    userPermissions: authStore.userPermissions,
+    userName: authStore.userName,
+    hasPermission: authStore.hasPermission,
   };
 };
 
