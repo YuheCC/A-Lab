@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { getHistoryList, isMockRecord } from './model';
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
 import Introduction from './components/Introduction';
+import IntroductionNew from './components/IntroductionNew';
 
 interface FormulationTableProps {}
 
@@ -20,17 +22,17 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   const [pageSize] = useState(20);
 
   // 根据 URL query 参数初始化 activeTab
-  const getInitialTab = (): 'introduction' | 'analysis' => {
+  const getInitialTab = (): 'introduction' | 'introductionNew' | 'analysis' => {
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'analysis' || tabParam === 'introduction') ? tabParam : 'introduction';
+    return (tabParam === 'analysis' || tabParam === 'introduction' || tabParam === 'introductionNew') ? tabParam : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introduction' | 'analysis'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<'introduction' | 'introductionNew' | 'analysis'>(getInitialTab());
 
   // 处理初始化时的 URL 参数，识别后删除 tab 参数
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'analysis' || tabParam === 'introduction')) {
+    if (tabParam && (tabParam === 'analysis' || tabParam === 'introduction' || tabParam === 'introductionNew')) {
       // 删除 tab 参数，保持其他参数不变
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('tab');
@@ -44,7 +46,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     setError(null);
 
     try {
-      const response = await getMDHistoryList({ page, page_size: pageSize });
+      const response = await getHistoryList({ page, page_size: pageSize });
 
       if (response && response.data && response.data.data) {
         setHistoryData(response.data.data);
@@ -94,13 +96,19 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理删除记录
-  const handleDeleteRecord = async (id: number) => {
+  const handleDeleteRecord = async (id: number | string) => {
+    // 检查是否是mock数据，如果是则直接跳过
+    const mockRecord = historyData.find(record => record.id === id);
+    if (mockRecord && isMockRecord(mockRecord)) {
+      return;
+    }
+
     if (!confirm(t('formulation.history.actions.deleteConfirm', '确定要删除这条记录吗？'))) {
       return;
     }
 
     try {
-      const response = await deleteMDHistory(id);
+      const response = await deleteMDHistory(Number(id));
       if (response && response.status < 400) {
         await fetchHistoryData(currentPage);
       } else {
@@ -123,7 +131,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理tab切换
-  const handleTabChange = (tab: 'introduction' | 'analysis') => {
+  const handleTabChange = (tab: 'introduction' | 'introductionNew' | 'analysis') => {
     setActiveTab(tab);
   };
 
@@ -157,6 +165,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
               {t('formulation.tabs.introduction', 'Introduction')}
             </button>
             <button
+              className={`formulation-tab ${activeTab === 'introductionNew' ? 'active' : ''}`}
+              onClick={() => handleTabChange('introductionNew')}
+            >
+              {t('formulation.tabs.introductionNew', 'Introduction New')}
+            </button>
+            <button
               className={`formulation-tab ${activeTab === 'analysis' ? 'active' : ''}`}
               onClick={() => handleTabChange('analysis')}
             >
@@ -169,6 +183,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
           {activeTab === 'introduction' && (
             <div className="formulation-tab-panel">
               <Introduction />
+            </div>
+          )}
+
+          {activeTab === 'introductionNew' && (
+            <div className="formulation-tab-panel">
+              <IntroductionNew />
             </div>
           )}
 
@@ -207,9 +227,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                     ) : (
                       historyData.map((record) => {
                         const statusInfo = formatStatus(record.status);
+                        const isMock = isMockRecord(record);
                         return (
                           <tr key={record.id}>
-                            <td className="analysis-id">AN-{String(record.id).padStart(3, '0')}</td>
+                            <td className="analysis-id">
+                              {isMock ? record.id : `AN-${String(record.id).padStart(3, '0')}`}
+                            </td>
                             <td className="salt-info">
                               <div className="compound-list">
                                 {formatIonDisplay(record.cation_name)}
@@ -247,12 +270,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                 {t('formulation.history.actions.viewDetails', 'View Details')}
                               </button>
                               )}
-                              <button
-                                className="action-button delete-button"
-                                onClick={() => handleDeleteRecord(record.id)}
-                              >
-                                {t('formulation.history.actions.delete', 'Delete')}
-                              </button>
+                              {!isMock && (
+                                <button
+                                  className="action-button delete-button"
+                                  onClick={() => handleDeleteRecord(record.id)}
+                                >
+                                  {t('formulation.history.actions.delete', 'Delete')}
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );

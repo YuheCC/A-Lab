@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getHistoryDetail, downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
+import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
+import { getHistoryDetail } from '../model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
 

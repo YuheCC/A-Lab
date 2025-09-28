@@ -10,6 +10,7 @@ interface FileRecord {
   avgCirculation: string;  // 保留兼容性
   avgCycleLife1: number;
   avgCycleLife2: number;
+  isMock?: boolean;  // 标识是否为mock数据
 }
 
 interface PredictionCardProps {
@@ -56,12 +57,14 @@ const PredictionCard: React.FC<PredictionCardProps> = ({ file, onView, onDelete 
         >
           {t('predictionTool.history.view', '查看')}
         </button>
-        <button
-          className="action-btn delete-btn"
-          onClick={() => onDelete && onDelete(file.id)}
-        >
-          {t('predictionTool.history.delete', '删除')}
-        </button>
+        {!file.isMock && (
+          <button
+            className="action-btn delete-btn"
+            onClick={() => onDelete && onDelete(file.id)}
+          >
+            {t('predictionTool.history.delete', '删除')}
+          </button>
+        )}
       </div>
     </div>
   );
