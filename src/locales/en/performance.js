@@ -27,7 +27,7 @@ export default {
 
   // Weight percentage
   weightPercentage: {
-    label: "Weight Percentage (wt%)",
+    label: "Weight ercentage (wt%)",
     tooltip: "Custom value to be launched in MU1.5"
   },
   
