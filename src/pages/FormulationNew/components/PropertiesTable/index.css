@@ -13,7 +13,7 @@
 
 .md-properties-table th {
   padding: 4px 12px;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   font-size: 14px;
   border-right: 1px solid #e5e7eb;
@@ -21,12 +21,10 @@
 
 .md-properties-table th:first-child {
   width: 60px;
-  text-align: center;
 }
 
 .md-properties-table th:last-child {
   width: 120px;
-  text-align: center;
   border-right: none;
 }
 
