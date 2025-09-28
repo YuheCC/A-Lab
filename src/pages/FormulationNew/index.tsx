@@ -7,6 +7,7 @@ import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
 import Introduction from './components/Introduction';
+import IntroductionNew from './components/IntroductionNew';
 
 interface FormulationTableProps {}
 
@@ -21,17 +22,17 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   const [pageSize] = useState(20);
 
   // 根据 URL query 参数初始化 activeTab
-  const getInitialTab = (): 'introduction' | 'analysis' => {
+  const getInitialTab = (): 'introduction' | 'introductionNew' | 'analysis' => {
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'analysis' || tabParam === 'introduction') ? tabParam : 'introduction';
+    return (tabParam === 'analysis' || tabParam === 'introduction' || tabParam === 'introductionNew') ? tabParam : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introduction' | 'analysis'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<'introduction' | 'introductionNew' | 'analysis'>(getInitialTab());
 
   // 处理初始化时的 URL 参数，识别后删除 tab 参数
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'analysis' || tabParam === 'introduction')) {
+    if (tabParam && (tabParam === 'analysis' || tabParam === 'introduction' || tabParam === 'introductionNew')) {
       // 删除 tab 参数，保持其他参数不变
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('tab');
@@ -130,7 +131,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理tab切换
-  const handleTabChange = (tab: 'introduction' | 'analysis') => {
+  const handleTabChange = (tab: 'introduction' | 'introductionNew' | 'analysis') => {
     setActiveTab(tab);
   };
 
@@ -164,6 +165,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
               {t('formulation.tabs.introduction', 'Introduction')}
             </button>
             <button
+              className={`formulation-tab ${activeTab === 'introductionNew' ? 'active' : ''}`}
+              onClick={() => handleTabChange('introductionNew')}
+            >
+              {t('formulation.tabs.introductionNew', 'Introduction New')}
+            </button>
+            <button
               className={`formulation-tab ${activeTab === 'analysis' ? 'active' : ''}`}
               onClick={() => handleTabChange('analysis')}
             >
@@ -176,6 +183,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
           {activeTab === 'introduction' && (
             <div className="formulation-tab-panel">
               <Introduction />
+            </div>
+          )}
+
+          {activeTab === 'introductionNew' && (
+            <div className="formulation-tab-panel">
+              <IntroductionNew />
             </div>
           )}
 
