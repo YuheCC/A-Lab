@@ -1,5 +1,5 @@
 export default  [
-    { path: "/", redirect: "/map" },
+    { path: "/", redirect: "/about" },
     {
         path: "/about",
         component: "About",
