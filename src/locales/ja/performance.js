@@ -89,6 +89,14 @@ export default {
     positiveTitle: "ポジティブ (Positive)",
     negativeTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルと同等またはそれ以下になることを意味します。",
     positiveTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルより優れることを意味します。",
+    descriptions: {
+      ceLabel: "コロンビック効率",
+      cycleLifeLabel: "サイクル寿命",
+      ratePerformanceLabel: "レート性能",
+      ce: "BOLからEOLまでの各サイクルの平均CE",
+      cycleLife: "放電容量保持率が80%に達するサイクル数",
+      ratePerformance: "0.5C放電と比較した5C放電での容量保持率"
+    },
     temperatureTabs: {
       temp25: "25°C性能",
       temp45: "45°C性能"

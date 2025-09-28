@@ -89,6 +89,14 @@ export default {
     positiveTitle: "正面 (Positive)",
     negativeTip: "表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。",
     positiveTip: "表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
+    descriptions: {
+      ceLabel: "库伦效率",
+      cycleLifeLabel: "循环寿命",
+      ratePerformanceLabel: "倍率性能",
+      ce: "从BOL到EOL各个循环的平均库伦效率",
+      cycleLife: "放电容量保持率达到80%时的循环次数",
+      ratePerformance: "5C放电容量相对于0.5C放电容量的保持率"
+    },
     temperatureTabs: {
       temp25: "25°C 性能",
       temp45: "45°C 性能"

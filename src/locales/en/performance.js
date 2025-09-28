@@ -89,6 +89,14 @@ export default {
     negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    descriptions: {
+      ceLabel: "Coulombic Efficiency",
+      cycleLifeLabel: "Cycle life",
+      ratePerformanceLabel: "Rate performance",
+      ce: "Avrage CE of each cycle from BOL to EOL",
+      cycleLife: "The number of cycles when the discharge capacity retenion rate reachs 80%",
+      ratePerformance: "The capacity retention of the capacity under 5C dishcarge compared the  capacity under 0.5C discharge"
+    },
     temperatureTabs: {
       temp25: "25°C Performance",
       temp45: "45°C Performance"

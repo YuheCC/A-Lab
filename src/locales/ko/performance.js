@@ -89,6 +89,14 @@ export default {
     positiveTitle: "긍정적 (Positive)",
     negativeTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.",
     positiveTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    descriptions: {
+      ceLabel: "코로나빅 효율",
+      cycleLifeLabel: "사이클 수명",
+      ratePerformanceLabel: "비율 성능",
+      ce: "BOL에서 EOL까지 각 사이클의 평균 CE",
+      cycleLife: "방전 용량 유지율이 80%에 도달하는 사이클 수",
+      ratePerformance: "0.5C 방전 대비 5C 방전 시 용량 유지율"
+    },
     temperatureTabs: {
       temp25: "25°C 성능",
       temp45: "45°C 성능"
