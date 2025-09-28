@@ -1,21 +1,21 @@
-# LoginModal 组件
+# LoginModal Component
 
-基于现有登录页面样式改良的登录浮层组件，用于替代页面跳转式登录。
+A login modal component based on the existing login page design, used to replace page-redirect login functionality.
 
-## 功能特性
+## Features
 
-- 🎨 **统一设计**: 基于原登录页面样式，保持设计一致性
-- 🔒 **完整认证**: 支持用户名/密码登录、条款同意、错误处理
-- 📱 **响应式**: 适配移动端和桌面端
-- 🌐 **国际化**: 完全支持i18next多语言
-- ♿ **无障碍**: 支持键盘导航、屏幕阅读器、焦点陷阱
-- 🎯 **重定向**: 支持登录后自定义跳转路径
-- ⌨️ **键盘友好**: ESC键关闭、Tab键循环聚焦、自动聚焦
-- 🔒 **焦点管理**: 打开时自动聚焦用户名输入框
+- 🎨 **Unified Design**: Based on original login page styles, maintaining design consistency
+- 🔒 **Complete Authentication**: Supports username/password login, terms agreement, error handling
+- 📱 **Responsive**: Adapts to mobile and desktop devices
+- 🌐 **Internationalization**: Full support for i18next multi-language
+- ♿ **Accessibility**: Supports keyboard navigation, screen readers, focus trap
+- 🎯 **Redirect**: Supports custom redirect path after login
+- ⌨️ **Keyboard Friendly**: ESC key to close, Tab key cycling focus, auto focus
+- 🔒 **Focus Management**: Auto-focus on username input when opened
 
-## 使用示例
+## Usage Examples
 
-### 🌟 推荐用法 - 使用Context（已全局集成）
+### 🌟 Recommended Usage - Using Context (Globally Integrated)
 
 ```tsx
 import { useLoginModal } from '@/components/LoginModal/hooks';
@@ -26,15 +26,15 @@ const MyComponent = () => {
   return (
     <div>
       <button onClick={() => openLoginModal('/dashboard')}>
-        登录
+        Login
       </button>
-      {/* 不需要再包含 LoginModal 组件，已在 layout 中全局集成 */}
+      {/* No need to include LoginModal component, already globally integrated in layout */}
     </div>
   );
 };
 ```
 
-### 权限检查
+### Authentication Check
 
 ```tsx
 import { useLoginModal } from '@/components/LoginModal/hooks';
@@ -42,29 +42,29 @@ import { useLoginModal } from '@/components/LoginModal/hooks';
 const ProtectedComponent = () => {
   const { requireAuth, withAuth } = useLoginModal();
 
-  // 方式1: 手动检查
+  // Method 1: Manual check
   const handleProtectedAction = () => {
     if (requireAuth('/protected-page')) {
-      // 执行需要权限的操作
-      console.log('执行保护操作');
+      // Execute protected operation
+      console.log('Executing protected operation');
     }
   };
 
-  // 方式2: 装饰器模式
+  // Method 2: Decorator pattern
   const protectedAction = withAuth(() => {
-    console.log('执行保护操作');
+    console.log('Executing protected operation');
   }, '/protected-page');
 
   return (
     <div>
-      <button onClick={handleProtectedAction}>需要登录的操作</button>
-      <button onClick={protectedAction}>装饰器模式</button>
+      <button onClick={handleProtectedAction}>Protected Action</button>
+      <button onClick={protectedAction}>Decorator Pattern</button>
     </div>
   );
 };
 ```
 
-### 传统用法（不推荐，但仍可用）
+### Traditional Usage (Not Recommended, but Still Available)
 
 ```tsx
 import { useState } from 'react';
@@ -76,7 +76,7 @@ const MyComponent = () => {
   return (
     <div>
       <button onClick={() => setShowLoginModal(true)}>
-        登录
+        Login
       </button>
       
       <LoginModal
@@ -89,15 +89,15 @@ const MyComponent = () => {
 };
 ```
 
-## API 接口
+## API Reference
 
 ### LoginModal Props
 
 ```tsx
 interface LoginModalProps {
-  isOpen: boolean;        // 控制模态框显示/隐藏
-  onClose: () => void;    // 关闭模态框的回调函数
-  redirectPath?: string;  // 可选：登录成功后的重定向路径
+  isOpen: boolean;        // Controls modal show/hide
+  onClose: () => void;    // Callback function to close modal
+  redirectPath?: string;  // Optional: redirect path after successful login
 }
 ```
 
@@ -105,121 +105,121 @@ interface LoginModalProps {
 
 ```tsx
 interface LoginModalHook {
-  // Context 原始方法
-  isOpen: boolean;                           // 模态框是否打开
-  redirectPath?: string;                     // 重定向路径
-  openLoginModal: (redirectPath?: string) => void;  // 打开登录浮层
-  closeLoginModal: () => void;               // 关闭登录浮层
+  // Context original methods
+  isOpen: boolean;                           // Whether modal is open
+  redirectPath?: string;                     // Redirect path
+  openLoginModal: (redirectPath?: string) => void;  // Open login modal
+  closeLoginModal: () => void;               // Close login modal
   
-  // 增强方法
-  requireAuth: (redirectPath?: string) => boolean;   // 检查认证状态
-  withAuth: <T>(action: T, redirectPath?: string) => T; // 权限装饰器
-  isAuthenticated: boolean;                  // 当前认证状态
+  // Enhanced methods
+  requireAuth: (redirectPath?: string) => boolean;   // Check authentication status
+  withAuth: <T>(action: T, redirectPath?: string) => T; // Permission decorator
+  isAuthenticated: boolean;                  // Current authentication status
 }
 ```
 
-## 样式定制
+## Style Customization
 
-组件使用独立的CSS文件 `LoginModal.css`，主要包含：
+The component uses an independent CSS file `LoginModal.css` that mainly includes:
 
-- 模态框遮罩层和容器
-- 表单样式（输入框、按钮、复选框）
-- 响应式布局
-- 动画效果
-- 无障碍支持
+- Modal overlay and container
+- Form styles (input fields, buttons, checkboxes)
+- Responsive layout
+- Animation effects
+- Accessibility support
 
-如需定制样式，可以：
+To customize styles, you can:
 
-1. 直接修改 `LoginModal.css`
-2. 通过CSS变量覆盖主题色
-3. 添加自定义类名
+1. Directly modify `LoginModal.css`
+2. Override theme colors through CSS variables
+3. Add custom class names
 
-## 国际化支持
+## Internationalization Support
 
-组件使用现有的认证相关翻译键：
+The component uses existing authentication-related translation keys:
 
 - `auth.header.welcomeBack`
 - `auth.form.username`
 - `auth.form.password`
 - `auth.switch.loginTermsText`
-- 等等...
+- And more...
 
-确保相关翻译文件已配置完整。
+Ensure related translation files are properly configured.
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-1. **组件已全局集成**：LoginModal已在`layouts/index.tsx`中集成，无需重复添加
-2. **统一管理**：所有LoginModal相关文件已统一放在`@/components/LoginModal/`目录下
-3. **使用Hook**：推荐使用`useLoginModal` Hook，简化使用
-4. **替换登录跳转**：将现有的`navigate('/login')`替换为`openLoginModal()`
+1. **Globally Integrated**: LoginModal is already integrated in `layouts/index.tsx`, no need to add it again
+2. **Unified Management**: All LoginModal related files are unified in `@/components/LoginModal/` directory
+3. **Use Hook**: Recommended to use `useLoginModal` Hook for simplified usage
+4. **Replace Login Redirect**: Replace existing `navigate('/login')` with `openLoginModal()`
 
-### 迁移指南
+### Migration Guide
 
 ```tsx
-// ❌ 旧方式 - 页面跳转
+// ❌ Old way - Page redirect
 const handleLogin = () => {
   navigate('/login?redirect=' + pathname);
 };
 
-// ✅ 新方式 - 使用浮层
+// ✅ New way - Using modal
 const { openLoginModal } = useLoginModal();
 const handleLogin = () => {
   openLoginModal(pathname);
 };
 ```
 
-## 🔗 认证系统集成
+## 🔗 Authentication System Integration
 
-LoginModal已与项目的认证系统（`useAuth`）深度集成：
+LoginModal is deeply integrated with the project's authentication system (`useAuth`):
 
-### 自动弹出场景
+### Auto-popup Scenarios
 
-1. **`verifyAuth`失败时**：自动弹出登录浮层而非跳转登录页
-2. **`logout`后**：自动弹出登录浮层提示重新登录
-3. **`ProtectedRoute`拦截时**：受保护路由自动弹出登录浮层
+1. **When `verifyAuth` fails**: Automatically pops up login modal instead of redirecting to login page
+2. **After `logout`**: Automatically pops up login modal to prompt re-login
+3. **When `ProtectedRoute` intercepts**: Protected routes automatically pop up login modal
 
-### 无缝集成
+### Seamless Integration
 
 ```tsx
-// ✅ 现在这些操作会自动弹出登录浮层，无需手动处理
+// ✅ These operations now automatically pop up login modal, no manual handling needed
 const { verifyAuth, logout } = useAuthStore();
 
-// 验证失败会自动弹登录浮层
+// Verification failure will automatically pop up login modal
 await verifyAuth();
 
-// 登出后会自动弹登录浮层
+// After logout will automatically pop up login modal
 await logout();
 ```
 
-## 集成建议
+## Integration Recommendations
 
-1. **零配置使用**：认证系统已自动集成，无需额外配置
-2. **权限拦截**：使用`requireAuth`和`withAuth`简化权限检查
-3. **业务集成**：在现有的添加收藏、高级搜索等功能中集成权限检查
-4. **路由保护**：`ProtectedRoute`现在会弹出浮层而非跳转页面
+1. **Zero Configuration**: Authentication system is automatically integrated, no additional configuration needed
+2. **Permission Interception**: Use `requireAuth` and `withAuth` to simplify permission checks
+3. **Business Integration**: Integrate permission checks in existing features like add to favorites, advanced search, etc.
+4. **Route Protection**: `ProtectedRoute` now pops up modal instead of redirecting to page
 
-## 注意事项
+## Notes
 
-- 组件会自动处理表单重置和错误清理
-- 登录成功后会自动关闭浮层并进行重定向
-- 支持ESC键关闭模态框（加载状态下不可关闭）
-- 加载状态下会禁用所有交互元素
-- 打开时自动聚焦到用户名输入框，提升用户体验
-- 具备完整的焦点陷阱，Tab键导航不会跳出模态框
-- 模态框打开时会阻止页面滚动，关闭时恢复
+- Component automatically handles form reset and error cleanup
+- Automatically closes modal and redirects after successful login
+- Supports ESC key to close modal (cannot close during loading state)
+- Disables all interactive elements during loading state
+- Auto-focuses on username input when opened for better user experience
+- Complete focus trap, Tab key navigation won't escape the modal
+- Prevents page scrolling when modal is open, restores when closed
 
-## 键盘交互
+## Keyboard Interactions
 
-- **ESC键**: 关闭模态框（非加载状态）
-- **Tab键**: 在可聚焦元素间循环导航
-- **Shift+Tab**: 反向循环导航
-- **Enter键**: 提交表单（在输入框内）
-- **空格键**: 切换复选框状态
+- **ESC Key**: Close modal (non-loading state)
+- **Tab Key**: Cycle through focusable elements
+- **Shift+Tab**: Reverse cycle navigation
+- **Enter Key**: Submit form (when in input field)
+- **Space Key**: Toggle checkbox state
 
-## 无障碍支持
+## Accessibility Support
 
-- 正确的ARIA标签和角色属性
-- 键盘导航完全支持
-- 屏幕阅读器友好
-- 高对比度焦点指示器
-- 语义化HTML结构
+- Proper ARIA labels and role attributes
+- Full keyboard navigation support
+- Screen reader friendly
+- High contrast focus indicators
+- Semantic HTML structure
