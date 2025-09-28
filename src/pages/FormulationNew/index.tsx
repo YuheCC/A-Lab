@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { getMDHistoryList, deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { deleteMDHistory, MDHistoryItem } from '@/services/formulation/md';
+import { getHistoryList, isMockRecord } from './model';
 import './index.css';
 import { normalizeServerDate } from "@/utils/messageUtils";
 import { formatIonDisplay } from './utils';
@@ -44,7 +45,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
     setError(null);
 
     try {
-      const response = await getMDHistoryList({ page, page_size: pageSize });
+      const response = await getHistoryList({ page, page_size: pageSize });
 
       if (response && response.data && response.data.data) {
         setHistoryData(response.data.data);
@@ -94,13 +95,19 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
   };
 
   // 处理删除记录
-  const handleDeleteRecord = async (id: number) => {
+  const handleDeleteRecord = async (id: number | string) => {
+    // 检查是否是mock数据，如果是则直接跳过
+    const mockRecord = historyData.find(record => record.id === id);
+    if (mockRecord && isMockRecord(mockRecord)) {
+      return;
+    }
+
     if (!confirm(t('formulation.history.actions.deleteConfirm', '确定要删除这条记录吗？'))) {
       return;
     }
 
     try {
-      const response = await deleteMDHistory(id);
+      const response = await deleteMDHistory(Number(id));
       if (response && response.status < 400) {
         await fetchHistoryData(currentPage);
       } else {
@@ -207,9 +214,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                     ) : (
                       historyData.map((record) => {
                         const statusInfo = formatStatus(record.status);
+                        const isMock = isMockRecord(record);
                         return (
                           <tr key={record.id}>
-                            <td className="analysis-id">AN-{String(record.id).padStart(3, '0')}</td>
+                            <td className="analysis-id">
+                              {isMock ? record.id : `AN-${String(record.id).padStart(3, '0')}`}
+                            </td>
                             <td className="salt-info">
                               <div className="compound-list">
                                 {formatIonDisplay(record.cation_name)}
@@ -247,12 +257,14 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                                 {t('formulation.history.actions.viewDetails', 'View Details')}
                               </button>
                               )}
-                              <button
-                                className="action-button delete-button"
-                                onClick={() => handleDeleteRecord(record.id)}
-                              >
-                                {t('formulation.history.actions.delete', 'Delete')}
-                              </button>
+                              {!isMock && (
+                                <button
+                                  className="action-button delete-button"
+                                  onClick={() => handleDeleteRecord(record.id)}
+                                >
+                                  {t('formulation.history.actions.delete', 'Delete')}
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );

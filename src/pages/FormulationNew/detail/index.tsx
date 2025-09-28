@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info } from 'lucide-react';
-import { getMDHistoryDetail, MDHistoryDetailResponse } from '@/services/formulation/md';
+import { MDHistoryDetailResponse } from '@/services/formulation/md';
+import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
 import './index.css';
 
@@ -57,7 +58,7 @@ const DetailPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await getMDHistoryDetail(Number(id));
+      const response = await getHistoryDetail(id);
       if (response?.data) {
         setDetailData(response.data);
         if (response.data.result_data) {
@@ -218,7 +219,9 @@ const DetailPage: React.FC = () => {
             storageKey="formulation-new-guide-shown"
           /> */}
         </div>
-        <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
+        <span className="detail-subtitle">
+          {t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}
+        </span>
       </div>
 
       <div className="detail-content">
