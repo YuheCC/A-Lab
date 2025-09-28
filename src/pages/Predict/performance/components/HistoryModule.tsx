@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getPerformanceHistoryList, deletePerformanceHistory, getPerformanceHistoryDetail, getBatterySystemList, type PerformanceHistoryItem } from '@/services/prediction/performance';
+import { type PerformanceHistoryItem } from '@/services/prediction/performance';
+import { getHistoryList, getHistoryDetail, deleteHistory, getBatterySystemOptions, isMockRecord } from '../model';
 import './HistoryModule.css';
 import { normalizeServerDate } from '@/utils/messageUtils';
 
@@ -141,7 +142,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   // 获取电池系统列表
   const fetchBatterySystemOptions = async () => {
     try {
-      const response = await getBatterySystemList();
+      const response = await getBatterySystemOptions();
       if (response?.data) {
         setBatterySystemOptions(response.data);
       }
@@ -155,8 +156,8 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
     try {
       setLoading(true);
       setError(null);
-      const response = await getPerformanceHistoryList();
-      
+      const response = await getHistoryList();
+
       if (response.data?.data) {
         const transformedData = response.data.data.map(transformAPIDataToPredictionResult);
         setHistoryData(transformedData);
@@ -176,7 +177,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
     }
 
     try {
-      await deletePerformanceHistory(parseInt(id));
+      await deleteHistory(parseInt(id));
       // 删除成功后刷新数据
       fetchHistoryData();
     } catch (err) {
@@ -188,7 +189,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
   // 查看详情
   const handleViewDetails = async (record: PredictionResult) => {
     try {
-      const response = await getPerformanceHistoryDetail(parseInt(record.id));
+      const response = await getHistoryDetail(parseInt(record.id));
       if (response.data) {
         // 将详细数据转换为组件期望的格式并传递给父组件
         const detailedResult = transformAPIDataToPredictionResult(response.data);
@@ -380,6 +381,8 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
             const temp25Style = getStatusColorAndClass(stats.temp25.ratio);
             const temp45Style = getStatusColorAndClass(stats.temp45.ratio);
             
+            const isMock = record.rawApiData && isMockRecord(record.rawApiData);
+
             return (
             <div key={record.id} className="history-item">
               <div className="item-header">
@@ -429,12 +432,14 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
                 >
                   {t('performance.history.actions.viewDetails')}
                 </button>
-                <button 
-                  className="delete-btn"
-                  onClick={() => handleDeleteRecord(record.id)}
-                >
-                  {t('performance.history.actions.delete')}
-                </button>
+                {!isMock && (
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteRecord(record.id)}
+                  >
+                    {t('performance.history.actions.delete')}
+                  </button>
+                )}
               </div>
             </div>
             );
