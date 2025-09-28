@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import { setGlobalLoginModalHandler } from '@/utils/authHelpers';
+import { setGlobalLoginModalHandler, resetGlobalLoginModalHandler } from '@/utils/authHelpers';
 
 interface LoginModalContextType {
   isOpen: boolean;
@@ -31,10 +31,10 @@ export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
   // 设置全局登录浮层处理函数
   useEffect(() => {
     setGlobalLoginModalHandler(openLoginModal);
-    
-    // 清理函数
+
+    // 清理函数，重置全局处理器
     return () => {
-      setGlobalLoginModalHandler(() => {});
+      resetGlobalLoginModalHandler();
     };
   }, [openLoginModal]);
 

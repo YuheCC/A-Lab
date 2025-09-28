@@ -15,6 +15,14 @@ export const setGlobalLoginModalHandler = (handler: (redirectPath?: string) => v
 };
 
 /**
+ * 重置全局的登录浮层处理函数
+ * 在LoginModalProvider清理时调用
+ */
+export const resetGlobalLoginModalHandler = () => {
+  globalOpenLoginModal = null;
+};
+
+/**
  * 触发全局登录浮层
  * 在需要认证时调用
  */
@@ -22,9 +30,23 @@ export const triggerLoginModal = (redirectPath?: string) => {
   if (globalOpenLoginModal) {
     globalOpenLoginModal(redirectPath);
   } else {
-    // 降级到传统的页面跳转
-    const current = redirectPath || window.location.pathname + window.location.search;
-    window.location.href = '/login?redirect=' + encodeURIComponent(current);
+    // 等待一小段时间让LoginModalProvider初始化完成
+    // 避免在页面刷新时立即跳转到登录页面
+    const waitForModalHandler = (retryCount = 0) => {
+      if (globalOpenLoginModal) {
+        globalOpenLoginModal(redirectPath);
+      } else if (retryCount < 5) {
+        // 等待50ms后重试，最多重试5次
+        setTimeout(() => waitForModalHandler(retryCount + 1), 50);
+      } else {
+        // 超过重试次数后才降级到传统的页面跳转
+        console.warn('LoginModalProvider未能及时初始化，降级到页面跳转');
+        const current = redirectPath || window.location.pathname + window.location.search;
+        window.location.href = '/login?redirect=' + encodeURIComponent(current);
+      }
+    };
+
+    waitForModalHandler();
   }
 };
 
@@ -32,5 +54,5 @@ export const triggerLoginModal = (redirectPath?: string) => {
  * 检查当前路径是否需要弹出登录浮层
  */
 export const shouldShowLoginModal = (pathname: string): boolean => {
-  return pathname !== '/login' && pathname !== '/';
+  return pathname !== '/login';
 };
