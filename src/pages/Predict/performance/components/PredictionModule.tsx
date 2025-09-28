@@ -642,6 +642,22 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
   };
 
+  const comingSoonText = useMemo(() => {
+    return {
+      1: t('formulation.comingSoon', 'Will be available soon'),
+      2: t('formulation.comingSoon', 'Will be available soon'),
+      3: t('formulation.comingSoon', 'Will be available soon'),
+      4: t('formulation.comingSoon2', 'Will be available soon')
+    };
+  }, [t]);
+  const batterySystemDisplayOptions = useMemo(() => {
+    return batterySystemOptions.map(system => ({
+      id: system.id,
+      name: system.name,
+      disabled: Number(system.id) !== 1,
+      disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
+    }));
+  }, [batterySystemOptions, comingSoonText]);
   return (
     <div className="prediction-module">
       <div className="module-section">
@@ -661,12 +677,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               }}
               options={isBatterySystemLoading ?
                 [{ id: 'loading', name: t('performance.batterySystemSelection.loading'), disabled: true }] :
-                batterySystemOptions.map(system => ({
-                  id: system.id,
-                  name: system.name,
-                  disabled: Number(system.id) !== 1,
-                  disabledText: Number(system.id) !== 1 ? t('formulation.comingSoon', 'Will be available soon') : undefined
-                }))
+                batterySystemDisplayOptions
               }
               className="system-select"
               disabled={isBatterySystemLoading}
