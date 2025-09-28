@@ -23,7 +23,7 @@ export default {
   },
 
   anionSelection: {
-    label: '阴离子选择（选择 1-2）'
+    label: '阴离子选择（最大2）'
   },
 
   totalSaltConcentration: {

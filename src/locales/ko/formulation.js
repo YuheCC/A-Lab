@@ -19,7 +19,7 @@ export default {
   },
 
   anionSelection: {
-    label: '음이온 선택 (1-2 선택)'
+    label: '음이온 선택 (최대 2)'
   },
 
   totalSaltConcentration: {

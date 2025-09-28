@@ -23,7 +23,7 @@ export default {
   },
 
   anionSelection: {
-    label: 'Anion Selection (Select 1-2)'
+    label: 'Anion Selection (Max 2)'
   },
 
   totalSaltConcentration: {

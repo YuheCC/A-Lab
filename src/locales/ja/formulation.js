@@ -19,7 +19,7 @@ export default {
   },
 
   anionSelection: {
-    label: '陰イオンの選択（1〜2を選択）'
+    label: '陰イオンの選択（最大2）'
   },
 
   totalSaltConcentration: {
