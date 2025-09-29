@@ -78,7 +78,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 从选中的电池系统中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
     if (!selectedSystem) return null;
-    const system = batterySystemOptions.find(s => s.name === selectedSystem);
+    const system = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!system) return null;
     
     return {
@@ -126,7 +126,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         setIsBatterySystemLoading(true);
         const response = await getBatterySystemList();
         if (response?.data) {
-          setBatterySystemOptions(response.data);
+          setBatterySystemOptions(response?.data instanceof Array ? response?.data : []);
           // 如果有选项，默认选择第一个
           if (response.data.length > 0) {
             setSelectedSystem(response.data[0].name);
@@ -373,7 +373,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
-    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
@@ -459,7 +459,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     console.log('LLM分析开始: sessionId =', sessionId);
 
-    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
@@ -612,7 +612,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisElapsed(0);
     
     // Reset to first battery system if available
-    if (batterySystemOptions.length > 0) {
+    if (batterySystemOptions?.length > 0) {
       setSelectedSystem(batterySystemOptions[0].name);
     }
   }, [batterySystemOptions]);
@@ -651,13 +651,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
   }, [t]);
   const batterySystemDisplayOptions = useMemo(() => {
-    return batterySystemOptions.map(system => ({
+    return batterySystemOptions?.map(system => ({
       id: system.id,
       name: system.name,
       disabled: Number(system.id) !== 1,
       disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
     }));
-  }, [batterySystemOptions, comingSoonText]);
+  }, [batterySystemOptions?.length, comingSoonText]);
   return (
     <div className="prediction-module">
       <div className="module-section">

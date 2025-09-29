@@ -107,7 +107,7 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
 
   // 根据电池系统ID获取电池系统名称
   const getBatterySystemNameById = (batterySystemId: number): string => {
-    const batterySystem = batterySystemOptions.find(system => parseInt(system.id) === batterySystemId);
+    const batterySystem = batterySystemOptions instanceof Array && batterySystemOptions?.find(system => parseInt(system.id) === batterySystemId);
     return batterySystem ? batterySystem.name : `${t('performance.batterySystemFallback')} ${batterySystemId}`;
   };
 
