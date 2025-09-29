@@ -45,7 +45,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 权限判断
   const isHighTier = useMemo(() => {
-    return ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
+    return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
   
