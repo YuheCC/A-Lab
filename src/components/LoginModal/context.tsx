@@ -4,8 +4,10 @@ import { setGlobalLoginModalHandler, resetGlobalLoginModalHandler } from '@/util
 interface LoginModalContextType {
   isOpen: boolean;
   redirectPath?: string;
+  onLogin?: () => void;
   openLoginModal: (redirectPath?: string) => void;
   closeLoginModal: () => void;
+  setOnLogin: (callback?: () => void) => void;
 }
 
 const LoginModalContext = createContext<LoginModalContextType | undefined>(undefined);
@@ -17,6 +19,7 @@ interface LoginModalProviderProps {
 export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
+  const [onLogin, setOnLoginCallback] = useState<(() => void) | undefined>();
 
   const openLoginModal = useCallback((newRedirectPath?: string) => {
     setRedirectPath(newRedirectPath);
@@ -26,6 +29,10 @@ export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
   const closeLoginModal = useCallback(() => {
     setIsOpen(false);
     setRedirectPath(undefined);
+  }, []);
+
+  const setOnLogin = useCallback((callback?: () => void) => {
+    setOnLoginCallback(() => callback);
   }, []);
 
   // 设置全局登录浮层处理函数
@@ -41,8 +48,10 @@ export const LoginModalProvider = ({ children }: LoginModalProviderProps) => {
   const value: LoginModalContextType = {
     isOpen,
     redirectPath,
+    onLogin,
     openLoginModal,
     closeLoginModal,
+    setOnLogin,
   };
 
   return (

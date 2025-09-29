@@ -29,7 +29,7 @@ const FullNavLayoutInner = () => {
     const { verifyAuth } = useAuthStore();
     const language = i18n.language;
     const message = useMessage();
-    const { isOpen: isLoginModalOpen, redirectPath, closeLoginModal } = useLoginModalContext();
+    const { isOpen: isLoginModalOpen, redirectPath, closeLoginModal, onLogin, setOnLogin } = useLoginModalContext();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
     const showPricingFromQuery = queryParams.get('showPricing') === 'true';
@@ -43,6 +43,26 @@ const FullNavLayoutInner = () => {
     useEffect(() => {
         verifyAuth();
     }, []);
+
+    // 定义登录成功后的回调函数
+    const handleLoginSuccess = () => {
+        // 重新验证身份
+        verifyAuth();
+
+        // 如果在预测页面，刷新数据
+        if (isPredictPage || true) {
+            // 刷新页面数据，触发组件重新渲染
+            window.location.reload();
+        }
+
+        // 如果需要，可以在这里添加更多刷新逻辑
+        // 例如重新获取用户数据、权限等
+    };
+
+    // 设置登录成功回调
+    useEffect(() => {
+        setOnLogin(handleLoginSuccess);
+    }, [setOnLogin, isPredictPage]);
 
     const handleAddToFavorites = async (molecule: any) => {
         // Use SMILES as unique identifier for the molecule
@@ -183,6 +203,7 @@ const FullNavLayoutInner = () => {
                   isOpen={isLoginModalOpen}
                   onClose={closeLoginModal}
                   redirectPath={redirectPath}
+                  onLogin={onLogin}
               />
           </FavoriteContext.Provider>
         </PricingContext.Provider>

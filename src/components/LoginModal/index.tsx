@@ -9,9 +9,10 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   redirectPath?: string;
+  onLogin?: () => void;
 }
 
-const LoginModal = ({ isOpen, onClose, redirectPath }: LoginModalProps) => {
+const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -84,6 +85,12 @@ const LoginModal = ({ isOpen, onClose, redirectPath }: LoginModalProps) => {
 
     if (response.success) {
       onClose();
+
+      // 调用登录成功回调
+      if (onLogin) {
+        onLogin();
+      }
+
       // Navigate to redirect path or default to map
       if (redirectPath) {
         navigate(redirectPath);
