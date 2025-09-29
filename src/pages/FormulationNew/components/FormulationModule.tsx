@@ -279,10 +279,23 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       } else {
         throw new Error(response?.data?.message || response?.data?.detail?.message || 'Invalid response from MD simulation');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('MD simulation failed:', error);
-      setError(error instanceof Error ? error.message : 'MD模拟运行失败');
-      setIsCalculating(false);
+
+      // 检查是否是未登录错误（401）或者token不存在
+      const token = localStorage.getItem('token');
+      const isUnauthorized = error?.response?.status === 401 || error?.status === 401;
+
+      if (!token || isUnauthorized) {
+        // 未登录或401错误时不显示错误信息，只设置计算状态为false
+        setIsCalculating(false);
+        // 清空错误状态，避免显示之前的错误信息
+        setError(null);
+      } else {
+        // 已登录且非401错误时显示错误信息
+        setError(error instanceof Error ? error.message : 'MD模拟运行失败');
+        setIsCalculating(false);
+      }
     }
   };
 
