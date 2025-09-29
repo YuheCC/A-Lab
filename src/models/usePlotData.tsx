@@ -104,6 +104,7 @@ interface AnionsPlotDataStore {
     error: string | null;
     data: AnionsPlotDataNode[];
     fetchData: () => Promise<AnionsPlotDataNode[] | undefined>;
+    fetchInitialData: () => Promise<AnionsPlotDataNode[] | undefined>;
 }
 
 const handleCluster = (cluster: any) => {
@@ -335,6 +336,11 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
     }
 }))
 
+// 添加 anions 的状态管理变量
+let anionsInitialData = false;
+let anionsIsFetching = false;
+let anionsFetchDataCompleted = false;
+
 /**
  * Zustand Datastore for Anions Plot Data
  * - Indicates if the plot data is loading/errored
@@ -347,7 +353,13 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
     data: [],
 
     fetchData: async () => {
+        // 如果正在获取数据或已经完成，则跳过
+        if (anionsIsFetching || anionsFetchDataCompleted) {
+            return;
+        }
+
         try {
+            anionsIsFetching = true;
             set({ loading: true });
             const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true&umap_type=anions`);
 
@@ -357,6 +369,8 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
             }
 
             const data = await response.json();
+            anionsInitialData = true;
+            anionsFetchDataCompleted = true; // 标记fetchData已完成
 
             // Map the data to our node structure with updated property names
             const nodes: AnionsPlotDataNode[] = data.data
@@ -400,6 +414,79 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
                 loading: false,
                 error: error.message
             })
+        } finally {
+            anionsIsFetching = false;
+        }
+    },
+    fetchInitialData: async () => {
+        // 如果正在获取数据，则跳过
+        if (anionsIsFetching) {
+            return;
+        }
+
+        try {
+            set({ loading: true });
+            const response = await authFetch(`/map-init-anions.js`);
+
+            if (!response.ok) {
+                set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });
+                return;
+            }
+
+            const data = await response.json();
+
+            // 如果fetchData已经完成，则忽略fetchInitialData的数据
+            if (anionsFetchDataCompleted) {
+                console.log('fetchData already completed, ignoring fetchInitialData result');
+                return;
+            }
+
+            anionsInitialData = true;
+
+            // Map the data to our node structure with updated property names
+            const nodes: AnionsPlotDataNode[] = data.data
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+                .slice(0, MAX_NODES)
+                .map((row: any, index: number) => ({
+                    id: index.toString(),
+                    x: Number(row.UMAP_0),
+                    y: Number(row.UMAP_1),
+                    smiles: row.SMILES,
+                    properties: {
+                        molwt: row.MOLECULAR_WEIGHT,
+                        homo_eV: row.HOMO_EV,
+                        lumo_eV: row.LUMO_EV,
+                        esp_min_eV: row.ESP_MIN_EV,
+                        esp_max_eV: row.ESP_MAX_EV,
+                        functional_groups: row.FUNCTIONAL_GROUPS,
+                        predicted_mp: row.PREDICTED_MP_CELSIUS,
+                        predicted_bp: row.PREDICTED_BP_CELSIUS,
+                        predicted_fp: row.PREDICTED_FP_CELSIUS,
+                        chemical_formula: row.CHEMICAL_FORMULA,
+                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: row.COMMERCIAL_SCORE,
+                        commercial_link: row.COMMERCIAL_LINK,
+                        vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
+                        fluoride_bde_ev: row.FLUORIDE_BDE_EV,
+                        CLUSTER: handleCluster(row.CLUSTER)
+                    },
+                    rawData: row
+                }));
+
+            set({
+                data: nodes,
+                loading: false,
+                error: null
+            })
+            return nodes;
+
+        } catch (error: any) {
+            set({
+                loading: false,
+                error: error.message
+            })
+        } finally {
+            anionsIsFetching = false;
         }
     }
 }))
