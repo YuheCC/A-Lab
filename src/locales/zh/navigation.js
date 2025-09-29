@@ -40,7 +40,8 @@ export default {
   userDropdown: {
     accountSettings: "账号设置",
     feedback: "意见与反馈",
-    logout: "退出登录"
+    logout: "退出登录",
+    login: "登录"
   },
   
   // Upgrade prompt

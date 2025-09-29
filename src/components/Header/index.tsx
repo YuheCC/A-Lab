@@ -192,9 +192,18 @@ const Header = () => {
                             <img src={feedbackSvg} alt="Feedback" className="item-icon" />
                             {t('navigation.userDropdown.feedback')}
                         </a>
-                        <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
-                            <img src={logoutSvg} alt="Logout" className="item-icon" />
-                            {t('navigation.userDropdown.logout')}
+                        <a href="#" className="dropdown-item" id="authActionButton" onClick={(event) => {
+                            event.preventDefault();
+                            setIsDropdownOpen(false);
+                            if (isAuthenticated) {
+                                logout();
+                            } else {
+                                const currentPath = window.location.pathname + window.location.search;
+                                window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+                            }
+                        }}>
+                            <img src={logoutSvg} alt={isAuthenticated ? 'Logout' : 'Login'} className="item-icon" />
+                            {isAuthenticated ? t('navigation.userDropdown.logout') : t('navigation.userDropdown.login')}
                         </a>
                     </div>
                 </div>
