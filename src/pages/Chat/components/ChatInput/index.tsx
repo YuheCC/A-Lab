@@ -39,6 +39,16 @@ const backendModeMap: Record<ChatMode, ChatMode> = {
 };
 const isDeepSpaceMode = (mode: ChatMode) => DEEP_SPACE_MODES.includes(mode);
 
+type PublicFeatureKey = 'askInput' | 'lightning' | 'pro' | 'deepSpace';
+
+const modeToPublicFeature: Partial<Record<ChatMode, PublicFeatureKey>> = {
+  lightning: 'lightning',
+  ask: 'pro',
+  'ask-oss': 'pro',
+  'deep-space': 'deepSpace',
+  'deep-space-oss': 'deepSpace',
+};
+
 interface ChatInputProps {
   placeholder?: string;
   disabled?: boolean;
@@ -58,7 +68,7 @@ const ChatInput: FC<ChatInputProps> = ({
   const { handleSendMessage, currentChatId, messages, remainingDeepSpaceQueries, modeLimits } = useChatContext();
   const userPermissions = useAuthStore(state => state.userPermissions);
   const isAdmin = userPermissions === 'admin';
-  const defaultPlaceholder = placeholder || t('chatbox.input.placeholder');
+  const defaultPlaceholder = placeholder || (inputLocked ? t('chatbox.input.placeholderPublic') : t('chatbox.input.placeholder'));
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -71,6 +81,44 @@ const ChatInput: FC<ChatInputProps> = ({
   const [fullDeepSpace, setFullDeepSpace] = useState<boolean>(false);
   const [enablePatentRag, setEnablePatentRag] = useState<boolean>(false);
   const [disableTools, setDisableTools] = useState<boolean>(false);
+  const [publicNotice, setPublicNotice] = useState<string | null>(null);
+  const publicNoticeTimerRef = useRef<number | null>(null);
+
+  const getFeatureLabel = useCallback((feature: PublicFeatureKey) => (
+    t(`chatbox.publicAccess.features.${feature}` as any)
+  ), [t]);
+
+  const buildPublicBannerMessage = useCallback((feature: PublicFeatureKey) => (
+    t('chatbox.publicAccess.bannerMessage', { feature: getFeatureLabel(feature) })
+  ), [getFeatureLabel, t]);
+
+  const clearPublicNoticeTimer = useCallback(() => {
+    if (publicNoticeTimerRef.current) {
+      window.clearTimeout(publicNoticeTimerRef.current);
+      publicNoticeTimerRef.current = null;
+    }
+  }, []);
+
+  const dismissPublicNotice = useCallback(() => {
+    clearPublicNoticeTimer();
+    setPublicNotice(null);
+  }, [clearPublicNoticeTimer]);
+
+  const showPublicNotice = useCallback((feature: PublicFeatureKey) => {
+    const message = buildPublicBannerMessage(feature);
+    setPublicNotice(message);
+    clearPublicNoticeTimer();
+    publicNoticeTimerRef.current = window.setTimeout(() => {
+      setPublicNotice(null);
+      publicNoticeTimerRef.current = null;
+    }, 4000);
+  }, [buildPublicBannerMessage, clearPublicNoticeTimer]);
+
+  React.useEffect(() => {
+    return () => {
+      clearPublicNoticeTimer();
+    };
+  }, [clearPublicNoticeTimer]);
 
   // 更新按钮状态
   React.useEffect(() => {
@@ -103,7 +151,10 @@ const ChatInput: FC<ChatInputProps> = ({
 
   // 处理输入变化
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (inputLocked) return;
+    if (inputLocked) {
+      showPublicNotice('askInput');
+      return;
+    }
     setInputValue(e.target.value);
   };
 
@@ -117,7 +168,10 @@ const ChatInput: FC<ChatInputProps> = ({
 
   // 处理发送消息
   const handleSendMessageLocal = () => {
-    if (inputLocked) return;
+    if (inputLocked) {
+      showPublicNotice('askInput');
+      return;
+    }
     if (inputValue.trim() && isButtonEnabled) {
       // 组装附加参数，透传到后端
       const extraPayload: Record<string, any> = {
@@ -143,9 +197,15 @@ const ChatInput: FC<ChatInputProps> = ({
   };
 
   const handleModeChange = useCallback((mode: ChatMode) => {
-    if (inputLocked) return;
+    if (inputLocked) {
+      const feature = modeToPublicFeature[mode];
+      if (feature) {
+        showPublicNotice(feature);
+      }
+      return;
+    }
     setCurrentMode(mode);
-  }, [inputLocked]);
+  }, [inputLocked, showPublicNotice]);
 
   const translationKeyMap: Partial<Record<ChatMode, string>> = {
     'deep-space': 'deepSpace',
@@ -222,45 +282,80 @@ const ChatInput: FC<ChatInputProps> = ({
 
   return (
     <div className={`chat-input-container ${className}`}>
+      {publicNotice && (
+        <div className="public-access-banner" role="alert">
+          <span>{publicNotice}</span>
+          <button
+            type="button"
+            className="public-access-banner__close"
+            onClick={dismissPublicNotice}
+            aria-label={t('chatbox.publicAccess.dismiss')}
+          >
+            ×
+          </button>
+        </div>
+      )}
       <div className="chat-input-wrapper">
-        <textarea
-          ref={textareaRef}
-          id="chat-input"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          placeholder={defaultPlaceholder}
-          rows={3}
-          disabled={disabled || inputLocked}
-          style={{
-            resize: 'none',
-            overflow: 'auto',
-            minHeight: '32px',
-            maxHeight: '120px'
-          }}
-        />
+        <div className="public-textarea-guard">
+          <textarea
+            ref={textareaRef}
+            id="chat-input"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder={defaultPlaceholder}
+            rows={3}
+            disabled={disabled || inputLocked}
+            style={{
+              resize: 'none',
+              overflow: 'auto',
+              minHeight: '32px',
+              maxHeight: '120px'
+            }}
+          />
+          {inputLocked && (
+            <button
+              type="button"
+              className="public-access-overlay"
+              onClick={() => showPublicNotice('askInput')}
+              aria-label={buildPublicBannerMessage('askInput')}
+            />
+          )}
+        </div>
         <div className="chat-controls-row">
           <div className="input-mode-switch">
 
-            {modesToRender.map(modeKey => (
-              <InfoTooltip
-                key={modeKey}
-                title={getModeTooltipContent(modeKey)}
-                placement="top"
-              >
-                <button
-                  className={`mode-btn ${currentMode === modeKey ? 'active' : ''}`}
-                  onClick={() => handleModeChange(modeKey)}
-                  type="button"
-                  disabled={inputLocked}
-                >
-                  <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
-                  {userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
-                    <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
+            {modesToRender.map(modeKey => {
+              const featureKey = modeToPublicFeature[modeKey];
+              return (
+                <div key={modeKey} className="mode-btn-wrapper">
+                  <InfoTooltip
+                    title={getModeTooltipContent(modeKey)}
+                    placement="top"
+                  >
+                    <button
+                      className={`mode-btn ${currentMode === modeKey ? 'active' : ''}${inputLocked ? ' public-locked' : ''}`}
+                      onClick={() => handleModeChange(modeKey)}
+                      type="button"
+                      disabled={inputLocked}
+                    >
+                      <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
+                      {userPermissions === 'research' && !inputLocked && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
+                        <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
+                      )}
+                    </button>
+                  </InfoTooltip>
+                  {inputLocked && featureKey && (
+                    <button
+                      type="button"
+                      className="public-access-overlay mode"
+                      onClick={() => showPublicNotice(featureKey)}
+                      aria-label={buildPublicBannerMessage(featureKey)}
+                    />
                   )}
-                </button>
-              </InfoTooltip>
-            ))}
+                </div>
+              );
+            })}
           </div>
           <button
             id="send-btn"

@@ -50,6 +50,16 @@ type SuggestionItem = {
     chatId?: number;
 };
 
+type PublicFeatureKey = 'askInput' | 'lightning' | 'pro' | 'deepSpace';
+
+const modeToPublicFeature: Partial<Record<ChatMode, PublicFeatureKey>> = {
+    lightning: 'lightning',
+    ask: 'pro',
+    'ask-oss': 'pro',
+    'deep-space': 'deepSpace',
+    'deep-space-oss': 'deepSpace',
+};
+
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
     const {
@@ -74,6 +84,44 @@ const ChatWelcome: React.FC = () => {
 
     const [fallbackSelection, setFallbackSelection] = useState<string[]>([]);
     const [fallbackPoolSize, setFallbackPoolSize] = useState(0);
+    const [publicNotice, setPublicNotice] = useState<string | null>(null);
+    const publicNoticeTimerRef = useRef<number | null>(null);
+
+    const getFeatureLabel = useCallback((feature: PublicFeatureKey) => (
+        t(`chatbox.publicAccess.features.${feature}` as any)
+    ), [t]);
+
+    const buildPublicBannerMessage = useCallback((feature: PublicFeatureKey) => (
+        t('chatbox.publicAccess.bannerMessage', { feature: getFeatureLabel(feature) })
+    ), [getFeatureLabel, t]);
+
+    const clearPublicNoticeTimer = useCallback(() => {
+        if (publicNoticeTimerRef.current) {
+            window.clearTimeout(publicNoticeTimerRef.current);
+            publicNoticeTimerRef.current = null;
+        }
+    }, []);
+
+    const dismissPublicNotice = useCallback(() => {
+        clearPublicNoticeTimer();
+        setPublicNotice(null);
+    }, [clearPublicNoticeTimer]);
+
+    const showPublicNotice = useCallback((feature: PublicFeatureKey) => {
+        const message = buildPublicBannerMessage(feature);
+        setPublicNotice(message);
+        clearPublicNoticeTimer();
+        publicNoticeTimerRef.current = window.setTimeout(() => {
+            setPublicNotice(null);
+            publicNoticeTimerRef.current = null;
+        }, 4000);
+    }, [buildPublicBannerMessage, clearPublicNoticeTimer]);
+
+    useEffect(() => {
+        return () => {
+            clearPublicNoticeTimer();
+        };
+    }, [clearPublicNoticeTimer]);
     useEffect(() => {
         const list = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
         const sanitized = Array.isArray(list) ? list.filter(Boolean) : [];
@@ -161,9 +209,15 @@ const ChatWelcome: React.FC = () => {
     }, [handleSendMessageLocal]);
 
     const handleModeChange = useCallback((mode: ChatMode) => {
-        if (isPublic) return;
+        if (isPublic) {
+            const feature = modeToPublicFeature[mode];
+            if (feature) {
+                showPublicNotice(feature);
+            }
+            return;
+        }
         setCurrentMode(mode);
-    }, [isPublic]);
+    }, [isPublic, showPublicNotice]);
 
     const translationKeyMap: Partial<Record<ChatMode, string>> = {
         'deep-space': 'deepSpace',
@@ -240,11 +294,17 @@ const ChatWelcome: React.FC = () => {
             handleSelectChat(item.chatId);
             return;
         }
-        if (item.type === 'fallback' && item.label.trim() && !isPublic) {
-            const { extraPayload, modeToSend } = buildExtraPayload();
-            handleSendMessage(item.label.trim(), modeToSend, undefined, extraPayload);
+        if (item.type === 'fallback') {
+            if (isPublic) {
+                showPublicNotice('askInput');
+                return;
+            }
+            if (item.label.trim()) {
+                const { extraPayload, modeToSend } = buildExtraPayload();
+                handleSendMessage(item.label.trim(), modeToSend, undefined, extraPayload);
+            }
         }
-    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic]);
+    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic, showPublicNotice]);
 
     const handleRefreshQuestions = useCallback(() => {
         const refreshBtn = document.querySelector('.refresh-questions-btn svg');
@@ -271,43 +331,79 @@ const ChatWelcome: React.FC = () => {
     }, [chatHistory.length, t]);
 
     const isInputEmpty = inputValue.trim().length === 0;
+    const placeholderText = isPublic ? t('chatbox.input.placeholderPublic') : t('chatbox.input.placeholder');
 
     return (
         <div className='new-chat-interface'>
             <div className="new-chat-content">
                 <h2 className="new-chat-title">{t('chatbox.chat.newExpoler')}</h2>
                 <div className="new-chat-input-container">
+                    {publicNotice && (
+                        <div className="public-access-banner" role="alert">
+                            <span>{publicNotice}</span>
+                            <button
+                                type="button"
+                                className="public-access-banner__close"
+                                onClick={dismissPublicNotice}
+                                aria-label={t('chatbox.publicAccess.dismiss')}
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
                     <div className="new-chat-input-wrapper">
-                        <textarea
-                            ref={textareaRef}
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            placeholder={t('chatbox.input.placeholder')}
-                            rows={3}
-                            disabled={isPublic}
-                        />
+                        <div className="public-textarea-guard">
+                            <textarea
+                                ref={textareaRef}
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                placeholder={placeholderText}
+                                rows={3}
+                                disabled={isPublic}
+                            />
+                            {isPublic && (
+                                <button
+                                    type="button"
+                                    className="public-access-overlay"
+                                    onClick={() => showPublicNotice('askInput')}
+                                    aria-label={buildPublicBannerMessage('askInput')}
+                                />
+                            )}
+                        </div>
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                {modesToRender.map(modeKey => (
-                                    <InfoTooltip
-                                        key={modeKey}
-                                        title={getModeTooltipContent(modeKey)}
-                                        placement="bottom"
-                                    >
-                                        <button
-                                            className={`new-mode-btn ${currentMode === modeKey ? 'active' : ''}`}
-                                            onClick={() => handleModeChange(modeKey)}
-                                            type="button"
-                                            disabled={isPublic}
-                                        >
-                                            <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
-                                            {userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
-                                                <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
+                                {modesToRender.map(modeKey => {
+                                    const featureKey = modeToPublicFeature[modeKey];
+                                    return (
+                                        <div key={modeKey} className="mode-btn-wrapper">
+                                            <InfoTooltip
+                                                title={getModeTooltipContent(modeKey)}
+                                                placement="bottom"
+                                            >
+                                                <button
+                                                    className={`new-mode-btn ${currentMode === modeKey ? 'active' : ''}${isPublic ? ' public-locked' : ''}`}
+                                                    onClick={() => handleModeChange(modeKey)}
+                                                    type="button"
+                                                    disabled={isPublic}
+                                                >
+                                                    <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
+                                                    {userPermissions === 'research' && !isPublic && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
+                                                        <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
+                                                    )}
+                                                </button>
+                                            </InfoTooltip>
+                                            {isPublic && featureKey && (
+                                                <button
+                                                    type="button"
+                                                    className="public-access-overlay mode"
+                                                    onClick={() => showPublicNotice(featureKey)}
+                                                    aria-label={buildPublicBannerMessage(featureKey)}
+                                                />
                                             )}
-                                        </button>
-                                    </InfoTooltip>
-                                ))}
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <button 
                                 className="new-chat-send-btn" 
