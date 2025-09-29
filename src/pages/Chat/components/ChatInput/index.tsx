@@ -43,12 +43,14 @@ interface ChatInputProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  inputLocked?: boolean;
 }
 
 const ChatInput: FC<ChatInputProps> = ({
   placeholder,
   disabled = false,
-  className = ''
+  className = '',
+  inputLocked = false,
 }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -72,8 +74,8 @@ const ChatInput: FC<ChatInputProps> = ({
 
   // 更新按钮状态
   React.useEffect(() => {
-    setIsButtonEnabled(inputValue.trim().length > 0 && !disabled);
-  }, [inputValue, disabled]);
+    setIsButtonEnabled(inputValue.trim().length > 0 && !disabled && !inputLocked);
+  }, [inputValue, disabled, inputLocked]);
 
   // 从 URL 参数读取 mode 并设置，读取后删除参数
   React.useEffect(() => {
@@ -101,6 +103,7 @@ const ChatInput: FC<ChatInputProps> = ({
 
   // 处理输入变化
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (inputLocked) return;
     setInputValue(e.target.value);
   };
 
@@ -114,6 +117,7 @@ const ChatInput: FC<ChatInputProps> = ({
 
   // 处理发送消息
   const handleSendMessageLocal = () => {
+    if (inputLocked) return;
     if (inputValue.trim() && isButtonEnabled) {
       // 组装附加参数，透传到后端
       const extraPayload: Record<string, any> = {
@@ -139,8 +143,9 @@ const ChatInput: FC<ChatInputProps> = ({
   };
 
   const handleModeChange = useCallback((mode: ChatMode) => {
+    if (inputLocked) return;
     setCurrentMode(mode);
-  }, []);
+  }, [inputLocked]);
 
   const translationKeyMap: Partial<Record<ChatMode, string>> = {
     'deep-space': 'deepSpace',
@@ -226,7 +231,7 @@ const ChatInput: FC<ChatInputProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={defaultPlaceholder}
           rows={3}
-          disabled={disabled}
+          disabled={disabled || inputLocked}
           style={{
             resize: 'none',
             overflow: 'auto',
@@ -247,6 +252,7 @@ const ChatInput: FC<ChatInputProps> = ({
                   className={`mode-btn ${currentMode === modeKey ? 'active' : ''}`}
                   onClick={() => handleModeChange(modeKey)}
                   type="button"
+                  disabled={inputLocked}
                 >
                   <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
                   {userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
@@ -283,8 +289,11 @@ const ChatInput: FC<ChatInputProps> = ({
               <input
                 type="checkbox"
                 checked={disableLiteratureSearch}
-                onChange={(e) => setDisableLiteratureSearch(e.target.checked)}
-                disabled={disabled}
+                onChange={(e) => {
+                  if (inputLocked) return;
+                  setDisableLiteratureSearch(e.target.checked);
+                }}
+                disabled={disabled || inputLocked}
               />
               <span>{t('chatbox.checkboxes.disableLiteratureSearch')}</span>
             </label>
@@ -292,8 +301,11 @@ const ChatInput: FC<ChatInputProps> = ({
               <input
                 type="checkbox"
                 checked={fullDeepSpace}
-                onChange={(e) => setFullDeepSpace(e.target.checked)}
-                disabled={disabled || !isDeepSpaceMode(currentMode)}
+                onChange={(e) => {
+                  if (inputLocked) return;
+                  setFullDeepSpace(e.target.checked);
+                }}
+                disabled={disabled || !isDeepSpaceMode(currentMode) || inputLocked}
               />
               <span>{t('chatbox.checkboxes.fullDeepSpace')}</span>
             </label>
@@ -301,8 +313,11 @@ const ChatInput: FC<ChatInputProps> = ({
               <input
                 type="checkbox"
                 checked={enablePatentRag}
-                onChange={(e) => setEnablePatentRag(e.target.checked)}
-                disabled={disabled}
+                onChange={(e) => {
+                  if (inputLocked) return;
+                  setEnablePatentRag(e.target.checked);
+                }}
+                disabled={disabled || inputLocked}
               />
               <span>Enable Patent RAG</span>
             </label>
@@ -310,8 +325,11 @@ const ChatInput: FC<ChatInputProps> = ({
               <input
                 type="checkbox"
                 checked={disableTools}
-                onChange={(e) => setDisableTools(e.target.checked)}
-                disabled={disabled}
+                onChange={(e) => {
+                  if (inputLocked) return;
+                  setDisableTools(e.target.checked);
+                }}
+                disabled={disabled || inputLocked}
               />
               <span>{t('chatbox.checkboxes.disableTools')}</span>
             </label>
