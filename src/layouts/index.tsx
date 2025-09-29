@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "umi";
 import Header from "@/components/Header";
-import { usePlotDataStore } from "@/models/usePlotData";
+import { useAnionsPlotDataStore, usePlotDataStore } from "@/models/usePlotData";
 import { useEffect, useState, createContext } from "react";
 // import "./index.less";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ const FullNavLayoutInner = () => {
     const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
     const isPredictPage = pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
+    const { fetchInitialData: fetchInitialDataAnions, fetchData: fetchDataAnions } = useAnionsPlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
     const { t, i18n } = useTranslation();
     const { verifyAuth } = useAuthStore();
@@ -171,6 +172,8 @@ const FullNavLayoutInner = () => {
     useEffect(() => {
         fetchInitialData();
         fetchData();
+        fetchInitialDataAnions();
+        fetchDataAnions();
     }, []);
     const getMainContainerClassName = () => {
         if (isChatPage) {
