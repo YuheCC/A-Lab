@@ -203,7 +203,8 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                   <p>{t('formulation.history.loading.error', 'Error')}: {error}</p>
                 </div>
               ) : (
-                <table className="analysis-table">
+                <div className="analysis-table-wrapper">
+                  <table className="analysis-table">
                   <thead>
                     <tr>
                       <th>{t('formulation.list.columns.analysisId', 'Analysis ID')}</th>
@@ -285,6 +286,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                     )}
                   </tbody>
                 </table>
+                </div>
               )}
             </div>
           )}

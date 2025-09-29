@@ -48,7 +48,7 @@
 }
 
 .formulation-new-table-container {
-  overflow-x: auto;
+  overflow-x: hidden;
   padding: 20px 0px;
 }
 
@@ -119,6 +119,13 @@
   }
 }
 
+
+.analysis-table-wrapper {
+  /* padding handled by formulation-new-table-container */
+  overflow-x: auto;
+  width: calc(100% - 60px);
+  margin: 0 30px;
+}
 
 .analysis-table {
   width: 100%;
