@@ -1,7 +1,7 @@
 export default {
     // Header
     title: "Upload early cycle data for life prediction",
-    subtitle: "Predict cycle life (number of cycles to 80% SOH) for lithium-ion batteries using as less as 100 cycle data with an AI model trained on SES internal experimental data",
+    subtitle: "Predict cycle life (number of cycles when discharge capacity retention reaches 80%) with an AI model trained on internal experimental data. Only the first 100 cycles (effective cycle so the real number may be higher) are needed. The prediction is accurate for battery systems  with limited active ion inventories, such as Li-ion, Na-ion, or anode free batteries.",
     betaTag: "BETA",
 
     // Steps
