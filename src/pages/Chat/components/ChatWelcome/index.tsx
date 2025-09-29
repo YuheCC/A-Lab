@@ -1,21 +1,55 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@mui/material';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { useChatContext } from '../../context/ChatContext';
+import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
 import i18n from '@/locales/i18n';
 import { useAuthStore } from '@/models/useAuth';
 
 // 推荐问题数据将从多语言配置中获取
 
-type ChatMode = 'regular' | 'deep-space' | 'clarify';
+
+type ChatMode =
+    | 'regular'
+    | 'clarify'
+    | 'lightning'
+    | 'ask'
+    | 'ask-oss'
+    | 'deep-space'
+    | 'deep-space-oss';
+
+const ADMIN_MODE_SEQUENCE: ChatMode[] = ['lightning', 'ask', 'ask-oss', 'deep-space', 'deep-space-oss'];
+const STANDARD_MODE_SEQUENCE: ChatMode[] = ['lightning', 'ask', 'deep-space'];
+const DEEP_SPACE_MODES: ChatMode[] = ['deep-space', 'deep-space-oss'];
+const computePowerMap: Record<ChatMode, string> = {
+    lightning: 'medium',
+    ask: 'high',
+    'ask-oss': 'oss-120b',
+    'deep-space': 'high',
+    'deep-space-oss': 'oss-120b',
+    regular: 'high',
+    clarify: 'high'
+};
+const backendModeMap: Record<ChatMode, ChatMode> = {
+    lightning: 'lightning',
+    ask: 'ask',
+    'ask-oss': 'ask',
+    'deep-space': 'deep-space',
+    'deep-space-oss': 'deep-space',
+    regular: 'regular',
+    clarify: 'clarify'
+};
+const isDeepSpaceMode = (mode: ChatMode) => DEEP_SPACE_MODES.includes(mode);
 
 const ChatWelcome: React.FC = () => {
     const { t } = useTranslation();
-    const { handleSendMessage, remainingQueries, remainingDeepSpaceQueries } = useChatContext();
+    const { handleSendMessage, remainingDeepSpaceQueries, modeLimits } = useChatContext();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAdmin = userPermissions === 'admin';
     const [inputValue, setInputValue] = useState<string>('');
-    const [currentMode, setCurrentMode] = useState<ChatMode>('regular');
+    const initialMode: ChatMode = isAdmin ? 'ask' : 'lightning';
+    const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
     const [disableLiterature, setDisableLiterature] = useState(false);
     const [fullDeepSpace, setFullDeepSpace] = useState(false);
     const [enablePatentRag, setEnablePatentRag] = useState(false);
@@ -57,13 +91,17 @@ const ChatWelcome: React.FC = () => {
             ragEnabled: !disableLiterature,
             patentRagEnabled: enablePatentRag,
             toolsEnabled: !disableTools,
+            originalMode: currentMode,
         };
-        if (currentMode === 'deep-space') {
+        if (isDeepSpaceMode(currentMode)) {
             extraPayload.dump_state = !!fullDeepSpace;
         }
+        extraPayload.llmComputePower = computePowerMap[currentMode];
+        const backendMode = backendModeMap[currentMode];
+        const modeToSend: ChatMode = backendMode === 'deep-space' ? 'clarify' : backendMode;
         handleSendMessage(
             inputValue.trim(),
-            (currentMode === "deep-space" ? "clarify" : currentMode) as ChatMode,
+            modeToSend,
             undefined,
             extraPayload
         );
@@ -83,89 +121,75 @@ const ChatWelcome: React.FC = () => {
         setCurrentMode(mode);
     }, []);
 
+    const translationKeyMap: Partial<Record<ChatMode, string>> = {
+        'deep-space': 'deepSpace',
+        'deep-space-oss': 'deepSpaceOss',
+        'ask-oss': 'askOss',
+    };
+
+    const getTranslationKey = (mode: ChatMode) => translationKeyMap[mode] || mode;
+
+    const modesToRender = isAdmin ? ADMIN_MODE_SEQUENCE : STANDARD_MODE_SEQUENCE;
+
     // 创建tooltip内容的辅助函数
     const getModeTooltipContent = (mode: ChatMode) => {
-        if (mode === 'regular') {
-            return (
-                <div style={{ padding: '4px' }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '8px'
-                    }}>
-                        <h4 style={{
-                            margin: 0,
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: '#111827'
-                        }}>
-                            {t('chatbox.chat.modes.regular')}
-                        </h4>
-                        {
-                            userPermissions === 'research' && (
-                                <span style={{
-                                    fontSize: '12px',
-                                    color: '#56B26A',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px'
-                                }}>
-                                    {t('chatbox.chat.modes.regularRemaining', { count: remainingQueries })}
-                                </span>
-                            )
-                        }
-                    </div>
-                    <div style={{
-                        fontSize: '13px',
-                        color: '#4b5563',
-                        lineHeight: '1.5',
-                        fontWeight: '300'
-                    }}>
-                        {t('chatbox.chat.modes.regularDescription')}
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div style={{ padding: '4px' }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '8px'
-                    }}>
-                        <h4 style={{
-                            margin: 0,
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: '#111827'
-                        }}>
-                            {t('chatbox.chat.modes.deepSpace')}
-                        </h4>
-                        {
-                            userPermissions !== 'admin' && (
-                                <span style={{
-                                    fontSize: '12px',
-                                    color: '#56B26A',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px'
-                                }}>
-                                    {t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries })}
-                                </span>
-                            )
-                        }        
-                    </div>
-                    <div style={{
-                        fontSize: '13px',
-                        color: '#4b5563',
-                        lineHeight: '1.5',
-                        fontWeight: '300'
-                    }}>
-                        {t('chatbox.chat.modes.deepSpaceDescription')}
-                    </div>
-                </div>
-            );
+        const key = getTranslationKey(mode);
+        const title = t(`chatbox.chat.modes.${key}` as any);
+        let desc = t(`chatbox.chat.modes.${key}Description` as any);
+        if (userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(mode)) {
+            const liteNotice = t('chatbox.chat.modes.liteNotice');
+            desc = `${desc}${liteNotice}`;
         }
+
+        const getRemainingLabel = () => {
+            if (mode === 'lightning') {
+                const info = modeLimits.lightning;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = getRemainingFromLimitInfo(info);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.lightningLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                }
+            }
+            if (mode === 'ask' || mode === 'ask-oss') {
+                const info = modeLimits.pro;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = getRemainingFromLimitInfo(info);
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.proLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                }
+            }
+            if (isDeepSpaceMode(mode)) {
+                const info = modeLimits.deepSpace;
+                if (info) {
+                    const limitValue = typeof info.limit === 'number' ? info.limit : null;
+                    if (limitValue !== null && limitValue > 0) {
+                        const remainingValue = typeof info.remaining === 'number' ? info.remaining : undefined;
+                        if (typeof remainingValue === 'number') {
+                            return t('chatbox.chat.modes.deepSpaceLimitLabel', { remaining: remainingValue, limit: limitValue });
+                        }
+                    }
+                    if (typeof info.remaining === 'number') {
+                        return t('chatbox.chat.modes.deepSpaceRemaining', { count: info.remaining });
+                    }
+                } else if (typeof remainingDeepSpaceQueries === 'number') {
+                    return t('chatbox.chat.modes.deepSpaceRemaining', { count: remainingDeepSpaceQueries });
+                }
+            }
+            return undefined;
+        };
+
+        const remaining = getRemainingLabel();
+        return (
+            <InfoTooltipContent title={title} description={desc} remainingLabel={remaining} />
+        );
     };
 
     // 处理推荐问题点击
@@ -175,11 +199,15 @@ const ChatWelcome: React.FC = () => {
                 ragEnabled: !disableLiterature,
                 patentRagEnabled: enablePatentRag,
                 toolsEnabled: !disableTools,
+                originalMode: currentMode,
             };
-            if (currentMode === 'deep-space') {
+            if (isDeepSpaceMode(currentMode)) {
                 extraPayload.dump_state = !!fullDeepSpace;
             }
-            handleSendMessage(question, currentMode === 'deep-space' ? 'clarify' : currentMode, undefined, extraPayload);
+            extraPayload.llmComputePower = computePowerMap[currentMode];
+            const backendMode = backendModeMap[currentMode];
+            const modeToSend: ChatMode = backendMode === 'deep-space' ? 'clarify' : backendMode;
+            handleSendMessage(question, modeToSend, undefined, extraPayload);
         }
     }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace, handleSendMessage]);
 
@@ -225,65 +253,24 @@ const ChatWelcome: React.FC = () => {
                         />
                         <div className="new-chat-input-controls">
                             <div className="new-chat-mode-switch">
-                                <Tooltip 
-                                    title={getModeTooltipContent('regular')} 
-                                    placement="bottom" 
-                                    arrow
-                                    PopperProps={{
-                                        sx: {
-                                            '& .MuiTooltip-tooltip': {
-                                                backgroundColor: 'white',
-                                                color: 'black',
-                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                                borderRadius: '8px',
-                                                padding: '12px',
-                                                fontSize: '14px',
-                                                maxWidth: 280
-                                            },
-                                            '& .MuiTooltip-arrow': {
-                                                color: 'white',
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <button 
-                                        className={`new-mode-btn ${currentMode === 'regular' ? 'active' : ''}`}
-                                        onClick={() => handleModeChange('regular')}
-                                        type="button"
+                                {modesToRender.map(modeKey => (
+                                    <InfoTooltip
+                                        key={modeKey}
+                                        title={getModeTooltipContent(modeKey)}
+                                        placement="bottom"
                                     >
-                                        <span>{t('chatbox.chat.modes.regular')}</span>
-                                    </button>
-                                </Tooltip>
-                                <Tooltip 
-                                    title={getModeTooltipContent('deep-space')} 
-                                    placement="bottom" 
-                                    arrow
-                                    PopperProps={{
-                                        sx: {
-                                            '& .MuiTooltip-tooltip': {
-                                                backgroundColor: 'white',
-                                                color: 'black',
-                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                                borderRadius: '8px',
-                                                padding: '12px',
-                                                fontSize: '14px',
-                                                maxWidth: 280
-                                            },
-                                            '& .MuiTooltip-arrow': {
-                                                color: 'white',
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <button 
-                                        className={`new-mode-btn ${currentMode === 'deep-space' ? 'active' : ''}`}
-                                        onClick={() => handleModeChange('deep-space')}
-                                        type="button"
-                                    >
-                                        <span>{t('chatbox.chat.modes.deepSpace')}</span>
-                                        <span className="beta-badge">{t('chatbox.chat.modes.betaBadge')}</span>
-                                    </button>
-                                </Tooltip>
+                                        <button
+                                            className={`new-mode-btn ${currentMode === modeKey ? 'active' : ''}`}
+                                            onClick={() => handleModeChange(modeKey)}
+                                            type="button"
+                                        >
+                                            <span>{t(`chatbox.chat.modes.${getTranslationKey(modeKey)}` as any)}</span>
+                                            {userPermissions === 'research' && ['ask', 'ask-oss', 'deep-space', 'deep-space-oss'].includes(modeKey) && (
+                                                <span className="lite-badge">{t('chatbox.chat.modes.liteBadge')}</span>
+                                            )}
+                                        </button>
+                                    </InfoTooltip>
+                                ))}
                             </div>
                             <button 
                                 className="new-chat-send-btn" 
@@ -334,6 +321,7 @@ const ChatWelcome: React.FC = () => {
                           type="checkbox"
                           checked={fullDeepSpace}
                           onChange={(e) => setFullDeepSpace(e.target.checked)}
+                          disabled={!isDeepSpaceMode(currentMode)}
                         />
                         Full Deep Space
                       </label>

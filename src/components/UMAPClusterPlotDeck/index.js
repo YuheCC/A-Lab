@@ -582,6 +582,7 @@ const UMAPClusterPlotDeck = ({
                 ref={hoverRef}
                 style={position}
                 showMoreDetails={true}
+                cation={hoveredObject.object.cation ?? hoveredObject.object.rawData?.cation ?? hoveredObject.object.rawData?.CATION}
                 onMouseEnter={() => {
                     setHoveredObject(null);
                     onHover(null);

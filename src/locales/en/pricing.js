@@ -14,8 +14,10 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (≤ 100 queries/day)",
-      "Deep Space (≤ 5 queries/month)"
+      "Ask Lightning (≤ 50 queries/day)",
+      "Ask Pro (≤ 10 queries/day)",
+      "Deep Space (≤ 5 queries/month)",
+      "Intelligent find friends compute: low"
     ]
   },
   explorer: {
@@ -28,8 +30,10 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)",
-      "Deep Space (≤ 10 queries/month)"
+      "Ask Lightning (unlimited)",
+      "Ask Pro (≤ 25 queries/day)",
+      "Deep Space (≤ 10 queries/month)",
+      "Intelligent find friends compute: medium"
     ]
   },
   team: {
@@ -42,8 +46,10 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap)",
-      "Deep Space (≤ 10 queries/person/month)"
+      "Ask Lightning (unlimited)",
+      "Ask Pro (≤ 25 queries/person/day)",
+      "Deep Space (≤ 10 queries/person/month)",
+      "Intelligent find friends compute: medium"
     ]
   },
   enterprise: {
@@ -56,8 +62,10 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap, battery-specific LLM)",
+      "Ask Lightning (unlimited)",
+      "Ask Pro (unlimited)",
       "Deep Space",
+      "Intelligent find friends compute: high",
       "More molecule properties",
       "Expert consulting"
     ]
@@ -72,8 +80,10 @@ export default {
       "Map",
       "Filter",
       "Search",
-      "Ask (no cap, battery-specific LLM)",
+      "Ask Lightning (unlimited)",
+      "Ask Pro (unlimited)",
       "Deep Space",
+      "Intelligent find friends compute: high",
       "More molecule properties",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]

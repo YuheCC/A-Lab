@@ -28,7 +28,6 @@ export default {
     functionalGroupList: "醚、缩酮、碳酸酯、酯",
     unknown: "未知",
     types: {
-      all: "所有类型",
       solvent: "溶剂",
       cosolvent: "共溶剂",
       diluent: "稀释剂",

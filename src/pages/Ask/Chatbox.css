@@ -152,7 +152,6 @@
     margin: 0;
     margin-bottom: 1em;
   }
-  
   .message-content h1,
   .message-content h2,
   .message-content h3,
@@ -162,22 +161,21 @@
     margin: 0;
     margin-bottom: 0.5em;
   }
-  
   .message-content ul,
   .message-content ol {
     margin: 0;
     margin-bottom: 1em;
     padding-left: 1.5em;
   }
-  
+
   .message-content li {
     margin: 0;
   }
-  
+
   .message-content > *:first-child {
     margin-top: 0 !important;
   }
-  
+
   .message-content > *:last-child {
     margin-bottom: 0 !important;
   }
@@ -185,6 +183,10 @@
   .message-user,
   .message-assistant {
     margin-bottom: 15px;
+  }
+
+  .message-assistant.error-message .message-content {
+    color: red;
   }
   
   .message-user:last-child,
@@ -317,25 +319,42 @@
     margin-left: 10px;
   }
   
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px 0px 20px;
-    width: calc(100% - 40px);
-    box-sizing: border-box;
-  }
+ .checkbox-group {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px 0 20px;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  gap: 10px;                 /* ensure spacing between items */
+  flex-wrap: wrap;           /* allow wrapping instead of clipping */
+  overflow: visible;         /* don't clip overflowing children */
+}
   
-  .admin-controls {
-    display: flex;
-    flex-flow:column;
-    background-color: #ebebeb;
-    border-radius: 4px;
-    padding: 4px 10px;
-  }
+ .admin-controls {
+  display: flex;
+  flex-wrap: wrap;           /* allow multiple rows */
+  align-items: center;
+  gap: 8px;                  /* spacing between checkboxes */
+  background-color: #ebebeb;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 100%;
+}
   .admin-controls-label {
     font-size:10px;
     font-weight: bold;
     color: #727272;
+  }
+
+  .checkbox-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;       /* keep label text with its checkbox */
+  }
+
+  .admin-controls .checkbox-item {
+    margin-right: 4px;
   }
   
   /* Thumbs Feedback */
@@ -687,4 +706,48 @@
   border-top: 1px solid #ddd;
   background-color: white;
   white-space: normal;
+}
+
+.message-timestamp {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.message-user .message-timestamp {
+  text-align: left;
+}
+.message-assistant .message-timestamp {
+  text-align: left;
+}
+@media (max-width: 600px) {
+  .message-timestamp { font-size: 11px; }
+}
+
+
+/* Nested subsections inside the Supplemental Data group */
+.extra-data-subsection {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin: 6px 8px;
+  background-color: #fafafa;
+}
+
+.extra-data-subsection .extra-data-header {
+  padding: 4px 8px;
+}
+
+.extra-data-subsection .extra-data-content {
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}
+
+/* Only reveal nested subsections when the top-level Supplemental Data is open */
+.extra-data-subsection {
+  display: none;
+}
+.extra-data-section.open .extra-data-subsection {
+  display: block;
 }

@@ -28,7 +28,6 @@ export default {
     functionalGroupList: "에테르, 케탈, 탄산에스터, 에스터",
     unknown: "알 수 없음",
     types: {
-      all: "모든 유형",
       solvent: "용매",
       cosolvent: "공용매",
       diluent: "희석제",

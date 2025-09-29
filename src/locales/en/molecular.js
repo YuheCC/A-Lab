@@ -28,9 +28,8 @@ export default {
     functionalGroupList: "Ether, ketal, carbonate, ester",
     unknown: "Unknown",
     types: {
-      all: "All Types",
-      cosolvent: "Cosolvent",
       solvent: "Solvent",
+      cosolvent: "Cosolvent",
       diluent: "Diluent",
       additive: "Additive"
     },
