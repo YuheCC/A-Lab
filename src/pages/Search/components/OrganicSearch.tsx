@@ -380,9 +380,20 @@ const OrganicSearch = () => {
                     }
                 }
             }
-        } catch (apiError) {
+        } catch (apiError: any) {
             console.error('Error checking Snowflake database:', apiError);
-            setSearchError(t('search.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = apiError?.response?.status === 401 || apiError?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setSearchError(null);
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setSearchError(t('search.searchError'));
+            }
         } finally {
             setSearchLoading(false);
             setLastSearch(searchInput);
