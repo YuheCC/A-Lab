@@ -101,6 +101,7 @@ const OrganicMolecules = () => {
                 <div className="graph-container search-graph">
                     {data.length > 0 ? (
                         <UMAPClusterPlotDeck
+                            zoomOffset={-0.3}
                             data={data}
                             userPermissions={userPermissions}
                             molecularType="organic"
@@ -116,7 +117,7 @@ const OrganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef} molecularType="organic"/>
+            <NodePopup key="organicNodePopup" node={node} ref={nodePopupRef} molecularType="organic"/>
         </>
     )
 };

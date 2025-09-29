@@ -19,7 +19,7 @@ const hexToRgb = (hex) => {
 
 const X_STRETCH = 1.3;
 
-const fitToData = (data, containerDimensions, prevViewState = null) => {
+const fitToData = (data, containerDimensions, prevViewState = null, zoomOffset = 0.3) => {
     if (!data || data.length === 0) {
         return {
             longitude: 3.7,
@@ -80,7 +80,6 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
     const baseZoom = Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1));
     
     // Add zoom offset for more detailed view (increase this value for more zoom)
-    const zoomOffset = 0.3; // 增加1.5个缩放级别
     const zoom = Math.max(0, Math.min(20, baseZoom + zoomOffset));
 
     if (prevViewState) {
@@ -269,7 +268,8 @@ const UMAPClusterPlotDeck = ({
     highlightedSimilarData = [],
     userPermissions,
     onClick,
-    molecularType = 'organic'
+    molecularType = 'organic',
+    zoomOffset = 0.3
 }) => {
     const { t } = useTranslation();
 
@@ -338,12 +338,12 @@ const UMAPClusterPlotDeck = ({
     useEffect(() => {
         if (containerReady) {
             if (isManipulated) {
-                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState));
+                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState, zoomOffset));
             } else {
-                setViewState(fitToData(data, containerDimensions));
+                setViewState(fitToData(data, containerDimensions, null, zoomOffset));
             }
         }
-    }, [containerDimensions, data, containerReady]);
+    }, [containerDimensions, data, containerReady, zoomOffset]);
 
     const layers = [
         useMemo(() =>
@@ -497,7 +497,7 @@ const UMAPClusterPlotDeck = ({
         // Reset view state to initial
         setHoveredObject(null);
         onHover(null);
-        setViewState(fitToData(data, containerDimensions));
+        setViewState(fitToData(data, containerDimensions, null, zoomOffset));
         setIsManipulated(false);
     };
 
@@ -590,8 +590,18 @@ const UMAPClusterPlotDeck = ({
                     { label: t('molecular.nodePopup.smiles'), value: hoveredObject.object.smiles, span: 2 },
                     { label: t('molecular.umapPlot.properties.cluster'), value: hoveredObject.object.properties.CLUSTER },
                     { label: t('molecular.umapPlot.properties.molWeight'), value: hoveredObject.object.properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
-                    { label: t('molecular.umapPlot.properties.espMax'), value: hoveredObject.object.properties.esp_max_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.espMin'), value: hoveredObject.object.properties.esp_min_eV, suffix: t('molecular.umapPlot.units.eV') },
+                    { 
+                        label: t('molecular.umapPlot.properties.espMax'), 
+                        value: hoveredObject.object.properties.esp_max_eV, 
+                        suffix: t('molecular.umapPlot.units.eV'),
+                        show: molecularType === 'organic'
+                    },
+                    { 
+                        label: t('molecular.umapPlot.properties.espMin'), 
+                        value: hoveredObject.object.properties.esp_min_eV, 
+                        suffix: t('molecular.umapPlot.units.eV'),
+                        show: molecularType === 'organic'
+                    },
                     { label: t('molecular.umapPlot.properties.homo'), value: hoveredObject.object.properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
                     { label: t('molecular.umapPlot.properties.lumo'), value: hoveredObject.object.properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
                     {
@@ -611,7 +621,24 @@ const UMAPClusterPlotDeck = ({
                     },
                     {
                         label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    },
+                    {
+                        label: "Chemical Formula", 
+                        value: hoveredObject.object.properties.chemical_formula,
+                        show: molecularType === "anions"
+                    },
+                    {
+                        label: "Molecular Volume", 
+                        value: hoveredObject.object.properties.vdw_volume_angstroms3,
+                        suffix: " Å³",
+                        show: molecularType === "anions"
+                    },
+                    {
+                        label: "F Dissociation Energy", 
+                        suffix: " eV",
+                        value: hoveredObject.object.properties.fluoride_bde_ev,
+                        show: molecularType === "anions"
                     }
                 ]}
             />

@@ -12,7 +12,7 @@ const API_URL = getAPIUrl();
 
 interface NodePopupProps {
   node: any;
-  molecularType?: 'organic' | 'inorganic';
+  molecularType?: 'organic' | 'inorganic' | 'anions';
 }
 
 // NodePopup component for displaying molecule information
@@ -80,6 +80,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
             <tbody>
               {Object.entries(node.properties || {})
                 .filter(([key, value]) => {
+                  console.log(key, value, molecularType);
                   // Hide commercial_link row if value is "N/A"
                   if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
@@ -91,7 +92,15 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                     return false;
                   }
 
-                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV')) {
+                    return false;
+                  }
+
+                  if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                    return false;
+                  }
+
+                  if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
                     return false;
                   }
                   

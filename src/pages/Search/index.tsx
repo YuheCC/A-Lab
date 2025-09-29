@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
+import AnionsSearch from "./components/AnionsSearch";
 import "./Search.css";
+import { useNavigate } from '@umijs/max';
 
 const Search = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'third'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions' | 'third'>('organic');
+    const navigate = useNavigate();
+    const handleGoToFavorites = () => {
+        navigate('/favorites');
+    };
 
     return (
         <div>
@@ -25,12 +31,29 @@ const Search = () => {
                         {t('search.tabs.inorganic')}
                     </button> */}
                     <button
+                        onClick={() => setActiveTab('anions')}
+                        className={`search-tab-button ${activeTab === 'anions' ? 'active' : ''}`}
+                    >
+                        {t('search.tabs.anions')}
+                    </button>
+                    <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
                     >
                         {t('search.tabs.third')}
                     </button>
                 </div>
+                {
+                    activeTab !== 'third' && (
+                        <button
+                            className="favorites-enter-button"
+                            onClick={handleGoToFavorites}
+                            title={t('search.favorites.goToFavorites')}
+                        >
+                            {t('search.favorites.favorites')}
+                        </button>
+                    )
+                }
             </div>
 
             {/* Tab Content */}
@@ -39,6 +62,8 @@ const Search = () => {
                     <OrganicSearch />
                 ) : activeTab === 'inorganic' ? (
                     <InorganicSearch />
+                ) : activeTab === 'anions' ? (
+                    <AnionsSearch />
                 ) : (
                     <ThirdSearch />
                 )}

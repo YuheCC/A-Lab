@@ -1,8 +1,9 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: '有機分子',
-        inorganic: '無機分子',
+        organic: '溶媒、添加剤・希釈剤',
+        inorganic: '無機溶媒、添加剤・希釈剤',
+        anions: '塩アニオン',
         third: '固体電解質'
     },
     
@@ -89,6 +90,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "お気に入りに追加 ★",
     saving: "保存中...",
+
+    // Favorites
+    favorites: {
+        favorites: "お気に入り",
+        goToFavorites: "お気に入りページに移動"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "検索条件に一致する複数の分子が見つかりました。友達検索は無効です。",

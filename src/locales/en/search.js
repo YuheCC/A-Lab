@@ -1,9 +1,10 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: 'Organic Molecules',
-        inorganic: 'Inorganic Molecules',
-        third: 'Solid-State Electrolyte'
+        organic: 'Solvents, Additives & Diluents',
+        inorganic: 'Inorganic Solvent, Additives & Diluents',
+        anions: 'Salt Anions',
+        third: 'Solid Electrolytes '
     },
     
     // Search Input
@@ -89,6 +90,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "Add to Favorites ★",
     saving: "Saving...",
+
+    // Favorites
+    favorites: {
+        favorites: "Favorites",
+        goToFavorites: "Go to Favorites page"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "Multiple molecules found matching your search criterion. Find friends disabled.",

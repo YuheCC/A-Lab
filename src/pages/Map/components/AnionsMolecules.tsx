@@ -1,17 +1,17 @@
 import { useRef, useState, useEffect } from "react";
-import { useInorganicPlotDataStore } from "@/models/usePlotData";
+import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 
-const InorganicMolecules = () => {
+const AnionsMolecules = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
-    const { data, loading, error, fetchData } = useInorganicPlotDataStore(); 
+    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
 
     const [showMapFooter, setShowMapFooter] = useState(true);
     const [showTooltip, setShowTooltip] = useState(false);
@@ -41,7 +41,7 @@ const InorganicMolecules = () => {
             {/* UMAP Visualization in the middle (50%) */}
             <div className="map-umap-section" style={{ position: 'relative' }}>
                 {/* Info icon with tooltip */}
-                <div 
+                <div
                     style={{
                         position: 'absolute',
                         top: '15px',
@@ -52,9 +52,9 @@ const InorganicMolecules = () => {
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                 >
-                    <svg 
-                        width="20" 
-                        height="20" 
+                    <svg
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         style={{
                             fill: '#0066cc',
@@ -64,7 +64,7 @@ const InorganicMolecules = () => {
                         <circle cx="12" cy="12" r="10" fill="#ffffff" stroke="#0066cc" strokeWidth="2"/>
                         <text x="12" y="16" textAnchor="middle" fontSize="12" fill="#0066cc" fontWeight="bold">i</text>
                     </svg>
-                    
+
                     {/* Tooltip */}
                     {showTooltip && (
                         <div
@@ -110,7 +110,8 @@ const InorganicMolecules = () => {
                         <UMAPClusterPlotDeck
                             data={data}
                             userPermissions={userPermissions}
-                            molecularType="inorganic"
+                            molecularType="anions"
+                            zoomOffset={-0.2}
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();
@@ -123,9 +124,9 @@ const InorganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup key="inorganicNodePopup" node={node} ref={nodePopupRef} molecularType="inorganic"/>
+            <NodePopup key="anionsNodePopup" node={node} ref={nodePopupRef} molecularType="anions"/>
         </>
     )
 };
 
-export default InorganicMolecules;
+export default AnionsMolecules;

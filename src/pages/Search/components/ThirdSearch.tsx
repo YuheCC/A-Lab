@@ -164,7 +164,7 @@ const ThirdSearch: React.FC = () => {
     const mainContentStyle: React.CSSProperties = {
         backgroundColor: 'white',
         padding: '20px',
-        margin: '0 20px 20px 20px',
+        margin: '0px 0px 0px 0px',
         borderRadius: '8px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         display: 'flex',
@@ -605,9 +605,7 @@ const ThirdSearch: React.FC = () => {
         <>
             <div style={containerStyle} className="third-search-container-new">
                 {/* 顶部说明条 */}
-                <div style={headerBannerStyle}>
-                    {t('thirdSearch.headerBanner')}
-                </div>
+                
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>

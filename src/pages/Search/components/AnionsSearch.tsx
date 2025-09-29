@@ -4,7 +4,7 @@ import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
-import { usePlotDataStore } from "@/models/usePlotData";
+import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
@@ -15,7 +15,7 @@ import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
 import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
-import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
+import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 
 const API_URL = getAPIUrl();
@@ -66,14 +66,21 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const OrganicSearch = () => {
+const AnionsSearch = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
-    const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
-    
-    const { data, loading, error } = usePlotDataStore();
+    const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
+
+    const { data, loading, error, fetchData } = useAnionsPlotDataStore();
+
+    // 组件挂载时获取数据
+    useEffect(() => {
+        if (data.length === 0) {
+            fetchData();
+        }
+    }, [data.length, fetchData]);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
@@ -82,7 +89,7 @@ const OrganicSearch = () => {
     const [searchWarning, setSearchWarning] = useState<string | null>(null);
     const [searchedMolecules, setsearchedMolecules] = useState<MoleculeData[] | null>(null);
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
-    const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
+    const [, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.75);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
@@ -112,7 +119,7 @@ const OrganicSearch = () => {
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
-    const organicFilterRef = useRef<OrganicFilterRef>(null);
+    const anionsFilterRef = useRef<AnionsFilterRef>(null);
     const [cathode, setCathode] = useState('');
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
@@ -157,7 +164,7 @@ const OrganicSearch = () => {
                 setAmbiguousOptions(null);
             } else {
                 // 重置过滤状态
-                organicFilterRef.current?.resetFilters();
+                anionsFilterRef.current?.resetFilters();
             }
             setInterfaceMode(mode);
         }
@@ -181,14 +188,14 @@ const OrganicSearch = () => {
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!isDraggingRef.current || !containerRef.current) return;
-        
+
         e.preventDefault();
-        
+
         const containerRect = containerRef.current.getBoundingClientRect();
         const containerWidth = containerRect.width;
         const mouseX = e.clientX - containerRect.left;
         const newLeftPanelWidth = (mouseX / containerWidth) * 100;
-        
+
         // 限制拖拽范围在20%到80%之间
         if (newLeftPanelWidth >= 20 && newLeftPanelWidth <= 80) {
             setLeftPanelWidth(newLeftPanelWidth);
@@ -311,8 +318,8 @@ const OrganicSearch = () => {
             // Determine which endpoint to use based on user permissions
             let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
-            // Fetch the searched molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
+            // Fetch the searched molecule's properties
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=anions`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -413,22 +420,22 @@ const OrganicSearch = () => {
                         flex: `0 0 ${leftPanelWidth}%`
                     }}
                 >
-                    <div style={{ 
-                        width: '100%', 
-                        height: '100%', 
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
                         position: 'relative',
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center' 
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}>
                         {data.length > 0 ? (
                             <UMAPClusterPlotDeck
-                                zoomOffset={-0.3}
+                                zoomOffset={-0.2}
                                 data={interfaceMode === 'filter' ? filteredPlotData : data}
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
-                                molecularType="organic"
+                                molecularType="anions"
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -443,7 +450,7 @@ const OrganicSearch = () => {
                 </div>
 
                 {/* 可拖拽的分隔条 */}
-                <div 
+                <div
                     className="resize-divider"
                     onMouseDown={handleMouseDown}
                     style={{
@@ -513,7 +520,7 @@ const OrganicSearch = () => {
                                 disabled={searchLoading}
                             />
 
-                    <FindFriendOptions
+                    {/* <FindFriendOptions
                         findClosestFriends={findClosestFriends}
                         setFindClosestFriends={setFindClosestFriends}
                         extraRequests={extraRequests}
@@ -554,7 +561,7 @@ const OrganicSearch = () => {
                         solventOptions={solventOptions}
                         performanceOptions={performanceOptions}
                         userPermissions={userPermissions}
-                    />
+                    /> */}
 
                     <div className="search-results">
                         {searchLoading && (
@@ -704,7 +711,7 @@ const OrganicSearch = () => {
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
                                                     { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
-                                                ]} 
+                                                ]}
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
                                                     { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
@@ -719,15 +726,15 @@ const OrganicSearch = () => {
                                                         }}
                                                         onClick={() => {
                                                             console.log('Add to Favorites payload (search):', molecule);
-                                                            
+
                                                             // Get the raw commercial score (numeric 0-3)
                                                             const rawCommercialScore = molecule.COMMERCIAL_SCORE;
-                                                            
+
                                                             // Convert commercial score from numeric to descriptive text
-                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined 
+                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined
                                                                 ? COMMERCIAL_SCORE_MAP[rawCommercialScore as keyof typeof COMMERCIAL_SCORE_MAP] || null
                                                                 : null;
-                                                            
+
                                                             handleAddToFavorites({
                                                                 smiles: molecule.SMILES,
                                                                 properties: {
@@ -758,9 +765,14 @@ const OrganicSearch = () => {
                                                     {
                                                         userPermissions === 'admin' && (
                                                             <MoleculeFeedbackBox
+                                                                fullWidth={false}
                                                                 molecule={molecule}
                                                                 lastSearch={lastSearch}
                                                                 queryType="normal_ask"
+                                                                contextContent1={''}
+                                                                contextContent2={''}
+                                                                contextContent3={''}
+                                                                useMultiAgent={false}
                                                                 onClose={() => { }}
                                                             />
                                                         )
@@ -801,16 +813,16 @@ const OrganicSearch = () => {
                     </div>
                         </>
                     ) : (
-                        <OrganicFilter
-                            ref={organicFilterRef}
+                        <AnionsFilter
+                            ref={anionsFilterRef}
                             onDataFiltered={setFilteredPlotData}
                         />
                     )}
                 </div>
             </div>
-            <NodePopup key="organicNodePopup" ref={nodePopupRef} node={node} molecularType="organic"/>
+            <NodePopup key="anionsNodePopup" ref={nodePopupRef} node={node} molecularType="anions"/>
         </>
     )
 };
 
-export default OrganicSearch;
+export default AnionsSearch;

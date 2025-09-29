@@ -1,8 +1,9 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: '有机分子',
-        inorganic: '无机分子',
+        organic: '溶剂、添加剂和稀释剂',
+        inorganic: '无机溶剂、添加剂和稀释剂',
+        anions: '盐阴离子',
         third: '固态电解质'
     },
     
@@ -89,6 +90,12 @@ export default {
     // Buttons and Actions
     addToFavorites: "添加到收藏 ★",
     saving: "保存中...",
+
+    // Favorites
+    favorites: {
+        favorites: "收藏",
+        goToFavorites: "进入收藏页面"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "找到多个匹配您搜索条件的分子。查找朋友功能已禁用。",
