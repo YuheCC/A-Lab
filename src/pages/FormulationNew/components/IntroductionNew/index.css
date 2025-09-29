@@ -18,11 +18,11 @@
 
 /* Function Introduction Section */
 .function-intro-section {
-  padding: 0 0 40px 0;
+  padding: 0 0 10px 0;
 }
 
 .content-section {
-  padding: 40px 0;
+  padding: 40px 0px 10px 0px;
 }
 
 .section-title {
@@ -37,18 +37,6 @@
 
 .group-title {
   font-size: 24px;
-}
-
-/* 为Function Introduction和Properties Introduction添加下划线 */
-.function-intro-section .section-title::after,
-.content-section:has(.properties-table-container) .section-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 80px;
-  height: 2px;
-  background-color: #d1d5db;
 }
 
 .section-description {
@@ -296,7 +284,7 @@
 
 .property-image {
   width: 100%;
-  max-width: 600px;
+  max-width: 480px;
   height: auto;
   border-radius: 8px;
   margin-bottom: 16px;

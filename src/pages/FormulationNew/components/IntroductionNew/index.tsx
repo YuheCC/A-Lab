@@ -34,7 +34,7 @@ const IntroductionNew: React.FC = () => {
       {/* MD Service Benefits Section */}
       <div className="content-section">
         <div className="content-layout">
-          <div className="content-text" style={{ paddingTop: '25px' }}>
+          <div className="content-text" style={{ paddingTop: '45px' }}>
             <p className="content-description">
               MU's proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvents
               organize at different salt concentrations.
