@@ -11,6 +11,7 @@ import SettingModal from "@/components/SettingModal";
 import UserFeedBackModal from "@/components/UserFeedBackModal";
 import RoleRender from "../RoleRender";
 import { PricingContext } from "@/layouts/index";
+import { useLoginModalContext } from "@/components/LoginModal/context";
 
 const Header = () => {
     const { t } = useTranslation();
@@ -22,9 +23,10 @@ const Header = () => {
     const avatarRef = useRef<HTMLAnchorElement>(null);
     const navDropdownRef = useRef<HTMLDivElement>(null);
     const userFeedBackModalRef = useRef<any>(null);
-    const { logout, userName, userPermissions: permissions } = useAuthStore();
+    const { logout, userName, userPermissions: permissions, isAuthenticated } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
+    const { openLoginModal } = useLoginModalContext();
 
     // Helper function to check if a path is active
     const isPathActive = (path: string) => {
@@ -32,7 +34,7 @@ const Header = () => {
     };
 
     // 检查是否为common用户
-    const isCommonUser = permissions === 'common';
+    const isCommonUser = false; //permissions === 'common';
     const isEducationalUser = permissions === 'research';
 
     useEffect(() => {
@@ -166,36 +168,46 @@ const Header = () => {
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
-                <div className="user-avatar-container">
-                    <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
-                        <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
-                    </a>
-                    <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
-                        <div className="user-info">
-                            <div className="user-avatar-large">
-                                <img src={userCircleSvg} alt="User Avatar" className="user-avatar-img" />
-                            </div>
-                            <div className="user-details">
-                                <div className="user-name-container">
-                                    <div className="user-email">{userName}</div>
-                                    <RoleRender role={permissions} />
+                {isAuthenticated ? (
+                    <div className="user-avatar-container">
+                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
+                            <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
+                        </a>
+                        <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
+                            <div className="user-info">
+                                <div className="user-avatar-large">
+                                    <img src={userCircleSvg} alt="User Avatar" className="user-avatar-img" />
+                                </div>
+                                <div className="user-details">
+                                    <div className="user-name-container">
+                                        <div className="user-email">{userName}</div>
+                                        <RoleRender role={permissions} />
+                                    </div>
                                 </div>
                             </div>
+                            <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
+                                <img src={settingSvg} alt="Setting" className="item-icon" />
+                                {t('navigation.userDropdown.accountSettings')}
+                            </a>
+                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
+                                <img src={feedbackSvg} alt="Feedback" className="item-icon" />
+                                {t('navigation.userDropdown.feedback')}
+                            </a>
+                            <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
+                                <img src={logoutSvg} alt="Logout" className="item-icon" />
+                                {t('navigation.userDropdown.logout')}
+                            </a>
                         </div>
-                        <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
-                            <img src={settingSvg} alt="Setting" className="item-icon" />
-                            {t('navigation.userDropdown.accountSettings')}
-                        </a>
-                        <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
-                            <img src={feedbackSvg} alt="Feedback" className="item-icon" />
-                            {t('navigation.userDropdown.feedback')}
-                        </a>
-                        <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
-                            <img src={logoutSvg} alt="Logout" className="item-icon" />
-                            {t('navigation.userDropdown.logout')}
-                        </a>
                     </div>
-                </div>
+                ) : (
+                    <span
+                        className="nav-item login-text"
+                        onClick={() => openLoginModal()}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {t('auth.form.signIn', '登录')}
+                    </span>
+                )}
             </div>
             <SettingModal ref={settingModalRef} />
             <UserFeedBackModal ref={userFeedBackModalRef} />
