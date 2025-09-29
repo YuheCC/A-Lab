@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
 import './third.css';
 import { authFetch, getAPIUrl } from '@/utils';
+import { useAuthStore } from '@/models/useAuth';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 
 const BASE_URL = getAPIUrl();
 
@@ -11,10 +13,22 @@ interface SearchResult {
     [key: string]: any;
 }
 
-const ThirdSearch: React.FC = () => {
+const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = false }) => {
     const { t } = useTranslation();
-    const [molecularFormula, setMolecularFormula] = useState<string>('');
-    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('atLeastElements');
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
+    const [molecularFormula, setMolecularFormula] = useState<string>(
+        isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput : ''
+    );
+    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>(
+        isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.activeTab : 'atLeastElements'
+    );
+    useEffect(() => {
+        if (!isPublic) return;
+        setMolecularFormula(PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput);
+        setActiveTab(PUBLIC_SEARCH_LOCKED_VALUES.sse.activeTab);
+    }, [isPublic]);
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -27,6 +41,7 @@ const ThirdSearch: React.FC = () => {
     const [selectedRecord, setSelectedRecord] = useState<SearchResult | null>(null);
 
     const handleFormulaChange = (value: string) => {
+        if (isPublic) return;
         setMolecularFormula(value);
     };
 
@@ -77,6 +92,7 @@ const ThirdSearch: React.FC = () => {
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isPublic) return;
         setMolecularFormula(e.target.value);
     };
 
@@ -358,6 +374,7 @@ const ThirdSearch: React.FC = () => {
 
     // 触发对应索引的li元素点击事件的函数
     const triggerLiClick = (index: number) => {
+        if (isPublic) return;
         setTimeout(() => {
             const modeSwitcher = ref.current?.querySelector('.mpc-pt-mode-switcher');
             if (modeSwitcher) {
@@ -611,17 +628,36 @@ const noResultsStyle: React.CSSProperties = {
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>
-                    <button style={materialsButtonStyle}>{t('thirdSearch.materialsButton')}</button>
+                    <button style={{ ...materialsButtonStyle, opacity: isPublic ? 0.6 : 1 }} disabled={isPublic}>
+                        {t('thirdSearch.materialsButton')}
+                    </button>
                     
                     {/* 自定义输入框，替代库的输入框 */}
                     <input
-                        style={customInputStyle}
+                        style={{
+                            ...customInputStyle,
+                            backgroundColor: isPublic ? '#f0f0f0' : customInputStyle.backgroundColor,
+                            cursor: isPublic ? 'not-allowed' : 'text',
+                        }}
                         value={molecularFormula}
                         onChange={handleInputChange}
                         placeholder=""
+                        disabled={isPublic}
                     />
-                    
-                    <button style={iconButtonStyle} title={t('thirdSearch.periodicTableTooltip')} onClick={() => setInputShow(!inputShow)}>
+
+                    <button
+                        style={{
+                            ...iconButtonStyle,
+                            opacity: isPublic ? 0.5 : 1,
+                            cursor: isPublic ? 'not-allowed' : iconButtonStyle.cursor,
+                        }}
+                        title={t('thirdSearch.periodicTableTooltip')}
+                        onClick={() => {
+                            if (isPublic) return;
+                            setInputShow(!inputShow);
+                        }}
+                        disabled={isPublic}
+                    >
                         <div style={{ 
                             width: '16px', 
                             height: '12px', 
@@ -653,26 +689,43 @@ const noResultsStyle: React.CSSProperties = {
                             <>
                                 <div style={tabContainerStyle}>
                                     <button 
-                                        style={activeTab === 'elements' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'elements' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 0.5 : 1,
+                                            cursor: isPublic ? 'not-allowed' : 'pointer',
+                                        }}
                                         onClick={() => {
+                                            if (isPublic) return;
                                             setActiveTab('elements');
                                             triggerLiClick(0);
                                         }}
+                                        disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.onlyElements')}
                                     </button>
                                     <button 
-                                        style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'atLeastElements' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 0.5 : 1,
+                                            cursor: isPublic ? 'not-allowed' : 'pointer',
+                                        }}
                                         onClick={() => {
+                                            if (isPublic) return;
                                             setActiveTab('atLeastElements');
                                             triggerLiClick(1);
                                         }}
+                                        disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.atLeastElements')}
                                     </button>
                                     <button 
-                                        style={activeTab === 'formula' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'formula' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 1 : 1,
+                                            cursor: isPublic ? 'default' : 'pointer',
+                                        }}
                                         onClick={() => {
+                                            if (activeTab === 'formula' || isPublic) return;
                                             setActiveTab('formula');
                                             triggerLiClick(2);
                                         }}
@@ -682,7 +735,15 @@ const noResultsStyle: React.CSSProperties = {
                                 </div>
 
                                 {/* MaterialsInput组件 - 通过CSS隐藏输入框，只显示周期表 */}
-                                <div ref={ref} style={materialsInputContainerStyle} className="materials-input-container">
+                                <div
+                                    ref={ref}
+                                    style={{
+                                        ...materialsInputContainerStyle,
+                                        opacity: isPublic ? 0.5 : 1,
+                                        pointerEvents: isPublic ? 'none' : 'auto',
+                                    }}
+                                    className="materials-input-container"
+                                >
                                     <MaterialsInput
                                         value={molecularFormula}
                                         onChange={handleFormulaChange}

@@ -4,14 +4,21 @@ import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
 import AnionsSearch from "./components/AnionsSearch";
 import "./Search.css";
 import { useNavigate } from '@umijs/max';
+import { useAuthStore } from '@/models/useAuth';
 
 const Search = () => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions' | 'third'>('organic');
     const navigate = useNavigate();
+
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublicUser = initialAuthLoaded && !isAuthenticated;
     const handleGoToFavorites = () => {
         navigate('/favorites');
     };
+
+    console.log('isPublicUser', isPublicUser);
 
     return (
         <div>
@@ -55,13 +62,13 @@ const Search = () => {
             {/* Tab Content */}
             <div className="tab-content">
                 {activeTab === 'organic' ? (
-                    <OrganicSearch />
+                    <OrganicSearch isPublicUser={isPublicUser} />
                 ) : activeTab === 'inorganic' ? (
                     <InorganicSearch />
                 ) : activeTab === 'anions' ? (
-                    <AnionsSearch />
+                    <AnionsSearch isPublicUser={isPublicUser} />
                 ) : (
-                    <ThirdSearch />
+                    <ThirdSearch isPublicUser={isPublicUser} />
                 )}
             </div>
         </div>
