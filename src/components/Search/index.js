@@ -15,6 +15,7 @@ const SearchInput = React.memo(({
   lockInput = false,
   initialEditorOpen = true,
   lockMolEditorToggle = false,
+  allowSubmitWhenLocked = false,
 }) => {
   const { t } = useTranslation();
   const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
@@ -43,13 +44,16 @@ const SearchInput = React.memo(({
     }
   }
 
+  const isSubmitDisabled = disabled || (lockInput && !allowSubmitWhenLocked);
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isSubmitDisabled) {
       onSearch(inputValue);
     }
   };
 
   const handleClickSend = () => {
+    if (isSubmitDisabled) return;
     onSearch(inputValue);
   }
 
@@ -115,7 +119,7 @@ const SearchInput = React.memo(({
         <button
           className="search-button"
           onClick={handleClickSend}
-          disabled={disabled || lockInput}
+          disabled={isSubmitDisabled}
         >
           {t('search.searchButton')}
         </button>

@@ -40,6 +40,7 @@ interface FindFriendOptionsProps {
   findFriendLimitInfo?: QueryLimitInfo;
   showBatteryFields?: boolean;
   readOnly?: boolean;
+  allowFindFriendsToggleWhenReadOnly?: boolean;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -76,8 +77,11 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   findFriendLimitInfo,
   showBatteryFields = true,
   readOnly = false,
+  allowFindFriendsToggleWhenReadOnly = false,
 }) => {
   const { t } = useTranslation();
+  const canToggleFindFriends = !readOnly || allowFindFriendsToggleWhenReadOnly;
+  const checkboxDisabled = readOnly && !allowFindFriendsToggleWhenReadOnly;
   const toggleAdvanced = () => {
     if (readOnly) return;
     setShowAdvanced(!showAdvanced);
@@ -105,7 +109,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
             flex: '0 0 100%',
             width: '100%',
             minWidth: 0,
-            opacity: readOnly ? 0.6 : 1,
+            opacity: readOnly && !allowFindFriendsToggleWhenReadOnly ? 0.6 : 1,
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
@@ -127,14 +131,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       type="checkbox"
                       checked={findClosestFriends}
                       onChange={(e) => setFindClosestFriends(e.target.checked)}
-                      disabled={readOnly}
+                      disabled={checkboxDisabled}
                     />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 auto', minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <label
                         htmlFor="find-friends-checkbox"
-                      style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      style={{ display: 'flex', alignItems: 'center', cursor: canToggleFindFriends ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap' }}
                     >
                       <span>{t('search.findFriendsLabel')}</span>
                       <InfoTooltip
@@ -156,6 +160,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                           alignItems: 'center',
                           gap: '8px',
                           flexWrap: 'wrap',
+                          opacity: readOnly ? 0.6 : 1,
                         }}
                       >
                         <select
@@ -193,7 +198,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                     )}
                   </div>
                   {findClosestFriends && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', opacity: readOnly ? 0.6 : 1 }}>
                       <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
                       <InfoTooltip
                         title={(

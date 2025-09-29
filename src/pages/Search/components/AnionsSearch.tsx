@@ -535,6 +535,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 lockInput={isPublic}
                                 initialEditorOpen={!isPublic}
                                 lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
                             />
 
                             <FindFriendOptions
@@ -569,6 +570,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 showStructureSlider={false}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
                             />
 
                     <div className="search-results">

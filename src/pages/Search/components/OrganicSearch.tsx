@@ -526,6 +526,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 lockInput={isPublic}
                                 initialEditorOpen={!isPublic}
                                 lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
                             />
 
                             <FindFriendOptions
@@ -558,6 +559,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
                             />
 
                     <div className="search-results">
