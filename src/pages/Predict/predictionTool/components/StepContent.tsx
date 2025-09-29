@@ -3,6 +3,7 @@ import { FileText, RefreshCw, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
 
 interface StepContentProps {
@@ -14,6 +15,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete, onReset }) => {
   const { t } = useTranslation();
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -242,12 +244,12 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               </div>
             )}
             
-            {error && (
-              <div className="error-message" style={{ 
-                color: '#e53e3e', 
-                backgroundColor: '#fed7d7', 
-                padding: '12px', 
-                borderRadius: '6px', 
+            {error && isAuthenticated && (
+              <div className="error-message" style={{
+                color: '#e53e3e',
+                backgroundColor: '#fed7d7',
+                padding: '12px',
+                borderRadius: '6px',
                 margin: '16px 0',
                 fontSize: '14px'
               }}>
