@@ -363,7 +363,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                     </tbody>
                   </table>
                 ) : (
-                  <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic' }}>
+                  <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic', marginLeft: '20px' }}>
                     {t('predictionTool.results.noDetailedData')}
                   </p>
                 )}
