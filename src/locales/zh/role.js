@@ -1,4 +1,5 @@
 export default {
+    public: '公开访问',
     common: '普通用户',
     research: '教育用户',
     explorer: '探索者',

@@ -1,4 +1,5 @@
 export default {
+    public: 'Public',
     common: 'Basic',
     research: 'Education',
     explorer: 'Explorer',
