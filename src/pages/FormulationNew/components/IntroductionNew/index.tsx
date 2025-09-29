@@ -34,7 +34,7 @@ const IntroductionNew: React.FC = () => {
       {/* MD Service Benefits Section */}
       <div className="content-section">
         <div className="content-layout">
-          <div className="content-text">
+          <div className="content-text" style={{ paddingTop: '25px' }}>
             <p className="content-description">
               MU's proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvents
               organize at different salt concentrations.
@@ -77,7 +77,7 @@ const IntroductionNew: React.FC = () => {
       <div className="content-section">
         <div className="group-header">
           <span className="group-label">GROUP 01</span>
-          <h2 className="section-title">Standard Properties</h2>
+          <h2 className="section-title group-title">Standard Properties</h2>
         </div>
 
         {/* Property 01: RDF */}
@@ -215,7 +215,7 @@ const IntroductionNew: React.FC = () => {
       <div className="content-section">
         <div className="group-header">
           <span className="group-label">GROUP 02</span>
-          <h2 className="section-title">Instructions Needed</h2>
+          <h2 className="section-title group-title">Instructions Needed</h2>
         </div>
 
         {/* Property 08: Ion–ion correlation */}
@@ -259,7 +259,7 @@ const IntroductionNew: React.FC = () => {
       <div className="content-section">
         <div className="group-header">
           <span className="group-label">GROUP 03</span>
-          <h2 className="section-title">Advanced Properties</h2>
+          <h2 className="section-title group-title">Advanced Properties</h2>
         </div>
 
         {/* Property 12: EDL */}
