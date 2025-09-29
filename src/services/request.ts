@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { triggerLoginModal, shouldShowLoginModal } from '@/utils/authHelpers';
 
 // 直接使用定义的 BASE_URL，如果未定义则使用默认值
 const baseURL = BASE_URL || 'https://prod-api.ses.ai';
@@ -6,7 +7,7 @@ const baseURL = BASE_URL || 'https://prod-api.ses.ai';
 // 创建axios实例
 const axiosInstance: AxiosInstance = axios.create({
     baseURL,
-    timeout: 10000,
+    timeout: 1000000,
     headers: {
         'Content-Type': 'application/json',
     }
@@ -41,8 +42,18 @@ axiosInstance.interceptors.response.use(
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
+            localStorage.removeItem('organization_name');
+
             const current = window.location.pathname + window.location.search;
-            window.location.href = '/login?redirect=' + encodeURIComponent(current);
+
+            // 使用登录浮层而不是页面跳转
+            if (shouldShowLoginModal(window.location.pathname)) {
+                triggerLoginModal(current);
+            } else {
+                // 如果不应该显示浮层，则跳转到登录页面
+                console.log('current401', current);
+                window.location.href = '/login?redirect=' + encodeURIComponent(current);
+            }
         }
         return Promise.resolve({
             ok: false,

@@ -9,6 +9,9 @@ import { authFetch, getAPIUrl } from "@/utils";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
+import { usePageCleanup } from "@/hooks/usePageCleanup";
+import { LoginModalProvider, useLoginModalContext } from "@/components/LoginModal/context";
+import LoginModal from "@/components/LoginModal";
 
 const API_URL = getAPIUrl();
 
@@ -19,11 +22,14 @@ const FullNavLayoutInner = () => {
     const location = useLocation();
     const pathname = location.pathname;
     const isChatPage = pathname.includes('/chat') || pathname.includes('/ask');
+    const isPredictPage = pathname.includes('/predict');
     const { fetchInitialData , fetchData} = usePlotDataStore();
     const [moleculeFavoriteStatus, setMoleculeFavoriteStatus] = useState<any>({});
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { verifyAuth } = useAuthStore();
+    const language = i18n.language;
     const message = useMessage();
+    const { isOpen: isLoginModalOpen, redirectPath, closeLoginModal, onLogin, setOnLogin } = useLoginModalContext();
     // 从query获取showPricing参数
     const queryParams = new URLSearchParams(window.location.search);
     const showPricingFromQuery = queryParams.get('showPricing') === 'true';
@@ -31,9 +37,32 @@ const FullNavLayoutInner = () => {
     const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
     const [permission, setPermission] = useState(permissionFromQuery);
 
+    // 使用页面清理hook
+    usePageCleanup(pathname);
+
     useEffect(() => {
         verifyAuth();
     }, []);
+
+    // 定义登录成功后的回调函数
+    const handleLoginSuccess = () => {
+        // 重新验证身份
+        verifyAuth();
+
+        // 如果在预测页面，刷新数据
+        if (isPredictPage || true) {
+            // 刷新页面数据，触发组件重新渲染
+            window.location.reload();
+        }
+
+        // 如果需要，可以在这里添加更多刷新逻辑
+        // 例如重新获取用户数据、权限等
+    };
+
+    // 设置登录成功回调
+    useEffect(() => {
+        setOnLogin(handleLoginSuccess);
+    }, [setOnLogin, isPredictPage]);
 
     const handleAddToFavorites = async (molecule: any) => {
         // Use SMILES as unique identifier for the molecule
@@ -147,13 +176,19 @@ const FullNavLayoutInner = () => {
         if (isChatPage) {
             return 'main-container chat-container';
         }
+        if (isPredictPage) {
+            return 'main-container predict-container';
+        }
+        if (pathname.startsWith('/formulation')) {
+            return 'main-container formulation-container';
+        }
         return 'main-container';
     }
     return (
         <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
               <Header />
-              <div className={getMainContainerClassName()}>
+              <div className={`${getMainContainerClassName()} ${language}-page`}>
                   <Outlet />
               </div>
               <PricingOverlay 
@@ -164,6 +199,12 @@ const FullNavLayoutInner = () => {
                   }}
                   permission={permission}
               />
+              <LoginModal
+                  isOpen={isLoginModalOpen}
+                  onClose={closeLoginModal}
+                  redirectPath={redirectPath}
+                  onLogin={onLogin}
+              />
           </FavoriteContext.Provider>
         </PricingContext.Provider>
     );
@@ -172,7 +213,9 @@ const FullNavLayoutInner = () => {
 const FullNavLayout = () => {
     return (
         <MessageProvider>
-            <FullNavLayoutInner />
+            <LoginModalProvider>
+                <FullNavLayoutInner />
+            </LoginModalProvider>
         </MessageProvider>
     );
 }
