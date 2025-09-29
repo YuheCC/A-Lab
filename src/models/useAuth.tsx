@@ -134,21 +134,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem('username');
         localStorage.removeItem('permissions');
         localStorage.removeItem('organization_name');
-        set({ 
-            isAuthenticated: false, 
-            token: null, 
-            userPermissions: null, 
+        set({
+            isAuthenticated: false,
+            token: null,
+            userPermissions: null,
             userName: null,
             isLoading: false,
             error: null,
             organization_name: null
         });
         const current = window.location.pathname + window.location.search;
-        
-        // 使用LoginModal浮层而不是页面跳转
-        if (shouldShowLoginModal(window.location.pathname)) {
-            triggerLoginModal(current);
-        }
+
+        // 刷新页面以清除所有状态和缓存的数据
+        window.location.reload();
     },
 
     register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {
