@@ -4,6 +4,7 @@ export default {
     },
     input: {
         placeholder: "배터리, 배터리 화학 또는 관련 주제에 대한 질문이라면 무엇이든 물어보세요.",
+        placeholderPublic: "계정을 만들고 배터리, 배터리 화학 또는 관련 주제에 대해 무엇이든 물어보세요.",
         sendButton: "전송"
     },
     chat: {
@@ -169,6 +170,16 @@ export default {
         feedbackError: "피드백 제출 오류:",
         copyError: "복사 실패:",
         generalError: "오류"
+    },
+    publicAccess: {
+        bannerMessage: "계정을 만들거나 로그인하면 {{feature}}를 사용할 수 있습니다.",
+        dismiss: "닫기",
+        features: {
+            askInput: "Ask",
+            lightning: "라이트닝",
+            pro: "프로",
+            deepSpace: "딥 스페이스"
+        }
     },
     supplementalData: "부가 데이터",
     history: {

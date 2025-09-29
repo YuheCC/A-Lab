@@ -39,6 +39,8 @@ interface FindFriendOptionsProps {
   structureSliderTooltip?: React.ReactNode;
   findFriendLimitInfo?: QueryLimitInfo;
   showBatteryFields?: boolean;
+  readOnly?: boolean;
+  allowFindFriendsToggleWhenReadOnly?: boolean;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -74,10 +76,18 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   structureSliderTooltip,
   findFriendLimitInfo,
   showBatteryFields = true,
+  readOnly = false,
+  allowFindFriendsToggleWhenReadOnly = false,
 }) => {
   const { t } = useTranslation();
-  const toggleAdvanced = () => setShowAdvanced(!showAdvanced);
+  const canToggleFindFriends = !readOnly || allowFindFriendsToggleWhenReadOnly;
+  const checkboxDisabled = readOnly && !allowFindFriendsToggleWhenReadOnly;
+  const toggleAdvanced = () => {
+    if (readOnly) return;
+    setShowAdvanced(!showAdvanced);
+  };
   const handleAdvancedToggleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (readOnly) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       toggleAdvanced();
@@ -93,7 +103,15 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   return (
     <>
       <div className="search-options">
-        <div className="search-option" style={{ flex: '0 0 100%', width: '100%', minWidth: 0 }}>
+        <div
+          className="search-option"
+          style={{
+            flex: '0 0 100%',
+            width: '100%',
+            minWidth: 0,
+            opacity: readOnly && !allowFindFriendsToggleWhenReadOnly ? 0.6 : 1,
+          }}
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
             <div
               style={{
@@ -106,20 +124,21 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 flex: '1 1 auto',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: '1 1 auto', minWidth: 0 }}>
-                <div style={{ paddingTop: '2px' }}>
-                  <input
-                    id="find-friends-checkbox"
-                    type="checkbox"
-                    checked={findClosestFriends}
-                    onChange={(e) => setFindClosestFriends(e.target.checked)}
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 auto', minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                    <label
-                      htmlFor="find-friends-checkbox"
-                      style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: '1 1 auto', minWidth: 0 }}>
+                  <div style={{ paddingTop: '2px' }}>
+                    <input
+                      id="find-friends-checkbox"
+                      type="checkbox"
+                      checked={findClosestFriends}
+                      onChange={(e) => setFindClosestFriends(e.target.checked)}
+                      disabled={checkboxDisabled}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 auto', minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      <label
+                        htmlFor="find-friends-checkbox"
+                      style={{ display: 'flex', alignItems: 'center', cursor: canToggleFindFriends ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap' }}
                     >
                       <span>{t('search.findFriendsLabel')}</span>
                       <InfoTooltip
@@ -141,12 +160,17 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                           alignItems: 'center',
                           gap: '8px',
                           flexWrap: 'wrap',
+                          opacity: readOnly ? 0.6 : 1,
                         }}
                       >
                         <select
                           value={selectedMolType}
-                          onChange={(e) => setSelectedMolType(e.target.value)}
+                          onChange={(e) => {
+                            if (readOnly) return;
+                            setSelectedMolType(e.target.value);
+                          }}
                           style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                          disabled={readOnly}
                         >
                           <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
                           <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
@@ -156,9 +180,13 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                         {selectedMolType === 'additive' && (
                           <select
                             value={additiveSubtype}
-                            onChange={(e) => setAdditiveSubtype(e.target.value)}
+                            onChange={(e) => {
+                              if (readOnly) return;
+                              setAdditiveSubtype(e.target.value);
+                            }}
                             style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
                             aria-label={t('search.moleculeTypes.additiveSubtype')}
+                            disabled={readOnly}
                           >
                             <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
                             <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
@@ -170,7 +198,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                     )}
                   </div>
                   {findClosestFriends && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', opacity: readOnly ? 0.6 : 1 }}>
                       <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
                       <InfoTooltip
                         title={(
@@ -186,8 +214,12 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       </InfoTooltip>
                       <select
                         value={computeLevel}
-                        onChange={(e) => setComputeLevel(e.target.value)}
+                        onChange={(e) => {
+                          if (readOnly) return;
+                          setComputeLevel(e.target.value);
+                        }}
                         style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                        disabled={readOnly}
                       >
                         <option value="Disabled">{t('search.computeDisabled')}</option>
                         <option value="Low">{t('search.computeLow')}</option>
@@ -223,7 +255,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    cursor: 'pointer',
+                    cursor: readOnly ? 'not-allowed' : 'pointer',
                     whiteSpace: 'nowrap',
                     border: '1px solid #2563eb',
                     borderRadius: '6px',
@@ -234,6 +266,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                     transition: 'background-color 0.2s',
                     backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
                     marginLeft: 'auto',
+                    opacity: readOnly ? 0.5 : 1,
                   }}
                 >
                   <span>{t('search.advancedOptions')}</span>
@@ -272,6 +305,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 showBatteryFields={showBatteryFields}
                 showStructureSlider={showStructureSlider}
                 structureSliderTooltip={structureSliderTooltip}
+                readOnly={readOnly}
               />
             )}
           </div>

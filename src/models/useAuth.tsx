@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     userName: null,
     token: null,
     error: null,
-    userInfo: {},
+    userInfo: null,
     isAdvancedTier: false,
     organization_name: null,
     verifyAuth: async () => {
@@ -46,16 +46,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isLoading: false,
                 isAuthenticated: false,
                 initialAuthLoaded: true,
+                userPermissions: permissions || 'research',
+                userInfo: null,
+                isAdvancedTier: false,
+                organization_name: organizationName || null,
             });
-            const current = window.location.pathname + window.location.search;
-            if(window.location.pathname !== '/login' && window.location.pathname !== '/') {
-                window.location.href = '/login?redirect=' + encodeURIComponent(current);
-            }
             return;
         }
 
         try {
             const response: any = await verifyService();
+            if (response?.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('permissions');
+                localStorage.removeItem('organization_name');
+                set({
+                    isAuthenticated: false,
+                    userPermissions: 'research',
+                    isLoading: false,
+                    initialAuthLoaded: true,
+                    userInfo: null,
+                    isAdvancedTier: false,
+                    organization_name: null,
+                });
+                return;
+            }
+            if (response?.ok === false) {
+                throw new Error(response?.data?.detail || 'Failed to verify authentication');
+            }
             const data = response.data;
 
             localStorage.setItem('username', data.username);
@@ -87,6 +106,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 userPermissions: 'research',
                 isLoading: false,
                 initialAuthLoaded: true,
+                userInfo: null,
+                isAdvancedTier: false,
+                organization_name: null,
             })
         }
     },

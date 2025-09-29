@@ -44,6 +44,20 @@ export class ChatService {
     return isNaN(parsed.getTime()) ? new Date(trimmed) : parsed;
   }
 
+  private normalizePinnedFlag(input: any): boolean {
+    if (input === null || input === undefined) return false;
+    if (typeof input === 'boolean') return input;
+    if (typeof input === 'number') return input !== 0;
+    if (typeof input === 'string') {
+      const normalized = input.trim().toLowerCase();
+      if (!normalized) return false;
+      if (['true', '1', 'yes', 'y', 'on'].includes(normalized)) return true;
+      if (['false', '0', 'no', 'n', 'off'].includes(normalized)) return false;
+      return true;
+    }
+    return false;
+  }
+
   private parseToolStats(input: any): ToolStats | undefined {
     const source = input;
     if (!source || typeof source !== 'object') {
@@ -207,14 +221,18 @@ export class ChatService {
         method: 'GET',
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
-      return (resp.data || [])?.map((item: any) => ({
-        ...item,
-        chatId: item.id,
-        title: item.session_name,
-        timestamp: this.normalizeServerDate(item.updated_at),
-        isPinned: true,
-        updatedAt: item.updated_at, // 保存原始updated_at用于分页
-      })) || [];
+
+      const list = Array.isArray(resp.data) ? resp.data : [];
+      return list
+        .map((item: any) => ({
+          ...item,
+          chatId: item.id,
+          title: item.session_name,
+          timestamp: this.normalizeServerDate(item.updated_at),
+          isPinned: this.normalizePinnedFlag(item.pinned),
+          updatedAt: item.updated_at, // 保存原始updated_at用于分页
+        }))
+        .filter(item => item.isPinned);
     } catch (error) {
       console.error('Failed to get pinned chat list:', error);
       return [];
@@ -239,7 +257,7 @@ export class ChatService {
         chatId: item.id,
         title: item.session_name,
         timestamp: this.normalizeServerDate(item.updated_at),
-        isPinned: item.pinned,
+        isPinned: this.normalizePinnedFlag(item.pinned),
         updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
     } catch (error) {

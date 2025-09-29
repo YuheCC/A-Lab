@@ -18,6 +18,7 @@ import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 
 const API_URL = getAPIUrl();
 
@@ -69,9 +70,12 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const OrganicSearch = () => {
+const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -127,6 +131,22 @@ const OrganicSearch = () => {
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isPublic) return;
+        setFindClosestFriends(false);
+        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
+        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
+        setShowHypothetical(false);
+        setShowAdvanced(false);
+        setExtraRequests('');
+        setCathode('');
+        setAnode('');
+        setSalt('');
+        setSolvent('');
+        setMetric('');
+    }, [isPublic]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -502,6 +522,11 @@ const OrganicSearch = () => {
                             <SearchInput
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
+                                initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
+                                lockInput={isPublic}
+                                initialEditorOpen={!isPublic}
+                                lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
                             />
 
                             <FindFriendOptions
@@ -533,6 +558,8 @@ const OrganicSearch = () => {
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
+                                readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
                             />
 
                     <div className="search-results">

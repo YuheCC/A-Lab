@@ -18,6 +18,7 @@ import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 
 const API_URL = getAPIUrl();
 
@@ -69,9 +70,12 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const AnionsSearch = () => {
+const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -131,6 +135,27 @@ const AnionsSearch = () => {
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isPublic) return;
+        setFindClosestFriends(false);
+        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
+        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
+        setShowHypothetical(true);
+        setShowAdvanced(false);
+        setExtraRequests('');
+        setCathode('');
+        setCathodeCustom('');
+        setAnode('');
+        setAnodeCustom('');
+        setSalt('');
+        setSaltCustom('');
+        setSolvent('');
+        setSolventCustom('');
+        setMetric('');
+        setMetricCustom('');
+    }, [isPublic]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -506,6 +531,11 @@ const AnionsSearch = () => {
                             <SearchInput
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
+                                initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.anionInput : ''}
+                                lockInput={isPublic}
+                                initialEditorOpen={!isPublic}
+                                lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
                             />
 
                             <FindFriendOptions
@@ -536,9 +566,11 @@ const AnionsSearch = () => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
-                                enableMolTypeSelector={false}
+                                enableMolTypeSelector={isPublic ? true : false}
                                 showStructureSlider={false}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
+                                readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
                             />
 
                     <div className="search-results">

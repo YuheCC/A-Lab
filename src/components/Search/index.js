@@ -8,29 +8,52 @@ import benPenSvg from '@/assets/svg/benPen.svg';
 
 
 // SearchInput now maintains its own internal input state.
-const SearchInput = React.memo(({ onSearch, disabled }) => {
+const SearchInput = React.memo(({
+  onSearch,
+  disabled,
+  initialValue = "",
+  lockInput = false,
+  initialEditorOpen = true,
+  lockMolEditorToggle = false,
+  allowSubmitWhenLocked = false,
+}) => {
   const { t } = useTranslation();
-  const [showMolEditor, setShowMolEditor] = useState(true);
-  const [inputValue, setInputValue] = useState("");
+  const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
+  const [inputValue, setInputValue] = useState(initialValue);
+
+  useEffect(() => {
+    setInputValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    if (lockMolEditorToggle) {
+      setShowMolEditor(initialEditorOpen);
+    }
+  }, [lockMolEditorToggle, initialEditorOpen]);
 
   const handleChange = (e) => {
+    if (lockInput) return;
     setInputValue(e.target.value);
   };
 
   const handleMolChange = (mol) => {
+    if (lockInput) return;
     // If the molecule is valid, update the inputValue
     if (mol) {
       setInputValue(mol);
     }
   }
 
+  const isSubmitDisabled = disabled || (lockInput && !allowSubmitWhenLocked);
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isSubmitDisabled) {
       onSearch(inputValue);
     }
   };
 
   const handleClickSend = () => {
+    if (isSubmitDisabled) return;
     onSearch(inputValue);
   }
 
@@ -56,8 +79,16 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
         <InfoTooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
           <div
             className='control-icon pen-icon'
-            style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            style={{
+              marginLeft: '8px',
+              cursor: lockMolEditorToggle ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              opacity: lockMolEditorToggle ? 0.5 : 1,
+              pointerEvents: lockMolEditorToggle ? 'none' : 'auto',
+            }}
             onClick={() => {
+              if (lockMolEditorToggle) return;
               setShowMolEditor(!showMolEditor);
             }}
           >
@@ -71,7 +102,7 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          disabled={disabled}
+          disabled={disabled || lockInput}
         />
         <InfoTooltip
           title={<>
@@ -88,16 +119,16 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
         <button
           className="search-button"
           onClick={handleClickSend}
-          disabled={disabled}
+          disabled={isSubmitDisabled}
         >
           {t('search.searchButton')}
         </button>
       </div>
-      {showMolEditor && <MolEditor onMolChange={handleMolChange} style={{
+      {showMolEditor && !lockMolEditorToggle && <MolEditor onMolChange={handleMolChange} style={{
         marginTop: 5,
         border: 'none',
         boxShadow: 'none',
-      }}/>}
+      }}/>} 
     </div>
   );
 });

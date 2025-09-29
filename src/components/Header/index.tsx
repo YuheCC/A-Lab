@@ -22,7 +22,7 @@ const Header = () => {
     const avatarRef = useRef<HTMLAnchorElement>(null);
     const navDropdownRef = useRef<HTMLDivElement>(null);
     const userFeedBackModalRef = useRef<any>(null);
-    const { logout, userName, userPermissions: permissions } = useAuthStore();
+    const { logout, userName, userPermissions: permissions, isAuthenticated } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
 
@@ -34,6 +34,8 @@ const Header = () => {
     // 检查是否为common用户
     const isCommonUser = permissions === 'common';
     const isEducationalUser = permissions === 'research';
+    const displayName = isAuthenticated && userName ? userName : 'public';
+    const displayRole = isAuthenticated && permissions ? permissions : 'public';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -177,8 +179,8 @@ const Header = () => {
                             </div>
                             <div className="user-details">
                                 <div className="user-name-container">
-                                    <div className="user-email">{userName}</div>
-                                    <RoleRender role={permissions} />
+                                    <div className="user-email">{displayName}</div>
+                                    <RoleRender role={displayRole} />
                                 </div>
                             </div>
                         </div>
@@ -190,9 +192,18 @@ const Header = () => {
                             <img src={feedbackSvg} alt="Feedback" className="item-icon" />
                             {t('navigation.userDropdown.feedback')}
                         </a>
-                        <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
-                            <img src={logoutSvg} alt="Logout" className="item-icon" />
-                            {t('navigation.userDropdown.logout')}
+                        <a href="#" className="dropdown-item" id="authActionButton" onClick={(event) => {
+                            event.preventDefault();
+                            setIsDropdownOpen(false);
+                            if (isAuthenticated) {
+                                logout();
+                            } else {
+                                const currentPath = window.location.pathname + window.location.search;
+                                window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+                            }
+                        }}>
+                            <img src={logoutSvg} alt={isAuthenticated ? 'Logout' : 'Login'} className="item-icon" />
+                            {isAuthenticated ? t('navigation.userDropdown.logout') : t('navigation.userDropdown.login')}
                         </a>
                     </div>
                 </div>

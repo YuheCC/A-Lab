@@ -4,6 +4,7 @@ export default {
     },
     input: {
         placeholder: "バッテリー、バッテリー化学、または関連トピックに関するものなら何でも聞いてください。",
+        placeholderPublic: "アカウントを作成して、バッテリー、バッテリー化学、または関連トピックについて何でも質問してください。",
         sendButton: "送信"
     },
     chat: {
@@ -169,6 +170,16 @@ export default {
         feedbackError: "フィードバック送信エラー：",
         copyError: "コピーに失敗しました：",
         generalError: "エラー"
+    },
+    publicAccess: {
+        bannerMessage: "アカウントを作成するかログインすると{{feature}}を利用できます。",
+        dismiss: "閉じる",
+        features: {
+            askInput: "Ask",
+            lightning: "ライトニング",
+            pro: "プロ",
+            deepSpace: "ディープスペース"
+        }
     },
     supplementalData: "補足データ",
     history: {
