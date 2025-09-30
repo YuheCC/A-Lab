@@ -45,7 +45,6 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
 
     const handleFormulaChange = (value: string) => {
         if (isPublic) {
-            triggerAccessModal();
             return;
         }
         setMolecularFormula(value);
@@ -110,7 +109,6 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isPublic) {
-            triggerAccessModal();
             return;
         }
         setMolecularFormula(e.target.value);
@@ -665,7 +663,7 @@ const noResultsStyle: React.CSSProperties = {
                         style={{
                             ...materialsButtonStyle,
                             opacity: isPublic ? 0.6 : 1,
-                            cursor: isPublic ? 'not-allowed' : materialsButtonStyle.cursor || 'pointer',
+                            cursor: isPublic ? 'not-allowed' : materialsButtonStyle?.cursor || 'pointer',
                         }}
                         onClick={(event) => {
                             if (isPublic) {
@@ -756,12 +754,10 @@ const noResultsStyle: React.CSSProperties = {
                                             cursor: isPublic ? 'not-allowed' : 'pointer',
                                         }}
                                         onClick={() => {
-                                            if (isPublic) {
-                                                triggerAccessModal();
-                                                return;
-                                            }
                                             setActiveTab('elements');
-                                            triggerLiClick(0);
+                                            if (!isPublic) {
+                                                triggerLiClick(0);
+                                            }
                                         }}
                                         aria-disabled={isPublic}
                                     >
@@ -774,12 +770,10 @@ const noResultsStyle: React.CSSProperties = {
                                             cursor: isPublic ? 'not-allowed' : 'pointer',
                                         }}
                                         onClick={() => {
-                                            if (isPublic) {
-                                                triggerAccessModal();
-                                                return;
-                                            }
                                             setActiveTab('atLeastElements');
-                                            triggerLiClick(1);
+                                            if (!isPublic) {
+                                                triggerLiClick(1);
+                                            }
                                         }}
                                         aria-disabled={isPublic}
                                     >
@@ -793,12 +787,10 @@ const noResultsStyle: React.CSSProperties = {
                                         }}
                                         onClick={() => {
                                             if (activeTab === 'formula') return;
-                                            if (isPublic) {
-                                                triggerAccessModal();
-                                                return;
-                                            }
                                             setActiveTab('formula');
-                                            triggerLiClick(2);
+                                            if (!isPublic) {
+                                                triggerLiClick(2);
+                                            }
                                         }}
                                     >
                                         {t('thirdSearch.tabs.formula')}
