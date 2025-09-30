@@ -74,7 +74,7 @@ const ChatWelcome: React.FC = () => {
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
     const isAdmin = userPermissions === 'admin';
-    const isPublic = initialAuthLoaded && !isAuthenticated;
+    const isPublic = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
     const [inputValue, setInputValue] = useState<string>('');
     const initialMode: ChatMode = isAdmin ? 'ask' : 'lightning';
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);

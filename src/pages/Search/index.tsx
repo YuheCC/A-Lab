@@ -13,12 +13,11 @@ const Search = () => {
 
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublicUser = initialAuthLoaded && !isAuthenticated;
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublicUser = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
     const handleGoToFavorites = () => {
         navigate('/favorites');
     };
-
-    console.log('isPublicUser', isPublicUser);
 
     return (
         <div>

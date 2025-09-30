@@ -75,7 +75,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);

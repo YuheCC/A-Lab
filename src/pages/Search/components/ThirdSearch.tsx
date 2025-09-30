@@ -17,7 +17,8 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     const { t } = useTranslation();
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const [molecularFormula, setMolecularFormula] = useState<string>(
         isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput : ''
     );

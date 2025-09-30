@@ -34,6 +34,8 @@ const Header = () => {
     };
 
     // 检查是否为common用户
+    // Common users have since gained access to all features, so this is set to false even for common / logged out users
+    // It should be removed in a future update but is kept temporarily in case we need to revert
     const isCommonUser = false; //permissions === 'common';
     const isEducationalUser = permissions === 'research';
     const displayName = isAuthenticated && userName ? userName : 'public';
