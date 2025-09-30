@@ -6,6 +6,7 @@ import { useChatContext } from '../../context/ChatContext';
 import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
 import i18n from '@/locales/i18n';
 import { useAuthStore } from '@/models/useAuth';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -88,6 +89,7 @@ const ChatWelcome: React.FC = () => {
     const [questionWidths, setQuestionWidths] = useState<string[]>([]);
     const [publicNotice, setPublicNotice] = useState<string | null>(null);
     const publicNoticeTimerRef = useRef<number | null>(null);
+    const triggerAccessModal = useAccessModals();
 
     const recommendedQuestions = useMemo(() => {
         const list = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
@@ -119,6 +121,10 @@ const ChatWelcome: React.FC = () => {
     }, [clearPublicNoticeTimer]);
 
     const showPublicNotice = useCallback((feature: PublicFeatureKey) => {
+        if (feature === 'askInput' || feature === 'lightning' || feature === 'pro' || feature === 'deepSpace') {
+            triggerAccessModal();
+            return;
+        }
         const message = buildPublicBannerMessage(feature);
         setPublicNotice(message);
         clearPublicNoticeTimer();
@@ -126,7 +132,7 @@ const ChatWelcome: React.FC = () => {
             setPublicNotice(null);
             publicNoticeTimerRef.current = null;
         }, 4000);
-    }, [buildPublicBannerMessage, clearPublicNoticeTimer]);
+    }, [buildPublicBannerMessage, clearPublicNoticeTimer, triggerAccessModal]);
 
     useEffect(() => {
         return () => {
@@ -196,9 +202,12 @@ const ChatWelcome: React.FC = () => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleInputChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (isPublic) return;
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         setInputValue(e.target.value);
-    }, [isPublic]);
+    }, [isPublic, triggerAccessModal]);
 
     const buildExtraPayload = useCallback(() => {
         const extraPayload: Record<string, any> = {
@@ -217,13 +226,16 @@ const ChatWelcome: React.FC = () => {
     }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace]);
 
     const handleSendMessageLocal = useCallback(() => {
-        if (isPublic) return;
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         const trimmed = inputValue.trim();
         if (!trimmed) return;
         const { extraPayload, modeToSend } = buildExtraPayload();
         handleSendMessage(trimmed, modeToSend, undefined, extraPayload);
         setInputValue('');
-    }, [buildExtraPayload, handleSendMessage, inputValue, isPublic]);
+    }, [buildExtraPayload, handleSendMessage, inputValue, isPublic, triggerAccessModal]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -320,7 +332,7 @@ const ChatWelcome: React.FC = () => {
         }
         if (item.type === 'fallback') {
             if (isPublic) {
-                showPublicNotice('askInput');
+                triggerAccessModal();
                 return;
             }
             if (item.label.trim()) {
@@ -328,7 +340,7 @@ const ChatWelcome: React.FC = () => {
                 handleSendMessage(item.label.trim(), modeToSend, undefined, extraPayload);
             }
         }
-    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic, showPublicNotice]);
+    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic, triggerAccessModal]);
 
     const handleRefreshQuestions = useCallback(() => {
         const refreshBtn = document.querySelector('.refresh-questions-btn svg');
@@ -401,7 +413,7 @@ const ChatWelcome: React.FC = () => {
                                 <button
                                     type="button"
                                     className="public-access-overlay"
-                                    onClick={() => showPublicNotice('askInput')}
+                                    onClick={triggerAccessModal}
                                     aria-label={buildPublicBannerMessage('askInput')}
                                 />
                             )}

@@ -6,6 +6,7 @@ import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
 import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 type ChatMode =
   | 'regular'
@@ -83,6 +84,7 @@ const ChatInput: FC<ChatInputProps> = ({
   const [disableTools, setDisableTools] = useState<boolean>(false);
   const [publicNotice, setPublicNotice] = useState<string | null>(null);
   const publicNoticeTimerRef = useRef<number | null>(null);
+  const triggerAccessModal = useAccessModals();
 
   const getFeatureLabel = useCallback((feature: PublicFeatureKey) => (
     t(`chatbox.publicAccess.features.${feature}` as any)
@@ -105,6 +107,10 @@ const ChatInput: FC<ChatInputProps> = ({
   }, [clearPublicNoticeTimer]);
 
   const showPublicNotice = useCallback((feature: PublicFeatureKey) => {
+    if (feature === 'askInput' || feature === 'lightning' || feature === 'pro' || feature === 'deepSpace') {
+      triggerAccessModal();
+      return;
+    }
     const message = buildPublicBannerMessage(feature);
     setPublicNotice(message);
     clearPublicNoticeTimer();
@@ -112,7 +118,7 @@ const ChatInput: FC<ChatInputProps> = ({
       setPublicNotice(null);
       publicNoticeTimerRef.current = null;
     }, 4000);
-  }, [buildPublicBannerMessage, clearPublicNoticeTimer]);
+  }, [buildPublicBannerMessage, clearPublicNoticeTimer, triggerAccessModal]);
 
   React.useEffect(() => {
     return () => {
@@ -152,7 +158,7 @@ const ChatInput: FC<ChatInputProps> = ({
   // 处理输入变化
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (inputLocked) {
-      showPublicNotice('askInput');
+      triggerAccessModal();
       return;
     }
     setInputValue(e.target.value);
@@ -169,7 +175,7 @@ const ChatInput: FC<ChatInputProps> = ({
   // 处理发送消息
   const handleSendMessageLocal = () => {
     if (inputLocked) {
-      showPublicNotice('askInput');
+      triggerAccessModal();
       return;
     }
     if (inputValue.trim() && isButtonEnabled) {
@@ -313,14 +319,14 @@ const ChatInput: FC<ChatInputProps> = ({
               maxHeight: '120px'
             }}
           />
-          {inputLocked && (
-            <button
-              type="button"
-              className="public-access-overlay"
-              onClick={() => showPublicNotice('askInput')}
-              aria-label={buildPublicBannerMessage('askInput')}
-            />
-          )}
+        {inputLocked && (
+          <button
+            type="button"
+            className="public-access-overlay"
+            onClick={triggerAccessModal}
+            aria-label={buildPublicBannerMessage('askInput')}
+          />
+        )}
         </div>
         <div className="chat-controls-row">
           <div className="input-mode-switch">

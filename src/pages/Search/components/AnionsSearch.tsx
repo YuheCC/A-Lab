@@ -19,6 +19,7 @@ import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const API_URL = getAPIUrl();
 
@@ -110,6 +111,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
+    const triggerAccessModal = useAccessModals();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -547,6 +549,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 initialEditorOpen={!isPublic}
                                 lockMolEditorToggle={isPublic}
                                 allowSubmitWhenLocked={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                             <FindFriendOptions
@@ -582,6 +585,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
                                 allowFindFriendsToggleWhenReadOnly={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                     <div className="search-results">
