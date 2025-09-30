@@ -46,8 +46,8 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
   const handleDownloadSampleData = () => {
     // 创建下载链接
     const link = document.createElement('a');
-    link.href = '/ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
-    link.download = 'ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
+    link.href = '/predict/demo.csv';
+    link.download = 'demo.csv';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

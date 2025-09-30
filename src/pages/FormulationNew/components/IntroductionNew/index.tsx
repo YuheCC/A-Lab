@@ -24,7 +24,7 @@ const IntroductionNew: React.FC = () => {
             className="content-image"
           />
           <div className="image-caption">
-            [Caption] Our proprietary Molecular Dynamics (MD) service for electrolyte formulation
+            Our proprietary Molecular Dynamics (MD) service for electrolyte formulation
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@ const IntroductionNew: React.FC = () => {
               className="content-image"
             />
             <div className="image-caption">
-              [Caption] Accelerating electrolyte design with MD simulations across concentrations
+              Accelerating electrolyte design with MD simulations across concentrations
             </div>
           </div>
         </div>
@@ -296,7 +296,7 @@ const IntroductionNew: React.FC = () => {
                 className="property-image"
               />
               <div className="image-caption">
-              image.pngOur MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis. 
+                Our MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis. 
               </div>
             </div>
           </div>
