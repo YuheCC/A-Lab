@@ -179,6 +179,7 @@ export default {
     loading: '解析詳細を読み込み中...',
     missingId: '解析IDパラメータが不足',
     fetchError: '解析詳細の取得に失敗',
+    configuration: '構成情報',
     saltSolventConfig: '塩と溶媒の構成',
     saltSummary: '塩のサマリー',
     solventSummary: '溶媒サマリー',

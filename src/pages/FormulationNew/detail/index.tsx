@@ -6,6 +6,7 @@ import { Info } from 'lucide-react';
 import { MDHistoryDetailResponse } from '@/services/formulation/md';
 import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
+import { formatIonDisplay } from '../utils';
 import './index.css';
 
 interface ResultData {
@@ -203,6 +204,62 @@ const DetailPage: React.FC = () => {
         </div>
         <div className="results-section">
           {/* <h2>{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</h2> */}
+
+          {/* Configuration Information */}
+          {detailData && (
+            <div className="configuration-info">
+              <h3>{t('formulation.detail.configuration', 'Configuration')}</h3>
+              <div className="configuration-table">
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      <div className="compound-item">
+                        {formatIonDisplay(detailData.cation_name)}
+                      </div>
+                      {detailData.anion_name_list.map((anion, idx) => (
+                        <div key={idx} className="compound-item">
+                          {formatIonDisplay(anion)}({detailData.anion_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</span>
+                  <span className="config-value">
+                    {detailData.anion_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      {detailData.solvent_smiles_list.map((solvent, idx) => (
+                        <div key={idx} className="compound-item">
+                          {solvent}({detailData.solvent_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</span>
+                  <span className="config-value">
+                    {detailData.solvent_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.concentration', 'Concentration')}</span>
+                  <span className="config-value">{detailData.cation_molality} mol/kg</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="system-properties">
             <h3>{t('formulation.results.systemProperties', 'System Properties')}</h3>

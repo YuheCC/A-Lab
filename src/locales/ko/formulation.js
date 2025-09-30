@@ -179,6 +179,7 @@ export default {
     loading: '분석 세부사항을 로딩 중...',
     missingId: '분석 ID 매개변수 누락',
     fetchError: '분석 세부사항 가져오기 실패',
+    configuration: '구성 정보',
     saltSolventConfig: '염 및 용매 구성',
     saltSummary: '염 요약',
     solventSummary: '용매 요약',

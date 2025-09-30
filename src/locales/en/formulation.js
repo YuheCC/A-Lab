@@ -182,6 +182,7 @@ export default {
     loading: 'Loading analysis details...',
     missingId: 'Missing analysis ID parameter',
     fetchError: 'Failed to fetch analysis details',
+    configuration: 'Configuration',
     saltSolventConfig: 'Salt & Solvent Configuration',
     saltSummary: 'Salt Summary',
     solventSummary: 'Solvent Summary',

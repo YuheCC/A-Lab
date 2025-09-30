@@ -182,6 +182,7 @@ export default {
     loading: '正在加载分析详情...',
     missingId: '缺少分析ID参数',
     fetchError: '获取分析详情失败',
+    configuration: '配置信息',
     saltSolventConfig: '盐与溶剂配置',
     saltSummary: '盐配置概览',
     solventSummary: '溶剂概览',
