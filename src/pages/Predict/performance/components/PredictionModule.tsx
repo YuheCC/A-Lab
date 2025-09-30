@@ -9,6 +9,7 @@ import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
+import CustomSelect from './CustomSelect';
 
 interface SystemSpec {
   cathode: string;
@@ -44,7 +45,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 权限判断
   const isHighTier = useMemo(() => {
-    return ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
+    return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
   
@@ -70,10 +71,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [hasAnalysisResult, setHasAnalysisResult] = useState(false);
 
+  // 等待时间展示相关状态
+  const [analysisStartTime, setAnalysisStartTime] = useState<Date | null>(null);
+  const [analysisElapsed, setAnalysisElapsed] = useState<number>(0);
+
   // 从选中的电池系统中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
     if (!selectedSystem) return null;
-    const system = batterySystemOptions.find(s => s.name === selectedSystem);
+    const system = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!system) return null;
     
     return {
@@ -86,6 +91,34 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   const currentSpec = getCurrentSpec();
 
+  // 计算等待时间的useEffect
+  useEffect(() => {
+    if (!isAnalyzing || !analysisStartTime) {
+      setAnalysisElapsed(0);
+      return;
+    }
+
+    const computeElapsed = () => {
+      const now = Date.now();
+      const elapsedSec = Math.max(0, Math.floor((now - analysisStartTime.getTime()) / 1000));
+      setAnalysisElapsed(elapsedSec);
+    };
+
+    computeElapsed();
+    const timer = setInterval(computeElapsed, 1000);
+    return () => clearInterval(timer);
+  }, [isAnalyzing, analysisStartTime]);
+
+  // 格式化等待时间显示
+  const formatElapsedTime = useMemo(() => {
+    const minutes = Math.floor(analysisElapsed / 60);
+    const seconds = analysisElapsed % 60;
+    if (minutes <= 0) {
+      return t('performance.analysis.analyzingForSeconds', { seconds: analysisElapsed });
+    }
+    return t('performance.analysis.analyzingForMinutesAndSeconds', { minutes, seconds });
+  }, [analysisElapsed, t]);
+
   // 获取电池系统选项
   useEffect(() => {
     const fetchBatterySystemOptions = async () => {
@@ -93,7 +126,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         setIsBatterySystemLoading(true);
         const response = await getBatterySystemList();
         if (response?.data) {
-          setBatterySystemOptions(response.data);
+          setBatterySystemOptions(response?.data instanceof Array ? response?.data : []);
           // 如果有选项，默认选择第一个
           if (response.data.length > 0) {
             setSelectedSystem(response.data[0].name);
@@ -195,6 +228,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           if (eventData?.finished === true || eventData?.complete === true || eventData?.done === true) {
             setIsAnalyzing(false);
             setHasAnalysisResult(true);
+            setAnalysisStartTime(null); // 清理开始时间
             console.log('LLM分析完成 (数组格式)');
           }
           return;
@@ -220,6 +254,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 // 只要收到对应 history_id 的消息就标记分析完成
                 setIsAnalyzing(false);
                 setHasAnalysisResult(true);
+                setAnalysisStartTime(null); // 清理开始时间
                 console.log('LLM分析完成 (对象格式)，history_id:', parsedData.history_id);
               } else {
                 console.log('收到的消息 history_id 不匹配当前预测结果，忽略:', {
@@ -338,7 +373,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
-    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
@@ -351,6 +386,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setHasAnalysisResult(false);
     setAnalysisContent('');
     setIsAnalyzing(false);
+    setAnalysisStartTime(null);
+    setAnalysisElapsed(0);
 
     try {
       const response = await predictPerformance({
@@ -422,7 +459,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     console.log('LLM分析开始: sessionId =', sessionId);
 
-    const selectedBatterySystem = batterySystemOptions.find(s => s.name === selectedSystem);
+    const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
@@ -432,6 +469,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisError(null);
     setAnalysisContent('');
     setHasAnalysisResult(false);
+    setAnalysisStartTime(new Date()); // 记录分析开始时间
 
     try {
       const currentLang = getCurrentLanguage();
@@ -453,6 +491,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       setAnalysisError(t('performance.ui.analysisFailed'));
       setIsAnalyzing(false);
       setHasAnalysisResult(false);
+      setAnalysisStartTime(null); // 清理开始时间
     }
   };
 
@@ -569,9 +608,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisContent('');
     setAnalysisError(null);
     setHasAnalysisResult(false);
+    setAnalysisStartTime(null);
+    setAnalysisElapsed(0);
     
     // Reset to first battery system if available
-    if (batterySystemOptions.length > 0) {
+    if (batterySystemOptions?.length > 0) {
       setSelectedSystem(batterySystemOptions[0].name);
     }
   }, [batterySystemOptions]);
@@ -601,6 +642,22 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
   };
 
+  const comingSoonText = useMemo(() => {
+    return {
+      1: t('formulation.comingSoon', 'Will be available soon'),
+      2: t('formulation.comingSoon', 'Will be available soon'),
+      3: t('formulation.comingSoon', 'Will be available soon'),
+      4: t('formulation.comingSoon2', 'Will be available soon')
+    };
+  }, [t]);
+  const batterySystemDisplayOptions = useMemo(() => {
+    return batterySystemOptions?.map(system => ({
+      id: system.id,
+      name: system.name,
+      disabled: Number(system.id) !== 1,
+      disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
+    }));
+  }, [batterySystemOptions?.length, comingSoonText]);
   return (
     <div className="prediction-module">
       <div className="module-section">
@@ -609,27 +666,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         <div className="module-content-card">
           <div className="form-group">
             <label>{t('performance.batterySystemSelection.label')}</label>
-            <select 
-              value={selectedSystem} 
-              onChange={(e) => setSelectedSystem(e.target.value)}
+            <CustomSelect
+              value={selectedSystem}
+              onChange={setSelectedSystem}
+              onOptionClick={(option, isSelected) => {
+                if(!showSpecs && selectedSystem) {
+                  setShowSpecs(true);
+                }
+                // 这里可以添加你需要的option点击处理逻辑
+              }}
+              options={isBatterySystemLoading ?
+                [{ id: 'loading', name: t('performance.batterySystemSelection.loading'), disabled: true }] :
+                batterySystemDisplayOptions
+              }
               className="system-select"
               disabled={isBatterySystemLoading}
-            >
-              {isBatterySystemLoading ? (
-                <option value="">{t('performance.batterySystemSelection.loading')}</option>
-              ) : (
-                batterySystemOptions.map((system) => (
-                  <option
-                    key={system.id}
-                    value={Number(system.id) === 1 ? system.name : ""}
-                    disabled={Number(system.id) !== 1}
-                    style={Number(system.id) !== 1 ? { color: '#ccc' } : {}}
-                  >
-                    {system.name}{Number(system.id) !== 1 ? ' (Will be available soon)' : ''}
-                  </option>
-                ))
-              )}
-            </select>
+              placeholder={t('performance.batterySystemSelection.loading')}
+            />
           </div>
 
           {showSpecs && currentSpec && (
@@ -897,6 +950,18 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 title={
                   <div>
                     <div style={{
+                      fontSize: '12px',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                      marginBottom: '16px',
+                      paddingBottom: '12px',
+                      borderBottom: '1px solid #e5e7eb'
+                    }}>
+                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                    </div>
+                    <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '12px',
@@ -963,7 +1028,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     </div>
                   </div>
                 }
-                placement="top"
+                placement="bottom"
                 arrow
                 PopperProps={{
                   sx: {
@@ -974,8 +1039,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                       borderRadius: '8px',
                       padding: '16px',
                       fontSize: '14px',
-                      maxWidth: 320,
-                      minWidth: 280,
+                      maxWidth: 500,
+                      minWidth: 380,
                       border: 'none'
                     },
                     '& .MuiTooltip-arrow': {
@@ -1105,7 +1170,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               <div className="llm-content">
                 {isAnalyzing && !analysisContent && (
                   <div className="analysis-loading">
-                    <p>{t('performance.ui.startingAnalysis')}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      <span>{t('performance.analysis.analyzing') || 'LLM分析中'}</span>
+                      {analysisElapsed > 0 && (
+                        <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{formatElapsedTime}</span>
+                      )}
+                    </div>
                     <div className="loading-spinner"></div>
                   </div>
                 )}

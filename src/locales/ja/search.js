@@ -1,9 +1,9 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: '有機分子',
-        inorganic: '無機分子',
-        anions: 'アニオン',
+        organic: '溶媒、添加剤・希釈剤',
+        inorganic: '無機溶媒、添加剤・希釈剤',
+        anions: '塩アニオン',
         third: '固体電解質'
     },
     

@@ -1,6 +1,7 @@
 export default {
     // Header
-    title: "배터리 수명 예측",
+    title: "초기 사이클 데이터 업로드로 수명 예측",
+    subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 리튬이온 배터리의 사이클 수명(80% SOH까지의 사이클 수)을 예측합니다. 첫 100 사이클만(실효 사이클이므로 실제 숫자는 더 많을 수 있습니다) 필요합니다",
     betaTag: "BETA",
 
     // Steps
@@ -98,11 +99,11 @@ export default {
 
     // Chart
     chart: {
-        title: "사이클 수에 따른 배터리 용량 변화",
+        title: "배터리 용량 대 사이클 수",
         cycleCount: "사이클 수",
-        capacityProcess: "용량 변화 과정",
-        predictedCycleLife: "예측 사이클 수명",
-        xAxisName: "사이클 수 (Cycle)",
+        capacityProcess: "용량 열화 (업로드된 데이터)",
+        predictedCycleLife: "80% SOH에 도달하는 예측 사이클 수",
+        xAxisName: "사이클 수",
         yAxisName: "방전 용량"
     },
 

@@ -82,9 +82,20 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                     setTotalCount(results.length);
                 }
                 
-            } catch (err) {
+            } catch (err: any) {
                 console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+                // 检查是否是未登录错误（401）或者token不存在
+                const token = localStorage.getItem('token');
+                const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+                if (!token || isUnauthorized) {
+                    // 未登录或401错误时不显示错误信息
+                    setError('');
+                } else {
+                    // 已登录且非401错误时显示错误信息
+                    setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -180,7 +191,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     const mainContentStyle: React.CSSProperties = {
         backgroundColor: 'white',
         padding: '20px',
-        margin: '0 20px 20px 20px',
+        margin: '0px 0px 0px 0px',
         borderRadius: '8px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         display: 'flex',
@@ -352,9 +363,20 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                 });
             }
             
-        } catch (err) {
+        } catch (err: any) {
             console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-            setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setError('');
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+            }
         } finally {
             setIsLoading(false);
         }
@@ -622,9 +644,7 @@ const noResultsStyle: React.CSSProperties = {
         <>
             <div style={containerStyle} className="third-search-container-new">
                 {/* 顶部说明条 */}
-                <div style={headerBannerStyle}>
-                    {t('thirdSearch.headerBanner')}
-                </div>
+                
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>

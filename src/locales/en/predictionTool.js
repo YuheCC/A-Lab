@@ -1,6 +1,7 @@
 export default {
     // Header
-    title: "Battery Life Prediction",
+    title: "Upload early cycle data for life prediction",
+    subtitle: "Predict cycle life (number of cycles when discharge capacity retention reaches 80%) with an AI model trained on internal experimental data. Only the first 100 cycles (effective cycle so the real number may be higher) are needed. The prediction is accurate for battery systems  with limited active ion inventories, such as Li-ion, Na-ion, or anode free batteries.",
     betaTag: "BETA",
 
     // Steps
@@ -99,10 +100,10 @@ export default {
     // Chart
     chart: {
         title: "Battery Capacity vs Cycle Count",
-        cycleCount: "Cycle Count",
-        capacityProcess: "Capacity Change Process",
-        predictedCycleLife: "Predicted Cycle Life",
-        xAxisName: "Cycle Count (Cycle)",
+        cycleCount: "Cycle Number",
+        capacityProcess: "Capacity degradation (uploaded data)",
+        predictedCycleLife: "Predicted cycle number to reach 80% SOH",
+        xAxisName: "Cycle Number",
         yAxisName: "Discharge Capacity"
     },
 

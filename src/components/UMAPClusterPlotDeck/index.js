@@ -591,8 +591,18 @@ const UMAPClusterPlotDeck = ({
                     { label: t('molecular.nodePopup.smiles'), value: hoveredObject.object.smiles, span: 2 },
                     { label: t('molecular.umapPlot.properties.cluster'), value: hoveredObject.object.properties.CLUSTER },
                     { label: t('molecular.umapPlot.properties.molWeight'), value: hoveredObject.object.properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
-                    { label: t('molecular.umapPlot.properties.espMax'), value: hoveredObject.object.properties.esp_max_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.espMin'), value: hoveredObject.object.properties.esp_min_eV, suffix: t('molecular.umapPlot.units.eV') },
+                    { 
+                        label: t('molecular.umapPlot.properties.espMax'), 
+                        value: hoveredObject.object.properties.esp_max_eV, 
+                        suffix: t('molecular.umapPlot.units.eV'),
+                        show: molecularType === 'organic'
+                    },
+                    { 
+                        label: t('molecular.umapPlot.properties.espMin'), 
+                        value: hoveredObject.object.properties.esp_min_eV, 
+                        suffix: t('molecular.umapPlot.units.eV'),
+                        show: molecularType === 'organic'
+                    },
                     { label: t('molecular.umapPlot.properties.homo'), value: hoveredObject.object.properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
                     { label: t('molecular.umapPlot.properties.lumo'), value: hoveredObject.object.properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
                     {
@@ -612,7 +622,24 @@ const UMAPClusterPlotDeck = ({
                     },
                     {
                         label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                    },
+                    {
+                        label: "Chemical Formula", 
+                        value: hoveredObject.object.properties.chemical_formula,
+                        show: molecularType === "anions"
+                    },
+                    {
+                        label: "Molecular Volume", 
+                        value: hoveredObject.object.properties.vdw_volume_angstroms3,
+                        suffix: " Å³",
+                        show: molecularType === "anions"
+                    },
+                    {
+                        label: "F Dissociation Energy", 
+                        suffix: " eV",
+                        value: hoveredObject.object.properties.fluoride_bde_ev,
+                        show: molecularType === "anions"
                     }
                 ]}
             />
