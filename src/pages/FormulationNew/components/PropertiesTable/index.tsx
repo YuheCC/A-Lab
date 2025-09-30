@@ -27,7 +27,7 @@ const defaultProperties: PropertyItem[] = [
   { id: 9, property: 'Structure factor (S(q))', type: 'Structural' },
   { id: 10, property: 'Dynamic structure factor (S(q,ω))', type: 'Structural + Dynamic' },
   { id: 11, property: 'Residence time', type: 'Dynamic' },
-  { id: 12, property: 'EDL (Electric Double Layer)', type: 'Thermodynamic', group: 'Advanced Studies', estimatedTime: '1-2 Weeks', groupRowSpan: 2, timeRowSpan: 2 },
+  { id: 12, property: 'EDL (Electric Double Layer)', type: 'Thermodynamic', group: 'Custom Studies', estimatedTime: '1-2 Weeks', groupRowSpan: 2, timeRowSpan: 2 },
   { id: 13, property: 'Solubility', type: 'Thermodynamic' }
 ];
 
