@@ -1075,6 +1075,10 @@ body.chat-page-body {
 
 .public-textarea-guard {
     position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    align-items: stretch;
 }
 
 .public-textarea-guard textarea:disabled {
