@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { getMDHistoryDetail, MDHistoryDetailResponse } from '@/services/formulation/md';
+import { Tooltip } from '@mui/material';
+import { Info } from 'lucide-react';
+import { MDHistoryDetailResponse } from '@/services/formulation/md';
+import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
+import { formatIonDisplay } from '../utils';
 import './index.css';
 
 interface ResultData {
@@ -55,7 +59,7 @@ const DetailPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await getMDHistoryDetail(Number(id));
+      const response = await getHistoryDetail(id);
       if (response?.data) {
         setDetailData(response.data);
         if (response.data.result_data) {
@@ -73,7 +77,7 @@ const DetailPage: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/formulation');
+    navigate('/formulation/new?tab=analysis');
   };
 
   // 动态生成系统属性数据
@@ -93,17 +97,20 @@ const DetailPage: React.FC = () => {
   ];
 
   // 动态生成集群分析数据
-  const clusterAnalysis = resultData?.cluster_data?.map(item => ({
+  const clusterAnalysis = resultData?.output_json?.cluster?.map(item => ({
     size: item.size,
     category: item.category,
     fraction: `${(item.fraction * 100).toFixed(1)}%`
-  })) || [
-    { size: 0, category: t('formulation.detail.SSIP', 'SSIP'), fraction: '20.0%' },
-    { size: 1, category: t('formulation.detail.CIP', 'CIP'), fraction: '40.0%' },
-    { size: 2, category: t('formulation.detail.AGG', 'AGG'), fraction: '10.0%' },
-    { size: 3, category: t('formulation.detail.AGG', 'AGG'), fraction: '5.0%' },
-    { size: 4, category: t('formulation.detail.AGG', 'AGG'), fraction: '25.0%' }
-  ];
+  })) || [];
+
+  // 动态生成扩散系数数据
+  const diffusionData = resultData?.output_json?.diffusion_data ?
+  resultData.output_json.diffusion_data.map((item: any) => ({
+    species: item.species,
+    coefficient: parseFloat(item['diffusion_coefficient_1e-10_m2_s']).toFixed(3)
+  })) : [];
+
+  console.log(resultData);
 
   const handleDownloadJSON = () => {
     let data;
@@ -150,18 +157,20 @@ const DetailPage: React.FC = () => {
     }
   };
 
+  // 判断是否为base64内容，如果是则返回base64格式，否则返回路径
+  const getImageSrc = (data: string | undefined) => {
+    if (!data) return '';
+    // 判断是否为路径（包含 / 或 . 等路径特征）
+    if (data.startsWith('/')) {
+      return data;
+    }
+    // 否则认为是base64
+    return `data:image/png;base64,${data}`;
+  };
+
   if (loading) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            />
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -180,15 +189,6 @@ const DetailPage: React.FC = () => {
   if (error) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            />
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -206,25 +206,71 @@ const DetailPage: React.FC = () => {
 
   return (
     <div className="detail-page-container">
-      <div className="detail-header">
-        <div className="formulation-title-wrapper">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          <GuideTooltip
-            storageKey="formulation-new-guide-shown"
-          />
-        </div>
-        <span className="detail-subtitle">{t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - AN-{String(id).padStart(3, '0')}</span>
-      </div>
-
       <div className="detail-content">
         <div className="detail-actions">
-          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
+          <span style={{ fontSize: '18px', fontWeight: '600' }} className="detail-action-title">{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</span>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('formulation.actions.backToList', 'Back to List')}
           </button>
         </div>
         <div className="results-section">
-          <h2>{t('formulation.results.analysisResults', 'Analysis Results')}</h2>
+          {/* <h2>{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</h2> */}
+
+          {/* Configuration Information */}
+          {detailData && (
+            <div className="configuration-info">
+              <h3>{t('formulation.detail.configuration', 'Configuration')}</h3>
+              <div className="configuration-table">
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      <div className="compound-item">
+                        {formatIonDisplay(detailData.cation_name)}
+                      </div>
+                      {detailData.anion_name_list.map((anion, idx) => (
+                        <div key={idx} className="compound-item">
+                          {formatIonDisplay(anion)}({detailData.anion_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</span>
+                  <span className="config-value">
+                    {detailData.anion_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      {detailData.solvent_smiles_list.map((solvent, idx) => (
+                        <div key={idx} className="compound-item">
+                          {solvent}({detailData.solvent_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</span>
+                  <span className="config-value">
+                    {detailData.solvent_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.concentration', 'Concentration')}</span>
+                  <span className="config-value">{detailData.cation_molality} mol/kg</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="system-properties">
             <h3>{t('formulation.results.systemProperties', 'System Properties')}</h3>
@@ -249,16 +295,66 @@ const DetailPage: React.FC = () => {
               {clusterAnalysis.map((item, index) => (
                 <div key={index} className="table-row">
                   <span>{item.size}</span>
-                  <span
-                    className="category-tag"
-                    style={{
-                      backgroundColor: getCategoryColor(item.category),
-                      color: getCategoryTextColor(item.category)
-                    }}
-                  >
-                    {item.category}
+                  <span className="category-cell">
+                    <span
+                      className="category-tag"
+                      style={{
+                        backgroundColor: getCategoryColor(item.category),
+                        color: getCategoryTextColor(item.category)
+                      }}
+                    >
+                      {item.category}
+                    </span>
+                    <Tooltip
+                      title={t(`formulation.results.${item.category}Title`, '')}
+                      placement="top"
+                      arrow
+                      slotProps={{
+                        tooltip: {
+                          sx: {
+                            bgcolor: 'white',
+                            color: 'black',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            fontSize: '14px',
+                            maxWidth: '300px',
+                            whiteSpace: 'pre-line',
+                            '& .MuiTooltip-arrow': {
+                              color: 'white',
+                              '&::before': {
+                                border: '1px solid #e5e7eb'
+                              }
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      <div className="tip-icon-container">
+                        <Info
+                          size={16}
+                          className="tip-icon"
+                        />
+                      </div>
+                    </Tooltip>
                   </span>
                   <span>{item.fraction}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="diffusion-coefficient">
+            <h3>{t('formulation.results.diffusionCoefficient', 'Diffusion Coefficient (Unit: 10⁻¹⁰ m²/second) for all species')}</h3>
+            <div className="diffusion-table">
+              <div className="table-header">
+                <span>{t('formulation.results.species', 'Species')}</span>
+                <span>{t('formulation.results.coefficient', 'Diffusion Coefficient (×10⁻¹⁰ m²/s)')}</span>
+              </div>
+              {diffusionData.map((item: any, index: number) => (
+                <div key={index} className="table-row">
+                  <span>{item.species}</span>
+                  <span>{item.coefficient}</span>
                 </div>
               ))}
             </div>
@@ -273,7 +369,7 @@ const DetailPage: React.FC = () => {
                 <div className="chart-image-container">
                   <img
                     style={{ maxWidth: '60%' }}
-                    src={`data:image/png;base64,${resultData.rdf_cn_plot}`}
+                    src={getImageSrc(resultData.rdf_cn_plot)}
                     alt="Radial Distribution Function and Coordination Number"
                     className="chart-image"
                   />
@@ -287,13 +383,13 @@ const DetailPage: React.FC = () => {
               )}
             </div>
 
-            <div className="chart-section">
+            {/* <div className="chart-section">
               <h4>{t('formulation.results.meanSquareDisplacement', 'Mean Square Displacement')}</h4>
               {resultData?.msd_plot ? (
                 <div className="chart-image-container">
                   <img
                     style={{ maxWidth: '60%' }}
-                    src={`data:image/png;base64,${resultData.msd_plot}`}
+                    src={getImageSrc(resultData.msd_plot)}
                     alt="Mean Square Displacement"
                     className="chart-image"
                   />
@@ -305,7 +401,7 @@ const DetailPage: React.FC = () => {
                   <p className="chart-subtitle">{t('formulation.results.meanSquareDisplacementSubtitle', 'Mean Square Displacement')}</p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           <div className="analysis-file">

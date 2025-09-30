@@ -35,16 +35,29 @@
 
 .prediction-header {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 24px;
   flex-shrink: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .prediction-title {
   font-size: 24px;
   font-weight: 600;
   color: #1e293b;
+  margin: 0;
+}
+
+.prediction-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
   margin: 0;
 }
 

@@ -6,6 +6,7 @@ import { useChatContext } from '../../context/ChatContext';
 import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
 import i18n from '@/locales/i18n';
 import { useAuthStore } from '@/models/useAuth';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 // 推荐问题数据将从多语言配置中获取
 
@@ -48,6 +49,7 @@ type SuggestionItem = {
     label: string;
     type: 'chat' | 'fallback';
     chatId?: number;
+    widthClass?: string;
 };
 
 type PublicFeatureKey = 'askInput' | 'lightning' | 'pro' | 'deepSpace';
@@ -73,7 +75,7 @@ const ChatWelcome: React.FC = () => {
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
     const isAdmin = userPermissions === 'admin';
-    const isPublic = initialAuthLoaded && !isAuthenticated;
+    const isPublic = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
     const [inputValue, setInputValue] = useState<string>('');
     const initialMode: ChatMode = isAdmin ? 'ask' : 'lightning';
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
@@ -84,8 +86,19 @@ const ChatWelcome: React.FC = () => {
 
     const [fallbackSelection, setFallbackSelection] = useState<string[]>([]);
     const [fallbackPoolSize, setFallbackPoolSize] = useState(0);
+    const [questionWidths, setQuestionWidths] = useState<string[]>([]);
     const [publicNotice, setPublicNotice] = useState<string | null>(null);
     const publicNoticeTimerRef = useRef<number | null>(null);
+    const triggerAccessModal = useAccessModals();
+
+    const recommendedQuestions = useMemo(() => {
+        const list = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
+        return Array.isArray(list) ? list.filter(Boolean) : [];
+    }, [i18n.language, t]);
+    const widthClasses = useMemo(() => ['width-xs', 'width-sm', 'width-md', 'width-lg', 'width-xl'], []);
+    const generateWidthClasses = useCallback((count: number) => (
+        Array.from({ length: count }, () => widthClasses[Math.floor(Math.random() * widthClasses.length)])
+    ), [widthClasses]);
 
     const getFeatureLabel = useCallback((feature: PublicFeatureKey) => (
         t(`chatbox.publicAccess.features.${feature}` as any)
@@ -108,6 +121,10 @@ const ChatWelcome: React.FC = () => {
     }, [clearPublicNoticeTimer]);
 
     const showPublicNotice = useCallback((feature: PublicFeatureKey) => {
+        if (feature === 'askInput' || feature === 'lightning' || feature === 'pro' || feature === 'deepSpace') {
+            triggerAccessModal();
+            return;
+        }
         const message = buildPublicBannerMessage(feature);
         setPublicNotice(message);
         clearPublicNoticeTimer();
@@ -115,7 +132,7 @@ const ChatWelcome: React.FC = () => {
             setPublicNotice(null);
             publicNoticeTimerRef.current = null;
         }, 4000);
-    }, [buildPublicBannerMessage, clearPublicNoticeTimer]);
+    }, [buildPublicBannerMessage, clearPublicNoticeTimer, triggerAccessModal]);
 
     useEffect(() => {
         return () => {
@@ -123,13 +140,25 @@ const ChatWelcome: React.FC = () => {
         };
     }, [clearPublicNoticeTimer]);
     useEffect(() => {
-        const list = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
-        const sanitized = Array.isArray(list) ? list.filter(Boolean) : [];
-        setFallbackPoolSize(sanitized.length);
-        setFallbackSelection(sanitized.slice(0, MAX_SUGGESTIONS));
-        // We intentionally depend only on language so we refresh when translations change
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [i18n.language]);
+        const sanitized = recommendedQuestions;
+        const poolSize = isPublic ? Math.min(MAX_SUGGESTIONS, sanitized.length) : sanitized.length;
+        setFallbackPoolSize(poolSize);
+        if (sanitized.length === 0) {
+            setFallbackSelection([]);
+            setQuestionWidths([]);
+            return;
+        }
+        if (isPublic) {
+            const preset = sanitized.slice(0, MAX_SUGGESTIONS);
+            setFallbackSelection(preset);
+            setQuestionWidths(generateWidthClasses(preset.length));
+            return;
+        }
+        const shuffled = [...sanitized].sort(() => 0.5 - Math.random());
+        const selection = shuffled.slice(0, MAX_SUGGESTIONS);
+        setFallbackSelection(selection);
+        setQuestionWidths(generateWidthClasses(selection.length));
+    }, [generateWidthClasses, isPublic, recommendedQuestions]);
 
     const [suggestionStart, setSuggestionStart] = useState(0);
     useEffect(() => {
@@ -159,22 +188,26 @@ const ChatWelcome: React.FC = () => {
                 label: chat.title?.trim() || t('chatbox.chat.untitledChat', 'Untitled chat'),
                 type: 'chat' as const,
                 chatId: chat.chatId,
+                widthClass: 'width-md',
             }));
         }
         return fallbackSelection.map((question, index) => ({
             key: `fallback-${index}`,
             label: question,
             type: 'fallback' as const,
+            widthClass: questionWidths[index] || 'width-md',
         }));
-    }, [chatSuggestions, fallbackSelection, t]);
+    }, [chatSuggestions, fallbackSelection, questionWidths, t]);
 
-    const widthClasses = ['width-xs', 'width-sm', 'width-md', 'width-lg', 'width-xl'];
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleInputChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (isPublic) return;
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         setInputValue(e.target.value);
-    }, [isPublic]);
+    }, [isPublic, triggerAccessModal]);
 
     const buildExtraPayload = useCallback(() => {
         const extraPayload: Record<string, any> = {
@@ -193,13 +226,16 @@ const ChatWelcome: React.FC = () => {
     }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace]);
 
     const handleSendMessageLocal = useCallback(() => {
-        if (isPublic) return;
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         const trimmed = inputValue.trim();
         if (!trimmed) return;
         const { extraPayload, modeToSend } = buildExtraPayload();
         handleSendMessage(trimmed, modeToSend, undefined, extraPayload);
         setInputValue('');
-    }, [buildExtraPayload, handleSendMessage, inputValue, isPublic]);
+    }, [buildExtraPayload, handleSendMessage, inputValue, isPublic, triggerAccessModal]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -296,7 +332,7 @@ const ChatWelcome: React.FC = () => {
         }
         if (item.type === 'fallback') {
             if (isPublic) {
-                showPublicNotice('askInput');
+                triggerAccessModal();
                 return;
             }
             if (item.label.trim()) {
@@ -304,7 +340,7 @@ const ChatWelcome: React.FC = () => {
                 handleSendMessage(item.label.trim(), modeToSend, undefined, extraPayload);
             }
         }
-    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic, showPublicNotice]);
+    }, [buildExtraPayload, handleSelectChat, handleSendMessage, isPublic, triggerAccessModal]);
 
     const handleRefreshQuestions = useCallback(() => {
         const refreshBtn = document.querySelector('.refresh-questions-btn svg');
@@ -321,14 +357,25 @@ const ChatWelcome: React.FC = () => {
             }
             return;
         }
-        const list = t('chatbox.chat.recommendedQuestions', { returnObjects: true }) as string[];
-        const sanitized = Array.isArray(list) ? list.filter(Boolean) : [];
-        setFallbackPoolSize(sanitized.length);
-        if (sanitized.length > 0) {
-            const shuffled = [...sanitized].sort(() => 0.5 - Math.random());
-            setFallbackSelection(shuffled.slice(0, MAX_SUGGESTIONS));
+        const sanitized = recommendedQuestions;
+        const poolSize = isPublic ? Math.min(MAX_SUGGESTIONS, sanitized.length) : sanitized.length;
+        setFallbackPoolSize(poolSize);
+        if (sanitized.length === 0) {
+            setFallbackSelection([]);
+            setQuestionWidths([]);
+            return;
         }
-    }, [chatHistory.length, t]);
+        if (isPublic) {
+            const preset = sanitized.slice(0, MAX_SUGGESTIONS);
+            setFallbackSelection(preset);
+            setQuestionWidths(generateWidthClasses(preset.length));
+            return;
+        }
+        const shuffled = [...sanitized].sort(() => 0.5 - Math.random());
+        const selection = shuffled.slice(0, MAX_SUGGESTIONS);
+        setFallbackSelection(selection);
+        setQuestionWidths(generateWidthClasses(selection.length));
+    }, [chatHistory.length, generateWidthClasses, isPublic, recommendedQuestions]);
 
     const isInputEmpty = inputValue.trim().length === 0;
     const placeholderText = isPublic ? t('chatbox.input.placeholderPublic') : t('chatbox.input.placeholder');
@@ -366,7 +413,7 @@ const ChatWelcome: React.FC = () => {
                                 <button
                                     type="button"
                                     className="public-access-overlay"
-                                    onClick={() => showPublicNotice('askInput')}
+                                    onClick={triggerAccessModal}
                                     aria-label={buildPublicBannerMessage('askInput')}
                                 />
                             )}
@@ -477,13 +524,13 @@ const ChatWelcome: React.FC = () => {
                 </div>
 
                 <div className="recommended-questions">
-                    {suggestionItems.map((item, index) => {
-                        const randomWidthClass = widthClasses[Math.floor(Math.random() * widthClasses.length)];
+                    {suggestionItems.map((item) => {
                         const isClickable = item.type === 'chat' || (!isPublic && item.type === 'fallback');
+                        const widthClass = item.widthClass || 'width-md';
                         return (
                             <div 
                                 key={item.key}
-                                className={`recommended-question ${randomWidthClass}`}
+                                className={`recommended-question ${widthClass}`}
                                 onClick={() => isClickable && handleSuggestionClick(item)}
                                 role="button"
                                 tabIndex={isClickable ? 0 : -1}

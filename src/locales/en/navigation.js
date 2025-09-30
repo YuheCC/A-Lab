@@ -1,7 +1,7 @@
 export default {
   // Header navigation links
   header: {
-    map: "Map",
+    map: "Maps",
     ask: "Ask",
     search: "Search",
     molecule: "Molecule",

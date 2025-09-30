@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "첨가제가 셀 성능에 미치는 영향",
+  subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
   beta: "베타",
   
   // Battery System Selection
@@ -27,7 +28,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "중량 백분율 (wt%)",
-    tooltip: "사용자 정의 값 지원이 곧 출시됩니다"
+    tooltip: "사용자 정의 값은 MU1.5에서 출시될 예정입니다"
   },
   
   // Molecule information
@@ -88,6 +89,14 @@ export default {
     positiveTitle: "긍정적 (Positive)",
     negativeTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.",
     positiveTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    descriptions: {
+      ceLabel: "코로나빅 효율",
+      cycleLifeLabel: "사이클 수명",
+      ratePerformanceLabel: "비율 성능",
+      ce: "BOL에서 EOL까지 각 사이클의 평균 CE",
+      cycleLife: "방전 용량 유지율이 80%에 도달하는 사이클 수",
+      ratePerformance: "0.5C 방전 대비 5C 방전 시 용량 유지율"
+    },
     temperatureTabs: {
       temp25: "25°C 성능",
       temp45: "45°C 성능"
@@ -118,6 +127,13 @@ export default {
       recommendations: "3. 종합 권장사항"
     },
     references: "참고문헌"
+  },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "분석 중",
+      analyzingForSeconds: "{{seconds}}초",
+    analyzingForMinutesAndSeconds: "{{minutes}}분 {{seconds}}초"
   },
   
   // General UI text

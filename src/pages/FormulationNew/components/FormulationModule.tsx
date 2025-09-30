@@ -224,16 +224,16 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // Available options
   const cationOptions = [
     { value: 'Li', label: 'Li⁺', subLabel: 'Lithium', available: true },
-    { value: 'Na', label: 'Na⁺', subLabel: 'Sodium', available: false },
-    { value: 'Mg2', label: 'Mg²⁺', subLabel: 'Magnesium', available: false },
-    { value: 'Zn2', label: 'Zn²⁺', subLabel: 'Zinc', available: false }
+    { value: 'Na', label: 'Na⁺', subLabel: 'Sodium', available: false, disabledText: t('formulation.comingSoon', 'To be available in MU2') },
+    { value: 'Mg2', label: 'Mg²⁺', subLabel: 'Magnesium', available: false, disabledText: t('formulation.comingSoon2', 'To be available in MU2') },
+    { value: 'Zn2', label: 'Zn²⁺', subLabel: 'Zinc', available: false, disabledText: t('formulation.comingSoon2', 'To be available in MU2') }
   ];
 
   const anionOptions = [
-    { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true },
-    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true },
-    { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true },
-    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true }
+    { value: 'PF6', label: 'PF₆⁻', subLabel: 'Hexafluorophosphate', available: true, disabledText: "" },
+    { value: 'BF4', label: 'BF₄⁻', subLabel: 'Tetrafluoroborate', available: true, disabledText: "" },
+    { value: 'FSI', label: 'FSI⁻', subLabel: 'Bis(fluorosulfonyl)imide', available: true, disabledText: "" },
+    { value: 'TFSI', label: 'TFSI⁻', subLabel: 'Bis(trifluoromethylsulfonyl)imide', available: true, disabledText: "" }
   ];
 
   const handleCalculate = async () => {
@@ -279,10 +279,23 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       } else {
         throw new Error(response?.data?.message || response?.data?.detail?.message || 'Invalid response from MD simulation');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('MD simulation failed:', error);
-      setError(error instanceof Error ? error.message : 'MD模拟运行失败');
-      setIsCalculating(false);
+
+      // 检查是否是未登录错误（401）或者token不存在
+      const token = localStorage.getItem('token');
+      const isUnauthorized = error?.response?.status === 401 || error?.status === 401;
+
+      if (!token || isUnauthorized) {
+        // 未登录或401错误时不显示错误信息，只设置计算状态为false
+        setIsCalculating(false);
+        // 清空错误状态，避免显示之前的错误信息
+        setError(null);
+      } else {
+        // 已登录且非401错误时显示错误信息
+        setError(error instanceof Error ? error.message : 'MD模拟运行失败');
+        setIsCalculating(false);
+      }
     }
   };
 
@@ -344,7 +357,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
                   <div className="ion-symbol">{option.label}</div>
                   <div className="ion-name">{option.subLabel}</div>
                   {!option.available && (
-                    <div className="coming-soon">{t('formulation.comingSoon', 'Will be available soon')}</div>
+                    <div className="coming-soon">{option.disabledText || t('formulation.comingSoon', 'Will be available soon')}</div>
                   )}
                 </div>
               ))}

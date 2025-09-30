@@ -1,6 +1,7 @@
 export default {
     // Header
-    title: "バッテリー寿命予測ツール",
+    title: "早期サイクルデータをアップロードして寿命予測",
+    subtitle: "SES社内実験データで訓練されたAIモデルを使用して、リチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します。最初の100サイクル（実効サイクルなので実際の数はこれより多くなる可能性があります）のみが必要です",
     betaTag: "BETA",
 
     // Steps
@@ -98,11 +99,11 @@ export default {
 
     // Chart
     chart: {
-        title: "サイクル数によるバッテリー容量変化",
+        title: "バッテリー容量対サイクル数",
         cycleCount: "サイクル数",
-        capacityProcess: "容量変化プロセス",
-        predictedCycleLife: "予測サイクル寿命",
-        xAxisName: "サイクル数 (Cycle)",
+        capacityProcess: "容量劣化（アップロードデータ）",
+        predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
+        xAxisName: "サイクル数",
         yAxisName: "放電容量"
     },
 

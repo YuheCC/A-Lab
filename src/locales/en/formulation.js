@@ -1,7 +1,12 @@
 export default {
   title: 'Salt & Solvent Configuration',
   subtitle: 'Configure and customize your electrolytes',
-  comingSoon: 'Will be available soon',
+  comingSoon: 'to be launched in MU1.5',
+  comingSoon2: 'to be launched in MU2',
+  tabs: {
+    introduction: 'Introduction',
+    records: 'Records'
+  },
   actions: {
     backToList: 'Back to List'
   },
@@ -10,7 +15,7 @@ export default {
   },
 
   saltConfiguration: {
-    title: 'Salt Configuration'
+    title: 'Salts Configuration'
   },
 
   cationSelection: {
@@ -18,7 +23,7 @@ export default {
   },
 
   anionSelection: {
-    label: 'Anion Selection (Select 1-2)'
+    label: 'Anion Selection (Max 2)'
   },
 
   totalSaltConcentration: {
@@ -45,7 +50,7 @@ export default {
   },
 
   solventConfiguration: {
-    title: 'Solvent Configuration'
+    title: 'Solvents Configuration'
   },
 
   smilesString: {
@@ -73,7 +78,7 @@ export default {
   },
 
   ui: {
-    calculating: 'Calculating...'
+    calculating: 'validating inputs, prepare calculations'
   },
 
   result: {
@@ -89,7 +94,7 @@ export default {
 
   tip: {
     calculating: 'Computing',
-    calculatingDesc: 'MD simulation using polarizable force field is time consuming (24-48 hr). The system will notify you regarding the job status.',
+    calculatingDesc: 'MD simulation using polarizable force field is time consuming. The system will notify you regarding the job status.',
     notice2: 'You can close this page without affecting the background calculation process'
   },
   history: {
@@ -108,7 +113,7 @@ export default {
       molPerKg: 'mol/kg'
     },
     actions: {
-      viewDetails: 'View Details',
+      viewDetails: 'View Result',
       delete: 'Delete',
       deleteConfirm: 'Are you sure you want to delete this record?',
       deleteFailed: 'Failed to delete record'
@@ -138,8 +143,8 @@ export default {
   results: {
     analysisResults: 'Analysis Results',
     systemProperties: 'System Properties',
-    clusterAnalysis: 'Cluster Analysis',
-    size: 'Size',
+    clusterAnalysis: 'Solvation Cluster Type and Fraction Analysis',
+    size: 'Number of Anions in the First Solvation Cluster',
     category: 'Category',
     fraction: 'Fraction',
     analysisCharts: 'Analysis Charts',
@@ -155,17 +160,29 @@ export default {
     density: 'Density (g/cm³)',
     viscosity: 'Viscosity (cP)',
     conductivity: 'Conductivity (mS/cm)',
+    diffusionCoefficient: 'Diffusion Coefficient (Unit: 10⁻¹⁰ m²/second) for all species',
+    species: 'Species',
+    coefficient: 'Diffusion Coefficient (×10⁻¹⁰ m²/s)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
-  }
-  ,
+    AGG: 'AGG',
+    SSIPTitle: 'Solvent-Separated Ion Pair',
+    CIPTitle: 'Contact Ion Pair',
+    AGGTitle: 'Ion Aggregate'
+  },
+  guide: {
+    help: 'Help',
+    close: 'Close'
+  },
   detail: {
     title: 'Analysis Results',
     viewSubtitle: 'View detailed analysis results',
     viewSubtitleWithId: 'View detailed analysis results',
     actionTitle: 'Analysis Details',
     loading: 'Loading analysis details...',
+    missingId: 'Missing analysis ID parameter',
+    fetchError: 'Failed to fetch analysis details',
+    configuration: 'Configuration',
     saltSolventConfig: 'Salt & Solvent Configuration',
     saltSummary: 'Salt Summary',
     solventSummary: 'Solvent Summary',
@@ -178,8 +195,8 @@ export default {
     weightFraction: 'Weight fraction',
     analysisResults: 'Analysis Results',
     systemProperties: 'System Properties',
-    clusterAnalysis: 'Cluster Analysis',
-    size: 'Size',
+    clusterAnalysis: 'Solvation Cluster Type and Fraction Analysis',
+    size: 'Number of Anions in the First Solvation Cluster',
     category: 'Category',
     fraction: 'Fraction',
     analysisCharts: 'Analysis Charts',
@@ -197,7 +214,10 @@ export default {
     conductivity: 'Conductivity (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP:Solvent-Separated lon Pair*The cation and anion are associated, but not in direct contact."Instead, one or more solvent molecules sit between them."Typical in moderately polar solvents, where solvation shells keeplons apart, but eleetrostatic correlation remains.Example: Li*-(solvent)-PF.',
+    CIPTitle: 'CIP: Contact lon Pair One cation and one anion are directly in contact, sharing no interceptingsolvent molecules.Common in low-dielectric solvents or at high salt concentration.Strongerassoclation than sSIPExample: Li.PF, directly touching.',
+    AGGTitle: 'AGG: lon Aggregate "Largerassoclated structures involving direct contact of more than twocations and anions in combination.Can be dimers, trimers, orlarger clusters.Often appearat high concentration, poor solvent, or in ionic liquids.*Example: (Li* PF.),cluster, or Li* bridging multiple anions.'
   }
 };
 

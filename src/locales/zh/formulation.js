@@ -1,7 +1,12 @@
 export default {
   title: '盐与溶剂配置',
   subtitle: '配置并自定义你的电解质',
-  comingSoon: '即将提供',
+  comingSoon: '将在MU1.5中推出',
+  comingSoon2: '将在MU2中推出',
+  tabs: {
+    introduction: '介绍',
+    records: '记录'
+  },
   actions: {
     backToList: '返回列表'
   },
@@ -18,7 +23,7 @@ export default {
   },
 
   anionSelection: {
-    label: '阴离子选择（选择 1-2）'
+    label: '阴离子选择（最大2）'
   },
 
   totalSaltConcentration: {
@@ -73,7 +78,7 @@ export default {
   },
 
   ui: {
-    calculating: '计算中...'
+    calculating: '验证输入中，准备计算'
   },
 
   result: {
@@ -89,7 +94,7 @@ export default {
 
   tip: {
     calculating: '计算中',
-    calculatingDesc: '基于极化力场的分子动力学模拟耗时较长（24-48小时），可在预计时间之后查看结果，系统会提醒您计算的状态',
+    calculatingDesc: '基于极化力场的分子动力学模拟耗时较长，可在预计时间之后查看结果，系统会提醒您计算的状态',
     notice2: '您可以关闭此页面，不会影响后台计算进程'
   },
   history: {
@@ -108,7 +113,7 @@ export default {
       molPerKg: 'mol/kg'
     },
     actions: {
-      viewDetails: '查看详情',
+      viewDetails: '查看结果',
       delete: '删除',
       deleteConfirm: '确认删除该记录？',
       deleteFailed: '删除记录失败'
@@ -138,8 +143,8 @@ export default {
   results: {
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '簇分析',
-    size: '尺寸',
+    clusterAnalysis: '溶剂化簇类型和分数分析',
+    size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
     analysisCharts: '分析图表',
@@ -155,17 +160,29 @@ export default {
     density: '密度 (g/cm³)',
     viscosity: '黏度 (cP)',
     conductivity: '电导率 (mS/cm)',
+    diffusionCoefficient: '扩散系数（单位：10⁻¹⁰ m²/秒）所有组分',
+    species: '组分',
+    coefficient: '扩散系数（×10⁻¹⁰ m²/s）',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
-  }
-  ,
+    AGG: 'AGG',
+    SSIPTitle: 'Solvent-Separated Ion Pair',
+    CIPTitle: 'Contact Ion Pair',
+    AGGTitle: 'Ion Aggregate'
+  },
+  guide: {
+    help: '帮助',
+    close: '关闭'
+  },
   detail: {
     title: '分析结果',
     viewSubtitle: '查看详细分析结果',
     viewSubtitleWithId: '查看详细分析结果',
     actionTitle: '分析详情',
     loading: '正在加载分析详情...',
+    missingId: '缺少分析ID参数',
+    fetchError: '获取分析详情失败',
+    configuration: '配置信息',
     saltSolventConfig: '盐与溶剂配置',
     saltSummary: '盐配置概览',
     solventSummary: '溶剂概览',
@@ -178,8 +195,8 @@ export default {
     weightFraction: '质量分数',
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '簇分析',
-    size: '尺寸',
+    clusterAnalysis: '溶剂化簇类型和分数分析',
+    size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
     analysisCharts: '分析图表',
@@ -197,7 +214,10 @@ export default {
     conductivity: '电导率 (mS/cm)',
     SSIP: 'SSIP',
     CIP: 'CIP',
-    AGG: 'AGG'
+    AGG: 'AGG',
+    SSIPTitle: 'SSIP：溶剂分离离子对*阳离子和阴离子虽有关联，但并不直接接触。相反，一个或多个溶剂分子位于它们之间。典型出现在中等极性溶剂中，溶剂化壳层使离子分离，但静电关联依然存在。例如：Li*-(溶剂)-PF₆⁻',
+    CIPTitle: 'CIP：接触离子对 一个阳离子和一个阴离子直接接触，它们之间没有插入的溶剂分子。常见于低介电常数溶剂或高盐浓度下。比SSIP结合更强。例如：Li⁺·PF₆⁻直接接触。',
+    AGGTitle: 'AGG：离子聚集体 涉及两个以上阳离子和阴离子组合直接接触的较大关联结构。可以是二聚体、三聚体或更大的簇团。通常出现在高浓度、较差溶剂或离子液体中。例如：(Li⁺·PF₆⁻)ₙ簇团，或Li⁺桥接多个阴离子。'
   }
 };
 

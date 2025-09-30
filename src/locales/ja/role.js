@@ -5,6 +5,9 @@ export default {
     explorer: 'エクスプローラー',
     team: 'チーム',
     enterprise: 'エンタープライズ',
+    enterprise1: 'エンタープライズI',
+    enterprise2: 'エンタープライズII',
+    enterprise3: 'エンタープライズIII',
     joint: '共同',
     admin: '管理者'
 }; 

@@ -16,6 +16,7 @@ const SearchInput = React.memo(({
   initialEditorOpen = true,
   lockMolEditorToggle = false,
   allowSubmitWhenLocked = false,
+  onLockedClick,
 }) => {
   const { t } = useTranslation();
   const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
@@ -31,8 +32,17 @@ const SearchInput = React.memo(({
     }
   }, [lockMolEditorToggle, initialEditorOpen]);
 
+  const handleLockedClick = () => {
+    if (typeof onLockedClick === 'function') {
+      onLockedClick();
+    }
+  };
+
   const handleChange = (e) => {
-    if (lockInput) return;
+    if (lockInput) {
+      handleLockedClick();
+      return;
+    }
     setInputValue(e.target.value);
   };
 
@@ -85,10 +95,12 @@ const SearchInput = React.memo(({
               display: 'flex',
               alignItems: 'center',
               opacity: lockMolEditorToggle ? 0.5 : 1,
-              pointerEvents: lockMolEditorToggle ? 'none' : 'auto',
             }}
             onClick={() => {
-              if (lockMolEditorToggle) return;
+              if (lockMolEditorToggle) {
+                handleLockedClick();
+                return;
+              }
               setShowMolEditor(!showMolEditor);
             }}
           >
@@ -102,7 +114,29 @@ const SearchInput = React.memo(({
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          disabled={disabled || lockInput}
+          readOnly={lockInput}
+          disabled={disabled}
+          onClick={() => {
+            if (lockInput) {
+              handleLockedClick();
+            }
+          }}
+          onFocus={(e) => {
+            if (lockInput) {
+              e.target.blur();
+              handleLockedClick();
+            }
+          }}
+          onMouseDown={(e) => {
+            if (lockInput) {
+              e.preventDefault();
+              handleLockedClick();
+            }
+          }}
+          style={{
+            cursor: lockInput ? 'not-allowed' : 'text',
+            backgroundColor: lockInput ? '#f0f2f5' : undefined,
+          }}
         />
         <InfoTooltip
           title={<>

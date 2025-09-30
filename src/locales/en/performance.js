@@ -1,33 +1,34 @@
 export default {
   // Page header
-  title: "Impact of additive on the cell performance",
+  title: "Impact of additive on cell performances",
+  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Cell chemistry selection",
-    label: "Cell chemistry",
+    title: "Cell Chemistry Selection",
+    label: "Cell Chemistry",
     loading: "Loading...",
     systemSpecs: {
-      title: "Cell specifications",
+      title: "Cell Specifications",
       cathode: "Cathode:",
       anode: "Anode:",  
-      benchmarkElectrolyte: "Benchmark electrolyte:",
-      cellDesign: "Cell design:"
+      benchmarkElectrolyte: "Benchmark Electrolyte:",
+      cellDesign: "Cell Design:"
     }
   },
   
   // Additive input
   additive: {
-    label: "SMILES of additive",
+    label: "SMILES of Additive",
     required: "*",
     placeholder: "Enter valid SMILES for additive of interest"
   },
 
   // Weight percentage
   weightPercentage: {
-    label: "Weight percentage (wt%)",
-    tooltip: "Support for custom values coming soon"
+    label: "Weight Percentage (wt%)",
+    tooltip: "Custom value to be launched in MU1.5"
   },
   
   // Molecule information
@@ -88,16 +89,24 @@ export default {
     negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
     titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    descriptions: {
+      ceLabel: "Coulombic Efficiency",
+      cycleLifeLabel: "Cycle life",
+      ratePerformanceLabel: "Rate performance",
+      ce: "Avrage CE of each cycle from BOL to EOL",
+      cycleLife: "The number of cycles when the discharge capacity retenion rate reachs 80%",
+      ratePerformance: "The capacity retention of the capacity under 5C dishcarge compared the  capacity under 0.5C discharge"
+    },
     temperatureTabs: {
       temp25: "25°C Performance",
       temp45: "45°C Performance"
     },
     performance: {
-      cycleLife25: "25°C Cycle life",
-      ce25: "25°C Coulombic efficiency",
-      ratePerformance25: "25°C Rate performance",
+      cycleLife25: "25°C Cycle Life",
+      ce25: "25°C Coulombic Efficiency",
+      ratePerformance25: "25°C Rate Performance",
       cycleLife45: "45°C Cycle Life",
-      ce45: "45°C Coulombic efficiency"
+      ce45: "45°C Coulombic Efficiency"
     },
     status: {
       positive: "POSITIVE",
@@ -114,10 +123,17 @@ export default {
     title: "LLM Analysis",
     sections: {
       nickelOptimization: "1. Nickel Dehydrogenation Optimization",
-      cyclingOptimization: "2. 4°C Cycling Optimization", 
+      cyclingOptimization: "2. 4°C Cycling Optimization",
       recommendations: "3. Comprehensive Recommendations"
     },
     references: "References"
+  },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "Analyzing",
+    analyzingForSeconds: "{{seconds}} s",
+    analyzingForMinutesAndSeconds: "{{minutes}} min {{seconds}} s"
   },
   
   // General UI text

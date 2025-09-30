@@ -22,7 +22,8 @@ const ChatContent: React.FC = () => {
     const { t } = useTranslation();
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublic = initialAuthLoaded && !isAuthenticated;
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublic = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
 
     return (
         <>

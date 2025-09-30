@@ -41,6 +41,7 @@ interface FindFriendOptionsProps {
   showBatteryFields?: boolean;
   readOnly?: boolean;
   allowFindFriendsToggleWhenReadOnly?: boolean;
+  onLockedClick?: () => void;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -78,16 +79,28 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   showBatteryFields = true,
   readOnly = false,
   allowFindFriendsToggleWhenReadOnly = false,
+  onLockedClick,
 }) => {
   const { t } = useTranslation();
   const canToggleFindFriends = !readOnly || allowFindFriendsToggleWhenReadOnly;
   const checkboxDisabled = readOnly && !allowFindFriendsToggleWhenReadOnly;
+  const handleGuardedInteraction = (event?: React.SyntheticEvent | Event) => {
+    if (!readOnly) return false;
+    if (event && 'preventDefault' in event) {
+      event.preventDefault();
+      event.stopPropagation?.();
+    }
+    if (typeof onLockedClick === 'function') {
+      onLockedClick();
+    }
+    return true;
+  };
   const toggleAdvanced = () => {
-    if (readOnly) return;
+    if (handleGuardedInteraction()) return;
     setShowAdvanced(!showAdvanced);
   };
   const handleAdvancedToggleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (readOnly) return;
+    if (handleGuardedInteraction(event)) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       toggleAdvanced();
@@ -154,23 +167,33 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       </InfoTooltip>
                     </label>
                     {enableMolTypeSelector && (
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          flexWrap: 'wrap',
-                          opacity: readOnly ? 0.6 : 1,
-                        }}
-                      >
-                        <select
-                          value={selectedMolType}
-                          onChange={(e) => {
-                            if (readOnly) return;
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        flexWrap: 'wrap',
+                        opacity: readOnly ? 0.6 : 1,
+                      }}
+                    >
+                      <select
+                        value={selectedMolType}
+                        onChange={(e) => {
+                            if (handleGuardedInteraction(e)) return;
                             setSelectedMolType(e.target.value);
                           }}
-                          style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                          disabled={readOnly}
+                          style={{
+                            backgroundColor: readOnly ? '#f1f5f9' : 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            padding: '4px',
+                            color: readOnly ? '#94a3b8' : undefined,
+                            cursor: readOnly ? 'not-allowed' : 'pointer',
+                          }}
+                          onMouseDown={(event) => {
+                            if (handleGuardedInteraction(event)) return;
+                          }}
+                          aria-disabled={readOnly}
                         >
                           <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
                           <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
@@ -181,12 +204,22 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                           <select
                             value={additiveSubtype}
                             onChange={(e) => {
-                              if (readOnly) return;
+                              if (handleGuardedInteraction(e)) return;
                               setAdditiveSubtype(e.target.value);
                             }}
-                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            style={{
+                              backgroundColor: readOnly ? '#f1f5f9' : 'white',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px',
+                              padding: '4px',
+                              color: readOnly ? '#94a3b8' : undefined,
+                              cursor: readOnly ? 'not-allowed' : 'pointer',
+                            }}
                             aria-label={t('search.moleculeTypes.additiveSubtype')}
-                            disabled={readOnly}
+                            onMouseDown={(event) => {
+                              if (handleGuardedInteraction(event)) return;
+                            }}
+                            aria-disabled={readOnly}
                           >
                             <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
                             <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
@@ -215,11 +248,21 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       <select
                         value={computeLevel}
                         onChange={(e) => {
-                          if (readOnly) return;
+                          if (handleGuardedInteraction(e)) return;
                           setComputeLevel(e.target.value);
                         }}
-                        style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                        disabled={readOnly}
+                        style={{
+                          backgroundColor: readOnly ? '#f1f5f9' : 'white',
+                          border: '1px solid #ccc',
+                          borderRadius: '4px',
+                          padding: '4px',
+                          color: readOnly ? '#94a3b8' : undefined,
+                          cursor: readOnly ? 'not-allowed' : 'pointer',
+                        }}
+                        onMouseDown={(event) => {
+                          if (handleGuardedInteraction(event)) return;
+                        }}
+                        aria-disabled={readOnly}
                       >
                         <option value="Disabled">{t('search.computeDisabled')}</option>
                         <option value="Low">{t('search.computeLow')}</option>
@@ -245,38 +288,36 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                   )}
                 </div>
               </div>
-              {ShowFindFriendsAdvancedOptions && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  aria-expanded={showAdvanced}
-                  onClick={toggleAdvanced}
-                  onKeyDown={handleAdvancedToggleKeyDown}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    cursor: readOnly ? 'not-allowed' : 'pointer',
-                    whiteSpace: 'nowrap',
-                    border: '1px solid #2563eb',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    color: '#2563eb',
-                    fontWeight: 500,
-                    fontSize: '13px',
-                    transition: 'background-color 0.2s',
-                    backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
-                    marginLeft: 'auto',
-                    opacity: readOnly ? 0.5 : 1,
-                  }}
-                >
-                  <span>{t('search.advancedOptions')}</span>
-                  {showAdvanced ? (
-                    <ChevronUp size={14} style={{ marginLeft: '6px' }} />
-                  ) : (
-                    <ChevronDown size={14} style={{ marginLeft: '6px' }} />
-                  )}
-                </div>
-              )}
+              <div
+                role="button"
+                tabIndex={0}
+                aria-expanded={showAdvanced}
+                onClick={toggleAdvanced}
+                onKeyDown={handleAdvancedToggleKeyDown}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  cursor: readOnly ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap',
+                  border: '1px solid #2563eb',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  color: '#2563eb',
+                  fontWeight: 500,
+                  fontSize: '13px',
+                  transition: 'background-color 0.2s',
+                  backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                  marginLeft: 'auto',
+                  opacity: readOnly ? 0.5 : 1,
+                }}
+              >
+                <span>{t('search.advancedOptions')}</span>
+                {showAdvanced ? (
+                  <ChevronUp size={14} style={{ marginLeft: '6px' }} />
+                ) : (
+                  <ChevronDown size={14} style={{ marginLeft: '6px' }} />
+                )}
+              </div>
             </div>
             {showAdvanced && (
               <FindFriendAdvancedOptions
@@ -306,6 +347,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 showStructureSlider={showStructureSlider}
                 structureSliderTooltip={structureSliderTooltip}
                 readOnly={readOnly}
+                onLockedClick={onLockedClick}
               />
             )}
           </div>

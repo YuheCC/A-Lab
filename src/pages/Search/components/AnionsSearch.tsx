@@ -19,6 +19,7 @@ import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const API_URL = getAPIUrl();
 
@@ -75,7 +76,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -110,6 +111,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
+    const triggerAccessModal = useAccessModals();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -409,9 +411,20 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                     }
                 }
             }
-        } catch (apiError) {
+        } catch (apiError: any) {
             console.error('Error checking Snowflake database:', apiError);
-            setSearchError(t('search.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = apiError?.response?.status === 401 || apiError?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setSearchError(null);
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setSearchError(t('search.searchError'));
+            }
         } finally {
             setSearchLoading(false);
             setLastSearch(searchInput);
@@ -536,6 +549,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 initialEditorOpen={!isPublic}
                                 lockMolEditorToggle={isPublic}
                                 allowSubmitWhenLocked={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                             <FindFriendOptions
@@ -571,6 +585,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
                                 allowFindFriendsToggleWhenReadOnly={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                     <div className="search-results">

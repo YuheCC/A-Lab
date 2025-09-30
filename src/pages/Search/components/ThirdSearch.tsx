@@ -5,6 +5,7 @@ import './third.css';
 import { authFetch, getAPIUrl } from '@/utils';
 import { useAuthStore } from '@/models/useAuth';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const BASE_URL = getAPIUrl();
 
@@ -17,7 +18,9 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     const { t } = useTranslation();
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublic = isPublicUser || (initialAuthLoaded && !isAuthenticated);
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
+    const triggerAccessModal = useAccessModals();
     const [molecularFormula, setMolecularFormula] = useState<string>(
         isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput : ''
     );
@@ -41,7 +44,9 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     const [selectedRecord, setSelectedRecord] = useState<SearchResult | null>(null);
 
     const handleFormulaChange = (value: string) => {
-        if (isPublic) return;
+        if (isPublic) {
+            return;
+        }
         setMolecularFormula(value);
     };
 
@@ -82,9 +87,20 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                     setTotalCount(results.length);
                 }
                 
-            } catch (err) {
+            } catch (err: any) {
                 console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+                // 检查是否是未登录错误（401）或者token不存在
+                const token = localStorage.getItem('token');
+                const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+                if (!token || isUnauthorized) {
+                    // 未登录或401错误时不显示错误信息
+                    setError('');
+                } else {
+                    // 已登录且非401错误时显示错误信息
+                    setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -92,7 +108,9 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (isPublic) return;
+        if (isPublic) {
+            return;
+        }
         setMolecularFormula(e.target.value);
     };
 
@@ -180,7 +198,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
     const mainContentStyle: React.CSSProperties = {
         backgroundColor: 'white',
         padding: '20px',
-        margin: '0 20px 20px 20px',
+        margin: '0px 0px 0px 0px',
         borderRadius: '8px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         display: 'flex',
@@ -352,9 +370,20 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                 });
             }
             
-        } catch (err) {
+        } catch (err: any) {
             console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-            setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setError('');
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+            }
         } finally {
             setIsLoading(false);
         }
@@ -374,7 +403,10 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
 
     // 触发对应索引的li元素点击事件的函数
     const triggerLiClick = (index: number) => {
-        if (isPublic) return;
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         setTimeout(() => {
             const modeSwitcher = ref.current?.querySelector('.mpc-pt-mode-switcher');
             if (modeSwitcher) {
@@ -622,13 +654,25 @@ const noResultsStyle: React.CSSProperties = {
         <>
             <div style={containerStyle} className="third-search-container-new">
                 {/* 顶部说明条 */}
-                <div style={headerBannerStyle}>
-                    {t('thirdSearch.headerBanner')}
-                </div>
+                
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>
-                    <button style={{ ...materialsButtonStyle, opacity: isPublic ? 0.6 : 1 }} disabled={isPublic}>
+                    <button
+                        type="button"
+                        style={{
+                            ...materialsButtonStyle,
+                            opacity: isPublic ? 0.6 : 1,
+                            cursor: isPublic ? 'not-allowed' : materialsButtonStyle?.cursor || 'pointer',
+                        }}
+                        onClick={(event) => {
+                            if (isPublic) {
+                                event.preventDefault();
+                                triggerAccessModal();
+                            }
+                        }}
+                        aria-disabled={isPublic}
+                    >
                         {t('thirdSearch.materialsButton')}
                     </button>
                     
@@ -641,8 +685,20 @@ const noResultsStyle: React.CSSProperties = {
                         }}
                         value={molecularFormula}
                         onChange={handleInputChange}
+                        readOnly={isPublic}
                         placeholder=""
-                        disabled={isPublic}
+                        onMouseDown={(event) => {
+                            if (isPublic) {
+                                event.preventDefault();
+                                triggerAccessModal();
+                            }
+                        }}
+                        onFocus={(event) => {
+                            if (isPublic) {
+                                event.target.blur();
+                                triggerAccessModal();
+                            }
+                        }}
                     />
 
                     <button
@@ -653,10 +709,13 @@ const noResultsStyle: React.CSSProperties = {
                         }}
                         title={t('thirdSearch.periodicTableTooltip')}
                         onClick={() => {
-                            if (isPublic) return;
+                            if (isPublic) {
+                                triggerAccessModal();
+                                return;
+                            }
                             setInputShow(!inputShow);
                         }}
-                        disabled={isPublic}
+                        aria-disabled={isPublic}
                     >
                         <div style={{ 
                             width: '16px', 
@@ -695,11 +754,12 @@ const noResultsStyle: React.CSSProperties = {
                                             cursor: isPublic ? 'not-allowed' : 'pointer',
                                         }}
                                         onClick={() => {
-                                            if (isPublic) return;
                                             setActiveTab('elements');
-                                            triggerLiClick(0);
+                                            if (!isPublic) {
+                                                triggerLiClick(0);
+                                            }
                                         }}
-                                        disabled={isPublic}
+                                        aria-disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.onlyElements')}
                                     </button>
@@ -710,11 +770,12 @@ const noResultsStyle: React.CSSProperties = {
                                             cursor: isPublic ? 'not-allowed' : 'pointer',
                                         }}
                                         onClick={() => {
-                                            if (isPublic) return;
                                             setActiveTab('atLeastElements');
-                                            triggerLiClick(1);
+                                            if (!isPublic) {
+                                                triggerLiClick(1);
+                                            }
                                         }}
-                                        disabled={isPublic}
+                                        aria-disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.atLeastElements')}
                                     </button>
@@ -725,9 +786,11 @@ const noResultsStyle: React.CSSProperties = {
                                             cursor: isPublic ? 'default' : 'pointer',
                                         }}
                                         onClick={() => {
-                                            if (activeTab === 'formula' || isPublic) return;
+                                            if (activeTab === 'formula') return;
                                             setActiveTab('formula');
-                                            triggerLiClick(2);
+                                            if (!isPublic) {
+                                                triggerLiClick(2);
+                                            }
                                         }}
                                     >
                                         {t('thirdSearch.tabs.formula')}
@@ -740,20 +803,26 @@ const noResultsStyle: React.CSSProperties = {
                                     style={{
                                         ...materialsInputContainerStyle,
                                         opacity: isPublic ? 0.5 : 1,
-                                        pointerEvents: isPublic ? 'none' : 'auto',
                                     }}
                                     className="materials-input-container"
+                                    onClick={() => {
+                                        if (isPublic) {
+                                            triggerAccessModal();
+                                        }
+                                    }}
                                 >
-                                    <MaterialsInput
-                                        value={molecularFormula}
-                                        onChange={handleFormulaChange}
-                                        placeholder=""
-                                        label=""
-                                        allowedInputTypes={['formula', 'elements', 'chemical_system']}
-                                        periodicTableMode="toggle"
-                                        showTypeDropdown={false}
-                                        showSubmitButton={false}
-                                    />
+                                    <div style={{ pointerEvents: isPublic ? 'none' : 'auto' }}>
+                                        <MaterialsInput
+                                            value={molecularFormula}
+                                            onChange={handleFormulaChange}
+                                            placeholder=""
+                                            label=""
+                                            allowedInputTypes={['formula', 'elements', 'chemical_system']}
+                                            periodicTableMode="toggle"
+                                            showTypeDropdown={false}
+                                            showSubmitButton={false}
+                                        />
+                                    </div>
                                 </div>
                              </>
                          )

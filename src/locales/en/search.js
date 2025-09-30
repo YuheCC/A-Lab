@@ -1,10 +1,10 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: 'Organic',
-        inorganic: 'Inorganic',
-        anions: 'Anions',
-        third: 'Solid-State Electrolyte'
+        organic: 'Solvents, Additives & Diluents',
+        inorganic: 'Inorganic Solvent, Additives & Diluents',
+        anions: 'Salt Anions',
+        third: 'Solid Electrolytes '
     },
     
     // Search Input

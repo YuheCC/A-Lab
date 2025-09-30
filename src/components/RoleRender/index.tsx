@@ -12,7 +12,7 @@ const RoleRender = ({role}: {role?: string | null}) => {
     }
 
     return (
-        <span className="subscription-badge" style={{backgroundColor: config.color}}>{config.name}</span>
+        <span className="subscription-badge" style={{backgroundColor: roleConfig[role]?.color}}>{roleConfig[role]?.name}</span>
     )
 }
 

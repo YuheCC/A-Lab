@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Navigate, useLocation } from 'umi';
 import { useEffect } from 'react';
 import { login as loginService, register as registerService, verify as verifyService, verifyCode as verifyCodeService, verifyForgotPasswordCode as verifyForgotPasswordCodeService } from '@/services/auth';
+import { triggerLoginModal, shouldShowLoginModal } from '@/utils/authHelpers';
 
 interface AuthState {
     initialAuthLoaded: boolean;
@@ -51,6 +52,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 isAdvancedTier: false,
                 organization_name: organizationName || null,
             });
+            const current = window.location.pathname + window.location.search;
+            
+            // 使用LoginModal浮层而不是页面跳转
+            if (shouldShowLoginModal(window.location.pathname)) {
+                triggerLoginModal(current);
+            }
             return;
         }
 
@@ -153,17 +160,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem('username');
         localStorage.removeItem('permissions');
         localStorage.removeItem('organization_name');
-        set({ 
-            isAuthenticated: false, 
-            token: null, 
-            userPermissions: null, 
+        set({
+            isAuthenticated: false,
+            token: null,
+            userPermissions: null,
             userName: null,
             isLoading: false,
             error: null,
             organization_name: null
         });
         const current = window.location.pathname + window.location.search;
-        window.location.href = '/login?redirect=' + encodeURIComponent(current);
+
+        // 刷新页面以清除所有状态和缓存的数据
+        window.location.reload();
     },
 
     register: async ({ username, email, first_name, last_name, organization_name, password }: { username: string, email: string, first_name: string, last_name: string, organization_name: string, password: string }) => {
@@ -257,9 +266,11 @@ export const ProtectedRoute = ({ children, allowedRoles = [] }: { children: Reac
         return <div className="app-loading">Loading...</div>;
     }
 
-    // If the user is not authenticated (this page is protected), redirec to auth
+    // If the user is not authenticated, trigger login modal instead of redirect
     if (!isAuthenticated) {
-        return <Navigate to={`/login?redirect=${encodeURIComponent(pathname)}`}></Navigate>
+        // 触发登录浮层，verifyAuth方法已经处理了这个逻辑
+        // 返回一个空的div，让用户留在当前页面
+        return <div style={{ display: 'none' }}></div>;
     }
 
     // If the user is authenticated and there are no allowedRoles default to allowing all authenticated users

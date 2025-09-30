@@ -13,12 +13,11 @@ const Search = () => {
 
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
-    const isPublicUser = initialAuthLoaded && !isAuthenticated;
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublicUser = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
     const handleGoToFavorites = () => {
         navigate('/favorites');
     };
-
-    console.log('isPublicUser', isPublicUser);
 
     return (
         <div>
@@ -50,13 +49,17 @@ const Search = () => {
                         {t('search.tabs.third')}
                     </button>
                 </div>
-                <button
-                    className="favorites-enter-button"
-                    onClick={handleGoToFavorites}
-                    title={t('search.favorites.goToFavorites')}
-                >
-                    ⭐ {t('search.favorites.favorites')}
-                </button>
+                {
+                    activeTab !== 'third' && (
+                        <button
+                            className="favorites-enter-button"
+                            onClick={handleGoToFavorites}
+                            title={t('search.favorites.goToFavorites')}
+                        >
+                            {t('search.favorites.favorites')}
+                        </button>
+                    )
+                }
             </div>
 
             {/* Tab Content */}
