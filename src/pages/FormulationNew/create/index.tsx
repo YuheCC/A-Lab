@@ -15,16 +15,6 @@ const CreatePage: React.FC = () => {
 
   return (
     <div className="create-page-container">
-      <div className="create-header">
-        <div className="formulation-title-wrapper">
-          <h1 className="create-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          {/* <GuideTooltip
-            storageKey="formulation-new-guide-shown"
-          /> */}
-        </div>
-        <span className="create-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
-      </div>
-
       <div className="create-content formulation-container">
         <div className="create-actions">
           <span className="create-action-title">{t('formulation.create.newConfiguration', 'New Configuration')}</span>

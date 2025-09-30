@@ -159,15 +159,6 @@ const DetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            {/* <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            /> */}
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -186,15 +177,6 @@ const DetailPage: React.FC = () => {
   if (error) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            {/* <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            /> */}
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -212,27 +194,15 @@ const DetailPage: React.FC = () => {
 
   return (
     <div className="detail-page-container">
-      <div className="detail-header">
-        <div className="formulation-title-wrapper">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          {/* <GuideTooltip
-            storageKey="formulation-new-guide-shown"
-          /> */}
-        </div>
-        <span className="detail-subtitle">
-          {t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}
-        </span>
-      </div>
-
       <div className="detail-content">
         <div className="detail-actions">
-          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
+          <span style={{ fontSize: '18px', fontWeight: '600' }} className="detail-action-title">{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</span>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('formulation.actions.backToList', 'Back to List')}
           </button>
         </div>
         <div className="results-section">
-          <h2>{t('formulation.results.analysisResults', 'Analysis Results')}</h2>
+          {/* <h2>{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</h2> */}
 
           <div className="system-properties">
             <h3>{t('formulation.results.systemProperties', 'System Properties')}</h3>

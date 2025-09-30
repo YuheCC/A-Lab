@@ -137,18 +137,6 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   return (
     <div className="formulation-new-container">
-      <div className="formulation-header">
-        <div className="formulation-title-wrapper">
-          <h1 className="formulation-title">
-            {t('formulation.title', 'Salt & Solvent Configuration')}
-          </h1>
-          {/* <GuideTooltip
-            storageKey="formulation-new-guide-shown"
-          /> */}
-        </div>
-        <span className="formulation-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
-      </div>
-
       <div className="formulation-action-section">
         <button className="new-analysis-button" onClick={handleNewAnalysis}>
           + {t('formulation.history.newAnalysis', 'New Analysis')}
