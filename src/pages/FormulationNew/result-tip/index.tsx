@@ -17,17 +17,17 @@ const ResultTip: React.FC<ResultTipProps> = () => {
 
   return (
     <div className="result-tip-container">
-      <div className="result-tip-header">
+      {/* <div className="result-tip-header">
         <div className="formulation-title-wrapper">
           <h1 className="result-tip-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          {/* <GuideTooltip
+          <GuideTooltip
             storageKey="formulation-new-guide-shown"
-          /> */}
+          />
         </div>
         <span className="result-tip-subtitle">{t('formulation.subtitle', 'Configure and customize your electrolytes')}</span>
-      </div>
+      </div> */}
 
-      <div className="result-tip-content">
+      <div className="result-tip-content" style={{ paddingTop: '30px' }}>
         <div className="tip-card">
           <h2 className="tip-title">{t('formulation.tip.calculating', '计算中')}</h2>
           <p className="tip-description">{t('formulation.tip.calculatingDesc', '基于极化力场的分子动力学模拟耗时较长（24-48小时），可在预计时间之后查看结果，系统会提醒您计算的状态')}</p>

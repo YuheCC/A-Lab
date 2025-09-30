@@ -88,6 +88,59 @@
   margin: 0 0 12px 0;
 }
 
+/* Configuration Information */
+.configuration-info {
+  margin-bottom: 32px;
+}
+
+.configuration-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 16px 16px 16px;
+}
+
+.configuration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  gap: 24px;
+}
+
+.configuration-row:last-child {
+  padding-bottom: 0;
+}
+
+.config-label {
+  font-size: 14px;
+  color: #4b5563;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.config-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.config-value .compound-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.config-value .compound-item {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
 /* System Properties */
 .properties-table {
   border: 1px solid #e2e8f0;
@@ -336,6 +389,25 @@
   .back-to-list-button {
     width: 100%;
     text-align: center;
+  }
+
+  .configuration-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .config-label {
+    font-weight: 600;
+  }
+
+  .config-value {
+    width: 100%;
+  }
+
+  .config-value .compound-list {
+    justify-content: flex-start;
   }
 
   .cluster-table .table-header,

@@ -6,6 +6,7 @@ import { Info } from 'lucide-react';
 import { MDHistoryDetailResponse } from '@/services/formulation/md';
 import { getHistoryDetail } from '../model';
 import GuideTooltip from '../components/GuideTooltip';
+import { formatIonDisplay } from '../utils';
 import './index.css';
 
 interface ResultData {
@@ -159,15 +160,6 @@ const DetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            {/* <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            /> */}
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -186,15 +178,6 @@ const DetailPage: React.FC = () => {
   if (error) {
     return (
       <div className="detail-page-container">
-        <div className="detail-header">
-          <div className="formulation-title-wrapper">
-            <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-            {/* <GuideTooltip
-              storageKey="formulation-new-guide-shown"
-            /> */}
-          </div>
-          <span className="detail-subtitle">{t('formulation.detail.viewSubtitle', 'View detailed analysis results')}</span>
-        </div>
         <div className="detail-content">
           <div className="detail-actions">
             <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
@@ -212,27 +195,71 @@ const DetailPage: React.FC = () => {
 
   return (
     <div className="detail-page-container">
-      <div className="detail-header">
-        <div className="formulation-title-wrapper">
-          <h1 className="detail-title">{t('formulation.title', 'Salt & Solvent Configuration')}</h1>
-          {/* <GuideTooltip
-            storageKey="formulation-new-guide-shown"
-          /> */}
-        </div>
-        <span className="detail-subtitle">
-          {t('formulation.detail.viewSubtitleWithId', 'View detailed analysis results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}
-        </span>
-      </div>
-
       <div className="detail-content">
         <div className="detail-actions">
-          <span className="detail-action-title">{t('formulation.detail.actionTitle', 'Analysis Details')}</span>
+          <span style={{ fontSize: '18px', fontWeight: '600' }} className="detail-action-title">{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</span>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('formulation.actions.backToList', 'Back to List')}
           </button>
         </div>
         <div className="results-section">
-          <h2>{t('formulation.results.analysisResults', 'Analysis Results')}</h2>
+          {/* <h2>{t('formulation.results.analysisResults', 'Analysis Results')} - {id === 'example' ? id : `AN-${String(id).padStart(3, '0')}`}</h2> */}
+
+          {/* Configuration Information */}
+          {detailData && (
+            <div className="configuration-info">
+              <h3>{t('formulation.detail.configuration', 'Configuration')}</h3>
+              <div className="configuration-table">
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFraction', 'Salt (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      <div className="compound-item">
+                        {formatIonDisplay(detailData.cation_name)}
+                      </div>
+                      {detailData.anion_name_list.map((anion, idx) => (
+                        <div key={idx} className="compound-item">
+                          {formatIonDisplay(anion)}({detailData.anion_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.saltFractionType', 'Fraction Type (Salt)')}</span>
+                  <span className="config-value">
+                    {detailData.anion_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</span>
+                  <span className="config-value">
+                    <div className="compound-list">
+                      {detailData.solvent_smiles_list.map((solvent, idx) => (
+                        <div key={idx} className="compound-item">
+                          {solvent}({detailData.solvent_fractions[idx]})
+                        </div>
+                      ))}
+                    </div>
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.solventFractionType', 'Fraction Type (Solvent)')}</span>
+                  <span className="config-value">
+                    {detailData.solvent_fractions_type === 'mole'
+                      ? t('formulation.fractionType.mole', 'Molar fraction')
+                      : t('formulation.fractionType.weight', 'Weight fraction')}
+                  </span>
+                </div>
+                <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.concentration', 'Concentration')}</span>
+                  <span className="config-value">{detailData.cation_molality} mol/kg</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="system-properties">
             <h3>{t('formulation.results.systemProperties', 'System Properties')}</h3>
