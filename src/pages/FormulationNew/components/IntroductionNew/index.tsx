@@ -73,7 +73,6 @@ const IntroductionNew: React.FC = () => {
       {/* Group 1: Standard Properties */}
       <div className="content-section">
         <div className="group-header">
-          <span className="group-label">GROUP 01</span>
           <h2 className="section-title group-title">Standard Properties</h2>
         </div>
 
@@ -213,7 +212,6 @@ const IntroductionNew: React.FC = () => {
       {/* Group 2: Instructions Needed */}
       <div className="content-section">
         <div className="group-header">
-          <span className="group-label">GROUP 02</span>
           <h2 className="section-title group-title">Advanced Analysis</h2>
         </div>
 
@@ -257,7 +255,6 @@ const IntroductionNew: React.FC = () => {
       {/* Group 3: Advanced Properties */}
       <div className="content-section">
         <div className="group-header">
-          <span className="group-label">GROUP 03</span>
           <h2 className="section-title group-title">Custom Studies</h2>
         </div>
 
@@ -299,7 +296,7 @@ const IntroductionNew: React.FC = () => {
                 className="property-image"
               />
               <div className="image-caption">
-                Our MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis. 
+              image.pngOur MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis. 
               </div>
             </div>
           </div>

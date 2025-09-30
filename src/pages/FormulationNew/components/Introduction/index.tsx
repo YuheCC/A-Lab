@@ -7,19 +7,20 @@ const Introduction: React.FC = () => {
     <div className="introduction-container">
       <div className="guide-content-section">
         <img src="/formulation/introduction1.png" alt="Introduction" />
-        <div className="figure-caption">Our proprietary Molecular Dynamics (MD) service for electrolyte formulation</div>
-        <p>Molecular dynamics (MD) simulations in SES’s platform uniquely combine advanced polarizable force fields with an automated workflow, capturing ion–solvent interactions with high fidelity. Users simply submit electrolyte formulations through the MU portal, and within days receive quantitative predictions of key properties—delivering faster, more reliable insights than conventional trial-and-error or standard modeling approaches.</p>
+        <div className="figure-caption">[Caption] Our proprietary Molecular Dynamics (MD) service for electrolyte formulation</div>
+        <p>Molecular dynamics (MD) simulations in MU's platform uniquely combine advanced polarizable force fields with an automated workflow, capturing ion–solvent interactions with high fidelity. Users simply submit desired electrolyte formulations through the MU portal containing any known or unknown molecules, and within days will receive quantitative predictions of key properties—delivering faster and more accurate insights than conventional trial-and-error or classical modeling approaches.</p>
       </div>
       <div className="guide-content-section">
         <img src="/formulation/introduction2.png" alt="Introduction" />
-        <div className="figure-caption">Accelerating electrolyte design with MD simulations across concentrations</div>
-        <p>SES’s proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvents organize at different salt concentrations. Each simulation run completes in ~3 days, after which customers receive quantitative property predictions—delivering fast, reliable insights to guide electrolyte design and optimization beyond traditional trial-anderror approaches.</p>
+        <div className="figure-caption">[Caption] Accelerating electrolyte design with MD simulations across concentrations</div>
+        <p>MU's proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvent molecules organize at different salt concentrations.</p>
+        <p>Each standard simulation run completes in ~3 days depending on the complexity of the formulation, after which customers receive quantitative property predictions—delivering fast and reliable insights to guide electrolyte design and optimization, which saves tremendous cost and time.</p>
       </div>
       <div className="guide-content-section">
         <PropertiesTable />
         <div className="properties-tip-section">
           <div className="introduction-properties-tip">
-            The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team.
+            Properties listed as Standard Properties will be available in about 3 days as soon as the MD simulations are complete. For other properties, please contact our team.
           </div>
           <div className="email-contact">
             <a
@@ -32,11 +33,11 @@ const Introduction: React.FC = () => {
         </div>
       </div>
       <div className="guide-content-section">
-        <h4>Group 1. Standard properties</h4>
+        <h4>Standard Properties</h4>
         <ol>
           <li><strong>Radial distribution function (RDF)</strong>: Probability of finding a particle at a given distance from a reference particle. RDF describes local structure of electrolytes, which directly impacts solubility, miscibility, ion conductivity, solvation structure and interphases.</li>
           <li><strong>Coordination number (CN)</strong>: Average number of neighboring atoms/molecules surrounding a central ion. This has impact on conductivity, solubility and interphases.</li>
-          <li><strong>Solvation cluster type and fraction analysis</strong>: Analyzes how cations and anions associate in electrolyte solutions. Three major cluster types:
+          <li><strong>Solvation cluster analysis</strong>: Analyzes how cations and anions associate in electrolyte solutions. Three major cluster types:
             <br />• <strong>SSIP (Solvent-Separated Ion Pair)</strong>: Cation-anion associated but with at least one solvent molecule sits between them. Such species prevail in high-dielectric solvents; supports higher Li⁺ mobility and typically higher conductivity.
             <br />• <strong>CIP (Contact Ion Pair)</strong>: Cation–anion forms direct contact with no solvent molecules in between. Such species are more common at higher salt concentration or in solvents of low dielectric constants; their existence can slow down ion transport, leading to typically lower conductivity.
             <br />• <strong>AGG (Aggregate)</strong>: Larger clusters with multiple cations/anions linked together. Dominant in concentrated electrolytes; often reduces conductivity.
@@ -65,7 +66,7 @@ const Introduction: React.FC = () => {
       </div>
 
       <div className="guide-content-section">
-        <h4>Group 2. Instructions needed</h4>
+        <h4>Advanced Analysis</h4>
         <ol start={8}>
         <li><strong>Ion–ion correlation</strong>: Measure of how ionic species are correlated beyond random distribution.</li>
           <li><strong>Structure factor (S(q))</strong>: Quantifies how atomic arrangements scatter radiation, revealing ordering in reciprocal space.</li>
@@ -75,8 +76,10 @@ const Introduction: React.FC = () => {
       </div>
 
       <div className="guide-content-section">
-        <h4>Group 3. </h4>
-        <p>12. <strong>EDL (Electric Double Layer)</strong>: Structured region of ions near a charged surface or electrode. Inferring the formation of SEI compound and redox reactions.</p>
+        <h4>Custom Studies</h4>
+        <ol start={12}>
+          <li><strong>EDL (Electric Double Layer)</strong>: Structured region of ions near a charged surface or electrode. Inferring the formation of SEI compound and redox reactions.</li>
+        </ol>
         <img src="/formulation/introduction5.png" alt="Electric Double Layer" />
         <div className="figure-caption">Electric double layer structure under well-controlled electrostatic potential. In this snapshot of MD simulation, electrolyte of given formulation from the user is placed between two electrodes. By mimicking the potential change across the virtual cell, surface structure under electrostatic potential can be visualized, whose chemical distribution predetermines the eventual interphasial chemistries.</div>
 
