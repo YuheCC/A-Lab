@@ -157,6 +157,17 @@ const DetailPage: React.FC = () => {
     }
   };
 
+  // 判断是否为base64内容，如果是则返回base64格式，否则返回路径
+  const getImageSrc = (data: string | undefined) => {
+    if (!data) return '';
+    // 判断是否为路径（包含 / 或 . 等路径特征）
+    if (data.startsWith('/')) {
+      return data;
+    }
+    // 否则认为是base64
+    return `data:image/png;base64,${data}`;
+  };
+
   if (loading) {
     return (
       <div className="detail-page-container">
@@ -358,7 +369,7 @@ const DetailPage: React.FC = () => {
                 <div className="chart-image-container">
                   <img
                     style={{ maxWidth: '60%' }}
-                    src={`data:image/png;base64,${resultData.rdf_cn_plot}`}
+                    src={getImageSrc(resultData.rdf_cn_plot)}
                     alt="Radial Distribution Function and Coordination Number"
                     className="chart-image"
                   />
@@ -378,7 +389,7 @@ const DetailPage: React.FC = () => {
                 <div className="chart-image-container">
                   <img
                     style={{ maxWidth: '60%' }}
-                    src={`data:image/png;base64,${resultData.msd_plot}`}
+                    src={getImageSrc(resultData.msd_plot)}
                     alt="Mean Square Displacement"
                     className="chart-image"
                   />
