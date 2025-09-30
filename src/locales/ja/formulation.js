@@ -109,7 +109,7 @@ export default {
       molPerKg: 'mol/kg'
     },
     actions: {
-      viewDetails: '詳細を見る',
+      viewDetails: '結果を見る',
       delete: '削除',
       deleteConfirm: 'この記録を削除しますか？',
       deleteFailed: '記録の削除に失敗しました'
@@ -163,9 +163,9 @@ export default {
     SSIP: 'SSIP',
     CIP: 'CIP',
     AGG: 'AGG',
-    SSIPTitle: 'SSIP：溶媒分離イオンペア カチオンとアニオンは関連しているが、直接接触していない。代わりに、1つ以上の溶媒分子がそれらの間に位置している。中程度の極性溶媒に典型的で、溶媒和殻がイオンを分離させるが、静電相関は残る。例：Li⁺-(溶媒)-PF₆⁻',
-    CIPTitle: 'CIP：接触イオンペア 1つのカチオンと1つのアニオンが直接接触し、間に溶媒分子を挟まない。低誘電率溶媒や高塩濃度で一般的。SSIPより強い結合。例：Li⁺·PF₆⁻が直接接触。',
-    AGGTitle: 'AGG：イオン凝集体 2つ以上のカチオンとアニオンの組み合わせによる直接接触を含む、より大きな関連構造。二量体、三量体、またはより大きなクラスターであり得る。高濃度、不良溶媒、またはイオン液体でしばしば現れる。例：(Li⁺·PF₆⁻)ₙクラスター、またはLi⁺が複数のアニオンを架橋。'
+    SSIPTitle: 'Solvent-Separated Ion Pair',
+    CIPTitle: 'Contact Ion Pair',
+    AGGTitle: 'Ion Aggregate'
   },
   guide: {
     help: 'ヘルプ',

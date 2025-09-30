@@ -113,7 +113,7 @@ export default {
       molPerKg: 'mol/kg'
     },
     actions: {
-      viewDetails: '查看详情',
+      viewDetails: '查看结果',
       delete: '删除',
       deleteConfirm: '确认删除该记录？',
       deleteFailed: '删除记录失败'
@@ -166,9 +166,9 @@ export default {
     SSIP: 'SSIP',
     CIP: 'CIP',
     AGG: 'AGG',
-    SSIPTitle: 'SSIP：溶剂分离离子对*阳离子和阴离子虽有关联，但并不直接接触。相反，一个或多个溶剂分子位于它们之间。典型出现在中等极性溶剂中，溶剂化壳层使离子分离，但静电关联依然存在。例如：Li*-(溶剂)-PF₆⁻',
-    CIPTitle: 'CIP：接触离子对 一个阳离子和一个阴离子直接接触，它们之间没有插入的溶剂分子。常见于低介电常数溶剂或高盐浓度下。比SSIP结合更强。例如：Li⁺·PF₆⁻直接接触。',
-    AGGTitle: 'AGG：离子聚集体 涉及两个以上阳离子和阴离子组合直接接触的较大关联结构。可以是二聚体、三聚体或更大的簇团。通常出现在高浓度、较差溶剂或离子液体中。例如：(Li⁺·PF₆⁻)ₙ簇团，或Li⁺桥接多个阴离子。'
+    SSIPTitle: 'Solvent-Separated Ion Pair',
+    CIPTitle: 'Contact Ion Pair',
+    AGGTitle: 'Ion Aggregate'
   },
   guide: {
     help: '帮助',
