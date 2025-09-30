@@ -179,7 +179,6 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
         <div className="login-modal-body">
           <div className="login-modal-auth-header">
             <img src={logo} alt={t('auth.logo.alt')} className="login-modal-logo" />
-            <h2 id="login-modal-title">{t('auth.header.welcomeBack')}</h2>
             <p>{t('auth.header.signInSubtitle')}</p>
           </div>
 
