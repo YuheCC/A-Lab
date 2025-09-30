@@ -34,38 +34,42 @@ const Introduction: React.FC = () => {
       <div className="guide-content-section">
         <h4>Group 1. Standard properties</h4>
         <ol>
-          <li><strong>Radial distribution function (RDF)</strong>: Probability of finding a particle at a given distance from a reference particle, describing local structure. This has impacts on solubility, conductivity, dissolution at electrolyte-electrode interphase, and SEI.</li>
-          <li><strong>Coordination number (CN)</strong>: Average number of neighboring atoms/ions surrounding a central particle.</li>
-          <li><strong>Solvation cluster type and fraction analysis</strong>: Analyzes how cations and anions associate in electrolyte solutions:
-            <br />• <strong>SSIP (Solvent-Separated Ion Pair)</strong>: Cation-anion correlated but at least one solvent molecule sits between. Favored in high-dielectric solvents; supports higher Li⁺ mobility.
-            <br />• <strong>CIP (Contact Ion Pair)</strong>: Cation-anion directly contact, no solvent in between. More common at higher salt concentration; can slow down ion transport.
+          <li><strong>Radial distribution function (RDF)</strong>: Probability of finding a particle at a given distance from a reference particle. RDF describes local structure of electrolytes, which directly impacts solubility, miscibility, ion conductivity, solvation structure and interphases.</li>
+          <li><strong>Coordination number (CN)</strong>: Average number of neighboring atoms/molecules surrounding a central ion. This has impact on conductivity, solubility and interphases.</li>
+          <li><strong>Solvation cluster type and fraction analysis</strong>: Analyzes how cations and anions associate in electrolyte solutions. Three major cluster types:
+            <br />• <strong>SSIP (Solvent-Separated Ion Pair)</strong>: Cation-anion associated but with at least one solvent molecule sits between them. Such species prevail in high-dielectric solvents; supports higher Li⁺ mobility and typically higher conductivity.
+            <br />• <strong>CIP (Contact Ion Pair)</strong>: Cation–anion forms direct contact with no solvent molecules in between. Such species are more common at higher salt concentration or in solvents of low dielectric constants; their existence can slow down ion transport, leading to typically lower conductivity.
             <br />• <strong>AGG (Aggregate)</strong>: Larger clusters with multiple cations/anions linked together. Dominant in concentrated electrolytes; often reduces conductivity.
-            <br />The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to ionic conductivity, viscosity, and Li⁺ transport behavior.
+            <br />The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to viscosity, and Li⁺ transport behavior such as ion conductivity, transference number.
             <div className="cluster-illustration">
               <img src="/formulation/cluster-illustration.jpg" alt="Solvation cluster types illustration" />
               <div className="figure-caption">Representative Li solvate clusters</div>
             </div>
           </li>
-          <li><strong>Diffusivity</strong>: Rate of particle spreading due to random motion, linked to mobility.</li>
-          <li><strong>Conductivity</strong>: Ability of ions/electrons to carry charge through a medium. As shown in the figure below, our MD-calculated ionic conductivity aligns well with experimental benchmarks, providing reliable predictions for electrolyte design.</li>
+          <li><strong>Diffusivity</strong>: Rate at which particles move randomly in the absence of an electric field, closely related to migration properties like mobility.</li>
+          <li><strong>Conductivity</strong>: Ability of ions or other charged particles to carry charges through a medium under the action of electric field. Benchmark of predicted ionic conductivity against experimental values can be seen in the following figure.</li>
           <li><strong>Viscosity</strong>: Resistance of a fluid to flow or deformation under shear stress.</li>
           <li><strong>Density</strong>: Mass per unit volume, reflecting system compactness.</li>
         </ol>
         <img src="/formulation/introduction4.png" alt="MD simulation results" />
         <div className="figure-caption">MD Simulation Accuracy: Predicted vs. Measured Ionic Conductivity</div>
         <p>
-        Our molecular dynamics simulations demonstrate excellent agreement with experimental ionic conductivity measurements across over 100 
-        electrolyte formulation systems (0-40 mS/cm). Points close to the diagonal line indicate high prediction accuracy, giving you confidence in 
-        simulation-based screening before synthesis.
+        Our molecular dynamics simulations (blue points) show excellent agreement with experimental ionic conductivity measurements across more than 100 electrolyte formulations spanning 0–40 mS cm⁻¹. The benchmark includes a wide variety of common and novel solvents— sulfone, sulfite, ether, ester, carbonate, nitrile, siloxane, borate, phosphate ester.
+        </p>
+        <p>
+        In contrast, the external machine-learning force field (MLFF, open circles) has been benchmarked only on a small subset of carbonate systems. Our force field achieves accuracy on par with, and in many cases exceeding, the MLFF in those carbonate systems, while also demonstrating high predictive power across a far broader chemical space where the MLFF's performance remains untested.
+        </p>
+        <p>
+        Points lying near the black diagonal (y = x) confirm the reliability of our simulation-based screening before synthesis.
         </p>
       </div>
 
       <div className="guide-content-section">
         <h4>Group 2. Instructions needed</h4>
         <ol start={8}>
-        <li><strong>Ion–ion correlation</strong>: Measure of how ionic positions and motions are correlated beyond random distribution.</li>
+        <li><strong>Ion–ion correlation</strong>: Measure of how ionic species are correlated beyond random distribution.</li>
           <li><strong>Structure factor (S(q))</strong>: Quantifies how atomic arrangements scatter radiation, revealing ordering in reciprocal space.</li>
-          <li><strong>Dynamic structure factor (S(q,ω))</strong>: function describing the space-time correlations of particles.</li>
+          <li><strong>Dynamic structure factor (S(q,ω))</strong>: Function describing the space-time correlations of particles.</li>
           <li><strong>Residence time</strong>: Average time an ion/molecule stays bound or in the vicinity of another species.</li>
         </ol>
       </div>
@@ -74,15 +78,13 @@ const Introduction: React.FC = () => {
         <h4>Group 3. </h4>
         <p>12. <strong>EDL (Electric Double Layer)</strong>: Structured region of ions near a charged surface or electrode. Inferring the formation of SEI compound and redox reactions.</p>
         <img src="/formulation/introduction5.png" alt="Electric Double Layer" />
-        <div className="figure-caption">Electric double layer under well-controlled electrostatic potential. In this MD simulation, electrolyte is created between two electrodes. By mimicking the potential change across the quasi cell, surface structure under electrostatic potential can be studied.</div>
+        <div className="figure-caption">Electric double layer structure under well-controlled electrostatic potential. In this snapshot of MD simulation, electrolyte of given formulation from the user is placed between two electrodes. By mimicking the potential change across the virtual cell, surface structure under electrostatic potential can be visualized, whose chemical distribution predetermines the eventual interphasial chemistries.</div>
 
         <ol start={13}>
-          <li><strong>Solubility</strong>: Maximum amount of a substance that can dissolve in a solvent under equilibrium conditions.</li>
+          <li><strong>Solubility</strong>: Maximum amount of a salt or a molecular species that can be homogenously distributed (i.e., dissolved or blended) in a given medium under equilibrium conditions.</li>
         </ol>
         <img src="/formulation/introduction6.png" alt="Solubility calculation" />
-        <div className="figure-caption">Our MD Simulations Accurately Predict solubility of LiFSI in 19 solvents. Points close to the diagonal 
-line indicate high prediction accuracy, giving you confidence in simulation-based screening before 
-synthesis.</div>
+        <div className="figure-caption">Our MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis.</div>
       </div>
     </div>
   );

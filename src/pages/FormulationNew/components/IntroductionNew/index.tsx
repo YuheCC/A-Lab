@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Info } from 'lucide-react';
 import PropertiesTable from '../PropertiesTable';
 import './index.css';
 
@@ -12,10 +13,7 @@ const IntroductionNew: React.FC = () => {
       <div className="function-intro-section">
         <h2 className="section-title">Function Introduction</h2>
         <p className="section-description">
-          Molecular dynamics (MD) simulations in MU's platform uniquely combine advanced polarizable force fields with an automated workflow,
-          capturing ion–solvent interactions with high fidelity. Users simply submit electrolyte formulations through the MU portal, and within days
-          receive quantitative predictions of key properties—delivering faster, more reliable insights than conventional trial-and-error or standard
-          modeling approaches.
+          Molecular dynamics (MD) simulations in MU’s platform uniquely combine advanced polarizable force fields with an automated workflow, capturing ion–solvent interactions with high fidelity. Users simply submit desired electrolyte formulations through the MU portal containing any known or unknown molecules, and within days will receive quantitative predictions of key properties—delivering faster and more accurate insights than conventional trial-and-error or classical modeling approaches.
         </p>
 
         {/* MD Service Workflow Image */}
@@ -26,7 +24,7 @@ const IntroductionNew: React.FC = () => {
             className="content-image"
           />
           <div className="image-caption">
-            Our proprietary Molecular Dynamics (MD) service for electrolyte formulation
+            [Caption] Our proprietary Molecular Dynamics (MD) service for electrolyte formulation
           </div>
         </div>
       </div>
@@ -36,12 +34,10 @@ const IntroductionNew: React.FC = () => {
         <div className="content-layout">
           <div className="content-text" style={{ paddingTop: '45px' }}>
             <p className="content-description">
-              MU's proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvents
-              organize at different salt concentrations.
+              MU’s proprietary MD service provides molecular-level snapshots of electrolyte formulations, capturing how Li⁺, anions, and solvent molecules organize at different salt concentrations.
             </p>
             <p className="content-description">
-              Each simulation run completes in ~3 days, after which customers receive quantitative property predictions—delivering
-              fast, reliable insights to guide electrolyte design and optimization beyond traditional trial-and-error approaches.
+              Each standard simulation run completes in ~3 days depending on the complexity of the formulation, after which customers receive quantitative property predictions—delivering fast and reliable insights to guide electrolyte design and optimization, which saves tremendous cost and time.
             </p>
           </div>
           <div className="content-image-section">
@@ -51,7 +47,7 @@ const IntroductionNew: React.FC = () => {
               className="content-image"
             />
             <div className="image-caption">
-              Accelerating electrolyte design with MD simulations across concentrations
+              [Caption] Accelerating electrolyte design with MD simulations across concentrations
             </div>
           </div>
         </div>
@@ -65,7 +61,8 @@ const IntroductionNew: React.FC = () => {
         </div>
         <div className="properties-note">
           <p className="note-text">
-            The properties listed as Group 1 will be available in 3 days as soon as the MD simulations are complete. For other properties, please contact our team.
+            <Info size={16} style={{ marginRight: '8px', flexShrink: 0 }} />
+            <span>Properties listed as Standard Properties will be available in about 3 days as soon as the MD simulations are complete. For other properties, please contact our team.</span>
           </p>
           <button className="contact-team-button">
             Contact Team
@@ -85,8 +82,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">01</div>
           <h3 className="property-title">Radial distribution function (RDF)</h3>
           <p className="property-description">
-            Probability of finding a particle at a given distance from a reference particle, describing local structure.
-            This has impacts on solubility, conductivity, dissolution at electrolyte-electrode interphase, and SEI.
+            Probability of finding a particle at a given distance from a reference particle. RDF describes local structure of electrolytes, which directly impacts solubility, miscibility, ion conductivity, solvation structure and interphases. 
           </p>
         </div>
 
@@ -95,7 +91,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">02</div>
           <h3 className="property-title">Coordination number (CN)</h3>
           <p className="property-description">
-            Average number of neighboring atoms/ions surrounding a central particle.
+           Average number of neighboring atoms/molecules surrounding a central ion. This has impact on conductivity, solubility and interphases.
           </p>
         </div>
 
@@ -105,7 +101,7 @@ const IntroductionNew: React.FC = () => {
           <h3 className="property-title">Solvation cluster analysis</h3>
           <div className="property-description-wrapper">
             <p className="property-description">
-              Analyzes how cations and anions associate in electrolyte solutions through three key configurations:
+              Analyzes how cations and anions associate in electrolyte solutions. Three major cluster types: 
             </p>
 
             {/* SSIP */}
@@ -114,8 +110,7 @@ const IntroductionNew: React.FC = () => {
               <div className="cluster-details">
                 <h4 className="cluster-name">Solvent-Separated Ion Pair</h4>
                 <p className="cluster-desc">
-                  Cation-anion correlated but at least one solvent molecule sits between. Favored in high-dielectric solvents;
-                  supports higher Li⁺ mobility.
+                 Cation-anion associated but with at least one solvent molecule sits between them. Such species prevail in high-dielectric solvents; supports higher Li⁺ mobility and typically higher conductivity.
                 </p>
               </div>
             </div>
@@ -126,8 +121,7 @@ const IntroductionNew: React.FC = () => {
               <div className="cluster-details">
                 <h4 className="cluster-name">Contact Ion Pair</h4>
                 <p className="cluster-desc">
-                  Cation-anion directly contact, no solvent in between. More common at higher salt concentration;
-                  can slow down ion transport.
+                 Cation–anion forms direct contact with no solvent molecules in between. Such species are more common at higher salt concentration or in solvents of low dielectric constants; their existence can slow down ion transport, leading to typically lower conductivity.
                 </p>
               </div>
             </div>
@@ -138,8 +132,7 @@ const IntroductionNew: React.FC = () => {
               <div className="cluster-details">
                 <h4 className="cluster-name">Aggregate</h4>
                 <p className="cluster-desc">
-                  Larger clusters with multiple cations/anions linked together. Dominant in concentrated electrolytes;
-                  often reduces conductivity.
+                 Larger clusters with multiple cations/anions linked together. Dominant in concentrated electrolytes; often reduces conductivity. 
                 </p>
               </div>
             </div>
@@ -155,7 +148,7 @@ const IntroductionNew: React.FC = () => {
             </div>
 
             <p className="cluster-summary">
-              The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to ionic conductivity, viscosity, and Li⁺ transport behavior.
+              The fraction of SSIP/CIP/AGG provides a structural descriptor linking solvation environment to viscosity, and Li⁺ transport behavior such as ion conductivity, transference number.
             </p>
           </div>
         </div>
@@ -165,7 +158,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">04</div>
           <h3 className="property-title">Diffusivity</h3>
           <p className="property-description">
-            Rate of particle spreading due to random motion, linked to mobility.
+            Rate at which particles move randomly in the absence of an electric field, closely related to migration properties like mobility. 
           </p>
         </div>
 
@@ -175,7 +168,7 @@ const IntroductionNew: React.FC = () => {
           <h3 className="property-title">Conductivity</h3>
           <div className="property-description-wrapper">
             <p className="property-description">
-              Ability of ions/electrons to carry charge through a medium. As shown in the figure below, our MD-calculated ionic conductivity aligns well with experimental benchmarks, providing reliable predictions for electrolyte design.
+              Ability of ions or other charged particles to carry charges through a medium under the action of electric field. Benchmark of predicted ionic conductivity against experimental values can be seen in the following figure.  
             </p>
 
             <div className="property-image-section">
@@ -186,7 +179,13 @@ const IntroductionNew: React.FC = () => {
               />
               <div className="image-caption">MD Simulation Accuracy: Predicted vs. Measured Ionic Conductivity</div>
               <p className="image-description">
-                Our molecular dynamics simulations demonstrate excellent agreement with experimental ionic conductivity measurements across over 100 electrolyte formulation systems (0-40 mS/cm). Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis.
+                Our molecular dynamics simulations (blue points) show excellent agreement with experimental ionic conductivity measurements across more than 100 electrolyte formulations spanning 0–40 mS cm⁻¹. The benchmark includes a wide variety of common and novel solvents— sulfone, sulfite, ether, ester, carbonate, nitrile, siloxane, borate, phosphate ester. 
+              </p>
+              <p className="image-description">
+                In contrast, the external machine-learning force field (MLFF, open circles) has been benchmarked only on a small subset of carbonate systems. Our force field achieves accuracy on par with, and in many cases exceeding, the MLFF in those carbonate systems, while also demonstrating high predictive power across a far broader chemical space where the MLFF’s performance remains untested. 
+              </p>
+              <p className="image-description">
+                Points lying near the black diagonal (y = x) confirm the reliability of our simulation-based screening before synthesis. 
               </p>
             </div>
           </div>
@@ -215,7 +214,7 @@ const IntroductionNew: React.FC = () => {
       <div className="content-section">
         <div className="group-header">
           <span className="group-label">GROUP 02</span>
-          <h2 className="section-title group-title">Instructions Needed</h2>
+          <h2 className="section-title group-title">Advanced Analysis</h2>
         </div>
 
         {/* Property 08: Ion–ion correlation */}
@@ -223,7 +222,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">08</div>
           <h3 className="property-title">Ion–ion correlation</h3>
           <p className="property-description">
-            Measure of how ionic positions and motions are correlated beyond random distribution.
+            Measure of how ionic species are correlated beyond random distribution. 
           </p>
         </div>
 
@@ -241,7 +240,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">10</div>
           <h3 className="property-title">Dynamic structure factor (S(q,ω))</h3>
           <p className="property-description">
-            Function describing the space-time correlations of particles.
+            Function describing the space-time correlations of particles. 
           </p>
         </div>
 
@@ -250,7 +249,7 @@ const IntroductionNew: React.FC = () => {
           <div className="property-number">11</div>
           <h3 className="property-title">Residence time</h3>
           <p className="property-description">
-            Average time an ion/molecule stays bound or in the vicinity of another species.
+            Average time an ion/molecule stays bound or in the vicinity of another species.  
           </p>
         </div>
       </div>
@@ -259,7 +258,7 @@ const IntroductionNew: React.FC = () => {
       <div className="content-section">
         <div className="group-header">
           <span className="group-label">GROUP 03</span>
-          <h2 className="section-title group-title">Advanced Properties</h2>
+          <h2 className="section-title group-title">Custom Studies</h2>
         </div>
 
         {/* Property 12: EDL */}
@@ -278,7 +277,7 @@ const IntroductionNew: React.FC = () => {
                 className="property-image"
               />
               <div className="image-caption">
-                Electric double layer under well-controlled electrostatic potential. In this MD simulation, electrolyte is created between two electrodes. By mimicking the potential change across the quasi cell, surface structure under electrostatic potential can be studied.
+                Electric double layer structure under well-controlled electrostatic potential. In this snapshot of MD simulation, electrolyte of given formulation from the user is placed between two electrodes. By mimicking the potential change across the virtual cell, surface structure under electrostatic potential can be visualized, whose chemical distribution predetermines the eventual interphasial chemistries.
               </div>
             </div>
           </div>
@@ -290,7 +289,7 @@ const IntroductionNew: React.FC = () => {
           <h3 className="property-title">Solubility</h3>
           <div className="property-description-wrapper">
             <p className="property-description">
-              Maximum amount of a substance that can dissolve in a solvent under equilibrium conditions.
+              Maximum amount of a salt or a molecular species that can be homogenously distributed (i.e., dissolved or blended) in a given medium under equilibrium conditions.
             </p>
 
             <div className="property-image-section">
@@ -300,7 +299,7 @@ const IntroductionNew: React.FC = () => {
                 className="property-image"
               />
               <div className="image-caption">
-                Our MD Simulations Accurately Predict solubility of LiFSI in 19 solvents. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis.
+                Our MD Simulations accurately predicts the solubility of a typical lithium salt LiFSI in 19 solvents of diverse chemical structures and functional groups. Points close to the diagonal line indicate high prediction accuracy, giving you confidence in simulation-based screening before synthesis. 
               </div>
             </div>
           </div>
