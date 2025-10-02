@@ -6,6 +6,7 @@ import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
+import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -290,8 +291,8 @@ const UMAPClusterPlotDeck = ({
     const clampBounds = useMemo(() => calculateClampBounds(data), [data]);
 
     const onHover = useCallback((info) => {
-        if (info && info.object) {
-            setHoveredObject(info.object);
+        if (info && info.object && info.object.hasFullData) {
+            setHoveredObject(info);
         } else {
             setHoveredObject(null);
         }
@@ -327,12 +328,87 @@ const UMAPClusterPlotDeck = ({
 
 
     // Handle point click
-    const handlePointClick = useCallback(() => {
-        if (!hoveredObject || !hoveredObject.object) return;
+    const handlePointClick = useCallback((info) => {
+        if (!info || !info.object || !info.object.hasFullData) {
+            return;
+        }
+
         setHoveredObject(null);
+        onHover(null);
         // Call the onClick handler with the plotly data in the expected format
-        onClick(hoveredObject.object);
-    }, [onClick, hoveredObject]);
+        onClick(info.object);
+    }, [onClick, onHover]);
+
+    const resolveCation = useCallback((dataNode) => {
+        if (!dataNode) {
+            return undefined;
+        }
+        return dataNode.cation ?? dataNode.rawData?.cation ?? dataNode.rawData?.CATION;
+    }, []);
+
+    const buildHoverPropGroups = useCallback((dataNode) => {
+        if (!dataNode) {
+            return [];
+        }
+
+        const properties = dataNode.properties || {};
+
+        return [
+            { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2 },
+            { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER },
+            { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
+            { 
+                label: t('molecular.umapPlot.properties.espMax'), 
+                value: properties.esp_max_eV, 
+                suffix: t('molecular.umapPlot.units.eV'),
+                show: molecularType === 'organic'
+            },
+            { 
+                label: t('molecular.umapPlot.properties.espMin'), 
+                value: properties.esp_min_eV, 
+                suffix: t('molecular.umapPlot.units.eV'),
+                show: molecularType === 'organic'
+            },
+            { label: t('molecular.umapPlot.properties.homo'), value: properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
+            { label: t('molecular.umapPlot.properties.lumo'), value: properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
+            {
+                label: t('molecular.umapPlot.properties.predictedMp'), value: properties.predicted_mp,
+                suffix: t('molecular.umapPlot.units.celsius'),
+                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+            },
+            {
+                label: t('molecular.umapPlot.properties.predictedBp'), value: properties.predicted_bp,
+                suffix: t('molecular.umapPlot.units.celsius'),
+                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+            },
+            {
+                label: 'Predicted FP', value: properties.predicted_fp,
+                suffix: ' °C',
+                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+            },
+            {
+                label: 'Combustion Enthalpy', value: properties.combustion_enthalpy, suffix: ' eV',
+                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+            },
+            {
+                label: "Chemical Formula", 
+                value: properties.chemical_formula,
+                show: molecularType === "anions"
+            },
+            {
+                label: "Molecular Volume", 
+                value: properties.vdw_volume_angstroms3,
+                suffix: " Å³",
+                show: molecularType === "anions"
+            },
+            {
+                label: "F Dissociation Energy", 
+                suffix: " eV",
+                value: properties.fluoride_bde_ev,
+                show: molecularType === "anions"
+            }
+        ];
+    }, [molecularType, t, userPermissions]);
 
     // Calculate bounds from data to fit the view
     useEffect(() => {
@@ -344,6 +420,24 @@ const UMAPClusterPlotDeck = ({
             }
         }
     }, [containerDimensions, data, containerReady, zoomOffset]);
+
+    const fullDataNodes = useMemo(() => data.filter(node => node?.hasFullData), [data]);
+    const shouldAutoShowHover = useMemo(() => {
+        if (fullDataNodes.length === 0) {
+            return false;
+        }
+
+        if (data.length > 0 && data.length <= AUTO_HOVER_MOLECULE_THRESHOLD) {
+            return true;
+        }
+
+        return fullDataNodes.length <= AUTO_HOVER_MOLECULE_THRESHOLD;
+    }, [data.length, fullDataNodes.length]);
+
+    const autoHoverNodes = useMemo(
+        () => (shouldAutoShowHover ? fullDataNodes : []),
+        [fullDataNodes, shouldAutoShowHover]
+    );
 
     const layers = [
         useMemo(() =>
@@ -361,25 +455,23 @@ const UMAPClusterPlotDeck = ({
                 opacity: 0.3,
                 pickable: true,
                 autoHighlight: true,
+                highlightedObjectIndex: hoveredObject?.index ?? -1,
                 onHover: info => {
-                    if (info.object) {
+                    if (info.object && info.object.hasFullData) {
                         onHover(info);
-                        setHoveredObject(info);
                     } else {
                         onHover(null);
-                        setHoveredObject(null);
                     }
                 },
                 onClick: info => {
-                    if (info.object) {
+                    if (info.object && info.object.hasFullData) {
                         handlePointClick(info);
                     } else {
                         onHover(null);
-                        setHoveredObject(null);
                     }
                 },
             })
-            , [data, onHover, handlePointClick]),
+            , [data, onHover, handlePointClick, hoveredObject]),
         useMemo(() =>
             new MarkerWithLabelLayer({
                 id: 'similar-markers',
@@ -563,9 +655,8 @@ const UMAPClusterPlotDeck = ({
                 });
             }}
             onClick={(info) => {
-                if (info.layer === null) {
+                if (info.layer === null || !info.object || !info.object.hasFullData) {
                     onHover(null);
-                    setHoveredObject(null);
                 } else {
                     handlePointClick(info);
                 }
@@ -582,67 +673,39 @@ const UMAPClusterPlotDeck = ({
                 ref={hoverRef}
                 style={position}
                 showMoreDetails={true}
-                cation={hoveredObject.object.cation ?? hoveredObject.object.rawData?.cation ?? hoveredObject.object.rawData?.CATION}
+                cation={resolveCation(hoveredObject.object)}
                 onMouseEnter={() => {
                     setHoveredObject(null);
                     onHover(null);
                 }}
-                propGroups={[
-                    { label: t('molecular.nodePopup.smiles'), value: hoveredObject.object.smiles, span: 2 },
-                    { label: t('molecular.umapPlot.properties.cluster'), value: hoveredObject.object.properties.CLUSTER },
-                    { label: t('molecular.umapPlot.properties.molWeight'), value: hoveredObject.object.properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
-                    { 
-                        label: t('molecular.umapPlot.properties.espMax'), 
-                        value: hoveredObject.object.properties.esp_max_eV, 
-                        suffix: t('molecular.umapPlot.units.eV'),
-                        show: molecularType === 'organic'
-                    },
-                    { 
-                        label: t('molecular.umapPlot.properties.espMin'), 
-                        value: hoveredObject.object.properties.esp_min_eV, 
-                        suffix: t('molecular.umapPlot.units.eV'),
-                        show: molecularType === 'organic'
-                    },
-                    { label: t('molecular.umapPlot.properties.homo'), value: hoveredObject.object.properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.lumo'), value: hoveredObject.object.properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    {
-                        label: t('molecular.umapPlot.properties.predictedMp'), value: hoveredObject.object.properties.predicted_mp,
-                        suffix: t('molecular.umapPlot.units.celsius'),
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: t('molecular.umapPlot.properties.predictedBp'), value: hoveredObject.object.properties.predicted_bp,
-                        suffix: t('molecular.umapPlot.units.celsius'),
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: 'Predicted FP', value: hoveredObject.object.properties.predicted_fp,
-                        suffix: ' °C',
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: "Chemical Formula", 
-                        value: hoveredObject.object.properties.chemical_formula,
-                        show: molecularType === "anions"
-                    },
-                    {
-                        label: "Molecular Volume", 
-                        value: hoveredObject.object.properties.vdw_volume_angstroms3,
-                        suffix: " Å³",
-                        show: molecularType === "anions"
-                    },
-                    {
-                        label: "F Dissociation Energy", 
-                        suffix: " eV",
-                        value: hoveredObject.object.properties.fluoride_bde_ev,
-                        show: molecularType === "anions"
-                    }
-                ]}
+                propGroups={buildHoverPropGroups(hoveredObject.object)}
             />
+        ) : null}
+        {autoHoverNodes.length > 0 ? (
+            <div
+                style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    maxHeight: 'calc(100% - 24px)',
+                    overflowY: 'auto',
+                    pointerEvents: 'none',
+                    zIndex: 1000
+                }}
+            >
+                {autoHoverNodes.map(node => (
+                    <MolCard
+                        key={`auto-hover-${node.id}`}
+                        showMoreDetails={true}
+                        style={{ pointerEvents: 'auto' }}
+                        cation={resolveCation(node)}
+                        propGroups={buildHoverPropGroups(node)}
+                    />
+                ))}
+            </div>
         ) : null}
     </div>
 }
