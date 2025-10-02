@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect, Fragment } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
 import { CompositeLayer } from 'deck.gl';
@@ -7,6 +7,7 @@ import { Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
 import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
+import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -287,6 +288,7 @@ const UMAPClusterPlotDeck = ({
     const [containerReady, setContainerReady] = useState(false);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
+    const [autoHoverLayouts, setAutoHoverLayouts] = useState([]);
 
     const clampBounds = useMemo(() => calculateClampBounds(data), [data]);
 
@@ -434,10 +436,123 @@ const UMAPClusterPlotDeck = ({
         return fullDataNodes.length <= AUTO_HOVER_MOLECULE_THRESHOLD;
     }, [data.length, fullDataNodes.length]);
 
-    const autoHoverNodes = useMemo(
-        () => (shouldAutoShowHover ? fullDataNodes : []),
-        [fullDataNodes, shouldAutoShowHover]
-    );
+    const autoHoverNodes = useMemo(() => (shouldAutoShowHover ? fullDataNodes : []), [fullDataNodes, shouldAutoShowHover]);
+
+    useEffect(() => {
+        if (!shouldAutoShowHover || autoHoverNodes.length === 0) {
+            setAutoHoverLayouts([]);
+            return;
+        }
+
+        if (!containerDimensions.width || !containerDimensions.height) {
+            return;
+        }
+
+        const viewport = new WebMercatorViewport({
+            width: containerDimensions.width,
+            height: containerDimensions.height,
+            longitude: viewState.longitude,
+            latitude: viewState.latitude,
+            zoom: viewState.zoom,
+            pitch: viewState.pitch,
+            bearing: viewState.bearing
+        });
+
+        const CARD_WIDTH = 320;
+        const CARD_HEIGHT = 220;
+        const CARD_GAP = 16;
+        const MARGIN = 12;
+
+        const layouts = autoHoverNodes.map((node, index) => {
+            const [projectedX, projectedY] = viewport.project([X_STRETCH * node.x, node.y]);
+
+            if (!Number.isFinite(projectedX) || !Number.isFinite(projectedY)) {
+                return null;
+            }
+
+            const anchorLeft = projectedX;
+            const anchorTop = projectedY;
+
+            const containerWidth = containerDimensions.width;
+            const containerHeight = containerDimensions.height;
+
+            const isVisible = anchorLeft >= -CARD_WIDTH && anchorLeft <= containerWidth + CARD_WIDTH &&
+                anchorTop >= -CARD_HEIGHT && anchorTop <= containerHeight + CARD_HEIGHT;
+
+            if (!isVisible) {
+                return null;
+            }
+
+            const candidateOffsets = [
+                { offsetX: CARD_GAP, offsetY: -CARD_GAP - CARD_HEIGHT },
+                { offsetX: CARD_GAP, offsetY: CARD_GAP },
+                { offsetX: -CARD_GAP - CARD_WIDTH, offsetY: -CARD_GAP - CARD_HEIGHT },
+                { offsetX: -CARD_GAP - CARD_WIDTH, offsetY: CARD_GAP }
+            ];
+
+            let cardLeft;
+            let cardTop;
+
+            for (const candidate of candidateOffsets) {
+                const potentialLeft = anchorLeft + candidate.offsetX;
+                const potentialTop = anchorTop + candidate.offsetY;
+
+                const fitsHorizontally = potentialLeft >= MARGIN && (potentialLeft + CARD_WIDTH) <= containerWidth - MARGIN;
+                const fitsVertically = potentialTop >= MARGIN && (potentialTop + CARD_HEIGHT) <= containerHeight - MARGIN;
+
+                if (fitsHorizontally && fitsVertically) {
+                    cardLeft = potentialLeft;
+                    cardTop = potentialTop;
+                    break;
+                }
+            }
+
+            if (cardLeft === undefined || cardTop === undefined) {
+                const fallback = candidateOffsets[0];
+                cardLeft = anchorLeft + fallback.offsetX;
+                cardTop = anchorTop + fallback.offsetY;
+
+                cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - CARD_WIDTH - MARGIN);
+                cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - CARD_HEIGHT - MARGIN);
+            }
+
+            const cardRight = cardLeft + CARD_WIDTH;
+            const cardBottom = cardTop + CARD_HEIGHT;
+
+            let targetX;
+            if (anchorLeft < cardLeft) {
+                targetX = cardLeft;
+            } else if (anchorLeft > cardRight) {
+                targetX = cardRight;
+            } else {
+                targetX = anchorLeft;
+            }
+
+            let targetY;
+            if (anchorTop < cardTop) {
+                targetY = cardTop;
+            } else if (anchorTop > cardBottom) {
+                targetY = cardBottom;
+            } else {
+                targetY = anchorTop;
+            }
+
+            return {
+                node,
+                index,
+                anchor: { left: anchorLeft, top: anchorTop },
+                card: { left: cardLeft, top: cardTop, width: CARD_WIDTH, height: CARD_HEIGHT },
+                line: {
+                    startX: anchorLeft,
+                    startY: anchorTop,
+                    endX: targetX,
+                    endY: targetY
+                }
+            };
+        }).filter(Boolean);
+
+        setAutoHoverLayouts(layouts);
+    }, [autoHoverNodes, shouldAutoShowHover, containerDimensions, viewState]);
 
     const layers = [
         useMemo(() =>
@@ -681,32 +796,128 @@ const UMAPClusterPlotDeck = ({
                 propGroups={buildHoverPropGroups(hoveredObject.object)}
             />
         ) : null}
-        {autoHoverNodes.length > 0 ? (
-            <div
-                style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '12px',
-                    maxHeight: 'calc(100% - 24px)',
-                    overflowY: 'auto',
-                    pointerEvents: 'none',
-                    zIndex: 1000
-                }}
-            >
-                {autoHoverNodes.map(node => (
-                    <MolCard
-                        key={`auto-hover-${node.id}`}
-                        showMoreDetails={true}
-                        style={{ pointerEvents: 'auto' }}
-                        cation={resolveCation(node)}
-                        propGroups={buildHoverPropGroups(node)}
-                    />
-                ))}
-            </div>
-        ) : null}
+        {autoHoverLayouts.map(layout => {
+            const { anchor, card, line, index: layoutIndex, node } = layout;
+
+            const badgeStyle = {
+                position: 'absolute',
+                left: anchor.left,
+                top: anchor.top,
+                transform: 'translate(-50%, -50%)',
+                width: 22,
+                height: 22,
+                borderRadius: '9999px',
+                backgroundColor: '#ffffff',
+                border: '2px solid #2563eb',
+                color: '#2563eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '11px',
+                fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(15, 23, 42, 0.18)',
+                pointerEvents: 'none',
+                zIndex: 1100
+            };
+
+            const lineLeft = Math.min(line.startX, line.endX);
+            const lineTop = Math.min(line.startY, line.endY);
+            let lineWidth = Math.abs(line.endX - line.startX);
+            let lineHeight = Math.abs(line.endY - line.startY);
+            let lineStartX = line.startX - lineLeft;
+            let lineStartY = line.startY - lineTop;
+            let lineEndX = line.endX - lineLeft;
+            let lineEndY = line.endY - lineTop;
+
+            if (lineWidth === 0) {
+                lineWidth = 2;
+                lineStartX = 1;
+                lineEndX = 1;
+            }
+
+            if (lineHeight === 0) {
+                lineHeight = 2;
+                lineStartY = 1;
+                lineEndY = 1;
+            }
+
+            return (
+                <Fragment key={`auto-hover-${node.id}`}>
+                    <div style={badgeStyle}>{layoutIndex + 1}</div>
+                    <svg
+                        style={{
+                            position: 'absolute',
+                            left: lineLeft,
+                            top: lineTop,
+                            width: lineWidth,
+                            height: lineHeight,
+                            pointerEvents: 'none',
+                            zIndex: 1095
+                        }}
+                        width={lineWidth}
+                        height={lineHeight}
+                    >
+                        <line
+                            x1={lineStartX}
+                            y1={lineStartY}
+                            x2={lineEndX}
+                            y2={lineEndY}
+                            stroke="#2563eb"
+                            strokeWidth={1.5}
+                            strokeDasharray="4 2"
+                            strokeLinecap="round"
+                        />
+                    </svg>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: card.left,
+                            top: card.top,
+                            width: card.width,
+                            pointerEvents: 'none',
+                            zIndex: 1100
+                        }}
+                    >
+                        <div
+                            style={{
+                                position: 'relative',
+                                pointerEvents: 'auto',
+                                backgroundColor: '#ffffff',
+                                borderRadius: '12px',
+                                boxShadow: '0 18px 42px rgba(15, 23, 42, 0.24)'
+                            }}
+                        >
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '-11px',
+                                    left: '14px',
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: '9999px',
+                                    backgroundColor: '#2563eb',
+                                    color: '#ffffff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    boxShadow: '0 6px 14px rgba(37, 99, 235, 0.35)'
+                                }}
+                            >
+                                {layoutIndex + 1}
+                            </div>
+                            <MolCard
+                                showMoreDetails={true}
+                                style={{ width: '100%', pointerEvents: 'auto' }}
+                                cation={resolveCation(node)}
+                                propGroups={buildHoverPropGroups(node)}
+                            />
+                        </div>
+                    </div>
+                </Fragment>
+            );
+        })}
     </div>
 }
 
