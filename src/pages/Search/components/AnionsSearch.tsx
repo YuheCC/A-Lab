@@ -484,6 +484,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="anions"
                                 enableAutoHover={false}
                                 onClick={(node: any) => {

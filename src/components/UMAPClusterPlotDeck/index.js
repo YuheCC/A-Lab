@@ -269,12 +269,15 @@ const UMAPClusterPlotDeck = ({
     highlightedData = [],
     highlightedSimilarData = [],
     userPermissions,
+    isAuthenticated,
     onClick,
     molecularType = 'organic',
     zoomOffset = 0.3,
     enableAutoHover = true
 }) => {
     const { t } = useTranslation();
+    const normalizedPermissions = (userPermissions || '').toLowerCase();
+    const isBasicTierUser = !isAuthenticated || ['common', 'public', 'basic'].includes(normalizedPermissions);
 
     const [viewState, setViewState] = useState({
         longitude: 3.7,
@@ -394,11 +397,6 @@ const UMAPClusterPlotDeck = ({
                 show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
             },
             {
-                label: "Chemical Formula", 
-                value: properties.chemical_formula,
-                show: molecularType === "anions"
-            },
-            {
                 label: "Molecular Volume", 
                 value: properties.vdw_volume_angstroms3,
                 suffix: " Å³",
@@ -463,10 +461,19 @@ const UMAPClusterPlotDeck = ({
             bearing: viewState.bearing
         });
 
-        const CARD_WIDTH = 460;
-        const CARD_HEIGHT = 260;
-        const CARD_GAP = 16;
+        const BASE_CARD_WIDTH = 460;
+        const BASE_CARD_HEIGHT = 260;
+        const BASE_CARD_GAP = 16;
+        const COMPACT_CARD_WIDTH = 360;
+        const COMPACT_CARD_HEIGHT = 200;
+        const COMPACT_STACK_HEIGHT = 170;
+        const COMPACT_CARD_GAP = 4;
         const MARGIN = 12;
+
+        const cardWidth = isBasicTierUser ? COMPACT_CARD_WIDTH : BASE_CARD_WIDTH;
+        const cardHeight = isBasicTierUser ? COMPACT_CARD_HEIGHT : BASE_CARD_HEIGHT;
+        const cardGap = isBasicTierUser ? COMPACT_CARD_GAP : BASE_CARD_GAP;
+        const stackingHeight = isBasicTierUser ? COMPACT_STACK_HEIGHT : cardHeight;
 
         const layouts = autoHoverNodes.map((node, index) => {
             const [projectedX, projectedY] = viewport.project([X_STRETCH * node.x, node.y]);
@@ -481,48 +488,66 @@ const UMAPClusterPlotDeck = ({
             const containerWidth = containerDimensions.width;
             const containerHeight = containerDimensions.height;
 
-            const isVisible = anchorLeft >= -CARD_WIDTH && anchorLeft <= containerWidth + CARD_WIDTH &&
-                anchorTop >= -CARD_HEIGHT && anchorTop <= containerHeight + CARD_HEIGHT;
+            const isVisible = anchorLeft >= -cardWidth && anchorLeft <= containerWidth + cardWidth &&
+                anchorTop >= -cardHeight && anchorTop <= containerHeight + cardHeight;
 
             if (!isVisible) {
                 return null;
             }
 
-            const candidateOffsets = [
-                { offsetX: CARD_GAP, offsetY: -CARD_GAP - CARD_HEIGHT },
-                { offsetX: CARD_GAP, offsetY: CARD_GAP },
-                { offsetX: -CARD_GAP - CARD_WIDTH, offsetY: -CARD_GAP - CARD_HEIGHT },
-                { offsetX: -CARD_GAP - CARD_WIDTH, offsetY: CARD_GAP }
-            ];
-
             let cardLeft;
             let cardTop;
 
-            for (const candidate of candidateOffsets) {
-                const potentialLeft = anchorLeft + candidate.offsetX;
-                const potentialTop = anchorTop + candidate.offsetY;
+            if (isBasicTierUser) {
+                const availableHeight = Math.max(0, containerHeight - 2 * MARGIN);
+                const cardsPerColumn = Math.max(1, Math.floor((availableHeight + cardGap) / (stackingHeight + cardGap)));
+                const columnIndex = Math.floor(index / cardsPerColumn);
+                const rowIndex = index % cardsPerColumn;
 
-                const fitsHorizontally = potentialLeft >= MARGIN && (potentialLeft + CARD_WIDTH) <= containerWidth - MARGIN;
-                const fitsVertically = potentialTop >= MARGIN && (potentialTop + CARD_HEIGHT) <= containerHeight - MARGIN;
+                if (molecularType === 'anions') {
+                    cardLeft = (containerWidth - MARGIN - cardWidth) - columnIndex * (cardWidth + cardGap);
+                } else {
+                    cardLeft = MARGIN + columnIndex * (cardWidth + cardGap);
+                }
 
-                if (fitsHorizontally && fitsVertically) {
-                    cardLeft = potentialLeft;
-                    cardTop = potentialTop;
-                    break;
+                cardTop = MARGIN + rowIndex * (stackingHeight + cardGap);
+
+                cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - cardWidth - MARGIN);
+                cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - cardHeight - MARGIN);
+            } else {
+                const candidateOffsets = [
+                    { offsetX: cardGap, offsetY: -cardGap - cardHeight },
+                    { offsetX: cardGap, offsetY: cardGap },
+                    { offsetX: -cardGap - cardWidth, offsetY: -cardGap - cardHeight },
+                    { offsetX: -cardGap - cardWidth, offsetY: cardGap }
+                ];
+
+                for (const candidate of candidateOffsets) {
+                    const potentialLeft = anchorLeft + candidate.offsetX;
+                    const potentialTop = anchorTop + candidate.offsetY;
+
+                    const fitsHorizontally = potentialLeft >= MARGIN && (potentialLeft + cardWidth) <= containerWidth - MARGIN;
+                    const fitsVertically = potentialTop >= MARGIN && (potentialTop + cardHeight) <= containerHeight - MARGIN;
+
+                    if (fitsHorizontally && fitsVertically) {
+                        cardLeft = potentialLeft;
+                        cardTop = potentialTop;
+                        break;
+                    }
+                }
+
+                if (cardLeft === undefined || cardTop === undefined) {
+                    const fallback = candidateOffsets[0];
+                    cardLeft = anchorLeft + fallback.offsetX;
+                    cardTop = anchorTop + fallback.offsetY;
+
+                    cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - cardWidth - MARGIN);
+                    cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - cardHeight - MARGIN);
                 }
             }
 
-            if (cardLeft === undefined || cardTop === undefined) {
-                const fallback = candidateOffsets[0];
-                cardLeft = anchorLeft + fallback.offsetX;
-                cardTop = anchorTop + fallback.offsetY;
-
-                cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - CARD_WIDTH - MARGIN);
-                cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - CARD_HEIGHT - MARGIN);
-            }
-
-            const cardRight = cardLeft + CARD_WIDTH;
-            const cardBottom = cardTop + CARD_HEIGHT;
+            const cardRight = cardLeft + cardWidth;
+            const cardBottom = cardTop + cardHeight;
 
             let targetX;
             if (anchorLeft < cardLeft) {
@@ -546,7 +571,7 @@ const UMAPClusterPlotDeck = ({
                 node,
                 index,
                 anchor: { left: anchorLeft, top: anchorTop },
-                card: { left: cardLeft, top: cardTop, width: CARD_WIDTH, height: CARD_HEIGHT },
+                card: { left: cardLeft, top: cardTop, width: cardWidth, height: cardHeight },
                 line: {
                     startX: anchorLeft,
                     startY: anchorTop,
@@ -557,7 +582,7 @@ const UMAPClusterPlotDeck = ({
         }).filter(Boolean);
 
         setAutoHoverLayouts(layouts);
-    }, [autoHoverNodes, shouldAutoShowHover, containerDimensions, viewState]);
+    }, [autoHoverNodes, shouldAutoShowHover, containerDimensions, viewState, isBasicTierUser, molecularType]);
 
     const layers = [
         useMemo(() =>
@@ -849,30 +874,7 @@ const UMAPClusterPlotDeck = ({
             return (
                 <Fragment key={`auto-hover-${node.id}`}>
                     <div style={badgeStyle}>{layoutIndex + 1}</div>
-                    <svg
-                        style={{
-                            position: 'absolute',
-                            left: lineLeft,
-                            top: lineTop,
-                            width: lineWidth,
-                            height: lineHeight,
-                            pointerEvents: 'none',
-                            zIndex: 940
-                        }}
-                        width={lineWidth}
-                        height={lineHeight}
-                    >
-                        <line
-                            x1={lineStartX}
-                            y1={lineStartY}
-                            x2={lineEndX}
-                            y2={lineEndY}
-                            stroke="#2563eb"
-                            strokeWidth={1.5}
-                            strokeDasharray="4 2"
-                            strokeLinecap="round"
-                        />
-                    </svg>
+                    {/* Removed connecting line per request to declutter map */}
                     <div
                         style={{
                             position: 'absolute',
@@ -916,6 +918,7 @@ const UMAPClusterPlotDeck = ({
                                 showMoreDetails={false}
                                 style={{ width: '100%', pointerEvents: 'auto' }}
                                 cation={resolveCation(node)}
+                                compact={isBasicTierUser}
                                 propGroups={buildHoverPropGroups(node)}
                             />
                         </div>

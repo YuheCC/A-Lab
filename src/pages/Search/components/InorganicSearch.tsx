@@ -71,6 +71,7 @@ interface InorganicSimilarMolecule {
 const InorganicSearch = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -408,6 +409,7 @@ const InorganicSearch = () => {
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="inorganic"
                                 enableAutoHover={false}
                                 onClick={(node: any) => {

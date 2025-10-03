@@ -8,6 +8,7 @@ import NodePopup from "@/components/NodePopup";
 const AnionsMolecules = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
@@ -110,6 +111,7 @@ const AnionsMolecules = () => {
                         <UMAPClusterPlotDeck
                             data={data}
                             userPermissions={userPermissions}
+                            isAuthenticated={isAuthenticated}
                             molecularType="anions"
                             zoomOffset={-0.2}
                             enableAutoHover
