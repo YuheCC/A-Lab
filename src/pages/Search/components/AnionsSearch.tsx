@@ -1,7 +1,7 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
-import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
@@ -22,6 +22,29 @@ import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 
 const API_URL = getAPIUrl();
+
+const renderAnionCommercialScore = (score?: number | string | null) => {
+    if (score === null || score === undefined) {
+        return undefined;
+    }
+
+    const numericScore = typeof score === 'number' ? score : Number(score);
+    const mapped = (COMMERCIAL_SCORE_MAP as Record<number, string | undefined>)[numericScore];
+
+    if (mapped) {
+        return mapped;
+    }
+
+    if (!Number.isNaN(numericScore)) {
+        return numericScore.toString();
+    }
+
+    if (typeof score === 'string' && score.trim() !== '') {
+        return score;
+    }
+
+    return undefined;
+};
 
 // 定义类型
 interface MoleculeData {
@@ -644,7 +667,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true}
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true}
                                                 ]} foldPropGroups={[
                                                     { label: 'UMAP_X', value: molecule.x, span: 1 },
                                                     { label: 'UMAP_Y', value: molecule.y, span: 1 },
@@ -738,7 +761,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true}
                                                 ]}
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
@@ -759,9 +782,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                             const rawCommercialScore = molecule.COMMERCIAL_SCORE;
 
                                                             // Convert commercial score from numeric to descriptive text
-                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined
-                                                                ? COMMERCIAL_SCORE_MAP[rawCommercialScore as keyof typeof COMMERCIAL_SCORE_MAP] || null
-                                                                : null;
+                                                            const commercialScoreText = renderAnionCommercialScore(rawCommercialScore) ?? null;
 
                                                             handleAddToFavorites({
                                                                 smiles: molecule.SMILES,
