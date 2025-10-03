@@ -9,6 +9,75 @@ import { sendEducationCode } from '@/services/auth';
 import { useMessage } from '@/components/MessageProvider';
 import { useEffect } from 'react';
 
+type TierId = 'basic' | 'research' | 'explorer' | 'team' | 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
+
+interface PlanConfig {
+  id: TierId;
+  key: string;
+  highlight?: boolean;
+  buttonVariant?: 'primary' | 'secondary';
+}
+
+const PERSONAL_PLAN_CONFIGS: PlanConfig[] = [
+  { id: 'basic', key: 'basic' },
+  { id: 'research', key: 'research' },
+  { id: 'explorer', key: 'explorer', highlight: true },
+  { id: 'team', key: 'team' },
+];
+
+const BUSINESS_PLAN_CONFIGS: PlanConfig[] = [
+  { id: 'enterprise1', key: 'enterprise1', buttonVariant: 'secondary' },
+  { id: 'enterprise2', key: 'enterprise2', buttonVariant: 'secondary' },
+  { id: 'enterprise3', key: 'enterprise3', buttonVariant: 'secondary' },
+  { id: 'joint', key: 'joint', buttonVariant: 'secondary' },
+];
+
+const PERMISSION_NORMALIZATION: Record<string, TierId | 'admin'> = {
+  basic: 'basic',
+  common: 'basic',
+  research: 'research',
+  explorer: 'explorer',
+  team: 'team',
+  enterprise: 'enterprise1',
+  enterprise1: 'enterprise1',
+  enterprise_i: 'enterprise1',
+  enterprise2: 'enterprise2',
+  enterprise_ii: 'enterprise2',
+  enterprise3: 'enterprise3',
+  enterprise_iii: 'enterprise3',
+  joint: 'joint',
+  admin: 'admin',
+};
+
+const TIER_RANK: Record<TierId | 'admin', number> = {
+  basic: 0,
+  research: 1,
+  explorer: 2,
+  team: 3,
+  enterprise1: 4,
+  enterprise2: 5,
+  enterprise3: 6,
+  joint: 7,
+  admin: 8,
+};
+
+const normalizeTierKey = (tier?: string | null): TierId | 'admin' | null => {
+  if (!tier) {
+    return null;
+  }
+  return PERMISSION_NORMALIZATION[tier] ?? null;
+};
+
+const getTierRankValue = (tier?: string | null): number => {
+  const normalized = normalizeTierKey(tier);
+  if (!normalized) {
+    return -1;
+  }
+  return TIER_RANK[normalized];
+};
+
+const isEnterpriseTier = (tier: TierId) => tier === 'enterprise1' || tier === 'enterprise2' || tier === 'enterprise3';
+
 interface PricingProps {
   showHeader?: boolean;
   className?: string;
@@ -16,47 +85,52 @@ interface PricingProps {
 }
 
 const Pricing = ({ showHeader = true, className = '', permission }: PricingProps) => {
-  console.log(permission);
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
   const [contactModalOpen, setContactModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'enterprise' | 'joint'>('enterprise');
+  const [selectedPlan, setSelectedPlan] = useState<'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint'>('enterprise1');
   const [showEducationModal, setShowEducationModal] = useState(false);
   const [educationEmail, setEducationEmail] = useState('');
   const [educationError, setEducationError] = useState('');
   const [isSendingEducation, setIsSendingEducation] = useState(false);
   const navigate = useNavigate();
-  const { userPermissions: myPermission, userInfo } = useAuthStore();
+  const { userPermissions: myPermission, userInfo, isAuthenticated } = useAuthStore();
   const { success, error } = useMessage();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
   };
 
-  const permissionList = ["common", "research", "explorer", "team", "enterprise", "joint"];
-  const hasPermission = (permission: string) => {
-    if(!myPermission){
+  const myTierRank = getTierRankValue(myPermission);
+
+  const hasPermission = (target: TierId | string) => {
+    if (!isAuthenticated) {
       return false;
     }
-    const index = permissionList.indexOf(permission);
-    const myIndex = permissionList.indexOf(myPermission || "common");
-    return index <= myIndex;
-  }
+    if (myTierRank < 0) {
+      return false;
+    }
+    const targetRank = getTierRankValue(target);
+    if (targetRank < 0) {
+      return false;
+    }
+    return myTierRank >= targetRank;
+  };
 
-  console.log(explorer_url, team_url);
-  const pricingUrlMpas = useMemo(() => ({
-    research: "/map?showPricing=true",
-    explorer: explorer_url + "?prefilled_email=" + userInfo?.email,
-    team: team_url + "?prefilled_email=" + userInfo?.email,
-    enterprise: "",
-    joint: "",
-  }), [userInfo]);
+  const pricingUrlMap = useMemo(() => ({
+    explorer: explorer_url ? `${explorer_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
+    team: team_url ? `${team_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
+  }), [userInfo?.email]);
 
-  const handleEducationClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const openEducationModal = () => {
     setShowEducationModal(true);
     setEducationEmail('');
     setEducationError('');
+  };
+
+  const handleEducationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openEducationModal();
   };
 
   const handleEducationSubmit = async () => {
@@ -104,42 +178,130 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     setEducationError('');
   };
 
-  const clickButtonHandler = (permission: string) => {
-    if(showHeader){
-      navigate(`/map?showPricing=true&permission=${permission}`);
+  const clickButtonHandler = (tier: TierId) => {
+    if (tier === 'basic') {
+      navigate('/register');
       return;
     }
 
-    // 处理 research 点击事件，显示教育邮箱验证浮层
-    if(permission === 'research'){
-      handleEducationClick(new MouseEvent('click') as any);
+    if (showHeader) {
+      navigate(`/map?showPricing=true&permission=${tier}`);
       return;
     }
 
-    // 处理 enterprise 和 joint 点击事件，显示联系销售浮层
-    if(permission === 'enterprise' || permission === 'joint'){
-      setSelectedPlan(permission);
+    if (tier === 'research') {
+      openEducationModal();
+      return;
+    }
+
+    if (isEnterpriseTier(tier) || tier === 'joint') {
+      setSelectedPlan(tier);
       setContactModalOpen(true);
       return;
     }
 
-    if(pricingUrlMpas[permission as keyof typeof pricingUrlMpas]){
-      window.open(pricingUrlMpas[permission as keyof typeof pricingUrlMpas], '_blank');
+    const targetUrl = pricingUrlMap[tier as keyof typeof pricingUrlMap];
+    if (targetUrl) {
+      window.open(targetUrl, '_blank');
     }
-  }
+  };
+
+  const filteredPersonalPlans = useMemo(() => {
+    if (showHeader || !isAuthenticated) {
+      return PERSONAL_PLAN_CONFIGS;
+    }
+    return PERSONAL_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [showHeader, isAuthenticated, myTierRank]);
+
+  const filteredBusinessPlans = useMemo(() => {
+    if (showHeader || !isAuthenticated) {
+      return BUSINESS_PLAN_CONFIGS;
+    }
+    return BUSINESS_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [showHeader, isAuthenticated, myTierRank]);
 
   useEffect(() => {
-    if(permission && myPermission){
-      if(hasPermission(permission)){
-        return;
-      }
-      // 如果是enterprise或joint，需要先切换到business组
-      if(permission === 'enterprise' || permission === 'joint'){
-        setActiveGroup('business');
-      }
-      
-      clickButtonHandler(permission);
+    if (showHeader) {
+      return;
     }
+
+    const hasPersonal = filteredPersonalPlans.length > 0;
+    const hasBusiness = filteredBusinessPlans.length > 0;
+
+    if (activeGroup === 'personal' && !hasPersonal && hasBusiness) {
+      setActiveGroup('business');
+    } else if (activeGroup === 'business' && !hasBusiness && hasPersonal) {
+      setActiveGroup('personal');
+    }
+  }, [showHeader, activeGroup, filteredPersonalPlans.length, filteredBusinessPlans.length]);
+
+  const noPlansAvailable = !showHeader && isAuthenticated && filteredPersonalPlans.length === 0 && filteredBusinessPlans.length === 0;
+  const personalGroupDisabled = !showHeader && filteredPersonalPlans.length === 0;
+  const businessGroupDisabled = !showHeader && filteredBusinessPlans.length === 0;
+
+  const renderPlanCard = (plan: PlanConfig) => {
+    const title = t(`pricing.${plan.key}.title`);
+    const description = t(`pricing.${plan.key}.description`);
+    const price = t(`pricing.${plan.key}.price`);
+    const period = t(`pricing.${plan.key}.period`);
+    const cta = t(`pricing.${plan.key}.cta`);
+    const details = t(`pricing.${plan.key}.details`, { returnObjects: true }) as string[];
+    const detailItems = Array.isArray(details) ? details : [];
+    const subtitle = t(`pricing.${plan.key}.subtitle`, { defaultValue: '' }) as string;
+    const isDisabled = hasPermission(plan.id);
+    const buttonClass = ['pricing-btn', plan.buttonVariant === 'secondary' ? 'secondary' : '']
+      .filter(Boolean)
+      .join(' ');
+
+    return (
+      <div className={`pricing-card ${plan.highlight ? 'highlight' : ''}`} key={plan.id}>
+        <div className="pricing-card-top">
+          <div className="pricing-title">{title}</div>
+          <div className="pricing-subtitle">{subtitle}</div>
+          <div className="pricing-access">{description}</div>
+          {(price || period) && (
+            <div className="pricing-price">
+              {price}
+              <span className="pricing-unit">{period}</span>
+            </div>
+          )}
+        </div>
+        <button
+          disabled={isDisabled}
+          onClick={() => clickButtonHandler(plan.id)}
+          className={buttonClass}
+          data-permission={plan.id}
+        >
+          {cta}
+        </button>
+        <ul className="pricing-features">
+          {detailItems.map((detail, index) => (
+            <li key={index}>{detail}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    if (!permission) {
+      return;
+    }
+
+    const normalized = normalizeTierKey(permission);
+    if (!normalized || normalized === 'admin') {
+      return;
+    }
+
+    if (myPermission && hasPermission(normalized)) {
+      return;
+    }
+
+    if (isEnterpriseTier(normalized) || normalized === 'joint') {
+      setActiveGroup('business');
+    }
+
+    clickButtonHandler(normalized);
   }, [permission, myPermission]);
 
   return (
@@ -156,93 +318,41 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       <div className="pricing-switcher">
         <button 
           className={`pricing-switch-btn ${activeGroup === 'personal' ? 'active' : ''}`}
+          disabled={personalGroupDisabled}
           onClick={() => handleGroupSwitch('personal')}
         >
           {t('pricing.switcher.individual')}
         </button>
         <button 
           className={`pricing-switch-btn ${activeGroup === 'business' ? 'active' : ''}`}
+          disabled={businessGroupDisabled}
           onClick={() => handleGroupSwitch('business')}
         >
           {t('pricing.switcher.enterprise')}
         </button>
       </div>
 
-      <div className={`pricing-group ${activeGroup === 'personal' ? 'active' : ''}`} data-group="personal">
-        <div className="pricing-grid">
-          <div className="pricing-card">
-            <div className="pricing-card-top">
-              <div className="pricing-title">{t('pricing.research.title')}</div>
-              <div className="pricing-access">{t('pricing.research.description')}</div>
-              <div className="pricing-price">{t('pricing.research.price')}<span className="pricing-unit">{t('pricing.research.period')}</span></div>
-            </div>
-            <button disabled={hasPermission('research')} onClick={() => clickButtonHandler('research')} className="pricing-btn" data-permission="research">{t('pricing.research.cta')}</button>
-            <ul className="pricing-features">
-              {(t('pricing.research.details', { returnObjects: true }) as string[]).map((detail, index) => (
-                <li key={index}>{detail}</li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="pricing-card highlight">
-            <div className="pricing-card-top">
-              <div className="pricing-title">{t('pricing.explorer.title')}</div>
-              <div className="pricing-access">{t('pricing.explorer.description')}</div>
-              <div className="pricing-price">{t('pricing.explorer.price')}<span className="pricing-unit">{t('pricing.explorer.period')}</span></div>
-            </div>
-            <button disabled={hasPermission('explorer')} onClick={() => clickButtonHandler('explorer')} className="pricing-btn" data-permission="explorer">{t('pricing.explorer.cta')}</button>
-            <ul className="pricing-features">
-              {(t('pricing.explorer.details', { returnObjects: true }) as string[]).map((detail, index) => (
-                <li key={index}>{detail}</li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="pricing-card">
-            <div className="pricing-card-top">
-              <div className="pricing-title">{t('pricing.team.title')}</div>
-              <div className="pricing-access">{t('pricing.team.description')}</div>
-              <div className="pricing-price">{t('pricing.team.price')}<span className="pricing-unit">{t('pricing.team.period')}</span></div>
-            </div>
-            <button disabled={hasPermission('team')} onClick={() => clickButtonHandler('team')} className="pricing-btn" data-permission="team">{t('pricing.team.cta')}</button>
-            <ul className="pricing-features">
-              {(t('pricing.team.details', { returnObjects: true }) as string[]).map((detail, index) => (
-                <li key={index}>{detail}</li>
-              ))}
-            </ul>
+      {filteredPersonalPlans.length > 0 && (
+        <div className={`pricing-group ${activeGroup === 'personal' ? 'active' : ''}`} data-group="personal">
+          <div className="pricing-grid">
+            {filteredPersonalPlans.map((plan) => renderPlanCard(plan))}
           </div>
         </div>
-      </div>
+      )}
 
-      <div className={`pricing-group ${activeGroup === 'business' ? 'active' : ''}`} data-group="business">
-        <div className="pricing-grid">
-          <div className="pricing-card">
-            <div className="pricing-card-top">
-              <div className="pricing-title">{t('pricing.enterprise.title')}</div>
-              <div className="pricing-access">{t('pricing.enterprise.description')}</div>
-            </div>
-            <button disabled={hasPermission('enterprise')} onClick={() => clickButtonHandler('enterprise')} className="pricing-btn secondary" data-permission="enterprise">{t('pricing.enterprise.cta')}</button>
-            <ul className="pricing-features">
-              {(t('pricing.enterprise.details', { returnObjects: true }) as string[]).map((detail, index) => (
-                <li key={index}>{detail}</li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="pricing-card">
-            <div className="pricing-card-top">
-              <div className="pricing-title">{t('pricing.joint.title')}</div>
-              <div className="pricing-access">{t('pricing.joint.description')}</div>
-            </div>
-            <button disabled={hasPermission('joint')} onClick={() => clickButtonHandler('joint')} className="pricing-btn secondary" data-permission="joint">{t('pricing.joint.cta')}</button>
-            <ul className="pricing-features">
-              {(t('pricing.joint.details', { returnObjects: true }) as string[]).map((detail, index) => (
-                <li key={index}>{detail}</li>
-              ))}
-            </ul>
+      {filteredBusinessPlans.length > 0 && (
+        <div className={`pricing-group ${activeGroup === 'business' ? 'active' : ''}`} data-group="business">
+          <div className="pricing-grid">
+            {filteredBusinessPlans.map((plan) => renderPlanCard(plan))}
           </div>
         </div>
-      </div>
+      )}
+
+      {noPlansAvailable && (
+        <div style={{ textAlign: 'center', marginTop: '24px', color: '#6b7280' }}>
+          {t('pricing.noHigherPlansMessage', 'You already have the highest level available. Contact us if you need anything else.')}
+        </div>
+      )}
       
       {/* <div className="pricing-footer-note">
         {t('pricing.footer.note')} <span className="pricing-verify-link">{t('pricing.footer.verify')}</span>
