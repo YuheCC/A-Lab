@@ -28,6 +28,13 @@
   margin-right: 5px;
 }
 
+.molcard-compact .molcard-visualization {
+  min-height: 140px;
+  width: 140px;
+  max-width: 140px;
+  padding: 4px;
+}
+
 .molcard-vertical .molcard-info-panel {
   border-left: none;
   border-top: 1px solid #ddd;
@@ -44,6 +51,12 @@
   color: #333;
   max-width: 250px;
   min-width: 200px;
+}
+
+.molcard-compact .molcard-info-panel {
+  padding: 8px;
+  max-width: 220px;
+  min-width: 170px;
 }
 
 .molcard-property-group {
@@ -66,6 +79,19 @@
   overflow-wrap: break-word;
   white-space: pre-wrap;
   line-height: 1.4;
+}
+
+.molcard-compact .molcard-property-group {
+  font-size: 11px;
+}
+
+.molcard-compact .molcard-property-group label {
+  font-size: 9px;
+}
+
+.molcard-compact .molcard-property-group code {
+  font-size: 11px;
+  max-width: 180px;
 }
 
 .molcard-footer-expanded .molcard-property-group code {
@@ -113,6 +139,10 @@
   grid-template-columns: 1fr 1fr;
   padding: 5px;
   gap: 5px;
+}
+
+.molcard-compact .molcard-info-content {
+  gap: 4px;
 }
 .molcard-large .molcard-info-content {
   gap: 10px;
