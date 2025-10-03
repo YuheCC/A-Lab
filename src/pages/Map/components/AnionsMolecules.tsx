@@ -112,6 +112,7 @@ const AnionsMolecules = () => {
                             userPermissions={userPermissions}
                             molecularType="anions"
                             zoomOffset={-0.2}
+                            enableAutoHover
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();

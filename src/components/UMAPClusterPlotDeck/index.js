@@ -271,7 +271,8 @@ const UMAPClusterPlotDeck = ({
     userPermissions,
     onClick,
     molecularType = 'organic',
-    zoomOffset = 0.3
+    zoomOffset = 0.3,
+    enableAutoHover = true
 }) => {
     const { t } = useTranslation();
 
@@ -425,6 +426,10 @@ const UMAPClusterPlotDeck = ({
 
     const fullDataNodes = useMemo(() => data.filter(node => node?.hasFullData), [data]);
     const shouldAutoShowHover = useMemo(() => {
+        if (!enableAutoHover) {
+            return false;
+        }
+
         if (fullDataNodes.length === 0) {
             return false;
         }
@@ -434,7 +439,7 @@ const UMAPClusterPlotDeck = ({
         }
 
         return fullDataNodes.length <= AUTO_HOVER_MOLECULE_THRESHOLD;
-    }, [data.length, fullDataNodes.length]);
+    }, [enableAutoHover, data.length, fullDataNodes.length]);
 
     const autoHoverNodes = useMemo(() => (shouldAutoShowHover ? fullDataNodes : []), [fullDataNodes, shouldAutoShowHover]);
 
@@ -458,8 +463,8 @@ const UMAPClusterPlotDeck = ({
             bearing: viewState.bearing
         });
 
-        const CARD_WIDTH = 320;
-        const CARD_HEIGHT = 220;
+        const CARD_WIDTH = 460;
+        const CARD_HEIGHT = 260;
         const CARD_GAP = 16;
         const MARGIN = 12;
 
@@ -817,7 +822,7 @@ const UMAPClusterPlotDeck = ({
                 fontWeight: 600,
                 boxShadow: '0 2px 6px rgba(15, 23, 42, 0.18)',
                 pointerEvents: 'none',
-                zIndex: 1100
+                zIndex: 950
             };
 
             const lineLeft = Math.min(line.startX, line.endX);
@@ -852,7 +857,7 @@ const UMAPClusterPlotDeck = ({
                             width: lineWidth,
                             height: lineHeight,
                             pointerEvents: 'none',
-                            zIndex: 1095
+                            zIndex: 940
                         }}
                         width={lineWidth}
                         height={lineHeight}
@@ -875,7 +880,7 @@ const UMAPClusterPlotDeck = ({
                             top: card.top,
                             width: card.width,
                             pointerEvents: 'none',
-                            zIndex: 1100
+                            zIndex: 960
                         }}
                     >
                         <div
@@ -908,7 +913,7 @@ const UMAPClusterPlotDeck = ({
                                 {layoutIndex + 1}
                             </div>
                             <MolCard
-                                showMoreDetails={true}
+                                showMoreDetails={false}
                                 style={{ width: '100%', pointerEvents: 'auto' }}
                                 cation={resolveCation(node)}
                                 propGroups={buildHoverPropGroups(node)}

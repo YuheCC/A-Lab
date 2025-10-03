@@ -111,6 +111,7 @@ const InorganicMolecules = () => {
                             data={data}
                             userPermissions={userPermissions}
                             molecularType="inorganic"
+                            enableAutoHover
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();

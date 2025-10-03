@@ -105,6 +105,7 @@ const OrganicMolecules = () => {
                             data={data}
                             userPermissions={userPermissions}
                             molecularType="organic"
+                            enableAutoHover
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();

@@ -453,6 +453,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 molecularType="organic"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();

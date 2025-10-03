@@ -462,6 +462,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 molecularType="anions"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();

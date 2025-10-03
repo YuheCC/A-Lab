@@ -409,6 +409,7 @@ const InorganicSearch = () => {
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 molecularType="inorganic"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
