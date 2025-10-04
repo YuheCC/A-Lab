@@ -11,7 +11,7 @@ import RoleRender from "@/components/RoleRender";
 const SettingModal = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const [activeTab, setActiveTab] = useState('account');
-    const { userName, userPermissions: permissions, userInfo } = useAuthStore();
+    const { userName, userPermissions: permissions, userInfo, isAuthenticated } = useAuthStore();
     const { i18n, t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
     const [showRedeemModal, setShowRedeemModal] = useState(false);
@@ -138,6 +138,11 @@ const SettingModal = forwardRef((props, ref) => {
         setShowPricingOverlay(true); // 显示定价浮层
     }
 
+    const displayName = isAuthenticated && userName ? userName : 'public';
+    const displayRole = isAuthenticated && permissions ? permissions : 'public';
+    const registrationDisplay = userInfo?.created_at ? new Date(userInfo.created_at).toLocaleString() : t('settings.account.notAvailable');
+    const emailDisplay = userInfo?.email ?? t('settings.account.notAvailable');
+
     useImperativeHandle(ref, () => ({
         show: () => setShow(true),
         hide: () => setShow(false),
@@ -157,10 +162,10 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="user-info-left">
                         <div className="user-info-meta">
                           <div className="user-info-name-wrapper">
-                            <div className="user-info-name">{userName}</div>
-                            <RoleRender role={permissions} />
+                            <div className="user-info-name">{displayName}</div>
+                            <RoleRender role={displayRole} />
                           </div>
-                            <div className="user-info-registered">{t('settings.account.registrationTime')}: {new Date(userInfo.created_at).toLocaleString()}</div>
+                            <div className="user-info-registered">{t('settings.account.registrationTime')}: {registrationDisplay}</div>
                         </div>
                       </div>
                     </div>
@@ -168,13 +173,13 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="settings-group-title">{t('settings.account.accountInfo')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.account.name')}: {userName}</div>
+                          <div className="settings-item-title">{t('settings.account.name')}: {displayName}</div>
                         </div>
                         <div className="settings-item-action"></div>
                       </div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.account.email')}: {userInfo.email}</div>
+                          <div className="settings-item-title">{t('settings.account.email')}: {emailDisplay}</div>
                         </div>
                         <div className="settings-item-action"></div>
                       </div>
@@ -191,7 +196,7 @@ const SettingModal = forwardRef((props, ref) => {
                       <div className="settings-group-title">{t('settings.subscription.status')}</div>
                       <div className="settings-item">
                         <div className="settings-item-main">
-                          <div className="settings-item-title">{t('settings.subscription.currentPlan')} <RoleRender role={permissions} /></div>
+                          <div className="settings-item-title">{t('settings.subscription.currentPlan')} <RoleRender role={displayRole} /></div>
                           <div className="settings-item-desc">
                           <a href="#" className="redeem-team-code-link" onClick={handleRedeemClick}>{t('settings.subscription.redeemTeamCode')}</a>
                           </div>

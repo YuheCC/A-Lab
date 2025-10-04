@@ -18,6 +18,8 @@ import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const API_URL = getAPIUrl();
 
@@ -69,9 +71,12 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const OrganicSearch = () => {
+const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -113,6 +118,7 @@ const OrganicSearch = () => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
+    const triggerAccessModal = useAccessModals();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -127,6 +133,22 @@ const OrganicSearch = () => {
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isPublic) return;
+        setFindClosestFriends(false);
+        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
+        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
+        setShowHypothetical(false);
+        setShowAdvanced(false);
+        setExtraRequests('');
+        setCathode('');
+        setAnode('');
+        setSalt('');
+        setSolvent('');
+        setMetric('');
+    }, [isPublic]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -380,9 +402,20 @@ const OrganicSearch = () => {
                     }
                 }
             }
-        } catch (apiError) {
+        } catch (apiError: any) {
             console.error('Error checking Snowflake database:', apiError);
-            setSearchError(t('search.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = apiError?.response?.status === 401 || apiError?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setSearchError(null);
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setSearchError(t('search.searchError'));
+            }
         } finally {
             setSearchLoading(false);
             setLastSearch(searchInput);
@@ -419,7 +452,9 @@ const OrganicSearch = () => {
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="organic"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -502,6 +537,12 @@ const OrganicSearch = () => {
                             <SearchInput
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
+                                initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
+                                lockInput={isPublic}
+                                initialEditorOpen={!isPublic}
+                                lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                             <FindFriendOptions
@@ -533,6 +574,9 @@ const OrganicSearch = () => {
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
+                                readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                     <div className="search-results">

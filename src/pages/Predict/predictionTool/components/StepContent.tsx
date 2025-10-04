@@ -3,6 +3,7 @@ import { FileText, RefreshCw, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
 
 interface StepContentProps {
@@ -14,6 +15,7 @@ interface StepContentProps {
 
 const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onPredictionComplete, onReset }) => {
   const { t } = useTranslation();
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,8 +46,8 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
   const handleDownloadSampleData = () => {
     // 创建下载链接
     const link = document.createElement('a');
-    link.href = '/ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
-    link.download = 'ncagrcom_2dda31_T45C__cycle_cc0.3_dc0.3_V2.50_4.00_restnoRest.csv';
+    link.href = '/predict/demo.csv';
+    link.download = 'demo.csv';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -242,12 +244,12 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               </div>
             )}
             
-            {error && (
-              <div className="error-message" style={{ 
-                color: '#e53e3e', 
-                backgroundColor: '#fed7d7', 
-                padding: '12px', 
-                borderRadius: '6px', 
+            {error && isAuthenticated && (
+              <div className="error-message" style={{
+                color: '#e53e3e',
+                backgroundColor: '#fed7d7',
+                padding: '12px',
+                borderRadius: '6px',
                 margin: '16px 0',
                 fontSize: '14px'
               }}>
@@ -363,7 +365,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                     </tbody>
                   </table>
                 ) : (
-                  <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic' }}>
+                  <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic', marginLeft: '20px' }}>
                     {t('predictionTool.results.noDetailedData')}
                   </p>
                 )}
@@ -410,14 +412,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 borderRadius: '8px',
                 border: '1px solid #e2e8f0'
               }}>
-                <h4 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  marginBottom: '16px',
-                  color: '#2d3748'
-                }}>
-                  {t('predictionTool.chart.title')}
-                </h4>
                 <CycleLifeScatterChart
                   brcodeData={predictionResult.brcode_data}
                 />

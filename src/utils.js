@@ -1,3 +1,5 @@
+import { triggerLoginModal, shouldShowLoginModal } from './utils/authHelpers';
+
 export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
 
 const API_URL = getAPIUrl();
@@ -90,17 +92,23 @@ export const redirectToLogin = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   localStorage.removeItem('permissions');
+  localStorage.removeItem('organization_name');
 
   // Store the current URL to redirect back after login
   localStorage.setItem('redirectAfterLogin', current);
 
-  // Send them to the sign‑in screen **once**, carrying the original target.
-  window.history.pushState(
-    {},
-    '',
-    `/login?redirect=${encodeURIComponent(current)}`,
-  );
-  window.location.reload();
+  // 使用登录浮层而不是页面跳转
+  if (shouldShowLoginModal(window.location.pathname)) {
+    triggerLoginModal(current);
+  } else {
+    // 如果不应该显示浮层（比如在首页），则跳转到登录页面
+    window.history.pushState(
+      {},
+      '',
+      `/login?redirect=${encodeURIComponent(current)}`,
+    );
+    window.location.reload();
+  }
 };
 
 
@@ -119,6 +127,6 @@ export const filterLabels = {
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
     chemical_formula: "Chemical Formula",
-    vdw_volume_angstroms3: "Molecular Volume（Å^3）",
+    vdw_volume_angstroms3: "Molecular Volume（Å³）",
     fluoride_bde_ev: "F Dissociation Energy（eV）"
 };

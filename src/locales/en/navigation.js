@@ -1,7 +1,7 @@
 export default {
   // Header navigation links
   header: {
-    map: "Map",
+    map: "Maps",
     ask: "Ask",
     search: "Search",
     molecule: "Molecule",
@@ -40,7 +40,8 @@ export default {
   userDropdown: {
     accountSettings: "Account Settings",
     feedback: "Feedback & Suggestions",
-    logout: "Logout"
+    logout: "Logout",
+    login: "Login"
   },
   
   // Upgrade prompt

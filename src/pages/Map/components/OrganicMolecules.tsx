@@ -8,6 +8,7 @@ import NodePopup from "@/components/NodePopup";
 const OrganicMolecules = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
@@ -104,7 +105,9 @@ const OrganicMolecules = () => {
                             zoomOffset={-0.3}
                             data={data}
                             userPermissions={userPermissions}
+                            isAuthenticated={isAuthenticated}
                             molecularType="organic"
+                            enableAutoHover
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();

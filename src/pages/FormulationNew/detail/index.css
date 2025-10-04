@@ -88,6 +88,59 @@
   margin: 0 0 12px 0;
 }
 
+/* Configuration Information */
+.configuration-info {
+  margin-bottom: 32px;
+}
+
+.configuration-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 16px 16px 16px;
+}
+
+.configuration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  gap: 24px;
+}
+
+.configuration-row:last-child {
+  padding-bottom: 0;
+}
+
+.config-label {
+  font-size: 14px;
+  color: #4b5563;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.config-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.config-value .compound-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.config-value .compound-item {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
 /* System Properties */
 .properties-table {
   border: 1px solid #e2e8f0;
@@ -123,7 +176,7 @@
   overflow: hidden;
 }
 
-.table-header {
+.cluster-table .table-header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
@@ -134,9 +187,35 @@
   color: #374151;
 }
 
-.table-row {
+.cluster-table .table-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+  align-items: center;
+}
+
+/* Diffusion Coefficient */
+.diffusion-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.diffusion-table .table-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.diffusion-table .table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: 16px;
   padding: 12px 16px;
   align-items: center;
@@ -160,9 +239,37 @@
   font-size: 12px;
   font-weight: 500;
   text-align: center;
-  width: fit-content;
+  width: 44px;
   min-height: 20px;
   border: 1px solid transparent;
+}
+
+.category-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tip-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 20px;
+  width: 20px;
+}
+
+.tip-icon {
+  color: #6b7280;
+  cursor: help;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-icon:hover {
+  color: #374151;
 }
 
 /* Chart Sections */
@@ -284,9 +391,33 @@
     text-align: center;
   }
 
-  .table-header,
-  .table-row {
+  .configuration-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .config-label {
+    font-weight: 600;
+  }
+
+  .config-value {
+    width: 100%;
+  }
+
+  .config-value .compound-list {
+    justify-content: flex-start;
+  }
+
+  .cluster-table .table-header,
+  .cluster-table .table-row {
     grid-template-columns: 60px 80px 1fr;
+  }
+
+  .diffusion-table .table-header,
+  .diffusion-table .table-row {
+    grid-template-columns: 80px 1fr;
   }
 
   .chart-placeholder {

@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "添加剤の電池性能への影響",
+  subtitle: "SES社内実験データで訓練されたAIモデルを使用して、添加剤がセル性能指標（サイクル寿命、コロンビック効率、レート性能）に与える影響を予測します",
   beta: "ベータ",
   
   // Battery System Selection
@@ -27,7 +28,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "重量パーセント (wt%)",
-    tooltip: "カスタム値のサポートは近日公開予定"
+    tooltip: "カスタム値はMU1.5でリリース予定"
   },
   
   // Molecule information
@@ -88,6 +89,14 @@ export default {
     positiveTitle: "ポジティブ (Positive)",
     negativeTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルと同等またはそれ以下になることを意味します。",
     positiveTip: "電解液添加剤を添加した後、テスト条件下でのセルの性能がベンチマークセルより優れることを意味します。",
+    descriptions: {
+      ceLabel: "コロンビック効率",
+      cycleLifeLabel: "サイクル寿命",
+      ratePerformanceLabel: "レート性能",
+      ce: "BOLからEOLまでの各サイクルの平均CE",
+      cycleLife: "放電容量保持率が80%に達するサイクル数",
+      ratePerformance: "0.5C放電と比較した5C放電での容量保持率"
+    },
     temperatureTabs: {
       temp25: "25°C性能",
       temp45: "45°C性能"
@@ -118,6 +127,13 @@ export default {
       recommendations: "3. 包括的推奨事項"
     },
     references: "参考文献"
+  },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "分析中",
+    analyzingForSeconds: "{{seconds}}秒",
+    analyzingForMinutesAndSeconds: "{{minutes}}分{{seconds}}秒"
   },
   
   // General UI text

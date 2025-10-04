@@ -9,6 +9,7 @@ export default {
         accountInfo: '账号信息',
         name: '姓名',
         email: '注册邮箱',
+        notAvailable: '暂无',
         password: '修改密码',
         modify: '修改'
     },

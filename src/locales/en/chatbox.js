@@ -4,6 +4,7 @@ export default {
     },
     input: {
         placeholder: "Ask me anything, as long as it's about batteries, battery chemistry, or related topics.",
+        placeholderPublic: "Create an account to ask me anything, as long as it's about batteries, battery chemistry, or related topics.",
         sendButton: "Send"
     },
     chat: {
@@ -172,6 +173,16 @@ export default {
         feedbackError: "Error submitting feedback:",
         copyError: "Failed to copy:",
         generalError: "Error"
+    },
+    publicAccess: {
+        bannerMessage: "Create an account or log in to use {{feature}}.",
+        dismiss: "Dismiss",
+        features: {
+            askInput: "Ask",
+            lightning: "Lightning",
+            pro: "Pro",
+            deepSpace: "Deep Space"
+        }
     },
     supplementalData: "Supplemental Data",
     history: {

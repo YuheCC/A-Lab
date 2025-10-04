@@ -1,6 +1,7 @@
 export default {
     // Header
-    title: "电池寿命预测",
+    title: "上传早期循环数据进行寿命预测",
+    subtitle: "使用基于SES内部实验数据训练的AI模型预测锂离子电池的循环寿命（达到80% SOH的循环次数）。仅需前100个循环（有效循环，因此实际数量可能更多）即可",
     betaTag: "BETA",
 
     // Steps
@@ -65,7 +66,7 @@ export default {
     history: {
         title: "预测记录",
         newPrediction: "新增预测",
-        searchPlaceholder: "Search by file name...",
+        searchPlaceholder: "按文件名搜索...",
         loading: "加载中...",
         deleteConfirm: "确定要删除这条记录吗？",
         deleteSuccess: "删除成功",
@@ -99,10 +100,10 @@ export default {
     // Chart
     chart: {
         title: "电池容量随循环次数变化",
-        cycleCount: "循环次数",
-        capacityProcess: "容量变化过程",
-        predictedCycleLife: "预测循环寿命",
-        xAxisName: "循环次数 (Cycle)",
+        cycleCount: "循环数",
+        capacityProcess: "容量衰减过程（上传数据）",
+        predictedCycleLife: "预测达到80% SOH的循环次数",
+        xAxisName: "循环数",
         yAxisName: "放电容量"
     },
 

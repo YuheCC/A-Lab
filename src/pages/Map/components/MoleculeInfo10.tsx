@@ -85,19 +85,23 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
             {/* Organic Molecules Section */}
             <div ref={organicSectionRef}>
                 <h2 style={{ fontWeight: 'bold', marginBottom: '15px' }}>
-                    {t('map.about05.title')}
+                    {t('map.about.title')}
                 </h2>
 
                 <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    {t('map.about05.description1')}
+                    {t('map.about.description1')}
                 </p>
 
                 <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    {t('map.about05.description2')}
+                    {t('map.about.description2')}
                 </p>
 
                 <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    {t('map.about05.description3')}
+                    {t('map.about.description3')}
+                </p>
+
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                    {t('map.about.description4')}
                 </p>
 
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
@@ -130,6 +134,18 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
                     {t('map.anionsClusters.title')}
                 </h2>
 
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                    {t('map.anionsClusters.description')}
+                </p>
+
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                    {t('map.anionsClusters.description2')}
+                </p>
+
+                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+                    {t('map.anionsClusters.description3')}
+                </p>
+
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px', marginTop: '10px' }}>
                     <picture>
                         <source srcSet="/anions.png" type="image/png" />
@@ -146,7 +162,7 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
                 </div>
 
                 <h3 style={{ fontWeight: 'bold', marginBottom: '15px', marginTop: '25px' }}>
-                    {t('map.anionsClusters.title')} - {t('map.about05.clusterTitle')}
+                    {t('map.about05.clusterTitle')}
                 </h3>
 
                 <div style={{ marginBottom: '20px', lineHeight: '1.6', fontSize: '14px' }}>

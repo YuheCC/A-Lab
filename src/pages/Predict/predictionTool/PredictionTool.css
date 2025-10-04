@@ -35,10 +35,16 @@
 
 .prediction-header {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 24px;
   flex-shrink: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .prediction-title {
@@ -48,9 +54,16 @@
   margin: 0;
 }
 
+.prediction-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .beta-tag {
   background: #e5e7eb;
-  color: #6b7280;
+  color: #56B26A;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
@@ -413,6 +426,10 @@
   flex-shrink: 0;
 }
 
+.en-page .tip-label, .ja-page .tip-label {
+  min-width: 115px;
+}
+
 .tip-value {
   color: #374151;
   font-weight: 400;
@@ -634,7 +651,6 @@
 /* Results display styles - 响应式设计 */
 .results-display {
   width: 100%;
-  max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -645,14 +661,12 @@
 /* 结果展示步骤响应式设计 */
 @media (min-width: 1920px) {
   .results-display {
-    max-width: 900px;
     gap: 32px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1919px) {
   .results-display {
-    max-width: 750px;
     gap: 28px;
   }
 }

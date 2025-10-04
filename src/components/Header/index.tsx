@@ -11,6 +11,7 @@ import SettingModal from "@/components/SettingModal";
 import UserFeedBackModal from "@/components/UserFeedBackModal";
 import RoleRender from "../RoleRender";
 import { PricingContext } from "@/layouts/index";
+import { useLoginModalContext } from "@/components/LoginModal/context";
 
 const Header = () => {
     const { t } = useTranslation();
@@ -22,9 +23,10 @@ const Header = () => {
     const avatarRef = useRef<HTMLAnchorElement>(null);
     const navDropdownRef = useRef<HTMLDivElement>(null);
     const userFeedBackModalRef = useRef<any>(null);
-    const { logout, userName, userPermissions: permissions } = useAuthStore();
+    const { logout, userName, userPermissions: permissions, isAuthenticated } = useAuthStore();
     const settingModalRef = useRef<any>(null);
     const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
+    const { openLoginModal } = useLoginModalContext();
 
     // Helper function to check if a path is active
     const isPathActive = (path: string) => {
@@ -32,8 +34,12 @@ const Header = () => {
     };
 
     // 检查是否为common用户
-    const isCommonUser = permissions === 'common';
+    // Common users have since gained access to all features, so this is set to false even for common / logged out users
+    // It should be removed in a future update but is kept temporarily in case we need to revert
+    const isCommonUser = false; //permissions === 'common';
     const isEducationalUser = permissions === 'research';
+    const displayName = isAuthenticated && userName ? userName : 'public';
+    const displayRole = isAuthenticated && permissions ? permissions : 'public';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -147,55 +153,65 @@ const Header = () => {
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
                 <div 
-                    className={`nav-dropdown-container ${isCommonUser || isEducationalUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
+                    className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
                     onMouseEnter={handleNavDropdownMouseEnter}
                     onMouseLeave={handleNavDropdownMouseLeave}
                     ref={navDropdownRef}
                 >
-                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser || isEducationalUser)}
+                    {renderNavLink('/predict/performance', t('navigation.header.predict'), pathname.startsWith('/predict'), isCommonUser)}
                     <div 
                         className="nav-dropdown"
                         onMouseEnter={handleNavDropdownMouseEnter}
                         onMouseLeave={handleNavDropdownMouseLeave}
                     >
-                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser || isEducationalUser)}
-                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser || isEducationalUser)}
+                        {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser)}
+                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)}
                     </div>
                 </div>
                 {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
-                <div className="user-avatar-container">
-                    <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
-                        <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
-                    </a>
-                    <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
-                        <div className="user-info">
-                            <div className="user-avatar-large">
-                                <img src={userCircleSvg} alt="User Avatar" className="user-avatar-img" />
-                            </div>
-                            <div className="user-details">
-                                <div className="user-name-container">
-                                    <div className="user-email">{userName}</div>
-                                    <RoleRender role={permissions} />
+                {isAuthenticated ? (
+                    <div className="user-avatar-container">
+                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
+                            <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
+                        </a>
+                        <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
+                            <div className="user-info">
+                                <div className="user-avatar-large">
+                                    <img src={userCircleSvg} alt="User Avatar" className="user-avatar-img" />
+                                </div>
+                                <div className="user-details">
+                                    <div className="user-name-container">
+                                        <div className="user-email">{userName}</div>
+                                        <RoleRender role={permissions} />
+                                    </div>
                                 </div>
                             </div>
+                            <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
+                                <img src={settingSvg} alt="Setting" className="item-icon" />
+                                {t('navigation.userDropdown.accountSettings')}
+                            </a>
+                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
+                                <img src={feedbackSvg} alt="Feedback" className="item-icon" />
+                                {t('navigation.userDropdown.feedback')}
+                            </a>
+                            <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
+                                <img src={logoutSvg} alt="Logout" className="item-icon" />
+                                {t('navigation.userDropdown.logout')}
+                            </a>
                         </div>
-                        <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
-                            <img src={settingSvg} alt="Setting" className="item-icon" />
-                            {t('navigation.userDropdown.accountSettings')}
-                        </a>
-                        <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
-                            <img src={feedbackSvg} alt="Feedback" className="item-icon" />
-                            {t('navigation.userDropdown.feedback')}
-                        </a>
-                        <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
-                            <img src={logoutSvg} alt="Logout" className="item-icon" />
-                            {t('navigation.userDropdown.logout')}
-                        </a>
                     </div>
-                </div>
+                ) : (
+                    <span
+                        className="nav-item login-text"
+                        onClick={() => openLoginModal()}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {t('auth.form.signIn', '登录')}
+                    </span>
+                )}
             </div>
             <SettingModal ref={settingModalRef} />
             <UserFeedBackModal ref={userFeedBackModalRef} />

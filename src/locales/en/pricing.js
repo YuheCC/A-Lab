@@ -4,20 +4,41 @@ export default {
     individual: "Individual",
     enterprise: "Enterprise"
   },
-  research: {
-    title: "Research (academia only)",
+  basic: {
+    title: "Basic",
     description: "Access to Partial Molecular Universe (1M)",
     price: "$0",
     period: "/ month",
     cta: "Get Started",
+    subtitle: "",
+    details: [
+      "Map (view only)",
+      "Filter (view only)",
+      "Search (view only)",
+      "Formulation (view only)",
+      "Predict (view only)",
+      "Ask Lightning (view only)",
+      "Ask Pro (view only)",
+      "Deep Space (view only)"
+    ]
+  },
+  research: {
+    title: "Research",
+    description: "Access to Partial Molecular Universe (1M)",
+    price: "$0",
+    period: "/ month",
+    cta: "Get Started",
+    subtitle: "Academia only",
     details: [
       "Map",
       "Filter",
       "Search",
-      "Ask Lightning (≤ 50 queries/day)",
-      "Ask Pro (≤ 10 queries/day)",
-      "Deep Space (≤ 5 queries/month)",
-      "Intelligent find friends compute: low"
+      "Formulation (view only)",
+      "Predict (view only)",
+      "Ask Lightning (50/day)",
+      "Ask Pro (10/day)",
+      "Deep Space (5/month)",
+      "Intelligent find-friends (low, 10/month)"
     ]
   },
   explorer: {
@@ -26,46 +47,97 @@ export default {
     price: "$150",
     period: "/ month",
     cta: "Get Started",
+    subtitle: "",
     details: [
       "Map",
       "Filter",
       "Search",
+      "Formulation (view only)",
+      "Predict (25ºC Cycle Life)",
       "Ask Lightning (unlimited)",
-      "Ask Pro (≤ 25 queries/day)",
-      "Deep Space (≤ 10 queries/month)",
-      "Intelligent find friends compute: medium"
+      "Ask Pro (25/day)",
+      "Deep Space (10/month)",
+      "Intelligent find-friends (medium, 20/month)"
     ]
   },
   team: {
     title: "Team",
     description: "Access to Partial Molecular Universe (1M)",
     price: "$1,000",
-    period: "/ month (Up to 10 users)",
+    period: "/ month",
     cta: "Get Started",
+    subtitle: "Up to 10 users",
     details: [
       "Map",
       "Filter",
       "Search",
+      "Formulation (view only)",
+      "Predict (25ºC Cycle Life)",
       "Ask Lightning (unlimited)",
-      "Ask Pro (≤ 25 queries/person/day)",
-      "Deep Space (≤ 10 queries/person/month)",
-      "Intelligent find friends compute: medium"
+      "Ask Pro (25/person/day)",
+      "Deep Space (10/person/month)",
+      "Intelligent find-friends (medium, 20/person/month)"
     ]
   },
-  enterprise: {
-    title: "Enterprise",
+  enterprise1: {
+    title: "Enterprise I",
     description: "Access to Whole Molecular Universe (100M)",
     price: "",
     period: "",
     cta: "Contact Sales",
+    subtitle: "",
     details: [
       "Map",
       "Filter",
       "Search",
       "Ask Lightning (unlimited)",
       "Ask Pro (unlimited)",
-      "Deep Space",
-      "Intelligent find friends compute: high",
+      "Deep Space (100/month)",
+      "Formulation (10/month)",
+      "Predict (unlimited)",
+      "Intelligent find-friends (high, 100/month)",
+      "More molecule properties",
+      "Expert consulting"
+    ]
+  },
+  enterprise2: {
+    title: "Enterprise II",
+    description: "Access to Whole Molecular Universe (100M)",
+    price: "",
+    period: "",
+    cta: "Contact Sales",
+    subtitle: "",
+    details: [
+      "Map",
+      "Filter",
+      "Search",
+      "Ask Lightning (unlimited)",
+      "Ask Pro (unlimited)",
+      "Deep Space (unlimited)",
+      "Formulation (30/month)",
+      "Predict (unlimited)",
+      "Intelligent find-friends (high, unlimited)",
+      "More molecule properties",
+      "Expert consulting"
+    ]
+  },
+  enterprise3: {
+    title: "Enterprise III",
+    description: "Access to Whole Molecular Universe (100M)",
+    price: "",
+    period: "",
+    cta: "Contact Sales",
+    subtitle: "",
+    details: [
+      "Map",
+      "Filter",
+      "Search",
+      "Ask Lightning (unlimited)",
+      "Ask Pro (unlimited)",
+      "Deep Space (unlimited)",
+      "Formulation (100/month)",
+      "Predict (unlimited)",
+      "Intelligent find-friends (extreme, unlimited)",
       "More molecule properties",
       "Expert consulting"
     ]
@@ -76,25 +148,31 @@ export default {
     price: "",
     period: "",
     cta: "Contact Sales",
+    subtitle: "",
     details: [
       "Map",
       "Filter",
       "Search",
       "Ask Lightning (unlimited)",
       "Ask Pro (unlimited)",
-      "Deep Space",
-      "Intelligent find friends compute: high",
+      "Deep Space (unlimited)",
+      "Formulation (unlimited)",
+      "Predict (unlimited)",
+      "Intelligent find-friends (extreme, unlimited)",
       "More molecule properties",
       "Customized statement-of-work (inc. molecule synthesis, electrolyte formulation development and cell validation)"
     ]
   },
+  noHigherPlansMessage: "You already have the highest level available. Contact us if you need anything else.",
   footer: {
     note: "Molecular Universe is free for students and educators.",
     verify: "Get Verified"
   },
   contactSales: {
     title: "Contact Sales",
-    enterprise: "Enterprise",
+    enterprise1: "Enterprise I",
+    enterprise2: "Enterprise II",
+    enterprise3: "Enterprise III",
     joint: "Joint Development",
     form: {
       name: "Name",

@@ -9,6 +9,7 @@ export default {
         accountInfo: 'Account Information',
         name: 'Name',
         email: 'Email',
+        notAvailable: 'N/A',
         password: 'Change Password',
         modify: 'Modify'
     },

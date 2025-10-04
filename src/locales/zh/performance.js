@@ -1,6 +1,7 @@
 export default {
   // Page header
   title: "添加剂对电池性能的影响",
+  subtitle: "使用基于SES内部实验数据训练的AI模型预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
   beta: "测试版",
   
   // Battery System Selection
@@ -27,7 +28,7 @@ export default {
   // Weight percentage
   weightPercentage: {
     label: "重量百分比 (wt%)",
-    tooltip: "即将支持自定义数值"
+    tooltip: "自定义数值将在MU1.5中推出"
   },
   
   // Molecule information
@@ -88,6 +89,14 @@ export default {
     positiveTitle: "正面 (Positive)",
     negativeTip: "表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。",
     positiveTip: "表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
+    descriptions: {
+      ceLabel: "库伦效率",
+      cycleLifeLabel: "循环寿命",
+      ratePerformanceLabel: "倍率性能",
+      ce: "从BOL到EOL各个循环的平均库伦效率",
+      cycleLife: "放电容量保持率达到80%时的循环次数",
+      ratePerformance: "5C放电容量相对于0.5C放电容量的保持率"
+    },
     temperatureTabs: {
       temp25: "25°C 性能",
       temp45: "45°C 性能"
@@ -118,6 +127,13 @@ export default {
       recommendations: "3. 综合建议"
     },
     references: "参考文献"
+  },
+
+  // Analysis timing
+  analysis: {
+    analyzing: "LLM分析中",
+    analyzingForSeconds: "{{seconds}}秒",
+    analyzingForMinutesAndSeconds: "{{minutes}}分{{seconds}}秒"
   },
   
   // General UI text

@@ -141,6 +141,18 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                 title={
                   <div>
                     <div style={{
+                      fontSize: '12px',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                      marginBottom: '16px',
+                      paddingBottom: '12px',
+                      borderBottom: '1px solid #e5e7eb'
+                    }}>
+                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                    </div>
+                    <div style={{
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '12px',
@@ -207,7 +219,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                     </div>
                   </div>
                 }
-                placement="top"
+                placement="bottom"
                 arrow
                 PopperProps={{
                   sx: {
@@ -218,8 +230,8 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                       borderRadius: '8px',
                       padding: '16px',
                       fontSize: '14px',
-                      maxWidth: 320,
-                      minWidth: 280,
+                      maxWidth: 500,
+                      minWidth: 380,
                       border: 'none'
                     },
                     '& .MuiTooltip-arrow': {
