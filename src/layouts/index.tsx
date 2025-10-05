@@ -48,7 +48,7 @@ const FullNavLayoutInner = () => {
     // 定义登录成功后的回调函数
     const handleLoginSuccess = () => {
         // 重新验证身份
-        verifyAuth();
+        // verifyAuth();
 
         // 如果在预测页面，刷新数据
         if (isPredictPage || true) {
