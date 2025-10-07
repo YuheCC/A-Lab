@@ -52,6 +52,36 @@ const AboutPage = () => {
     document.body.style.overflow = '';
   };
 
+  const newsItems: Array<{
+    key: string;
+    date: string;
+    title: string;
+    content: string;
+    href: string | null;
+  }> = [
+    {
+      key: 'release3',
+      date: t('about.newsfeed.releaseDate3'),
+      title: t('about.newsfeed.release3'),
+      content: t('about.newsfeed.releaseAbout3'),
+      href: null,
+    },
+    {
+      key: 'release2',
+      date: t('about.newsfeed.releaseDate2'),
+      title: t('about.newsfeed.release2'),
+      content: t('about.newsfeed.releaseAbout2'),
+      href: 'https://www.businesswire.com/news/home/20250709499100/en/SES-AI-Launches-Agentic-Capability-in-Latest-Molecular-Universe-Release-to-Increase-Value-Proposition-for-RD-as-a-Service',
+    },
+    {
+      key: 'release1',
+      date: t('about.newsfeed.releaseDate1'),
+      title: t('about.newsfeed.release1'),
+      content: t('about.newsfeed.releaseAbout1'),
+      href: 'https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest',
+    },
+  ];
+
   return (
     <div className="about-page-body">
       <header className="about-header">
@@ -126,31 +156,31 @@ const AboutPage = () => {
                       </a>
                   </div>
                   <div className="news-feed">
-                      <div className="news-item" style={{alignItems:'flex-start'}}>
-                          <div className="news-date">{t('about.newsfeed.releaseDate2')}</div>
-                          <div className="news-content">
-                            <div className="news-title">
-                                {t('about.newsfeed.release2')}
-                            </div>
-                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
-                                {t('about.newsfeed.releaseAbout2')}<br/>
-                                <a href="https://www.businesswire.com/news/home/20250709499100/en/SES-AI-Launches-Agentic-Capability-in-Latest-Molecular-Universe-Release-to-Increase-Value-Proposition-for-RD-as-a-Service" target="_blank" style={{color:'#1c7c54',textDecoration:'underline'}}>{t('about.newsfeed.newsLink')}</a>
-                            </p>
+                    {newsItems.map((item) => (
+                      <div className="news-item" key={item.key} style={{alignItems: 'flex-start'}}>
+                        <div className="news-date">{item.date}</div>
+                        <div className="news-content">
+                          <div className="news-title">
+                            {item.title}
                           </div>
+                          <p className="news-details" style={{whiteSpace: 'pre-wrap'}}>
+                            {item.content}
+                            {item.href && (
+                              <>
+                                <br />
+                                <a
+                                  href={item.href}
+                                  target="_blank"
+                                  style={{color: '#1c7c54', textDecoration: 'underline'}}
+                                >
+                                  {t('about.newsfeed.newsLink')}
+                                </a>
+                              </>
+                            )}
+                          </p>
+                        </div>
                       </div>
-                      <div className="news-item" style={{alignItems:'flex-start'}}>
-                          <div className="news-date">{t('about.newsfeed.releaseDate1')}</div>
-                          <div className="news-content">
-                            <div className="news-title">
-                                {t('about.newsfeed.release1')}
-                            </div>
-                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
-                                {t('about.newsfeed.releaseAbout1')}<br/>
-                                <a href="https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest" target="_blank" style={{color:'#1c7c54',textDecoration:'underline'}}>{t('about.newsfeed.newsLink')}</a>
-                            </p>
-                          </div>
-                      </div>
-
+                    ))}
                   </div>
               </section>
               <section id="motivation" className="prose-section">
