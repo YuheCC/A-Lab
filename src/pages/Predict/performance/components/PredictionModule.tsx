@@ -34,6 +34,9 @@ interface PredictionModuleProps {
   onResetRef?: (resetFn: () => void) => void;
 }
 
+// Toggle these guards on to re-enable the original validation checks.
+const ENABLE_VALIDATION_CHECKS = true;
+
 const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const { t, i18n } = useTranslation();
   const pricingContext = useContext(PricingContext);
@@ -379,7 +382,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
     const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
@@ -399,7 +402,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const trimmedSmiles = additive.trim();
       const requestPayload: PerformancePredictionRequest = {
         smiles: trimmedSmiles,
-        battery_system_id: parseInt(selectedBatterySystem.id)
+        battery_system_id: parseInt(selectedBatterySystem ? selectedBatterySystem.id : '1' || '1'), 
       };
 
       if (isAdmin && useLLMPredictModel) {
@@ -428,9 +431,19 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       }
 
       if (response?.data) {
-        setPredictionResults(response.data);
+        const predictionData = response.data;
+        setPredictionResults(predictionData);
         setShowResults(true);
-        console.log('Prediction results:', response.data);
+        console.log('Prediction results:', predictionData);
+
+        const analysisResult = predictionData.llm_analysis_result;
+        if (typeof analysisResult === 'string' && analysisResult.trim()) {
+          setAnalysisContent(analysisResult);
+          setHasAnalysisResult(true);
+          setIsAnalyzing(false);
+          setAnalysisError(null);
+          setShowLLMAnalysis(true);
+        }
       } else {
         throw new Error('No data received from prediction API');
       }
@@ -458,7 +471,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return;
     }
     
-    if (!selectedSystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedSystem) {
       alert(t('performance.ui.pleaseSelectBattery'));
       return;
     }
@@ -501,7 +514,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     console.log('LLM分析开始: sessionId =', sessionId);
 
     const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
@@ -516,7 +529,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const currentLang = getCurrentLanguage();
       const analysisParams: LLMAnalysisRequest = {
         id: predictionResults.id,
-        battery_system_id: parseInt(selectedBatterySystem.id),
+        battery_system_id: parseInt(selectedBatterySystem ? selectedBatterySystem.id : '1' || '1'),
         session_id: sessionId,
         lang: currentLang
       };
@@ -1221,21 +1234,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               )}
             </div>
 
-              <div className="llm-button-section">
-                <button 
-                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
-                  onClick={handleLLMAnalysis}
-                  disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
-                >
-                  {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
-                </button>
-                
-                {analysisError && (
-                  <div className="analysis-error">
-                    <p>{analysisError}</p>
-                  </div>
-                )}
-              </div>
+              {!hasAnalysisResult && (
+                <div className="llm-button-section">
+                  <button 
+                    className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''}`}
+                    onClick={handleLLMAnalysis}
+                    disabled={isAnalyzing || !predictionResults || !isHighTier}
+                  >
+                    {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
+                  </button>
+                  
+                  {analysisError && (
+                    <div className="analysis-error">
+                      <p>{analysisError}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
