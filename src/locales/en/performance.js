@@ -78,7 +78,9 @@ export default {
   // Calculate button
   calculate: {
     button: "Calculate",
-    calculated: "Calculated"
+    calculated: "Calculated",
+    useLlmPredictModel: "Use LLM Predict model",
+    numberOfTrials: "Number of trials"
   },
   
   // Results

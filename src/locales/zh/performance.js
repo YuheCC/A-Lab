@@ -78,7 +78,9 @@ export default {
   // Calculate button
   calculate: {
     button: "计算",
-    calculated: "已计算"
+    calculated: "已计算",
+    useLlmPredictModel: "使用 LLM 预测模型",
+    numberOfTrials: "运行次数"
   },
   
   // Results

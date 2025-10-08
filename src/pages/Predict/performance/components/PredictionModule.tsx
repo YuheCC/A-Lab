@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info } from 'lucide-react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
-import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
+import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionRequest, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
@@ -34,12 +34,17 @@ interface PredictionModuleProps {
   onResetRef?: (resetFn: () => void) => void;
 }
 
+// Toggle these guards on to re-enable the original validation checks.
+const ENABLE_VALIDATION_CHECKS = true;
+
 const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const { t, i18n } = useTranslation();
   const pricingContext = useContext(PricingContext);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
+  const [useLLMPredictModel, setUseLLMPredictModel] = useState(false);
+  const [llmRunCount, setLlmRunCount] = useState('1');
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
@@ -49,6 +54,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const isHighTier = useMemo(() => {
     return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
+  const isAdmin = userPermissions === 'admin';
 
   
   // 新增状态：分子详情相关
@@ -376,7 +382,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
     const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
@@ -393,10 +399,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisElapsed(0);
 
     try {
-      const response = await predictPerformance({
-        smiles: additive.trim(),
-        battery_system_id: parseInt(selectedBatterySystem.id)
-      });
+      const trimmedSmiles = additive.trim();
+      const requestPayload: PerformancePredictionRequest = {
+        smiles: trimmedSmiles,
+        battery_system_id: parseInt(selectedBatterySystem ? selectedBatterySystem.id : '1' || '1'), 
+      };
+
+      if (isAdmin && useLLMPredictModel) {
+        requestPayload.predict_model = 'llm';
+
+        const parsedRuns = Number(llmRunCount);
+        const normalizedRuns = !Number.isNaN(parsedRuns) && parsedRuns > 0
+          ? Math.floor(parsedRuns)
+          : 1;
+        requestPayload.runs = normalizedRuns;
+      }
+
+      const response = await predictPerformance(requestPayload);
 
       const status = response?.status ?? response?.data?.status;
 
@@ -412,9 +431,19 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       }
 
       if (response?.data) {
-        setPredictionResults(response.data);
+        const predictionData = response.data;
+        setPredictionResults(predictionData);
         setShowResults(true);
-        console.log('Prediction results:', response.data);
+        console.log('Prediction results:', predictionData);
+
+        const analysisResult = predictionData.llm_analysis_result;
+        if (typeof analysisResult === 'string' && analysisResult.trim()) {
+          setAnalysisContent(analysisResult);
+          setHasAnalysisResult(true);
+          setIsAnalyzing(false);
+          setAnalysisError(null);
+          setShowLLMAnalysis(true);
+        }
       } else {
         throw new Error('No data received from prediction API');
       }
@@ -442,7 +471,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return;
     }
     
-    if (!selectedSystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedSystem) {
       alert(t('performance.ui.pleaseSelectBattery'));
       return;
     }
@@ -485,7 +514,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     console.log('LLM分析开始: sessionId =', sessionId);
 
     const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
+    if (ENABLE_VALIDATION_CHECKS && !selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
     }
@@ -500,7 +529,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const currentLang = getCurrentLanguage();
       const analysisParams: LLMAnalysisRequest = {
         id: predictionResults.id,
-        battery_system_id: parseInt(selectedBatterySystem.id),
+        battery_system_id: parseInt(selectedBatterySystem ? selectedBatterySystem.id : '1' || '1'),
         session_id: sessionId,
         lang: currentLang
       };
@@ -610,6 +639,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const resetPredictionState = useCallback(() => {
     // Clear form inputs
     setAdditive('');
+    setUseLLMPredictModel(false);
+    setLlmRunCount('1');
     
     // Reset display states
     setShowSpecs(true);
@@ -952,13 +983,62 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
           </div>
 
-          <button 
-            className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
-            onClick={handleCalculate}
-            disabled={isCalculating || showResults}
-          >
-            {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
-          </button>
+          <div className="calculation-controls">
+            <button 
+              className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
+              onClick={handleCalculate}
+              disabled={isCalculating || showResults}
+            >
+              {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
+            </button>
+
+            {isAdmin && (
+              <div className="llm-options">
+                <label className="llm-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={useLLMPredictModel}
+                    onChange={(event) => {
+                      const { checked } = event.target;
+                      setUseLLMPredictModel(checked);
+
+                      if (checked && (llmRunCount === '' || Number(llmRunCount) < 1)) {
+                        setLlmRunCount('1');
+                      }
+                    }}
+                    disabled={isCalculating || showResults}
+                  />
+                  <span>{t('performance.calculate.useLlmPredictModel')}</span>
+                </label>
+
+                <label className={`llm-runs ${useLLMPredictModel ? '' : 'disabled'}`} htmlFor="llm-runs-input">
+                  <span>{t('performance.calculate.numberOfTrials')}</span>
+                  <input
+                    id="llm-runs-input"
+                    type="number"
+                    min={1}
+                    value={llmRunCount}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      if (value === '') {
+                        setLlmRunCount('');
+                        return;
+                      }
+
+                      const numericValue = Number(value);
+                      if (Number.isNaN(numericValue) || numericValue < 1) {
+                        setLlmRunCount('1');
+                        return;
+                      }
+
+                      setLlmRunCount(String(Math.floor(numericValue)));
+                    }}
+                    disabled={!useLLMPredictModel || isCalculating || showResults}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
 
           {calculationError && (
             <div className="calculation-error">
@@ -1154,21 +1234,23 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               )}
             </div>
 
-              <div className="llm-button-section">
-                <button 
-                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
-                  onClick={handleLLMAnalysis}
-                  disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
-                >
-                  {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
-                </button>
-                
-                {analysisError && (
-                  <div className="analysis-error">
-                    <p>{analysisError}</p>
-                  </div>
-                )}
-              </div>
+              {!hasAnalysisResult && (
+                <div className="llm-button-section">
+                  <button 
+                    className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''}`}
+                    onClick={handleLLMAnalysis}
+                    disabled={isAnalyzing || !predictionResults || !isHighTier}
+                  >
+                    {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
+                  </button>
+                  
+                  {analysisError && (
+                    <div className="analysis-error">
+                      <p>{analysisError}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
