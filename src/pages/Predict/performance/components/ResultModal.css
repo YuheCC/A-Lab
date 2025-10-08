@@ -233,6 +233,13 @@
   text-align: justify;
 }
 
+.blurred-content {
+  filter: blur(6px);
+  opacity: 0.75;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* Tip icon styles */
 .tip-icon-container {
   display: inline-flex;

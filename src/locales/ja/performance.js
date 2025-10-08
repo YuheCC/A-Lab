@@ -111,7 +111,8 @@ export default {
     status: {
       positive: "ポジティブ",
       negative: "ネガティブ",
-      neutral: "ニュートラル"
+      neutral: "ニュートラル",
+      restricted: "制限あり"
     },
     confidence: "信頼度"
   },
