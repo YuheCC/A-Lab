@@ -37,6 +37,7 @@ const FullNavLayoutInner = () => {
     const permissionFromQuery = queryParams.get('permission');
     const [showPricingOverlay, setShowPricingOverlay] = useState(showPricingFromQuery);
     const [permission, setPermission] = useState(permissionFromQuery);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
     // 使用页面清理hook
     usePageCleanup(pathname);
@@ -188,7 +189,16 @@ const FullNavLayoutInner = () => {
         return 'main-container';
     }
     return (
-        <PricingContext.Provider value={{ showPricingOverlay, setShowPricingOverlay, permission, setPermission }}>
+        <PricingContext.Provider
+          value={{
+            showPricingOverlay,
+            setShowPricingOverlay,
+            permission,
+            setPermission,
+            showUpgradeModal,
+            setShowUpgradeModal,
+          }}
+        >
           <FavoriteContext.Provider value={{ moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites }}>
               <Header />
               <div className={`${getMainContainerClassName()} ${language}-page`}>
