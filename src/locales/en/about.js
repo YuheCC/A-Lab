@@ -66,13 +66,12 @@ export default {
     
     map: {
       title: "Map",
-      description: "Visualize millions of molecules on an interactive 2D map built using UMAP (Uniform Manifold Approximation and Projection)—a machine learning algorithm that turns high-dimensional chemical structure data into an intuitive, searchable map. Each point is a molecule embedded by its structure, and clusters represent chemical families. It's like Google Maps, but for chemistry: zoom into \"neighborhoods\" of similar molecules and uncover hidden gems. The MU-0.5 map features 25 molecular clusters and counting, and is the world's largest database of small molecules and battery-related properties."
+      description: "Molecular Universe first became known for its molecular databases. Having the world’s largest databases of battery relevant properties for battery relevant molecules at one’s fingertips completely changed battery material discovery. In Molecular Universe (MU-1), we are expanding the databases to cover most liquid and solid battery electrolytes, including solvents, additives, diluents, salts, and solid state materials. We are offering 1M database fully viewable to the Public, and fully searchable to Research, Explorer and Team tiers, and 200M database fully searchable to Enterprise and Joint Development tiers with more in-depth properties. "
     },
     
     ask: {
       title: "Ask",
-      description1: "Now that you have the map, you need a navigation system. Ask is the navigation system that allows you to ask your questions in natural language. You can be general such as \"recommend an electrolyte for LiFePO4 and graphite cell\" or be specific such as \"recommend an electrolyte that is nonflammable and stable at high voltage 4.55V and can do 6C fast charge in a Li-ion cell with NCM811 cathode and silicon anode\".",
-      description2: "It answers by recommending novel approaches that can address your challenge. The answer includes relevant formulations and molecules (solvents, additives and salts). It then searches these molecules in the Map and finds molecules with similar properties. Ask links cell-level, formualtion-level and molecule-level intelligence."
+      description1: "As one of the most popular tools in Molecular Universe, Ask is like having the world-renowned battery scientists and engineers at your fingertips. MU-1 enhances Ask performance by integrating the latest GPT-5 models and SES proprietary training data including publications, patents, and human intuition. We are offering Lightning to the Public, and more advanced Pro and multi-agent Deep Space to Research, Explorer, Team, Enterprise and Joint Development tiers. The Deep Space now has senior scientist-level agentic capability to understand users’ queries and recommend full solutions including detailed reasoning, experiments and predictions. Deep Space is also fully integrated with Maps, Predict and other features in MU-1, it is one step closer to full agentic capability that can outperform the very best human battery scientists.",
     },
     
     deepspace: {
@@ -82,15 +81,7 @@ export default {
     
     search: {
       title: "Search",
-      description: "You can enter a \"molecules-of-interest\", it finds its location on the map, and recommends its \"friends\", which are other molecules with similar properties but might be located nearby or faraway on the map. This helps users broaden their horizon for possible molecules with similar properties. Search molecules in three powerful ways:",
-      way1: "By structure - draw a molecule structure using the sketch pad",
-      way2: "By SMILES – Input a canonical SMILES string and instantly retrieve all key info.",
-      way3: "By molecule's name – input a molecule name such as \"ethylene carbonate\".",
-      way4: "By natural language – Ask questions like: \"Find 5 molecules with LUMO above -1 eV and HOMO below -7 eV.\"",
-      resultInfo: "Each result comes with a Molecule Info Card. Molecule's friends will be displayed checking the \"Find Friends\" box:",
-      discover1: "Discover molecules that are structurally similar with similar properties (great for refinement),",
-      discover2: "Or find structurally diverse options that still have similar properties (great for exploration).",
-      similarity: "The \"friend\" molecules will be displayed in order of similarity—based specifically on their chemical and physical properties—from most to least similar. This balances exploration and exploitation—helping you expand possibilities while staying grounded in what works."
+      description: "As another popular tool in Molecular Universe, “Find-Friends” helps users find other molecules with similar physicochemical and/or structural properties as the input molecule, which is invaluable in helping users quickly broaden their horizon of possibilities in establishing new IPs. In MU-1, we are offering “Intelligent Find-Friends” that also takes into account the battery chemistry environment and desired performance for the molecules we are seeking, quickly identifying the top “friends” that are most relevant.",
     },
     
     filter: {
@@ -100,6 +91,16 @@ export default {
       esp: "ESP Min / Max: Electrostatic potential extremes help determine if a molecule can act as a good solvent for Li-ion or Li-metal systems.",
       functional: "Functional Groups: Target specific chemistries with substructure filters, from fluorinated chains to sulfonyl groups.",
       overlay: "You can even overlay your filtered molecules directly on the UMAP to visually explore chemical regions (molecular) that meet your criteria."
+    },
+
+    formulate: {
+      title: "Formulate",
+      description: "Having mapped the world’s largest molecular databases, for the first time, we are venturing beyond the molecular universe, and into the formulation universe, which involves much higher dimensions of complexity. Electrolytes are more than just single molecules, they are formulations consisting of ions dissociated and solved by solvent molecules, which interact in various manners among themselves. Here we have developed advanced computation chemistry tools such as molecular dynamics simulations driven by polarizable force fields that have achieved unprecedented accuracy, scale and speed for prediction of formulation level properties including viscosity, solubility, miscibility, conductivity, etc. Users can enter their desired formulations, and we will compute their properties."
+    },
+
+    predict: {
+      title: "Predict",
+      description: "Having explored the formulation universe, we continue our journey into the cell universe, an even higher dimension of complexity. Ultimately the cell level performance is what users care about most, since the final product is neither a molecule nor formulation, but a complete cell. We are truly in uncharted territory, as currently there are no known methodologies for connecting molecule and formulation properties to cell performance, the interfaces and interphases are simply beyond what first-principle can predict. Fortunately, the power of AI and machine learning, grounded in our massive effort to meticulously collect cell experimental performance data over diverse chemistries and as functions of different molecules and formulations is showing promise. Users can select a particular cell chemistry and different unknown molecules from the Molecular Universe to see their impact on cell performance and accurately predict cycle life. Users can even blindly input data of early cell cycle life, and MU-1 will predict end of life, all without any prior knowledge of the input cell chemistry or test environment. "
     }
   },
   
