@@ -1,14 +1,14 @@
 export default {
   // Header navigation links
   header: {
-    map: "Maps",
+    map: "Map",
     ask: "Ask",
     search: "Search",
     molecule: "Molecule",
     filter: "Filter",
     favorites: "Favorites",
     predict: "Predict",
-    formulation: "Formulation",
+    formulation: "Formulate",
     about: "About",
     predictPerformance: "Cell Performance Prediction",
     predictionTool: "Battery Life Prediction",
