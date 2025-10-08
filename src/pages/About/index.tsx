@@ -264,13 +264,6 @@ const AboutPage = () => {
                             {t('about.features.ask.title')}
                           </div>
                           <div 
-                            className={`feature-tab ${activeFeature === 'deepspace' ? 'active' : ''}`} 
-                            data-feature="deepspace"
-                            onClick={() => handleFeatureClick('deepspace')}
-                          >
-                            {t('about.features.deepspace.title')}
-                          </div>
-                          <div 
                             className={`feature-tab ${activeFeature === 'search' ? 'active' : ''}`} 
                             data-feature="search"
                             onClick={() => handleFeatureClick('search')}
@@ -278,11 +271,18 @@ const AboutPage = () => {
                             {t('about.features.search.title')}
                           </div>
                           <div 
-                            className={`feature-tab ${activeFeature === 'filter' ? 'active' : ''}`} 
-                            data-feature="filter"
-                            onClick={() => handleFeatureClick('filter')}
+                            className={`feature-tab ${activeFeature === 'formulate' ? 'active' : ''}`} 
+                            data-feature="formulate"
+                            onClick={() => handleFeatureClick('formulate')}
                           >
-                            {t('about.features.filter.title')}
+                            {t('about.features.formulate.title')}
+                          </div>
+                          <div 
+                            className={`feature-tab ${activeFeature === 'predict' ? 'active' : ''}`} 
+                            data-feature="predict"
+                            onClick={() => handleFeatureClick('predict')}
+                          >
+                            {t('about.features.predict.title')}
                           </div>
                       </div>
                       <div className="features-content">
@@ -293,16 +293,12 @@ const AboutPage = () => {
                           <div className="feature-detail" data-feature="ask" style={{display: activeFeature === 'ask' ? 'block' : 'none'}}>
                               <h3>{t('about.features.ask.title')}</h3>
                               <p>{t('about.features.ask.description1')}</p>
-                              <p>{t('about.features.ask.description2')}</p>
-                          </div>
-                          <div className="feature-detail" data-feature="deepspace" style={{display: activeFeature === 'deepspace' ? 'block' : 'none'}}>
-                            <h3>{t('about.features.deepspace.title')}</h3>
-                            <p>{t('about.features.deepspace.description')}</p>
+                              {/* <p>{t('about.features.ask.description2')}</p> */}
                           </div>
                           <div className="feature-detail" data-feature="search" style={{display: activeFeature === 'search' ? 'block' : 'none'}}>
                               <h3>{t('about.features.search.title')}</h3>
                               <p>{t('about.features.search.description')}</p>
-                              <ul>
+                              {/* <ul>
                                   <li><b>{t('about.features.search.way1')}</b></li>
                                   <li><b>{t('about.features.search.way2')}</b></li>
                                   <li><b>{t('about.features.search.way3')}</b></li>
@@ -313,17 +309,15 @@ const AboutPage = () => {
                                   <li>{t('about.features.search.discover1')}</li>
                                   <li>{t('about.features.search.discover2')}</li>
                               </ul>
-                              <p>{t('about.features.search.similarity')}</p>
+                              <p>{t('about.features.search.similarity')}</p> */}
                           </div>
-                          <div className="feature-detail" data-feature="filter" style={{display: activeFeature === 'filter' ? 'block' : 'none'}}>
-                              <h3>{t('about.features.filter.title')}</h3>
-                              <p>{t('about.features.filter.description')}</p>
-                              <ul>
-                                  <li><b>{t('about.features.filter.homo')}</b></li>
-                                  <li><b>{t('about.features.filter.esp')}</b></li>
-                                  <li><b>{t('about.features.filter.functional')}</b></li>
-                              </ul>
-                              <p>{t('about.features.filter.overlay')}</p>
+                          <div className="feature-detail" data-feature="formulate" style={{display: activeFeature === 'formulate' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.formulate.title')}</h3>
+                              <p>{t('about.features.formulate.description')}</p>
+                          </div>
+                          <div className="feature-detail" data-feature="predict" style={{display: activeFeature === 'predict' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.predict.title')}</h3>
+                              <p>{t('about.features.predict.description')}</p>
                           </div>
                       </div>
                   </div>
