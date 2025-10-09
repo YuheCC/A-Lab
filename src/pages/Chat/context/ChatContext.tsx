@@ -282,7 +282,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const chatHistoryData = await chatService.getChatHistory();
                 updateChatHistory(chatHistoryData);
                 const initialNonPinned = chatHistoryData.filter(item => !item.isPinned);
-                setHasMoreHistory(initialNonPinned.length > 0);
+                setHasMoreHistory(!!localStorage.getItem('token') && initialNonPinned.length > 0);
                 if (initialNonPinned.length > 0) {
                     const lastItem = initialNonPinned[initialNonPinned.length - 1];
                     setLastUpdatedAt(lastItem.updatedAt);
