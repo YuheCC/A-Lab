@@ -207,37 +207,30 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   };
 
   const filteredPersonalPlans = useMemo(() => {
-    if (showHeader || !isAuthenticated) {
-      return PERSONAL_PLAN_CONFIGS;
-    }
-    return PERSONAL_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
-  }, [showHeader, isAuthenticated, myTierRank]);
+    return PERSONAL_PLAN_CONFIGS;
+  }, []);
 
   const filteredBusinessPlans = useMemo(() => {
-    if (showHeader || !isAuthenticated) {
-      return BUSINESS_PLAN_CONFIGS;
+    return BUSINESS_PLAN_CONFIGS;
+  }, []);
+
+  const availablePersonalPlans = useMemo(() => {
+    if (!isAuthenticated) {
+      return filteredPersonalPlans;
     }
-    return BUSINESS_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
-  }, [showHeader, isAuthenticated, myTierRank]);
+    return filteredPersonalPlans.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [isAuthenticated, myTierRank, filteredPersonalPlans]);
 
-  useEffect(() => {
-    if (showHeader) {
-      return;
+  const availableBusinessPlans = useMemo(() => {
+    if (!isAuthenticated) {
+      return filteredBusinessPlans;
     }
+    return filteredBusinessPlans.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [isAuthenticated, myTierRank, filteredBusinessPlans]);
 
-    const hasPersonal = filteredPersonalPlans.length > 0;
-    const hasBusiness = filteredBusinessPlans.length > 0;
-
-    if (activeGroup === 'personal' && !hasPersonal && hasBusiness) {
-      setActiveGroup('business');
-    } else if (activeGroup === 'business' && !hasBusiness && hasPersonal) {
-      setActiveGroup('personal');
-    }
-  }, [showHeader, activeGroup, filteredPersonalPlans.length, filteredBusinessPlans.length]);
-
-  const noPlansAvailable = !showHeader && isAuthenticated && filteredPersonalPlans.length === 0 && filteredBusinessPlans.length === 0;
-  const personalGroupDisabled = !showHeader && filteredPersonalPlans.length === 0;
-  const businessGroupDisabled = !showHeader && filteredBusinessPlans.length === 0;
+  const noPlansAvailable = !showHeader && isAuthenticated && availablePersonalPlans.length === 0 && availableBusinessPlans.length === 0;
+  const personalGroupDisabled = !showHeader && availablePersonalPlans.length === 0;
+  const businessGroupDisabled = !showHeader && availableBusinessPlans.length === 0;
 
   const renderPlanCard = (plan: PlanConfig) => {
     const title = t(`pricing.${plan.key}.title`);
@@ -304,6 +297,10 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     clickButtonHandler(normalized);
   }, [permission, myPermission]);
 
+  useEffect(() => {
+    console.log('activeGroup', activeGroup);
+  }, [activeGroup]);
+
   return (
     <section id="pricing" className={`pricing-section ${className}`}>
       {showHeader && (
@@ -318,14 +315,12 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       <div className="pricing-switcher">
         <button 
           className={`pricing-switch-btn ${activeGroup === 'personal' ? 'active' : ''}`}
-          disabled={personalGroupDisabled}
           onClick={() => handleGroupSwitch('personal')}
         >
           {t('pricing.switcher.individual')}
         </button>
         <button 
           className={`pricing-switch-btn ${activeGroup === 'business' ? 'active' : ''}`}
-          disabled={businessGroupDisabled}
           onClick={() => handleGroupSwitch('business')}
         >
           {t('pricing.switcher.enterprise')}
