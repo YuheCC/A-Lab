@@ -282,7 +282,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const chatHistoryData = await chatService.getChatHistory();
                 updateChatHistory(chatHistoryData);
                 const initialNonPinned = chatHistoryData.filter(item => !item.isPinned);
-                setHasMoreHistory(initialNonPinned.length > 0);
+                setHasMoreHistory(!!localStorage.getItem('token') && initialNonPinned.length > 0);
                 if (initialNonPinned.length > 0) {
                     const lastItem = initialNonPinned[initialNonPinned.length - 1];
                     setLastUpdatedAt(lastItem.updatedAt);
@@ -322,7 +322,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // 重置 molecular panel 状态
             handleMoleculePanelClose();
         }
-    }, [id, loadChatHistory, startNewChat, handleMoleculePanelClose]);
+    }, [id, loadChatData, loadChatHistory, startNewChat, handleMoleculePanelClose]);
 
     useEffect(() => {
         const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
@@ -466,7 +466,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
     }, [setIsLoading, addBotMessage, upsertMessage, messages, t, currentChatId]);
 
-    const loadChatData = async (chatId: number) => {
+    const loadChatData = useCallback(async (chatId: number) => {
         try {
             setLoadingChatData(true);
             const chatData = await chatService.getChatById(chatId);
@@ -499,7 +499,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setLoadingChatData(false);
         }
-    };
+    }, [navigate, setMessages]);
 
     const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string, extraOptions?: any) => {
         // 确保传递ragResultsCount
@@ -757,8 +757,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [startNewChat]);
 
     const handleSelectChat = useCallback((selectedChatId: number) => {
+        if (!selectedChatId) return;
         loadChatHistory(selectedChatId);
-    }, [loadChatHistory]);
+        loadChatData(selectedChatId);
+        const targetId = String(selectedChatId);
+        if (id !== targetId) {
+            navigate(`/ask/${targetId}`);
+        }
+    }, [id, loadChatData, loadChatHistory, navigate]);
 
     const handleDeleteChat = useCallback(async (chatId: number) => {
         const success = await chatService.deleteChat(chatId);

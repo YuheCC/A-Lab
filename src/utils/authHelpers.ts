@@ -53,6 +53,16 @@ export const triggerLoginModal = (redirectPath?: string) => {
 /**
  * 检查当前路径是否需要弹出登录浮层
  */
+const PUBLIC_ROUTES_WITHOUT_LOGIN_MODAL = ['/login', '/pricing'];
+
+const normalizePathname = (pathname: string) => {
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    return pathname.slice(0, -1);
+  }
+  return pathname;
+};
+
 export const shouldShowLoginModal = (pathname: string): boolean => {
-  return pathname !== '/login';
+  const normalizedPath = normalizePathname(pathname);
+  return !PUBLIC_ROUTES_WITHOUT_LOGIN_MODAL.includes(normalizedPath);
 };

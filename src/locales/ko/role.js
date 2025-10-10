@@ -1,4 +1,5 @@
 export default {
+    public: '퍼블릭',
     common: '일반 사용자',
     research: '연구원',
     explorer: '탐험가',

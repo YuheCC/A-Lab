@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "umi";
 import { useTranslation } from "react-i18next";
 import { X } from 'lucide-react';
 import { useAuthStore } from "@/models/useAuth";
 import './LoginModal.css';
+import { PricingContext } from "@/layouts";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
   
   const navigate = useNavigate();
   const { isLoading, login } = useAuthStore();
+  const pricingContext = useContext(PricingContext);
   
   // Refs for focus management
   const usernameInputRef = useRef<HTMLInputElement>(null);
@@ -111,7 +113,8 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
 
   const handleRegisterClick = () => {
     onClose();
-    navigate('/register');
+    pricingContext?.setPermission?.(null);
+    pricingContext?.setShowPricingOverlay?.(true);
   };
 
   const handleForgotPasswordClick = () => {

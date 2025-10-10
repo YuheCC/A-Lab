@@ -4,6 +4,7 @@ export default {
     },
     input: {
         placeholder: "随便问我关于电池、电池化学或相关主题的任何问题。",
+        placeholderPublic: "创建账户后即可向我询问关于电池、电池化学或相关主题的任何问题。",
         sendButton: "发送"
     },
     chat: {
@@ -171,6 +172,16 @@ export default {
         feedbackError: "提交反馈时出错：",
         copyError: "复制失败：",
         generalError: "错误"
+    },
+    publicAccess: {
+        bannerMessage: "创建账户或登录后即可使用{{feature}}。",
+        dismiss: "知道了",
+        features: {
+            askInput: "Ask",
+            lightning: "闪电",
+            pro: "专业版",
+            deepSpace: "深度搜索"
+        }
     },
     supplementalData: "补充数据",
     history: {

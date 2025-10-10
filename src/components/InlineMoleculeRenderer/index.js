@@ -9,6 +9,29 @@ import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
 import './InlineMoleculeRenderer.css';
 
+const renderAnionCommercialScore = (score) => {
+  if (score === null || score === undefined) {
+    return undefined;
+  }
+
+  const numericScore = typeof score === 'number' ? score : Number(score);
+  const mapped = COMMERCIAL_SCORE_MAP?.[numericScore];
+
+  if (mapped) {
+    return mapped;
+  }
+
+  if (!Number.isNaN(numericScore)) {
+    return numericScore.toString();
+  }
+
+  if (typeof score === 'string' && score.trim() !== '') {
+    return score;
+  }
+
+  return undefined;
+};
+
 // Component for individual clickable citation numbers
 const IndividualCitationLink = ({ number, style }) => {
   const handleClick = (e) => {
@@ -228,7 +251,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     if (moleculeData.COMMERCIAL_SCORE !== undefined) {
       propGroups.push({
         label: 'Commercial Viability',
-        value: COMMERCIAL_SCORE_MAP[moleculeData.COMMERCIAL_SCORE],
+        value: renderAnionCommercialScore(moleculeData.COMMERCIAL_SCORE),
         span: 2,
         wrap: true
       });

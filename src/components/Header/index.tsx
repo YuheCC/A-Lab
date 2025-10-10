@@ -17,7 +17,6 @@ const Header = () => {
     const { t } = useTranslation();
     const { pathname, search } = useLocation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [isNavDropdownHovered, setIsNavDropdownHovered] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const avatarRef = useRef<HTMLAnchorElement>(null);
@@ -25,7 +24,12 @@ const Header = () => {
     const userFeedBackModalRef = useRef<any>(null);
     const { logout, userName, userPermissions: permissions, isAuthenticated } = useAuthStore();
     const settingModalRef = useRef<any>(null);
-    const { setShowPricingOverlay } = useContext(PricingContext) || { setShowPricingOverlay: () => {} };
+    const pricingContext = useContext(PricingContext);
+    const {
+        setShowPricingOverlay = () => {},
+        showUpgradeModal = false,
+        setShowUpgradeModal = () => {},
+    } = pricingContext || {};
     const { openLoginModal } = useLoginModalContext();
 
     // Helper function to check if a path is active
@@ -34,8 +38,12 @@ const Header = () => {
     };
 
     // 检查是否为common用户
+    // Common users have since gained access to all features, so this is set to false even for common / logged out users
+    // It should be removed in a future update but is kept temporarily in case we need to revert
     const isCommonUser = false; //permissions === 'common';
     const isEducationalUser = permissions === 'research';
+    const displayName = isAuthenticated && userName ? userName : 'public';
+    const displayRole = isAuthenticated && permissions ? permissions : 'public';
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

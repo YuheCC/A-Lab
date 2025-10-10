@@ -9,6 +9,7 @@ export default {
         accountInfo: '계정 정보',
         name: '이름',
         email: '이메일',
+        notAvailable: '해당 없음',
         password: '비밀번호 변경',
         modify: '수정'
     },

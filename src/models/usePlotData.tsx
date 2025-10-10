@@ -10,89 +10,51 @@ let isFetching = false; // 添加标志防止重复获取
 let fetchDataCompleted = false; // 添加标志跟踪fetchData是否已完成
 
 // 定义数据类型
-interface PlotDataNode {
+interface BasePlotDataProperties {
+    molwt?: number;
+    homo_eV?: number;
+    lumo_eV?: number;
+    esp_min_eV?: number;
+    esp_max_eV?: number;
+    functional_groups?: string;
+    predicted_mp?: number;
+    predicted_bp?: number;
+    predicted_fp?: number;
+    chemical_formula?: string;
+    combustion_enthalpy?: number;
+    commercial_score?: number;
+    commercial_link?: string;
+    CLUSTER: string | null;
+}
+
+interface InorganicPlotDataProperties extends BasePlotDataProperties {}
+
+interface AnionsPlotDataProperties extends BasePlotDataProperties {
+    vdw_volume_angstroms3?: number;
+    fluoride_bde_ev?: number;
+}
+
+interface PlotDataNode<P extends BasePlotDataProperties = BasePlotDataProperties> {
     id: string;
     x: number;
     y: number;
     smiles: string;
     cation?: string;
-    properties: {
-        molwt: number;
-        homo_eV: number;
-        lumo_eV: number;
-        esp_min_eV: number;
-        esp_max_eV: number;
-        functional_groups: string;
-        predicted_mp: number;
-        predicted_bp: number;
-        predicted_fp: number;
-        chemical_formula: string;
-        combustion_enthalpy: number;
-        commercial_score: number;
-        commercial_link: string;
-        CLUSTER: string;
-    };
+    hasFullData: boolean;
+    properties: P;
     rawData: any;
 }
 
-// 无机分子数据类型
-interface InorganicPlotDataNode {
-    id: string;
-    x: number;
-    y: number;
-    smiles: string;
-    cation?: string;
-    properties: {
-        molwt: number;
-        homo_eV: number;
-        lumo_eV: number;
-        esp_min_eV: number;
-        esp_max_eV: number;
-        functional_groups: string;
-        predicted_mp: number;
-        predicted_bp: number;
-        predicted_fp: number;
-        chemical_formula: string;
-        combustion_enthalpy: number;
-        commercial_score: number;
-        commercial_link: string;
-        CLUSTER: string;
-    };
-    rawData: any;
-}
-
-// 阴离子分子数据类型
-interface AnionsPlotDataNode {
-    id: string;
-    x: number;
-    y: number;
-    smiles: string;
-    cation?: string;
-    properties: {
-        molwt: number;
-        homo_eV: number;
-        lumo_eV: number;
-        esp_min_eV: number;
-        esp_max_eV: number;
-        functional_groups: string;
-        predicted_mp: number;
-        predicted_bp: number;
-        predicted_fp: number;
-        chemical_formula: string;
-        combustion_enthalpy: number;
-        commercial_score: number;
-        commercial_link: string;
-        CLUSTER: string;
-    };
-    rawData: any;
-}
+type OrganicPlotDataNode = PlotDataNode<BasePlotDataProperties>;
+type InorganicPlotDataNode = PlotDataNode<InorganicPlotDataProperties>;
+type AnionsPlotDataNode = PlotDataNode<AnionsPlotDataProperties>;
 
 interface PlotDataStore {
     loading: boolean;
     error: string | null;
-    data: PlotDataNode[];
-    fetchData: () => Promise<PlotDataNode[] | undefined>;
-    fetchInitialData: () => Promise<PlotDataNode[] | undefined>;
+    data: OrganicPlotDataNode[];
+    fetchData: () => Promise<OrganicPlotDataNode[] | undefined>;
+    fetchInitialData: () => Promise<OrganicPlotDataNode[] | undefined>;
 }
 
 interface InorganicPlotDataStore {
@@ -123,6 +85,98 @@ const handleCluster = (cluster: any) => {
     }
     return cluster.toString();
 }
+
+const createOrganicNode = (row: any, index: number): OrganicPlotDataNode => {
+    const hasFullData = Boolean(row?.SMILES);
+
+    return {
+        id: (row?.ID ?? row?.id ?? index).toString(),
+        x: Number(row.UMAP_0),
+        y: Number(row.UMAP_1),
+        smiles: row.SMILES ?? '',
+        cation: row?.cation ?? row?.CATION ?? undefined,
+        hasFullData,
+        properties: {
+            molwt: row.MOLECULAR_WEIGHT,
+            homo_eV: row.HOMO_EV,
+            lumo_eV: row.LUMO_EV,
+            esp_min_eV: row.ESP_MIN_EV,
+            esp_max_eV: row.ESP_MAX_EV,
+            functional_groups: row.FUNCTIONAL_GROUPS,
+            predicted_mp: row.PREDICTED_MP_CELSIUS,
+            predicted_bp: row.PREDICTED_BP_CELSIUS,
+            predicted_fp: row.PREDICTED_FP_CELSIUS,
+            chemical_formula: row.CHEMICAL_FORMULA,
+            combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
+            commercial_score: row.COMMERCIAL_SCORE,
+            commercial_link: row.COMMERCIAL_LINK,
+            CLUSTER: handleCluster(row.CLUSTER)
+        },
+        rawData: row
+    };
+};
+
+const createInorganicNode = (row: any, index: number): InorganicPlotDataNode => {
+    const hasFullData = Boolean(row?.SMILES);
+
+    return {
+        id: (row?.ID ?? row?.id ?? index).toString(),
+        x: Number(row.UMAP_0),
+        y: Number(row.UMAP_1),
+        smiles: row.SMILES ?? '',
+        cation: row?.cation ?? row?.CATION ?? undefined,
+        hasFullData,
+        properties: {
+            molwt: row.MOLECULAR_WEIGHT,
+            homo_eV: row.HOMO_EV,
+            lumo_eV: row.LUMO_EV,
+            esp_min_eV: row.ESP_MIN_EV,
+            esp_max_eV: row.ESP_MAX_EV,
+            functional_groups: row.FUNCTIONAL_GROUPS,
+            predicted_mp: row.PREDICTED_MP_CELSIUS,
+            predicted_bp: row.PREDICTED_BP_CELSIUS,
+            predicted_fp: row.PREDICTED_FP_CELSIUS,
+            chemical_formula: row.CHEMICAL_FORMULA,
+            combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
+            commercial_score: row.COMMERCIAL_SCORE,
+            commercial_link: row.COMMERCIAL_LINK,
+            CLUSTER: handleCluster(row.CLUSTER)
+        },
+        rawData: row
+    };
+};
+
+const createAnionsNode = (row: any, index: number): AnionsPlotDataNode => {
+    const hasFullData = Boolean(row?.SMILES);
+
+    return {
+        id: (row?.ID ?? row?.id ?? index).toString(),
+        x: Number(row.UMAP_0),
+        y: Number(row.UMAP_1),
+        smiles: row.SMILES ?? '',
+        cation: row?.cation ?? row?.CATION ?? undefined,
+        hasFullData,
+        properties: {
+            molwt: row.MOLECULAR_WEIGHT,
+            homo_eV: row.HOMO_EV,
+            lumo_eV: row.LUMO_EV,
+            esp_min_eV: row.ESP_MIN_EV,
+            esp_max_eV: row.ESP_MAX_EV,
+            functional_groups: row.FUNCTIONAL_GROUPS,
+            predicted_mp: row.PREDICTED_MP_CELSIUS,
+            predicted_bp: row.PREDICTED_BP_CELSIUS,
+            predicted_fp: row.PREDICTED_FP_CELSIUS,
+            chemical_formula: row.CHEMICAL_FORMULA,
+            combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
+            commercial_score: row.COMMERCIAL_SCORE,
+            commercial_link: row.COMMERCIAL_LINK,
+            vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
+            fluoride_bde_ev: row.FLUORIDE_BDE_EV,
+            CLUSTER: handleCluster(row.CLUSTER)
+        },
+        rawData: row
+    };
+};
 
 /**
  * Zustand Datastore for Plot Data
@@ -156,33 +210,10 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
             fetchDataCompleted = true; // 标记fetchData已完成
 
             // Map the data to our node structure with updated property names
-            const nodes: PlotDataNode[] = data.data
-                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+            const nodes: OrganicPlotDataNode[] = data.data
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
-                .map((row: any, index: number) => ({
-                    id: index.toString(),
-                    x: Number(row.UMAP_0),
-                    y: Number(row.UMAP_1),
-                    smiles: row.SMILES,
-                    cation: row.cation ?? row.CATION ?? undefined,
-                    properties: {
-                        molwt: row.MOLECULAR_WEIGHT,
-                        homo_eV: row.HOMO_EV,
-                        lumo_eV: row.LUMO_EV,
-                        esp_min_eV: row.ESP_MIN_EV,
-                        esp_max_eV: row.ESP_MAX_EV,
-                        functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP_CELSIUS,
-                        predicted_bp: row.PREDICTED_BP_CELSIUS,
-                        predicted_fp: row.PREDICTED_FP_CELSIUS,
-                        chemical_formula: row.CHEMICAL_FORMULA,
-                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
-                        commercial_score: row.COMMERCIAL_SCORE,
-                        commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: handleCluster(row.CLUSTER)
-                    },
-                    rawData: row
-                }));
+                .map((row: any, index: number) => createOrganicNode(row, index));
 
             set({
                 data: nodes,
@@ -226,33 +257,10 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
             initialData = true;
 
             // Map the data to our node structure with updated property names
-            const nodes: PlotDataNode[] = data.data
-                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+            const nodes: OrganicPlotDataNode[] = data.data
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
-                .map((row: any, index: number) => ({
-                    id: index.toString(),
-                    x: Number(row.UMAP_0),
-                    y: Number(row.UMAP_1),
-                    smiles: row.SMILES,
-                    cation: row.cation ?? row.CATION ?? undefined,
-                    properties: {
-                        molwt: row.MOLECULAR_WEIGHT,
-                        homo_eV: row.HOMO_EV,
-                        lumo_eV: row.LUMO_EV,
-                        esp_min_eV: row.ESP_MIN_EV,
-                        esp_max_eV: row.ESP_MAX_EV,
-                        functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP_CELSIUS,
-                        predicted_bp: row.PREDICTED_BP_CELSIUS,
-                        predicted_fp: row.PREDICTED_FP_CELSIUS,
-                        chemical_formula: row.CHEMICAL_FORMULA,
-                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
-                        commercial_score: row.COMMERCIAL_SCORE,
-                        commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: handleCluster(row.CLUSTER)
-                    },
-                    rawData: row
-                }));
+                .map((row: any, index: number) => createOrganicNode(row, index));
 
             set({
                 data: nodes,
@@ -299,32 +307,9 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
 
             // Map the data to our node structure with updated property names
             const nodes: InorganicPlotDataNode[] = data.data
-                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
-                .map((row: any, index: number) => ({
-                    id: index.toString(),
-                    x: Number(row.UMAP_0),
-                    y: Number(row.UMAP_1),
-                    smiles: row.SMILES,
-                    cation: row.cation ?? row.CATION ?? undefined,
-                    properties: {
-                        molwt: row.MOLECULAR_WEIGHT,
-                        homo_eV: row.HOMO_EV,
-                        lumo_eV: row.LUMO_EV,
-                        esp_min_eV: row.ESP_MIN_EV,
-                        esp_max_eV: row.ESP_MAX_EV,
-                        functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP_CELSIUS,
-                        predicted_bp: row.PREDICTED_BP_CELSIUS,
-                        predicted_fp: row.PREDICTED_FP_CELSIUS,
-                        chemical_formula: row.CHEMICAL_FORMULA,
-                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
-                        commercial_score: row.COMMERCIAL_SCORE,
-                        commercial_link: row.COMMERCIAL_LINK,
-                        CLUSTER: handleCluster(row.CLUSTER)
-                    },
-                    rawData: row
-                }));
+                .map((row: any, index: number) => createInorganicNode(row, index));
 
             set({
                 data: nodes,
@@ -380,34 +365,9 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
             // Map the data to our node structure with updated property names
             const nodes: AnionsPlotDataNode[] = data.data
-                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
-                .map((row: any, index: number) => ({
-                    id: index.toString(),
-                    x: Number(row.UMAP_0),
-                    y: Number(row.UMAP_1),
-                    smiles: row.SMILES,
-                    cation: row.cation ?? row.CATION ?? undefined,
-                    properties: {
-                        molwt: row.MOLECULAR_WEIGHT,
-                        homo_eV: row.HOMO_EV,
-                        lumo_eV: row.LUMO_EV,
-                        esp_min_eV: row.ESP_MIN_EV,
-                        esp_max_eV: row.ESP_MAX_EV,
-                        functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP_CELSIUS,
-                        predicted_bp: row.PREDICTED_BP_CELSIUS,
-                        predicted_fp: row.PREDICTED_FP_CELSIUS,
-                        chemical_formula: row.CHEMICAL_FORMULA,
-                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
-                        commercial_score: row.COMMERCIAL_SCORE,
-                        commercial_link: row.COMMERCIAL_LINK,
-                        vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
-                        fluoride_bde_ev: row.FLUORIDE_BDE_EV,
-                        CLUSTER: handleCluster(row.CLUSTER)
-                    },
-                    rawData: row
-                }));
+                .map((row: any, index: number) => createAnionsNode(row, index));
 
             set({
                 data: nodes,
@@ -452,33 +412,9 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
             // Map the data to our node structure with updated property names
             const nodes: AnionsPlotDataNode[] = data.data
-                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined && row.SMILES)
+                .filter((row: any) => row && row.UMAP_0 !== undefined && row.UMAP_1 !== undefined)
                 .slice(0, MAX_NODES)
-                .map((row: any, index: number) => ({
-                    id: index.toString(),
-                    x: Number(row.UMAP_0),
-                    y: Number(row.UMAP_1),
-                    smiles: row.SMILES,
-                    properties: {
-                        molwt: row.MOLECULAR_WEIGHT,
-                        homo_eV: row.HOMO_EV,
-                        lumo_eV: row.LUMO_EV,
-                        esp_min_eV: row.ESP_MIN_EV,
-                        esp_max_eV: row.ESP_MAX_EV,
-                        functional_groups: row.FUNCTIONAL_GROUPS,
-                        predicted_mp: row.PREDICTED_MP_CELSIUS,
-                        predicted_bp: row.PREDICTED_BP_CELSIUS,
-                        predicted_fp: row.PREDICTED_FP_CELSIUS,
-                        chemical_formula: row.CHEMICAL_FORMULA,
-                        combustion_enthalpy: row.COMBUSTION_ENTHALPY_EV,
-                        commercial_score: row.COMMERCIAL_SCORE,
-                        commercial_link: row.COMMERCIAL_LINK,
-                        vdw_volume_angstroms3: row.VDW_VOLUME_ANGSTROMS3,
-                        fluoride_bde_ev: row.FLUORIDE_BDE_EV,
-                        CLUSTER: handleCluster(row.CLUSTER)
-                    },
-                    rawData: row
-                }));
+                .map((row: any, index: number) => createAnionsNode(row, index));
 
             set({
                 data: nodes,

@@ -1,7 +1,7 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
-import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
@@ -18,8 +18,33 @@ import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const API_URL = getAPIUrl();
+
+const renderAnionCommercialScore = (score?: number | string | null) => {
+    if (score === null || score === undefined) {
+        return undefined;
+    }
+
+    const numericScore = typeof score === 'number' ? score : Number(score);
+    const mapped = (COMMERCIAL_SCORE_MAP as Record<number, string | undefined>)[numericScore];
+
+    if (mapped) {
+        return mapped;
+    }
+
+    if (!Number.isNaN(numericScore)) {
+        return numericScore.toString();
+    }
+
+    if (typeof score === 'string' && score.trim() !== '') {
+        return score;
+    }
+
+    return undefined;
+};
 
 // 定义类型
 interface MoleculeData {
@@ -69,9 +94,12 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
-const AnionsSearch = () => {
+const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -106,6 +134,7 @@ const AnionsSearch = () => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
+    const triggerAccessModal = useAccessModals();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -131,6 +160,27 @@ const AnionsSearch = () => {
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isPublic) return;
+        setFindClosestFriends(false);
+        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
+        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
+        setShowHypothetical(true);
+        setShowAdvanced(false);
+        setExtraRequests('');
+        setCathode('');
+        setCathodeCustom('');
+        setAnode('');
+        setAnodeCustom('');
+        setSalt('');
+        setSaltCustom('');
+        setSolvent('');
+        setSolventCustom('');
+        setMetric('');
+        setMetricCustom('');
+    }, [isPublic]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
@@ -434,7 +484,9 @@ const AnionsSearch = () => {
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
                                 highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="anions"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -517,6 +569,12 @@ const AnionsSearch = () => {
                             <SearchInput
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
+                                initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.anionInput : ''}
+                                lockInput={isPublic}
+                                initialEditorOpen={!isPublic}
+                                lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                             <FindFriendOptions
@@ -547,9 +605,12 @@ const AnionsSearch = () => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
-                                enableMolTypeSelector={false}
+                                enableMolTypeSelector={isPublic ? true : false}
                                 showStructureSlider={false}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
+                                readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
+                                onLockedClick={triggerAccessModal}
                             />
 
                     <div className="search-results">
@@ -607,7 +668,7 @@ const AnionsSearch = () => {
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true}
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true}
                                                 ]} foldPropGroups={[
                                                     { label: 'UMAP_X', value: molecule.x, span: 1 },
                                                     { label: 'UMAP_Y', value: molecule.y, span: 1 },
@@ -701,7 +762,7 @@ const AnionsSearch = () => {
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true}
                                                 ]}
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
@@ -722,9 +783,7 @@ const AnionsSearch = () => {
                                                             const rawCommercialScore = molecule.COMMERCIAL_SCORE;
 
                                                             // Convert commercial score from numeric to descriptive text
-                                                            const commercialScoreText = rawCommercialScore !== null && rawCommercialScore !== undefined
-                                                                ? COMMERCIAL_SCORE_MAP[rawCommercialScore as keyof typeof COMMERCIAL_SCORE_MAP] || null
-                                                                : null;
+                                                            const commercialScoreText = renderAnionCommercialScore(rawCommercialScore) ?? null;
 
                                                             handleAddToFavorites({
                                                                 smiles: molecule.SMILES,

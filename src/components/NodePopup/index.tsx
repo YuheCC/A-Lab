@@ -100,40 +100,67 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
                   if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
                   }
-                  
+
                   // Hide predicted properties for users without proper permissions
                   if (!canSeePredictedProperties && 
                       (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
                     return false;
                   }
 
-                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV')) {
+                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV' || key === 'chemical_formula')) {
                     return false;
                   }
 
-                  if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                  if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups')) {
+                    return false;
+                  }
+
+                  if (molecularType === 'inorganic' && key === 'commercial_score') {
                     return false;
                   }
 
                   if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
                     return false;
                   }
-                  
+
                   return true;
                 })
                 .map(([key, value]) => (
                 <tr key={key}>
                   <td className="property-name white-text">{filterLabels[key as keyof typeof filterLabels] || key}</td>
                   <td className="property-value white-text">
-                    {value !== null && value !== undefined
-                      ? key === 'commercial_score' && typeof value === 'number'
-                        ? COMMERCIAL_SCORE_MAP[value as keyof typeof COMMERCIAL_SCORE_MAP] || 'N/A'
-                        : typeof value === 'number'
-                          ? key === 'CLUSTER'
-                            ? Math.round(value)
-                            : value.toFixed(4)
-                          : value.toString()
-                      : 'N/A'}
+                    {(() => {
+                      if (value === null || value === undefined) {
+                        return 'N/A';
+                      }
+
+                      if (key === 'commercial_score') {
+                        const numericValue = typeof value === 'number' ? value : Number(value);
+                        const mapped = COMMERCIAL_SCORE_MAP[numericValue as keyof typeof COMMERCIAL_SCORE_MAP];
+
+                        if (mapped) {
+                          return mapped;
+                        }
+
+                        if (!Number.isNaN(numericValue) && molecularType === 'anions') {
+                          return numericValue.toString();
+                        }
+
+                        if (typeof value === 'string' && value.trim() !== '') {
+                          return value;
+                        }
+
+                        return 'N/A';
+                      }
+
+                      if (typeof value === 'number') {
+                        return key === 'CLUSTER'
+                          ? Math.round(value)
+                          : value.toFixed(4);
+                      }
+
+                      return value.toString();
+                    })()}
                   </td>
                 </tr>
               ))}

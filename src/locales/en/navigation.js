@@ -40,7 +40,8 @@ export default {
   userDropdown: {
     accountSettings: "Account Settings",
     feedback: "Feedback & Suggestions",
-    logout: "Logout"
+    logout: "Logout",
+    login: "Login"
   },
   
   // Upgrade prompt
