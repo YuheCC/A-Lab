@@ -72,7 +72,7 @@ export interface FileDownloadParams {
  * @param params 包含上传文件的参数
  * @returns Promise<HistoryDetailResponse> 预测结果（包含详细数据）
  */
-export const predict = async (params: PredictParams): Promise<HistoryDetailResponse> => {
+export const predict = async (params: PredictParams): Promise<HistoryDetailResponse | null> => {
   const formData = new FormData();
   formData.append('file', params.file);
 
@@ -89,6 +89,10 @@ export const predict = async (params: PredictParams): Promise<HistoryDetailRespo
 
   if (!taskId && (response.status !== 401 && response.status !== 402)) {
     throw new Error('预测任务创建失败，未返回任务ID');
+  }
+
+  if(!taskId) {
+    return null;
   }
 
   // 2. 轮询获取结果
