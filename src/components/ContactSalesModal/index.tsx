@@ -4,10 +4,12 @@ import { X } from 'lucide-react';
 import { contactSales } from '@/services/auth';
 import './ContactSalesModal.css';
 
+type ContactPlanType = 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
+
 interface ContactSalesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  planType: 'enterprise' | 'joint';
+  planType: ContactPlanType;
 }
 
 const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps) => {

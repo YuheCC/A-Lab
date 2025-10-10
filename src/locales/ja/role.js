@@ -1,4 +1,5 @@
 export default {
+    public: 'パブリック',
     common: 'ベーシック',
     research: '教育',
     explorer: 'エクスプローラー',

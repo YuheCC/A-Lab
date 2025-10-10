@@ -32,6 +32,8 @@ interface AdvancedProps {
 
   showStructureSlider?: boolean;
   structureSliderTooltip?: React.ReactNode;
+  readOnly?: boolean;
+  onLockedClick?: () => void;
 }
 
 const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
@@ -59,8 +61,22 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   showBatteryFields = true,
   showStructureSlider = true,
   structureSliderTooltip,
+  readOnly = false,
+  onLockedClick,
 }) => {
   const { t } = useTranslation();
+  const isReadOnly = !!readOnly;
+  const handleGuardedInteraction = (event?: React.SyntheticEvent | Event) => {
+    if (!isReadOnly) return false;
+    if (event && 'preventDefault' in event) {
+      event.preventDefault();
+      event.stopPropagation?.();
+    }
+    if (typeof onLockedClick === 'function') {
+      onLockedClick();
+    }
+    return true;
+  };
   const structureTooltip = structureSliderTooltip ?? (
     <InfoTooltipContent
       title={t('search.searchRange')}
@@ -68,6 +84,9 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
     />
   );
   const shouldShowBatteryFields = showBatteryFields && computeLevel !== 'Disabled';
+  const readOnlyFieldStyle: React.CSSProperties | undefined = isReadOnly
+    ? { backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' }
+    : undefined;
 
   return (
     <div className="find-friend-advanced-options">
@@ -88,8 +107,15 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               max={1}
               step={0.01}
               value={structureWeight}
-              onChange={(e) => setStructureWeight(parseFloat(e.target.value))}
+              onChange={(e) => {
+                if (handleGuardedInteraction(e)) return;
+                setStructureWeight(parseFloat(e.target.value));
+              }}
               className="ff-advanced-range"
+              onMouseDown={(event) => {
+                handleGuardedInteraction(event);
+              }}
+              aria-disabled={isReadOnly}
             />
             <span className="ff-range-label">{t('search.nearbyFriends')}</span>
             <span className="ff-range-value">{structureWeight.toFixed(2)}</span>
@@ -103,7 +129,11 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
           <input
             type="checkbox"
             checked={showHypothetical}
-            onChange={(e) => setShowHypothetical(e.target.checked)}
+            onChange={(e) => {
+              if (handleGuardedInteraction(e)) return;
+              setShowHypothetical(e.target.checked);
+            }}
+            aria-disabled={isReadOnly}
           />
           <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
           <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
@@ -115,12 +145,20 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
       {/* Extra requests (keep incoming formatting) */}
       <div className="ff-advanced-section">
         <label className="ff-advanced-label">{t('search.extraRequests')}</label>
-        <textarea
-          value={extraRequests}
-          onChange={(e) => setExtraRequests(e.target.value)}
-          placeholder={t('search.extraRequestsPlaceholder')}
-          className="ff-advanced-textarea"
-        />
+          <textarea
+            value={extraRequests}
+            onChange={(e) => {
+              if (handleGuardedInteraction(e)) return;
+              setExtraRequests(e.target.value);
+            }}
+            placeholder={t('search.extraRequestsPlaceholder')}
+            className="ff-advanced-textarea"
+            readOnly={isReadOnly}
+            onMouseDown={(event) => {
+              handleGuardedInteraction(event);
+            }}
+            style={readOnlyFieldStyle}
+          />
       </div>
 
       {/* Optional recommendation text when battery fields are relevant */}
@@ -139,8 +177,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               <input
                 type="text"
                 value={cathode}
-                onChange={(e) => setCathode(e.target.value)}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setCathode(e.target.value);
+                }}
                 className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
               />
             </div>
           </div>
@@ -151,8 +197,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               <input
                 type="text"
                 value={anode}
-                onChange={(e) => setAnode(e.target.value)}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setAnode(e.target.value);
+                }}
                 className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
               />
             </div>
           </div>
@@ -163,8 +217,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               <input
                 type="text"
                 value={salt}
-                onChange={(e) => setSalt(e.target.value)}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setSalt(e.target.value);
+                }}
                 className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
               />
             </div>
           </div>
@@ -175,8 +237,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               <input
                 type="text"
                 value={solvent}
-                onChange={(e) => setSolvent(e.target.value)}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setSolvent(e.target.value);
+                }}
                 className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
               />
             </div>
           </div>
@@ -187,8 +257,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
               <input
                 type="text"
                 value={metric}
-                onChange={(e) => setMetric(e.target.value)}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setMetric(e.target.value);
+                }}
                 className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
               />
             </div>
           </div>

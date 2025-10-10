@@ -111,7 +111,8 @@ export default {
     status: {
       positive: "正面",
       negative: "负面",
-      neutral: "中性"
+      neutral: "中性",
+      restricted: "受限"
     },
     confidence: "置信度"
   },

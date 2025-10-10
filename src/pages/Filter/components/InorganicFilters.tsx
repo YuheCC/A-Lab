@@ -289,6 +289,7 @@ const InorganicFilters = () => {
                 highlightedData={[]}
                 highlightedSimilarData={[]}
                 userPermissions={userPermissions}
+                isAuthenticated={isAuthenticated}
                 molecularType="inorganic"
                 onClick={(node: Node) => {
                     console.log(node);
@@ -301,7 +302,7 @@ const InorganicFilters = () => {
                 {loading ? t('explorer.loadingMap') : error ? t('explorer.errorLoadingData') : t('explorer.noDataAvailable')}
             </div>
         ))
-    }, [filteredGraphData, loading, error, userPermissions, t]);
+    }, [filteredGraphData, loading, error, userPermissions, isAuthenticated, t]);
 
     return (
         <>

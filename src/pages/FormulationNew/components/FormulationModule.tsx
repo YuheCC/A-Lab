@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runMDSimulation, MDRunParams } from '@/services/formulation/md';
 import ResultTip from '@/components/ResultTip';
 import './FormulationModule.css';
 import { useNavigate } from '@umijs/max';
 import { formatIonDisplay } from '../utils';
+import { PricingContext } from '@/layouts/index';
 
 interface FormulationModuleProps {
   onResetRef?: (resetFn: () => void) => void;
@@ -13,6 +14,7 @@ interface FormulationModuleProps {
 const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pricingContext = useContext(PricingContext);
   // Salt Configuration State
   const [selectedCation, setSelectedCation] = useState('Li');
   const [selectedAnions, setSelectedAnions] = useState<string[]>(['PF6']);
@@ -271,6 +273,13 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
       const response = await runMDSimulation(params);
 
+      if (response?.status === 402 || response?.data?.status === 402) {
+        pricingContext?.setShowUpgradeModal?.(true);
+        setIsCalculating(false);
+        setError(null);
+        return;
+      }
+
       if (response && response.data && response.status < 300) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
@@ -285,6 +294,14 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       // 检查是否是未登录错误（401）或者token不存在
       const token = localStorage.getItem('token');
       const isUnauthorized = error?.response?.status === 401 || error?.status === 401;
+      const isPaymentRequired = error?.response?.status === 402 || error?.status === 402;
+
+      if (isPaymentRequired) {
+        pricingContext?.setShowUpgradeModal?.(true);
+        setIsCalculating(false);
+        setError(null);
+        return;
+      }
 
       if (!token || isUnauthorized) {
         // 未登录或401错误时不显示错误信息，只设置计算状态为false

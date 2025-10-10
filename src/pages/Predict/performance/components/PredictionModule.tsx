@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info } from 'lucide-react';
@@ -10,6 +10,7 @@ import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from './CustomSelect';
+import { PricingContext } from '@/layouts/index';
 
 interface SystemSpec {
   cathode: string;
@@ -35,6 +36,7 @@ interface PredictionModuleProps {
 
 const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const { t, i18n } = useTranslation();
+  const pricingContext = useContext(PricingContext);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
@@ -381,6 +383,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     setIsCalculating(true);
     setCalculationError(null);
+    setShowResults(false);
     setPredictionResults(null);
     // 重置LLM分析状态，因为要进行新的计算
     setHasAnalysisResult(false);
@@ -395,6 +398,19 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         battery_system_id: parseInt(selectedBatterySystem.id)
       });
 
+      const status = response?.status ?? response?.data?.status;
+
+      if (status === 402) {
+        pricingContext?.setShowUpgradeModal?.(true);
+        setCalculationError(null);
+        setShowResults(false);
+        return;
+      }
+
+      if (status && status >= 400) {
+        throw new Error(response?.data?.message || response?.data?.detail?.message || 'Prediction request failed');
+      }
+
       if (response?.data) {
         setPredictionResults(response.data);
         setShowResults(true);
@@ -404,6 +420,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       }
     } catch (error) {
       console.error('Prediction failed:', error);
+      const errorStatus = (error as any)?.response?.status ?? (error as any)?.status ?? (error as any)?.data?.status;
+
+      if (errorStatus === 402) {
+        pricingContext?.setShowUpgradeModal?.(true);
+        setShowResults(false);
+        setCalculationError(null);
+        return;
+      }
+
       setCalculationError(t('performance.ui.calculationFailed'));
     } finally {
       setIsCalculating(false);

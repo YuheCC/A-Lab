@@ -32,33 +32,110 @@ interface ResultModalProps {
   onClose: () => void;
 }
 
+interface ProcessedMetric {
+  status: 'Positive' | 'Negative' | 'Neutral' | 'Restricted';
+  confidence: number | null;
+  rawProb: number | null;
+  rawLabel: number | null;
+  isRestricted: boolean;
+}
+
 const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   const { t } = useTranslation();
 
-  // Same processing logic as in PredictionModule
-  const processPerformanceMetric = (propValue: string, labelValue: string) => {
-    // Parse string values to numbers
-    const prob = parseFloat(propValue || '0');
-    const label = parseInt(labelValue || '0');
-    
-    // Determine status based on label
-    let status: string;
-    if (label === 0) {
-      status = 'Positive';  // Positive
-    } else if (label === 1) {
-      status = 'Negative';  // Negative
-    } else {
-      status = 'UNKNOWN';
+  const isMissingMetricValue = (value?: string | number | null) => {
+    if (value === null || value === undefined) {
+      return true;
     }
-    
-    // Format confidence percentage
-    const confidence = parseFloat((prob * 100).toFixed(1));
-    const displayConfidence = label === 0 ? 100 - confidence : confidence;
+
+    if (typeof value === 'number') {
+      return Number.isNaN(value);
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length === 0 || trimmed.toLowerCase() === 'none';
+  };
+
+  const restrictedMetric = (): ProcessedMetric => ({
+    status: 'Restricted',
+    confidence: null,
+    rawProb: null,
+    rawLabel: null,
+    isRestricted: true,
+  });
+
+  const createFallbackMetric = (statusText: string, confidence: number): ProcessedMetric => {
+    const normalizedText = statusText?.toString().trim().toLowerCase();
+
+    if (normalizedText === 'restricted') {
+      return restrictedMetric();
+    }
+
+    let status: ProcessedMetric['status'] = 'Neutral';
+    if (normalizedText === 'positive' || normalizedText === '0') {
+      status = 'Positive';
+    } else if (normalizedText === 'negative' || normalizedText === '1') {
+      status = 'Negative';
+    }
+
     return {
       status,
-      confidence: displayConfidence,
-      rawProb: prob,
-      rawLabel: label
+      confidence,
+      rawProb: null,
+      rawLabel: null,
+      isRestricted: false,
+    };
+  };
+
+  // Same processing logic as in PredictionModule but resilient to null/undefined values
+  const processPerformanceMetric = (
+    probValue?: string | null,
+    labelValue?: string | null
+  ): ProcessedMetric => {
+    if (isMissingMetricValue(probValue) || isMissingMetricValue(labelValue)) {
+      return restrictedMetric();
+    }
+
+    const parsedProb = typeof probValue === 'number'
+      ? probValue
+      : parseFloat(probValue as string);
+    const parsedLabel = typeof labelValue === 'number'
+      ? labelValue
+      : parseInt(labelValue as string, 10);
+
+    if (!Number.isFinite(parsedProb) || !Number.isFinite(parsedLabel)) {
+      return restrictedMetric();
+    }
+
+    let status: ProcessedMetric['status'];
+    if (parsedLabel === 0) {
+      status = 'Positive';
+    } else if (parsedLabel === 1) {
+      status = 'Negative';
+    } else {
+      status = 'Neutral';
+    }
+
+    const baseConfidence = parseFloat((parsedProb * 100).toFixed(1));
+    if (!Number.isFinite(baseConfidence)) {
+      return restrictedMetric();
+    }
+
+    const adjustedConfidence =
+      parsedLabel === 0
+        ? parseFloat((100 - baseConfidence).toFixed(1))
+        : baseConfidence;
+
+    if (!Number.isFinite(adjustedConfidence)) {
+      return restrictedMetric();
+    }
+
+    return {
+      status,
+      confidence: adjustedConfidence,
+      rawProb: parsedProb,
+      rawLabel: parsedLabel,
+      isRestricted: false,
     };
   };
 
@@ -69,26 +146,41 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
       const apiData = (result as any).rawApiData;
       return {
         temp25: {
-          cycleLife: processPerformanceMetric(apiData.temperature_25_CL_prob, apiData.temperature_25_CL_label),
-          ce: processPerformanceMetric(apiData.temperature_25_CE_prob, apiData.temperature_25_CE_label),
-          ratePerformance: processPerformanceMetric(apiData.temperature_25_CR_prob, apiData.temperature_25_CR_label)
+          cycleLife: processPerformanceMetric(
+            apiData.temperature_25_CL_prob ?? apiData.temperature_25_CL_prop,
+            apiData.temperature_25_CL_label
+          ),
+          ce: processPerformanceMetric(
+            apiData.temperature_25_CE_prob ?? apiData.temperature_25_CE_prop,
+            apiData.temperature_25_CE_label
+          ),
+          ratePerformance: processPerformanceMetric(
+            apiData.temperature_25_CR_prob ?? apiData.temperature_25_CR_prop,
+            apiData.temperature_25_CR_label
+          )
         },
         temp45: {
-          cycleLife: processPerformanceMetric(apiData.temperature_45_CL_prob, apiData.temperature_45_CL_label),
-          ce: processPerformanceMetric(apiData.temperature_45_CE_prob, apiData.temperature_45_CE_label)
+          cycleLife: processPerformanceMetric(
+            apiData.temperature_45_CL_prob ?? apiData.temperature_45_CL_prop,
+            apiData.temperature_45_CL_label
+          ),
+          ce: processPerformanceMetric(
+            apiData.temperature_45_CE_prob ?? apiData.temperature_45_CE_prop,
+            apiData.temperature_45_CE_label
+          )
         }
       };
     } else {
       // Fallback to mock data with proper processing
       return {
         temp25: {
-          cycleLife: { status: result.results.temp25.cycleLife, confidence: 98.5 },
-          ce: { status: result.results.temp25.ce, confidence: 95.2 },
-          ratePerformance: { status: result.results.temp25.ratePerformance, confidence: 94.3 }
+          cycleLife: createFallbackMetric(result.results.temp25.cycleLife, 98.5),
+          ce: createFallbackMetric(result.results.temp25.ce, 95.2),
+          ratePerformance: createFallbackMetric(result.results.temp25.ratePerformance, 94.3)
         },
         temp45: {
-          cycleLife: { status: result.results.temp45.cycleLife, confidence: 96.8 },
-          ce: { status: result.results.temp45.ce, confidence: 92.1 }
+          cycleLife: createFallbackMetric(result.results.temp45.cycleLife, 96.8),
+          ce: createFallbackMetric(result.results.temp45.ce, 92.1)
         }
       };
     }
@@ -100,7 +192,28 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     if (status === 'Positive') return '#10b981';
     if (status === 'Negative') return '#ef4444';
     if (status === 'Neutral') return '#f59e0b';
+    if (status === 'Restricted') return '#9ca3af';
     return '#6b7280';
+  };
+
+  const getStatusText = (metric: ProcessedMetric) => {
+    if (metric.isRestricted) {
+      return t('performance.results.status.restricted');
+    }
+    if (metric.status === 'Positive') {
+      return t('performance.results.status.positive');
+    }
+    if (metric.status === 'Negative') {
+      return t('performance.results.status.negative');
+    }
+    return t('performance.results.status.neutral');
+  };
+
+  const getConfidenceText = (metric: ProcessedMetric) => {
+    if (metric.isRestricted || metric.confidence === null) {
+      return t('performance.results.status.restricted');
+    }
+    return `${metric.confidence}%`;
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -256,45 +369,54 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                   <div className="perf-header">
                     <span className="perf-label">{t('performance.results.performance.cycleLife25')}</span>
                     <span 
-                      className="perf-status"
+                      className={`perf-status${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
                       style={{ color: getStatusColor(processedResults.temp25.cycleLife.status) }}
                     >
-                      {processedResults.temp25.cycleLife.status === 'Positive' ? t('performance.results.status.positive') : 
-                       processedResults.temp25.cycleLife.status === 'Negative' ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral')}
+                      {getStatusText(processedResults.temp25.cycleLife)}
                     </span>
                   </div>
-                  <div className="perf-value">{processedResults.temp25.cycleLife.confidence}%</div>
+                  <div 
+                    className={`perf-value${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
+                    aria-label={processedResults.temp25.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
+                  >
+                    {getConfidenceText(processedResults.temp25.cycleLife)}
+                  </div>
                 </div>
 
                 <div className="performance-item">
                   <div className="perf-header">
                     <span className="perf-label">{t('performance.results.performance.ce25')}</span>
                     <span 
-                      className="perf-status"
+                      className={`perf-status${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
                       style={{ color: getStatusColor(processedResults.temp25.ce.status) }}
                     >
-                      {processedResults.temp25.ce.status === 'Positive' ? t('performance.results.status.positive') : 
-                       processedResults.temp25.ce.status === 'Negative' ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral')}
+                      {getStatusText(processedResults.temp25.ce)}
                     </span>
                   </div>
-                  <div className="perf-value">{processedResults.temp25.ce.confidence}%</div>
+                  <div 
+                    className={`perf-value${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
+                    aria-label={processedResults.temp25.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
+                  >
+                    {getConfidenceText(processedResults.temp25.ce)}
+                  </div>
                 </div>
 
                 <div className="performance-item">
                   <div className="perf-header">
                     <span className="perf-label">{t('performance.results.performance.ratePerformance25')}</span>
                     <span 
-                      className="perf-status"
+                      className={`perf-status${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
                       style={{ color: getStatusColor(processedResults.temp25.ratePerformance.status) }}
                     >
-                      {processedResults.temp25.ratePerformance.status === 'Positive' ? t('performance.results.status.positive') : 
-                       processedResults.temp25.ratePerformance.status === 'Negative' ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral')}
+                      {getStatusText(processedResults.temp25.ratePerformance)}
                     </span>
                   </div>
-                  <div className="perf-value">{processedResults.temp25.ratePerformance.confidence}%</div>
+                  <div 
+                    className={`perf-value${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
+                    aria-label={processedResults.temp25.ratePerformance.isRestricted ? t('performance.results.status.restricted') : undefined}
+                  >
+                    {getConfidenceText(processedResults.temp25.ratePerformance)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -306,30 +428,36 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
                   <div className="perf-header">
                     <span className="perf-label">{t('performance.results.performance.cycleLife45')}</span>
                     <span 
-                      className="perf-status"
+                      className={`perf-status${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
                       style={{ color: getStatusColor(processedResults.temp45.cycleLife.status) }}
                     >
-                      {processedResults.temp45.cycleLife.status === 'Positive' ? t('performance.results.status.positive') : 
-                       processedResults.temp45.cycleLife.status === 'Negative' ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral')}
+                      {getStatusText(processedResults.temp45.cycleLife)}
                     </span>
                   </div>
-                  <div className="perf-value">{processedResults.temp45.cycleLife.confidence}%</div>
+                  <div 
+                    className={`perf-value${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
+                    aria-label={processedResults.temp45.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
+                  >
+                    {getConfidenceText(processedResults.temp45.cycleLife)}
+                  </div>
                 </div>
 
                 <div className="performance-item">
                   <div className="perf-header">
                     <span className="perf-label">{t('performance.results.performance.ce45')}</span>
                     <span 
-                      className="perf-status"
+                      className={`perf-status${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
                       style={{ color: getStatusColor(processedResults.temp45.ce.status) }}
                     >
-                      {processedResults.temp45.ce.status === 'Positive' ? t('performance.results.status.positive') : 
-                       processedResults.temp45.ce.status === 'Negative' ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral')}
+                      {getStatusText(processedResults.temp45.ce)}
                     </span>
                   </div>
-                  <div className="perf-value">{processedResults.temp45.ce.confidence}%</div>
+                  <div 
+                    className={`perf-value${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
+                    aria-label={processedResults.temp45.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
+                  >
+                    {getConfidenceText(processedResults.temp45.ce)}
+                  </div>
                 </div>
               </div>
             </div>

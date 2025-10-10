@@ -11,6 +11,7 @@
     "start:prod": "umi dev"
   },
   "dependencies": {
+    "@deck.gl/core": "^9.1.12",
     "@deck.gl/layers": "^9.1.12",
     "@deck.gl/react": "^9.1.12",
     "@emotion/react": "^11.14.0",

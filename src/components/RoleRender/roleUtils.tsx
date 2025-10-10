@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-const roleList = ['common', 'research', 'explorer', 'team', 'enterprise1', 'enterprise2', 'enterprise3', 'joint', 'admin'] as const;
+const roleList = ['public', 'common', 'research', 'explorer', 'team', 'enterprise1', 'enterprise2', 'enterprise3', 'joint', 'admin'] as const;
 const roleColor: Record<(typeof roleList)[number], string> = {
+    public: '#e5e6e8',
     common: '#e5e6e8',
     research: '#c6f0c1',
     explorer: '#cedcfe',

@@ -220,6 +220,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         reasoning?: string,
         cardId?: string
     ) => {
+        console.log('properties', properties);
         const uniqueCardId = cardId || (isOriginal ? 'original' : `${name}-${(properties as MoleculeProperties).smiles || Math.random()}`);
         const isFunctionalGroupsExpanded = expandedCards[uniqueCardId] || false;
         return (
@@ -492,7 +493,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
         const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
-        const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+        const combustionEnthalpy = raw?.COMBUSTION_ENTHALPY_EV ?? raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
         const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;
         const lumo = raw?.LUMO_eV ?? raw?.LUMO ?? raw?.lumo;
         const espMax = raw?.ESP_max_eV ?? raw?.ESP_MAX ?? raw?.espMax;
