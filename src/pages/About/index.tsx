@@ -64,7 +64,7 @@ const AboutPage = () => {
       date: t('about.newsfeed.releaseDate3'),
       title: t('about.newsfeed.release3'),
       content: t('about.newsfeed.releaseAbout3'),
-      href: null,
+      href: 'https://www.businesswire.com/news/home/20251007024181/en/SES-AI-Enhances-Leadership-of-Material-Discovery-in-Battery-Industry-with-Newest-Version-of-Molecular-Universe-and-Enterprise-Level-Subscription-Offerings',
     },
     {
       key: 'release2',
