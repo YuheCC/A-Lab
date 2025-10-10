@@ -8,6 +8,7 @@ import ContactSalesModal from '@/components/ContactSalesModal';
 import { sendEducationCode } from '@/services/auth';
 import { useMessage } from '@/components/MessageProvider';
 import { useEffect } from 'react';
+import { useLoginModal } from '@/components/LoginModal/hooks';
 
 type TierId = 'basic' | 'research' | 'explorer' | 'team' | 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
 
@@ -96,6 +97,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   const navigate = useNavigate();
   const { userPermissions: myPermission, userInfo, isAuthenticated } = useAuthStore();
   const { success, error } = useMessage();
+  const { openLoginModal } = useLoginModal();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
@@ -179,7 +181,19 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   };
 
   const clickButtonHandler = (tier: TierId) => {
+    // 企业版按钮（Enterprise I/II/III、Joint）不需要登录检查
+    const isEnterprisePlan = isEnterpriseTier(tier) || tier === 'joint';
+    
+    if (!isEnterprisePlan) {
+      // 个人计划按钮需要登录检查
+      if (!isAuthenticated) {
+        openLoginModal();
+        return;
+      }
+    }
+
     if (tier === 'basic') {
+      // Basic 也需要登录才能继续，登录后跳转到注册流程
       navigate('/register');
       return;
     }
@@ -194,7 +208,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       return;
     }
 
-    if (isEnterpriseTier(tier) || tier === 'joint') {
+    if (isEnterprisePlan) {
       setSelectedPlan(tier);
       setContactModalOpen(true);
       return;
@@ -357,6 +371,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
         planType={selectedPlan}
+        userEmail={userInfo?.email}
       />
       
       {/* Education Verification Modal */}
