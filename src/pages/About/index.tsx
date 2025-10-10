@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Pricing from '../../components/Pricing';
 import './abou.css';
 import { MessageProvider } from '@/components/MessageProvider';
+import { LoginModalProvider } from '@/components/LoginModal/context';
 
 // About Page component
 const AboutPage = () => {
@@ -374,9 +375,11 @@ const AboutPage = () => {
 
 const AboutPageWithProvider = () => {
   return (
-    <MessageProvider>
-      <AboutPage />
-    </MessageProvider>
+    <LoginModalProvider>
+      <MessageProvider>
+        <AboutPage />
+      </MessageProvider>
+    </LoginModalProvider>
   );
 };
 
