@@ -78,9 +78,7 @@ export default {
   // Calculate button
   calculate: {
     button: "計算",
-    calculated: "計算済み",
-    useLlmPredictModel: "LLM予測モデルを使用",
-    numberOfTrials: "試行回数"
+    calculated: "計算済み"
   },
   
   // Results
