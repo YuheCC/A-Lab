@@ -1276,7 +1276,7 @@ const FavoritesGrid = () => {
                 className="back-to-search-button"
                 onClick={() => navigate('/search')}
                 style={{
-                  backgroundColor: '#007bff',
+                  backgroundColor: '#56b26a',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
