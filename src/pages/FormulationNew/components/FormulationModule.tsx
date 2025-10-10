@@ -274,7 +274,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       const response = await runMDSimulation(params);
 
       if (response?.status === 402 || response?.data?.status === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
         setIsCalculating(false);
         setError(null);
         return;

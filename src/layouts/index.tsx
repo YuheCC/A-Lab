@@ -12,6 +12,7 @@ import PricingOverlay from "@/components/PricingOverlay";
 import { usePageCleanup } from "@/hooks/usePageCleanup";
 import { LoginModalProvider, useLoginModalContext } from "@/components/LoginModal/context";
 import LoginModal from "@/components/LoginModal";
+import { setGlobalPricingModalHandler, resetGlobalPricingModalHandler } from "@/utils/authHelpers";
 
 const API_URL = getAPIUrl();
 
@@ -65,6 +66,20 @@ const FullNavLayoutInner = () => {
     useEffect(() => {
         setOnLogin(handleLoginSuccess);
     }, [setOnLogin, isPredictPage]);
+
+    // 设置全局 pricing 浮层处理函数
+    useEffect(() => {
+        const openPricingModal = (permission?: string | null) => {
+            setPermission(permission ?? null);
+            setShowPricingOverlay(true);
+        };
+
+        setGlobalPricingModalHandler(openPricingModal);
+
+        return () => {
+            resetGlobalPricingModalHandler();
+        };
+    }, []);
 
     const handleAddToFavorites = async (molecule: any) => {
         // Use SMILES as unique identifier for the molecule

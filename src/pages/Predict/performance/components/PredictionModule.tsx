@@ -401,7 +401,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const status = response?.status ?? response?.data?.status;
 
       if (status === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
         setCalculationError(null);
         setShowResults(false);
         return;
@@ -423,7 +422,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const errorStatus = (error as any)?.response?.status ?? (error as any)?.status ?? (error as any)?.data?.status;
 
       if (errorStatus === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
         setShowResults(false);
         setCalculationError(null);
         return;
