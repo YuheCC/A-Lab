@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info } from 'lucide-react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
-import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionRequest, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
+import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
@@ -40,8 +40,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const userPermissions = useAuthStore(state => state.userPermissions);
   const [selectedSystem, setSelectedSystem] = useState('');
   const [additive, setAdditive] = useState('');
-  const [useLLMPredictModel, setUseLLMPredictModel] = useState(false);
-  const [llmRunCount, setLlmRunCount] = useState('1');
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
@@ -51,7 +49,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const isHighTier = useMemo(() => {
     return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
-  const isAdmin = userPermissions === 'admin';
 
   
   // 新增状态：分子详情相关
@@ -396,23 +393,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setAnalysisElapsed(0);
 
     try {
-      const trimmedSmiles = additive.trim();
-      const requestPayload: PerformancePredictionRequest = {
-        smiles: trimmedSmiles,
+      const response = await predictPerformance({
+        smiles: additive.trim(),
         battery_system_id: parseInt(selectedBatterySystem.id)
-      };
-
-      if (isAdmin && useLLMPredictModel) {
-        requestPayload.predict_model = 'llm';
-
-        const parsedRuns = Number(llmRunCount);
-        const normalizedRuns = !Number.isNaN(parsedRuns) && parsedRuns > 0
-          ? Math.floor(parsedRuns)
-          : 1;
-        requestPayload.runs = normalizedRuns;
-      }
-
-      const response = await predictPerformance(requestPayload);
+      });
 
       const status = response?.status ?? response?.data?.status;
 
@@ -626,8 +610,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const resetPredictionState = useCallback(() => {
     // Clear form inputs
     setAdditive('');
-    setUseLLMPredictModel(false);
-    setLlmRunCount('1');
     
     // Reset display states
     setShowSpecs(true);
@@ -970,62 +952,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
           </div>
 
-          <div className="calculation-controls">
-            <button 
-              className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
-              onClick={handleCalculate}
-              disabled={isCalculating || showResults}
-            >
-              {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
-            </button>
-
-            {isAdmin && (
-              <div className="llm-options">
-                <label className="llm-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={useLLMPredictModel}
-                    onChange={(event) => {
-                      const { checked } = event.target;
-                      setUseLLMPredictModel(checked);
-
-                      if (checked && (llmRunCount === '' || Number(llmRunCount) < 1)) {
-                        setLlmRunCount('1');
-                      }
-                    }}
-                    disabled={isCalculating || showResults}
-                  />
-                  <span>{t('performance.calculate.useLlmPredictModel')}</span>
-                </label>
-
-                <label className={`llm-runs ${useLLMPredictModel ? '' : 'disabled'}`} htmlFor="llm-runs-input">
-                  <span>{t('performance.calculate.numberOfTrials')}</span>
-                  <input
-                    id="llm-runs-input"
-                    type="number"
-                    min={1}
-                    value={llmRunCount}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      if (value === '') {
-                        setLlmRunCount('');
-                        return;
-                      }
-
-                      const numericValue = Number(value);
-                      if (Number.isNaN(numericValue) || numericValue < 1) {
-                        setLlmRunCount('1');
-                        return;
-                      }
-
-                      setLlmRunCount(String(Math.floor(numericValue)));
-                    }}
-                    disabled={!useLLMPredictModel || isCalculating || showResults}
-                  />
-                </label>
-              </div>
-            )}
-          </div>
+          <button 
+            className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
+            onClick={handleCalculate}
+            disabled={isCalculating || showResults}
+          >
+            {isCalculating ? t('performance.ui.calculating') : t('performance.calculate.button')}
+          </button>
 
           {calculationError && (
             <div className="calculation-error">
