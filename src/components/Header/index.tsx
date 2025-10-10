@@ -156,7 +156,9 @@ const Header = () => {
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
                 {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
-                <div 
+                {renderNavLink('/design', t('navigation.header.design'), pathname === '/design', isCommonUser)}
+                {renderNavLink('/predict', t('navigation.header.predict'), pathname === '/predict', isCommonUser)}
+                {/* <div 
                     className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
                     onMouseEnter={handleNavDropdownMouseEnter}
                     onMouseLeave={handleNavDropdownMouseLeave}
@@ -171,7 +173,7 @@ const Header = () => {
                         {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser)}
                         {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)}
                     </div>
-                </div>
+                </div> */}
                 {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}
             </nav>
             <div className="user-actions">

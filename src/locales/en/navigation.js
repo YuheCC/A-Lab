@@ -8,6 +8,7 @@ export default {
     filter: "Filter",
     favorites: "Favorites",
     predict: "Predict",
+    design: "Design",
     formulation: "Formulate",
     about: "About",
     predictPerformance: "Cell Performance Prediction",
