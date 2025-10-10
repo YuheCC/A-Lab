@@ -3,6 +3,7 @@ export default {
   title: "Impact of additive on cell performances",
   subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
+  disclaimer: "This function predicts the impact of new additives on cell performance based on specific benchmark electrolyte formulations and internally generated cell data. If users employ different cell designs or benchmark electrolytes, the prediction results may deviate from actual performance. Independent validation is recommended.",
   
   // Battery System Selection
   batterySystemSelection: {

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Info } from 'lucide-react';
+import InfoTooltip from '@/components/InfoTooltip';
 import PredictionModule from './components/PredictionModule';
 import HistoryModule from './components/HistoryModule';
 import ResultModal from './components/ResultModal';
@@ -71,7 +73,21 @@ const PerformancePage: React.FC = () => {
           <div className="prediction-header">
             <div className="title-row">
               <h1 className="prediction-title">{t('performance.title')}</h1>
-              <span className="beta-tag">{t('performance.beta')}</span>
+              <InfoTooltip
+                title={
+                  <div style={{ maxWidth: '320px' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <strong>Disclaimer</strong>
+                    </div>
+                    <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                      {t('performance.disclaimer')}
+                    </div>
+                  </div>
+                }
+                placement="bottom"
+              >
+                <Info size={20} style={{ color: '#64748b', cursor: 'pointer' }} />
+              </InfoTooltip>
             </div>
             <p className="prediction-subtitle">{t('performance.subtitle')}</p>
           </div>

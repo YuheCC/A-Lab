@@ -122,6 +122,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     } catch (err: any) {
       setIsProcessing(false);
       setProgress(0);
+      console.log('Prediction error:', err);
       setError(err.message || t('predictionTool.errors.predictionFailed'));
       console.error('Prediction error:', err);
     }
