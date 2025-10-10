@@ -9,7 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1001;
+  z-index: 10000;
   backdrop-filter: blur(2px);
 }
 
@@ -284,7 +284,7 @@
 
 /* Ensure modal stays above other elements */
 .login-modal-overlay {
-  z-index: 1001;
+  z-index: 10000;
 }
 
 /* Prevent body scroll when modal is open */
