@@ -1,4 +1,4 @@
-import { triggerLoginModal, shouldShowLoginModal } from './utils/authHelpers';
+import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from './utils/authHelpers';
 
 export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
 
@@ -77,6 +77,18 @@ export const authFetch = (input, init = {}) => {
       !/^\/(login|signin|reset-password)/.test(window.location.pathname)
     ) {
       redirectToLogin();
+    }
+    // 402? → show pricing overlay (but not for GET requests)
+    const method = (init.method || 'GET').toUpperCase();
+    if (response.status === 402 && method !== 'GET') {
+      // Try to get permission info from response
+      response.clone().json().then((data) => {
+        const permission = data?.required_permission || null;
+        triggerPricingModal(permission);
+      }).catch(() => {
+        // If JSON parsing fails, just show pricing modal without permission
+        triggerPricingModal(null);
+      });
     }
     return response;
   });

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { triggerLoginModal, shouldShowLoginModal } from '@/utils/authHelpers';
+import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from '@/utils/authHelpers';
 
 // 直接使用定义的 BASE_URL，如果未定义则使用默认值
 const baseURL = BASE_URL || 'https://prod-api.ses.ai';
@@ -38,7 +38,7 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if(error.response.status === 401 && window.location.pathname !== '/login') {
+        if(error.response?.status === 401 && window.location.pathname !== '/login') {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
@@ -55,6 +55,14 @@ axiosInstance.interceptors.response.use(
                 window.location.href = '/login?redirect=' + encodeURIComponent(current);
             }
         }
+        
+        // 402 处理 - 弹出 pricing 浮层（GET 请求除外）
+        const method = (error.config?.method || 'GET').toUpperCase();
+        if(error.response?.status === 402 && method !== 'GET') {
+            const permission = error.response.data?.required_permission || null;
+            triggerPricingModal(permission);
+        }
+        
         return Promise.resolve({
             ok: false,
             ...error.response,

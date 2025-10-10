@@ -50,6 +50,51 @@ export const triggerLoginModal = (redirectPath?: string) => {
   }
 };
 
+// 全局的 pricing 浮层处理函数
+let globalOpenPricingModal: ((permission?: string | null) => void) | null = null;
+
+/**
+ * 设置全局的 pricing 浮层处理函数
+ * 在 PricingContext Provider 中调用
+ */
+export const setGlobalPricingModalHandler = (handler: (permission?: string | null) => void) => {
+  globalOpenPricingModal = handler;
+};
+
+/**
+ * 重置全局的 pricing 浮层处理函数
+ * 在 PricingContext Provider 清理时调用
+ */
+export const resetGlobalPricingModalHandler = () => {
+  globalOpenPricingModal = null;
+};
+
+/**
+ * 触发全局 pricing 浮层
+ * 在收到 402 响应时调用
+ */
+export const triggerPricingModal = (permission?: string | null) => {
+  if (globalOpenPricingModal) {
+    globalOpenPricingModal(permission);
+  } else {
+    // 等待一小段时间让 PricingContext Provider 初始化完成
+    const waitForModalHandler = (retryCount = 0) => {
+      if (globalOpenPricingModal) {
+        globalOpenPricingModal(permission);
+      } else if (retryCount < 5) {
+        // 等待50ms后重试，最多重试5次
+        setTimeout(() => waitForModalHandler(retryCount + 1), 50);
+      } else {
+        // 超过重试次数后才降级到页面跳转
+        console.warn('PricingContext Provider未能及时初始化，降级到页面跳转');
+        window.location.href = '/pricing';
+      }
+    };
+
+    waitForModalHandler();
+  }
+};
+
 /**
  * 检查当前路径是否需要弹出登录浮层
  */
