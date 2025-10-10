@@ -1,7 +1,7 @@
 .introduction-new-container {
   padding: 0 30px;
   margin: 0 auto;
-  max-width: 100%;
+  max-width: 1200px;
   animation: fadeInPanel 0.3s ease-out;
 }
 
