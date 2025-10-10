@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Activity, BarChart3 } from 'lucide-react';
+import { Upload, Activity, BarChart3, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import InfoTooltip from '@/components/InfoTooltip';
 import StepContent from './components/StepContent';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPredictionCard } from './components/PredictionCardRenderer';
@@ -196,7 +197,21 @@ const PredictionTool: React.FC = () => {
           <div className="prediction-header">
             <div className="title-row">
               <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-              <span className="beta-tag">{t('predictionTool.betaTag')}</span>
+              <InfoTooltip
+                title={
+                  <div style={{ maxWidth: '320px' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <strong>Disclaimer</strong>
+                    </div>
+                    <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                      {t('predictionTool.disclaimer')}
+                    </div>
+                  </div>
+                }
+                placement="bottom"
+              >
+                <Info size={20} style={{ color: '#64748b', cursor: 'pointer' }} />
+              </InfoTooltip>
             </div>
             <p className="prediction-subtitle">{t('predictionTool.subtitle')}</p>
           </div>

@@ -3,6 +3,7 @@ export default {
     title: "Upload early cycle data for life prediction",
     subtitle: "Predict cycle life (number of cycles when discharge capacity retention reaches 80%) with an AI model trained on internal experimental data. Only the first 100 cycles (effective cycle so the real number may be higher) are needed. The prediction is accurate for battery systems  with limited active ion inventories, such as Li-ion, Na-ion, or anode free batteries.",
     betaTag: "BETA",
+    disclaimer: "This function predicts cell cycle life based on early-stage cycling data provided by the user. It is currently applicable only to specific cell types and standard cycling conditions. Users are advised to validate the predictions with their own testing.",
 
     // Steps
     steps: {
