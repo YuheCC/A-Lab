@@ -400,7 +400,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
       const status = response?.status ?? response?.data?.status;
 
-      if (status === 402) {
+      if (status === 402 || status === 401) {
         setCalculationError(null);
         setShowResults(false);
         return;
@@ -420,8 +420,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     } catch (error) {
       console.error('Prediction failed:', error);
       const errorStatus = (error as any)?.response?.status ?? (error as any)?.status ?? (error as any)?.data?.status;
-
-      if (errorStatus === 402) {
+      if (errorStatus === 402 || errorStatus === 401) {
         setShowResults(false);
         setCalculationError(null);
         return;
