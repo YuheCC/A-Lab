@@ -184,6 +184,16 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     // 企业版按钮（Enterprise I/II/III、Joint）不需要登录检查
     const isEnterprisePlan = isEnterpriseTier(tier) || tier === 'joint';
     
+    // 如果是 showHeader 的情况
+    if (showHeader) {
+      // 如果不是企业版按钮（非 contact 按钮），跳转到 /map?showPricing
+      if (!isEnterprisePlan) {
+        navigate('/map?showPricing=true&permission=' + tier);
+        return;
+      }
+      // 如果是企业版按钮，继续执行下面的逻辑（打开 contact modal）
+    }
+    
     if (!isEnterprisePlan) {
       // 个人计划按钮需要登录检查
       if (!isAuthenticated) {
@@ -195,11 +205,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     if (tier === 'basic') {
       // Basic 也需要登录才能继续，登录后跳转到注册流程
       navigate('/register');
-      return;
-    }
-
-    if (showHeader) {
-      navigate(`/map?showPricing=true&permission=${tier}`);
       return;
     }
 
