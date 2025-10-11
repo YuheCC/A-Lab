@@ -126,7 +126,7 @@ export default {
       saltFractionType: '分数类型（盐）',
       solventFraction: '溶剂（分数）',
       solventFractionType: '分数类型（溶剂）',
-      concentration: '浓度',
+      concentration: '盐浓度',
       created: '创建时间',
       status: '状态',
       actions: '操作'

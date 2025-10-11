@@ -122,7 +122,7 @@ export default {
       saltFractionType: '분율 유형 (염)',
       solventFraction: '용매 (분율)',
       solventFractionType: '분율 유형 (용매)',
-      concentration: '농도',
+      concentration: '염 농도',
       created: '생성일',
       status: '상태',
       actions: '작업'

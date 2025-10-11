@@ -126,7 +126,7 @@ export default {
       saltFractionType: 'Fraction Type (Salt)',
       solventFraction: 'Solvent (Fraction)',
       solventFractionType: 'Fraction Type (Solvent)',
-      concentration: 'Concentration',
+      concentration: 'Salt Concentration',
       created: 'Created',
       status: 'Status',
       actions: 'Actions'
