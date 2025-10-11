@@ -6,6 +6,7 @@ import StepContent from './components/StepContent';
 import UniversalHistoryModule from '../components/UniversalHistoryModule';
 import { renderPredictionCard } from './components/PredictionCardRenderer';
 import HistoryModal from './components/HistoryModal';
+import TutorialLink from './components/TutorialLink';
 import { type PredictResponse } from '@/services/prediction/predictionTool';
 import { getHistoryList, deleteHistory, isMockRecord } from './model';
 import './PredictionTool.css';
@@ -213,7 +214,10 @@ const PredictionTool: React.FC = () => {
                 <Info size={20} style={{ color: '#64748b', cursor: 'pointer' }} />
               </InfoTooltip>
             </div>
-            <p className="prediction-subtitle">{t('predictionTool.subtitle')}</p>
+            <p className="prediction-subtitle">
+              {t('predictionTool.subtitle')}
+              <TutorialLink />
+            </p>
           </div>
 
           <div className="operation-area">
