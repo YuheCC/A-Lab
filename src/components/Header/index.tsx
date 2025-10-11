@@ -12,6 +12,7 @@ import UserFeedBackModal from "@/components/UserFeedBackModal";
 import RoleRender from "../RoleRender";
 import { PricingContext } from "@/layouts/index";
 import { useLoginModalContext } from "@/components/LoginModal/context";
+import HeaderLanguageSwitcher from "@/components/HeaderLanguageSwitcher";
 
 const Header = () => {
     const { t } = useTranslation();
@@ -178,6 +179,7 @@ const Header = () => {
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
+                <HeaderLanguageSwitcher />
                 {isAuthenticated ? (
                     <div className="user-avatar-container">
                         <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
