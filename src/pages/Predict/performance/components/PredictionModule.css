@@ -762,7 +762,7 @@
   gap: 32px;
 }
 
-.property-item {
+.properties-grid .property-item {
   flex: 1;
   display: flex;
   justify-content: space-between;
@@ -770,7 +770,7 @@
   min-height: 20px;
 }
 
-.property-item label {
+.properties-grid .property-item label {
   font-size: 12px;
   color: #6b7280;
   font-weight: 500;
@@ -779,7 +779,7 @@
   letter-spacing: 0.5px;
 }
 
-.property-item span {
+.properties-grid .property-item span {
   font-size: 14px;
   color: #1f2937;
   font-weight: 500;
@@ -792,7 +792,7 @@
   line-height: 1.4;
 }
 
-.smiles-error-content p:last-child {
+.smiles-error-content .p:last-child {
   margin-bottom: 0;
 }
 

@@ -196,16 +196,10 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     
     if (!isEnterprisePlan) {
       // 个人计划按钮需要登录检查
-      if (!isAuthenticated) {
+      if (!localStorage.getItem('token')) {
         openLoginModal();
         return;
       }
-    }
-
-    if (tier === 'basic') {
-      // Basic 也需要登录才能继续，登录后跳转到注册流程
-      navigate('/register');
-      return;
     }
 
     if (tier === 'research') {
