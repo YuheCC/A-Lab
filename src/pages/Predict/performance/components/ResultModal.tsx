@@ -2,8 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import './ResultModal.css';
+import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
-import { Info } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 
 interface PredictionResult {
   id: string;
@@ -252,81 +253,60 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
               {t('performance.results.title')}
               <Tooltip
                 title={
-                  <div>
-                    <div style={{
-                      fontSize: '12px',
-                      lineHeight: '1.5',
-                      color: '#6b7280',
-                      marginBottom: '16px',
-                      paddingBottom: '12px',
-                      borderBottom: '1px solid #e5e7eb'
-                    }}>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
-                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                  <div className="result-tooltip">
+                    <div className="result-tooltip__section result-tooltip__section--description">
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                      marginBottom: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#ef4444',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#dc2626',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.negativeTitle')}
-                        </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.negativeTip')}
-                        </div>
+                    <div className="result-tooltip__section">
+                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
+                        <ArrowDown className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
+                      </div>
+                      <div className="result-tooltip__indicator result-tooltip__indicator--positive">
+                        <ArrowUp className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.positiveTip')}</p>
                       </div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10b981',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#059669',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.positiveTitle')}
+                    <div className="result-tooltip__section result-tooltip__section--badge">
+                      <div className="result-tooltip__badge-title">{t('performance.results.badgeTitle')}</div>
+                      <div className="result-tooltip__badge-grid">
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-light">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
                         </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.positiveTip')}
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-medium">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-strong">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-light">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-medium">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-strong">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
                         </div>
                       </div>
                     </div>

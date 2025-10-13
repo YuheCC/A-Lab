@@ -87,9 +87,17 @@ export default {
     title: "Cell Performance Prediction",
     negativeTitle: "Negative",
     positiveTitle: "Positive",
-    negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
-    positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
-    titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    negativeTip: "After adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.",
+    positiveTip: "After adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
+    titleTip: "Negative means after adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.\nPositive means after adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
+    badgeTitle: "Badge Color Indicators (for cycle life and rate performance only)",
+    badgeDescriptions: {
+      gainLabel: "Performance gain",
+      lossLabel: "Performance loss",
+      levelLow: "< 5%",
+      levelMid: "5%～25%",
+      levelHigh: "> 25%"
+    },
     descriptions: {
       ceLabel: "Coulombic Efficiency",
       cycleLifeLabel: "Cycle life",
