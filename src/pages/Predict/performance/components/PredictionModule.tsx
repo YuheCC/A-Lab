@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
-import { Info } from 'lucide-react';
+import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
+import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from './CustomSelect';
 import { PricingContext } from '@/layouts/index';
@@ -534,8 +535,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
     
     // Format confidence percentage
-    const confidence = parseFloat((prob * 100).toFixed(1));
-    const displayConfidence = label === 0 ? 100 - confidence : confidence;
+    const confidence = prob;
+    const displayConfidence = parseFloat(confidence.toFixed(3));
     return {
       status,
       confidence: displayConfidence,
@@ -562,6 +563,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       };
     }
 
+    let quantification_result: any = {};
+    try{
+      const model_result = JSON.parse((predictionResults as any)?.model_result);
+      quantification_result = model_result?.quantification_result ?? {};
+    } catch (error) {
+      console.error('Error parsing API data:', error);
+    }
+    
     // Process each metric using unified logic
     const temp25_CE = processPerformanceMetric(
       predictionResults.temperature_25_CE_prob,
@@ -569,12 +578,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
     
     const temp25_CL = processPerformanceMetric(
-      predictionResults.temperature_25_CL_prob,
+      quantification_result?.pred_cl_25 ?? predictionResults.temperature_25_CL_prob,
       predictionResults.temperature_25_CL_label
     );
     
     const temp25_CR = processPerformanceMetric(
-      predictionResults.temperature_25_CR_prob,
+      quantification_result?.cr ?? predictionResults.temperature_25_CR_prob,
       predictionResults.temperature_25_CR_label
     );
     
@@ -584,7 +593,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
     
     const temp45_CL = processPerformanceMetric(
-      predictionResults.temperature_45_CL_prob,
+      quantification_result?.pred_cl_45 ?? predictionResults.temperature_45_CL_prob,
       predictionResults.temperature_45_CL_label
     );
 
@@ -647,19 +656,49 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   }, [onResetRef, resetPredictionState]);
 
   // Helper function to render result badge
-  const renderResultBadge = (metric: any) => {
+  const renderResultBadge = (metric: any, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
     const isPositive = metric.status === 'Positive';
     const isNegative = metric.status === 'Negative';
-    const badgeClass = isPositive ? 'positive' : isNegative ? 'negative' : 'unknown';
-    const icon = isPositive ? '✓' : isNegative ? '✕' : '?';
-    const statusText = isPositive ? t('performance.results.status.positive') : 
-                       isNegative ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral');
-
+    
+    // 获取百分比数值
+    let percentValue = 0;
+    if (typeof metric.confidence === 'string') {
+      percentValue = Math.abs(parseFloat(metric.confidence.replace('%', '')));
+    } else if (typeof metric.confidence === 'number') {
+      percentValue = Math.abs(metric.confidence);
+    }
+    
+    // 根据百分比值判断严重程度级别
+    let level = '';
+    if (percentValue < 5) {
+      level = 'light';
+    } else if (percentValue >= 5 && percentValue <= 25) {
+      level = 'medium';
+    } else if (percentValue > 25) {
+      level = 'dark';
+    }
+    
+    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
+    
+    // CE 只显示箭头
+    if (metricType === 'ce') {
+      const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
+      return (
+        <div className={`performance-result-badge performance-result-badge--${badgeClass} performance-result-badge--ce-only`}>
+          <span className="performance-result-badge__arrow">{arrow}</span>
+        </div>
+      );
+    }
+    
+    // 其他指标显示箭头 + 百分比
+    const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
+    const value = percentValue > 0 ? `${percentValue}%` : '';
+    
     return (
-      <div className={`result-badge ${badgeClass}`}>
-        <span className="result-icon">{icon}</span>
-        {statusText}
+      <div className={`performance-result-badge performance-result-badge--${badgeClass}`}>
+        <span className="performance-result-badge__text">
+          {arrow} {value}
+        </span>
       </div>
     );
   };
@@ -827,6 +866,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                         smile={moleculeDetails.properties.smiles}
                         cation={moleculeDetails.properties.cation}
                         theme="light"
+                        className=""
+                        style={{}}
                       />
                     ) : (
                       <div className="structure-placeholder">
@@ -970,81 +1011,60 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               <h2>{t('performance.results.title')}</h2>
               <Tooltip
                 title={
-                  <div>
-                    <div style={{
-                      fontSize: '12px',
-                      lineHeight: '1.5',
-                      color: '#6b7280',
-                      marginBottom: '16px',
-                      paddingBottom: '12px',
-                      borderBottom: '1px solid #e5e7eb'
-                    }}>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
-                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                  <div className="result-tooltip">
+                    <div className="result-tooltip__section result-tooltip__section--description">
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                      marginBottom: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#ef4444',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#dc2626',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.negativeTitle')}
-                        </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.negativeTip')}
-                        </div>
+                    <div className="result-tooltip__section">
+                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
+                        <ArrowDown className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
+                      </div>
+                      <div className="result-tooltip__indicator result-tooltip__indicator--positive">
+                        <ArrowUp className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.positiveTip')}</p>
                       </div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10b981',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#059669',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.positiveTitle')}
+                    <div className="result-tooltip__section result-tooltip__section--badge">
+                      <div className="result-tooltip__badge-title">{t('performance.results.badgeTitle')}</div>
+                      <div className="result-tooltip__badge-grid">
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-light">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
                         </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.positiveTip')}
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-medium">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-strong">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-light">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-medium">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-strong">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
                         </div>
                       </div>
                     </div>
@@ -1101,29 +1121,17 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="performance-results">
                   <div className="result-item">
                     <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                    {renderResultBadge(resultsData['25c'].cycleLife)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].cycleLife.confidence}%</span>
-                    </div>
+                    {renderResultBadge(resultsData['25c'].cycleLife, 'cycleLife')}
                   </div>
 
                   <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                    {renderResultBadge(resultsData['25c'].ce)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ce.confidence}%</span>
-                    </div>
+                    {renderResultBadge(resultsData['25c'].ce, 'ce')}
                   </div>
 
                   <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                    {renderResultBadge(resultsData['25c'].ratePerformance)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ratePerformance.confidence}%</span>
-                    </div>
+                    {renderResultBadge(resultsData['25c'].ratePerformance, 'ratePerformance')}
                   </div>
                 </div>
               )}
@@ -1132,20 +1140,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 <div className="performance-results">
                   <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                    {renderResultBadge(resultsData['45c'].cycleLife)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].cycleLife.confidence}%</span>
-                    </div>
+                    {renderResultBadge(resultsData['45c'].cycleLife, 'cycleLife')}
                   </div>
 
                   <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
                     <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                    {renderResultBadge(resultsData['45c'].ce)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].ce.confidence}%</span>
-                    </div>
+                    {renderResultBadge(resultsData['45c'].ce, 'ce')}
                   </div>
                 </div>
               )}

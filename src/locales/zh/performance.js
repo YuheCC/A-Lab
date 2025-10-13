@@ -85,11 +85,19 @@ export default {
   // Results
   results: {
     title: "电池性能预测",
-    titleTip: "负面（Negative）表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。\n正面（Positive）表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
+    titleTip: "负面（Negative）表示添加指定添加剂后，电池性能等于或差于使用基准电解液的电池。\n正面（Positive）表示添加指定添加剂后，电池性能优于使用基准电解液的电池。",
     negativeTitle: "负面 (Negative)",
     positiveTitle: "正面 (Positive)",
-    negativeTip: "表示添加电解液添加剂后，电池在测试条件下的性能与基准电池相同或更差。",
-    positiveTip: "表示添加电解液添加剂后，电池在测试条件下的性能优于基准电池。",
+    negativeTip: "添加指定添加剂后，电池性能等于或差于使用基准电解液的电池。",
+    positiveTip: "添加指定添加剂后，电池性能优于使用基准电解液的电池。",
+    badgeTitle: "Badge Color indicators（仅适用于循环寿命与倍率性能）",
+    badgeDescriptions: {
+      gainLabel: "性能提升",
+      lossLabel: "性能下降",
+      levelLow: "< 5%",
+      levelMid: "5%～25%",
+      levelHigh: "> 25%"
+    },
     descriptions: {
       ceLabel: "库伦效率",
       cycleLifeLabel: "循环寿命",

@@ -1,0 +1,154 @@
+/* Performance Tooltip Styles - Shared across Performance modules */
+
+.result-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.result-tooltip__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-tooltip__section--description {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 8px;
+}
+
+.result-tooltip__description {
+  margin: 0;
+}
+
+.result-tooltip__indicator {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.result-tooltip__indicator-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.result-tooltip__indicator-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-tooltip__indicator-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+
+.result-tooltip__indicator-text {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.result-tooltip__indicator--negative .result-tooltip__indicator-icon {
+  color: #ef4444;
+}
+
+.result-tooltip__indicator--negative .result-tooltip__indicator-title {
+  color: #dc2626;
+}
+
+.result-tooltip__indicator--positive .result-tooltip__indicator-icon {
+  color: #10b981;
+}
+
+.result-tooltip__indicator--positive .result-tooltip__indicator-title {
+  color: #059669;
+}
+
+.result-tooltip__section--badge {
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.result-tooltip__badge-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.result-tooltip__badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 20px;
+}
+
+.result-tooltip__badge-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-tooltip__badge {
+  width: 36px;
+  height: 24px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-tooltip__badge--gain-light {
+  background-color: #d1fae5;
+  color: #008236;
+}
+
+.result-tooltip__badge--gain-medium {
+  background-color: #00c950;
+  color: #ffffff;
+}
+
+.result-tooltip__badge--gain-strong {
+  background-color: #008236;
+  color: #ffffff;
+}
+
+.result-tooltip__badge--loss-light {
+  background-color: #ffe2e2;
+  color: #c10007;
+}
+
+.result-tooltip__badge--loss-medium {
+  background-color: #fb2c36;
+  color: #ffffff;
+}
+
+.result-tooltip__badge--loss-strong {
+  background-color: #c10007;
+  color: #ffffff;
+}
+
+.result-tooltip__badge-label {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+@media (max-width: 640px) {
+  .result-tooltip__badge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .result-tooltip__badge-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

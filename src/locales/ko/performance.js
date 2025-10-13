@@ -85,11 +85,19 @@ export default {
   // Results
   results: {
     title: "셀 성능 예측",
-    titleTip: "부정적(Negative)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    titleTip: "부정적(Negative)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋다는 것을 의미합니다.",
     negativeTitle: "부정적 (Negative)",
     positiveTitle: "긍정적 (Positive)",
-    negativeTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.",
-    positiveTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    negativeTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁩니다.",
+    positiveTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋습니다.",
+    badgeTitle: "배지 색상 지표 (사이클 수명 및 비율 성능만 적용)",
+    badgeDescriptions: {
+      gainLabel: "성능 향상",
+      lossLabel: "성능 저하",
+      levelLow: "< 5%",
+      levelMid: "5%～25%",
+      levelHigh: "> 25%"
+    },
     descriptions: {
       ceLabel: "코로나빅 효율",
       cycleLifeLabel: "사이클 수명",
