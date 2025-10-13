@@ -3,6 +3,7 @@ export default {
   title: "添加剂对电池性能的影响",
   subtitle: "使用基于SES内部实验数据训练的AI模型预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
   beta: "测试版",
+  disclaimerTitle: "免责声明",
   disclaimer: "此功能基于特定的基准电解液配方和内部生成的电池数据预测新添加剂对电池性能的影响。如果用户采用不同的电池设计或基准电解液，预测结果可能与实际性能有所偏差。建议进行独立验证。",
   
   // Battery System Selection
