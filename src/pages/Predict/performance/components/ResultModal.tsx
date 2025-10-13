@@ -222,6 +222,52 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     return `${metric.confidence}%`;
   };
 
+  // Helper function to render result badge (same as PredictionModule)
+  const renderResultBadge = (metric: ProcessedMetric, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
+    const isPositive = metric.status === 'Positive';
+    const isNegative = metric.status === 'Negative';
+    
+    // 获取百分比数值
+    let percentValue = 0;
+    if (metric.confidence !== null) {
+      percentValue = Math.abs(metric.confidence);
+    }
+    
+    // 根据百分比值判断严重程度级别
+    let level = '';
+    if (percentValue < 5) {
+      level = 'light';
+    } else if (percentValue >= 5 && percentValue <= 25) {
+      level = 'medium';
+    } else if (percentValue > 25) {
+      level = 'dark';
+    }
+    
+    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
+    
+    // CE 只显示箭头
+    if (metricType === 'ce') {
+      const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
+      return (
+        <div className={`performance-result-badge performance-result-badge--${badgeClass} performance-result-badge--ce-only`}>
+          <span className="performance-result-badge__arrow">{arrow}</span>
+        </div>
+      );
+    }
+    
+    // 其他指标显示箭头 + 百分比
+    const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
+    const value = percentValue > 0 ? `${percentValue}%` : '';
+    
+    return (
+      <div className={`performance-result-badge performance-result-badge--${badgeClass}`}>
+        <span className="performance-result-badge__text">
+          {arrow} {value}
+        </span>
+      </div>
+    );
+  };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -349,100 +395,35 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
-              <div className="performance-grid">
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.cycleLife25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.cycleLife.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.cycleLife)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.cycleLife)}
-                  </div>
+              <div className="performance-results">
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                  {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ce25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.ce.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.ce)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.ce)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ce25')}</div>
+                  {renderResultBadge(processedResults.temp25.ce, 'ce')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ratePerformance25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.ratePerformance.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.ratePerformance)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.ratePerformance.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.ratePerformance)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                  {renderResultBadge(processedResults.temp25.ratePerformance, 'ratePerformance')}
                 </div>
               </div>
             </div>
 
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
-              <div className="performance-grid two-columns">
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.cycleLife45')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp45.cycleLife.status) }}
-                    >
-                      {getStatusText(processedResults.temp45.cycleLife)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp45.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp45.cycleLife)}
-                  </div>
+              <div className="performance-results">
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
+                  {renderResultBadge(processedResults.temp45.cycleLife, 'cycleLife')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ce45')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp45.ce.status) }}
-                    >
-                      {getStatusText(processedResults.temp45.ce)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp45.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp45.ce)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ce45')}</div>
+                  {renderResultBadge(processedResults.temp45.ce, 'ce')}
                 </div>
               </div>
             </div>
