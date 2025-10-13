@@ -117,15 +117,12 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
       status = 'Neutral';
     }
 
-    const baseConfidence = parseFloat((parsedProb * 100).toFixed(1));
+    const baseConfidence = parsedProb;
     if (!Number.isFinite(baseConfidence)) {
       return restrictedMetric();
     }
 
-    const adjustedConfidence =
-      parsedLabel === 0
-        ? parseFloat((100 - baseConfidence).toFixed(1))
-        : baseConfidence;
+    const adjustedConfidence = parseFloat(baseConfidence.toFixed(3));
 
     if (!Number.isFinite(adjustedConfidence)) {
       return restrictedMetric();
@@ -145,10 +142,18 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     // If the result object has raw API data, use it for processing
     if ((result as any).rawApiData) {
       const apiData = (result as any).rawApiData;
+      let quantification_result: any = {};
+      try{
+        const model_result = JSON.parse(apiData?.model_result);
+        quantification_result = model_result?.quantification_result ?? {};
+      } catch (error) {
+        console.error('Error parsing API data:', error);
+      }
+
       return {
         temp25: {
           cycleLife: processPerformanceMetric(
-            apiData.temperature_25_CL_prob ?? apiData.temperature_25_CL_prop,
+            quantification_result?.pred_cl_25 ?? apiData.temperature_25_CL_prob ?? apiData.temperature_25_CL_prop,
             apiData.temperature_25_CL_label
           ),
           ce: processPerformanceMetric(
@@ -156,13 +161,13 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             apiData.temperature_25_CE_label
           ),
           ratePerformance: processPerformanceMetric(
-            apiData.temperature_25_CR_prob ?? apiData.temperature_25_CR_prop,
+            quantification_result?.cr ??apiData.temperature_25_CR_prob ?? apiData.temperature_25_CR_prop,
             apiData.temperature_25_CR_label
           )
         },
         temp45: {
           cycleLife: processPerformanceMetric(
-            apiData.temperature_45_CL_prob ?? apiData.temperature_45_CL_prop,
+            quantification_result?.pred_cl_45 ?? apiData.temperature_45_CL_prob ?? apiData.temperature_45_CL_prop,
             apiData.temperature_45_CL_label
           ),
           ce: processPerformanceMetric(
