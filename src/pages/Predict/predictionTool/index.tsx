@@ -202,7 +202,7 @@ const PredictionTool: React.FC = () => {
                 title={
                   <div style={{ maxWidth: '320px' }}>
                     <div style={{ marginBottom: '4px' }}>
-                      <strong>Disclaimer</strong>
+                      <strong style={{ color: 'red' }}>{t('predictionTool.disclaimerTitle')}</strong>
                     </div>
                     <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
                       {t('predictionTool.disclaimer')}
