@@ -537,7 +537,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     
     // Format confidence percentage
     const confidence = prob;
-    const displayConfidence = parseFloat(confidence.toFixed(3));
+    const displayConfidence = parseFloat(confidence.toFixed(2));
     return {
       status,
       confidence: displayConfidence,
