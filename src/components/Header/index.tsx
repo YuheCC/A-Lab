@@ -172,7 +172,7 @@ const Header = () => {
                         onMouseLeave={handleNavDropdownMouseLeave}
                     >
                         {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser)}
-                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)}
+                        {renderDropdownItem('/predict', t('navigation.header.predictionTool'), isPathActive('/predict'), isCommonUser)}
                     </div>
                 </div> */}
                 {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}

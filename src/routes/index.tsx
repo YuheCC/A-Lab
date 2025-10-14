@@ -30,17 +30,17 @@ export default  [
         path: "/favorites",
         component: "Favorites"
     },
-    // {
-    //     path: "/predict/performance",
-    //     component: "Predict/performance",
-    // },
-    // {
-    //     path: "/predict/prediction-tool",
-    //     component: "Predict/predictionTool"
-    // },
     {
         path: "/predict",
-        component: "Predict/predictionTool"
+        component: "PredictionTool"
+    },
+    {
+        path: "/predict/create",
+        component: "PredictionTool/create"
+    },
+    {
+        path: "/predict/detail",
+        component: "PredictionTool/detail"
     },
     {
         path: '/design',
