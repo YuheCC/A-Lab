@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useContext } from 're
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon } from './ArrowIcons';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
@@ -680,24 +681,28 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     
     const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
     
+    // 选择箭头图标 - 使用自定义箭头
+    const ArrowIcon = isPositive ? ArrowUpIcon : isNegative ? ArrowDownIcon : null;
+    
     // CE 只显示箭头
     if (metricType === 'ce') {
-      const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
       return (
         <div className={`performance-result-badge performance-result-badge--${badgeClass} performance-result-badge--ce-only`}>
-          <span className="performance-result-badge__arrow">{arrow}</span>
+          <span className="performance-result-badge__arrow">
+            {ArrowIcon && <ArrowIcon size={16} />}
+          </span>
         </div>
       );
     }
     
     // 其他指标显示箭头 + 百分比
-    const arrow = isPositive ? '↑' : isNegative ? '↓' : '';
     const value = percentValue > 0 ? `${percentValue}%` : '';
     
     return (
       <div className={`performance-result-badge performance-result-badge--${badgeClass}`}>
         <span className="performance-result-badge__text">
-          {arrow} {value}
+          {ArrowIcon && <ArrowIcon size={15} />}
+          {value && <span>{value}</span>}
         </span>
       </div>
     );
