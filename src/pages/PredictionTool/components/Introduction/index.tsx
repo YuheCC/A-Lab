@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './index.css';
+import './index.less';
 
 const Introduction: React.FC = () => {
   const { t } = useTranslation();

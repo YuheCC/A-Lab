@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
-import './index.css';
+import './index.less';
 
 interface FileRecord {
   id: string;

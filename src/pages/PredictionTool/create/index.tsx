@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Upload, Activity, BarChart3, Info } from 'lucide-react';
 import InfoTooltip from '@/components/InfoTooltip';
 import StepContent from '../components/StepContent';
-import './index.css';
+import './index.less';
 
 const CreatePage: React.FC = () => {
   const navigate = useNavigate();

@@ -6,7 +6,7 @@ import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/
 import { getHistoryDetail } from '../model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
-import './index.css';
+import './index.less';
 
 const DetailPage: React.FC = () => {
   const navigate = useNavigate();
