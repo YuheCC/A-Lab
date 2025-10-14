@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { Upload, Activity, BarChart3, Info } from 'lucide-react';
-import InfoTooltip from '@/components/InfoTooltip';
+import { Upload, Activity, BarChart3 } from 'lucide-react';
 import StepContent from '../components/StepContent';
 import './index.less';
 
@@ -52,24 +51,7 @@ const CreatePage: React.FC = () => {
     <div className="create-page-container">
       <div className="create-content">
         <div className="create-actions">
-          <div className="prediction-header-wrapper">
-            <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-            <InfoTooltip
-              title={
-                <div style={{ maxWidth: '320px' }}>
-                  <div style={{ marginBottom: '4px' }}>
-                    <strong style={{ color: 'red' }}>{t('predictionTool.disclaimerTitle')}</strong>
-                  </div>
-                  <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
-                    {t('predictionTool.disclaimer')}
-                  </div>
-                </div>
-              }
-              placement="bottom"
-            >
-              <Info size={20} style={{ color: '#64748b', cursor: 'pointer' }} />
-            </InfoTooltip>
-          </div>
+          <h1 className="prediction-title">{t('predictionTool.title')}</h1>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('predictionTool.actions.backToList', 'Back to List')}
           </button>

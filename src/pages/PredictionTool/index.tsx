@@ -148,6 +148,13 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   return (
     <div className="prediction-tool-container">
+      <div className="prediction-header">
+        <h1 className="prediction-title">{t('predictionTool.title')}</h1>
+        <p className="prediction-subtitle">
+          {t('predictionTool.subtitle')}
+        </p>
+      </div>
+
       <div className="prediction-action-section">
         <button className="new-prediction-button" onClick={handleNewPrediction}>
           + {t('predictionTool.history.newPrediction', 'New Prediction')}
