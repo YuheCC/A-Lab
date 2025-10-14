@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
+import Pagination from './components/Pagination';
 import './index.less';
 
 interface FileRecord {
@@ -27,6 +28,9 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyData, setHistoryData] = useState<FileRecord[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [total, setTotal] = useState(0);
 
   const getInitialTab = (): 'introduction' | 'records' => {
     const tabParam = searchParams.get('tab');
@@ -69,18 +73,20 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     };
   };
 
-  const fetchHistoryData = async () => {
+  const fetchHistoryData = async (page: number = currentPage) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getHistoryList({ page: 1, page_size: 20 });
+      const response = await getHistoryList({ page, page_size: pageSize });
       const transformedData = response.data.map(transformApiDataToFileRecord);
       setHistoryData(transformedData);
+      setTotal(response.total);
     } catch (err) {
       console.error('Failed to fetch prediction history:', err);
       setError(err instanceof Error ? err.message : t('predictionTool.history.loading.error', '获取历史记录失败'));
       setHistoryData([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
@@ -88,9 +94,9 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   useEffect(() => {
     if (activeTab === 'records') {
-      fetchHistoryData();
+      fetchHistoryData(currentPage);
     }
-  }, [activeTab]);
+  }, [activeTab, currentPage]);
 
   const handleNewPrediction = () => {
     window.open('/predict/create', '_blank');
@@ -113,11 +119,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
     try {
       await deleteHistory({ id: parseInt(id) });
-      await fetchHistoryData();
+      // 删除后重新获取当前页数据
+      await fetchHistoryData(currentPage);
     } catch (err) {
       console.error('Failed to delete record:', err);
       setError(err instanceof Error ? err.message : t('predictionTool.history.deleteFailed', '删除记录失败'));
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleTabChange = (tab: 'introduction' | 'records') => {
@@ -179,55 +190,63 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                   <p>{t('predictionTool.history.error', 'Error')}: {error}</p>
                 </div>
               ) : (
-                <div className="records-table-wrapper">
-                  <table className="records-table">
-                    <thead>
-                      <tr>
-                        <th>{t('predictionTool.list.columns.recordId', 'Record ID')}</th>
-                        <th>{t('predictionTool.list.columns.fileName', 'File Name')}</th>
-                        <th>{t('predictionTool.list.columns.batteryCount', 'Battery Count')}</th>
-                        <th>{t('predictionTool.list.columns.avgCycleLife', 'Avg Cycle Life')}</th>
-                        <th>{t('predictionTool.list.columns.created', 'Created')}</th>
-                        <th>{t('predictionTool.list.columns.actions', 'Actions')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {historyData.length === 0 ? (
+                <>
+                  <div className="records-table-wrapper">
+                    <table className="records-table">
+                      <thead>
                         <tr>
-                          <td colSpan={6} className="no-data">
-                            {t('predictionTool.history.noResults', 'No prediction records found.')}
-                          </td>
+                          <th>{t('predictionTool.list.columns.recordId', 'Record ID')}</th>
+                          <th>{t('predictionTool.list.columns.fileName', 'File Name')}</th>
+                          <th>{t('predictionTool.list.columns.batteryCount', 'Battery Count')}</th>
+                          <th>{t('predictionTool.list.columns.avgCycleLife', 'Avg Cycle Life')}</th>
+                          <th>{t('predictionTool.list.columns.created', 'Created')}</th>
+                          <th>{t('predictionTool.list.columns.actions', 'Actions')}</th>
                         </tr>
-                      ) : (
-                        historyData.map((record) => (
-                          <tr key={record.id}>
-                            <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
-                            <td className="file-name">{record.name}</td>
-                            <td>{record.batteryCount}</td>
-                            <td>{record.avgCirculation}</td>
-                            <td className="created-date">{formatDate(record.date)}</td>
-                            <td className="actions-cell">
-                              <button
-                                className="action-button view-button"
-                                onClick={() => handleViewDetails(record.id)}
-                              >
-                                {t('predictionTool.history.actions.viewDetails', 'View Details')}
-                              </button>
-                              {!record.isMock && (
-                                <button
-                                  className="action-button delete-button"
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                >
-                                  {t('predictionTool.history.actions.delete', 'Delete')}
-                                </button>
-                              )}
+                      </thead>
+                      <tbody>
+                        {historyData.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="no-data">
+                              {t('predictionTool.history.noResults', 'No prediction records found.')}
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                        ) : (
+                          historyData.map((record) => (
+                            <tr key={record.id}>
+                              <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
+                              <td className="file-name">{record.name}</td>
+                              <td>{record.batteryCount}</td>
+                              <td>{record.avgCirculation}</td>
+                              <td className="created-date">{formatDate(record.date)}</td>
+                              <td className="actions-cell">
+                                <button
+                                  className="action-button view-button"
+                                  onClick={() => handleViewDetails(record.id)}
+                                >
+                                  {t('predictionTool.history.actions.viewDetails', 'View Details')}
+                                </button>
+                                {!record.isMock && (
+                                  <button
+                                    className="action-button delete-button"
+                                    onClick={() => handleDeleteRecord(record.id)}
+                                  >
+                                    {t('predictionTool.history.actions.delete', 'Delete')}
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination
+                    current={currentPage}
+                    total={total}
+                    pageSize={pageSize}
+                    onChange={handlePageChange}
+                  />
+                </>
               )}
             </div>
           )}
