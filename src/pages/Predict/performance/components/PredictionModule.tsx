@@ -1157,20 +1157,25 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
 
               <div className="llm-button-section">
-                <button 
+                <button
                   className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
                   onClick={handleLLMAnalysis}
                   disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
                 >
                   {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
                 </button>
-                
+
                 {analysisError && (
                   <div className="analysis-error">
                     <p>{analysisError}</p>
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* 免责声明提示 */}
+            <div style={{ marginTop: '20px', fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}>
+              {t('performance.disclaimer')}
             </div>
           </div>
         )}

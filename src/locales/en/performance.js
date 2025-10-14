@@ -4,7 +4,7 @@ export default {
   subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
   disclaimerTitle: "Disclaimer",
-  disclaimer: "This function predicts the impact of new additives on cell performance based on specific benchmark electrolyte formulations and internally generated cell data. If users employ different cell designs or benchmark electrolytes, the prediction results may deviate from actual performance. Independent validation is recommended.",
+  disclaimer: "Note: This function predicts the impact of new additives by comparing the performance of cells with and without the additive, based on internal cell data and specific benchmark electrolyte (Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/FEC). Results may vary if different cell designs or benchmark electrolytes are used. Future updates will expand functionality to support customizable benchmark electrolytes, multi-additive analyses, and broader design flexibility.",
   
   // Battery System Selection
   batterySystemSelection: {

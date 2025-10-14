@@ -73,7 +73,7 @@ const PerformancePage: React.FC = () => {
           <div className="prediction-header">
             <div className="title-row">
               <h1 className="prediction-title">{t('performance.title')}</h1>
-              <InfoTooltip
+              {/* <InfoTooltip
                 title={
                   <div style={{ maxWidth: '320px' }}>
                     <div style={{ marginBottom: '4px' }}>
@@ -87,7 +87,7 @@ const PerformancePage: React.FC = () => {
                 placement="bottom"
               >
                 <Info size={20} style={{ color: '#64748b', cursor: 'pointer' }} />
-              </InfoTooltip>
+              </InfoTooltip> */}
             </div>
             <p className="prediction-subtitle">{t('performance.subtitle')}</p>
           </div>
