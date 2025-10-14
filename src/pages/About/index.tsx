@@ -279,6 +279,13 @@ const AboutPage = () => {
                             {t('about.features.formulate.title')}
                           </div>
                           <div 
+                            className={`feature-tab ${activeFeature === 'design' ? 'active' : ''}`} 
+                            data-feature="design"
+                            onClick={() => handleFeatureClick('design')}
+                          >
+                            {t('about.features.design.title')}
+                          </div>
+                          <div 
                             className={`feature-tab ${activeFeature === 'predict' ? 'active' : ''}`} 
                             data-feature="predict"
                             onClick={() => handleFeatureClick('predict')}
@@ -315,6 +322,10 @@ const AboutPage = () => {
                           <div className="feature-detail" data-feature="formulate" style={{display: activeFeature === 'formulate' ? 'block' : 'none'}}>
                               <h3>{t('about.features.formulate.title')}</h3>
                               <p>{t('about.features.formulate.description')}</p>
+                          </div>
+                          <div className="feature-detail" data-feature="design" style={{display: activeFeature === 'design' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.design.title')}</h3>
+                              <p>{t('about.features.design.description')}</p>
                           </div>
                           <div className="feature-detail" data-feature="predict" style={{display: activeFeature === 'predict' ? 'block' : 'none'}}>
                               <h3>{t('about.features.predict.title')}</h3>
