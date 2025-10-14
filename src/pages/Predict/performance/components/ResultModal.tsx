@@ -123,7 +123,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
       return restrictedMetric();
     }
 
-    const adjustedConfidence = parseFloat(baseConfidence.toFixed(3));
+    const adjustedConfidence = parseFloat(baseConfidence.toFixed(2));
 
     if (!Number.isFinite(adjustedConfidence)) {
       return restrictedMetric();
