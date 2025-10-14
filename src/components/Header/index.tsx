@@ -182,7 +182,7 @@ const Header = () => {
                 <HeaderLanguageSwitcher />
                 {isAuthenticated ? (
                     <div className="user-avatar-container">
-                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
+                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(!isDropdownOpen); }} ref={avatarRef}>
                             <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
                         </a>
                         <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
@@ -197,15 +197,15 @@ const Header = () => {
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
+                            <a href="#" className="dropdown-item" onClick={(e) => { e.preventDefault(); settingModalRef?.current?.show?.(); }}>
                                 <img src={settingSvg} alt="Setting" className="item-icon" />
                                 {t('navigation.userDropdown.accountSettings')}
                             </a>
-                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
+                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={(e) => { e.preventDefault(); userFeedBackModalRef?.current?.show?.(); }}>
                                 <img src={feedbackSvg} alt="Feedback" className="item-icon" />
                                 {t('navigation.userDropdown.feedback')}
                             </a>
-                            <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
+                            <a href="#" className="dropdown-item" id="logoutButton" onClick={(e) => { e.preventDefault(); logout(); }}>
                                 <img src={logoutSvg} alt="Logout" className="item-icon" />
                                 {t('navigation.userDropdown.logout')}
                             </a>
