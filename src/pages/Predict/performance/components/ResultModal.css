@@ -232,16 +232,25 @@
 }
 
 .performance-result-badge__arrow {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.performance-result-badge__arrow svg {
+  display: block;
 }
 
 .performance-result-badge__text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 1;
   font-weight: 500;
   text-align: center;
+  gap: 4px;
 }
 
 /* Positive 颜色方案 - 由浅到深的绿色 */
