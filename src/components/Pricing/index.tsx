@@ -306,8 +306,8 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     if (isEnterpriseTier(normalized) || normalized === 'joint') {
       setActiveGroup('business');
     }
-
-    clickButtonHandler(normalized);
+  
+    if(myPermission)clickButtonHandler(normalized);
   }, [permission, myPermission]);
 
   useEffect(() => {
