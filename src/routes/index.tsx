@@ -47,23 +47,23 @@ export default  [
         component: "Predict/performance"
     },
     {
-        path: "/formulation",
-        redirect: "/formulation/new"
+        path: "/formulate",
+        redirect: "/formulate/new"
     },
     {
-        path: "/formulation/new",
+        path: "/formulate/new",
         component: "FormulationNew"
     },
     {
-        path: "/formulation/result-tip",
+        path: "/formulate/result-tip",
         component: "FormulationNew/result-tip"
     },
     {
-        path: "/formulation/create",
+        path: "/formulate/create",
         component: "FormulationNew/create"
     },
     {
-        path: "/formulation/detail",
+        path: "/formulate/detail",
         component: "FormulationNew/detail"
     },
     {

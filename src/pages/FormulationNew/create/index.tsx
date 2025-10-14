@@ -10,7 +10,7 @@ const CreatePage: React.FC = () => {
   const { t } = useTranslation();
 
   const handleBackToList = () => {
-    navigate('/formulation/new?tab=analysis');
+    navigate('/formulate/new?tab=analysis');
   };
 
   return (

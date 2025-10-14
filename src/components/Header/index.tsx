@@ -156,7 +156,7 @@ const Header = () => {
                 {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
-                {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
+                {renderNavLink('/formulate', t('navigation.header.formulation'), pathname === '/formulate', isCommonUser)}
                 {renderNavLink('/design', t('navigation.header.design'), pathname === '/design', isCommonUser)}
                 {renderNavLink('/predict', t('navigation.header.predict'), pathname === '/predict', isCommonUser)}
                 {/* <div 
