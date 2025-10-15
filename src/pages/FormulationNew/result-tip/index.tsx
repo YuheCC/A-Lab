@@ -12,7 +12,7 @@ const ResultTip: React.FC<ResultTipProps> = () => {
   const { t } = useTranslation();
 
   const handleClose = () => {
-    navigate('/formulate/new?tab=analysis');
+    navigate('/formulate?tab=analysis');
   };
 
   return (

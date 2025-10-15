@@ -77,7 +77,7 @@ const DetailPage: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/formulate/new?tab=analysis');
+    navigate('/formulate?tab=analysis');
   };
 
   // 动态生成系统属性数据
