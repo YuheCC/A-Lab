@@ -507,9 +507,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string, extraOptions?: any) => {
         // 确保传递ragResultsCount
-        const finalExtraOptions = { 
-            ...extraOptions, 
-            numRagResults: ragResultsCount 
+        const finalExtraOptions = {
+            patentRagEnabled: true,
+            ...(extraOptions ?? {}),
+            numRagResults: ragResultsCount,
         };
         const normalizedMode = normalizeModeForBackend(mode);
         
@@ -635,13 +636,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const extraOptions: Record<string, any> = {
             numRagResults: ragResultsCount,
             llmComputePower: extra?.llmComputePower,
+            patentRagEnabled: true,
         };
         if (extra) {
             extraOptions.ragEnabled = extra.ragEnabled;
             extraOptions.disableLiteratureSearch = !extra.ragEnabled; // ragEnabled是反向的disableLiteratureSearch
             extraOptions.fullDeepSpace = extra.dump_state;
             extraOptions.toolsEnabled = extra.toolsEnabled;
-            extraOptions.patentRagEnabled = extra.patentRagEnabled;
+            if (typeof extra.patentRagEnabled === 'boolean') {
+                extraOptions.patentRagEnabled = extra.patentRagEnabled;
+            }
         }
 
         if (chatId) {

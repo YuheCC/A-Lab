@@ -379,7 +379,7 @@ export class ChatService {
           webSearchClient: "Tavily",
           numRagResults: extraOptions?.numRagResults,
           toolsEnabled: extraOptions?.toolsEnabled,
-          patentRagEnabled: extraOptions?.patentRagEnabled,
+          patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
           llm_compute_power: extraOptions?.llmComputePower,
         },
       });
@@ -407,7 +407,7 @@ export class ChatService {
         webSearchClient: "Tavily",
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
-        patentRagEnabled: extraOptions?.patentRagEnabled,
+        patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
         llm_compute_power: extraOptions?.llmComputePower,
       };
       
@@ -444,7 +444,7 @@ export class ChatService {
         webSearchClient: "Tavily",
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
-        patentRagEnabled: extraOptions?.patentRagEnabled,
+        patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
         llm_compute_power: extraOptions?.llmComputePower,
       };
       

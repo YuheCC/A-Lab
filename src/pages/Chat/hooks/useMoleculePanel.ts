@@ -6,6 +6,7 @@ export interface MoleculeData {
   name: string;
   SMILES: string;
   cation?: string;
+  isAnion?: boolean;
   molecular_weight?: number;
   HOMO_eV?: number;
   LUMO_eV?: number;

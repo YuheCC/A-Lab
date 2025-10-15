@@ -155,10 +155,15 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     if (data && data.length > 0 && onMoleculeClick) {
       // Transform the molecule data to the format expected by the sidebar
       const moleculeData = data[0];
+      const rawCation = moleculeData.cation ?? moleculeData.CATION;
+      const normalizedCation = typeof rawCation === 'string' ? rawCation.trim() : rawCation;
+      const hasCation = normalizedCation !== undefined && normalizedCation !== null && normalizedCation !== '';
+      const isAnion = Boolean(hasCation || moleculeData.is_anion || moleculeData.IS_ANION);
       const transformedMolecule = {
         name: text,
         SMILES: moleculeData.SMILES,
-        cation: moleculeData.cation ?? moleculeData.CATION,
+        cation: normalizedCation,
+        isAnion,
         molecular_weight: moleculeData.molecular_weight,
         HOMO_eV: moleculeData.HOMO_eV,
         LUMO_eV: moleculeData.LUMO_eV,
