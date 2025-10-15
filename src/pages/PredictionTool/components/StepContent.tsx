@@ -336,11 +336,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
 
             {/* 免责声明提示 */}
             <div className="disclaimer-tip" style={{
-              backgroundColor: '#f7fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              padding: '16px 20px',
-              marginBottom: '20px',
+              margin: '20px 0',
               fontSize: '14px',
               lineHeight: '1.6',
               color: '#4a5568'
