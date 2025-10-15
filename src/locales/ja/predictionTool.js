@@ -4,7 +4,7 @@ export default {
     subtitle: "SES社内実験データで訓練されたAIモデルを使用して、リチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します。最初の100サイクル（実効サイクルなので実際の数はこれより多くなる可能性があります）のみが必要です。",
     betaTag: "BETA",
     disclaimerTitle: "免責事項",
-    disclaimer: "注意：この機能は、ユーザーが提供する初期段階のサイクリングデータに基づいてセルサイクル寿命を予測します。現在、特定のセルタイプおよび標準的なサイクリング条件（実際の使用プロファイルではない）にのみ適用可能です。ユーザーは自身のテストで予測を検証することをお勧めします。",
+    disclaimer: "注意：この機能は、ユーザーが提供する初期段階のサイクリングデータのみを使用してセルサイクル寿命を予測します。セル化学や設計などの追加情報は必要ありません。このモデルは現在、標準的なサイクリング条件（実際の使用プロファイルではない）下で活性イオンが限られたバッテリーシステムに適用可能です。ユーザーは自身のテストを通じて予測を検証することをお勧めします。",
 
     // Steps
     steps: {
@@ -64,17 +64,45 @@ export default {
         contactSupport: "お問い合わせください"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "紹介",
+        records: "記録"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "記録ID",
+            fileName: "ファイル名",
+            batteryCount: "バッテリー数",
+            avgCycleLife: "平均サイクル寿命",
+            created: "作成日時",
+            actions: "操作"
+        }
+    },
+
     // History
     history: {
         title: "予測記録",
         newPrediction: "新しい予測",
         searchPlaceholder: "ファイル名で検索...",
-        loading: "読み込み中...",
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "予測記録がありません",
+        cannotDeleteDemo: "デモ記録は削除できません",
         deleteConfirm: "この記録を削除してもよろしいですか？",
         deleteSuccess: "削除成功",
         deleteFailed: "削除失敗",
         view: "表示",
-        delete: "削除"
+        delete: "削除",
+        loading: {
+            error: "履歴記録の取得に失敗しました"
+        },
+        actions: {
+            viewDetails: "詳細を表示",
+            delete: "削除"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "容量劣化（アップロードデータ）",
         predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
         xAxisName: "サイクル数",
-        yAxisName: "放電容量"
+        yAxisName: "放電容量",
+        predictedCapacityLine: "予測容量線",
+        sohPredictionLine: "80% SOH 予測線",
+        value: "値",
+        noData: "データなし"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "予測詳細",
+        loading: "予測詳細を読み込み中...",
+        missingId: "予測IDパラメータがありません",
+        fetchError: "予測詳細の取得に失敗しました",
+        downloadFailed: "ファイルダウンロードに失敗しました"
+    },
+
+    // Actions
+    actions: {
+        backToList: "リストに戻る"
     },
 
     // Default Step

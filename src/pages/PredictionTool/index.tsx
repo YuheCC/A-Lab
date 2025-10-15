@@ -190,7 +190,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
             <div className="prediction-tab-panel">
               {loading ? (
                 <div className="loading-state">
-                  <p>{t('predictionTool.history.loading', 'Loading...')}</p>
+                  <p>{t('predictionTool.history.loadingText', 'Loading...')}</p>
                 </div>
               ) : error ? (
                 <div className="error-state">

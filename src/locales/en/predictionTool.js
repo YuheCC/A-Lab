@@ -4,7 +4,7 @@ export default {
     subtitle: "Predict cycle life (number of cycles when discharge capacity retention reaches 80%) with an AI model trained on internal experimental data. Only the first 100 cycles (effective cycle so the real number may be higher) are needed. The prediction is accurate for battery systems  with limited active ion inventories, such as Li-ion, Na-ion, or anode free batteries.",
     betaTag: "BETA",
     disclaimerTitle: "Disclaimer",
-    disclaimer: "Note: This function predicts cell cycle life based on early-stage cycling data provided by the user. It is currently applicable only to specific cell types and standard cycling conditions (not real-world usage profiles). Users are advised to validate the predictions with their own testing.",
+    disclaimer: "Note: This function predicts cell cycle life using only early-stage cycling data provided by the user. No additional information, such as cell chemistry or design, is required. The model is currently applicable to battery systems with limited active ions under standard cycling conditions (not real-world usage profiles). Users are encouraged to validate the predictions through their own testing.",
 
     // Steps
     steps: {
@@ -64,17 +64,45 @@ export default {
         contactSupport: "contact us"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "Introduction",
+        records: "Records"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "Record ID",
+            fileName: "File Name",
+            batteryCount: "Battery Count",
+            avgCycleLife: "Avg Cycle Life",
+            created: "Created",
+            actions: "Actions"
+        }
+    },
+
     // History
     history: {
         title: "Prediction Records",
         newPrediction: "New Prediction",
         searchPlaceholder: "Search by file name...",
-        loading: "Loading...",
+        loadingText: "Loading...",
+        error: "Error",
+        noResults: "No prediction records found",
+        cannotDeleteDemo: "Cannot delete demo records",
         deleteConfirm: "Are you sure you want to delete this record?",
         deleteSuccess: "Delete successful",
         deleteFailed: "Delete failed",
         view: "View",
-        delete: "Delete"
+        delete: "Delete",
+        loading: {
+            error: "Failed to load history records"
+        },
+        actions: {
+            viewDetails: "View Details",
+            delete: "Delete"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "Capacity degradation (uploaded data)",
         predictedCycleLife: "Predicted cycle number to reach 80% SOH",
         xAxisName: "Cycle Number",
-        yAxisName: "Discharge Capacity"
+        yAxisName: "Discharge Capacity",
+        predictedCapacityLine: "Predicted Capacity Line",
+        sohPredictionLine: "80% SOH Prediction Line",
+        value: "Value",
+        noData: "No Data"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "Prediction Details",
+        loading: "Loading prediction details...",
+        missingId: "Missing prediction ID parameter",
+        fetchError: "Failed to fetch prediction details",
+        downloadFailed: "Download file failed"
+    },
+
+    // Actions
+    actions: {
+        backToList: "Back to List"
     },
 
     // Default Step

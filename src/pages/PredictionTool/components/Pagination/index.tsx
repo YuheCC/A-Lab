@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import './index.less';
 
 interface PaginationProps {
@@ -10,6 +11,7 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onChange }) => {
+  const { t } = useTranslation();
   const totalPages = Math.ceil(total / pageSize);
 
   if (totalPages <= 1) {
@@ -80,14 +82,14 @@ const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onCha
   return (
     <div className="pagination-container">
       <div className="pagination-info">
-        共 {total} 条，每页 {pageSize} 条
+        {t('common.pagination.totalInfo', { total, pageSize })}
       </div>
       <div className="pagination-controls">
         <button
           className="pagination-button pagination-prev"
           onClick={handlePrevious}
           disabled={current === 1}
-          title="上一页"
+          title={t('common.pagination.previousPage')}
         >
           <ChevronLeft size={16} />
         </button>
@@ -112,7 +114,7 @@ const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onCha
           className="pagination-button pagination-next"
           onClick={handleNext}
           disabled={current === totalPages}
-          title="下一页"
+          title={t('common.pagination.nextPage')}
         >
           <ChevronRight size={16} />
         </button>
