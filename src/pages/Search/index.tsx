@@ -50,7 +50,7 @@ const Search = () => {
                     </button>
                 </div>
                 {
-                    activeTab !== 'third' && (
+                    activeTab !== 'third' && isAuthenticated && (
                         <button
                             className="favorites-enter-button"
                             onClick={handleGoToFavorites}

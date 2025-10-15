@@ -121,12 +121,12 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
 
   // 处理新建分析
   const handleNewAnalysis = () => {
-    window.open('/formulation/create', '_blank');
+    window.open('/formulate/create', '_blank');
   };
 
   // 处理查看详情
   const handleViewDetails = (record: MDHistoryItem) => {
-    navigate(`/formulation/detail?id=${record.id}`);
+    navigate(`/formulate/detail?id=${record.id}`);
   };
 
   // 处理tab切换

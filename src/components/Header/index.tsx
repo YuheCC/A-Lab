@@ -12,6 +12,7 @@ import UserFeedBackModal from "@/components/UserFeedBackModal";
 import RoleRender from "../RoleRender";
 import { PricingContext } from "@/layouts/index";
 import { useLoginModalContext } from "@/components/LoginModal/context";
+import HeaderLanguageSwitcher from "@/components/HeaderLanguageSwitcher";
 
 const Header = () => {
     const { t } = useTranslation();
@@ -155,8 +156,10 @@ const Header = () => {
                 {renderNavLink('/ask', t('navigation.header.ask'), pathname === '/ask', isCommonUser)}
                 {renderNavLink('/search', t('navigation.header.search'), pathname === '/search', isCommonUser)}
                 {/* {renderNavLink('/filter', t('navigation.header.filter'), pathname === '/filter', isCommonUser)} */}
-                {renderNavLink('/formulation', t('navigation.header.formulation'), pathname === '/formulation', isCommonUser)}
-                <div 
+                {renderNavLink('/formulate', t('navigation.header.formulation'), pathname === '/formulate', isCommonUser)}
+                {renderNavLink('/design', t('navigation.header.design'), pathname === '/design', isCommonUser)}
+                {renderNavLink('/predict', t('navigation.header.predict'), pathname === '/predict', isCommonUser)}
+                {/* <div 
                     className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
                     onMouseEnter={handleNavDropdownMouseEnter}
                     onMouseLeave={handleNavDropdownMouseLeave}
@@ -169,16 +172,17 @@ const Header = () => {
                         onMouseLeave={handleNavDropdownMouseLeave}
                     >
                         {renderDropdownItem('/predict/performance', t('navigation.header.predictPerformance'), isPathActive('/predict/performance'), isCommonUser)}
-                        {renderDropdownItem('/predict/prediction-tool', t('navigation.header.predictionTool'), isPathActive('/predict/prediction-tool'), isCommonUser)}
+                        {renderDropdownItem('/predict', t('navigation.header.predictionTool'), isPathActive('/predict'), isCommonUser)}
                     </div>
-                </div>
+                </div> */}
                 {/* {renderNavLink('/favorites', t('navigation.header.favorites'), pathname === '/favorites', isCommonUser)} */}
             </nav>
             <div className="user-actions">
                 <NavLink to="/about" className="nav-item" target="_blank" rel="noopener noreferrer">{t('navigation.header.about')} ↗</NavLink>
+                <HeaderLanguageSwitcher />
                 {isAuthenticated ? (
                     <div className="user-avatar-container">
-                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={avatarRef}>
+                        <a href="#" className="action-icon user-avatar" id="userAvatar" onClick={(e) => { e.preventDefault(); setIsDropdownOpen(!isDropdownOpen); }} ref={avatarRef}>
                             <img src={userSvg} alt="User Avatar" className="user-avatar-img" />
                         </a>
                         <div className={`user-dropdown ${isDropdownOpen ? 'show' : ''}`} id="userDropdown" ref={dropdownRef}>
@@ -193,15 +197,15 @@ const Header = () => {
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" className="dropdown-item" onClick={() => settingModalRef?.current?.show?.()}>
+                            <a href="#" className="dropdown-item" onClick={(e) => { e.preventDefault(); settingModalRef?.current?.show?.(); }}>
                                 <img src={settingSvg} alt="Setting" className="item-icon" />
                                 {t('navigation.userDropdown.accountSettings')}
                             </a>
-                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={() => userFeedBackModalRef?.current?.show?.()}>
+                            <a href="#" className="dropdown-item" id="feedbackButton" onClick={(e) => { e.preventDefault(); userFeedBackModalRef?.current?.show?.(); }}>
                                 <img src={feedbackSvg} alt="Feedback" className="item-icon" />
                                 {t('navigation.userDropdown.feedback')}
                             </a>
-                            <a href="#" className="dropdown-item" id="logoutButton" onClick={logout}>
+                            <a href="#" className="dropdown-item" id="logoutButton" onClick={(e) => { e.preventDefault(); logout(); }}>
                                 <img src={logoutSvg} alt="Logout" className="item-icon" />
                                 {t('navigation.userDropdown.logout')}
                             </a>

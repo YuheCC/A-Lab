@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './index.css';
 
 interface PropertyItem {
@@ -15,36 +16,104 @@ interface PropertiesTableProps {
   properties?: PropertyItem[];
 }
 
-const defaultProperties: PropertyItem[] = [
-  { id: 1, property: 'Radial distribution function (RDF)', type: 'Structural', group: 'Standard Properties', estimatedTime: '3 Days', groupRowSpan: 7, timeRowSpan: 7 },
-  { id: 2, property: 'Coordination number', type: 'Structural' },
-  { id: 3, property: 'Solvation cluster type and fraction analysis', type: 'Structural' },
-  { id: 4, property: 'Diffusivity', type: 'Dynamic' },
-  { id: 5, property: 'Conductivity', type: 'Dynamic' },
-  { id: 6, property: 'Viscosity', type: 'Dynamic' },
-  { id: 7, property: 'Density', type: 'Structural' },
-  { id: 8, property: 'Ion-ion correlation', type: 'Dynamic', group: 'Advanced Analysis', estimatedTime: '1 Week', groupRowSpan: 4, timeRowSpan: 4 },
-  { id: 9, property: 'Structure factor (S(q))', type: 'Structural' },
-  { id: 10, property: 'Dynamic structure factor (S(q,ω))', type: 'Structural + Dynamic' },
-  { id: 11, property: 'Residence time', type: 'Dynamic' },
-  { id: 12, property: 'EDL (Electric Double Layer)', type: 'Thermodynamic', group: 'Custom Studies', estimatedTime: '1-2 Weeks', groupRowSpan: 2, timeRowSpan: 2 },
-  { id: 13, property: 'Solubility', type: 'Thermodynamic' }
-];
+const PropertiesTable: React.FC<PropertiesTableProps> = ({ properties }) => {
+  const { t } = useTranslation();
 
-const PropertiesTable: React.FC<PropertiesTableProps> = ({ properties = defaultProperties }) => {
+  const defaultProperties: PropertyItem[] = [
+    {
+      id: 1,
+      property: t('formulation.introductionNew.standardRdfTitle'),
+      type: t('formulation.introductionNew.table.types.structural'),
+      group: t('formulation.introductionNew.groupStandardProperties'),
+      estimatedTime: t('formulation.introductionNew.table.estimatedTimes.short'),
+      groupRowSpan: 7,
+      timeRowSpan: 7,
+    },
+    {
+      id: 2,
+      property: t('formulation.introductionNew.standardCnTitle'),
+      type: t('formulation.introductionNew.table.types.structural'),
+    },
+    {
+      id: 3,
+      property: t('formulation.introductionNew.standardSolvationClusterTableName'),
+      type: t('formulation.introductionNew.table.types.structural'),
+    },
+    {
+      id: 4,
+      property: t('formulation.introductionNew.standardDiffusivityTitle'),
+      type: t('formulation.introductionNew.table.types.dynamic'),
+    },
+    {
+      id: 5,
+      property: t('formulation.introductionNew.standardConductivityTitle'),
+      type: t('formulation.introductionNew.table.types.dynamic'),
+    },
+    {
+      id: 6,
+      property: t('formulation.introductionNew.standardViscosityTitle'),
+      type: t('formulation.introductionNew.table.types.dynamic'),
+    },
+    {
+      id: 7,
+      property: t('formulation.introductionNew.standardDensityTitle'),
+      type: t('formulation.introductionNew.table.types.structural'),
+    },
+    {
+      id: 8,
+      property: t('formulation.introductionNew.advancedIonCorrelationTitle'),
+      type: t('formulation.introductionNew.table.types.dynamic'),
+      group: t('formulation.introductionNew.groupAdvancedAnalysis'),
+      estimatedTime: t('formulation.introductionNew.table.estimatedTimes.medium'),
+      groupRowSpan: 4,
+      timeRowSpan: 4,
+    },
+    {
+      id: 9,
+      property: t('formulation.introductionNew.advancedStructureFactorTitle'),
+      type: t('formulation.introductionNew.table.types.structural'),
+    },
+    {
+      id: 10,
+      property: t('formulation.introductionNew.advancedDynamicStructureFactorTitle'),
+      type: t('formulation.introductionNew.table.types.structuralDynamic'),
+    },
+    {
+      id: 11,
+      property: t('formulation.introductionNew.advancedResidenceTimeTitle'),
+      type: t('formulation.introductionNew.table.types.dynamic'),
+    },
+    {
+      id: 12,
+      property: t('formulation.introductionNew.customEdlTitle'),
+      type: t('formulation.introductionNew.table.types.thermodynamic'),
+      group: t('formulation.introductionNew.groupCustomStudies'),
+      estimatedTime: t('formulation.introductionNew.table.estimatedTimes.long'),
+      groupRowSpan: 2,
+      timeRowSpan: 2,
+    },
+    {
+      id: 13,
+      property: t('formulation.introductionNew.customSolubilityTitle'),
+      type: t('formulation.introductionNew.table.types.thermodynamic'),
+    },
+  ];
+
+  const tableData = properties ?? defaultProperties;
+
   return (
     <table className="md-properties-table">
       <thead>
         <tr>
-          <th>No.</th>
-          <th>Property</th>
-          <th>Type</th>
-          <th>Group</th>
-          <th>Estimated Time</th>
+          <th>{t('formulation.introductionNew.table.headers.no')}</th>
+          <th>{t('formulation.introductionNew.table.headers.property')}</th>
+          <th>{t('formulation.introductionNew.table.headers.type')}</th>
+          <th>{t('formulation.introductionNew.table.headers.group')}</th>
+          <th>{t('formulation.introductionNew.table.headers.estimatedTime')}</th>
         </tr>
       </thead>
       <tbody>
-        {properties.map((item) => (
+        {tableData.map((item) => (
           <tr key={item.id}>
             <td>{item.id}</td>
             <td>{item.property}</td>

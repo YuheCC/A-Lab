@@ -102,6 +102,14 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       
       // 阶段2: 完成 (100%)
       setProgress(100);
+
+      // 预测结果为空时，不跳转并提示错误
+      if (!result || Object.keys(result).length === 0) {
+        setIsProcessing(false);
+        setPredictionResult(null);
+        setError(null);
+        return;
+      }
       
       // 保存预测结果
       setPredictionResult(result);
@@ -122,6 +130,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     } catch (err: any) {
       setIsProcessing(false);
       setProgress(0);
+      console.log('Prediction error:', err);
       setError(err.message || t('predictionTool.errors.predictionFailed'));
       console.error('Prediction error:', err);
     }

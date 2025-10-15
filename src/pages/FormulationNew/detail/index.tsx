@@ -77,7 +77,7 @@ const DetailPage: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/formulation/new?tab=analysis');
+    navigate('/formulate?tab=analysis');
   };
 
   // 动态生成系统属性数据
@@ -245,6 +245,10 @@ const DetailPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="configuration-row">
+                  <span className="config-label">{t('formulation.list.columns.concentration', 'Concentration')}</span>
+                  <span className="config-value">{detailData.cation_molality} mol/kg</span>
+                </div>
+                <div className="configuration-row">
                   <span className="config-label">{t('formulation.list.columns.solventFraction', 'Solvent (Fraction)')}</span>
                   <span className="config-value">
                     <div className="compound-list">
@@ -263,10 +267,6 @@ const DetailPage: React.FC = () => {
                       ? t('formulation.fractionType.mole', 'Molar fraction')
                       : t('formulation.fractionType.weight', 'Weight fraction')}
                   </span>
-                </div>
-                <div className="configuration-row">
-                  <span className="config-label">{t('formulation.list.columns.concentration', 'Concentration')}</span>
-                  <span className="config-value">{detailData.cation_molality} mol/kg</span>
                 </div>
               </div>
             </div>

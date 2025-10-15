@@ -8,6 +8,7 @@ export default {
     filter: "フィルター",
     favorites: "お気に入り",
     predict: "予測",
+    design: "デザイン",
     about: "概要",
     formulation: "配方",
     predictPerformance: "セル性能予測",

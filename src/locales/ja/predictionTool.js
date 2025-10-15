@@ -1,8 +1,10 @@
 export default {
     // Header
     title: "早期サイクルデータをアップロードして寿命予測",
-    subtitle: "SES社内実験データで訓練されたAIモデルを使用して、リチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します。最初の100サイクル（実効サイクルなので実際の数はこれより多くなる可能性があります）のみが必要です",
+    subtitle: "SES社内実験データで訓練されたAIモデルを使用して、リチウムイオン電池のサイクル寿命（80% SOHまでのサイクル数）を予測します。最初の100サイクル（実効サイクルなので実際の数はこれより多くなる可能性があります）のみが必要です。",
     betaTag: "BETA",
+    disclaimerTitle: "免責事項",
+    disclaimer: "<strong>注意：</strong>この機能は、ユーザーが提供する初期段階のサイクリングデータのみを使用してセルサイクル寿命を予測します。セル化学や設計などの追加情報は必要ありません。このモデルは現在、標準的なサイクリング条件（実際の使用プロファイルではない）下で活性イオンが限られたバッテリーシステムに適用可能です。ユーザーは自身のテストを通じて予測を検証することをお勧めします。",
 
     // Steps
     steps: {
@@ -62,17 +64,45 @@ export default {
         contactSupport: "お問い合わせください"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "紹介",
+        records: "記録"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "記録ID",
+            fileName: "ファイル名",
+            batteryCount: "バッテリー数",
+            avgCycleLife: "平均サイクル寿命",
+            created: "作成日時",
+            actions: "操作"
+        }
+    },
+
     // History
     history: {
         title: "予測記録",
         newPrediction: "新しい予測",
         searchPlaceholder: "ファイル名で検索...",
-        loading: "読み込み中...",
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "予測記録がありません",
+        cannotDeleteDemo: "デモ記録は削除できません",
         deleteConfirm: "この記録を削除してもよろしいですか？",
         deleteSuccess: "削除成功",
         deleteFailed: "削除失敗",
         view: "表示",
-        delete: "削除"
+        delete: "削除",
+        loading: {
+            error: "履歴記録の取得に失敗しました"
+        },
+        actions: {
+            viewDetails: "詳細を表示",
+            delete: "削除"
+        }
     },
 
     // Modal
@@ -104,12 +134,44 @@ export default {
         capacityProcess: "容量劣化（アップロードデータ）",
         predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
         xAxisName: "サイクル数",
-        yAxisName: "放電容量"
+        yAxisName: "放電容量",
+        predictedCapacityLine: "予測容量線",
+        sohPredictionLine: "80% SOH 予測線",
+        value: "値",
+        noData: "データなし"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "予測詳細",
+        loading: "予測詳細を読み込み中...",
+        missingId: "予測IDパラメータがありません",
+        fetchError: "予測詳細の取得に失敗しました",
+        downloadFailed: "ファイルダウンロードに失敗しました"
+    },
+
+    // Actions
+    actions: {
+        backToList: "リストに戻る"
     },
 
     // Default Step
     default: {
         selectStep: "操作ステップを選択してください",
         selectStepDescription: "上記のステップから実行する操作を選択してください"
+    },
+
+    // Tutorial
+    tutorial: {
+        button: "チュートリアル",
+        modalTitle: "使用ガイド",
+        imageCaption: '予測出力と実際のセル性能の比較',
+        point1: '"予測"は、最初の100サイクルの時系列データでサイクル寿命を予測できます。',
+        point1_sub1: 'NCM811/12%Si.-グラファイトと炭酸塩電解液',
+        point1_sub2: '1C/1Cサイクリング、100サイクルごとに0.33C/0.33C容量チェック',
+        point2: 'リチウムイオン電池の場合、予測精度は±5%を達成できます。',
+        point3: 'サイクル寿命が既知の実際のセルの場合、モデルは1321サイクル時にEOLを予測しました。',
+        point3_sub1: '実測値は1261サイクル（各サイクルの容量保持率に基づく）または1351サイクル（容量チェックサイクルの容量保持率に基づく）です。',
+        point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
     }
 };
