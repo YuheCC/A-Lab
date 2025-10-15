@@ -1044,14 +1044,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                       <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
                     </div>
                     <div className="result-tooltip__section">
-                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
-                        <ArrowDown className="result-tooltip__indicator-icon" />
-                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
-                      </div>
                       <div className="result-tooltip__indicator result-tooltip__indicator--positive">
                         <ArrowUp className="result-tooltip__indicator-icon" />
                         <p className="result-tooltip__indicator-text">{t('performance.results.positiveTip')}</p>
                       </div>
+                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
+                        <ArrowDown className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
+                      </div> 
                     </div>
                     <div className="result-tooltip__section result-tooltip__section--badge">
                       <div className="result-tooltip__badge-title">{t('performance.results.badgeTitle')}</div>
