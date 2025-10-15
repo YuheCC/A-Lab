@@ -119,10 +119,14 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     return myTierRank >= targetRank;
   };
 
-  const pricingUrlMap = useMemo(() => ({
-    explorer: explorer_url ? `${explorer_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
-    team: team_url ? `${team_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
-  }), [userInfo?.email]);
+  const pricingUrlMap = useMemo(() => {
+    // 优先从 localStorage 读取 email，如果没有再从 userInfo 中获取
+    const email = localStorage.getItem('email') || userInfo?.email || '';
+    return {
+      explorer: explorer_url ? `${explorer_url}?prefilled_email=${email}` : '',
+      team: team_url ? `${team_url}?prefilled_email=${email}` : '',
+    };
+  }, [userInfo?.email]);
 
   const openEducationModal = () => {
     setShowEducationModal(true);
