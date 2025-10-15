@@ -52,6 +52,36 @@ const AboutPage = () => {
     document.body.style.overflow = '';
   };
 
+  const newsItems: Array<{
+    key: string;
+    date: string;
+    title: string;
+    content: string;
+    href: string | null;
+  }> = [
+    {
+      key: 'release3',
+      date: t('about.newsfeed.releaseDate3'),
+      title: t('about.newsfeed.release3'),
+      content: t('about.newsfeed.releaseAbout3'),
+      href: null,
+    },
+    {
+      key: 'release2',
+      date: t('about.newsfeed.releaseDate2'),
+      title: t('about.newsfeed.release2'),
+      content: t('about.newsfeed.releaseAbout2'),
+      href: 'https://www.businesswire.com/news/home/20250709499100/en/SES-AI-Launches-Agentic-Capability-in-Latest-Molecular-Universe-Release-to-Increase-Value-Proposition-for-RD-as-a-Service',
+    },
+    {
+      key: 'release1',
+      date: t('about.newsfeed.releaseDate1'),
+      title: t('about.newsfeed.release1'),
+      content: t('about.newsfeed.releaseAbout1'),
+      href: 'https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest',
+    },
+  ];
+
   return (
     <div className="about-page-body">
       <header className="about-header">
@@ -126,31 +156,31 @@ const AboutPage = () => {
                       </a>
                   </div>
                   <div className="news-feed">
-                      <div className="news-item" style={{alignItems:'flex-start'}}>
-                          <div className="news-date">{t('about.newsfeed.releaseDate2')}</div>
-                          <div className="news-content">
-                            <div className="news-title">
-                                {t('about.newsfeed.release2')}
-                            </div>
-                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
-                                {t('about.newsfeed.releaseAbout2')}<br/>
-                                <a href="https://www.businesswire.com/news/home/20250709499100/en/SES-AI-Launches-Agentic-Capability-in-Latest-Molecular-Universe-Release-to-Increase-Value-Proposition-for-RD-as-a-Service" target="_blank" style={{color:'#1c7c54',textDecoration:'underline'}}>{t('about.newsfeed.newsLink')}</a>
-                            </p>
+                    {newsItems.map((item) => (
+                      <div className="news-item" key={item.key} style={{alignItems: 'flex-start'}}>
+                        <div className="news-date">{item.date}</div>
+                        <div className="news-content">
+                          <div className="news-title">
+                            {item.title}
                           </div>
+                          <p className="news-details" style={{whiteSpace: 'pre-wrap'}}>
+                            {item.content}
+                            {item.href && (
+                              <>
+                                <br />
+                                <a
+                                  href={item.href}
+                                  target="_blank"
+                                  style={{color: '#1c7c54', textDecoration: 'underline'}}
+                                >
+                                  {t('about.newsfeed.newsLink')}
+                                </a>
+                              </>
+                            )}
+                          </p>
+                        </div>
                       </div>
-                      <div className="news-item" style={{alignItems:'flex-start'}}>
-                          <div className="news-date">{t('about.newsfeed.releaseDate1')}</div>
-                          <div className="news-content">
-                            <div className="news-title">
-                                {t('about.newsfeed.release1')}
-                            </div>
-                            <p className="news-details" style={{whiteSpace:'pre-wrap'}}>
-                                {t('about.newsfeed.releaseAbout1')}<br/>
-                                <a href="https://www.businesswire.com/news/home/20250429660564/en/SES-AI-Unveils-Molecular-Universe-to-the-Public-for-the-First-Time-Receives-Strong-Industry-Interest" target="_blank" style={{color:'#1c7c54',textDecoration:'underline'}}>{t('about.newsfeed.newsLink')}</a>
-                            </p>
-                          </div>
-                      </div>
-
+                    ))}
                   </div>
               </section>
               <section id="motivation" className="prose-section">
@@ -234,13 +264,6 @@ const AboutPage = () => {
                             {t('about.features.ask.title')}
                           </div>
                           <div 
-                            className={`feature-tab ${activeFeature === 'deepspace' ? 'active' : ''}`} 
-                            data-feature="deepspace"
-                            onClick={() => handleFeatureClick('deepspace')}
-                          >
-                            {t('about.features.deepspace.title')}
-                          </div>
-                          <div 
                             className={`feature-tab ${activeFeature === 'search' ? 'active' : ''}`} 
                             data-feature="search"
                             onClick={() => handleFeatureClick('search')}
@@ -248,11 +271,18 @@ const AboutPage = () => {
                             {t('about.features.search.title')}
                           </div>
                           <div 
-                            className={`feature-tab ${activeFeature === 'filter' ? 'active' : ''}`} 
-                            data-feature="filter"
-                            onClick={() => handleFeatureClick('filter')}
+                            className={`feature-tab ${activeFeature === 'formulate' ? 'active' : ''}`} 
+                            data-feature="formulate"
+                            onClick={() => handleFeatureClick('formulate')}
                           >
-                            {t('about.features.filter.title')}
+                            {t('about.features.formulate.title')}
+                          </div>
+                          <div 
+                            className={`feature-tab ${activeFeature === 'predict' ? 'active' : ''}`} 
+                            data-feature="predict"
+                            onClick={() => handleFeatureClick('predict')}
+                          >
+                            {t('about.features.predict.title')}
                           </div>
                       </div>
                       <div className="features-content">
@@ -263,16 +293,12 @@ const AboutPage = () => {
                           <div className="feature-detail" data-feature="ask" style={{display: activeFeature === 'ask' ? 'block' : 'none'}}>
                               <h3>{t('about.features.ask.title')}</h3>
                               <p>{t('about.features.ask.description1')}</p>
-                              <p>{t('about.features.ask.description2')}</p>
-                          </div>
-                          <div className="feature-detail" data-feature="deepspace" style={{display: activeFeature === 'deepspace' ? 'block' : 'none'}}>
-                            <h3>{t('about.features.deepspace.title')}</h3>
-                            <p>{t('about.features.deepspace.description')}</p>
+                              {/* <p>{t('about.features.ask.description2')}</p> */}
                           </div>
                           <div className="feature-detail" data-feature="search" style={{display: activeFeature === 'search' ? 'block' : 'none'}}>
                               <h3>{t('about.features.search.title')}</h3>
                               <p>{t('about.features.search.description')}</p>
-                              <ul>
+                              {/* <ul>
                                   <li><b>{t('about.features.search.way1')}</b></li>
                                   <li><b>{t('about.features.search.way2')}</b></li>
                                   <li><b>{t('about.features.search.way3')}</b></li>
@@ -283,17 +309,15 @@ const AboutPage = () => {
                                   <li>{t('about.features.search.discover1')}</li>
                                   <li>{t('about.features.search.discover2')}</li>
                               </ul>
-                              <p>{t('about.features.search.similarity')}</p>
+                              <p>{t('about.features.search.similarity')}</p> */}
                           </div>
-                          <div className="feature-detail" data-feature="filter" style={{display: activeFeature === 'filter' ? 'block' : 'none'}}>
-                              <h3>{t('about.features.filter.title')}</h3>
-                              <p>{t('about.features.filter.description')}</p>
-                              <ul>
-                                  <li><b>{t('about.features.filter.homo')}</b></li>
-                                  <li><b>{t('about.features.filter.esp')}</b></li>
-                                  <li><b>{t('about.features.filter.functional')}</b></li>
-                              </ul>
-                              <p>{t('about.features.filter.overlay')}</p>
+                          <div className="feature-detail" data-feature="formulate" style={{display: activeFeature === 'formulate' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.formulate.title')}</h3>
+                              <p>{t('about.features.formulate.description')}</p>
+                          </div>
+                          <div className="feature-detail" data-feature="predict" style={{display: activeFeature === 'predict' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.predict.title')}</h3>
+                              <p>{t('about.features.predict.description')}</p>
                           </div>
                       </div>
                   </div>
