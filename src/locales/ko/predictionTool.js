@@ -64,17 +64,45 @@ export default {
         contactSupport: "문의하십시오"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "소개",
+        records: "기록"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "기록 ID",
+            fileName: "파일명",
+            batteryCount: "배터리 수",
+            avgCycleLife: "평균 사이클 수명",
+            created: "생성 시간",
+            actions: "작업"
+        }
+    },
+
     // History
     history: {
         title: "예측 기록",
         newPrediction: "새 예측",
         searchPlaceholder: "파일명으로 검색...",
-        loading: "로딩 중...",
+        loadingText: "로딩 중...",
+        error: "오류",
+        noResults: "예측 기록이 없습니다",
+        cannotDeleteDemo: "데모 기록을 삭제할 수 없습니다",
         deleteConfirm: "이 기록을 삭제하시겠습니까?",
         deleteSuccess: "삭제 성공",
         deleteFailed: "삭제 실패",
         view: "보기",
-        delete: "삭제"
+        delete: "삭제",
+        loading: {
+            error: "히스토리 기록을 가져오지 못했습니다"
+        },
+        actions: {
+            viewDetails: "상세 보기",
+            delete: "삭제"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "용량 열화 (업로드된 데이터)",
         predictedCycleLife: "80% SOH에 도달하는 예측 사이클 수",
         xAxisName: "사이클 수",
-        yAxisName: "방전 용량"
+        yAxisName: "방전 용량",
+        predictedCapacityLine: "예측 용량선",
+        sohPredictionLine: "80% SOH 예측선",
+        value: "값",
+        noData: "데이터 없음"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "예측 상세",
+        loading: "예측 상세 정보를 불러오는 중...",
+        missingId: "예측 ID 매개변수가 없습니다",
+        fetchError: "예측 상세 정보 가져오기 실패",
+        downloadFailed: "파일 다운로드 실패"
+    },
+
+    // Actions
+    actions: {
+        backToList: "목록으로 돌아가기"
     },
 
     // Default Step

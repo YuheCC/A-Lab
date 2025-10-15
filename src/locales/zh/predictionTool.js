@@ -64,17 +64,45 @@ export default {
         contactSupport: "联系我们"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "简介",
+        records: "记录"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "记录ID",
+            fileName: "文件名",
+            batteryCount: "电芯数量",
+            avgCycleLife: "平均循环寿命",
+            created: "创建时间",
+            actions: "操作"
+        }
+    },
+
     // History
     history: {
         title: "预测记录",
         newPrediction: "新增预测",
         searchPlaceholder: "按文件名搜索...",
-        loading: "加载中...",
+        loadingText: "加载中...",
+        error: "错误",
+        noResults: "暂无预测记录",
+        cannotDeleteDemo: "无法删除演示记录",
         deleteConfirm: "确定要删除这条记录吗？",
         deleteSuccess: "删除成功",
         deleteFailed: "删除失败",
         view: "查看",
-        delete: "删除"
+        delete: "删除",
+        loading: {
+            error: "获取历史记录失败"
+        },
+        actions: {
+            viewDetails: "查看详情",
+            delete: "删除"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "容量衰减过程（上传数据）",
         predictedCycleLife: "预测达到80% SOH的循环次数",
         xAxisName: "循环数",
-        yAxisName: "放电容量"
+        yAxisName: "放电容量",
+        predictedCapacityLine: "预测容量线",
+        sohPredictionLine: "80% SOH 预测线",
+        value: "值",
+        noData: "无数据"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "预测详情",
+        loading: "正在加载预测详情...",
+        missingId: "缺少预测ID参数",
+        fetchError: "获取预测详情失败",
+        downloadFailed: "下载文件失败"
+    },
+
+    // Actions
+    actions: {
+        backToList: "返回列表"
     },
 
     // Default Step

@@ -64,17 +64,45 @@ export default {
         contactSupport: "contact us"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "Introduction",
+        records: "Records"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "Record ID",
+            fileName: "File Name",
+            batteryCount: "Battery Count",
+            avgCycleLife: "Avg Cycle Life",
+            created: "Created",
+            actions: "Actions"
+        }
+    },
+
     // History
     history: {
         title: "Prediction Records",
         newPrediction: "New Prediction",
         searchPlaceholder: "Search by file name...",
-        loading: "Loading...",
+        loadingText: "Loading...",
+        error: "Error",
+        noResults: "No prediction records found",
+        cannotDeleteDemo: "Cannot delete demo records",
         deleteConfirm: "Are you sure you want to delete this record?",
         deleteSuccess: "Delete successful",
         deleteFailed: "Delete failed",
         view: "View",
-        delete: "Delete"
+        delete: "Delete",
+        loading: {
+            error: "Failed to load history records"
+        },
+        actions: {
+            viewDetails: "View Details",
+            delete: "Delete"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "Capacity degradation (uploaded data)",
         predictedCycleLife: "Predicted cycle number to reach 80% SOH",
         xAxisName: "Cycle Number",
-        yAxisName: "Discharge Capacity"
+        yAxisName: "Discharge Capacity",
+        predictedCapacityLine: "Predicted Capacity Line",
+        sohPredictionLine: "80% SOH Prediction Line",
+        value: "Value",
+        noData: "No Data"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "Prediction Details",
+        loading: "Loading prediction details...",
+        missingId: "Missing prediction ID parameter",
+        fetchError: "Failed to fetch prediction details",
+        downloadFailed: "Download file failed"
+    },
+
+    // Actions
+    actions: {
+        backToList: "Back to List"
     },
 
     // Default Step

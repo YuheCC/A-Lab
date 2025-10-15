@@ -189,7 +189,7 @@ const PredictionTool: React.FC = () => {
               fontSize: '14px',
               color: '#666'
             }}>
-              {t('predictionTool.history.loading')}
+              {t('predictionTool.history.loadingText')}
             </div>
           )}
         </div>

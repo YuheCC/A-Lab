@@ -64,17 +64,45 @@ export default {
         contactSupport: "お問い合わせください"
     },
 
+    // Tabs
+    tabs: {
+        introduction: "紹介",
+        records: "記録"
+    },
+
+    // List
+    list: {
+        columns: {
+            recordId: "記録ID",
+            fileName: "ファイル名",
+            batteryCount: "バッテリー数",
+            avgCycleLife: "平均サイクル寿命",
+            created: "作成日時",
+            actions: "操作"
+        }
+    },
+
     // History
     history: {
         title: "予測記録",
         newPrediction: "新しい予測",
         searchPlaceholder: "ファイル名で検索...",
-        loading: "読み込み中...",
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "予測記録がありません",
+        cannotDeleteDemo: "デモ記録は削除できません",
         deleteConfirm: "この記録を削除してもよろしいですか？",
         deleteSuccess: "削除成功",
         deleteFailed: "削除失敗",
         view: "表示",
-        delete: "削除"
+        delete: "削除",
+        loading: {
+            error: "履歴記録の取得に失敗しました"
+        },
+        actions: {
+            viewDetails: "詳細を表示",
+            delete: "削除"
+        }
     },
 
     // Modal
@@ -106,7 +134,25 @@ export default {
         capacityProcess: "容量劣化（アップロードデータ）",
         predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
         xAxisName: "サイクル数",
-        yAxisName: "放電容量"
+        yAxisName: "放電容量",
+        predictedCapacityLine: "予測容量線",
+        sohPredictionLine: "80% SOH 予測線",
+        value: "値",
+        noData: "データなし"
+    },
+
+    // Detail
+    detail: {
+        actionTitle: "予測詳細",
+        loading: "予測詳細を読み込み中...",
+        missingId: "予測IDパラメータがありません",
+        fetchError: "予測詳細の取得に失敗しました",
+        downloadFailed: "ファイルダウンロードに失敗しました"
+    },
+
+    // Actions
+    actions: {
+        backToList: "リストに戻る"
     },
 
     // Default Step

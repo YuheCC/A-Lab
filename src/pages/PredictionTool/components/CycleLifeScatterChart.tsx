@@ -108,8 +108,8 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           if (params.componentType === 'markLine') {
             return `
               <div>
-                <strong>80% SOH 预测线</strong><br/>
-                <strong>值:</strong> ${params.value?.toFixed(2) || markLineYValue?.toFixed(2) || '0'}<br/>
+                <strong>${t('predictionTool.chart.sohPredictionLine')}</strong><br/>
+                <strong>${t('predictionTool.chart.value')}:</strong> ${params.value?.toFixed(2) || markLineYValue?.toFixed(2) || '0'}<br/>
               </div>
             `;
           }
@@ -128,7 +128,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
           return `
             <div>
               <strong>${params.seriesName}</strong><br/>
-              <strong>值:</strong> ${params.value || '无数据'}<br/>
+              <strong>${t('predictionTool.chart.value')}:</strong> ${params.value || t('predictionTool.chart.noData')}<br/>
             </div>
           `;
         }
@@ -319,7 +319,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
             data: [
               {
                 yAxis: markLineYValue,
-                name: '预测容量线',
+                name: t('predictionTool.chart.predictedCapacityLine'),
                 label: {
                   show: true,
                   position: 'start',
@@ -363,7 +363,7 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
             data: [
               {
                 yAxis: markLineYValue,
-                name: '预测容量线',
+                name: t('predictionTool.chart.predictedCapacityLine'),
                 label: {
                   show: false // 右侧不显示标签，避免重复
                 },
