@@ -8,6 +8,7 @@ import ContactSalesModal from '@/components/ContactSalesModal';
 import { sendEducationCode } from '@/services/auth';
 import { useMessage } from '@/components/MessageProvider';
 import { useEffect } from 'react';
+import { useLoginModal } from '@/components/LoginModal/hooks';
 
 type TierId = 'basic' | 'research' | 'explorer' | 'team' | 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
 
@@ -96,6 +97,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   const navigate = useNavigate();
   const { userPermissions: myPermission, userInfo, isAuthenticated } = useAuthStore();
   const { success, error } = useMessage();
+  const { openLoginModal } = useLoginModal();
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
@@ -179,14 +181,25 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   };
 
   const clickButtonHandler = (tier: TierId) => {
-    if (tier === 'basic') {
-      navigate('/register');
-      return;
-    }
-
+    // 企业版按钮（Enterprise I/II/III、Joint）不需要登录检查
+    const isEnterprisePlan = isEnterpriseTier(tier) || tier === 'joint';
+    
+    // 如果是 showHeader 的情况
     if (showHeader) {
-      navigate(`/map?showPricing=true&permission=${tier}`);
-      return;
+      // 如果不是企业版按钮（非 contact 按钮），跳转到 /map?showPricing
+      if (!isEnterprisePlan) {
+        navigate('/map?showPricing=true&permission=' + tier);
+        return;
+      }
+      // 如果是企业版按钮，继续执行下面的逻辑（打开 contact modal）
+    }
+    
+    if (!isEnterprisePlan) {
+      // 个人计划按钮需要登录检查
+      if (!localStorage.getItem('token')) {
+        openLoginModal();
+        return;
+      }
     }
 
     if (tier === 'research') {
@@ -194,7 +207,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       return;
     }
 
-    if (isEnterpriseTier(tier) || tier === 'joint') {
+    if (isEnterprisePlan) {
       setSelectedPlan(tier);
       setContactModalOpen(true);
       return;
@@ -207,37 +220,30 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   };
 
   const filteredPersonalPlans = useMemo(() => {
-    if (showHeader || !isAuthenticated) {
-      return PERSONAL_PLAN_CONFIGS;
-    }
-    return PERSONAL_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
-  }, [showHeader, isAuthenticated, myTierRank]);
+    return PERSONAL_PLAN_CONFIGS;
+  }, []);
 
   const filteredBusinessPlans = useMemo(() => {
-    if (showHeader || !isAuthenticated) {
-      return BUSINESS_PLAN_CONFIGS;
+    return BUSINESS_PLAN_CONFIGS;
+  }, []);
+
+  const availablePersonalPlans = useMemo(() => {
+    if (!isAuthenticated) {
+      return filteredPersonalPlans;
     }
-    return BUSINESS_PLAN_CONFIGS.filter((plan) => getTierRankValue(plan.id) > myTierRank);
-  }, [showHeader, isAuthenticated, myTierRank]);
+    return filteredPersonalPlans.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [isAuthenticated, myTierRank, filteredPersonalPlans]);
 
-  useEffect(() => {
-    if (showHeader) {
-      return;
+  const availableBusinessPlans = useMemo(() => {
+    if (!isAuthenticated) {
+      return filteredBusinessPlans;
     }
+    return filteredBusinessPlans.filter((plan) => getTierRankValue(plan.id) > myTierRank);
+  }, [isAuthenticated, myTierRank, filteredBusinessPlans]);
 
-    const hasPersonal = filteredPersonalPlans.length > 0;
-    const hasBusiness = filteredBusinessPlans.length > 0;
-
-    if (activeGroup === 'personal' && !hasPersonal && hasBusiness) {
-      setActiveGroup('business');
-    } else if (activeGroup === 'business' && !hasBusiness && hasPersonal) {
-      setActiveGroup('personal');
-    }
-  }, [showHeader, activeGroup, filteredPersonalPlans.length, filteredBusinessPlans.length]);
-
-  const noPlansAvailable = !showHeader && isAuthenticated && filteredPersonalPlans.length === 0 && filteredBusinessPlans.length === 0;
-  const personalGroupDisabled = !showHeader && filteredPersonalPlans.length === 0;
-  const businessGroupDisabled = !showHeader && filteredBusinessPlans.length === 0;
+  const noPlansAvailable = !showHeader && isAuthenticated && availablePersonalPlans.length === 0 && availableBusinessPlans.length === 0;
+  const personalGroupDisabled = !showHeader && availablePersonalPlans.length === 0;
+  const businessGroupDisabled = !showHeader && availableBusinessPlans.length === 0;
 
   const renderPlanCard = (plan: PlanConfig) => {
     const title = t(`pricing.${plan.key}.title`);
@@ -300,9 +306,13 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     if (isEnterpriseTier(normalized) || normalized === 'joint') {
       setActiveGroup('business');
     }
-
-    clickButtonHandler(normalized);
+  
+    if(myPermission)clickButtonHandler(normalized);
   }, [permission, myPermission]);
+
+  useEffect(() => {
+    console.log('activeGroup', activeGroup);
+  }, [activeGroup]);
 
   return (
     <section id="pricing" className={`pricing-section ${className}`}>
@@ -318,14 +328,12 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       <div className="pricing-switcher">
         <button 
           className={`pricing-switch-btn ${activeGroup === 'personal' ? 'active' : ''}`}
-          disabled={personalGroupDisabled}
           onClick={() => handleGroupSwitch('personal')}
         >
           {t('pricing.switcher.individual')}
         </button>
         <button 
           className={`pricing-switch-btn ${activeGroup === 'business' ? 'active' : ''}`}
-          disabled={businessGroupDisabled}
           onClick={() => handleGroupSwitch('business')}
         >
           {t('pricing.switcher.enterprise')}
@@ -362,6 +370,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
         planType={selectedPlan}
+        userEmail={userInfo?.email}
       />
       
       {/* Education Verification Modal */}

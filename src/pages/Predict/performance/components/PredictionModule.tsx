@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
-import { Info } from 'lucide-react';
+import { Info, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon } from './ArrowIcons';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './PredictionModule.css';
+import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from './CustomSelect';
 import { PricingContext } from '@/layouts/index';
@@ -400,8 +402,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
       const status = response?.status ?? response?.data?.status;
 
-      if (status === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
+      if (status === 402 || status === 401) {
         setCalculationError(null);
         setShowResults(false);
         return;
@@ -412,18 +413,37 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       }
 
       if (response?.data) {
-        setPredictionResults(response.data);
+        let responseData = response?.data || {};
+        try{
+          if(responseData.model_result) {
+            const model_result = JSON.parse(responseData.model_result);
+            responseData = {
+              ...responseData,
+              temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label.toString(),
+              temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob.toString(),
+              temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label.toString(),
+              temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob.toString(),
+              temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label.toString(),
+              temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob.toString(),
+              temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label.toString(),
+              temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob.toString(),
+              temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label.toString(),
+              temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob.toString()
+            };
+          }
+        } catch (error) {
+          console.error('Error parsing API data:', error);
+        }
+        console.log('Prediction results:', responseData);
+        setPredictionResults(responseData);
         setShowResults(true);
-        console.log('Prediction results:', response.data);
       } else {
         throw new Error('No data received from prediction API');
       }
     } catch (error) {
       console.error('Prediction failed:', error);
       const errorStatus = (error as any)?.response?.status ?? (error as any)?.status ?? (error as any)?.data?.status;
-
-      if (errorStatus === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
+      if (errorStatus === 402 || errorStatus === 401) {
         setShowResults(false);
         setCalculationError(null);
         return;
@@ -537,8 +557,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
     
     // Format confidence percentage
-    const confidence = parseFloat((prob * 100).toFixed(1));
-    const displayConfidence = label === 0 ? 100 - confidence : confidence;
+    const confidence = prob;
+    const displayConfidence = parseFloat(confidence.toFixed(2));
     return {
       status,
       confidence: displayConfidence,
@@ -565,6 +585,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       };
     }
 
+    let quantification_result: any = {};
+    try{
+      const model_result = JSON.parse((predictionResults as any)?.model_result);
+      quantification_result = model_result?.quantification_result ?? {};
+    } catch (error) {
+      console.error('Error parsing API data:', error);
+    }
+    
     // Process each metric using unified logic
     const temp25_CE = processPerformanceMetric(
       predictionResults.temperature_25_CE_prob,
@@ -572,12 +600,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
     
     const temp25_CL = processPerformanceMetric(
-      predictionResults.temperature_25_CL_prob,
+      quantification_result?.pred_cl_25 ?? predictionResults.temperature_25_CL_prob,
       predictionResults.temperature_25_CL_label
     );
     
     const temp25_CR = processPerformanceMetric(
-      predictionResults.temperature_25_CR_prob,
+      quantification_result?.cr ?? predictionResults.temperature_25_CR_prob,
       predictionResults.temperature_25_CR_label
     );
     
@@ -587,7 +615,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     );
     
     const temp45_CL = processPerformanceMetric(
-      predictionResults.temperature_45_CL_prob,
+      quantification_result?.pred_cl_45 ?? predictionResults.temperature_45_CL_prob,
       predictionResults.temperature_45_CL_label
     );
 
@@ -650,19 +678,53 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   }, [onResetRef, resetPredictionState]);
 
   // Helper function to render result badge
-  const renderResultBadge = (metric: any) => {
+  const renderResultBadge = (metric: any, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
     const isPositive = metric.status === 'Positive';
     const isNegative = metric.status === 'Negative';
-    const badgeClass = isPositive ? 'positive' : isNegative ? 'negative' : 'unknown';
-    const icon = isPositive ? '✓' : isNegative ? '✕' : '?';
-    const statusText = isPositive ? t('performance.results.status.positive') : 
-                       isNegative ? t('performance.results.status.negative') : 
-                       t('performance.results.status.neutral');
-
+    
+    // 获取百分比数值
+    let percentValue = 0;
+    if (typeof metric.confidence === 'string') {
+      percentValue = Math.abs(parseFloat(metric.confidence.replace('%', '')));
+    } else if (typeof metric.confidence === 'number') {
+      percentValue = Math.abs(metric.confidence);
+    }
+    
+    // 根据百分比值判断严重程度级别
+    let level = '';
+    if (percentValue < 5) {
+      level = 'light';
+    } else if (percentValue >= 5 && percentValue <= 25) {
+      level = 'medium';
+    } else if (percentValue > 25) {
+      level = 'dark';
+    }
+    
+    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
+    
+    // 选择箭头图标 - 使用自定义箭头
+    const ArrowIcon = isPositive ? ArrowUpIcon : isNegative ? ArrowDownIcon : null;
+    
+    // CE 只显示箭头
+    if (metricType === 'ce') {
+      return (
+        <div className={`pm-performance-result-badge pm-performance-result-badge--${badgeClass} pm-performance-result-badge--ce-only`}>
+          <span className="pm-performance-result-badge__arrow">
+            {ArrowIcon && <ArrowIcon size={16} />}
+          </span>
+        </div>
+      );
+    }
+    
+    // 其他指标显示箭头 + 百分比
+    const value = percentValue > 0 ? `${percentValue}%` : '';
+    
     return (
-      <div className={`result-badge ${badgeClass}`}>
-        <span className="result-icon">{icon}</span>
-        {statusText}
+      <div className={`pm-performance-result-badge pm-performance-result-badge--${badgeClass}`}>
+        <span className="pm-performance-result-badge__text">
+          {ArrowIcon && <ArrowIcon size={15} />}
+          {value && <span>{value}</span>}
+        </span>
       </div>
     );
   };
@@ -684,12 +746,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }));
   }, [batterySystemOptions?.length, comingSoonText]);
   return (
-    <div className="prediction-module">
-      <div className="module-section">
+    <div className="pm-prediction-module">
+      <div className="pm-module-section">
         <h2>{t('performance.batterySystemSelection.title')}</h2>
         
-        <div className="module-content-card">
-          <div className="form-group">
+        <div className="pm-module-content-card">
+          <div className="pm-form-group">
             <label>{t('performance.batterySystemSelection.label')}</label>
             <CustomSelect
               value={selectedSystem}
@@ -704,41 +766,41 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 [{ id: 'loading', name: t('performance.batterySystemSelection.loading'), disabled: true }] :
                 batterySystemDisplayOptions
               }
-              className="system-select"
+              className="pm-system-select"
               disabled={isBatterySystemLoading}
               placeholder={t('performance.batterySystemSelection.loading')}
             />
           </div>
 
           {showSpecs && currentSpec && (
-            <div className="system-specs">
-              <div className="specs-header">
+            <div className="pm-system-specs">
+              <div className="pm-specs-header">
                 <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
                 <button 
-                  className="close-specs"
+                  className="pm-close-specs"
                   onClick={() => setShowSpecs(false)}
                 >
                   ×
                 </button>
               </div>
               
-              <div className="specs-grid">
-                <div className="spec-item">
+              <div className="pm-specs-grid">
+                <div className="pm-spec-item">
                   <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
                   <span>{currentSpec.cathode}</span>
                 </div>
                 
-                <div className="spec-item">
+                <div className="pm-spec-item">
                   <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
                   <span>{currentSpec.anode}</span>
                 </div>
                 
-                <div className="spec-item">
+                <div className="pm-spec-item">
                   <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
                   <span>{currentSpec.electrolyte}</span>
                 </div>
                 
-                <div className="spec-item">
+                <div className="pm-spec-item">
                   <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
                   <span>{currentSpec.cellDesign}</span>
                 </div>
@@ -746,11 +808,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
           )}
 
-          <div className="form-group">
-            <div className="dual-input-row">
-              <div className="dual-input-item">
+          <div className="pm-form-group">
+            <div className="pm-dual-input-row">
+              <div className="pm-dual-input-item">
                 <label>
-                  {t('performance.additive.label')} <span className="required">{t('performance.additive.required')}</span>
+                  {t('performance.additive.label')} <span className="pm-required">{t('performance.additive.required')}</span>
                 </label>
                 <input
                   type="text"
@@ -780,15 +842,15 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   }}
                   onBlur={handleSmilesBlur}
                   placeholder={t('performance.additive.placeholder')}
-                  className="additive-input"
+                  className="pm-additive-input"
                 />
               </div>
 
-              <div className="dual-input-item">
+              <div className="pm-dual-input-item">
                 <label>
                   {t('performance.weightPercentage.label')}
                   <Tooltip title={t('performance.weightPercentage.tooltip')} placement="top">
-                    <span className="info-icon">
+                    <span className="pm-info-icon">
                       ⓘ
                     </span>
                   </Tooltip>
@@ -797,43 +859,45 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   type="text"
                   value="1.9"
                   disabled
-                  className="weight-percentage-input"
+                  className="pm-weight-percentage-input"
                 />
               </div>
             </div>
           </div>
 
           {/* 分子详情显示区域 */}
-          <div className="molecule-details-section" style={{ marginBottom: '20px' }}>
+          <div className="pm-molecule-details-section" style={{ marginBottom: '20px' }}>
             {isMoleculeLoading && (
-              <div className="molecule-loading">
+              <div className="pm-molecule-loading">
                 <p>{t('performance.moleculeInfo.loading')}</p>
               </div>
             )}
 
             {moleculeDetails && (
-              <div className="molecule-information">
-                <div className="molecule-header">
+              <div className="pm-molecule-information">
+                <div className="pm-molecule-header">
                   <h3>{t('performance.moleculeInfo.title')}</h3>
                   <button 
-                    className="molecule-close-btn"
+                    className="pm-molecule-close-btn"
                     onClick={() => setMoleculeDetails(null)}
                   >
                     ×
                   </button>
                 </div>
                 
-                <div className="molecule-content">
-                  <div className="molecule-structure">
+                <div className="pm-molecule-content">
+                  <div className="pm-molecule-structure">
                     {moleculeDetails.properties.smiles ? (
                       <MolViewer2D
                         smile={moleculeDetails.properties.smiles}
                         cation={moleculeDetails.properties.cation}
                         theme="light"
+                        className=""
+                        style={{}}
                       />
                     ) : (
-                      <div className="structure-placeholder">
-                        <div className="structure-circle">
+                      <div className="pm-structure-placeholder">
+                        <div className="pm-structure-circle">
                           <span>{t('performance.moleculeInfo.structurePlaceholder.line1')}</span>
                           <span>{t('performance.moleculeInfo.structurePlaceholder.line2')}</span>
                         </div>
@@ -841,80 +905,80 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     )}
                   </div>
                   
-                  <div className="molecule-properties">
-                    <div className="properties-grid">
-                      <div className="property-row">
-                        <div className="property-item">
+                  <div className="pm-molecule-properties">
+                    <div className="pm-properties-grid">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.smiles')}</label>
                           <span>{moleculeDetails.properties.smiles || '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.espMin')}</label>
                           <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
                           <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
                           <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.umapX')}</label>
                           <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
                           <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.umapY')}</label>
                           <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
                           <span>{moleculeDetails.properties.flashPoint || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.homo')}</label>
                           <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
                           <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.lumo')}</label>
                           <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
                           <span>{moleculeDetails.properties.commercialViability || '-'}</span>
                         </div>
                       </div>
                       
-                      <div className="property-row">
-                        <div className="property-item">
+                      <div className="pm-property-row">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.espMax')}</label>
                           <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
                         </div>
-                        <div className="property-item">
+                        <div className="pm-property-item">
                           <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
                           <span>{moleculeDetails.properties.functionalGroups ? (() => {
                             try {
@@ -933,18 +997,18 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             )}
 
             {isInvalidSmiles && (
-              <div className="smiles-error-display">
-                <div className="error-header">
+              <div className="pm-smiles-error-display">
+                <div className="pm-error-header">
                   <h3>{t('performance.invalidSmiles.title')}</h3>
                 </div>
                 
-                <div className="smiles-error-content">
+                <div className="pm-smiles-error-content">
                   <p>{t('performance.invalidSmiles.description')}</p>
                   <p>{t('performance.invalidSmiles.suggestion')}</p>
-                  <div className="example-molecules">
-                    <div className="molecule-examples">
-                      <span className="example-molecule">[Li+].[O-]P(=O)(F)F</span>
-                      <span className="example-molecule">O=C1OC(F)CO1</span>
+                  <div className="pm-example-molecules">
+                    <div className="pm-molecule-examples">
+                      <span className="pm-example-molecule">[Li+].[O-]P(=O)(F)F</span>
+                      <span className="pm-example-molecule">O=C1OC(F)CO1</span>
                     </div>
                   </div>
                 </div>
@@ -953,7 +1017,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           </div>
 
           <button 
-            className={`calculate-btn ${showResults ? 'calculated' : ''} ${isCalculating ? 'calculating' : ''} ${isInvalidSmiles ? 'disabled' : ''}`}
+            className={`pm-calculate-btn ${showResults ? 'pm-calculated' : ''} ${isCalculating ? 'pm-calculating' : ''} ${isInvalidSmiles ? 'pm-disabled' : ''}`}
             onClick={handleCalculate}
             disabled={isCalculating || showResults}
           >
@@ -961,93 +1025,72 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           </button>
 
           {calculationError && (
-            <div className="calculation-error">
+            <div className="pm-calculation-error">
               <p>{calculationError}</p>
             </div>
           )}
         </div>
 
         {showResults && (
-          <div className="results-section">
-            <div className="results-title-container">
+          <div className="pm-results-section">
+            <div className="pm-results-title-container">
               <h2>{t('performance.results.title')}</h2>
               <Tooltip
                 title={
-                  <div>
-                    <div style={{
-                      fontSize: '12px',
-                      lineHeight: '1.5',
-                      color: '#6b7280',
-                      marginBottom: '16px',
-                      paddingBottom: '12px',
-                      borderBottom: '1px solid #e5e7eb'
-                    }}>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
-                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                  <div className="pm-result-tooltip">
+                    <div className="result-tooltip__section result-tooltip__section--description">
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                      marginBottom: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#ef4444',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#dc2626',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.negativeTitle')}
-                        </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.negativeTip')}
-                        </div>
+                    <div className="result-tooltip__section">
+                      <div className="result-tooltip__indicator result-tooltip__indicator--positive">
+                        <ArrowUp className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.positiveTip')}</p>
                       </div>
+                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
+                        <ArrowDown className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
+                      </div> 
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10b981',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#059669',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.positiveTitle')}
+                    <div className="result-tooltip__section result-tooltip__section--badge">
+                      <div className="result-tooltip__badge-title">{t('performance.results.badgeTitle')}</div>
+                      <div className="result-tooltip__badge-grid">
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-light">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
                         </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.positiveTip')}
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-medium">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-strong">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-light">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-medium">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-strong">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
                         </div>
                       </div>
                     </div>
@@ -1074,97 +1117,83 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   }
                 }}
               >
-                <div className="tip-icon-container">
+                <div className="pm-tip-icon-container">
                   <Info
                     size={16}
-                    className="tip-icon"
+                    className="pm-tip-icon"
                   />
                 </div>
               </Tooltip>
             </div>
             
-            <div className="results-card">
-              <div className="temperature-tabs" data-active={activeTab}>
+            {/* 免责声明提示 */}
+            <div 
+              style={{ marginTop: '20px', fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}
+              dangerouslySetInnerHTML={{ __html: t('performance.disclaimer') }}
+            />
+            
+            <div className="pm-results-card">
+              <div className="pm-temperature-tabs" data-active={activeTab}>
               <button 
-                className={`temp-tab ${activeTab === '25c' ? 'active' : ''}`}
+                className={`pm-temp-tab ${activeTab === '25c' ? 'active' : ''}`}
                 onClick={() => setActiveTab('25c')}
               >
                 {t('performance.results.temperatureTabs.temp25')}
               </button>
               <button 
-                className={`temp-tab ${activeTab === '45c' ? 'active' : ''}`}
+                className={`pm-temp-tab ${activeTab === '45c' ? 'active' : ''}`}
                 onClick={() => setActiveTab('45c')}
               >
                 {t('performance.results.temperatureTabs.temp45')}
               </button>
             </div>
 
-            <div className="results-content">
+            <div className="pm-results-content">
               {activeTab === '25c' && (
-                <div className="performance-results">
-                  <div className="result-item">
-                    <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                    {renderResultBadge(resultsData['25c'].cycleLife)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].cycleLife.confidence}%</span>
-                    </div>
+                <div className="pm-performance-results">
+                  <div className="pm-result-item">
+                    <div className="pm-result-label">{t('performance.results.performance.cycleLife25')}</div>
+                    {renderResultBadge(resultsData['25c'].cycleLife, 'cycleLife')}
                   </div>
 
-                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                    {renderResultBadge(resultsData['25c'].ce)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ce.confidence}%</span>
-                    </div>
+                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                    <div className="pm-result-label">{t('performance.results.performance.ce25')}</div>
+                    {renderResultBadge(resultsData['25c'].ce, 'ce')}
                   </div>
 
-                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                    {renderResultBadge(resultsData['25c'].ratePerformance)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['25c'].ratePerformance.confidence}%</span>
-                    </div>
+                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                    <div className="pm-result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                    {renderResultBadge(resultsData['25c'].ratePerformance, 'ratePerformance')}
                   </div>
                 </div>
               )}
 
               {activeTab === '45c' && (
-                <div className="performance-results">
-                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                    {renderResultBadge(resultsData['45c'].cycleLife)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].cycleLife.confidence}%</span>
-                    </div>
+                <div className="pm-performance-results">
+                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                    <div className="pm-result-label">{t('performance.results.performance.cycleLife45')}</div>
+                    {renderResultBadge(resultsData['45c'].cycleLife, 'cycleLife')}
                   </div>
 
-                  <div className={`result-item ${!isHighTier ? 'with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                    {renderResultBadge(resultsData['45c'].ce)}
-                    <div className="result-confidence">
-                      <span className="confidence-label">{t('performance.results.confidence')}</span>
-                      <span className="confidence-value">{resultsData['45c'].ce.confidence}%</span>
-                    </div>
+                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                    <div className="pm-result-label">{t('performance.results.performance.ce45')}</div>
+                    {renderResultBadge(resultsData['45c'].ce, 'ce')}
                   </div>
                 </div>
               )}
             </div>
 
-              <div className="llm-button-section">
-                <button 
-                  className={`llm-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${hasAnalysisResult ? 'analyzed' : ''}`}
+              <div className="pm-llm-button-section">
+                <button
+                  className={`pm-llm-analysis-btn ${isAnalyzing ? 'pm-analyzing' : ''} ${hasAnalysisResult ? 'pm-analyzed' : ''}`}
                   onClick={handleLLMAnalysis}
                   disabled={isAnalyzing || !predictionResults || hasAnalysisResult || !isHighTier}
                 >
                   {isAnalyzing ? t('performance.ui.analyzing') : t('performance.llmAnalysis.button')}
                 </button>
-                
+
                 {analysisError && (
-                  <div className="analysis-error">
+                  <div className="pm-analysis-error">
                     <p>{analysisError}</p>
                   </div>
                 )}
@@ -1174,12 +1203,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
         )}
 
         {(analysisContent || isAnalyzing || showLLMAnalysis) && (
-          <div className="llm-analysis-section">
-            <div className="llm-analysis-header">
+          <div className="pm-llm-analysis-section">
+            <div className="pm-llm-analysis-header">
               <h2>{t('performance.llmAnalysis.title')}</h2>
               {/* {(analysisContent || isAnalyzing) && (
                 <button 
-                  className="close-analysis-btn"
+                  className="pm-close-analysis-btn"
                   onClick={() => {
                     setShowLLMAnalysis(false);
                     setAnalysisContent('');
@@ -1191,28 +1220,28 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               )} */}
             </div>
             
-            <div className="llm-analysis-card">
-              <div className="llm-content">
+            <div className="pm-llm-analysis-card">
+              <div className="pm-llm-content">
                 {isAnalyzing && !analysisContent && (
-                  <div className="analysis-loading">
+                  <div className="pm-analysis-loading">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                       <span>{t('performance.analysis.analyzing') || 'LLM分析中'}</span>
                       {analysisElapsed > 0 && (
                         <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{formatElapsedTime}</span>
                       )}
                     </div>
-                    <div className="loading-spinner"></div>
+                    <div className="pm-loading-spinner"></div>
                   </div>
                 )}
                 
                 {analysisContent && (
-                  <div className="analysis-content" style={{ fontSize: '14px', paddingTop: 0 }}>
+                  <div className="pm-analysis-content" style={{ fontSize: '14px', paddingTop: 0 }}>
                     <InlineMoleculeRenderer content={analysisContent} onMoleculeClick={() => {}} />
                   </div>
                 )}
                 
                 {!analysisContent && !isAnalyzing && showLLMAnalysis && (
-                  <div className="analysis-placeholder">
+                  <div className="pm-analysis-placeholder">
                     <p>{t('performance.ui.analysisPlaceholder')}</p>
                   </div>
                 )}

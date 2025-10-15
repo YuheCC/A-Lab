@@ -282,7 +282,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const chatHistoryData = await chatService.getChatHistory();
                 updateChatHistory(chatHistoryData);
                 const initialNonPinned = chatHistoryData.filter(item => !item.isPinned);
-                setHasMoreHistory(initialNonPinned.length > 0);
+                if(userPermissions === 'common' || !localStorage.getItem('token')){
+                    setHasMoreHistory(false);
+                } else {
+                    setHasMoreHistory(initialNonPinned.length > 0);
+                }
                 if (initialNonPinned.length > 0) {
                     const lastItem = initialNonPinned[initialNonPinned.length - 1];
                     setLastUpdatedAt(lastItem.updatedAt);
@@ -294,7 +298,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         initChatHistory();
-    }, [updateChatHistory]);
+    }, [updateChatHistory, userPermissions]);
 
     // 初始化时获取使用次数
     useEffect(() => {
@@ -808,7 +812,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             const updatedHistory = [...pinned, ...mergedNonPinned];
             updateChatHistory(updatedHistory);
-            setHasMoreHistory(moreNonPinned.length > 0);
+            if(userPermissions === 'common' || !localStorage.getItem('token')){
+                setHasMoreHistory(false);
+            } else {
+                setHasMoreHistory(moreNonPinned.length > 0);
+            }
             if (moreNonPinned?.length > 0) {
                 const lastItem = mergedNonPinned[mergedNonPinned.length - 1];
                 setLastUpdatedAt(lastItem.updatedAt);
@@ -820,7 +828,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setLoadingMoreHistory(false);
         }
-    }, [loadingMoreHistory, hasMoreHistory, lastUpdatedAt, chatHistory, updateChatHistory]);
+    }, [loadingMoreHistory, hasMoreHistory, lastUpdatedAt, chatHistory, updateChatHistory, userPermissions]);
 
     // 处理侧边栏切换
     const handleToggleSidebar = useCallback(() => {

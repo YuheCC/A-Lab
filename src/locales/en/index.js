@@ -15,6 +15,7 @@ import role from './role';
 import performance from './performance';
 import predictionTool from './predictionTool';
 import formulation from './formulation';
+import common from './common';
 // merged into formulation: results, analysisDetail
 
 export default {
@@ -35,5 +36,6 @@ export default {
     performance,
     predictionTool,
     formulation,
-    
+    common,
+
 }

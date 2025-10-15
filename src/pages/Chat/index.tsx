@@ -35,7 +35,7 @@ const ChatContent: React.FC = () => {
                     </div>
                     {showInput && (
                         <>
-                            {!wsConnected && (
+                            {/* {!wsConnected && (
                                 <div style={{
                                     background: '#fff3cd',
                                     border: '1px solid #ffeaa7',
@@ -57,7 +57,7 @@ const ChatContent: React.FC = () => {
                                 }}></div>
                                     {t('chatbox.status.connectingToServer')}
                                 </div>
-                            )}
+                            )} */}
                             <ChatInput
                                 disabled={isLoading || !wsConnected || isPublic}
                                 inputLocked={isPublic}

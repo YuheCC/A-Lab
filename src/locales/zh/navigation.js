@@ -8,6 +8,7 @@ export default {
     filter: "筛选",
     favorites: "收藏",
     predict: "预测",
+    design: "设计",
     formulation: "配方",
     about: "关于",
     predictPerformance: "电芯性能预测",

@@ -1,9 +1,9 @@
 export const PUBLIC_SEARCH_LOCKED_VALUES = {
-  organicInput: "EC, DTD",
+  organicInput: "EC, DTD, DMC",
   anionInput: "LiBF4, LiFSI",
   sse: {
     activeTab: "formula" as const,
-    formulaInput: "Li31784La14883Mg31Zr9977Al74Ga967O60000",
+    formulaInput: "Li11P2(S3Cl)3",
   },
   findFriends: {
     moleculeType: "additive",
