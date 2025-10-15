@@ -7,6 +7,7 @@ import { useChatContext } from '../../context/ChatContext';
 import { useAuthStore } from '@/models/useAuth';
 import { getRemainingFromLimitInfo } from '@/utils/queryLimit';
 import { useAccessModals } from '@/hooks/useAccessModals';
+import { PUBLIC_CHAT_MODEL_DEFAULTS } from '@/constants/publicDefaults';
 
 type ChatMode =
   | 'regular'
@@ -73,8 +74,22 @@ const ChatInput: FC<ChatInputProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const initialMode: ChatMode = isAdmin ? 'ask' : 'lightning';
-  const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
+  const resolveDefaultMode = React.useCallback((): ChatMode => {
+    if (!inputLocked) {
+      return isAdmin ? 'ask' : 'lightning';
+    }
+
+    const numericChatId =
+      typeof currentChatId === 'number' ? currentChatId : Number(currentChatId);
+
+    if (!Number.isFinite(numericChatId)) {
+      return 'lightning';
+    }
+
+    return PUBLIC_CHAT_MODEL_DEFAULTS[numericChatId] ?? 'lightning';
+  }, [currentChatId, inputLocked, isAdmin]);
+
+  const [currentMode, setCurrentMode] = useState<ChatMode>(() => resolveDefaultMode());
 
   // 管理员参数（参考 Ask 页）
   const [ignoreChatHistory, setIgnoreChatHistory] = useState<boolean>(false);
@@ -130,6 +145,15 @@ const ChatInput: FC<ChatInputProps> = ({
   React.useEffect(() => {
     setIsButtonEnabled(inputValue.trim().length > 0 && !disabled && !inputLocked);
   }, [inputValue, disabled, inputLocked]);
+
+  React.useEffect(() => {
+    if (!inputLocked) {
+      return;
+    }
+
+    const defaultMode = resolveDefaultMode();
+    setCurrentMode(prevMode => (prevMode === defaultMode ? prevMode : defaultMode));
+  }, [inputLocked, resolveDefaultMode]);
 
   // 从 URL 参数读取 mode 并设置，读取后删除参数
   React.useEffect(() => {
