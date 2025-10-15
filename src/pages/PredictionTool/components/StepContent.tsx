@@ -335,14 +335,16 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
             </div>
 
             {/* 免责声明提示 */}
-            <div className="disclaimer-tip" style={{
-              margin: '20px 0',
-              fontSize: '14px',
-              lineHeight: '1.6',
-              color: '#4a5568'
-            }}>
-              {t('predictionTool.disclaimer')}
-            </div>
+            <div 
+              className="disclaimer-tip" 
+              style={{
+                margin: '20px 0',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                color: '#4a5568'
+              }}
+              dangerouslySetInnerHTML={{ __html: t('predictionTool.disclaimer') }}
+            />
             
             <div className="results-table-card">
               <div className="results-table">                
