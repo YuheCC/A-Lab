@@ -3,6 +3,10 @@ export default {
   subtitle: '電解質を構成してカスタマイズ',
   comingSoon: 'MU1.5で導入予定',
   comingSoon2: 'MU2で導入予定',
+  tabs: {
+    introduction: '紹介',
+    records: '記録'
+  },
   introductionNew: {
     functionIntroTitle: '機能紹介',
     functionIntroDescription:
