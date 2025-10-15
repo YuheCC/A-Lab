@@ -31,31 +31,35 @@ export default  [
         component: "Favorites"
     },
     {
-        path: "/predict/performance",
-        component: "Predict/performance",
+        path: "/predict",
+        component: "PredictionTool"
     },
     {
-        path: "/predict/prediction-tool",
-        component: "Predict/predictionTool"
+        path: "/predict/create",
+        component: "PredictionTool/create"
     },
     {
-        path: "/formulation",
-        redirect: "/formulation/new"
+        path: "/predict/detail",
+        component: "PredictionTool/detail"
     },
     {
-        path: "/formulation/new",
+        path: '/design',
+        component: "Predict/performance"
+    },
+    {
+        path: "/formulate",
         component: "FormulationNew"
     },
     {
-        path: "/formulation/result-tip",
+        path: "/formulate/result-tip",
         component: "FormulationNew/result-tip"
     },
     {
-        path: "/formulation/create",
+        path: "/formulate/create",
         component: "FormulationNew/create"
     },
     {
-        path: "/formulation/detail",
+        path: "/formulate/detail",
         component: "FormulationNew/detail"
     },
     {

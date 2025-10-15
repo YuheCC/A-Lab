@@ -81,7 +81,7 @@ const ChatWelcome: React.FC = () => {
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
     const [disableLiterature, setDisableLiterature] = useState(false);
     const [fullDeepSpace, setFullDeepSpace] = useState(false);
-    const [enablePatentRag, setEnablePatentRag] = useState(false);
+    const [disablePatentRag, setDisablePatentRag] = useState(false);
     const [disableTools, setDisableTools] = useState(false);
 
     const [fallbackSelection, setFallbackSelection] = useState<string[]>([]);
@@ -182,7 +182,7 @@ const ChatWelcome: React.FC = () => {
     }, [chatHistory, suggestionStart]);
 
     const suggestionItems = useMemo((): SuggestionItem[] => {
-        if (chatSuggestions.length > 0) {
+        if ( !localStorage.getItem('token') && chatSuggestions.length > 0) {
             return chatSuggestions.map((chat) => ({
                 key: `chat-${chat.chatId}`,
                 label: chat.title?.trim() || t('chatbox.chat.untitledChat', 'Untitled chat'),
@@ -212,7 +212,7 @@ const ChatWelcome: React.FC = () => {
     const buildExtraPayload = useCallback(() => {
         const extraPayload: Record<string, any> = {
             ragEnabled: !disableLiterature,
-            patentRagEnabled: enablePatentRag,
+            patentRagEnabled: !disablePatentRag,
             toolsEnabled: !disableTools,
             originalMode: currentMode,
         };
@@ -223,7 +223,7 @@ const ChatWelcome: React.FC = () => {
         const backendMode = backendModeMap[currentMode];
         const modeToSend: ChatMode = backendMode === 'deep-space' ? 'clarify' : backendMode;
         return { extraPayload, modeToSend };
-    }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace]);
+    }, [currentMode, disableLiterature, disablePatentRag, disableTools, fullDeepSpace]);
 
     const handleSendMessageLocal = useCallback(() => {
         if (isPublic) {
@@ -351,12 +351,16 @@ const ChatWelcome: React.FC = () => {
                 (refreshBtn as HTMLElement).style.transform = 'rotate(0deg)';
             }, 500);
         }
-        if (chatHistory.length > 0) {
+        
+        // When not authenticated, use chatHistory rotation logic
+        if (!isAuthenticated && chatHistory.length > 0) {
             if (chatHistory.length > MAX_SUGGESTIONS) {
                 setSuggestionStart(prev => (prev + MAX_SUGGESTIONS) % chatHistory.length);
             }
             return;
         }
+        
+        // When authenticated, use recommendedQuestions with random shuffle
         const sanitized = recommendedQuestions;
         const poolSize = isPublic ? Math.min(MAX_SUGGESTIONS, sanitized.length) : sanitized.length;
         setFallbackPoolSize(poolSize);
@@ -375,7 +379,7 @@ const ChatWelcome: React.FC = () => {
         const selection = shuffled.slice(0, MAX_SUGGESTIONS);
         setFallbackSelection(selection);
         setQuestionWidths(generateWidthClasses(selection.length));
-    }, [chatHistory.length, generateWidthClasses, isPublic, recommendedQuestions]);
+    }, [chatHistory.length, generateWidthClasses, isAuthenticated, isPublic, recommendedQuestions]);
 
     const isInputEmpty = inputValue.trim().length === 0;
     const placeholderText = isPublic ? t('chatbox.input.placeholderPublic') : t('chatbox.input.placeholder');
@@ -486,14 +490,14 @@ const ChatWelcome: React.FC = () => {
                       <label className="checkbox-item">
                         <input
                           type="checkbox"
-                          checked={enablePatentRag}
+                          checked={disablePatentRag}
                           onChange={(e) => {
                             if (isPublic) return;
-                            setEnablePatentRag(e.target.checked);
+                            setDisablePatentRag(e.target.checked);
                           }}
                           disabled={isPublic}
                         />
-                        Enable Patent RAG
+                        Disable Patent RAG
                       </label>
                       <label className="checkbox-item">
                         <input
@@ -549,20 +553,22 @@ const ChatWelcome: React.FC = () => {
                     })}
                 </div>
                 
-                <div className="refresh-questions">
-                    <button 
-                        className="refresh-questions-btn"
-                        onClick={handleRefreshQuestions}
-                        type="button"
-                        aria-label={t('chatbox.chat.refreshQuestions')}
-                        disabled={chatHistory.length <= MAX_SUGGESTIONS && fallbackPoolSize <= MAX_SUGGESTIONS}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="16" height="16">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                        </svg>
-                        <span>{t('chatbox.chat.refreshQuestions')}</span>
-                    </button>
-                </div>
+                { !(!localStorage.getItem('token') && chatHistory.length <= MAX_SUGGESTIONS) && (
+                    <div className="refresh-questions">
+                        <button 
+                            className="refresh-questions-btn"
+                            onClick={handleRefreshQuestions}
+                            type="button"
+                            aria-label={t('chatbox.chat.refreshQuestions')}
+                            disabled={chatHistory.length <= MAX_SUGGESTIONS && fallbackPoolSize <= MAX_SUGGESTIONS}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="16" height="16">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                            <span>{t('chatbox.chat.refreshQuestions')}</span>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

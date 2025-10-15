@@ -31,7 +31,8 @@ export default {
       solvent: "Solvent",
       cosolvent: "Cosolvent",
       diluent: "Diluent",
-      additive: "Additive"
+      additive: "Additive",
+      salt: "Salt"
     },
     additiveSubtypes: {
       title: "Additive subcategory",

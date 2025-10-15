@@ -274,7 +274,6 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       const response = await runMDSimulation(params);
 
       if (response?.status === 402 || response?.data?.status === 402) {
-        pricingContext?.setShowUpgradeModal?.(true);
         setIsCalculating(false);
         setError(null);
         return;
@@ -283,7 +282,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
       if (response && response.data && response.status < 300) {
         console.log('MD simulation result:', response.data);
         setIsCalculating(false);
-        navigate('/formulation/result-tip');
+        navigate('/formulate/result-tip');
         setCurrentView('results');
       } else {
         throw new Error(response?.data?.message || response?.data?.detail?.message || 'Invalid response from MD simulation');

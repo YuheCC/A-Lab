@@ -3,6 +3,113 @@ export default {
   subtitle: '전해질을 구성하고 사용자 지정하세요',
   comingSoon: 'MU1.5에서 출시 예정',
   comingSoon2: 'MU2에서 출시 예정',
+  tabs: {
+    introduction: '소개',
+    records: '기록'
+  },
+  introductionNew: {
+    functionIntroTitle: '기능 소개',
+    functionIntroDescription:
+      'MU 플랫폼의 분자동역학(MD) 시뮬레이션은 고급 편극 가능(force field)과 자동화된 워크플로를 결합하여 높은 정확도로 이온과 용매의 상호작용을 포착합니다. 사용자는 알려진 분자뿐 아니라 미지의 분자를 포함한 전해질 조성식을 MU 포털로 제출하기만 하면 되며, 며칠 이내에 주요 물성에 대한 정량 예측을 받아 기존의 시행착오나 고전적 모델링보다 빠르고 정확한 인사이트를 얻을 수 있습니다.',
+    functionIntroImageAlt: 'MD 시뮬레이션 워크플로',
+    functionIntroCaption: '전해질 조성을 위한 MU 고유의 분자동역학(MD) 서비스',
+    benefitsParagraph1:
+      'MU 고유의 MD 서비스는 다양한 염 농도에서 Li⁺, 음이온, 용매 분자가 어떻게 배열되는지 분자 수준의 스냅샷으로 제공합니다.',
+    benefitsParagraph2:
+      '표준 시뮬레이션은 조성의 복잡도에 따라 약 3일 내로 완료되며, 이후 즉시 정량적 물성 예측을 제공해 전해질 설계 및 최적화를 빠르고 신뢰성 있게 지원하여 비용과 시간을 크게 절약합니다.',
+    benefitsImageAlt: '농도 구간 전반에 걸친 MD 시뮬레이션',
+    benefitsImageCaption: '농도 전 구간의 MD 시뮬레이션으로 전해질 설계를 가속화',
+    propertiesIntroTitle: '물성 소개',
+    propertiesIntroNoteDescription:
+      '표준 물성으로 분류된 항목은 MD 시뮬레이션 완료 후 약 3일 이내에 제공됩니다. 그 외 물성은 납기 조정을 위해 팀에 문의해 주세요.',
+    propertiesIntroNoteButton: '팀에 문의',
+    groupStandardProperties: '표준 물성',
+    standardRdfTitle: '방사형 분포 함수(RDF)',
+    standardRdfDescription:
+      '기준 입자에서 특정 거리에 입자가 존재할 확률을 나타내며, 전해질의 국소 구조를 설명합니다. 이는 용해도, 상용성, 이온 전도도, 용매화 구조, 계면 형성에 직접적인 영향을 미칩니다.',
+    standardCnTitle: '배위수(CN)',
+    standardCnDescription:
+      '중심 이온을 둘러싼 인접 원자/분자의 평균 개수를 뜻하며, 전도도, 용해도, 계면 특성에 영향을 미칩니다.',
+    standardSolvationClusterTitle: '용매화 클러스터 분석',
+    standardSolvationClusterDescription: '전해질 용액에서 양이온과 음이온이 어떻게 결합하는지를 분석합니다. 대표적인 세 가지 유형은 다음과 같습니다.',
+    standardSolvationClusterSsipBadge: 'SSIP',
+    standardSolvationClusterSsipName: 'Solvent-Separated Ion Pair',
+    standardSolvationClusterSsipDescription:
+      '양이온과 음이온이 서로 연관되어 있지만 최소 한 개 이상의 용매 분자가 그 사이에 위치합니다. 고유전율 용매에서 지배적이며 Li⁺ 이동성과 전도도를 높이는 경향이 있습니다.',
+    standardSolvationClusterCipBadge: 'CIP',
+    standardSolvationClusterCipName: 'Contact Ion Pair',
+    standardSolvationClusterCipDescription:
+      '양이온과 음이온이 용매 없이 직접 접촉합니다. 고농도 염이나 저유전율 용매에서 자주 나타나며, 이온 전달 속도를 저하시켜 전도도를 낮출 수 있습니다.',
+    standardSolvationClusterAggBadge: 'AGG',
+    standardSolvationClusterAggName: 'Aggregate',
+    standardSolvationClusterAggDescription:
+      '여러 개의 양이온과 음이온이 연결된 큰 클러스터로, 농축 전해질에서 우세하며 전도도를 감소시키는 경우가 많습니다.',
+    standardSolvationClusterImageAlt: '대표적인 Li 용매화 클러스터',
+    standardSolvationClusterImageCaption: '대표적인 Li 용매화 클러스터',
+    standardSolvationClusterSummary:
+      'SSIP/CIP/AGG 비율은 용매화 환경과 점도, 이온 전도도, 전달수 등의 거동을 연계하는 중요한 구조 지표입니다.',
+    standardDiffusivityTitle: '확산 계수',
+    standardDiffusivityDescription:
+      '외부 전기장이 없는 상태에서 입자가 무작위로 이동하는 속도이며, 이동도와 같은 수송 특성과 밀접하게 연관됩니다.',
+    standardConductivityTitle: '전도도',
+    standardConductivityDescription:
+      '전기장 하에서 이온이나 다른 전하 입자가 전하를 운반하는 능력을 나타냅니다. 아래 그림은 예측된 이온 전도도가 실험값과 어떻게 비교되는지를 보여줍니다.',
+    standardConductivityImageAlt: 'MD 시뮬레이션 정확도',
+    standardConductivityImageCaption: 'MD 시뮬레이션 정확도: 예측 vs. 실측 이온 전도도',
+    standardConductivityImageDescription1:
+      '우리의 분자동역학 시뮬레이션(파란 점)은 0–40 mS·cm⁻¹ 범위의 100개 이상의 전해질 조성에서 실험적 이온 전도도 측정과 뛰어난 일치를 보입니다. 이 벤치마크에는 설폰, 설파이트, 에터, 에스터, 카보네이트, 니트릴, 실록산, 보레이트, 포스페이트 에스터 등 다양한 용매가 포함됩니다.',
+    standardConductivityImageDescription2:
+      '반면 외부 머신러닝 힘장(MLFF, 빈 원)은 소수의 카보네이트 시스템에서만 검증되었습니다. 우리의 힘장은 해당 시스템에서 MLFF에 상응하거나 더욱 우수한 정확도를 제공하며, MLFF 검증이 이루어지지 않은 보다 넓은 화학 공간에서도 높은 예측력을 유지합니다.',
+    standardConductivityImageDescription3:
+      '검은색 대각선(y = x) 부근에 데이터가 위치하는 것은 합성 전 시뮬레이션 기반 선별이 신뢰할 수 있음을 보여줍니다.',
+    standardViscosityTitle: '점도',
+    standardViscosityDescription: '유체가 전단 응력에 대해 흐름이나 변형을 저항하는 특성입니다.',
+    standardDensityTitle: '밀도',
+    standardDensityDescription: '단위 부피당 질량으로, 시스템의 치밀도를 반영합니다.',
+    groupAdvancedAnalysis: '고급 분석',
+    advancedIonCorrelationTitle: '이온-이온 상관',
+    advancedIonCorrelationDescription: '이온 종 사이의 상관 관계가 무작위 분포를 넘어서는 정도를 측정합니다.',
+    advancedStructureFactorTitle: '구조 인자(S(q))',
+    advancedStructureFactorDescription: '원자 배열이 방사선을 산란시키는 방식을 정량화하여 역공간에서의 질서를 보여줍니다.',
+    advancedDynamicStructureFactorTitle: '동적 구조 인자(S(q,ω))',
+    advancedDynamicStructureFactorDescription: '입자의 시공간 상관을 기술하는 함수입니다.',
+    advancedResidenceTimeTitle: '체류 시간',
+    advancedResidenceTimeDescription: '이온 또는 분자가 다른 종의 근처에 머무는 평균 시간을 의미합니다.',
+    groupCustomStudies: '맞춤 연구',
+    customEdlTitle: 'EDL (전기 이중층)',
+    customEdlDescription:
+      '전하를 띤 표면 또는 전극 근처에 형성되는 이온 구조를 의미하며, SEI 형성 및 산화환원 반응을 추론하는 데 유용합니다.',
+    customEdlImageAlt: '전기 이중층',
+    customEdlImageCaption:
+      '정밀하게 제어된 전위 하에서 형성된 전기 이중층 구조입니다. 이 MD 시뮬레이션 스냅샷은 사용자가 제공한 전해질 조성이 두 전극 사이에 위치하는 모습을 보여줍니다. 가상 셀의 전위를 변화시키면 전기 potential에 따른 계면 구조를 시각화할 수 있으며, 이는 최종 계면 화학을 좌우합니다.',
+    customSolubilityTitle: '용해도',
+    customSolubilityDescription:
+      '평형 조건에서 특정 염 또는 분자가 주어진 매질에 균일하게 분산(용해 또는 혼합)될 수 있는 최대량을 나타냅니다.',
+    customSolubilityImageAlt: '용해도 예측',
+    customSolubilityImageCaption:
+      '우리의 MD 시뮬레이션은 대표적인 리튬 염 LiFSI가 다양한 화학 구조와 작용기를 가진 19개 용매에서 보이는 용해도를 정확하게 예측합니다. 대각선에 가까운 점일수록 높은 예측 정확도를 의미하며, 합성 전 시뮬레이션 기반 선별에 대한 확신을 제공합니다.',
+    standardSolvationClusterTableName: '용매화 클러스터 유형 및 분율 분석',
+    table: {
+      headers: {
+        no: '번호',
+        property: '물성',
+        type: '유형',
+        group: '그룹',
+        estimatedTime: '예상 기간'
+      },
+      types: {
+        structural: '구조 물성',
+        dynamic: '동적 물성',
+        structuralDynamic: '구조 + 동적',
+        thermodynamic: '열역학 물성'
+      },
+      estimatedTimes: {
+        short: '약 3일',
+        medium: '약 1주',
+        long: '약 1-2주'
+      }
+    }
+  },
   actions: {
     backToList: '목록으로 돌아가기'
   },
@@ -122,7 +229,7 @@ export default {
       saltFractionType: '분율 유형 (염)',
       solventFraction: '용매 (분율)',
       solventFractionType: '분율 유형 (용매)',
-      concentration: '농도',
+      concentration: '염 농도',
       created: '생성일',
       status: '상태',
       actions: '작업'

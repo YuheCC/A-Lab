@@ -90,242 +90,242 @@ export const mockDetailData: MDHistoryDetailResponse = {
         "data": [
           [
             0.875,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             0.925,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             0.975,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.025,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.075,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.125,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.175,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.225,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.275,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.325,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.375,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.425,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.475,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.525,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             0.0071
           ],
           [
             1.575,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             0.1377
           ],
           [
             1.625,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             1.3345
           ],
           [
             1.675,
-            0.0,
+            0,
             0.002,
-            0.0,
-            0.0,
+            0,
+            0,
             5.1838
           ],
           [
             1.725,
-            0.0,
+            0,
             0.0439,
-            0.0,
-            0.0,
+            0,
+            0,
             11.3883
           ],
           [
             1.775,
-            0.0,
+            0,
             0.6647,
-            0.0,
-            0.0,
+            0,
+            0,
             16.3189
           ],
           [
             1.825,
-            0.0,
+            0,
             3.9231,
-            0.0,
-            0.0,
+            0,
+            0,
             17.2169
           ],
           [
             1.875,
-            0.0,
+            0,
             12.2229,
-            0.0,
-            0.0,
+            0,
+            0,
             14.81
           ],
           [
             1.925,
-            0.0,
+            0,
             22.4142,
-            0.0,
-            0.0,
+            0,
+            0,
             10.8066
           ],
           [
             1.975,
             0.0007,
             27.6341,
-            0.0,
-            0.0,
+            0,
+            0,
             7.5285
           ],
           [
             2.025,
             0.0005,
             25.431,
-            0.0,
-            0.0,
+            0,
+            0,
             4.8694
           ],
           [
             2.075,
             0.0034,
             19.106,
-            0.0,
-            0.0,
+            0,
+            0,
             3.2303
           ],
           [
             2.125,
             0.0082,
             12.5452,
-            0.0,
-            0.0,
+            0,
+            0,
             2.1511
           ],
           [
             2.175,
             0.0152,
             7.6821,
-            0.0,
-            0.0,
+            0,
+            0,
             1.5768
           ],
           [
             2.225,
             0.0255,
             4.5289,
-            0.0,
-            0.0,
+            0,
+            0,
             1.2084
           ],
           [
             2.275,
             0.0282,
             2.6282,
-            0.0,
-            0.0,
+            0,
+            0,
             0.9861
           ],
           [
             2.325,
             0.0336,
             1.5749,
-            0.0,
-            0.0,
+            0,
+            0,
             0.7904
           ],
           [
@@ -333,7 +333,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.0393,
             0.9272,
             0.0007,
-            0.0,
+            0,
             0.7525
           ],
           [
@@ -2366,282 +2366,282 @@ export const mockDetailData: MDHistoryDetailResponse = {
         "data": [
           [
             0.875,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             0.925,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             0.975,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.025,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.075,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.125,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.175,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.225,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.275,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.325,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.375,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.425,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.475,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.525,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.575,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+            0,
+            0,
+            0,
+            0,
+            0
           ],
           [
             1.625,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             0.01
           ],
           [
             1.675,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             0.04
           ],
           [
             1.725,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
+            0,
+            0,
+            0,
+            0,
             0.13
           ],
           [
             1.775,
-            0.0,
+            0,
             0.01,
-            0.0,
-            0.0,
+            0,
+            0,
             0.25
           ],
           [
             1.825,
-            0.0,
+            0,
             0.05,
-            0.0,
-            0.0,
+            0,
+            0,
             0.39
           ],
           [
             1.875,
-            0.0,
+            0,
             0.18,
-            0.0,
-            0.0,
+            0,
+            0,
             0.51
           ],
           [
             1.925,
-            0.0,
+            0,
             0.44,
-            0.0,
-            0.0,
+            0,
+            0,
             0.61
           ],
           [
             1.975,
-            0.0,
+            0,
             0.77,
-            0.0,
-            0.0,
+            0,
+            0,
             0.68
           ],
           [
             2.025,
-            0.0,
+            0,
             1.09,
-            0.0,
-            0.0,
+            0,
+            0,
             0.73
           ],
           [
             2.075,
-            0.0,
+            0,
             1.34,
-            0.0,
-            0.0,
+            0,
+            0,
             0.76
           ],
           [
             2.125,
-            0.0,
+            0,
             1.52,
-            0.0,
-            0.0,
+            0,
+            0,
             0.78
           ],
           [
             2.175,
-            0.0,
+            0,
             1.63,
-            0.0,
-            0.0,
+            0,
+            0,
             0.8
           ],
           [
             2.225,
-            0.0,
+            0,
             1.7,
-            0.0,
-            0.0,
+            0,
+            0,
             0.81
           ],
           [
             2.275,
-            0.0,
+            0,
             1.74,
-            0.0,
-            0.0,
+            0,
+            0,
             0.83
           ],
           [
             2.325,
-            0.0,
+            0,
             1.77,
-            0.0,
-            0.0,
+            0,
+            0,
             0.84
           ],
           [
             2.375,
-            0.0,
+            0,
             1.79,
-            0.0,
-            0.0,
+            0,
+            0,
             0.85
           ],
           [
             2.425,
             0.01,
             1.8,
-            0.0,
-            0.0,
+            0,
+            0,
             0.86
           ],
           [
             2.475,
             0.01,
             1.8,
-            0.0,
-            0.0,
+            0,
+            0,
             0.87
           ],
           [
             2.525,
             0.01,
             1.81,
-            0.0,
-            0.0,
+            0,
+            0,
             0.88
           ],
           [
             2.575,
             0.01,
             1.81,
-            0.0,
-            0.0,
+            0,
+            0,
             0.89
           ],
           [
@@ -2649,7 +2649,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.01,
             1.82,
             0.01,
-            0.0,
+            0,
             0.9
           ],
           [
@@ -2657,7 +2657,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.01,
             1.82,
             0.01,
-            0.0,
+            0,
             0.92
           ],
           [
@@ -2690,7 +2690,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             1.82,
             0.17,
             0.04,
-            1.0
+            1
           ],
           [
             2.925,
@@ -2846,7 +2846,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             3.875,
-            1.0,
+            1,
             1.87,
             1.55,
             0.79,
@@ -3217,7 +3217,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             8.16,
             3.94,
             2.44,
-            1.0,
+            1,
             6.22
           ],
           [
@@ -3246,7 +3246,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             6.375,
-            9.0,
+            9,
             4.34,
             2.62,
             1.06,
@@ -3310,7 +3310,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             6.775,
-            11.0,
+            11,
             5.33,
             3.05,
             1.19,
@@ -3362,7 +3362,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             6.23,
             3.43,
             1.31,
-            8.0
+            8
           ],
           [
             7.125,
@@ -3439,7 +3439,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             7.575,
             16.46,
-            8.0,
+            8,
             4.17,
             1.54,
             9.39
@@ -3592,7 +3592,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             8.525,
             24.89,
             12.12,
-            6.0,
+            6,
             2.11,
             12.86
           ],
@@ -3761,7 +3761,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             35.52,
             17.68,
             8.5,
-            3.0,
+            3,
             17.29
           ],
           [
@@ -3977,7 +3977,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             52.66,
             26.45,
             12.14,
-            4.0,
+            4,
             24.21
           ],
           [
@@ -4137,7 +4137,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             68.69,
             34.41,
             15.75,
-            5.0,
+            5,
             30.11
           ],
           [
@@ -4206,7 +4206,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             12.375,
-            77.0,
+            77,
             38.54,
             17.61,
             5.53,
@@ -4263,7 +4263,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             12.725,
             83.92,
-            42.0,
+            42,
             19.15,
             5.96,
             35.81
@@ -4286,7 +4286,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             12.875,
-            87.0,
+            87,
             43.54,
             19.84,
             6.16,
@@ -4647,7 +4647,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             1.474
           ],
           [
-            9.0,
+            9,
             5.33,
             6.635,
             3.426,
@@ -4661,7 +4661,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             6.306
           ],
           [
-            24.0,
+            24,
             11.56,
             14.79,
             6.768,
@@ -4675,7 +4675,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             10.24
           ],
           [
-            39.0,
+            39,
             17.52,
             22.62,
             9.87,
@@ -4689,7 +4689,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             13.96
           ],
           [
-            54.0,
+            54,
             23.35,
             30.32,
             12.83,
@@ -4703,7 +4703,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             17.54
           ],
           [
-            69.0,
+            69,
             29.13,
             37.96,
             15.73,
@@ -4717,7 +4717,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             21.06
           ],
           [
-            84.0,
+            84,
             34.88,
             45.53,
             18.59,
@@ -4731,7 +4731,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             24.45
           ],
           [
-            99.0,
+            99,
             40.61,
             53.05,
             21.42,
@@ -4745,7 +4745,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             27.84
           ],
           [
-            114.0,
+            114,
             46.32,
             60.55,
             24.24,
@@ -4759,7 +4759,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             31.2
           ],
           [
-            129.0,
+            129,
             52.01,
             68.02,
             27.03,
@@ -4773,7 +4773,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             34.54
           ],
           [
-            144.0,
+            144,
             57.7,
             75.49,
             29.81,
@@ -4787,7 +4787,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             37.85
           ],
           [
-            159.0,
+            159,
             63.37,
             82.96,
             32.57,
@@ -4801,7 +4801,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             41.17
           ],
           [
-            174.0,
+            174,
             69.05,
             90.42,
             35.36,
@@ -4815,7 +4815,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             44.47
           ],
           [
-            189.0,
+            189,
             74.7,
             97.83,
             38.12,
@@ -4829,7 +4829,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             47.74
           ],
           [
-            204.0,
+            204,
             80.31,
             105.2,
             40.88,
@@ -4843,7 +4843,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             50.98
           ],
           [
-            219.0,
+            219,
             85.87,
             112.6,
             43.62,
@@ -4853,13 +4853,13 @@ export const mockDetailData: MDHistoryDetailResponse = {
             226.5,
             88.66,
             116.3,
-            45.0,
+            45,
             54.22
           ],
           [
-            234.0,
+            234,
             91.45,
-            120.0,
+            120,
             46.37,
             55.84
           ],
@@ -4871,7 +4871,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             57.43
           ],
           [
-            249.0,
+            249,
             97.03,
             127.4,
             49.08,
@@ -4885,7 +4885,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             60.6
           ],
           [
-            264.0,
+            264,
             102.6,
             134.8,
             51.79,
@@ -4899,7 +4899,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             63.77
           ],
           [
-            279.0,
+            279,
             108.2,
             142.2,
             54.49,
@@ -4907,13 +4907,13 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             286.5,
-            111.0,
+            111,
             145.9,
             55.84,
             66.92
           ],
           [
-            294.0,
+            294,
             113.8,
             149.6,
             57.2,
@@ -4927,7 +4927,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             70.08
           ],
           [
-            309.0,
+            309,
             119.4,
             156.9,
             59.88,
@@ -4941,8 +4941,8 @@ export const mockDetailData: MDHistoryDetailResponse = {
             73.21
           ],
           [
-            324.0,
-            125.0,
+            324,
+            125,
             164.2,
             62.55,
             74.77
@@ -4955,7 +4955,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             76.34
           ],
           [
-            339.0,
+            339,
             130.6,
             171.4,
             65.18,
@@ -4969,7 +4969,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             79.42
           ],
           [
-            354.0,
+            354,
             136.2,
             178.7,
             67.81,
@@ -4977,13 +4977,13 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             361.5,
-            139.0,
+            139,
             182.3,
             69.13,
             82.56
           ],
           [
-            369.0,
+            369,
             141.8,
             185.9,
             70.46,
@@ -4997,7 +4997,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             85.66
           ],
           [
-            384.0,
+            384,
             147.4,
             193.2,
             73.11,
@@ -5011,8 +5011,8 @@ export const mockDetailData: MDHistoryDetailResponse = {
             88.79
           ],
           [
-            399.0,
-            153.0,
+            399,
+            153,
             200.4,
             75.76,
             90.35
@@ -5020,12 +5020,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             406.5,
             155.8,
-            204.0,
+            204,
             77.09,
             91.91
           ],
           [
-            414.0,
+            414,
             158.6,
             207.6,
             78.42,
@@ -5036,10 +5036,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             161.4,
             211.2,
             79.77,
-            95.0
+            95
           ],
           [
-            429.0,
+            429,
             164.2,
             214.8,
             81.12,
@@ -5047,15 +5047,15 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             436.5,
-            167.0,
+            167,
             218.4,
             82.45,
             98.07
           ],
           [
-            444.0,
+            444,
             169.8,
-            222.0,
+            222,
             83.78,
             99.59
           ],
@@ -5067,7 +5067,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             101.1
           ],
           [
-            459.0,
+            459,
             175.4,
             229.2,
             86.45,
@@ -5081,7 +5081,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             104.2
           ],
           [
-            474.0,
+            474,
             181.1,
             236.5,
             89.12,
@@ -5095,7 +5095,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             107.2
           ],
           [
-            489.0,
+            489,
             186.7,
             243.7,
             91.75,
@@ -5109,9 +5109,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             110.2
           ],
           [
-            504.0,
+            504,
             192.4,
-            251.0,
+            251,
             94.38,
             111.7
           ],
@@ -5123,7 +5123,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             113.3
           ],
           [
-            519.0,
+            519,
             197.9,
             258.2,
             97.01,
@@ -5137,7 +5137,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             116.3
           ],
           [
-            534.0,
+            534,
             203.5,
             265.5,
             99.68,
@@ -5147,11 +5147,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             541.5,
             206.3,
             269.1,
-            101.0,
+            101,
             119.4
           ],
           [
-            549.0,
+            549,
             209.1,
             272.7,
             102.3,
@@ -5165,11 +5165,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             122.5
           ],
           [
-            564.0,
+            564,
             214.7,
-            280.0,
-            105.0,
-            124.0
+            280,
+            105,
+            124
           ],
           [
             571.5,
@@ -5179,7 +5179,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             125.6
           ],
           [
-            579.0,
+            579,
             220.3,
             287.3,
             107.6,
@@ -5188,12 +5188,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             586.5,
             223.1,
-            291.0,
-            109.0,
+            291,
+            109,
             128.6
           ],
           [
-            594.0,
+            594,
             225.9,
             294.6,
             110.3,
@@ -5207,9 +5207,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             131.7
           ],
           [
-            609.0,
+            609,
             231.6,
-            302.0,
+            302,
             112.9,
             133.3
           ],
@@ -5221,7 +5221,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             134.8
           ],
           [
-            624.0,
+            624,
             237.2,
             309.3,
             115.6,
@@ -5230,12 +5230,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             631.5,
             240.1,
-            313.0,
+            313,
             116.9,
-            138.0
+            138
           ],
           [
-            639.0,
+            639,
             242.9,
             316.7,
             118.2,
@@ -5249,9 +5249,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             141.1
           ],
           [
-            654.0,
+            654,
             248.6,
-            324.0,
+            324,
             120.8,
             142.6
           ],
@@ -5263,7 +5263,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             144.2
           ],
           [
-            669.0,
+            669,
             254.2,
             331.4,
             123.5,
@@ -5277,7 +5277,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             147.3
           ],
           [
-            684.0,
+            684,
             259.9,
             338.8,
             126.1,
@@ -5291,7 +5291,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             150.5
           ],
           [
-            699.0,
+            699,
             265.6,
             346.2,
             128.8,
@@ -5305,7 +5305,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             153.6
           ],
           [
-            714.0,
+            714,
             271.2,
             353.6,
             131.4,
@@ -5319,9 +5319,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             156.8
           ],
           [
-            729.0,
+            729,
             276.9,
-            361.0,
+            361,
             134.1,
             158.3
           ],
@@ -5333,7 +5333,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             159.9
           ],
           [
-            744.0,
+            744,
             282.6,
             368.4,
             136.7,
@@ -5347,7 +5347,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             163.1
           ],
           [
-            759.0,
+            759,
             288.2,
             375.8,
             139.4,
@@ -5361,21 +5361,21 @@ export const mockDetailData: MDHistoryDetailResponse = {
             166.2
           ],
           [
-            774.0,
+            774,
             293.9,
             383.3,
-            142.0,
+            142,
             167.7
           ],
           [
             781.5,
             296.8,
-            387.0,
+            387,
             143.4,
             169.3
           ],
           [
-            789.0,
+            789,
             299.7,
             390.7,
             144.7,
@@ -5389,11 +5389,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             172.4
           ],
           [
-            804.0,
+            804,
             305.4,
             398.1,
             147.4,
-            174.0
+            174
           ],
           [
             811.5,
@@ -5403,7 +5403,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             175.6
           ],
           [
-            819.0,
+            819,
             311.2,
             405.5,
             150.1,
@@ -5417,8 +5417,8 @@ export const mockDetailData: MDHistoryDetailResponse = {
             178.6
           ],
           [
-            834.0,
-            317.0,
+            834,
+            317,
             412.9,
             152.7,
             180.2
@@ -5431,7 +5431,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             181.7
           ],
           [
-            849.0,
+            849,
             322.8,
             420.3,
             155.4,
@@ -5440,12 +5440,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             856.5,
             325.7,
-            424.0,
+            424,
             156.8,
             184.8
           ],
           [
-            864.0,
+            864,
             328.6,
             427.7,
             158.1,
@@ -5459,7 +5459,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             187.8
           ],
           [
-            879.0,
+            879,
             334.4,
             435.1,
             160.8,
@@ -5473,7 +5473,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             190.8
           ],
           [
-            894.0,
+            894,
             340.2,
             442.5,
             163.5,
@@ -5487,8 +5487,8 @@ export const mockDetailData: MDHistoryDetailResponse = {
             193.8
           ],
           [
-            909.0,
-            346.0,
+            909,
+            346,
             449.9,
             166.1,
             195.4
@@ -5501,7 +5501,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             196.9
           ],
           [
-            924.0,
+            924,
             351.7,
             457.3,
             168.8,
@@ -5510,12 +5510,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             931.5,
             354.6,
-            461.0,
+            461,
             170.1,
             199.9
           ],
           [
-            939.0,
+            939,
             357.5,
             464.7,
             171.4,
@@ -5526,13 +5526,13 @@ export const mockDetailData: MDHistoryDetailResponse = {
             360.4,
             468.4,
             172.7,
-            203.0
+            203
           ],
           [
-            954.0,
+            954,
             363.3,
             472.1,
-            174.0,
+            174,
             204.5
           ],
           [
@@ -5540,10 +5540,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             366.2,
             475.8,
             175.3,
-            206.0
+            206
           ],
           [
-            969.0,
+            969,
             369.1,
             479.5,
             176.6,
@@ -5551,14 +5551,14 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             976.5,
-            372.0,
+            372,
             483.2,
             177.9,
-            209.0
+            209
           ],
           [
-            984.0,
-            375.0,
+            984,
+            375,
             486.9,
             179.2,
             210.5
@@ -5568,10 +5568,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             377.9,
             490.6,
             180.4,
-            212.0
+            212
           ],
           [
-            999.0,
+            999,
             380.8,
             494.4,
             181.7,
@@ -5581,11 +5581,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             1006.5,
             383.7,
             498.1,
-            183.0,
-            215.0
+            183,
+            215
           ],
           [
-            1014.0,
+            1014,
             386.7,
             501.8,
             184.3,
@@ -5596,10 +5596,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             389.6,
             505.5,
             185.6,
-            218.0
+            218
           ],
           [
-            1029.0,
+            1029,
             392.5,
             509.3,
             186.9,
@@ -5608,12 +5608,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1036.5,
             395.5,
-            513.0,
+            513,
             188.2,
-            221.0
+            221
           ],
           [
-            1044.0,
+            1044,
             398.4,
             516.7,
             189.5,
@@ -5624,10 +5624,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             401.4,
             520.4,
             190.8,
-            224.0
+            224
           ],
           [
-            1059.0,
+            1059,
             404.3,
             524.1,
             192.1,
@@ -5638,10 +5638,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             407.3,
             527.8,
             193.4,
-            227.0
+            227
           ],
           [
-            1074.0,
+            1074,
             410.2,
             531.6,
             194.7,
@@ -5651,25 +5651,25 @@ export const mockDetailData: MDHistoryDetailResponse = {
             1081.5,
             413.1,
             535.3,
-            196.0,
-            230.0
+            196,
+            230
           ],
           [
-            1089.0,
-            416.0,
-            539.0,
+            1089,
+            416,
+            539,
             197.3,
             231.5
           ],
           [
             1096.5,
-            419.0,
+            419,
             542.8,
             198.6,
             233.1
           ],
           [
-            1104.0,
+            1104,
             421.9,
             546.5,
             199.9,
@@ -5683,7 +5683,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             236.1
           ],
           [
-            1119.0,
+            1119,
             427.7,
             554.1,
             202.5,
@@ -5697,7 +5697,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             239.1
           ],
           [
-            1134.0,
+            1134,
             433.6,
             561.6,
             205.2,
@@ -5711,7 +5711,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             242.2
           ],
           [
-            1149.0,
+            1149,
             439.5,
             569.1,
             207.7,
@@ -5721,11 +5721,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             1156.5,
             442.4,
             572.9,
-            209.0,
+            209,
             245.2
           ],
           [
-            1164.0,
+            1164,
             445.4,
             576.6,
             210.3,
@@ -5739,7 +5739,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             248.3
           ],
           [
-            1179.0,
+            1179,
             451.3,
             584.2,
             212.9,
@@ -5748,12 +5748,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1186.5,
             454.3,
-            588.0,
+            588,
             214.2,
             251.4
           ],
           [
-            1194.0,
+            1194,
             457.3,
             591.8,
             215.6,
@@ -5767,11 +5767,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             254.5
           ],
           [
-            1209.0,
+            1209,
             463.2,
             599.3,
             218.2,
-            256.0
+            256
           ],
           [
             1216.5,
@@ -5781,11 +5781,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             257.5
           ],
           [
-            1224.0,
+            1224,
             469.2,
             606.9,
             220.9,
-            259.0
+            259
           ],
           [
             1231.5,
@@ -5795,7 +5795,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             260.5
           ],
           [
-            1239.0,
+            1239,
             475.2,
             614.4,
             223.6,
@@ -5809,7 +5809,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             263.6
           ],
           [
-            1254.0,
+            1254,
             481.2,
             621.9,
             226.2,
@@ -5823,7 +5823,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             266.7
           ],
           [
-            1269.0,
+            1269,
             487.2,
             629.4,
             228.9,
@@ -5837,7 +5837,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             269.8
           ],
           [
-            1284.0,
+            1284,
             493.2,
             636.9,
             231.5,
@@ -5851,7 +5851,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             272.8
           ],
           [
-            1299.0,
+            1299,
             499.2,
             644.5,
             234.2,
@@ -5865,9 +5865,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             275.9
           ],
           [
-            1314.0,
+            1314,
             505.1,
-            652.0,
+            652,
             236.8,
             277.4
           ],
@@ -5879,7 +5879,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             278.9
           ],
           [
-            1329.0,
+            1329,
             511.1,
             659.5,
             239.4,
@@ -5893,52 +5893,52 @@ export const mockDetailData: MDHistoryDetailResponse = {
             281.9
           ],
           [
-            1344.0,
-            517.0,
-            667.0,
+            1344,
+            517,
+            667,
             242.1,
             283.4
           ],
           [
             1351.5,
-            520.0,
+            520,
             670.8,
             243.4,
             284.9
           ],
           [
-            1359.0,
-            523.0,
+            1359,
+            523,
             674.6,
             244.8,
             286.4
           ],
           [
             1366.5,
-            526.0,
+            526,
             678.3,
             246.1,
             287.9
           ],
           [
-            1374.0,
-            529.0,
+            1374,
+            529,
             682.1,
             247.4,
             289.4
           ],
           [
             1381.5,
-            532.0,
+            532,
             685.8,
             248.7,
-            291.0
+            291
           ],
           [
-            1389.0,
-            535.0,
+            1389,
+            535,
             689.6,
-            250.0,
+            250,
             292.5
           ],
           [
@@ -5946,10 +5946,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             537.9,
             693.4,
             251.4,
-            294.0
+            294
           ],
           [
-            1404.0,
+            1404,
             540.9,
             697.1,
             252.7,
@@ -5960,10 +5960,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             543.9,
             700.9,
             254.1,
-            297.0
+            297
           ],
           [
-            1419.0,
+            1419,
             546.8,
             704.6,
             255.4,
@@ -5974,10 +5974,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             549.8,
             708.4,
             256.7,
-            300.0
+            300
           ],
           [
-            1434.0,
+            1434,
             552.7,
             712.2,
             258.1,
@@ -5991,7 +5991,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             303.1
           ],
           [
-            1449.0,
+            1449,
             558.6,
             719.7,
             260.7,
@@ -6005,7 +6005,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             306.1
           ],
           [
-            1464.0,
+            1464,
             564.5,
             727.2,
             263.4,
@@ -6019,7 +6019,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             309.1
           ],
           [
-            1479.0,
+            1479,
             570.3,
             734.7,
             266.1,
@@ -6033,7 +6033,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             312.1
           ],
           [
-            1494.0,
+            1494,
             576.2,
             742.3,
             268.7,
@@ -6047,8 +6047,8 @@ export const mockDetailData: MDHistoryDetailResponse = {
             315.1
           ],
           [
-            1509.0,
-            582.0,
+            1509,
+            582,
             749.9,
             271.4,
             316.7
@@ -6061,10 +6061,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             318.2
           ],
           [
-            1524.0,
+            1524,
             587.9,
             757.4,
-            274.0,
+            274,
             319.7
           ],
           [
@@ -6075,9 +6075,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             321.3
           ],
           [
-            1539.0,
+            1539,
             593.8,
-            765.0,
+            765,
             276.6,
             322.8
           ],
@@ -6089,7 +6089,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             324.3
           ],
           [
-            1554.0,
+            1554,
             599.8,
             772.7,
             279.2,
@@ -6103,7 +6103,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             327.4
           ],
           [
-            1569.0,
+            1569,
             605.7,
             780.3,
             281.9,
@@ -6117,7 +6117,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             330.4
           ],
           [
-            1584.0,
+            1584,
             611.6,
             787.9,
             284.5,
@@ -6131,11 +6131,11 @@ export const mockDetailData: MDHistoryDetailResponse = {
             333.5
           ],
           [
-            1599.0,
+            1599,
             617.6,
             795.6,
             287.2,
-            335.0
+            335
           ],
           [
             1606.5,
@@ -6145,7 +6145,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             336.5
           ],
           [
-            1614.0,
+            1614,
             623.5,
             803.3,
             289.8,
@@ -6159,9 +6159,9 @@ export const mockDetailData: MDHistoryDetailResponse = {
             339.6
           ],
           [
-            1629.0,
+            1629,
             629.5,
-            811.0,
+            811,
             292.3,
             341.1
           ],
@@ -6173,7 +6173,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             342.6
           ],
           [
-            1644.0,
+            1644,
             635.5,
             818.7,
             294.9,
@@ -6187,7 +6187,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             345.7
           ],
           [
-            1659.0,
+            1659,
             641.5,
             826.4,
             297.5,
@@ -6201,10 +6201,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             348.8
           ],
           [
-            1674.0,
+            1674,
             647.5,
             834.1,
-            300.0,
+            300,
             350.3
           ],
           [
@@ -6215,7 +6215,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             351.8
           ],
           [
-            1689.0,
+            1689,
             653.5,
             841.8,
             302.6,
@@ -6229,7 +6229,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             354.9
           ],
           [
-            1704.0,
+            1704,
             659.5,
             849.5,
             305.2,
@@ -6240,10 +6240,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             662.5,
             853.3,
             306.5,
-            358.0
+            358
           ],
           [
-            1719.0,
+            1719,
             665.5,
             857.1,
             307.8,
@@ -6252,12 +6252,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1726.5,
             668.5,
-            861.0,
+            861,
             309.1,
             361.1
           ],
           [
-            1734.0,
+            1734,
             671.5,
             864.8,
             310.4,
@@ -6271,10 +6271,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             364.2
           ],
           [
-            1749.0,
+            1749,
             677.5,
             872.5,
-            313.0,
+            313,
             365.8
           ],
           [
@@ -6285,7 +6285,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             367.3
           ],
           [
-            1764.0,
+            1764,
             683.5,
             880.2,
             315.6,
@@ -6294,12 +6294,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1771.5,
             686.5,
-            884.0,
+            884,
             316.9,
             370.5
           ],
           [
-            1779.0,
+            1779,
             689.5,
             887.9,
             318.2,
@@ -6313,7 +6313,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             373.7
           ],
           [
-            1794.0,
+            1794,
             695.4,
             895.6,
             320.8,
@@ -6324,10 +6324,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             698.4,
             899.5,
             322.1,
-            377.0
+            377
           ],
           [
-            1809.0,
+            1809,
             701.4,
             903.3,
             323.5,
@@ -6341,7 +6341,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             380.2
           ],
           [
-            1824.0,
+            1824,
             707.3,
             911.1,
             326.1,
@@ -6350,12 +6350,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1831.5,
             710.2,
-            915.0,
+            915,
             327.3,
             383.4
           ],
           [
-            1839.0,
+            1839,
             713.2,
             918.9,
             328.6,
@@ -6369,7 +6369,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             386.7
           ],
           [
-            1854.0,
+            1854,
             719.1,
             926.7,
             331.2,
@@ -6380,28 +6380,28 @@ export const mockDetailData: MDHistoryDetailResponse = {
             722.1,
             930.6,
             332.5,
-            390.0
+            390
           ],
           [
-            1869.0,
-            725.0,
+            1869,
+            725,
             934.5,
             333.8,
             391.7
           ],
           [
             1876.5,
-            728.0,
+            728,
             938.4,
             335.1,
             393.4
           ],
           [
-            1884.0,
+            1884,
             730.9,
             942.3,
             336.4,
-            395.0
+            395
           ],
           [
             1891.5,
@@ -6411,7 +6411,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             396.7
           ],
           [
-            1899.0,
+            1899,
             736.8,
             950.1,
             338.9,
@@ -6420,12 +6420,12 @@ export const mockDetailData: MDHistoryDetailResponse = {
           [
             1906.5,
             739.8,
-            954.0,
+            954,
             340.2,
             400.1
           ],
           [
-            1914.0,
+            1914,
             742.7,
             957.9,
             341.4,
@@ -6439,10 +6439,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             403.4
           ],
           [
-            1929.0,
+            1929,
             748.6,
             965.7,
-            344.0,
+            344,
             405.1
           ],
           [
@@ -6453,7 +6453,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             406.8
           ],
           [
-            1944.0,
+            1944,
             754.5,
             973.4,
             346.5,
@@ -6467,21 +6467,21 @@ export const mockDetailData: MDHistoryDetailResponse = {
             410.2
           ],
           [
-            1959.0,
+            1959,
             760.3,
             981.2,
-            349.0,
+            349,
             411.9
           ],
           [
             1966.5,
             763.3,
-            985.0,
+            985,
             350.3,
             413.6
           ],
           [
-            1974.0,
+            1974,
             766.2,
             988.9,
             351.6,
@@ -6495,7 +6495,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             416.9
           ],
           [
-            1989.0,
+            1989,
             772.1,
             996.7,
             354.1,
@@ -6503,9341 +6503,9341 @@ export const mockDetailData: MDHistoryDetailResponse = {
           ],
           [
             1996.5,
-            775.0,
-            1001.0,
+            775,
+            1001,
             355.4,
             420.3
           ],
           [
-            2004.0,
+            2004,
             777.9,
-            1005.0,
+            1005,
             356.7,
-            422.0
+            422
           ],
           [
             2011.5,
             780.8,
-            1009.0,
-            358.0,
+            1009,
+            358,
             423.7
           ],
           [
-            2019.0,
+            2019,
             783.7,
-            1012.0,
+            1012,
             359.3,
             425.4
           ],
           [
             2026.5,
             786.6,
-            1016.0,
+            1016,
             360.6,
             427.1
           ],
           [
-            2034.0,
+            2034,
             789.5,
-            1020.0,
+            1020,
             361.9,
             428.8
           ],
           [
             2041.5,
             792.4,
-            1024.0,
+            1024,
             363.2,
             430.6
           ],
           [
-            2049.0,
+            2049,
             795.3,
-            1028.0,
+            1028,
             364.5,
             432.3
           ],
           [
             2056.5,
             798.2,
-            1032.0,
+            1032,
             365.8,
-            434.0
+            434
           ],
           [
-            2064.0,
+            2064,
             801.2,
-            1036.0,
+            1036,
             367.1,
             435.6
           ],
           [
             2071.5,
             804.1,
-            1040.0,
+            1040,
             368.5,
             437.3
           ],
           [
-            2079.0,
-            807.0,
-            1044.0,
+            2079,
+            807,
+            1044,
             369.8,
-            439.0
+            439
           ],
           [
             2086.5,
-            810.0,
-            1048.0,
+            810,
+            1048,
             371.1,
             440.7
           ],
           [
-            2094.0,
+            2094,
             812.9,
-            1052.0,
+            1052,
             372.4,
             442.4
           ],
           [
             2101.5,
             815.9,
-            1056.0,
+            1056,
             373.7,
             444.1
           ],
           [
-            2109.0,
+            2109,
             818.8,
-            1060.0,
-            375.0,
+            1060,
+            375,
             445.7
           ],
           [
             2116.5,
             821.7,
-            1064.0,
+            1064,
             376.3,
             447.4
           ],
           [
-            2124.0,
+            2124,
             824.6,
-            1068.0,
+            1068,
             377.6,
             449.1
           ],
           [
             2131.5,
             827.6,
-            1072.0,
+            1072,
             378.9,
             450.7
           ],
           [
-            2139.0,
+            2139,
             830.5,
-            1075.0,
+            1075,
             380.2,
             452.4
           ],
           [
             2146.5,
             833.4,
-            1079.0,
+            1079,
             381.5,
             454.1
           ],
           [
-            2154.0,
+            2154,
             836.4,
-            1083.0,
+            1083,
             382.8,
             455.7
           ],
           [
             2161.5,
             839.3,
-            1087.0,
+            1087,
             384.1,
             457.4
           ],
           [
-            2169.0,
+            2169,
             842.3,
-            1091.0,
+            1091,
             385.4,
             459.1
           ],
           [
             2176.5,
             845.2,
-            1095.0,
+            1095,
             386.6,
             460.7
           ],
           [
-            2184.0,
+            2184,
             848.2,
-            1099.0,
+            1099,
             387.9,
             462.4
           ],
           [
             2191.5,
             851.1,
-            1103.0,
+            1103,
             389.2,
             464.1
           ],
           [
-            2199.0,
-            854.0,
-            1107.0,
+            2199,
+            854,
+            1107,
             390.4,
             465.8
           ],
           [
             2206.5,
-            857.0,
-            1111.0,
+            857,
+            1111,
             391.7,
             467.5
           ],
           [
-            2214.0,
+            2214,
             859.9,
-            1115.0,
+            1115,
             392.9,
             469.2
           ],
           [
             2221.5,
             862.8,
-            1119.0,
+            1119,
             394.2,
             470.8
           ],
           [
-            2229.0,
+            2229,
             865.7,
-            1123.0,
+            1123,
             395.4,
             472.5
           ],
           [
             2236.5,
             868.6,
-            1127.0,
+            1127,
             396.7,
             474.2
           ],
           [
-            2244.0,
+            2244,
             871.5,
-            1131.0,
-            398.0,
+            1131,
+            398,
             475.9
           ],
           [
             2251.5,
             874.4,
-            1135.0,
+            1135,
             399.2,
             477.5
           ],
           [
-            2259.0,
+            2259,
             877.3,
-            1139.0,
+            1139,
             400.5,
             479.2
           ],
           [
             2266.5,
             880.2,
-            1143.0,
+            1143,
             401.7,
             480.9
           ],
           [
-            2274.0,
+            2274,
             883.1,
-            1147.0,
-            403.0,
+            1147,
+            403,
             482.6
           ],
           [
             2281.5,
-            886.0,
-            1151.0,
+            886,
+            1151,
             404.3,
             484.2
           ],
           [
-            2289.0,
+            2289,
             888.9,
-            1155.0,
+            1155,
             405.5,
             485.9
           ],
           [
             2296.5,
             891.7,
-            1159.0,
+            1159,
             406.8,
             487.6
           ],
           [
-            2304.0,
+            2304,
             894.6,
-            1163.0,
+            1163,
             408.1,
             489.2
           ],
           [
             2311.5,
             897.5,
-            1167.0,
+            1167,
             409.4,
             490.9
           ],
           [
-            2319.0,
+            2319,
             900.3,
-            1171.0,
+            1171,
             410.7,
             492.5
           ],
           [
             2326.5,
             903.2,
-            1175.0,
-            412.0,
+            1175,
+            412,
             494.2
           ],
           [
-            2334.0,
+            2334,
             906.1,
-            1179.0,
+            1179,
             413.3,
             495.9
           ],
           [
             2341.5,
             908.9,
-            1183.0,
+            1183,
             414.5,
             497.6
           ],
           [
-            2349.0,
+            2349,
             911.8,
-            1187.0,
+            1187,
             415.8,
             499.2
           ],
           [
             2356.5,
             914.6,
-            1191.0,
+            1191,
             417.1,
             500.9
           ],
           [
-            2364.0,
+            2364,
             917.5,
-            1195.0,
+            1195,
             418.3,
             502.6
           ],
           [
             2371.5,
             920.3,
-            1199.0,
+            1199,
             419.6,
             504.3
           ],
           [
-            2379.0,
+            2379,
             923.1,
-            1203.0,
+            1203,
             420.8,
-            506.0
+            506
           ],
           [
             2386.5,
-            926.0,
-            1207.0,
+            926,
+            1207,
             422.1,
             507.7
           ],
           [
-            2394.0,
+            2394,
             928.8,
-            1211.0,
+            1211,
             423.3,
             509.4
           ],
           [
             2401.5,
             931.6,
-            1215.0,
+            1215,
             424.5,
             511.2
           ],
           [
-            2409.0,
+            2409,
             934.5,
-            1219.0,
+            1219,
             425.8,
             512.9
           ],
           [
             2416.5,
             937.3,
-            1223.0,
-            427.0,
+            1223,
+            427,
             514.6
           ],
           [
-            2424.0,
+            2424,
             940.2,
-            1227.0,
+            1227,
             428.3,
             516.3
           ],
           [
             2431.5,
-            943.0,
-            1231.0,
+            943,
+            1231,
             429.5,
-            518.0
+            518
           ],
           [
-            2439.0,
+            2439,
             945.9,
-            1236.0,
+            1236,
             430.8,
             519.7
           ],
           [
             2446.5,
             948.7,
-            1240.0,
+            1240,
             432.1,
             521.4
           ],
           [
-            2454.0,
+            2454,
             951.6,
-            1244.0,
+            1244,
             433.3,
             523.2
           ],
           [
             2461.5,
             954.5,
-            1248.0,
+            1248,
             434.6,
             524.9
           ],
           [
-            2469.0,
+            2469,
             957.4,
-            1252.0,
+            1252,
             435.8,
             526.6
           ],
           [
             2476.5,
             960.2,
-            1256.0,
+            1256,
             437.1,
             528.3
           ],
           [
-            2484.0,
+            2484,
             963.1,
-            1260.0,
+            1260,
             438.4,
-            530.0
+            530
           ],
           [
             2491.5,
-            966.0,
-            1264.0,
+            966,
+            1264,
             439.6,
             531.7
           ],
           [
-            2499.0,
+            2499,
             968.9,
-            1268.0,
+            1268,
             440.9,
             533.4
           ],
           [
             2506.5,
             971.8,
-            1272.0,
+            1272,
             442.1,
             535.1
           ],
           [
-            2514.0,
+            2514,
             974.7,
-            1276.0,
+            1276,
             443.3,
             536.9
           ],
           [
             2521.5,
             977.6,
-            1280.0,
+            1280,
             444.6,
             538.6
           ],
           [
-            2529.0,
+            2529,
             980.5,
-            1284.0,
+            1284,
             445.9,
             540.4
           ],
           [
             2536.5,
             983.4,
-            1288.0,
+            1288,
             447.1,
             542.1
           ],
           [
-            2544.0,
+            2544,
             986.3,
-            1293.0,
+            1293,
             448.4,
             543.9
           ],
           [
             2551.5,
             989.2,
-            1297.0,
+            1297,
             449.7,
             545.7
           ],
           [
-            2559.0,
+            2559,
             992.1,
-            1301.0,
+            1301,
             450.9,
             547.5
           ],
           [
             2566.5,
-            995.0,
-            1305.0,
+            995,
+            1305,
             452.2,
             549.3
           ],
           [
-            2574.0,
+            2574,
             997.9,
-            1309.0,
+            1309,
             453.4,
-            551.0
+            551
           ],
           [
             2581.5,
-            1001.0,
-            1313.0,
+            1001,
+            1313,
             454.6,
             552.8
           ],
           [
-            2589.0,
-            1004.0,
-            1317.0,
+            2589,
+            1004,
+            1317,
             455.8,
             554.6
           ],
           [
             2596.5,
-            1007.0,
-            1321.0,
-            457.0,
+            1007,
+            1321,
+            457,
             556.4
           ],
           [
-            2604.0,
-            1009.0,
-            1326.0,
+            2604,
+            1009,
+            1326,
             458.3,
             558.2
           ],
           [
             2611.5,
-            1012.0,
-            1330.0,
+            1012,
+            1330,
             459.5,
-            560.0
+            560
           ],
           [
-            2619.0,
-            1015.0,
-            1334.0,
+            2619,
+            1015,
+            1334,
             460.7,
             561.8
           ],
           [
             2626.5,
-            1018.0,
-            1338.0,
-            462.0,
+            1018,
+            1338,
+            462,
             563.6
           ],
           [
-            2634.0,
-            1021.0,
-            1342.0,
+            2634,
+            1021,
+            1342,
             463.2,
             565.4
           ],
           [
             2641.5,
-            1024.0,
-            1346.0,
+            1024,
+            1346,
             464.5,
             567.2
           ],
           [
-            2649.0,
-            1027.0,
-            1350.0,
+            2649,
+            1027,
+            1350,
             465.7,
             569.1
           ],
           [
             2656.5,
-            1030.0,
-            1354.0,
-            467.0,
+            1030,
+            1354,
+            467,
             570.9
           ],
           [
-            2664.0,
-            1033.0,
-            1358.0,
+            2664,
+            1033,
+            1358,
             468.2,
             572.7
           ],
           [
             2671.5,
-            1035.0,
-            1363.0,
+            1035,
+            1363,
             469.4,
             574.5
           ],
           [
-            2679.0,
-            1038.0,
-            1367.0,
+            2679,
+            1038,
+            1367,
             470.7,
             576.3
           ],
           [
             2686.5,
-            1041.0,
-            1371.0,
+            1041,
+            1371,
             471.9,
             578.1
           ],
           [
-            2694.0,
-            1044.0,
-            1375.0,
+            2694,
+            1044,
+            1375,
             473.1,
             579.9
           ],
           [
             2701.5,
-            1047.0,
-            1379.0,
+            1047,
+            1379,
             474.4,
             581.7
           ],
           [
-            2709.0,
-            1050.0,
-            1383.0,
+            2709,
+            1050,
+            1383,
             475.6,
             583.5
           ],
           [
             2716.5,
-            1053.0,
-            1387.0,
+            1053,
+            1387,
             476.8,
             585.3
           ],
           [
-            2724.0,
-            1056.0,
-            1391.0,
+            2724,
+            1056,
+            1391,
             478.1,
             587.1
           ],
           [
             2731.5,
-            1059.0,
-            1396.0,
+            1059,
+            1396,
             479.3,
             588.9
           ],
           [
-            2739.0,
-            1062.0,
-            1400.0,
+            2739,
+            1062,
+            1400,
             480.6,
             590.7
           ],
           [
             2746.5,
-            1064.0,
-            1404.0,
+            1064,
+            1404,
             481.8,
             592.4
           ],
           [
-            2754.0,
-            1067.0,
-            1408.0,
+            2754,
+            1067,
+            1408,
             483.1,
             594.2
           ],
           [
             2761.5,
-            1070.0,
-            1412.0,
+            1070,
+            1412,
             484.4,
-            596.0
+            596
           ],
           [
-            2769.0,
-            1073.0,
-            1416.0,
+            2769,
+            1073,
+            1416,
             485.6,
             597.7
           ],
           [
             2776.5,
-            1076.0,
-            1421.0,
+            1076,
+            1421,
             486.9,
             599.5
           ],
           [
-            2784.0,
-            1079.0,
-            1425.0,
+            2784,
+            1079,
+            1425,
             488.2,
             601.3
           ],
           [
             2791.5,
-            1082.0,
-            1429.0,
+            1082,
+            1429,
             489.5,
-            603.0
+            603
           ],
           [
-            2799.0,
-            1085.0,
-            1433.0,
+            2799,
+            1085,
+            1433,
             490.8,
             604.8
           ],
           [
             2806.5,
-            1088.0,
-            1437.0,
+            1088,
+            1437,
             492.1,
             606.5
           ],
           [
-            2814.0,
-            1091.0,
-            1441.0,
+            2814,
+            1091,
+            1441,
             493.4,
             608.3
           ],
           [
             2821.5,
-            1094.0,
-            1446.0,
+            1094,
+            1446,
             494.7,
             610.1
           ],
           [
-            2829.0,
-            1097.0,
-            1450.0,
-            496.0,
+            2829,
+            1097,
+            1450,
+            496,
             611.8
           ],
           [
             2836.5,
-            1100.0,
-            1454.0,
+            1100,
+            1454,
             497.3,
             613.6
           ],
           [
-            2844.0,
-            1102.0,
-            1458.0,
+            2844,
+            1102,
+            1458,
             498.7,
             615.3
           ],
           [
             2851.5,
-            1105.0,
-            1462.0,
-            500.0,
-            617.0
+            1105,
+            1462,
+            500,
+            617
           ],
           [
-            2859.0,
-            1108.0,
-            1466.0,
+            2859,
+            1108,
+            1466,
             501.3,
             618.7
           ],
           [
             2866.5,
-            1111.0,
-            1471.0,
+            1111,
+            1471,
             502.6,
             620.4
           ],
           [
-            2874.0,
-            1114.0,
-            1475.0,
+            2874,
+            1114,
+            1475,
             503.9,
             622.2
           ],
           [
             2881.5,
-            1117.0,
-            1479.0,
+            1117,
+            1479,
             505.2,
             623.9
           ],
           [
-            2889.0,
-            1120.0,
-            1483.0,
+            2889,
+            1120,
+            1483,
             506.5,
             625.6
           ],
           [
             2896.5,
-            1123.0,
-            1487.0,
+            1123,
+            1487,
             507.8,
             627.3
           ],
           [
-            2904.0,
-            1126.0,
-            1491.0,
+            2904,
+            1126,
+            1491,
             509.1,
             629.1
           ],
           [
             2911.5,
-            1129.0,
-            1496.0,
+            1129,
+            1496,
             510.5,
             630.8
           ],
           [
-            2919.0,
-            1131.0,
-            1500.0,
+            2919,
+            1131,
+            1500,
             511.8,
             632.5
           ],
           [
             2926.5,
-            1134.0,
-            1504.0,
+            1134,
+            1504,
             513.1,
             634.3
           ],
           [
-            2934.0,
-            1137.0,
-            1508.0,
+            2934,
+            1137,
+            1508,
             514.4,
-            636.0
+            636
           ],
           [
             2941.5,
-            1140.0,
-            1512.0,
+            1140,
+            1512,
             515.8,
             637.8
           ],
           [
-            2949.0,
-            1143.0,
-            1517.0,
+            2949,
+            1143,
+            1517,
             517.1,
             639.6
           ],
           [
             2956.5,
-            1146.0,
-            1521.0,
+            1146,
+            1521,
             518.5,
             641.3
           ],
           [
-            2964.0,
-            1149.0,
-            1525.0,
+            2964,
+            1149,
+            1525,
             519.8,
             643.1
           ],
           [
             2971.5,
-            1152.0,
-            1529.0,
+            1152,
+            1529,
             521.1,
             644.8
           ],
           [
-            2979.0,
-            1155.0,
-            1533.0,
+            2979,
+            1155,
+            1533,
             522.5,
             646.6
           ],
           [
             2986.5,
-            1158.0,
-            1537.0,
+            1158,
+            1537,
             523.8,
             648.4
           ],
           [
-            2994.0,
-            1161.0,
-            1542.0,
+            2994,
+            1161,
+            1542,
             525.2,
             650.2
           ],
           [
             3001.5,
-            1163.0,
-            1546.0,
+            1163,
+            1546,
             526.5,
-            652.0
+            652
           ],
           [
-            3009.0,
-            1166.0,
-            1550.0,
+            3009,
+            1166,
+            1550,
             527.9,
             653.7
           ],
           [
             3016.5,
-            1169.0,
-            1554.0,
+            1169,
+            1554,
             529.2,
             655.5
           ],
           [
-            3024.0,
-            1172.0,
-            1558.0,
+            3024,
+            1172,
+            1558,
             530.6,
             657.3
           ],
           [
             3031.5,
-            1175.0,
-            1562.0,
+            1175,
+            1562,
             531.9,
             659.1
           ],
           [
-            3039.0,
-            1178.0,
-            1566.0,
+            3039,
+            1178,
+            1566,
             533.2,
             660.8
           ],
           [
             3046.5,
-            1181.0,
-            1571.0,
+            1181,
+            1571,
             534.6,
             662.6
           ],
           [
-            3054.0,
-            1184.0,
-            1575.0,
+            3054,
+            1184,
+            1575,
             535.9,
             664.3
           ],
           [
             3061.5,
-            1187.0,
-            1579.0,
+            1187,
+            1579,
             537.3,
             666.1
           ],
           [
-            3069.0,
-            1190.0,
-            1583.0,
+            3069,
+            1190,
+            1583,
             538.6,
             667.8
           ],
           [
             3076.5,
-            1193.0,
-            1587.0,
-            540.0,
+            1193,
+            1587,
+            540,
             669.6
           ],
           [
-            3084.0,
-            1195.0,
-            1592.0,
+            3084,
+            1195,
+            1592,
             541.4,
             671.3
           ],
           [
             3091.5,
-            1198.0,
-            1596.0,
+            1198,
+            1596,
             542.8,
             673.1
           ],
           [
-            3099.0,
-            1201.0,
-            1600.0,
+            3099,
+            1201,
+            1600,
             544.1,
             674.8
           ],
           [
             3106.5,
-            1204.0,
-            1604.0,
+            1204,
+            1604,
             545.5,
             676.6
           ],
           [
-            3114.0,
-            1207.0,
-            1608.0,
+            3114,
+            1207,
+            1608,
             546.8,
             678.3
           ],
           [
             3121.5,
-            1210.0,
-            1612.0,
+            1210,
+            1612,
             548.1,
             680.1
           ],
           [
-            3129.0,
-            1213.0,
-            1617.0,
+            3129,
+            1213,
+            1617,
             549.5,
             681.8
           ],
           [
             3136.5,
-            1216.0,
-            1621.0,
+            1216,
+            1621,
             550.8,
             683.5
           ],
           [
-            3144.0,
-            1219.0,
-            1625.0,
+            3144,
+            1219,
+            1625,
             552.1,
             685.3
           ],
           [
             3151.5,
-            1222.0,
-            1629.0,
+            1222,
+            1629,
             553.5,
-            687.0
+            687
           ],
           [
-            3159.0,
-            1224.0,
-            1633.0,
+            3159,
+            1224,
+            1633,
             554.8,
             688.8
           ],
           [
             3166.5,
-            1227.0,
-            1637.0,
+            1227,
+            1637,
             556.1,
             690.5
           ],
           [
-            3174.0,
-            1230.0,
-            1641.0,
+            3174,
+            1230,
+            1641,
             557.5,
             692.3
           ],
           [
             3181.5,
-            1233.0,
-            1646.0,
+            1233,
+            1646,
             558.8,
-            694.0
+            694
           ],
           [
-            3189.0,
-            1236.0,
-            1650.0,
+            3189,
+            1236,
+            1650,
             560.2,
             695.8
           ],
           [
             3196.5,
-            1239.0,
-            1654.0,
+            1239,
+            1654,
             561.6,
             697.6
           ],
           [
-            3204.0,
-            1242.0,
-            1658.0,
+            3204,
+            1242,
+            1658,
             562.9,
             699.4
           ],
           [
             3211.5,
-            1245.0,
-            1662.0,
+            1245,
+            1662,
             564.3,
             701.1
           ],
           [
-            3219.0,
-            1248.0,
-            1666.0,
+            3219,
+            1248,
+            1666,
             565.7,
             702.9
           ],
           [
             3226.5,
-            1251.0,
-            1670.0,
-            567.0,
+            1251,
+            1670,
+            567,
             704.7
           ],
           [
-            3234.0,
-            1254.0,
-            1675.0,
+            3234,
+            1254,
+            1675,
             568.4,
             706.5
           ],
           [
             3241.5,
-            1256.0,
-            1679.0,
+            1256,
+            1679,
             569.7,
             708.2
           ],
           [
-            3249.0,
-            1259.0,
-            1683.0,
+            3249,
+            1259,
+            1683,
             571.1,
-            710.0
+            710
           ],
           [
             3256.5,
-            1262.0,
-            1687.0,
+            1262,
+            1687,
             572.5,
             711.7
           ],
           [
-            3264.0,
-            1265.0,
-            1691.0,
+            3264,
+            1265,
+            1691,
             573.8,
             713.5
           ],
           [
             3271.5,
-            1268.0,
-            1695.0,
+            1268,
+            1695,
             575.2,
             715.2
           ],
           [
-            3279.0,
-            1271.0,
-            1699.0,
+            3279,
+            1271,
+            1699,
             576.6,
-            717.0
+            717
           ],
           [
             3286.5,
-            1274.0,
-            1704.0,
+            1274,
+            1704,
             577.9,
             718.7
           ],
           [
-            3294.0,
-            1277.0,
-            1708.0,
+            3294,
+            1277,
+            1708,
             579.3,
             720.5
           ],
           [
             3301.5,
-            1280.0,
-            1712.0,
+            1280,
+            1712,
             580.7,
             722.2
           ],
           [
-            3309.0,
-            1283.0,
-            1716.0,
-            582.0,
-            724.0
+            3309,
+            1283,
+            1716,
+            582,
+            724
           ],
           [
             3316.5,
-            1285.0,
-            1720.0,
+            1285,
+            1720,
             583.4,
             725.7
           ],
           [
-            3324.0,
-            1288.0,
-            1724.0,
+            3324,
+            1288,
+            1724,
             584.8,
             727.4
           ],
           [
             3331.5,
-            1291.0,
-            1728.0,
+            1291,
+            1728,
             586.2,
             729.2
           ],
           [
-            3339.0,
-            1294.0,
-            1732.0,
+            3339,
+            1294,
+            1732,
             587.5,
             730.9
           ],
           [
             3346.5,
-            1297.0,
-            1737.0,
+            1297,
+            1737,
             588.9,
             732.7
           ],
           [
-            3354.0,
-            1300.0,
-            1741.0,
+            3354,
+            1300,
+            1741,
             590.3,
             734.4
           ],
           [
             3361.5,
-            1303.0,
-            1745.0,
+            1303,
+            1745,
             591.7,
             736.2
           ],
           [
-            3369.0,
-            1306.0,
-            1749.0,
+            3369,
+            1306,
+            1749,
             593.1,
             737.9
           ],
           [
             3376.5,
-            1309.0,
-            1753.0,
+            1309,
+            1753,
             594.5,
             739.6
           ],
           [
-            3384.0,
-            1312.0,
-            1757.0,
+            3384,
+            1312,
+            1757,
             595.9,
             741.3
           ],
           [
             3391.5,
-            1314.0,
-            1762.0,
+            1314,
+            1762,
             597.3,
-            743.0
+            743
           ],
           [
-            3399.0,
-            1317.0,
-            1766.0,
+            3399,
+            1317,
+            1766,
             598.7,
             744.7
           ],
           [
             3406.5,
-            1320.0,
-            1770.0,
+            1320,
+            1770,
             600.2,
             746.4
           ],
           [
-            3414.0,
-            1323.0,
-            1774.0,
+            3414,
+            1323,
+            1774,
             601.6,
             748.1
           ],
           [
             3421.5,
-            1326.0,
-            1778.0,
+            1326,
+            1778,
             603.1,
             749.8
           ],
           [
-            3429.0,
-            1329.0,
-            1783.0,
+            3429,
+            1329,
+            1783,
             604.5,
             751.5
           ],
           [
             3436.5,
-            1332.0,
-            1787.0,
+            1332,
+            1787,
             605.9,
             753.1
           ],
           [
-            3444.0,
-            1335.0,
-            1791.0,
+            3444,
+            1335,
+            1791,
             607.4,
             754.8
           ],
           [
             3451.5,
-            1338.0,
-            1795.0,
+            1338,
+            1795,
             608.8,
             756.5
           ],
           [
-            3459.0,
-            1341.0,
-            1799.0,
+            3459,
+            1341,
+            1799,
             610.2,
             758.2
           ],
           [
             3466.5,
-            1344.0,
-            1803.0,
+            1344,
+            1803,
             611.6,
             759.9
           ],
           [
-            3474.0,
-            1346.0,
-            1808.0,
-            613.0,
+            3474,
+            1346,
+            1808,
+            613,
             761.6
           ],
           [
             3481.5,
-            1349.0,
-            1812.0,
+            1349,
+            1812,
             614.4,
             763.3
           ],
           [
-            3489.0,
-            1352.0,
-            1816.0,
+            3489,
+            1352,
+            1816,
             615.8,
-            765.0
+            765
           ],
           [
             3496.5,
-            1355.0,
-            1820.0,
+            1355,
+            1820,
             617.2,
             766.7
           ],
           [
-            3504.0,
-            1358.0,
-            1824.0,
+            3504,
+            1358,
+            1824,
             618.6,
             768.4
           ],
           [
             3511.5,
-            1361.0,
-            1829.0,
-            620.0,
+            1361,
+            1829,
+            620,
             770.1
           ],
           [
-            3519.0,
-            1364.0,
-            1833.0,
+            3519,
+            1364,
+            1833,
             621.4,
             771.8
           ],
           [
             3526.5,
-            1367.0,
-            1837.0,
+            1367,
+            1837,
             622.8,
             773.5
           ],
           [
-            3534.0,
-            1369.0,
-            1841.0,
+            3534,
+            1369,
+            1841,
             624.1,
             775.1
           ],
           [
             3541.5,
-            1372.0,
-            1845.0,
+            1372,
+            1845,
             625.5,
             776.8
           ],
           [
-            3549.0,
-            1375.0,
-            1849.0,
+            3549,
+            1375,
+            1849,
             626.9,
             778.4
           ],
           [
             3556.5,
-            1378.0,
-            1854.0,
+            1378,
+            1854,
             628.3,
-            780.0
+            780
           ],
           [
-            3564.0,
-            1381.0,
-            1858.0,
+            3564,
+            1381,
+            1858,
             629.7,
             781.6
           ],
           [
             3571.5,
-            1384.0,
-            1862.0,
+            1384,
+            1862,
             631.1,
             783.2
           ],
           [
-            3579.0,
-            1387.0,
-            1866.0,
+            3579,
+            1387,
+            1866,
             632.4,
             784.8
           ],
           [
             3586.5,
-            1390.0,
-            1870.0,
+            1390,
+            1870,
             633.8,
             786.5
           ],
           [
-            3594.0,
-            1393.0,
-            1875.0,
+            3594,
+            1393,
+            1875,
             635.2,
             788.1
           ],
           [
             3601.5,
-            1396.0,
-            1879.0,
+            1396,
+            1879,
             636.5,
             789.7
           ],
           [
-            3609.0,
-            1399.0,
-            1883.0,
+            3609,
+            1399,
+            1883,
             637.8,
             791.3
           ],
           [
             3616.5,
-            1402.0,
-            1887.0,
+            1402,
+            1887,
             639.2,
             792.9
           ],
           [
-            3624.0,
-            1404.0,
-            1891.0,
+            3624,
+            1404,
+            1891,
             640.5,
             794.6
           ],
           [
             3631.5,
-            1407.0,
-            1895.0,
+            1407,
+            1895,
             641.9,
             796.2
           ],
           [
-            3639.0,
-            1410.0,
-            1900.0,
+            3639,
+            1410,
+            1900,
             643.2,
             797.8
           ],
           [
             3646.5,
-            1413.0,
-            1904.0,
+            1413,
+            1904,
             644.6,
             799.5
           ],
           [
-            3654.0,
-            1416.0,
-            1908.0,
+            3654,
+            1416,
+            1908,
             645.9,
             801.1
           ],
           [
             3661.5,
-            1419.0,
-            1912.0,
+            1419,
+            1912,
             647.2,
             802.8
           ],
           [
-            3669.0,
-            1422.0,
-            1916.0,
+            3669,
+            1422,
+            1916,
             648.5,
             804.4
           ],
           [
             3676.5,
-            1425.0,
-            1920.0,
+            1425,
+            1920,
             649.8,
             806.1
           ],
           [
-            3684.0,
-            1428.0,
-            1924.0,
+            3684,
+            1428,
+            1924,
             651.2,
             807.7
           ],
           [
             3691.5,
-            1431.0,
-            1928.0,
+            1431,
+            1928,
             652.6,
             809.4
           ],
           [
-            3699.0,
-            1433.0,
-            1933.0,
+            3699,
+            1433,
+            1933,
             653.9,
-            811.0
+            811
           ],
           [
             3706.5,
-            1436.0,
-            1937.0,
+            1436,
+            1937,
             655.3,
             812.7
           ],
           [
-            3714.0,
-            1439.0,
-            1941.0,
+            3714,
+            1439,
+            1941,
             656.6,
             814.3
           ],
           [
             3721.5,
-            1442.0,
-            1945.0,
-            658.0,
+            1442,
+            1945,
+            658,
             815.9
           ],
           [
-            3729.0,
-            1445.0,
-            1949.0,
+            3729,
+            1445,
+            1949,
             659.4,
             817.5
           ],
           [
             3736.5,
-            1448.0,
-            1953.0,
+            1448,
+            1953,
             660.7,
             819.2
           ],
           [
-            3744.0,
-            1451.0,
-            1957.0,
+            3744,
+            1451,
+            1957,
             662.1,
             820.8
           ],
           [
             3751.5,
-            1453.0,
-            1961.0,
+            1453,
+            1961,
             663.5,
             822.4
           ],
           [
-            3759.0,
-            1456.0,
-            1965.0,
+            3759,
+            1456,
+            1965,
             664.8,
             824.1
           ],
           [
             3766.5,
-            1459.0,
-            1969.0,
+            1459,
+            1969,
             666.2,
             825.7
           ],
           [
-            3774.0,
-            1462.0,
-            1974.0,
+            3774,
+            1462,
+            1974,
             667.6,
             827.4
           ],
           [
             3781.5,
-            1465.0,
-            1978.0,
-            669.0,
-            829.0
+            1465,
+            1978,
+            669,
+            829
           ],
           [
-            3789.0,
-            1468.0,
-            1982.0,
+            3789,
+            1468,
+            1982,
             670.4,
             830.6
           ],
           [
             3796.5,
-            1471.0,
-            1986.0,
+            1471,
+            1986,
             671.8,
             832.3
           ],
           [
-            3804.0,
-            1473.0,
-            1990.0,
+            3804,
+            1473,
+            1990,
             673.2,
-            834.0
+            834
           ],
           [
             3811.5,
-            1476.0,
-            1994.0,
+            1476,
+            1994,
             674.6,
             835.6
           ],
           [
-            3819.0,
-            1479.0,
-            1998.0,
-            676.0,
+            3819,
+            1479,
+            1998,
+            676,
             837.3
           ],
           [
             3826.5,
-            1482.0,
-            2002.0,
+            1482,
+            2002,
             677.4,
             838.9
           ],
           [
-            3834.0,
-            1485.0,
-            2006.0,
+            3834,
+            1485,
+            2006,
             678.8,
             840.6
           ],
           [
             3841.5,
-            1488.0,
-            2010.0,
+            1488,
+            2010,
             680.1,
             842.2
           ],
           [
-            3849.0,
-            1491.0,
-            2015.0,
+            3849,
+            1491,
+            2015,
             681.5,
             843.9
           ],
           [
             3856.5,
-            1493.0,
-            2019.0,
+            1493,
+            2019,
             682.9,
             845.6
           ],
           [
-            3864.0,
-            1496.0,
-            2023.0,
+            3864,
+            1496,
+            2023,
             684.2,
             847.3
           ],
           [
             3871.5,
-            1499.0,
-            2027.0,
+            1499,
+            2027,
             685.6,
-            849.0
+            849
           ],
           [
-            3879.0,
-            1502.0,
-            2031.0,
-            687.0,
+            3879,
+            1502,
+            2031,
+            687,
             850.6
           ],
           [
             3886.5,
-            1505.0,
-            2035.0,
+            1505,
+            2035,
             688.3,
             852.3
           ],
           [
-            3894.0,
-            1508.0,
-            2039.0,
+            3894,
+            1508,
+            2039,
             689.7,
             853.9
           ],
           [
             3901.5,
-            1511.0,
-            2043.0,
+            1511,
+            2043,
             691.1,
             855.5
           ],
           [
-            3909.0,
-            1514.0,
-            2047.0,
+            3909,
+            1514,
+            2047,
             692.5,
             857.1
           ],
           [
             3916.5,
-            1517.0,
-            2051.0,
+            1517,
+            2051,
             693.9,
             858.8
           ],
           [
-            3924.0,
-            1520.0,
-            2055.0,
+            3924,
+            1520,
+            2055,
             695.3,
             860.4
           ],
           [
             3931.5,
-            1523.0,
-            2059.0,
+            1523,
+            2059,
             696.7,
-            862.0
+            862
           ],
           [
-            3939.0,
-            1525.0,
-            2063.0,
+            3939,
+            1525,
+            2063,
             698.1,
             863.6
           ],
           [
             3946.5,
-            1528.0,
-            2067.0,
+            1528,
+            2067,
             699.5,
             865.3
           ],
           [
-            3954.0,
-            1531.0,
-            2071.0,
+            3954,
+            1531,
+            2071,
             700.9,
             866.9
           ],
           [
             3961.5,
-            1534.0,
-            2076.0,
+            1534,
+            2076,
             702.3,
             868.6
           ],
           [
-            3969.0,
-            1537.0,
-            2080.0,
+            3969,
+            1537,
+            2080,
             703.6,
             870.2
           ],
           [
             3976.5,
-            1540.0,
-            2084.0,
-            705.0,
+            1540,
+            2084,
+            705,
             871.9
           ],
           [
-            3984.0,
-            1543.0,
-            2088.0,
+            3984,
+            1543,
+            2088,
             706.4,
             873.5
           ],
           [
             3991.5,
-            1546.0,
-            2092.0,
+            1546,
+            2092,
             707.8,
             875.2
           ],
           [
-            3999.0,
-            1549.0,
-            2096.0,
+            3999,
+            1549,
+            2096,
             709.2,
             876.9
           ],
           [
             4006.5,
-            1551.0,
-            2100.0,
+            1551,
+            2100,
             710.6,
             878.5
           ],
           [
-            4014.0,
-            1554.0,
-            2104.0,
-            712.0,
+            4014,
+            1554,
+            2104,
+            712,
             880.2
           ],
           [
             4021.5,
-            1557.0,
-            2108.0,
+            1557,
+            2108,
             713.4,
             881.9
           ],
           [
-            4029.0,
-            1560.0,
-            2112.0,
+            4029,
+            1560,
+            2112,
             714.7,
             883.6
           ],
           [
             4036.5,
-            1563.0,
-            2116.0,
+            1563,
+            2116,
             716.1,
             885.2
           ],
           [
-            4044.0,
-            1566.0,
-            2120.0,
+            4044,
+            1566,
+            2120,
             717.5,
             886.9
           ],
           [
             4051.5,
-            1569.0,
-            2124.0,
+            1569,
+            2124,
             718.8,
             888.5
           ],
           [
-            4059.0,
-            1572.0,
-            2128.0,
+            4059,
+            1572,
+            2128,
             720.2,
             890.2
           ],
           [
             4066.5,
-            1575.0,
-            2132.0,
+            1575,
+            2132,
             721.5,
             891.8
           ],
           [
-            4074.0,
-            1578.0,
-            2136.0,
+            4074,
+            1578,
+            2136,
             722.9,
             893.5
           ],
           [
             4081.5,
-            1581.0,
-            2140.0,
+            1581,
+            2140,
             724.2,
             895.1
           ],
           [
-            4089.0,
-            1583.0,
-            2144.0,
+            4089,
+            1583,
+            2144,
             725.6,
             896.8
           ],
           [
             4096.5,
-            1586.0,
-            2149.0,
-            727.0,
+            1586,
+            2149,
+            727,
             898.4
           ],
           [
-            4104.0,
-            1589.0,
-            2153.0,
+            4104,
+            1589,
+            2153,
             728.3,
             900.1
           ],
           [
             4111.5,
-            1592.0,
-            2157.0,
+            1592,
+            2157,
             729.7,
             901.7
           ],
           [
-            4119.0,
-            1595.0,
-            2161.0,
+            4119,
+            1595,
+            2161,
             731.1,
             903.4
           ],
           [
             4126.5,
-            1598.0,
-            2165.0,
+            1598,
+            2165,
             732.4,
-            905.0
+            905
           ],
           [
-            4134.0,
-            1601.0,
-            2169.0,
+            4134,
+            1601,
+            2169,
             733.8,
             906.6
           ],
           [
             4141.5,
-            1604.0,
-            2173.0,
+            1604,
+            2173,
             735.1,
             908.2
           ],
           [
-            4149.0,
-            1607.0,
-            2177.0,
+            4149,
+            1607,
+            2177,
             736.4,
             909.8
           ],
           [
             4156.5,
-            1610.0,
-            2181.0,
+            1610,
+            2181,
             737.8,
             911.4
           ],
           [
-            4164.0,
-            1613.0,
-            2185.0,
+            4164,
+            1613,
+            2185,
             739.1,
             913.1
           ],
           [
             4171.5,
-            1615.0,
-            2189.0,
+            1615,
+            2189,
             740.4,
             914.7
           ],
           [
-            4179.0,
-            1618.0,
-            2193.0,
+            4179,
+            1618,
+            2193,
             741.7,
             916.3
           ],
           [
             4186.5,
-            1621.0,
-            2197.0,
-            743.0,
-            918.0
+            1621,
+            2197,
+            743,
+            918
           ],
           [
-            4194.0,
-            1624.0,
-            2201.0,
+            4194,
+            1624,
+            2201,
             744.3,
             919.7
           ],
           [
             4201.5,
-            1627.0,
-            2205.0,
+            1627,
+            2205,
             745.6,
             921.4
           ],
           [
-            4209.0,
-            1630.0,
-            2209.0,
+            4209,
+            1630,
+            2209,
             746.9,
-            923.0
+            923
           ],
           [
             4216.5,
-            1633.0,
-            2213.0,
+            1633,
+            2213,
             748.1,
             924.7
           ],
           [
-            4224.0,
-            1636.0,
-            2217.0,
+            4224,
+            1636,
+            2217,
             749.5,
             926.3
           ],
           [
             4231.5,
-            1639.0,
-            2221.0,
+            1639,
+            2221,
             750.7,
-            928.0
+            928
           ],
           [
-            4239.0,
-            1642.0,
-            2225.0,
-            752.0,
+            4239,
+            1642,
+            2225,
+            752,
             929.6
           ],
           [
             4246.5,
-            1645.0,
-            2229.0,
+            1645,
+            2229,
             753.3,
             931.2
           ],
           [
-            4254.0,
-            1648.0,
-            2233.0,
+            4254,
+            1648,
+            2233,
             754.6,
             932.8
           ],
           [
             4261.5,
-            1651.0,
-            2237.0,
+            1651,
+            2237,
             755.9,
             934.4
           ],
           [
-            4269.0,
-            1654.0,
-            2241.0,
+            4269,
+            1654,
+            2241,
             757.3,
-            936.0
+            936
           ],
           [
             4276.5,
-            1657.0,
-            2245.0,
+            1657,
+            2245,
             758.6,
             937.6
           ],
           [
-            4284.0,
-            1660.0,
-            2249.0,
+            4284,
+            1660,
+            2249,
             759.9,
             939.2
           ],
           [
             4291.5,
-            1663.0,
-            2253.0,
+            1663,
+            2253,
             761.2,
             940.8
           ],
           [
-            4299.0,
-            1666.0,
-            2257.0,
+            4299,
+            1666,
+            2257,
             762.6,
             942.4
           ],
           [
             4306.5,
-            1669.0,
-            2260.0,
+            1669,
+            2260,
             763.9,
-            944.0
+            944
           ],
           [
-            4314.0,
-            1672.0,
-            2264.0,
+            4314,
+            1672,
+            2264,
             765.2,
             945.7
           ],
           [
             4321.5,
-            1675.0,
-            2268.0,
+            1675,
+            2268,
             766.6,
             947.3
           ],
           [
-            4329.0,
-            1678.0,
-            2272.0,
+            4329,
+            1678,
+            2272,
             767.9,
-            949.0
+            949
           ],
           [
             4336.5,
-            1681.0,
-            2276.0,
+            1681,
+            2276,
             769.1,
             950.6
           ],
           [
-            4344.0,
-            1684.0,
-            2280.0,
+            4344,
+            1684,
+            2280,
             770.4,
             952.2
           ],
           [
             4351.5,
-            1687.0,
-            2284.0,
+            1687,
+            2284,
             771.7,
             953.8
           ],
           [
-            4359.0,
-            1690.0,
-            2288.0,
+            4359,
+            1690,
+            2288,
             772.9,
             955.4
           ],
           [
             4366.5,
-            1694.0,
-            2292.0,
+            1694,
+            2292,
             774.2,
-            957.0
+            957
           ],
           [
-            4374.0,
-            1697.0,
-            2296.0,
+            4374,
+            1697,
+            2296,
             775.4,
             958.6
           ],
           [
             4381.5,
-            1700.0,
-            2300.0,
+            1700,
+            2300,
             776.7,
             960.2
           ],
           [
-            4389.0,
-            1703.0,
-            2304.0,
-            778.0,
+            4389,
+            1703,
+            2304,
+            778,
             961.8
           ],
           [
             4396.5,
-            1706.0,
-            2308.0,
+            1706,
+            2308,
             779.2,
             963.4
           ],
           [
-            4404.0,
-            1709.0,
-            2312.0,
+            4404,
+            1709,
+            2312,
             780.5,
-            965.0
+            965
           ],
           [
             4411.5,
-            1712.0,
-            2316.0,
+            1712,
+            2316,
             781.9,
             966.6
           ],
           [
-            4419.0,
-            1715.0,
-            2320.0,
+            4419,
+            1715,
+            2320,
             783.2,
             968.3
           ],
           [
             4426.5,
-            1718.0,
-            2324.0,
+            1718,
+            2324,
             784.5,
             969.9
           ],
           [
-            4434.0,
-            1721.0,
-            2328.0,
+            4434,
+            1721,
+            2328,
             785.8,
             971.5
           ],
           [
             4441.5,
-            1724.0,
-            2332.0,
+            1724,
+            2332,
             787.1,
             973.1
           ],
           [
-            4449.0,
-            1727.0,
-            2336.0,
+            4449,
+            1727,
+            2336,
             788.4,
             974.6
           ],
           [
             4456.5,
-            1730.0,
-            2340.0,
+            1730,
+            2340,
             789.8,
             976.2
           ],
           [
-            4464.0,
-            1733.0,
-            2344.0,
+            4464,
+            1733,
+            2344,
             791.1,
             977.8
           ],
           [
             4471.5,
-            1736.0,
-            2348.0,
+            1736,
+            2348,
             792.4,
             979.4
           ],
           [
-            4479.0,
-            1739.0,
-            2352.0,
+            4479,
+            1739,
+            2352,
             793.7,
-            981.0
+            981
           ],
           [
             4486.5,
-            1742.0,
-            2356.0,
-            795.0,
+            1742,
+            2356,
+            795,
             982.6
           ],
           [
-            4494.0,
-            1745.0,
-            2359.0,
+            4494,
+            1745,
+            2359,
             796.4,
             984.2
           ],
           [
             4501.5,
-            1748.0,
-            2363.0,
+            1748,
+            2363,
             797.7,
             985.9
           ],
           [
-            4509.0,
-            1751.0,
-            2367.0,
-            799.0,
+            4509,
+            1751,
+            2367,
+            799,
             987.5
           ],
           [
             4516.5,
-            1754.0,
-            2371.0,
+            1754,
+            2371,
             800.3,
             989.2
           ],
           [
-            4524.0,
-            1757.0,
-            2375.0,
+            4524,
+            1757,
+            2375,
             801.6,
             990.8
           ],
           [
             4531.5,
-            1760.0,
-            2379.0,
+            1760,
+            2379,
             802.9,
             992.5
           ],
           [
-            4539.0,
-            1763.0,
-            2383.0,
+            4539,
+            1763,
+            2383,
             804.2,
             994.2
           ],
           [
             4546.5,
-            1766.0,
-            2387.0,
+            1766,
+            2387,
             805.5,
             995.8
           ],
           [
-            4554.0,
-            1769.0,
-            2391.0,
+            4554,
+            1769,
+            2391,
             806.8,
             997.5
           ],
           [
             4561.5,
-            1772.0,
-            2395.0,
+            1772,
+            2395,
             808.1,
             999.2
           ],
           [
-            4569.0,
-            1775.0,
-            2399.0,
+            4569,
+            1775,
+            2399,
             809.4,
-            1001.0
+            1001
           ],
           [
             4576.5,
-            1778.0,
-            2403.0,
+            1778,
+            2403,
             810.8,
-            1003.0
+            1003
           ],
           [
-            4584.0,
-            1781.0,
-            2407.0,
+            4584,
+            1781,
+            2407,
             812.1,
-            1004.0
+            1004
           ],
           [
             4591.5,
-            1784.0,
-            2410.0,
+            1784,
+            2410,
             813.4,
-            1006.0
+            1006
           ],
           [
-            4599.0,
-            1787.0,
-            2414.0,
+            4599,
+            1787,
+            2414,
             814.8,
-            1008.0
+            1008
           ],
           [
             4606.5,
-            1790.0,
-            2418.0,
+            1790,
+            2418,
             816.1,
-            1009.0
+            1009
           ],
           [
-            4614.0,
-            1794.0,
-            2422.0,
+            4614,
+            1794,
+            2422,
             817.4,
-            1011.0
+            1011
           ],
           [
             4621.5,
-            1797.0,
-            2426.0,
+            1797,
+            2426,
             818.7,
-            1013.0
+            1013
           ],
           [
-            4629.0,
-            1800.0,
-            2430.0,
-            820.0,
-            1014.0
+            4629,
+            1800,
+            2430,
+            820,
+            1014
           ],
           [
             4636.5,
-            1803.0,
-            2434.0,
+            1803,
+            2434,
             821.3,
-            1016.0
+            1016
           ],
           [
-            4644.0,
-            1806.0,
-            2438.0,
+            4644,
+            1806,
+            2438,
             822.6,
-            1018.0
+            1018
           ],
           [
             4651.5,
-            1809.0,
-            2442.0,
-            824.0,
-            1019.0
+            1809,
+            2442,
+            824,
+            1019
           ],
           [
-            4659.0,
-            1812.0,
-            2446.0,
+            4659,
+            1812,
+            2446,
             825.3,
-            1021.0
+            1021
           ],
           [
             4666.5,
-            1815.0,
-            2450.0,
+            1815,
+            2450,
             826.6,
-            1022.0
+            1022
           ],
           [
-            4674.0,
-            1818.0,
-            2454.0,
+            4674,
+            1818,
+            2454,
             827.9,
-            1024.0
+            1024
           ],
           [
             4681.5,
-            1821.0,
-            2458.0,
+            1821,
+            2458,
             829.2,
-            1026.0
+            1026
           ],
           [
-            4689.0,
-            1824.0,
-            2462.0,
+            4689,
+            1824,
+            2462,
             830.5,
-            1027.0
+            1027
           ],
           [
             4696.5,
-            1827.0,
-            2466.0,
+            1827,
+            2466,
             831.8,
-            1029.0
+            1029
           ],
           [
-            4704.0,
-            1830.0,
-            2470.0,
-            833.0,
-            1031.0
+            4704,
+            1830,
+            2470,
+            833,
+            1031
           ],
           [
             4711.5,
-            1833.0,
-            2473.0,
+            1833,
+            2473,
             834.3,
-            1032.0
+            1032
           ],
           [
-            4719.0,
-            1836.0,
-            2477.0,
+            4719,
+            1836,
+            2477,
             835.6,
-            1034.0
+            1034
           ],
           [
             4726.5,
-            1839.0,
-            2481.0,
+            1839,
+            2481,
             836.9,
-            1036.0
+            1036
           ],
           [
-            4734.0,
-            1842.0,
-            2485.0,
+            4734,
+            1842,
+            2485,
             838.1,
-            1037.0
+            1037
           ],
           [
             4741.5,
-            1845.0,
-            2489.0,
+            1845,
+            2489,
             839.4,
-            1039.0
+            1039
           ],
           [
-            4749.0,
-            1848.0,
-            2493.0,
+            4749,
+            1848,
+            2493,
             840.6,
-            1041.0
+            1041
           ],
           [
             4756.5,
-            1851.0,
-            2497.0,
+            1851,
+            2497,
             841.8,
-            1042.0
+            1042
           ],
           [
-            4764.0,
-            1854.0,
-            2501.0,
-            843.0,
-            1044.0
+            4764,
+            1854,
+            2501,
+            843,
+            1044
           ],
           [
             4771.5,
-            1857.0,
-            2505.0,
+            1857,
+            2505,
             844.1,
-            1046.0
+            1046
           ],
           [
-            4779.0,
-            1860.0,
-            2509.0,
+            4779,
+            1860,
+            2509,
             845.3,
-            1047.0
+            1047
           ],
           [
             4786.5,
-            1863.0,
-            2513.0,
+            1863,
+            2513,
             846.6,
-            1049.0
+            1049
           ],
           [
-            4794.0,
-            1866.0,
-            2517.0,
+            4794,
+            1866,
+            2517,
             847.7,
-            1051.0
+            1051
           ],
           [
             4801.5,
-            1869.0,
-            2521.0,
+            1869,
+            2521,
             848.9,
-            1052.0
+            1052
           ],
           [
-            4809.0,
-            1872.0,
-            2525.0,
-            850.0,
-            1054.0
+            4809,
+            1872,
+            2525,
+            850,
+            1054
           ],
           [
             4816.5,
-            1875.0,
-            2529.0,
+            1875,
+            2529,
             851.2,
-            1056.0
+            1056
           ],
           [
-            4824.0,
-            1878.0,
-            2533.0,
+            4824,
+            1878,
+            2533,
             852.3,
-            1057.0
+            1057
           ],
           [
             4831.5,
-            1881.0,
-            2537.0,
+            1881,
+            2537,
             853.5,
-            1059.0
+            1059
           ],
           [
-            4839.0,
-            1884.0,
-            2541.0,
+            4839,
+            1884,
+            2541,
             854.6,
-            1060.0
+            1060
           ],
           [
             4846.5,
-            1887.0,
-            2545.0,
+            1887,
+            2545,
             855.8,
-            1062.0
+            1062
           ],
           [
-            4854.0,
-            1890.0,
-            2549.0,
+            4854,
+            1890,
+            2549,
             856.9,
-            1064.0
+            1064
           ],
           [
             4861.5,
-            1893.0,
-            2553.0,
+            1893,
+            2553,
             858.1,
-            1065.0
+            1065
           ],
           [
-            4869.0,
-            1896.0,
-            2557.0,
+            4869,
+            1896,
+            2557,
             859.3,
-            1067.0
+            1067
           ],
           [
             4876.5,
-            1899.0,
-            2561.0,
+            1899,
+            2561,
             860.4,
-            1069.0
+            1069
           ],
           [
-            4884.0,
-            1902.0,
-            2565.0,
+            4884,
+            1902,
+            2565,
             861.6,
-            1071.0
+            1071
           ],
           [
             4891.5,
-            1905.0,
-            2569.0,
+            1905,
+            2569,
             862.8,
-            1072.0
+            1072
           ],
           [
-            4899.0,
-            1908.0,
-            2573.0,
+            4899,
+            1908,
+            2573,
             863.9,
-            1074.0
+            1074
           ],
           [
             4906.5,
-            1911.0,
-            2577.0,
+            1911,
+            2577,
             865.1,
-            1076.0
+            1076
           ],
           [
-            4914.0,
-            1914.0,
-            2581.0,
+            4914,
+            1914,
+            2581,
             866.3,
-            1077.0
+            1077
           ],
           [
             4921.5,
-            1917.0,
-            2585.0,
+            1917,
+            2585,
             867.4,
-            1079.0
+            1079
           ],
           [
-            4929.0,
-            1920.0,
-            2589.0,
+            4929,
+            1920,
+            2589,
             868.6,
-            1080.0
+            1080
           ],
           [
             4936.5,
-            1923.0,
-            2593.0,
+            1923,
+            2593,
             869.7,
-            1082.0
+            1082
           ],
           [
-            4944.0,
-            1926.0,
-            2597.0,
+            4944,
+            1926,
+            2597,
             870.9,
-            1084.0
+            1084
           ],
           [
             4951.5,
-            1929.0,
-            2601.0,
-            872.0,
-            1085.0
+            1929,
+            2601,
+            872,
+            1085
           ],
           [
-            4959.0,
-            1932.0,
-            2605.0,
+            4959,
+            1932,
+            2605,
             873.2,
-            1087.0
+            1087
           ],
           [
             4966.5,
-            1935.0,
-            2609.0,
+            1935,
+            2609,
             874.4,
-            1088.0
+            1088
           ],
           [
-            4974.0,
-            1938.0,
-            2614.0,
+            4974,
+            1938,
+            2614,
             875.5,
-            1090.0
+            1090
           ],
           [
             4981.5,
-            1941.0,
-            2618.0,
+            1941,
+            2618,
             876.7,
-            1092.0
+            1092
           ],
           [
-            4989.0,
-            1944.0,
-            2622.0,
+            4989,
+            1944,
+            2622,
             877.8,
-            1093.0
+            1093
           ],
           [
             4996.5,
-            1947.0,
-            2626.0,
+            1947,
+            2626,
             878.9,
-            1095.0
+            1095
           ],
           [
-            5004.0,
-            1950.0,
-            2630.0,
-            880.0,
-            1096.0
+            5004,
+            1950,
+            2630,
+            880,
+            1096
           ],
           [
             5011.5,
-            1953.0,
-            2634.0,
+            1953,
+            2634,
             881.1,
-            1098.0
+            1098
           ],
           [
-            5019.0,
-            1956.0,
-            2638.0,
+            5019,
+            1956,
+            2638,
             882.3,
-            1099.0
+            1099
           ],
           [
             5026.5,
-            1959.0,
-            2642.0,
+            1959,
+            2642,
             883.4,
-            1101.0
+            1101
           ],
           [
-            5034.0,
-            1962.0,
-            2646.0,
+            5034,
+            1962,
+            2646,
             884.5,
-            1102.0
+            1102
           ],
           [
             5041.5,
-            1965.0,
-            2651.0,
+            1965,
+            2651,
             885.6,
-            1104.0
+            1104
           ],
           [
-            5049.0,
-            1968.0,
-            2655.0,
+            5049,
+            1968,
+            2655,
             886.8,
-            1106.0
+            1106
           ],
           [
             5056.5,
-            1971.0,
-            2659.0,
+            1971,
+            2659,
             887.9,
-            1107.0
+            1107
           ],
           [
-            5064.0,
-            1974.0,
-            2663.0,
-            889.0,
-            1109.0
+            5064,
+            1974,
+            2663,
+            889,
+            1109
           ],
           [
             5071.5,
-            1977.0,
-            2667.0,
+            1977,
+            2667,
             890.2,
-            1110.0
+            1110
           ],
           [
-            5079.0,
-            1980.0,
-            2671.0,
+            5079,
+            1980,
+            2671,
             891.3,
-            1112.0
+            1112
           ],
           [
             5086.5,
-            1983.0,
-            2676.0,
+            1983,
+            2676,
             892.5,
-            1114.0
+            1114
           ],
           [
-            5094.0,
-            1986.0,
-            2680.0,
+            5094,
+            1986,
+            2680,
             893.7,
-            1115.0
+            1115
           ],
           [
             5101.5,
-            1989.0,
-            2684.0,
+            1989,
+            2684,
             894.8,
-            1117.0
+            1117
           ],
           [
-            5109.0,
-            1992.0,
-            2688.0,
+            5109,
+            1992,
+            2688,
             895.9,
-            1119.0
+            1119
           ],
           [
             5116.5,
-            1995.0,
-            2692.0,
-            897.0,
-            1120.0
+            1995,
+            2692,
+            897,
+            1120
           ],
           [
-            5124.0,
-            1998.0,
-            2696.0,
+            5124,
+            1998,
+            2696,
             898.2,
-            1122.0
+            1122
           ],
           [
             5131.5,
-            2001.0,
-            2701.0,
+            2001,
+            2701,
             899.3,
-            1124.0
+            1124
           ],
           [
-            5139.0,
-            2004.0,
-            2705.0,
+            5139,
+            2004,
+            2705,
             900.5,
-            1125.0
+            1125
           ],
           [
             5146.5,
-            2007.0,
-            2709.0,
+            2007,
+            2709,
             901.6,
-            1127.0
+            1127
           ],
           [
-            5154.0,
-            2010.0,
-            2713.0,
+            5154,
+            2010,
+            2713,
             902.7,
-            1129.0
+            1129
           ],
           [
             5161.5,
-            2013.0,
-            2718.0,
+            2013,
+            2718,
             903.7,
-            1131.0
+            1131
           ],
           [
-            5169.0,
-            2016.0,
-            2722.0,
+            5169,
+            2016,
+            2722,
             904.8,
-            1132.0
+            1132
           ],
           [
             5176.5,
-            2019.0,
-            2726.0,
+            2019,
+            2726,
             905.9,
-            1134.0
+            1134
           ],
           [
-            5184.0,
-            2022.0,
-            2730.0,
+            5184,
+            2022,
+            2730,
             907.1,
-            1136.0
+            1136
           ],
           [
             5191.5,
-            2025.0,
-            2735.0,
+            2025,
+            2735,
             908.2,
-            1138.0
+            1138
           ],
           [
-            5199.0,
-            2028.0,
-            2739.0,
+            5199,
+            2028,
+            2739,
             909.4,
-            1139.0
+            1139
           ],
           [
             5206.5,
-            2031.0,
-            2743.0,
+            2031,
+            2743,
             910.5,
-            1141.0
+            1141
           ],
           [
-            5214.0,
-            2034.0,
-            2747.0,
+            5214,
+            2034,
+            2747,
             911.7,
-            1143.0
+            1143
           ],
           [
             5221.5,
-            2037.0,
-            2752.0,
+            2037,
+            2752,
             912.8,
-            1144.0
+            1144
           ],
           [
-            5229.0,
-            2040.0,
-            2756.0,
-            914.0,
-            1146.0
+            5229,
+            2040,
+            2756,
+            914,
+            1146
           ],
           [
             5236.5,
-            2043.0,
-            2760.0,
+            2043,
+            2760,
             915.2,
-            1148.0
+            1148
           ],
           [
-            5244.0,
-            2046.0,
-            2764.0,
+            5244,
+            2046,
+            2764,
             916.3,
-            1150.0
+            1150
           ],
           [
             5251.5,
-            2050.0,
-            2768.0,
+            2050,
+            2768,
             917.4,
-            1151.0
+            1151
           ],
           [
-            5259.0,
-            2053.0,
-            2773.0,
+            5259,
+            2053,
+            2773,
             918.5,
-            1153.0
+            1153
           ],
           [
             5266.5,
-            2056.0,
-            2777.0,
+            2056,
+            2777,
             919.6,
-            1155.0
+            1155
           ],
           [
-            5274.0,
-            2059.0,
-            2781.0,
+            5274,
+            2059,
+            2781,
             920.7,
-            1156.0
+            1156
           ],
           [
             5281.5,
-            2062.0,
-            2786.0,
+            2062,
+            2786,
             921.8,
-            1158.0
+            1158
           ],
           [
-            5289.0,
-            2065.0,
-            2790.0,
+            5289,
+            2065,
+            2790,
             922.9,
-            1160.0
+            1160
           ],
           [
             5296.5,
-            2068.0,
-            2794.0,
-            924.0,
-            1161.0
+            2068,
+            2794,
+            924,
+            1161
           ],
           [
-            5304.0,
-            2071.0,
-            2798.0,
+            5304,
+            2071,
+            2798,
             925.1,
-            1163.0
+            1163
           ],
           [
             5311.5,
-            2074.0,
-            2803.0,
+            2074,
+            2803,
             926.2,
-            1165.0
+            1165
           ],
           [
-            5319.0,
-            2077.0,
-            2807.0,
+            5319,
+            2077,
+            2807,
             927.3,
-            1166.0
+            1166
           ],
           [
             5326.5,
-            2081.0,
-            2811.0,
+            2081,
+            2811,
             928.4,
-            1168.0
+            1168
           ],
           [
-            5334.0,
-            2084.0,
-            2816.0,
+            5334,
+            2084,
+            2816,
             929.6,
-            1170.0
+            1170
           ],
           [
             5341.5,
-            2087.0,
-            2820.0,
+            2087,
+            2820,
             930.7,
-            1171.0
+            1171
           ],
           [
-            5349.0,
-            2090.0,
-            2824.0,
+            5349,
+            2090,
+            2824,
             931.8,
-            1173.0
+            1173
           ],
           [
             5356.5,
-            2093.0,
-            2828.0,
+            2093,
+            2828,
             932.9,
-            1175.0
+            1175
           ],
           [
-            5364.0,
-            2096.0,
-            2833.0,
-            934.0,
-            1176.0
+            5364,
+            2096,
+            2833,
+            934,
+            1176
           ],
           [
             5371.5,
-            2099.0,
-            2837.0,
-            935.0,
-            1178.0
+            2099,
+            2837,
+            935,
+            1178
           ],
           [
-            5379.0,
-            2102.0,
-            2841.0,
+            5379,
+            2102,
+            2841,
             936.1,
-            1179.0
+            1179
           ],
           [
             5386.5,
-            2106.0,
-            2846.0,
+            2106,
+            2846,
             937.2,
-            1181.0
+            1181
           ],
           [
-            5394.0,
-            2109.0,
-            2850.0,
+            5394,
+            2109,
+            2850,
             938.3,
-            1183.0
+            1183
           ],
           [
             5401.5,
-            2112.0,
-            2854.0,
+            2112,
+            2854,
             939.4,
-            1184.0
+            1184
           ],
           [
-            5409.0,
-            2115.0,
-            2859.0,
+            5409,
+            2115,
+            2859,
             940.4,
-            1186.0
+            1186
           ],
           [
             5416.5,
-            2118.0,
-            2863.0,
+            2118,
+            2863,
             941.5,
-            1187.0
+            1187
           ],
           [
-            5424.0,
-            2121.0,
-            2867.0,
+            5424,
+            2121,
+            2867,
             942.6,
-            1189.0
+            1189
           ],
           [
             5431.5,
-            2124.0,
-            2872.0,
+            2124,
+            2872,
             943.8,
-            1191.0
+            1191
           ],
           [
-            5439.0,
-            2127.0,
-            2876.0,
+            5439,
+            2127,
+            2876,
             944.9,
-            1192.0
+            1192
           ],
           [
             5446.5,
-            2130.0,
-            2880.0,
-            946.0,
-            1194.0
+            2130,
+            2880,
+            946,
+            1194
           ],
           [
-            5454.0,
-            2134.0,
-            2885.0,
+            5454,
+            2134,
+            2885,
             947.1,
-            1195.0
+            1195
           ],
           [
             5461.5,
-            2137.0,
-            2889.0,
+            2137,
+            2889,
             948.2,
-            1197.0
+            1197
           ],
           [
-            5469.0,
-            2140.0,
-            2893.0,
+            5469,
+            2140,
+            2893,
             949.2,
-            1199.0
+            1199
           ],
           [
             5476.5,
-            2143.0,
-            2897.0,
+            2143,
+            2897,
             950.3,
-            1200.0
+            1200
           ],
           [
-            5484.0,
-            2146.0,
-            2902.0,
+            5484,
+            2146,
+            2902,
             951.3,
-            1202.0
+            1202
           ],
           [
             5491.5,
-            2149.0,
-            2906.0,
+            2149,
+            2906,
             952.3,
-            1203.0
+            1203
           ],
           [
-            5499.0,
-            2152.0,
-            2910.0,
+            5499,
+            2152,
+            2910,
             953.4,
-            1205.0
+            1205
           ],
           [
             5506.5,
-            2155.0,
-            2914.0,
+            2155,
+            2914,
             954.4,
-            1206.0
+            1206
           ],
           [
-            5514.0,
-            2158.0,
-            2919.0,
+            5514,
+            2158,
+            2919,
             955.5,
-            1208.0
+            1208
           ],
           [
             5521.5,
-            2161.0,
-            2923.0,
+            2161,
+            2923,
             956.5,
-            1210.0
+            1210
           ],
           [
-            5529.0,
-            2164.0,
-            2927.0,
+            5529,
+            2164,
+            2927,
             957.6,
-            1211.0
+            1211
           ],
           [
             5536.5,
-            2167.0,
-            2931.0,
+            2167,
+            2931,
             958.7,
-            1213.0
+            1213
           ],
           [
-            5544.0,
-            2170.0,
-            2935.0,
+            5544,
+            2170,
+            2935,
             959.9,
-            1215.0
+            1215
           ],
           [
             5551.5,
-            2173.0,
-            2940.0,
-            961.0,
-            1216.0
+            2173,
+            2940,
+            961,
+            1216
           ],
           [
-            5559.0,
-            2176.0,
-            2944.0,
-            962.0,
-            1218.0
+            5559,
+            2176,
+            2944,
+            962,
+            1218
           ],
           [
             5566.5,
-            2179.0,
-            2948.0,
+            2179,
+            2948,
             963.1,
-            1220.0
+            1220
           ],
           [
-            5574.0,
-            2182.0,
-            2952.0,
+            5574,
+            2182,
+            2952,
             964.2,
-            1221.0
+            1221
           ],
           [
             5581.5,
-            2185.0,
-            2957.0,
+            2185,
+            2957,
             965.2,
-            1223.0
+            1223
           ],
           [
-            5589.0,
-            2188.0,
-            2961.0,
+            5589,
+            2188,
+            2961,
             966.2,
-            1224.0
+            1224
           ],
           [
             5596.5,
-            2191.0,
-            2965.0,
+            2191,
+            2965,
             967.3,
-            1226.0
+            1226
           ],
           [
-            5604.0,
-            2194.0,
-            2969.0,
+            5604,
+            2194,
+            2969,
             968.3,
-            1227.0
+            1227
           ],
           [
             5611.5,
-            2197.0,
-            2973.0,
+            2197,
+            2973,
             969.4,
-            1229.0
+            1229
           ],
           [
-            5619.0,
-            2200.0,
-            2978.0,
+            5619,
+            2200,
+            2978,
             970.5,
-            1231.0
+            1231
           ],
           [
             5626.5,
-            2203.0,
-            2982.0,
+            2203,
+            2982,
             971.5,
-            1232.0
+            1232
           ],
           [
-            5634.0,
-            2206.0,
-            2986.0,
+            5634,
+            2206,
+            2986,
             972.6,
-            1234.0
+            1234
           ],
           [
             5641.5,
-            2210.0,
-            2990.0,
+            2210,
+            2990,
             973.6,
-            1235.0
+            1235
           ],
           [
-            5649.0,
-            2213.0,
-            2994.0,
+            5649,
+            2213,
+            2994,
             974.7,
-            1237.0
+            1237
           ],
           [
             5656.5,
-            2216.0,
-            2998.0,
+            2216,
+            2998,
             975.8,
-            1239.0
+            1239
           ],
           [
-            5664.0,
-            2219.0,
-            3003.0,
+            5664,
+            2219,
+            3003,
             976.9,
-            1240.0
+            1240
           ],
           [
             5671.5,
-            2222.0,
-            3007.0,
-            978.0,
-            1242.0
+            2222,
+            3007,
+            978,
+            1242
           ],
           [
-            5679.0,
-            2225.0,
-            3011.0,
+            5679,
+            2225,
+            3011,
             979.1,
-            1243.0
+            1243
           ],
           [
             5686.5,
-            2228.0,
-            3015.0,
+            2228,
+            3015,
             980.2,
-            1245.0
+            1245
           ],
           [
-            5694.0,
-            2231.0,
-            3020.0,
+            5694,
+            2231,
+            3020,
             981.3,
-            1246.0
+            1246
           ],
           [
             5701.5,
-            2234.0,
-            3024.0,
+            2234,
+            3024,
             982.5,
-            1248.0
+            1248
           ],
           [
-            5709.0,
-            2238.0,
-            3028.0,
+            5709,
+            2238,
+            3028,
             983.7,
-            1249.0
+            1249
           ],
           [
             5716.5,
-            2241.0,
-            3032.0,
+            2241,
+            3032,
             984.8,
-            1251.0
+            1251
           ],
           [
-            5724.0,
-            2244.0,
-            3036.0,
-            986.0,
-            1253.0
+            5724,
+            2244,
+            3036,
+            986,
+            1253
           ],
           [
             5731.5,
-            2247.0,
-            3041.0,
+            2247,
+            3041,
             987.1,
-            1254.0
+            1254
           ],
           [
-            5739.0,
-            2250.0,
-            3045.0,
+            5739,
+            2250,
+            3045,
             988.3,
-            1256.0
+            1256
           ],
           [
             5746.5,
-            2253.0,
-            3049.0,
+            2253,
+            3049,
             989.4,
-            1257.0
+            1257
           ],
           [
-            5754.0,
-            2256.0,
-            3053.0,
+            5754,
+            2256,
+            3053,
             990.6,
-            1259.0
+            1259
           ],
           [
             5761.5,
-            2259.0,
-            3057.0,
+            2259,
+            3057,
             991.8,
-            1260.0
+            1260
           ],
           [
-            5769.0,
-            2263.0,
-            3061.0,
-            993.0,
-            1262.0
+            5769,
+            2263,
+            3061,
+            993,
+            1262
           ],
           [
             5776.5,
-            2266.0,
-            3066.0,
+            2266,
+            3066,
             994.2,
-            1263.0
+            1263
           ],
           [
-            5784.0,
-            2269.0,
-            3070.0,
+            5784,
+            2269,
+            3070,
             995.4,
-            1265.0
+            1265
           ],
           [
             5791.5,
-            2272.0,
-            3074.0,
+            2272,
+            3074,
             996.6,
-            1267.0
+            1267
           ],
           [
-            5799.0,
-            2275.0,
-            3078.0,
+            5799,
+            2275,
+            3078,
             997.7,
-            1268.0
+            1268
           ],
           [
             5806.5,
-            2278.0,
-            3083.0,
+            2278,
+            3083,
             998.9,
-            1270.0
+            1270
           ],
           [
-            5814.0,
-            2281.0,
-            3087.0,
-            1000.0,
-            1271.0
+            5814,
+            2281,
+            3087,
+            1000,
+            1271
           ],
           [
             5821.5,
-            2284.0,
-            3091.0,
-            1001.0,
-            1273.0
+            2284,
+            3091,
+            1001,
+            1273
           ],
           [
-            5829.0,
-            2287.0,
-            3095.0,
-            1002.0,
-            1274.0
+            5829,
+            2287,
+            3095,
+            1002,
+            1274
           ],
           [
             5836.5,
-            2290.0,
-            3100.0,
-            1003.0,
-            1276.0
+            2290,
+            3100,
+            1003,
+            1276
           ],
           [
-            5844.0,
-            2293.0,
-            3104.0,
-            1004.0,
-            1277.0
+            5844,
+            2293,
+            3104,
+            1004,
+            1277
           ],
           [
             5851.5,
-            2296.0,
-            3108.0,
-            1006.0,
-            1279.0
+            2296,
+            3108,
+            1006,
+            1279
           ],
           [
-            5859.0,
-            2299.0,
-            3112.0,
-            1007.0,
-            1280.0
+            5859,
+            2299,
+            3112,
+            1007,
+            1280
           ],
           [
             5866.5,
-            2302.0,
-            3116.0,
-            1008.0,
-            1282.0
+            2302,
+            3116,
+            1008,
+            1282
           ],
           [
-            5874.0,
-            2305.0,
-            3121.0,
-            1009.0,
-            1283.0
+            5874,
+            2305,
+            3121,
+            1009,
+            1283
           ],
           [
             5881.5,
-            2308.0,
-            3125.0,
-            1010.0,
-            1285.0
+            2308,
+            3125,
+            1010,
+            1285
           ],
           [
-            5889.0,
-            2311.0,
-            3129.0,
-            1011.0,
-            1286.0
+            5889,
+            2311,
+            3129,
+            1011,
+            1286
           ],
           [
             5896.5,
-            2314.0,
-            3133.0,
-            1012.0,
-            1288.0
+            2314,
+            3133,
+            1012,
+            1288
           ],
           [
-            5904.0,
-            2318.0,
-            3137.0,
-            1013.0,
-            1289.0
+            5904,
+            2318,
+            3137,
+            1013,
+            1289
           ],
           [
             5911.5,
-            2321.0,
-            3141.0,
-            1014.0,
-            1291.0
+            2321,
+            3141,
+            1014,
+            1291
           ],
           [
-            5919.0,
-            2324.0,
-            3146.0,
-            1015.0,
-            1292.0
+            5919,
+            2324,
+            3146,
+            1015,
+            1292
           ],
           [
             5926.5,
-            2327.0,
-            3150.0,
-            1017.0,
-            1294.0
+            2327,
+            3150,
+            1017,
+            1294
           ],
           [
-            5934.0,
-            2330.0,
-            3154.0,
-            1018.0,
-            1295.0
+            5934,
+            2330,
+            3154,
+            1018,
+            1295
           ],
           [
             5941.5,
-            2333.0,
-            3158.0,
-            1019.0,
-            1297.0
+            2333,
+            3158,
+            1019,
+            1297
           ],
           [
-            5949.0,
-            2336.0,
-            3162.0,
-            1020.0,
-            1298.0
+            5949,
+            2336,
+            3162,
+            1020,
+            1298
           ],
           [
             5956.5,
-            2339.0,
-            3166.0,
-            1021.0,
-            1300.0
+            2339,
+            3166,
+            1021,
+            1300
           ],
           [
-            5964.0,
-            2342.0,
-            3171.0,
-            1022.0,
-            1301.0
+            5964,
+            2342,
+            3171,
+            1022,
+            1301
           ],
           [
             5971.5,
-            2345.0,
-            3175.0,
-            1023.0,
-            1303.0
+            2345,
+            3175,
+            1023,
+            1303
           ],
           [
-            5979.0,
-            2348.0,
-            3179.0,
-            1024.0,
-            1304.0
+            5979,
+            2348,
+            3179,
+            1024,
+            1304
           ],
           [
             5986.5,
-            2352.0,
-            3183.0,
-            1025.0,
-            1306.0
+            2352,
+            3183,
+            1025,
+            1306
           ],
           [
-            5994.0,
-            2355.0,
-            3187.0,
-            1026.0,
-            1307.0
+            5994,
+            2355,
+            3187,
+            1026,
+            1307
           ],
           [
             6001.5,
-            2358.0,
-            3191.0,
-            1028.0,
-            1308.0
+            2358,
+            3191,
+            1028,
+            1308
           ],
           [
-            6009.0,
-            2361.0,
-            3195.0,
-            1029.0,
-            1310.0
+            6009,
+            2361,
+            3195,
+            1029,
+            1310
           ],
           [
             6016.5,
-            2364.0,
-            3200.0,
-            1030.0,
-            1311.0
+            2364,
+            3200,
+            1030,
+            1311
           ],
           [
-            6024.0,
-            2367.0,
-            3204.0,
-            1031.0,
-            1313.0
+            6024,
+            2367,
+            3204,
+            1031,
+            1313
           ],
           [
             6031.5,
-            2370.0,
-            3208.0,
-            1032.0,
-            1314.0
+            2370,
+            3208,
+            1032,
+            1314
           ],
           [
-            6039.0,
-            2373.0,
-            3212.0,
-            1033.0,
-            1316.0
+            6039,
+            2373,
+            3212,
+            1033,
+            1316
           ],
           [
             6046.5,
-            2376.0,
-            3216.0,
-            1034.0,
-            1317.0
+            2376,
+            3216,
+            1034,
+            1317
           ],
           [
-            6054.0,
-            2379.0,
-            3221.0,
-            1035.0,
-            1319.0
+            6054,
+            2379,
+            3221,
+            1035,
+            1319
           ],
           [
             6061.5,
-            2382.0,
-            3225.0,
-            1036.0,
-            1320.0
+            2382,
+            3225,
+            1036,
+            1320
           ],
           [
-            6069.0,
-            2385.0,
-            3229.0,
-            1037.0,
-            1322.0
+            6069,
+            2385,
+            3229,
+            1037,
+            1322
           ],
           [
             6076.5,
-            2388.0,
-            3233.0,
-            1038.0,
-            1323.0
+            2388,
+            3233,
+            1038,
+            1323
           ],
           [
-            6084.0,
-            2391.0,
-            3237.0,
-            1040.0,
-            1325.0
+            6084,
+            2391,
+            3237,
+            1040,
+            1325
           ],
           [
             6091.5,
-            2394.0,
-            3241.0,
-            1041.0,
-            1326.0
+            2394,
+            3241,
+            1041,
+            1326
           ],
           [
-            6099.0,
-            2397.0,
-            3245.0,
-            1042.0,
-            1328.0
+            6099,
+            2397,
+            3245,
+            1042,
+            1328
           ],
           [
             6106.5,
-            2400.0,
-            3250.0,
-            1043.0,
-            1329.0
+            2400,
+            3250,
+            1043,
+            1329
           ],
           [
-            6114.0,
-            2404.0,
-            3254.0,
-            1044.0,
-            1331.0
+            6114,
+            2404,
+            3254,
+            1044,
+            1331
           ],
           [
             6121.5,
-            2407.0,
-            3258.0,
-            1045.0,
-            1332.0
+            2407,
+            3258,
+            1045,
+            1332
           ],
           [
-            6129.0,
-            2410.0,
-            3262.0,
-            1046.0,
-            1334.0
+            6129,
+            2410,
+            3262,
+            1046,
+            1334
           ],
           [
             6136.5,
-            2413.0,
-            3266.0,
-            1047.0,
-            1335.0
+            2413,
+            3266,
+            1047,
+            1335
           ],
           [
-            6144.0,
-            2416.0,
-            3270.0,
-            1048.0,
-            1336.0
+            6144,
+            2416,
+            3270,
+            1048,
+            1336
           ],
           [
             6151.5,
-            2419.0,
-            3274.0,
-            1049.0,
-            1338.0
+            2419,
+            3274,
+            1049,
+            1338
           ],
           [
-            6159.0,
-            2422.0,
-            3279.0,
-            1050.0,
-            1339.0
+            6159,
+            2422,
+            3279,
+            1050,
+            1339
           ],
           [
             6166.5,
-            2425.0,
-            3283.0,
-            1051.0,
-            1341.0
+            2425,
+            3283,
+            1051,
+            1341
           ],
           [
-            6174.0,
-            2428.0,
-            3287.0,
-            1052.0,
-            1342.0
+            6174,
+            2428,
+            3287,
+            1052,
+            1342
           ],
           [
             6181.5,
-            2431.0,
-            3291.0,
-            1053.0,
-            1344.0
+            2431,
+            3291,
+            1053,
+            1344
           ],
           [
-            6189.0,
-            2434.0,
-            3295.0,
-            1054.0,
-            1345.0
+            6189,
+            2434,
+            3295,
+            1054,
+            1345
           ],
           [
             6196.5,
-            2438.0,
-            3299.0,
-            1055.0,
-            1347.0
+            2438,
+            3299,
+            1055,
+            1347
           ],
           [
-            6204.0,
-            2441.0,
-            3303.0,
-            1056.0,
-            1348.0
+            6204,
+            2441,
+            3303,
+            1056,
+            1348
           ],
           [
             6211.5,
-            2444.0,
-            3308.0,
-            1057.0,
-            1350.0
+            2444,
+            3308,
+            1057,
+            1350
           ],
           [
-            6219.0,
-            2447.0,
-            3312.0,
-            1058.0,
-            1351.0
+            6219,
+            2447,
+            3312,
+            1058,
+            1351
           ],
           [
             6226.5,
-            2450.0,
-            3316.0,
-            1059.0,
-            1353.0
+            2450,
+            3316,
+            1059,
+            1353
           ],
           [
-            6234.0,
-            2453.0,
-            3320.0,
-            1060.0,
-            1354.0
+            6234,
+            2453,
+            3320,
+            1060,
+            1354
           ],
           [
             6241.5,
-            2456.0,
-            3324.0,
-            1062.0,
-            1356.0
+            2456,
+            3324,
+            1062,
+            1356
           ],
           [
-            6249.0,
-            2459.0,
-            3328.0,
-            1063.0,
-            1357.0
+            6249,
+            2459,
+            3328,
+            1063,
+            1357
           ],
           [
             6256.5,
-            2462.0,
-            3332.0,
-            1064.0,
-            1358.0
+            2462,
+            3332,
+            1064,
+            1358
           ],
           [
-            6264.0,
-            2465.0,
-            3337.0,
-            1065.0,
-            1360.0
+            6264,
+            2465,
+            3337,
+            1065,
+            1360
           ],
           [
             6271.5,
-            2468.0,
-            3341.0,
-            1065.0,
-            1361.0
+            2468,
+            3341,
+            1065,
+            1361
           ],
           [
-            6279.0,
-            2471.0,
-            3345.0,
-            1066.0,
-            1362.0
+            6279,
+            2471,
+            3345,
+            1066,
+            1362
           ],
           [
             6286.5,
-            2474.0,
-            3349.0,
-            1067.0,
-            1364.0
+            2474,
+            3349,
+            1067,
+            1364
           ],
           [
-            6294.0,
-            2477.0,
-            3353.0,
-            1068.0,
-            1365.0
+            6294,
+            2477,
+            3353,
+            1068,
+            1365
           ],
           [
             6301.5,
-            2480.0,
-            3357.0,
-            1069.0,
-            1367.0
+            2480,
+            3357,
+            1069,
+            1367
           ],
           [
-            6309.0,
-            2483.0,
-            3362.0,
-            1070.0,
-            1368.0
+            6309,
+            2483,
+            3362,
+            1070,
+            1368
           ],
           [
             6316.5,
-            2486.0,
-            3366.0,
-            1071.0,
-            1369.0
+            2486,
+            3366,
+            1071,
+            1369
           ],
           [
-            6324.0,
-            2489.0,
-            3370.0,
-            1072.0,
-            1370.0
+            6324,
+            2489,
+            3370,
+            1072,
+            1370
           ],
           [
             6331.5,
-            2492.0,
-            3374.0,
-            1073.0,
-            1372.0
+            2492,
+            3374,
+            1073,
+            1372
           ],
           [
-            6339.0,
-            2495.0,
-            3378.0,
-            1074.0,
-            1373.0
+            6339,
+            2495,
+            3378,
+            1074,
+            1373
           ],
           [
             6346.5,
-            2498.0,
-            3383.0,
-            1075.0,
-            1374.0
+            2498,
+            3383,
+            1075,
+            1374
           ],
           [
-            6354.0,
-            2501.0,
-            3387.0,
-            1076.0,
-            1376.0
+            6354,
+            2501,
+            3387,
+            1076,
+            1376
           ],
           [
             6361.5,
-            2504.0,
-            3391.0,
-            1077.0,
-            1377.0
+            2504,
+            3391,
+            1077,
+            1377
           ],
           [
-            6369.0,
-            2507.0,
-            3395.0,
-            1078.0,
-            1378.0
+            6369,
+            2507,
+            3395,
+            1078,
+            1378
           ],
           [
             6376.5,
-            2510.0,
-            3399.0,
-            1079.0,
-            1380.0
+            2510,
+            3399,
+            1079,
+            1380
           ],
           [
-            6384.0,
-            2513.0,
-            3403.0,
-            1080.0,
-            1381.0
+            6384,
+            2513,
+            3403,
+            1080,
+            1381
           ],
           [
             6391.5,
-            2516.0,
-            3407.0,
-            1081.0,
-            1382.0
+            2516,
+            3407,
+            1081,
+            1382
           ],
           [
-            6399.0,
-            2519.0,
-            3412.0,
-            1082.0,
-            1384.0
+            6399,
+            2519,
+            3412,
+            1082,
+            1384
           ],
           [
             6406.5,
-            2522.0,
-            3416.0,
-            1083.0,
-            1385.0
+            2522,
+            3416,
+            1083,
+            1385
           ],
           [
-            6414.0,
-            2525.0,
-            3420.0,
-            1084.0,
-            1386.0
+            6414,
+            2525,
+            3420,
+            1084,
+            1386
           ],
           [
             6421.5,
-            2528.0,
-            3424.0,
-            1084.0,
-            1388.0
+            2528,
+            3424,
+            1084,
+            1388
           ],
           [
-            6429.0,
-            2532.0,
-            3428.0,
-            1085.0,
-            1389.0
+            6429,
+            2532,
+            3428,
+            1085,
+            1389
           ],
           [
             6436.5,
-            2535.0,
-            3432.0,
-            1086.0,
-            1390.0
+            2535,
+            3432,
+            1086,
+            1390
           ],
           [
-            6444.0,
-            2538.0,
-            3436.0,
-            1087.0,
-            1391.0
+            6444,
+            2538,
+            3436,
+            1087,
+            1391
           ],
           [
             6451.5,
-            2541.0,
-            3440.0,
-            1088.0,
-            1393.0
+            2541,
+            3440,
+            1088,
+            1393
           ],
           [
-            6459.0,
-            2544.0,
-            3445.0,
-            1089.0,
-            1394.0
+            6459,
+            2544,
+            3445,
+            1089,
+            1394
           ],
           [
             6466.5,
-            2547.0,
-            3449.0,
-            1090.0,
-            1395.0
+            2547,
+            3449,
+            1090,
+            1395
           ],
           [
-            6474.0,
-            2549.0,
-            3453.0,
-            1091.0,
-            1397.0
+            6474,
+            2549,
+            3453,
+            1091,
+            1397
           ],
           [
             6481.5,
-            2552.0,
-            3457.0,
-            1092.0,
-            1398.0
+            2552,
+            3457,
+            1092,
+            1398
           ],
           [
-            6489.0,
-            2555.0,
-            3461.0,
-            1093.0,
-            1399.0
+            6489,
+            2555,
+            3461,
+            1093,
+            1399
           ],
           [
             6496.5,
-            2559.0,
-            3465.0,
-            1094.0,
-            1401.0
+            2559,
+            3465,
+            1094,
+            1401
           ],
           [
-            6504.0,
-            2562.0,
-            3469.0,
-            1094.0,
-            1402.0
+            6504,
+            2562,
+            3469,
+            1094,
+            1402
           ],
           [
             6511.5,
-            2565.0,
-            3473.0,
-            1095.0,
-            1403.0
+            2565,
+            3473,
+            1095,
+            1403
           ],
           [
-            6519.0,
-            2568.0,
-            3477.0,
-            1096.0,
-            1405.0
+            6519,
+            2568,
+            3477,
+            1096,
+            1405
           ],
           [
             6526.5,
-            2571.0,
-            3481.0,
-            1097.0,
-            1406.0
+            2571,
+            3481,
+            1097,
+            1406
           ],
           [
-            6534.0,
-            2574.0,
-            3485.0,
-            1098.0,
-            1407.0
+            6534,
+            2574,
+            3485,
+            1098,
+            1407
           ],
           [
             6541.5,
-            2577.0,
-            3489.0,
-            1099.0,
-            1409.0
+            2577,
+            3489,
+            1099,
+            1409
           ],
           [
-            6549.0,
-            2580.0,
-            3494.0,
-            1100.0,
-            1410.0
+            6549,
+            2580,
+            3494,
+            1100,
+            1410
           ],
           [
             6556.5,
-            2583.0,
-            3498.0,
-            1100.0,
-            1411.0
+            2583,
+            3498,
+            1100,
+            1411
           ],
           [
-            6564.0,
-            2586.0,
-            3502.0,
-            1101.0,
-            1413.0
+            6564,
+            2586,
+            3502,
+            1101,
+            1413
           ],
           [
             6571.5,
-            2589.0,
-            3506.0,
-            1102.0,
-            1414.0
+            2589,
+            3506,
+            1102,
+            1414
           ],
           [
-            6579.0,
-            2592.0,
-            3510.0,
-            1103.0,
-            1415.0
+            6579,
+            2592,
+            3510,
+            1103,
+            1415
           ],
           [
             6586.5,
-            2595.0,
-            3514.0,
-            1104.0,
-            1417.0
+            2595,
+            3514,
+            1104,
+            1417
           ],
           [
-            6594.0,
-            2598.0,
-            3519.0,
-            1105.0,
-            1418.0
+            6594,
+            2598,
+            3519,
+            1105,
+            1418
           ],
           [
             6601.5,
-            2601.0,
-            3523.0,
-            1106.0,
-            1419.0
+            2601,
+            3523,
+            1106,
+            1419
           ],
           [
-            6609.0,
-            2604.0,
-            3527.0,
-            1107.0,
-            1421.0
+            6609,
+            2604,
+            3527,
+            1107,
+            1421
           ],
           [
             6616.5,
-            2608.0,
-            3531.0,
-            1108.0,
-            1422.0
+            2608,
+            3531,
+            1108,
+            1422
           ],
           [
-            6624.0,
-            2611.0,
-            3535.0,
-            1109.0,
-            1424.0
+            6624,
+            2611,
+            3535,
+            1109,
+            1424
           ],
           [
             6631.5,
-            2614.0,
-            3540.0,
-            1110.0,
-            1425.0
+            2614,
+            3540,
+            1110,
+            1425
           ],
           [
-            6639.0,
-            2617.0,
-            3544.0,
-            1111.0,
-            1427.0
+            6639,
+            2617,
+            3544,
+            1111,
+            1427
           ],
           [
             6646.5,
-            2620.0,
-            3548.0,
-            1112.0,
-            1428.0
+            2620,
+            3548,
+            1112,
+            1428
           ],
           [
-            6654.0,
-            2623.0,
-            3552.0,
-            1113.0,
-            1429.0
+            6654,
+            2623,
+            3552,
+            1113,
+            1429
           ],
           [
             6661.5,
-            2626.0,
-            3556.0,
-            1114.0,
-            1431.0
+            2626,
+            3556,
+            1114,
+            1431
           ],
           [
-            6669.0,
-            2630.0,
-            3560.0,
-            1115.0,
-            1432.0
+            6669,
+            2630,
+            3560,
+            1115,
+            1432
           ],
           [
             6676.5,
-            2633.0,
-            3565.0,
-            1116.0,
-            1434.0
+            2633,
+            3565,
+            1116,
+            1434
           ],
           [
-            6684.0,
-            2636.0,
-            3569.0,
-            1117.0,
-            1435.0
+            6684,
+            2636,
+            3569,
+            1117,
+            1435
           ],
           [
             6691.5,
-            2639.0,
-            3573.0,
-            1118.0,
-            1437.0
+            2639,
+            3573,
+            1118,
+            1437
           ],
           [
-            6699.0,
-            2642.0,
-            3577.0,
-            1119.0,
-            1438.0
+            6699,
+            2642,
+            3577,
+            1119,
+            1438
           ],
           [
             6706.5,
-            2645.0,
-            3581.0,
-            1120.0,
-            1440.0
+            2645,
+            3581,
+            1120,
+            1440
           ],
           [
-            6714.0,
-            2648.0,
-            3585.0,
-            1121.0,
-            1441.0
+            6714,
+            2648,
+            3585,
+            1121,
+            1441
           ],
           [
             6721.5,
-            2651.0,
-            3590.0,
-            1122.0,
-            1443.0
+            2651,
+            3590,
+            1122,
+            1443
           ],
           [
-            6729.0,
-            2655.0,
-            3594.0,
-            1123.0,
-            1444.0
+            6729,
+            2655,
+            3594,
+            1123,
+            1444
           ],
           [
             6736.5,
-            2658.0,
-            3598.0,
-            1124.0,
-            1446.0
+            2658,
+            3598,
+            1124,
+            1446
           ],
           [
-            6744.0,
-            2661.0,
-            3602.0,
-            1125.0,
-            1447.0
+            6744,
+            2661,
+            3602,
+            1125,
+            1447
           ],
           [
             6751.5,
-            2664.0,
-            3606.0,
-            1126.0,
-            1449.0
+            2664,
+            3606,
+            1126,
+            1449
           ],
           [
-            6759.0,
-            2667.0,
-            3610.0,
-            1126.0,
-            1450.0
+            6759,
+            2667,
+            3610,
+            1126,
+            1450
           ],
           [
             6766.5,
-            2670.0,
-            3614.0,
-            1127.0,
-            1452.0
+            2670,
+            3614,
+            1127,
+            1452
           ],
           [
-            6774.0,
-            2673.0,
-            3618.0,
-            1128.0,
-            1453.0
+            6774,
+            2673,
+            3618,
+            1128,
+            1453
           ],
           [
             6781.5,
-            2676.0,
-            3622.0,
-            1129.0,
-            1455.0
+            2676,
+            3622,
+            1129,
+            1455
           ],
           [
-            6789.0,
-            2679.0,
-            3626.0,
-            1130.0,
-            1456.0
+            6789,
+            2679,
+            3626,
+            1130,
+            1456
           ],
           [
             6796.5,
-            2682.0,
-            3631.0,
-            1131.0,
-            1458.0
+            2682,
+            3631,
+            1131,
+            1458
           ],
           [
-            6804.0,
-            2685.0,
-            3635.0,
-            1132.0,
-            1459.0
+            6804,
+            2685,
+            3635,
+            1132,
+            1459
           ],
           [
             6811.5,
-            2689.0,
-            3639.0,
-            1133.0,
-            1460.0
+            2689,
+            3639,
+            1133,
+            1460
           ],
           [
-            6819.0,
-            2692.0,
-            3643.0,
-            1134.0,
-            1462.0
+            6819,
+            2692,
+            3643,
+            1134,
+            1462
           ],
           [
             6826.5,
-            2695.0,
-            3647.0,
-            1135.0,
-            1463.0
+            2695,
+            3647,
+            1135,
+            1463
           ],
           [
-            6834.0,
-            2698.0,
-            3651.0,
-            1136.0,
-            1465.0
+            6834,
+            2698,
+            3651,
+            1136,
+            1465
           ],
           [
             6841.5,
-            2701.0,
-            3655.0,
-            1137.0,
-            1466.0
+            2701,
+            3655,
+            1137,
+            1466
           ],
           [
-            6849.0,
-            2704.0,
-            3659.0,
-            1138.0,
-            1468.0
+            6849,
+            2704,
+            3659,
+            1138,
+            1468
           ],
           [
             6856.5,
-            2708.0,
-            3663.0,
-            1139.0,
-            1469.0
+            2708,
+            3663,
+            1139,
+            1469
           ],
           [
-            6864.0,
-            2711.0,
-            3667.0,
-            1140.0,
-            1470.0
+            6864,
+            2711,
+            3667,
+            1140,
+            1470
           ],
           [
             6871.5,
-            2714.0,
-            3672.0,
-            1141.0,
-            1472.0
+            2714,
+            3672,
+            1141,
+            1472
           ],
           [
-            6879.0,
-            2717.0,
-            3676.0,
-            1142.0,
-            1473.0
+            6879,
+            2717,
+            3676,
+            1142,
+            1473
           ],
           [
             6886.5,
-            2721.0,
-            3680.0,
-            1143.0,
-            1475.0
+            2721,
+            3680,
+            1143,
+            1475
           ],
           [
-            6894.0,
-            2724.0,
-            3684.0,
-            1144.0,
-            1476.0
+            6894,
+            2724,
+            3684,
+            1144,
+            1476
           ],
           [
             6901.5,
-            2727.0,
-            3688.0,
-            1145.0,
-            1478.0
+            2727,
+            3688,
+            1145,
+            1478
           ],
           [
-            6909.0,
-            2730.0,
-            3692.0,
-            1146.0,
-            1479.0
+            6909,
+            2730,
+            3692,
+            1146,
+            1479
           ],
           [
             6916.5,
-            2733.0,
-            3696.0,
-            1147.0,
-            1480.0
+            2733,
+            3696,
+            1147,
+            1480
           ],
           [
-            6924.0,
-            2736.0,
-            3701.0,
-            1148.0,
-            1482.0
+            6924,
+            2736,
+            3701,
+            1148,
+            1482
           ],
           [
             6931.5,
-            2740.0,
-            3705.0,
-            1149.0,
-            1483.0
+            2740,
+            3705,
+            1149,
+            1483
           ],
           [
-            6939.0,
-            2743.0,
-            3709.0,
-            1150.0,
-            1485.0
+            6939,
+            2743,
+            3709,
+            1150,
+            1485
           ],
           [
             6946.5,
-            2746.0,
-            3713.0,
-            1151.0,
-            1486.0
+            2746,
+            3713,
+            1151,
+            1486
           ],
           [
-            6954.0,
-            2749.0,
-            3717.0,
-            1151.0,
-            1488.0
+            6954,
+            2749,
+            3717,
+            1151,
+            1488
           ],
           [
             6961.5,
-            2752.0,
-            3722.0,
-            1152.0,
-            1489.0
+            2752,
+            3722,
+            1152,
+            1489
           ],
           [
-            6969.0,
-            2755.0,
-            3726.0,
-            1153.0,
-            1491.0
+            6969,
+            2755,
+            3726,
+            1153,
+            1491
           ],
           [
             6976.5,
-            2758.0,
-            3730.0,
-            1154.0,
-            1492.0
+            2758,
+            3730,
+            1154,
+            1492
           ],
           [
-            6984.0,
-            2762.0,
-            3734.0,
-            1155.0,
-            1494.0
+            6984,
+            2762,
+            3734,
+            1155,
+            1494
           ],
           [
             6991.5,
-            2765.0,
-            3739.0,
-            1156.0,
-            1495.0
+            2765,
+            3739,
+            1156,
+            1495
           ],
           [
-            6999.0,
-            2768.0,
-            3743.0,
-            1157.0,
-            1497.0
+            6999,
+            2768,
+            3743,
+            1157,
+            1497
           ],
           [
             7006.5,
-            2771.0,
-            3747.0,
-            1158.0,
-            1499.0
+            2771,
+            3747,
+            1158,
+            1499
           ],
           [
-            7014.0,
-            2774.0,
-            3751.0,
-            1159.0,
-            1500.0
+            7014,
+            2774,
+            3751,
+            1159,
+            1500
           ],
           [
             7021.5,
-            2778.0,
-            3756.0,
-            1160.0,
-            1502.0
+            2778,
+            3756,
+            1160,
+            1502
           ],
           [
-            7029.0,
-            2781.0,
-            3760.0,
-            1161.0,
-            1503.0
+            7029,
+            2781,
+            3760,
+            1161,
+            1503
           ],
           [
             7036.5,
-            2784.0,
-            3764.0,
-            1162.0,
-            1505.0
+            2784,
+            3764,
+            1162,
+            1505
           ],
           [
-            7044.0,
-            2787.0,
-            3768.0,
-            1163.0,
-            1506.0
+            7044,
+            2787,
+            3768,
+            1163,
+            1506
           ],
           [
             7051.5,
-            2790.0,
-            3773.0,
-            1164.0,
-            1508.0
+            2790,
+            3773,
+            1164,
+            1508
           ],
           [
-            7059.0,
-            2793.0,
-            3777.0,
-            1165.0,
-            1509.0
+            7059,
+            2793,
+            3777,
+            1165,
+            1509
           ],
           [
             7066.5,
-            2797.0,
-            3781.0,
-            1165.0,
-            1511.0
+            2797,
+            3781,
+            1165,
+            1511
           ],
           [
-            7074.0,
-            2800.0,
-            3785.0,
-            1166.0,
-            1512.0
+            7074,
+            2800,
+            3785,
+            1166,
+            1512
           ],
           [
             7081.5,
-            2803.0,
-            3789.0,
-            1167.0,
-            1514.0
+            2803,
+            3789,
+            1167,
+            1514
           ],
           [
-            7089.0,
-            2806.0,
-            3794.0,
-            1168.0,
-            1515.0
+            7089,
+            2806,
+            3794,
+            1168,
+            1515
           ],
           [
             7096.5,
-            2809.0,
-            3798.0,
-            1169.0,
-            1517.0
+            2809,
+            3798,
+            1169,
+            1517
           ],
           [
-            7104.0,
-            2812.0,
-            3802.0,
-            1170.0,
-            1518.0
+            7104,
+            2812,
+            3802,
+            1170,
+            1518
           ],
           [
             7111.5,
-            2815.0,
-            3806.0,
-            1171.0,
-            1520.0
+            2815,
+            3806,
+            1171,
+            1520
           ],
           [
-            7119.0,
-            2818.0,
-            3811.0,
-            1172.0,
-            1521.0
+            7119,
+            2818,
+            3811,
+            1172,
+            1521
           ],
           [
             7126.5,
-            2821.0,
-            3815.0,
-            1173.0,
-            1523.0
+            2821,
+            3815,
+            1173,
+            1523
           ],
           [
-            7134.0,
-            2824.0,
-            3819.0,
-            1174.0,
-            1524.0
+            7134,
+            2824,
+            3819,
+            1174,
+            1524
           ],
           [
             7141.5,
-            2828.0,
-            3823.0,
-            1175.0,
-            1526.0
+            2828,
+            3823,
+            1175,
+            1526
           ],
           [
-            7149.0,
-            2831.0,
-            3828.0,
-            1176.0,
-            1527.0
+            7149,
+            2831,
+            3828,
+            1176,
+            1527
           ],
           [
             7156.5,
-            2834.0,
-            3832.0,
-            1176.0,
-            1529.0
+            2834,
+            3832,
+            1176,
+            1529
           ],
           [
-            7164.0,
-            2837.0,
-            3836.0,
-            1177.0,
-            1530.0
+            7164,
+            2837,
+            3836,
+            1177,
+            1530
           ],
           [
             7171.5,
-            2840.0,
-            3840.0,
-            1178.0,
-            1532.0
+            2840,
+            3840,
+            1178,
+            1532
           ],
           [
-            7179.0,
-            2843.0,
-            3844.0,
-            1179.0,
-            1533.0
+            7179,
+            2843,
+            3844,
+            1179,
+            1533
           ],
           [
             7186.5,
-            2846.0,
-            3849.0,
-            1180.0,
-            1535.0
+            2846,
+            3849,
+            1180,
+            1535
           ],
           [
-            7194.0,
-            2849.0,
-            3853.0,
-            1181.0,
-            1536.0
+            7194,
+            2849,
+            3853,
+            1181,
+            1536
           ],
           [
             7201.5,
-            2852.0,
-            3857.0,
-            1181.0,
-            1538.0
+            2852,
+            3857,
+            1181,
+            1538
           ],
           [
-            7209.0,
-            2855.0,
-            3862.0,
-            1182.0,
-            1539.0
+            7209,
+            2855,
+            3862,
+            1182,
+            1539
           ],
           [
             7216.5,
-            2858.0,
-            3866.0,
-            1183.0,
-            1541.0
+            2858,
+            3866,
+            1183,
+            1541
           ],
           [
-            7224.0,
-            2861.0,
-            3870.0,
-            1184.0,
-            1542.0
+            7224,
+            2861,
+            3870,
+            1184,
+            1542
           ],
           [
             7231.5,
-            2864.0,
-            3875.0,
-            1185.0,
-            1544.0
+            2864,
+            3875,
+            1185,
+            1544
           ],
           [
-            7239.0,
-            2867.0,
-            3879.0,
-            1186.0,
-            1545.0
+            7239,
+            2867,
+            3879,
+            1186,
+            1545
           ],
           [
             7246.5,
-            2870.0,
-            3884.0,
-            1186.0,
-            1547.0
+            2870,
+            3884,
+            1186,
+            1547
           ],
           [
-            7254.0,
-            2873.0,
-            3888.0,
-            1187.0,
-            1548.0
+            7254,
+            2873,
+            3888,
+            1187,
+            1548
           ],
           [
             7261.5,
-            2876.0,
-            3893.0,
-            1188.0,
-            1549.0
+            2876,
+            3893,
+            1188,
+            1549
           ],
           [
-            7269.0,
-            2879.0,
-            3897.0,
-            1189.0,
-            1551.0
+            7269,
+            2879,
+            3897,
+            1189,
+            1551
           ],
           [
             7276.5,
-            2882.0,
-            3902.0,
-            1190.0,
-            1553.0
+            2882,
+            3902,
+            1190,
+            1553
           ],
           [
-            7284.0,
-            2885.0,
-            3906.0,
-            1190.0,
-            1554.0
+            7284,
+            2885,
+            3906,
+            1190,
+            1554
           ],
           [
             7291.5,
-            2888.0,
-            3911.0,
-            1191.0,
-            1555.0
+            2888,
+            3911,
+            1191,
+            1555
           ],
           [
-            7299.0,
-            2891.0,
-            3915.0,
-            1192.0,
-            1557.0
+            7299,
+            2891,
+            3915,
+            1192,
+            1557
           ],
           [
             7306.5,
-            2894.0,
-            3920.0,
-            1193.0,
-            1558.0
+            2894,
+            3920,
+            1193,
+            1558
           ],
           [
-            7314.0,
-            2897.0,
-            3924.0,
-            1194.0,
-            1560.0
+            7314,
+            2897,
+            3924,
+            1194,
+            1560
           ],
           [
             7321.5,
-            2900.0,
-            3929.0,
-            1195.0,
-            1561.0
+            2900,
+            3929,
+            1195,
+            1561
           ],
           [
-            7329.0,
-            2903.0,
-            3933.0,
-            1196.0,
-            1563.0
+            7329,
+            2903,
+            3933,
+            1196,
+            1563
           ],
           [
             7336.5,
-            2906.0,
-            3938.0,
-            1197.0,
-            1564.0
+            2906,
+            3938,
+            1197,
+            1564
           ],
           [
-            7344.0,
-            2909.0,
-            3942.0,
-            1198.0,
-            1565.0
+            7344,
+            2909,
+            3942,
+            1198,
+            1565
           ],
           [
             7351.5,
-            2912.0,
-            3946.0,
-            1199.0,
-            1567.0
+            2912,
+            3946,
+            1199,
+            1567
           ],
           [
-            7359.0,
-            2915.0,
-            3951.0,
-            1200.0,
-            1568.0
+            7359,
+            2915,
+            3951,
+            1200,
+            1568
           ],
           [
             7366.5,
-            2918.0,
-            3955.0,
-            1200.0,
-            1570.0
+            2918,
+            3955,
+            1200,
+            1570
           ],
           [
-            7374.0,
-            2920.0,
-            3960.0,
-            1201.0,
-            1571.0
+            7374,
+            2920,
+            3960,
+            1201,
+            1571
           ],
           [
             7381.5,
-            2923.0,
-            3964.0,
-            1202.0,
-            1572.0
+            2923,
+            3964,
+            1202,
+            1572
           ],
           [
-            7389.0,
-            2926.0,
-            3969.0,
-            1203.0,
-            1574.0
+            7389,
+            2926,
+            3969,
+            1203,
+            1574
           ],
           [
             7396.5,
-            2929.0,
-            3973.0,
-            1204.0,
-            1575.0
+            2929,
+            3973,
+            1204,
+            1575
           ],
           [
-            7404.0,
-            2932.0,
-            3978.0,
-            1205.0,
-            1576.0
+            7404,
+            2932,
+            3978,
+            1205,
+            1576
           ],
           [
             7411.5,
-            2935.0,
-            3982.0,
-            1206.0,
-            1578.0
+            2935,
+            3982,
+            1206,
+            1578
           ],
           [
-            7419.0,
-            2938.0,
-            3987.0,
-            1207.0,
-            1579.0
+            7419,
+            2938,
+            3987,
+            1207,
+            1579
           ],
           [
             7426.5,
-            2940.0,
-            3991.0,
-            1208.0,
-            1580.0
+            2940,
+            3991,
+            1208,
+            1580
           ],
           [
-            7434.0,
-            2943.0,
-            3995.0,
-            1209.0,
-            1581.0
+            7434,
+            2943,
+            3995,
+            1209,
+            1581
           ],
           [
             7441.5,
-            2946.0,
-            4000.0,
-            1209.0,
-            1583.0
+            2946,
+            4000,
+            1209,
+            1583
           ],
           [
-            7449.0,
-            2949.0,
-            4004.0,
-            1210.0,
-            1584.0
+            7449,
+            2949,
+            4004,
+            1210,
+            1584
           ],
           [
             7456.5,
-            2952.0,
-            4009.0,
-            1211.0,
-            1585.0
+            2952,
+            4009,
+            1211,
+            1585
           ],
           [
-            7464.0,
-            2955.0,
-            4013.0,
-            1212.0,
-            1586.0
+            7464,
+            2955,
+            4013,
+            1212,
+            1586
           ],
           [
             7471.5,
-            2958.0,
-            4018.0,
-            1213.0,
-            1588.0
+            2958,
+            4018,
+            1213,
+            1588
           ],
           [
-            7479.0,
-            2960.0,
-            4022.0,
-            1214.0,
-            1589.0
+            7479,
+            2960,
+            4022,
+            1214,
+            1589
           ],
           [
             7486.5,
-            2963.0,
-            4026.0,
-            1215.0,
-            1590.0
+            2963,
+            4026,
+            1215,
+            1590
           ],
           [
-            7494.0,
-            2966.0,
-            4031.0,
-            1216.0,
-            1591.0
+            7494,
+            2966,
+            4031,
+            1216,
+            1591
           ],
           [
             7501.5,
-            2969.0,
-            4035.0,
-            1217.0,
-            1592.0
+            2969,
+            4035,
+            1217,
+            1592
           ],
           [
-            7509.0,
-            2972.0,
-            4040.0,
-            1218.0,
-            1593.0
+            7509,
+            2972,
+            4040,
+            1218,
+            1593
           ],
           [
             7516.5,
-            2975.0,
-            4044.0,
-            1219.0,
-            1594.0
+            2975,
+            4044,
+            1219,
+            1594
           ],
           [
-            7524.0,
-            2978.0,
-            4048.0,
-            1220.0,
-            1596.0
+            7524,
+            2978,
+            4048,
+            1220,
+            1596
           ],
           [
             7531.5,
-            2981.0,
-            4053.0,
-            1221.0,
-            1597.0
+            2981,
+            4053,
+            1221,
+            1597
           ],
           [
-            7539.0,
-            2984.0,
-            4057.0,
-            1222.0,
-            1598.0
+            7539,
+            2984,
+            4057,
+            1222,
+            1598
           ],
           [
             7546.5,
-            2987.0,
-            4062.0,
-            1223.0,
-            1599.0
+            2987,
+            4062,
+            1223,
+            1599
           ],
           [
-            7554.0,
-            2990.0,
-            4066.0,
-            1225.0,
-            1601.0
+            7554,
+            2990,
+            4066,
+            1225,
+            1601
           ],
           [
             7561.5,
-            2993.0,
-            4071.0,
-            1226.0,
-            1602.0
+            2993,
+            4071,
+            1226,
+            1602
           ],
           [
-            7569.0,
-            2996.0,
-            4075.0,
-            1227.0,
-            1603.0
+            7569,
+            2996,
+            4075,
+            1227,
+            1603
           ],
           [
             7576.5,
-            2999.0,
-            4080.0,
-            1228.0,
-            1605.0
+            2999,
+            4080,
+            1228,
+            1605
           ],
           [
-            7584.0,
-            3002.0,
-            4084.0,
-            1229.0,
-            1606.0
+            7584,
+            3002,
+            4084,
+            1229,
+            1606
           ],
           [
             7591.5,
-            3005.0,
-            4089.0,
-            1230.0,
-            1607.0
+            3005,
+            4089,
+            1230,
+            1607
           ],
           [
-            7599.0,
-            3008.0,
-            4093.0,
-            1231.0,
-            1609.0
+            7599,
+            3008,
+            4093,
+            1231,
+            1609
           ],
           [
             7606.5,
-            3011.0,
-            4098.0,
-            1232.0,
-            1610.0
+            3011,
+            4098,
+            1232,
+            1610
           ],
           [
-            7614.0,
-            3014.0,
-            4102.0,
-            1233.0,
-            1611.0
+            7614,
+            3014,
+            4102,
+            1233,
+            1611
           ],
           [
             7621.5,
-            3017.0,
-            4107.0,
-            1235.0,
-            1613.0
+            3017,
+            4107,
+            1235,
+            1613
           ],
           [
-            7629.0,
-            3020.0,
-            4111.0,
-            1236.0,
-            1614.0
+            7629,
+            3020,
+            4111,
+            1236,
+            1614
           ],
           [
             7636.5,
-            3023.0,
-            4116.0,
-            1237.0,
-            1615.0
+            3023,
+            4116,
+            1237,
+            1615
           ],
           [
-            7644.0,
-            3026.0,
-            4121.0,
-            1238.0,
-            1617.0
+            7644,
+            3026,
+            4121,
+            1238,
+            1617
           ],
           [
             7651.5,
-            3029.0,
-            4125.0,
-            1239.0,
-            1618.0
+            3029,
+            4125,
+            1239,
+            1618
           ],
           [
-            7659.0,
-            3032.0,
-            4130.0,
-            1240.0,
-            1620.0
+            7659,
+            3032,
+            4130,
+            1240,
+            1620
           ],
           [
             7666.5,
-            3035.0,
-            4134.0,
-            1241.0,
-            1621.0
+            3035,
+            4134,
+            1241,
+            1621
           ],
           [
-            7674.0,
-            3038.0,
-            4139.0,
-            1242.0,
-            1622.0
+            7674,
+            3038,
+            4139,
+            1242,
+            1622
           ],
           [
             7681.5,
-            3040.0,
-            4143.0,
-            1243.0,
-            1624.0
+            3040,
+            4143,
+            1243,
+            1624
           ],
           [
-            7689.0,
-            3043.0,
-            4148.0,
-            1244.0,
-            1625.0
+            7689,
+            3043,
+            4148,
+            1244,
+            1625
           ],
           [
             7696.5,
-            3046.0,
-            4152.0,
-            1246.0,
-            1627.0
+            3046,
+            4152,
+            1246,
+            1627
           ],
           [
-            7704.0,
-            3049.0,
-            4157.0,
-            1247.0,
-            1628.0
+            7704,
+            3049,
+            4157,
+            1247,
+            1628
           ],
           [
             7711.5,
-            3052.0,
-            4161.0,
-            1248.0,
-            1629.0
+            3052,
+            4161,
+            1248,
+            1629
           ],
           [
-            7719.0,
-            3055.0,
-            4166.0,
-            1249.0,
-            1631.0
+            7719,
+            3055,
+            4166,
+            1249,
+            1631
           ],
           [
             7726.5,
-            3058.0,
-            4170.0,
-            1250.0,
-            1632.0
+            3058,
+            4170,
+            1250,
+            1632
           ],
           [
-            7734.0,
-            3061.0,
-            4175.0,
-            1251.0,
-            1634.0
+            7734,
+            3061,
+            4175,
+            1251,
+            1634
           ],
           [
             7741.5,
-            3064.0,
-            4180.0,
-            1252.0,
-            1635.0
+            3064,
+            4180,
+            1252,
+            1635
           ],
           [
-            7749.0,
-            3067.0,
-            4184.0,
-            1253.0,
-            1637.0
+            7749,
+            3067,
+            4184,
+            1253,
+            1637
           ],
           [
             7756.5,
-            3070.0,
-            4189.0,
-            1254.0,
-            1638.0
+            3070,
+            4189,
+            1254,
+            1638
           ],
           [
-            7764.0,
-            3072.0,
-            4193.0,
-            1255.0,
-            1639.0
+            7764,
+            3072,
+            4193,
+            1255,
+            1639
           ],
           [
             7771.5,
-            3075.0,
-            4198.0,
-            1256.0,
-            1641.0
+            3075,
+            4198,
+            1256,
+            1641
           ],
           [
-            7779.0,
-            3078.0,
-            4202.0,
-            1257.0,
-            1642.0
+            7779,
+            3078,
+            4202,
+            1257,
+            1642
           ],
           [
             7786.5,
-            3081.0,
-            4207.0,
-            1258.0,
-            1644.0
+            3081,
+            4207,
+            1258,
+            1644
           ],
           [
-            7794.0,
-            3084.0,
-            4211.0,
-            1259.0,
-            1645.0
+            7794,
+            3084,
+            4211,
+            1259,
+            1645
           ],
           [
             7801.5,
-            3087.0,
-            4216.0,
-            1260.0,
-            1646.0
+            3087,
+            4216,
+            1260,
+            1646
           ],
           [
-            7809.0,
-            3089.0,
-            4221.0,
-            1261.0,
-            1648.0
+            7809,
+            3089,
+            4221,
+            1261,
+            1648
           ],
           [
             7816.5,
-            3092.0,
-            4225.0,
-            1262.0,
-            1649.0
+            3092,
+            4225,
+            1262,
+            1649
           ],
           [
-            7824.0,
-            3095.0,
-            4230.0,
-            1263.0,
-            1650.0
+            7824,
+            3095,
+            4230,
+            1263,
+            1650
           ],
           [
             7831.5,
-            3098.0,
-            4234.0,
-            1264.0,
-            1651.0
+            3098,
+            4234,
+            1264,
+            1651
           ],
           [
-            7839.0,
-            3101.0,
-            4239.0,
-            1265.0,
-            1653.0
+            7839,
+            3101,
+            4239,
+            1265,
+            1653
           ],
           [
             7846.5,
-            3104.0,
-            4243.0,
-            1266.0,
-            1654.0
+            3104,
+            4243,
+            1266,
+            1654
           ],
           [
-            7854.0,
-            3106.0,
-            4248.0,
-            1267.0,
-            1655.0
+            7854,
+            3106,
+            4248,
+            1267,
+            1655
           ],
           [
             7861.5,
-            3109.0,
-            4253.0,
-            1268.0,
-            1657.0
+            3109,
+            4253,
+            1268,
+            1657
           ],
           [
-            7869.0,
-            3112.0,
-            4257.0,
-            1269.0,
-            1658.0
+            7869,
+            3112,
+            4257,
+            1269,
+            1658
           ],
           [
             7876.5,
-            3115.0,
-            4262.0,
-            1270.0,
-            1659.0
+            3115,
+            4262,
+            1270,
+            1659
           ],
           [
-            7884.0,
-            3118.0,
-            4267.0,
-            1271.0,
-            1661.0
+            7884,
+            3118,
+            4267,
+            1271,
+            1661
           ],
           [
             7891.5,
-            3121.0,
-            4271.0,
-            1272.0,
-            1662.0
+            3121,
+            4271,
+            1272,
+            1662
           ],
           [
-            7899.0,
-            3123.0,
-            4276.0,
-            1273.0,
-            1663.0
+            7899,
+            3123,
+            4276,
+            1273,
+            1663
           ],
           [
             7906.5,
-            3126.0,
-            4281.0,
-            1274.0,
-            1664.0
+            3126,
+            4281,
+            1274,
+            1664
           ],
           [
-            7914.0,
-            3129.0,
-            4286.0,
-            1274.0,
-            1665.0
+            7914,
+            3129,
+            4286,
+            1274,
+            1665
           ],
           [
             7921.5,
-            3132.0,
-            4290.0,
-            1275.0,
-            1667.0
+            3132,
+            4290,
+            1275,
+            1667
           ],
           [
-            7929.0,
-            3135.0,
-            4295.0,
-            1276.0,
-            1668.0
+            7929,
+            3135,
+            4295,
+            1276,
+            1668
           ],
           [
             7936.5,
-            3138.0,
-            4300.0,
-            1277.0,
-            1669.0
+            3138,
+            4300,
+            1277,
+            1669
           ],
           [
-            7944.0,
-            3141.0,
-            4305.0,
-            1278.0,
-            1671.0
+            7944,
+            3141,
+            4305,
+            1278,
+            1671
           ],
           [
             7951.5,
-            3144.0,
-            4309.0,
-            1279.0,
-            1672.0
+            3144,
+            4309,
+            1279,
+            1672
           ],
           [
-            7959.0,
-            3146.0,
-            4314.0,
-            1280.0,
-            1673.0
+            7959,
+            3146,
+            4314,
+            1280,
+            1673
           ],
           [
             7966.5,
-            3149.0,
-            4319.0,
-            1280.0,
-            1675.0
+            3149,
+            4319,
+            1280,
+            1675
           ],
           [
-            7974.0,
-            3152.0,
-            4323.0,
-            1281.0,
-            1676.0
+            7974,
+            3152,
+            4323,
+            1281,
+            1676
           ],
           [
             7981.5,
-            3155.0,
-            4328.0,
-            1282.0,
-            1677.0
+            3155,
+            4328,
+            1282,
+            1677
           ],
           [
-            7989.0,
-            3158.0,
-            4332.0,
-            1283.0,
-            1679.0
+            7989,
+            3158,
+            4332,
+            1283,
+            1679
           ],
           [
             7996.5,
-            3161.0,
-            4337.0,
-            1284.0,
-            1680.0
+            3161,
+            4337,
+            1284,
+            1680
           ],
           [
-            8004.0,
-            3163.0,
-            4341.0,
-            1284.0,
-            1681.0
+            8004,
+            3163,
+            4341,
+            1284,
+            1681
           ],
           [
             8011.5,
-            3166.0,
-            4346.0,
-            1285.0,
-            1683.0
+            3166,
+            4346,
+            1285,
+            1683
           ],
           [
-            8019.0,
-            3169.0,
-            4351.0,
-            1286.0,
-            1684.0
+            8019,
+            3169,
+            4351,
+            1286,
+            1684
           ],
           [
             8026.5,
-            3172.0,
-            4355.0,
-            1287.0,
-            1685.0
+            3172,
+            4355,
+            1287,
+            1685
           ],
           [
-            8034.0,
-            3175.0,
-            4360.0,
-            1288.0,
-            1687.0
+            8034,
+            3175,
+            4360,
+            1288,
+            1687
           ],
           [
             8041.5,
-            3177.0,
-            4364.0,
-            1289.0,
-            1688.0
+            3177,
+            4364,
+            1289,
+            1688
           ],
           [
-            8049.0,
-            3180.0,
-            4369.0,
-            1290.0,
-            1689.0
+            8049,
+            3180,
+            4369,
+            1290,
+            1689
           ],
           [
             8056.5,
-            3183.0,
-            4373.0,
-            1290.0,
-            1690.0
+            3183,
+            4373,
+            1290,
+            1690
           ],
           [
-            8064.0,
-            3186.0,
-            4378.0,
-            1291.0,
-            1692.0
+            8064,
+            3186,
+            4378,
+            1291,
+            1692
           ],
           [
             8071.5,
-            3188.0,
-            4383.0,
-            1292.0,
-            1693.0
+            3188,
+            4383,
+            1292,
+            1693
           ],
           [
-            8079.0,
-            3191.0,
-            4387.0,
-            1293.0,
-            1694.0
+            8079,
+            3191,
+            4387,
+            1293,
+            1694
           ],
           [
             8086.5,
-            3194.0,
-            4392.0,
-            1294.0,
-            1695.0
+            3194,
+            4392,
+            1294,
+            1695
           ],
           [
-            8094.0,
-            3197.0,
-            4396.0,
-            1295.0,
-            1696.0
+            8094,
+            3197,
+            4396,
+            1295,
+            1696
           ],
           [
             8101.5,
-            3200.0,
-            4401.0,
-            1295.0,
-            1698.0
+            3200,
+            4401,
+            1295,
+            1698
           ],
           [
-            8109.0,
-            3203.0,
-            4405.0,
-            1296.0,
-            1699.0
+            8109,
+            3203,
+            4405,
+            1296,
+            1699
           ],
           [
             8116.5,
-            3206.0,
-            4410.0,
-            1297.0,
-            1700.0
+            3206,
+            4410,
+            1297,
+            1700
           ],
           [
-            8124.0,
-            3209.0,
-            4414.0,
-            1298.0,
-            1701.0
+            8124,
+            3209,
+            4414,
+            1298,
+            1701
           ],
           [
             8131.5,
-            3211.0,
-            4419.0,
-            1299.0,
-            1702.0
+            3211,
+            4419,
+            1299,
+            1702
           ],
           [
-            8139.0,
-            3214.0,
-            4424.0,
-            1300.0,
-            1704.0
+            8139,
+            3214,
+            4424,
+            1300,
+            1704
           ],
           [
             8146.5,
-            3217.0,
-            4428.0,
-            1301.0,
-            1705.0
+            3217,
+            4428,
+            1301,
+            1705
           ],
           [
-            8154.0,
-            3220.0,
-            4433.0,
-            1302.0,
-            1706.0
+            8154,
+            3220,
+            4433,
+            1302,
+            1706
           ],
           [
             8161.5,
-            3223.0,
-            4437.0,
-            1303.0,
-            1707.0
+            3223,
+            4437,
+            1303,
+            1707
           ],
           [
-            8169.0,
-            3226.0,
-            4442.0,
-            1304.0,
-            1708.0
+            8169,
+            3226,
+            4442,
+            1304,
+            1708
           ],
           [
             8176.5,
-            3229.0,
-            4446.0,
-            1304.0,
-            1709.0
+            3229,
+            4446,
+            1304,
+            1709
           ],
           [
-            8184.0,
-            3232.0,
-            4451.0,
-            1305.0,
-            1711.0
+            8184,
+            3232,
+            4451,
+            1305,
+            1711
           ],
           [
             8191.5,
-            3234.0,
-            4455.0,
-            1306.0,
-            1712.0
+            3234,
+            4455,
+            1306,
+            1712
           ],
           [
-            8199.0,
-            3237.0,
-            4460.0,
-            1307.0,
-            1713.0
+            8199,
+            3237,
+            4460,
+            1307,
+            1713
           ],
           [
             8206.5,
-            3240.0,
-            4465.0,
-            1308.0,
-            1714.0
+            3240,
+            4465,
+            1308,
+            1714
           ],
           [
-            8214.0,
-            3243.0,
-            4469.0,
-            1309.0,
-            1715.0
+            8214,
+            3243,
+            4469,
+            1309,
+            1715
           ],
           [
             8221.5,
-            3246.0,
-            4474.0,
-            1309.0,
-            1717.0
+            3246,
+            4474,
+            1309,
+            1717
           ],
           [
-            8229.0,
-            3249.0,
-            4478.0,
-            1310.0,
-            1718.0
+            8229,
+            3249,
+            4478,
+            1310,
+            1718
           ],
           [
             8236.5,
-            3252.0,
-            4483.0,
-            1311.0,
-            1719.0
+            3252,
+            4483,
+            1311,
+            1719
           ],
           [
-            8244.0,
-            3255.0,
-            4487.0,
-            1312.0,
-            1721.0
+            8244,
+            3255,
+            4487,
+            1312,
+            1721
           ],
           [
             8251.5,
-            3258.0,
-            4492.0,
-            1313.0,
-            1722.0
+            3258,
+            4492,
+            1313,
+            1722
           ],
           [
-            8259.0,
-            3261.0,
-            4496.0,
-            1313.0,
-            1723.0
+            8259,
+            3261,
+            4496,
+            1313,
+            1723
           ],
           [
             8266.5,
-            3263.0,
-            4501.0,
-            1314.0,
-            1724.0
+            3263,
+            4501,
+            1314,
+            1724
           ],
           [
-            8274.0,
-            3266.0,
-            4505.0,
-            1315.0,
-            1726.0
+            8274,
+            3266,
+            4505,
+            1315,
+            1726
           ],
           [
             8281.5,
-            3269.0,
-            4510.0,
-            1316.0,
-            1727.0
+            3269,
+            4510,
+            1316,
+            1727
           ],
           [
-            8289.0,
-            3272.0,
-            4514.0,
-            1316.0,
-            1728.0
+            8289,
+            3272,
+            4514,
+            1316,
+            1728
           ],
           [
             8296.5,
-            3275.0,
-            4519.0,
-            1317.0,
-            1729.0
+            3275,
+            4519,
+            1317,
+            1729
           ],
           [
-            8304.0,
-            3278.0,
-            4524.0,
-            1318.0,
-            1730.0
+            8304,
+            3278,
+            4524,
+            1318,
+            1730
           ],
           [
             8311.5,
-            3281.0,
-            4528.0,
-            1319.0,
-            1732.0
+            3281,
+            4528,
+            1319,
+            1732
           ],
           [
-            8319.0,
-            3284.0,
-            4533.0,
-            1319.0,
-            1733.0
+            8319,
+            3284,
+            4533,
+            1319,
+            1733
           ],
           [
             8326.5,
-            3287.0,
-            4538.0,
-            1320.0,
-            1734.0
+            3287,
+            4538,
+            1320,
+            1734
           ],
           [
-            8334.0,
-            3289.0,
-            4542.0,
-            1321.0,
-            1735.0
+            8334,
+            3289,
+            4542,
+            1321,
+            1735
           ],
           [
             8341.5,
-            3292.0,
-            4547.0,
-            1322.0,
-            1736.0
+            3292,
+            4547,
+            1322,
+            1736
           ],
           [
-            8349.0,
-            3295.0,
-            4552.0,
-            1322.0,
-            1738.0
+            8349,
+            3295,
+            4552,
+            1322,
+            1738
           ],
           [
             8356.5,
-            3298.0,
-            4556.0,
-            1323.0,
-            1739.0
+            3298,
+            4556,
+            1323,
+            1739
           ],
           [
-            8364.0,
-            3301.0,
-            4561.0,
-            1324.0,
-            1740.0
+            8364,
+            3301,
+            4561,
+            1324,
+            1740
           ],
           [
             8371.5,
-            3304.0,
-            4565.0,
-            1325.0,
-            1741.0
+            3304,
+            4565,
+            1325,
+            1741
           ],
           [
-            8379.0,
-            3307.0,
-            4570.0,
-            1326.0,
-            1743.0
+            8379,
+            3307,
+            4570,
+            1326,
+            1743
           ],
           [
             8386.5,
-            3310.0,
-            4575.0,
-            1326.0,
-            1744.0
+            3310,
+            4575,
+            1326,
+            1744
           ],
           [
-            8394.0,
-            3313.0,
-            4579.0,
-            1327.0,
-            1745.0
+            8394,
+            3313,
+            4579,
+            1327,
+            1745
           ],
           [
             8401.5,
-            3316.0,
-            4584.0,
-            1328.0,
-            1747.0
+            3316,
+            4584,
+            1328,
+            1747
           ],
           [
-            8409.0,
-            3319.0,
-            4588.0,
-            1329.0,
-            1748.0
+            8409,
+            3319,
+            4588,
+            1329,
+            1748
           ],
           [
             8416.5,
-            3322.0,
-            4593.0,
-            1329.0,
-            1749.0
+            3322,
+            4593,
+            1329,
+            1749
           ],
           [
-            8424.0,
-            3325.0,
-            4597.0,
-            1330.0,
-            1751.0
+            8424,
+            3325,
+            4597,
+            1330,
+            1751
           ],
           [
             8431.5,
-            3328.0,
-            4602.0,
-            1331.0,
-            1752.0
+            3328,
+            4602,
+            1331,
+            1752
           ],
           [
-            8439.0,
-            3331.0,
-            4607.0,
-            1332.0,
-            1753.0
+            8439,
+            3331,
+            4607,
+            1332,
+            1753
           ],
           [
             8446.5,
-            3334.0,
-            4611.0,
-            1333.0,
-            1754.0
+            3334,
+            4611,
+            1333,
+            1754
           ],
           [
-            8454.0,
-            3337.0,
-            4616.0,
-            1333.0,
-            1756.0
+            8454,
+            3337,
+            4616,
+            1333,
+            1756
           ],
           [
             8461.5,
-            3340.0,
-            4621.0,
-            1334.0,
-            1757.0
+            3340,
+            4621,
+            1334,
+            1757
           ],
           [
-            8469.0,
-            3343.0,
-            4625.0,
-            1335.0,
-            1758.0
+            8469,
+            3343,
+            4625,
+            1335,
+            1758
           ],
           [
             8476.5,
-            3346.0,
-            4630.0,
-            1336.0,
-            1760.0
+            3346,
+            4630,
+            1336,
+            1760
           ],
           [
-            8484.0,
-            3349.0,
-            4634.0,
-            1337.0,
-            1761.0
+            8484,
+            3349,
+            4634,
+            1337,
+            1761
           ],
           [
             8491.5,
-            3352.0,
-            4639.0,
-            1337.0,
-            1762.0
+            3352,
+            4639,
+            1337,
+            1762
           ],
           [
-            8499.0,
-            3355.0,
-            4644.0,
-            1338.0,
-            1764.0
+            8499,
+            3355,
+            4644,
+            1338,
+            1764
           ],
           [
             8506.5,
-            3358.0,
-            4648.0,
-            1339.0,
-            1765.0
+            3358,
+            4648,
+            1339,
+            1765
           ],
           [
-            8514.0,
-            3360.0,
-            4653.0,
-            1340.0,
-            1767.0
+            8514,
+            3360,
+            4653,
+            1340,
+            1767
           ],
           [
             8521.5,
-            3363.0,
-            4657.0,
-            1341.0,
-            1768.0
+            3363,
+            4657,
+            1341,
+            1768
           ],
           [
-            8529.0,
-            3366.0,
-            4662.0,
-            1342.0,
-            1770.0
+            8529,
+            3366,
+            4662,
+            1342,
+            1770
           ],
           [
             8536.5,
-            3369.0,
-            4666.0,
-            1342.0,
-            1771.0
+            3369,
+            4666,
+            1342,
+            1771
           ],
           [
-            8544.0,
-            3372.0,
-            4671.0,
-            1343.0,
-            1773.0
+            8544,
+            3372,
+            4671,
+            1343,
+            1773
           ],
           [
             8551.5,
-            3374.0,
-            4675.0,
-            1344.0,
-            1774.0
+            3374,
+            4675,
+            1344,
+            1774
           ],
           [
-            8559.0,
-            3377.0,
-            4680.0,
-            1345.0,
-            1775.0
+            8559,
+            3377,
+            4680,
+            1345,
+            1775
           ],
           [
             8566.5,
-            3380.0,
-            4684.0,
-            1346.0,
-            1777.0
+            3380,
+            4684,
+            1346,
+            1777
           ],
           [
-            8574.0,
-            3383.0,
-            4689.0,
-            1347.0,
-            1778.0
+            8574,
+            3383,
+            4689,
+            1347,
+            1778
           ],
           [
             8581.5,
-            3386.0,
-            4693.0,
-            1348.0,
-            1780.0
+            3386,
+            4693,
+            1348,
+            1780
           ],
           [
-            8589.0,
-            3388.0,
-            4698.0,
-            1349.0,
-            1781.0
+            8589,
+            3388,
+            4698,
+            1349,
+            1781
           ],
           [
             8596.5,
-            3391.0,
-            4702.0,
-            1350.0,
-            1783.0
+            3391,
+            4702,
+            1350,
+            1783
           ],
           [
-            8604.0,
-            3394.0,
-            4707.0,
-            1350.0,
-            1784.0
+            8604,
+            3394,
+            4707,
+            1350,
+            1784
           ],
           [
             8611.5,
-            3397.0,
-            4711.0,
-            1351.0,
-            1786.0
+            3397,
+            4711,
+            1351,
+            1786
           ],
           [
-            8619.0,
-            3399.0,
-            4716.0,
-            1352.0,
-            1787.0
+            8619,
+            3399,
+            4716,
+            1352,
+            1787
           ],
           [
             8626.5,
-            3402.0,
-            4721.0,
-            1353.0,
-            1789.0
+            3402,
+            4721,
+            1353,
+            1789
           ],
           [
-            8634.0,
-            3405.0,
-            4725.0,
-            1354.0,
-            1790.0
+            8634,
+            3405,
+            4725,
+            1354,
+            1790
           ],
           [
             8641.5,
-            3408.0,
-            4730.0,
-            1354.0,
-            1792.0
+            3408,
+            4730,
+            1354,
+            1792
           ],
           [
-            8649.0,
-            3411.0,
-            4735.0,
-            1355.0,
-            1793.0
+            8649,
+            3411,
+            4735,
+            1355,
+            1793
           ],
           [
             8656.5,
-            3414.0,
-            4739.0,
-            1356.0,
-            1794.0
+            3414,
+            4739,
+            1356,
+            1794
           ],
           [
-            8664.0,
-            3416.0,
-            4744.0,
-            1357.0,
-            1796.0
+            8664,
+            3416,
+            4744,
+            1357,
+            1796
           ],
           [
             8671.5,
-            3419.0,
-            4748.0,
-            1358.0,
-            1797.0
+            3419,
+            4748,
+            1358,
+            1797
           ],
           [
-            8679.0,
-            3422.0,
-            4753.0,
-            1359.0,
-            1799.0
+            8679,
+            3422,
+            4753,
+            1359,
+            1799
           ],
           [
             8686.5,
-            3425.0,
-            4758.0,
-            1360.0,
-            1800.0
+            3425,
+            4758,
+            1360,
+            1800
           ],
           [
-            8694.0,
-            3428.0,
-            4762.0,
-            1360.0,
-            1801.0
+            8694,
+            3428,
+            4762,
+            1360,
+            1801
           ],
           [
             8701.5,
-            3430.0,
-            4767.0,
-            1361.0,
-            1803.0
+            3430,
+            4767,
+            1361,
+            1803
           ],
           [
-            8709.0,
-            3433.0,
-            4771.0,
-            1362.0,
-            1804.0
+            8709,
+            3433,
+            4771,
+            1362,
+            1804
           ],
           [
             8716.5,
-            3436.0,
-            4776.0,
-            1363.0,
-            1806.0
+            3436,
+            4776,
+            1363,
+            1806
           ],
           [
-            8724.0,
-            3439.0,
-            4780.0,
-            1364.0,
-            1807.0
+            8724,
+            3439,
+            4780,
+            1364,
+            1807
           ],
           [
             8731.5,
-            3442.0,
-            4785.0,
-            1365.0,
-            1809.0
+            3442,
+            4785,
+            1365,
+            1809
           ],
           [
-            8739.0,
-            3445.0,
-            4789.0,
-            1366.0,
-            1810.0
+            8739,
+            3445,
+            4789,
+            1366,
+            1810
           ],
           [
             8746.5,
-            3447.0,
-            4794.0,
-            1366.0,
-            1812.0
+            3447,
+            4794,
+            1366,
+            1812
           ],
           [
-            8754.0,
-            3450.0,
-            4798.0,
-            1367.0,
-            1814.0
+            8754,
+            3450,
+            4798,
+            1367,
+            1814
           ],
           [
             8761.5,
-            3453.0,
-            4803.0,
-            1368.0,
-            1815.0
+            3453,
+            4803,
+            1368,
+            1815
           ],
           [
-            8769.0,
-            3456.0,
-            4807.0,
-            1369.0,
-            1817.0
+            8769,
+            3456,
+            4807,
+            1369,
+            1817
           ],
           [
             8776.5,
-            3459.0,
-            4812.0,
-            1370.0,
-            1819.0
+            3459,
+            4812,
+            1370,
+            1819
           ],
           [
-            8784.0,
-            3462.0,
-            4817.0,
-            1371.0,
-            1820.0
+            8784,
+            3462,
+            4817,
+            1371,
+            1820
           ],
           [
             8791.5,
-            3465.0,
-            4821.0,
-            1372.0,
-            1822.0
+            3465,
+            4821,
+            1372,
+            1822
           ],
           [
-            8799.0,
-            3468.0,
-            4826.0,
-            1373.0,
-            1823.0
+            8799,
+            3468,
+            4826,
+            1373,
+            1823
           ],
           [
             8806.5,
-            3471.0,
-            4830.0,
-            1374.0,
-            1825.0
+            3471,
+            4830,
+            1374,
+            1825
           ],
           [
-            8814.0,
-            3474.0,
-            4835.0,
-            1375.0,
-            1826.0
+            8814,
+            3474,
+            4835,
+            1375,
+            1826
           ],
           [
             8821.5,
-            3477.0,
-            4839.0,
-            1376.0,
-            1828.0
+            3477,
+            4839,
+            1376,
+            1828
           ],
           [
-            8829.0,
-            3480.0,
-            4844.0,
-            1377.0,
-            1829.0
+            8829,
+            3480,
+            4844,
+            1377,
+            1829
           ],
           [
             8836.5,
-            3483.0,
-            4849.0,
-            1377.0,
-            1831.0
+            3483,
+            4849,
+            1377,
+            1831
           ],
           [
-            8844.0,
-            3486.0,
-            4853.0,
-            1378.0,
-            1832.0
+            8844,
+            3486,
+            4853,
+            1378,
+            1832
           ],
           [
             8851.5,
-            3489.0,
-            4858.0,
-            1379.0,
-            1833.0
+            3489,
+            4858,
+            1379,
+            1833
           ],
           [
-            8859.0,
-            3492.0,
-            4862.0,
-            1380.0,
-            1835.0
+            8859,
+            3492,
+            4862,
+            1380,
+            1835
           ],
           [
             8866.5,
-            3495.0,
-            4867.0,
-            1381.0,
-            1836.0
+            3495,
+            4867,
+            1381,
+            1836
           ],
           [
-            8874.0,
-            3498.0,
-            4872.0,
-            1382.0,
-            1837.0
+            8874,
+            3498,
+            4872,
+            1382,
+            1837
           ],
           [
             8881.5,
-            3502.0,
-            4876.0,
-            1383.0,
-            1839.0
+            3502,
+            4876,
+            1383,
+            1839
           ],
           [
-            8889.0,
-            3505.0,
-            4881.0,
-            1383.0,
-            1840.0
+            8889,
+            3505,
+            4881,
+            1383,
+            1840
           ],
           [
             8896.5,
-            3508.0,
-            4885.0,
-            1384.0,
-            1841.0
+            3508,
+            4885,
+            1384,
+            1841
           ],
           [
-            8904.0,
-            3511.0,
-            4890.0,
-            1385.0,
-            1843.0
+            8904,
+            3511,
+            4890,
+            1385,
+            1843
           ],
           [
             8911.5,
-            3514.0,
-            4894.0,
-            1386.0,
-            1844.0
+            3514,
+            4894,
+            1386,
+            1844
           ],
           [
-            8919.0,
-            3517.0,
-            4899.0,
-            1387.0,
-            1845.0
+            8919,
+            3517,
+            4899,
+            1387,
+            1845
           ],
           [
             8926.5,
-            3520.0,
-            4903.0,
-            1387.0,
-            1847.0
+            3520,
+            4903,
+            1387,
+            1847
           ],
           [
-            8934.0,
-            3523.0,
-            4908.0,
-            1388.0,
-            1848.0
+            8934,
+            3523,
+            4908,
+            1388,
+            1848
           ],
           [
             8941.5,
-            3526.0,
-            4913.0,
-            1389.0,
-            1850.0
+            3526,
+            4913,
+            1389,
+            1850
           ],
           [
-            8949.0,
-            3529.0,
-            4917.0,
-            1390.0,
-            1851.0
+            8949,
+            3529,
+            4917,
+            1390,
+            1851
           ],
           [
             8956.5,
-            3532.0,
-            4922.0,
-            1391.0,
-            1853.0
+            3532,
+            4922,
+            1391,
+            1853
           ],
           [
-            8964.0,
-            3534.0,
-            4927.0,
-            1392.0,
-            1854.0
+            8964,
+            3534,
+            4927,
+            1392,
+            1854
           ],
           [
             8971.5,
-            3537.0,
-            4931.0,
-            1392.0,
-            1855.0
+            3537,
+            4931,
+            1392,
+            1855
           ],
           [
-            8979.0,
-            3540.0,
-            4936.0,
-            1393.0,
-            1857.0
+            8979,
+            3540,
+            4936,
+            1393,
+            1857
           ],
           [
             8986.5,
-            3543.0,
-            4941.0,
-            1394.0,
-            1858.0
+            3543,
+            4941,
+            1394,
+            1858
           ],
           [
-            8994.0,
-            3546.0,
-            4945.0,
-            1395.0,
-            1859.0
+            8994,
+            3546,
+            4945,
+            1395,
+            1859
           ],
           [
             9001.5,
-            3549.0,
-            4950.0,
-            1396.0,
-            1861.0
+            3549,
+            4950,
+            1396,
+            1861
           ],
           [
-            9009.0,
-            3552.0,
-            4954.0,
-            1396.0,
-            1862.0
+            9009,
+            3552,
+            4954,
+            1396,
+            1862
           ],
           [
             9016.5,
-            3555.0,
-            4959.0,
-            1397.0,
-            1863.0
+            3555,
+            4959,
+            1397,
+            1863
           ],
           [
-            9024.0,
-            3558.0,
-            4964.0,
-            1398.0,
-            1865.0
+            9024,
+            3558,
+            4964,
+            1398,
+            1865
           ],
           [
             9031.5,
-            3561.0,
-            4968.0,
-            1399.0,
-            1866.0
+            3561,
+            4968,
+            1399,
+            1866
           ],
           [
-            9039.0,
-            3564.0,
-            4973.0,
-            1400.0,
-            1867.0
+            9039,
+            3564,
+            4973,
+            1400,
+            1867
           ],
           [
             9046.5,
-            3567.0,
-            4978.0,
-            1401.0,
-            1869.0
+            3567,
+            4978,
+            1401,
+            1869
           ],
           [
-            9054.0,
-            3570.0,
-            4982.0,
-            1401.0,
-            1870.0
+            9054,
+            3570,
+            4982,
+            1401,
+            1870
           ],
           [
             9061.5,
-            3573.0,
-            4987.0,
-            1402.0,
-            1871.0
+            3573,
+            4987,
+            1402,
+            1871
           ],
           [
-            9069.0,
-            3576.0,
-            4992.0,
-            1403.0,
-            1873.0
+            9069,
+            3576,
+            4992,
+            1403,
+            1873
           ],
           [
             9076.5,
-            3579.0,
-            4996.0,
-            1404.0,
-            1874.0
+            3579,
+            4996,
+            1404,
+            1874
           ],
           [
-            9084.0,
-            3582.0,
-            5001.0,
-            1405.0,
-            1875.0
+            9084,
+            3582,
+            5001,
+            1405,
+            1875
           ],
           [
             9091.5,
-            3585.0,
-            5005.0,
-            1406.0,
-            1877.0
+            3585,
+            5005,
+            1406,
+            1877
           ],
           [
-            9099.0,
-            3588.0,
-            5010.0,
-            1407.0,
-            1878.0
+            9099,
+            3588,
+            5010,
+            1407,
+            1878
           ],
           [
             9106.5,
-            3591.0,
-            5014.0,
-            1408.0,
-            1879.0
+            3591,
+            5014,
+            1408,
+            1879
           ],
           [
-            9114.0,
-            3594.0,
-            5019.0,
-            1408.0,
-            1881.0
+            9114,
+            3594,
+            5019,
+            1408,
+            1881
           ],
           [
             9121.5,
-            3597.0,
-            5023.0,
-            1409.0,
-            1882.0
+            3597,
+            5023,
+            1409,
+            1882
           ],
           [
-            9129.0,
-            3600.0,
-            5028.0,
-            1410.0,
-            1883.0
+            9129,
+            3600,
+            5028,
+            1410,
+            1883
           ],
           [
             9136.5,
-            3603.0,
-            5032.0,
-            1411.0,
-            1885.0
+            3603,
+            5032,
+            1411,
+            1885
           ],
           [
-            9144.0,
-            3607.0,
-            5037.0,
-            1411.0,
-            1886.0
+            9144,
+            3607,
+            5037,
+            1411,
+            1886
           ],
           [
             9151.5,
-            3610.0,
-            5042.0,
-            1412.0,
-            1888.0
+            3610,
+            5042,
+            1412,
+            1888
           ],
           [
-            9159.0,
-            3613.0,
-            5046.0,
-            1413.0,
-            1889.0
+            9159,
+            3613,
+            5046,
+            1413,
+            1889
           ],
           [
             9166.5,
-            3616.0,
-            5051.0,
-            1414.0,
-            1890.0
+            3616,
+            5051,
+            1414,
+            1890
           ],
           [
-            9174.0,
-            3619.0,
-            5055.0,
-            1415.0,
-            1892.0
+            9174,
+            3619,
+            5055,
+            1415,
+            1892
           ],
           [
             9181.5,
-            3622.0,
-            5060.0,
-            1416.0,
-            1894.0
+            3622,
+            5060,
+            1416,
+            1894
           ],
           [
-            9189.0,
-            3626.0,
-            5064.0,
-            1417.0,
-            1895.0
+            9189,
+            3626,
+            5064,
+            1417,
+            1895
           ],
           [
             9196.5,
-            3629.0,
-            5069.0,
-            1418.0,
-            1897.0
+            3629,
+            5069,
+            1418,
+            1897
           ],
           [
-            9204.0,
-            3632.0,
-            5073.0,
-            1418.0,
-            1898.0
+            9204,
+            3632,
+            5073,
+            1418,
+            1898
           ],
           [
             9211.5,
-            3635.0,
-            5078.0,
-            1419.0,
-            1900.0
+            3635,
+            5078,
+            1419,
+            1900
           ],
           [
-            9219.0,
-            3638.0,
-            5082.0,
-            1420.0,
-            1901.0
+            9219,
+            3638,
+            5082,
+            1420,
+            1901
           ],
           [
             9226.5,
-            3641.0,
-            5087.0,
-            1421.0,
-            1903.0
+            3641,
+            5087,
+            1421,
+            1903
           ],
           [
-            9234.0,
-            3644.0,
-            5091.0,
-            1421.0,
-            1904.0
+            9234,
+            3644,
+            5091,
+            1421,
+            1904
           ],
           [
             9241.5,
-            3647.0,
-            5096.0,
-            1422.0,
-            1905.0
+            3647,
+            5096,
+            1422,
+            1905
           ],
           [
-            9249.0,
-            3651.0,
-            5101.0,
-            1423.0,
-            1907.0
+            9249,
+            3651,
+            5101,
+            1423,
+            1907
           ],
           [
             9256.5,
-            3654.0,
-            5105.0,
-            1423.0,
-            1908.0
+            3654,
+            5105,
+            1423,
+            1908
           ],
           [
-            9264.0,
-            3657.0,
-            5110.0,
-            1424.0,
-            1910.0
+            9264,
+            3657,
+            5110,
+            1424,
+            1910
           ],
           [
             9271.5,
-            3660.0,
-            5114.0,
-            1425.0,
-            1911.0
+            3660,
+            5114,
+            1425,
+            1911
           ],
           [
-            9279.0,
-            3663.0,
-            5119.0,
-            1425.0,
-            1913.0
+            9279,
+            3663,
+            5119,
+            1425,
+            1913
           ],
           [
             9286.5,
-            3666.0,
-            5123.0,
-            1426.0,
-            1914.0
+            3666,
+            5123,
+            1426,
+            1914
           ],
           [
-            9294.0,
-            3669.0,
-            5128.0,
-            1427.0,
-            1915.0
+            9294,
+            3669,
+            5128,
+            1427,
+            1915
           ],
           [
             9301.5,
-            3672.0,
-            5132.0,
-            1428.0,
-            1917.0
+            3672,
+            5132,
+            1428,
+            1917
           ],
           [
-            9309.0,
-            3676.0,
-            5137.0,
-            1428.0,
-            1919.0
+            9309,
+            3676,
+            5137,
+            1428,
+            1919
           ],
           [
             9316.5,
-            3679.0,
-            5141.0,
-            1429.0,
-            1920.0
+            3679,
+            5141,
+            1429,
+            1920
           ],
           [
-            9324.0,
-            3682.0,
-            5146.0,
-            1430.0,
-            1921.0
+            9324,
+            3682,
+            5146,
+            1430,
+            1921
           ],
           [
             9331.5,
-            3685.0,
-            5150.0,
-            1431.0,
-            1923.0
+            3685,
+            5150,
+            1431,
+            1923
           ],
           [
-            9339.0,
-            3688.0,
-            5155.0,
-            1432.0,
-            1925.0
+            9339,
+            3688,
+            5155,
+            1432,
+            1925
           ],
           [
             9346.5,
-            3691.0,
-            5159.0,
-            1432.0,
-            1926.0
+            3691,
+            5159,
+            1432,
+            1926
           ],
           [
-            9354.0,
-            3694.0,
-            5164.0,
-            1433.0,
-            1927.0
+            9354,
+            3694,
+            5164,
+            1433,
+            1927
           ],
           [
             9361.5,
-            3697.0,
-            5168.0,
-            1434.0,
-            1929.0
+            3697,
+            5168,
+            1434,
+            1929
           ],
           [
-            9369.0,
-            3700.0,
-            5172.0,
-            1435.0,
-            1930.0
+            9369,
+            3700,
+            5172,
+            1435,
+            1930
           ],
           [
             9376.5,
-            3703.0,
-            5177.0,
-            1436.0,
-            1931.0
+            3703,
+            5177,
+            1436,
+            1931
           ],
           [
-            9384.0,
-            3706.0,
-            5181.0,
-            1437.0,
-            1932.0
+            9384,
+            3706,
+            5181,
+            1437,
+            1932
           ],
           [
             9391.5,
-            3709.0,
-            5185.0,
-            1438.0,
-            1934.0
+            3709,
+            5185,
+            1438,
+            1934
           ],
           [
-            9399.0,
-            3712.0,
-            5190.0,
-            1439.0,
-            1935.0
+            9399,
+            3712,
+            5190,
+            1439,
+            1935
           ],
           [
             9406.5,
-            3715.0,
-            5194.0,
-            1440.0,
-            1937.0
+            3715,
+            5194,
+            1440,
+            1937
           ],
           [
-            9414.0,
-            3718.0,
-            5198.0,
-            1440.0,
-            1938.0
+            9414,
+            3718,
+            5198,
+            1440,
+            1938
           ],
           [
             9421.5,
-            3720.0,
-            5202.0,
-            1441.0,
-            1939.0
+            3720,
+            5202,
+            1441,
+            1939
           ],
           [
-            9429.0,
-            3723.0,
-            5206.0,
-            1442.0,
-            1941.0
+            9429,
+            3723,
+            5206,
+            1442,
+            1941
           ],
           [
             9436.5,
-            3726.0,
-            5210.0,
-            1443.0,
-            1942.0
+            3726,
+            5210,
+            1443,
+            1942
           ],
           [
-            9444.0,
-            3729.0,
-            5214.0,
-            1444.0,
-            1943.0
+            9444,
+            3729,
+            5214,
+            1444,
+            1943
           ],
           [
             9451.5,
-            3732.0,
-            5219.0,
-            1445.0,
-            1945.0
+            3732,
+            5219,
+            1445,
+            1945
           ],
           [
-            9459.0,
-            3735.0,
-            5223.0,
-            1446.0,
-            1946.0
+            9459,
+            3735,
+            5223,
+            1446,
+            1946
           ],
           [
             9466.5,
-            3738.0,
-            5227.0,
-            1447.0,
-            1948.0
+            3738,
+            5227,
+            1447,
+            1948
           ],
           [
-            9474.0,
-            3741.0,
-            5231.0,
-            1448.0,
-            1949.0
+            9474,
+            3741,
+            5231,
+            1448,
+            1949
           ],
           [
             9481.5,
-            3744.0,
-            5235.0,
-            1449.0,
-            1951.0
+            3744,
+            5235,
+            1449,
+            1951
           ],
           [
-            9489.0,
-            3747.0,
-            5240.0,
-            1450.0,
-            1952.0
+            9489,
+            3747,
+            5240,
+            1450,
+            1952
           ],
           [
             9496.5,
-            3750.0,
-            5244.0,
-            1451.0,
-            1954.0
+            3750,
+            5244,
+            1451,
+            1954
           ],
           [
-            9504.0,
-            3753.0,
-            5248.0,
-            1452.0,
-            1956.0
+            9504,
+            3753,
+            5248,
+            1452,
+            1956
           ],
           [
             9511.5,
-            3756.0,
-            5252.0,
-            1453.0,
-            1957.0
+            3756,
+            5252,
+            1453,
+            1957
           ],
           [
-            9519.0,
-            3759.0,
-            5257.0,
-            1454.0,
-            1959.0
+            9519,
+            3759,
+            5257,
+            1454,
+            1959
           ],
           [
             9526.5,
-            3762.0,
-            5261.0,
-            1455.0,
-            1960.0
+            3762,
+            5261,
+            1455,
+            1960
           ],
           [
-            9534.0,
-            3765.0,
-            5265.0,
-            1456.0,
-            1962.0
+            9534,
+            3765,
+            5265,
+            1456,
+            1962
           ],
           [
             9541.5,
-            3768.0,
-            5269.0,
-            1457.0,
-            1963.0
+            3768,
+            5269,
+            1457,
+            1963
           ],
           [
-            9549.0,
-            3771.0,
-            5274.0,
-            1458.0,
-            1965.0
+            9549,
+            3771,
+            5274,
+            1458,
+            1965
           ],
           [
             9556.5,
-            3774.0,
-            5278.0,
-            1459.0,
-            1966.0
+            3774,
+            5278,
+            1459,
+            1966
           ],
           [
-            9564.0,
-            3777.0,
-            5282.0,
-            1460.0,
-            1968.0
+            9564,
+            3777,
+            5282,
+            1460,
+            1968
           ],
           [
             9571.5,
-            3781.0,
-            5287.0,
-            1461.0,
-            1969.0
+            3781,
+            5287,
+            1461,
+            1969
           ],
           [
-            9579.0,
-            3784.0,
-            5291.0,
-            1462.0,
-            1971.0
+            9579,
+            3784,
+            5291,
+            1462,
+            1971
           ],
           [
             9586.5,
-            3787.0,
-            5295.0,
-            1463.0,
-            1972.0
+            3787,
+            5295,
+            1463,
+            1972
           ],
           [
-            9594.0,
-            3790.0,
-            5300.0,
-            1465.0,
-            1974.0
+            9594,
+            3790,
+            5300,
+            1465,
+            1974
           ],
           [
             9601.5,
-            3793.0,
-            5304.0,
-            1466.0,
-            1975.0
+            3793,
+            5304,
+            1466,
+            1975
           ],
           [
-            9609.0,
-            3796.0,
-            5308.0,
-            1467.0,
-            1976.0
+            9609,
+            3796,
+            5308,
+            1467,
+            1976
           ],
           [
             9616.5,
-            3799.0,
-            5313.0,
-            1468.0,
-            1977.0
+            3799,
+            5313,
+            1468,
+            1977
           ],
           [
-            9624.0,
-            3802.0,
-            5317.0,
-            1469.0,
-            1979.0
+            9624,
+            3802,
+            5317,
+            1469,
+            1979
           ],
           [
             9631.5,
-            3805.0,
-            5322.0,
-            1470.0,
-            1980.0
+            3805,
+            5322,
+            1470,
+            1980
           ],
           [
-            9639.0,
-            3808.0,
-            5326.0,
-            1471.0,
-            1981.0
+            9639,
+            3808,
+            5326,
+            1471,
+            1981
           ],
           [
             9646.5,
-            3811.0,
-            5330.0,
-            1472.0,
-            1982.0
+            3811,
+            5330,
+            1472,
+            1982
           ],
           [
-            9654.0,
-            3815.0,
-            5335.0,
-            1473.0,
-            1984.0
+            9654,
+            3815,
+            5335,
+            1473,
+            1984
           ],
           [
             9661.5,
-            3818.0,
-            5339.0,
-            1474.0,
-            1985.0
+            3818,
+            5339,
+            1474,
+            1985
           ],
           [
-            9669.0,
-            3821.0,
-            5344.0,
-            1475.0,
-            1986.0
+            9669,
+            3821,
+            5344,
+            1475,
+            1986
           ],
           [
             9676.5,
-            3825.0,
-            5348.0,
-            1476.0,
-            1987.0
+            3825,
+            5348,
+            1476,
+            1987
           ],
           [
-            9684.0,
-            3828.0,
-            5353.0,
-            1477.0,
-            1988.0
+            9684,
+            3828,
+            5353,
+            1477,
+            1988
           ],
           [
             9691.5,
-            3831.0,
-            5357.0,
-            1478.0,
-            1989.0
+            3831,
+            5357,
+            1478,
+            1989
           ],
           [
-            9699.0,
-            3835.0,
-            5362.0,
-            1479.0,
-            1990.0
+            9699,
+            3835,
+            5362,
+            1479,
+            1990
           ],
           [
             9706.5,
-            3838.0,
-            5366.0,
-            1479.0,
-            1991.0
+            3838,
+            5366,
+            1479,
+            1991
           ],
           [
-            9714.0,
-            3841.0,
-            5371.0,
-            1480.0,
-            1993.0
+            9714,
+            3841,
+            5371,
+            1480,
+            1993
           ],
           [
             9721.5,
-            3845.0,
-            5375.0,
-            1481.0,
-            1994.0
+            3845,
+            5375,
+            1481,
+            1994
           ],
           [
-            9729.0,
-            3848.0,
-            5379.0,
-            1482.0,
-            1995.0
+            9729,
+            3848,
+            5379,
+            1482,
+            1995
           ],
           [
             9736.5,
-            3851.0,
-            5384.0,
-            1483.0,
-            1996.0
+            3851,
+            5384,
+            1483,
+            1996
           ],
           [
-            9744.0,
-            3855.0,
-            5388.0,
-            1484.0,
-            1997.0
+            9744,
+            3855,
+            5388,
+            1484,
+            1997
           ],
           [
             9751.5,
-            3858.0,
-            5392.0,
-            1485.0,
-            1998.0
+            3858,
+            5392,
+            1485,
+            1998
           ],
           [
-            9759.0,
-            3861.0,
-            5396.0,
-            1485.0,
-            1999.0
+            9759,
+            3861,
+            5396,
+            1485,
+            1999
           ],
           [
             9766.5,
-            3865.0,
-            5401.0,
-            1486.0,
-            2000.0
+            3865,
+            5401,
+            1486,
+            2000
           ],
           [
-            9774.0,
-            3868.0,
-            5405.0,
-            1487.0,
-            2001.0
+            9774,
+            3868,
+            5405,
+            1487,
+            2001
           ],
           [
             9781.5,
-            3871.0,
-            5409.0,
-            1488.0,
-            2002.0
+            3871,
+            5409,
+            1488,
+            2002
           ],
           [
-            9789.0,
-            3874.0,
-            5414.0,
-            1488.0,
-            2003.0
+            9789,
+            3874,
+            5414,
+            1488,
+            2003
           ],
           [
             9796.5,
-            3877.0,
-            5418.0,
-            1489.0,
-            2004.0
+            3877,
+            5418,
+            1489,
+            2004
           ],
           [
-            9804.0,
-            3880.0,
-            5422.0,
-            1490.0,
-            2005.0
+            9804,
+            3880,
+            5422,
+            1490,
+            2005
           ],
           [
             9811.5,
-            3883.0,
-            5427.0,
-            1491.0,
-            2006.0
+            3883,
+            5427,
+            1491,
+            2006
           ],
           [
-            9819.0,
-            3886.0,
-            5431.0,
-            1492.0,
-            2007.0
+            9819,
+            3886,
+            5431,
+            1492,
+            2007
           ],
           [
             9826.5,
-            3889.0,
-            5435.0,
-            1492.0,
-            2008.0
+            3889,
+            5435,
+            1492,
+            2008
           ],
           [
-            9834.0,
-            3892.0,
-            5440.0,
-            1493.0,
-            2009.0
+            9834,
+            3892,
+            5440,
+            1493,
+            2009
           ],
           [
             9841.5,
-            3895.0,
-            5444.0,
-            1494.0,
-            2010.0
+            3895,
+            5444,
+            1494,
+            2010
           ],
           [
-            9849.0,
-            3898.0,
-            5448.0,
-            1495.0,
-            2011.0
+            9849,
+            3898,
+            5448,
+            1495,
+            2011
           ],
           [
             9856.5,
-            3901.0,
-            5453.0,
-            1496.0,
-            2012.0
+            3901,
+            5453,
+            1496,
+            2012
           ],
           [
-            9864.0,
-            3904.0,
-            5457.0,
-            1497.0,
-            2013.0
+            9864,
+            3904,
+            5457,
+            1497,
+            2013
           ],
           [
             9871.5,
-            3907.0,
-            5461.0,
-            1497.0,
-            2014.0
+            3907,
+            5461,
+            1497,
+            2014
           ],
           [
-            9879.0,
-            3910.0,
-            5466.0,
-            1498.0,
-            2015.0
+            9879,
+            3910,
+            5466,
+            1498,
+            2015
           ],
           [
             9886.5,
-            3913.0,
-            5470.0,
-            1499.0,
-            2016.0
+            3913,
+            5470,
+            1499,
+            2016
           ],
           [
-            9894.0,
-            3916.0,
-            5475.0,
-            1499.0,
-            2017.0
+            9894,
+            3916,
+            5475,
+            1499,
+            2017
           ],
           [
             9901.5,
-            3919.0,
-            5479.0,
-            1500.0,
-            2018.0
+            3919,
+            5479,
+            1500,
+            2018
           ],
           [
-            9909.0,
-            3922.0,
-            5484.0,
-            1500.0,
-            2020.0
+            9909,
+            3922,
+            5484,
+            1500,
+            2020
           ],
           [
             9916.5,
-            3925.0,
-            5488.0,
-            1501.0,
-            2021.0
+            3925,
+            5488,
+            1501,
+            2021
           ],
           [
-            9924.0,
-            3928.0,
-            5493.0,
-            1502.0,
-            2022.0
+            9924,
+            3928,
+            5493,
+            1502,
+            2022
           ],
           [
             9931.5,
-            3930.0,
-            5497.0,
-            1502.0,
-            2023.0
+            3930,
+            5497,
+            1502,
+            2023
           ],
           [
-            9939.0,
-            3933.0,
-            5502.0,
-            1503.0,
-            2023.0
+            9939,
+            3933,
+            5502,
+            1503,
+            2023
           ],
           [
             9946.5,
-            3936.0,
-            5506.0,
-            1504.0,
-            2024.0
+            3936,
+            5506,
+            1504,
+            2024
           ],
           [
-            9954.0,
-            3939.0,
-            5511.0,
-            1504.0,
-            2025.0
+            9954,
+            3939,
+            5511,
+            1504,
+            2025
           ],
           [
             9961.5,
-            3942.0,
-            5515.0,
-            1505.0,
-            2026.0
+            3942,
+            5515,
+            1505,
+            2026
           ],
           [
-            9969.0,
-            3945.0,
-            5519.0,
-            1506.0,
-            2027.0
+            9969,
+            3945,
+            5519,
+            1506,
+            2027
           ],
           [
             9976.5,
-            3948.0,
-            5524.0,
-            1506.0,
-            2028.0
+            3948,
+            5524,
+            1506,
+            2028
           ],
           [
-            9984.0,
-            3951.0,
-            5528.0,
-            1507.0,
-            2029.0
+            9984,
+            3951,
+            5528,
+            1507,
+            2029
           ],
           [
             9991.5,
-            3954.0,
-            5532.0,
-            1507.0,
-            2030.0
+            3954,
+            5532,
+            1507,
+            2030
           ],
           [
-            9999.0,
-            3957.0,
-            5537.0,
-            1508.0,
-            2031.0
+            9999,
+            3957,
+            5537,
+            1508,
+            2031
           ],
           [
             10006.5,
-            3960.0,
-            5541.0,
-            1509.0,
-            2033.0
+            3960,
+            5541,
+            1509,
+            2033
           ],
           [
-            10014.0,
-            3963.0,
-            5545.0,
-            1509.0,
-            2034.0
+            10014,
+            3963,
+            5545,
+            1509,
+            2034
           ],
           [
             10021.5,
-            3966.0,
-            5550.0,
-            1510.0,
-            2035.0
+            3966,
+            5550,
+            1510,
+            2035
           ],
           [
-            10029.0,
-            3969.0,
-            5554.0,
-            1510.0,
-            2036.0
+            10029,
+            3969,
+            5554,
+            1510,
+            2036
           ],
           [
             10036.5,
-            3972.0,
-            5558.0,
-            1511.0,
-            2037.0
+            3972,
+            5558,
+            1511,
+            2037
           ],
           [
-            10044.0,
-            3975.0,
-            5562.0,
-            1512.0,
-            2038.0
+            10044,
+            3975,
+            5562,
+            1512,
+            2038
           ],
           [
             10051.5,
-            3978.0,
-            5567.0,
-            1512.0,
-            2039.0
+            3978,
+            5567,
+            1512,
+            2039
           ],
           [
-            10059.0,
-            3981.0,
-            5571.0,
-            1513.0,
-            2040.0
+            10059,
+            3981,
+            5571,
+            1513,
+            2040
           ],
           [
             10066.5,
-            3984.0,
-            5575.0,
-            1514.0,
-            2042.0
+            3984,
+            5575,
+            1514,
+            2042
           ],
           [
-            10074.0,
-            3987.0,
-            5579.0,
-            1514.0,
-            2043.0
+            10074,
+            3987,
+            5579,
+            1514,
+            2043
           ],
           [
             10081.5,
-            3990.0,
-            5583.0,
-            1515.0,
-            2044.0
+            3990,
+            5583,
+            1515,
+            2044
           ],
           [
-            10089.0,
-            3993.0,
-            5587.0,
-            1516.0,
-            2045.0
+            10089,
+            3993,
+            5587,
+            1516,
+            2045
           ],
           [
             10096.5,
-            3996.0,
-            5591.0,
-            1516.0,
-            2046.0
+            3996,
+            5591,
+            1516,
+            2046
           ],
           [
-            10104.0,
-            3999.0,
-            5595.0,
-            1517.0,
-            2047.0
+            10104,
+            3999,
+            5595,
+            1517,
+            2047
           ],
           [
             10111.5,
-            4002.0,
-            5599.0,
-            1517.0,
-            2048.0
+            4002,
+            5599,
+            1517,
+            2048
           ],
           [
-            10119.0,
-            4005.0,
-            5603.0,
-            1518.0,
-            2049.0
+            10119,
+            4005,
+            5603,
+            1518,
+            2049
           ],
           [
             10126.5,
-            4008.0,
-            5607.0,
-            1519.0,
-            2049.0
+            4008,
+            5607,
+            1519,
+            2049
           ],
           [
-            10134.0,
-            4011.0,
-            5611.0,
-            1520.0,
-            2050.0
+            10134,
+            4011,
+            5611,
+            1520,
+            2050
           ],
           [
             10141.5,
-            4014.0,
-            5615.0,
-            1520.0,
-            2051.0
+            4014,
+            5615,
+            1520,
+            2051
           ],
           [
-            10149.0,
-            4018.0,
-            5619.0,
-            1521.0,
-            2052.0
+            10149,
+            4018,
+            5619,
+            1521,
+            2052
           ],
           [
             10156.5,
-            4021.0,
-            5623.0,
-            1522.0,
-            2053.0
+            4021,
+            5623,
+            1522,
+            2053
           ],
           [
-            10164.0,
-            4024.0,
-            5627.0,
-            1522.0,
-            2055.0
+            10164,
+            4024,
+            5627,
+            1522,
+            2055
           ],
           [
             10171.5,
-            4027.0,
-            5631.0,
-            1523.0,
-            2056.0
+            4027,
+            5631,
+            1523,
+            2056
           ],
           [
-            10179.0,
-            4031.0,
-            5635.0,
-            1524.0,
-            2057.0
+            10179,
+            4031,
+            5635,
+            1524,
+            2057
           ],
           [
             10186.5,
-            4034.0,
-            5640.0,
-            1525.0,
-            2058.0
+            4034,
+            5640,
+            1525,
+            2058
           ],
           [
-            10194.0,
-            4037.0,
-            5644.0,
-            1526.0,
-            2059.0
+            10194,
+            4037,
+            5644,
+            1526,
+            2059
           ],
           [
             10201.5,
-            4041.0,
-            5648.0,
-            1526.0,
-            2060.0
+            4041,
+            5648,
+            1526,
+            2060
           ],
           [
-            10209.0,
-            4044.0,
-            5652.0,
-            1527.0,
-            2061.0
+            10209,
+            4044,
+            5652,
+            1527,
+            2061
           ],
           [
             10216.5,
-            4047.0,
-            5656.0,
-            1528.0,
-            2062.0
+            4047,
+            5656,
+            1528,
+            2062
           ],
           [
-            10224.0,
-            4050.0,
-            5661.0,
-            1528.0,
-            2063.0
+            10224,
+            4050,
+            5661,
+            1528,
+            2063
           ],
           [
             10231.5,
-            4053.0,
-            5665.0,
-            1529.0,
-            2064.0
+            4053,
+            5665,
+            1529,
+            2064
           ],
           [
-            10239.0,
-            4057.0,
-            5669.0,
-            1530.0,
-            2065.0
+            10239,
+            4057,
+            5669,
+            1530,
+            2065
           ],
           [
             10246.5,
-            4059.0,
-            5673.0,
-            1530.0,
-            2066.0
+            4059,
+            5673,
+            1530,
+            2066
           ],
           [
-            10254.0,
-            4063.0,
-            5677.0,
-            1531.0,
-            2067.0
+            10254,
+            4063,
+            5677,
+            1531,
+            2067
           ],
           [
             10261.5,
-            4066.0,
-            5681.0,
-            1532.0,
-            2068.0
+            4066,
+            5681,
+            1532,
+            2068
           ],
           [
-            10269.0,
-            4069.0,
-            5685.0,
-            1533.0,
-            2069.0
+            10269,
+            4069,
+            5685,
+            1533,
+            2069
           ],
           [
             10276.5,
-            4072.0,
-            5690.0,
-            1534.0,
-            2070.0
+            4072,
+            5690,
+            1534,
+            2070
           ],
           [
-            10284.0,
-            4075.0,
-            5694.0,
-            1534.0,
-            2070.0
+            10284,
+            4075,
+            5694,
+            1534,
+            2070
           ],
           [
             10291.5,
-            4078.0,
-            5698.0,
-            1535.0,
-            2071.0
+            4078,
+            5698,
+            1535,
+            2071
           ],
           [
-            10299.0,
-            4080.0,
-            5702.0,
-            1536.0,
-            2072.0
+            10299,
+            4080,
+            5702,
+            1536,
+            2072
           ],
           [
             10306.5,
-            4083.0,
-            5707.0,
-            1537.0,
-            2073.0
+            4083,
+            5707,
+            1537,
+            2073
           ],
           [
-            10314.0,
-            4086.0,
-            5711.0,
-            1538.0,
-            2074.0
+            10314,
+            4086,
+            5711,
+            1538,
+            2074
           ],
           [
             10321.5,
-            4089.0,
-            5715.0,
-            1538.0,
-            2075.0
+            4089,
+            5715,
+            1538,
+            2075
           ],
           [
-            10329.0,
-            4092.0,
-            5719.0,
-            1539.0,
-            2076.0
+            10329,
+            4092,
+            5719,
+            1539,
+            2076
           ],
           [
             10336.5,
-            4096.0,
-            5723.0,
-            1540.0,
-            2077.0
+            4096,
+            5723,
+            1540,
+            2077
           ],
           [
-            10344.0,
-            4099.0,
-            5727.0,
-            1540.0,
-            2078.0
+            10344,
+            4099,
+            5727,
+            1540,
+            2078
           ],
           [
             10351.5,
-            4102.0,
-            5731.0,
-            1541.0,
-            2079.0
+            4102,
+            5731,
+            1541,
+            2079
           ],
           [
-            10359.0,
-            4105.0,
-            5735.0,
-            1542.0,
-            2080.0
+            10359,
+            4105,
+            5735,
+            1542,
+            2080
           ],
           [
             10366.5,
-            4108.0,
-            5739.0,
-            1543.0,
-            2081.0
+            4108,
+            5739,
+            1543,
+            2081
           ],
           [
-            10374.0,
-            4111.0,
-            5743.0,
-            1544.0,
-            2082.0
+            10374,
+            4111,
+            5743,
+            1544,
+            2082
           ],
           [
             10381.5,
-            4114.0,
-            5747.0,
-            1544.0,
-            2083.0
+            4114,
+            5747,
+            1544,
+            2083
           ],
           [
-            10389.0,
-            4117.0,
-            5751.0,
-            1545.0,
-            2085.0
+            10389,
+            4117,
+            5751,
+            1545,
+            2085
           ],
           [
             10396.5,
-            4120.0,
-            5755.0,
-            1546.0,
-            2086.0
+            4120,
+            5755,
+            1546,
+            2086
           ],
           [
-            10404.0,
-            4123.0,
-            5758.0,
-            1547.0,
-            2087.0
+            10404,
+            4123,
+            5758,
+            1547,
+            2087
           ],
           [
             10411.5,
-            4126.0,
-            5762.0,
-            1548.0,
-            2087.0
+            4126,
+            5762,
+            1548,
+            2087
           ],
           [
-            10419.0,
-            4130.0,
-            5766.0,
-            1549.0,
-            2088.0
+            10419,
+            4130,
+            5766,
+            1549,
+            2088
           ],
           [
             10426.5,
-            4133.0,
-            5770.0,
-            1550.0,
-            2089.0
+            4133,
+            5770,
+            1550,
+            2089
           ],
           [
-            10434.0,
-            4136.0,
-            5774.0,
-            1551.0,
-            2090.0
+            10434,
+            4136,
+            5774,
+            1551,
+            2090
           ],
           [
             10441.5,
-            4139.0,
-            5778.0,
-            1551.0,
-            2090.0
+            4139,
+            5778,
+            1551,
+            2090
           ],
           [
-            10449.0,
-            4142.0,
-            5782.0,
-            1552.0,
-            2091.0
+            10449,
+            4142,
+            5782,
+            1552,
+            2091
           ],
           [
             10456.5,
-            4145.0,
-            5786.0,
-            1553.0,
-            2092.0
+            4145,
+            5786,
+            1553,
+            2092
           ],
           [
-            10464.0,
-            4149.0,
-            5790.0,
-            1554.0,
-            2093.0
+            10464,
+            4149,
+            5790,
+            1554,
+            2093
           ],
           [
             10471.5,
-            4152.0,
-            5794.0,
-            1555.0,
-            2094.0
+            4152,
+            5794,
+            1555,
+            2094
           ],
           [
-            10479.0,
-            4155.0,
-            5798.0,
-            1556.0,
-            2094.0
+            10479,
+            4155,
+            5798,
+            1556,
+            2094
           ],
           [
             10486.5,
-            4158.0,
-            5801.0,
-            1557.0,
-            2095.0
+            4158,
+            5801,
+            1557,
+            2095
           ],
           [
-            10494.0,
-            4162.0,
-            5805.0,
-            1558.0,
-            2096.0
+            10494,
+            4162,
+            5805,
+            1558,
+            2096
           ],
           [
             10501.5,
-            4165.0,
-            5809.0,
-            1559.0,
-            2097.0
+            4165,
+            5809,
+            1559,
+            2097
           ],
           [
-            10509.0,
-            4168.0,
-            5813.0,
-            1559.0,
-            2098.0
+            10509,
+            4168,
+            5813,
+            1559,
+            2098
           ],
           [
             10516.5,
-            4171.0,
-            5816.0,
-            1560.0,
-            2099.0
+            4171,
+            5816,
+            1560,
+            2099
           ],
           [
-            10524.0,
-            4175.0,
-            5820.0,
-            1561.0,
-            2099.0
+            10524,
+            4175,
+            5820,
+            1561,
+            2099
           ],
           [
             10531.5,
-            4178.0,
-            5824.0,
-            1562.0,
-            2100.0
+            4178,
+            5824,
+            1562,
+            2100
           ],
           [
-            10539.0,
-            4181.0,
-            5827.0,
-            1563.0,
-            2101.0
+            10539,
+            4181,
+            5827,
+            1563,
+            2101
           ],
           [
             10546.5,
-            4184.0,
-            5831.0,
-            1564.0,
-            2101.0
+            4184,
+            5831,
+            1564,
+            2101
           ],
           [
-            10554.0,
-            4188.0,
-            5835.0,
-            1565.0,
-            2102.0
+            10554,
+            4188,
+            5835,
+            1565,
+            2102
           ],
           [
             10561.5,
-            4191.0,
-            5838.0,
-            1566.0,
-            2102.0
+            4191,
+            5838,
+            1566,
+            2102
           ],
           [
-            10569.0,
-            4195.0,
-            5842.0,
-            1567.0,
-            2102.0
+            10569,
+            4195,
+            5842,
+            1567,
+            2102
           ],
           [
             10576.5,
-            4198.0,
-            5846.0,
-            1567.0,
-            2103.0
+            4198,
+            5846,
+            1567,
+            2103
           ],
           [
-            10584.0,
-            4201.0,
-            5850.0,
-            1568.0,
-            2103.0
+            10584,
+            4201,
+            5850,
+            1568,
+            2103
           ],
           [
             10591.5,
-            4205.0,
-            5853.0,
-            1569.0,
-            2104.0
+            4205,
+            5853,
+            1569,
+            2104
           ],
           [
-            10599.0,
-            4208.0,
-            5857.0,
-            1570.0,
-            2104.0
+            10599,
+            4208,
+            5857,
+            1570,
+            2104
           ],
           [
             10606.5,
-            4211.0,
-            5860.0,
-            1571.0,
-            2104.0
+            4211,
+            5860,
+            1571,
+            2104
           ],
           [
-            10614.0,
-            4215.0,
-            5864.0,
-            1571.0,
-            2105.0
+            10614,
+            4215,
+            5864,
+            1571,
+            2105
           ],
           [
             10621.5,
-            4218.0,
-            5867.0,
-            1572.0,
-            2105.0
+            4218,
+            5867,
+            1572,
+            2105
           ],
           [
-            10629.0,
-            4221.0,
-            5871.0,
-            1573.0,
-            2105.0
+            10629,
+            4221,
+            5871,
+            1573,
+            2105
           ],
           [
             10636.5,
-            4225.0,
-            5874.0,
-            1574.0,
-            2106.0
+            4225,
+            5874,
+            1574,
+            2106
           ],
           [
-            10644.0,
-            4228.0,
-            5878.0,
-            1575.0,
-            2106.0
+            10644,
+            4228,
+            5878,
+            1575,
+            2106
           ],
           [
             10651.5,
-            4231.0,
-            5881.0,
-            1575.0,
-            2106.0
+            4231,
+            5881,
+            1575,
+            2106
           ],
           [
-            10659.0,
-            4234.0,
-            5884.0,
-            1576.0,
-            2106.0
+            10659,
+            4234,
+            5884,
+            1576,
+            2106
           ],
           [
             10666.5,
-            4238.0,
-            5888.0,
-            1577.0,
-            2106.0
+            4238,
+            5888,
+            1577,
+            2106
           ],
           [
-            10674.0,
-            4241.0,
-            5891.0,
-            1577.0,
-            2106.0
+            10674,
+            4241,
+            5891,
+            1577,
+            2106
           ],
           [
             10681.5,
-            4244.0,
-            5895.0,
-            1578.0,
-            2106.0
+            4244,
+            5895,
+            1578,
+            2106
           ],
           [
-            10689.0,
-            4247.0,
-            5898.0,
-            1579.0,
-            2106.0
+            10689,
+            4247,
+            5898,
+            1579,
+            2106
           ],
           [
             10696.5,
-            4250.0,
-            5902.0,
-            1580.0,
-            2107.0
+            4250,
+            5902,
+            1580,
+            2107
           ],
           [
-            10704.0,
-            4253.0,
-            5905.0,
-            1580.0,
-            2107.0
+            10704,
+            4253,
+            5905,
+            1580,
+            2107
           ],
           [
             10711.5,
-            4257.0,
-            5909.0,
-            1581.0,
-            2107.0
+            4257,
+            5909,
+            1581,
+            2107
           ],
           [
-            10719.0,
-            4260.0,
-            5912.0,
-            1582.0,
-            2107.0
+            10719,
+            4260,
+            5912,
+            1582,
+            2107
           ],
           [
             10726.5,
-            4263.0,
-            5916.0,
-            1583.0,
-            2108.0
+            4263,
+            5916,
+            1583,
+            2108
           ],
           [
-            10734.0,
-            4266.0,
-            5919.0,
-            1583.0,
-            2108.0
+            10734,
+            4266,
+            5919,
+            1583,
+            2108
           ],
           [
             10741.5,
-            4270.0,
-            5923.0,
-            1584.0,
-            2108.0
+            4270,
+            5923,
+            1584,
+            2108
           ],
           [
-            10749.0,
-            4273.0,
-            5926.0,
-            1585.0,
-            2108.0
+            10749,
+            4273,
+            5926,
+            1585,
+            2108
           ],
           [
             10756.5,
-            4276.0,
-            5929.0,
-            1586.0,
-            2108.0
+            4276,
+            5929,
+            1586,
+            2108
           ],
           [
-            10764.0,
-            4280.0,
-            5932.0,
-            1587.0,
-            2108.0
+            10764,
+            4280,
+            5932,
+            1587,
+            2108
           ],
           [
             10771.5,
-            4283.0,
-            5936.0,
-            1587.0,
-            2108.0
+            4283,
+            5936,
+            1587,
+            2108
           ],
           [
-            10779.0,
-            4286.0,
-            5940.0,
-            1588.0,
-            2109.0
+            10779,
+            4286,
+            5940,
+            1588,
+            2109
           ],
           [
             10786.5,
-            4289.0,
-            5943.0,
-            1589.0,
-            2109.0
+            4289,
+            5943,
+            1589,
+            2109
           ],
           [
-            10794.0,
-            4292.0,
-            5946.0,
-            1590.0,
-            2109.0
+            10794,
+            4292,
+            5946,
+            1590,
+            2109
           ],
           [
             10801.5,
-            4296.0,
-            5949.0,
-            1591.0,
-            2109.0
+            4296,
+            5949,
+            1591,
+            2109
           ],
           [
-            10809.0,
-            4299.0,
-            5953.0,
-            1592.0,
-            2109.0
+            10809,
+            4299,
+            5953,
+            1592,
+            2109
           ],
           [
             10816.5,
-            4302.0,
-            5956.0,
-            1593.0,
-            2109.0
+            4302,
+            5956,
+            1593,
+            2109
           ],
           [
-            10824.0,
-            4305.0,
-            5959.0,
-            1595.0,
-            2109.0
+            10824,
+            4305,
+            5959,
+            1595,
+            2109
           ],
           [
             10831.5,
-            4308.0,
-            5962.0,
-            1596.0,
-            2110.0
+            4308,
+            5962,
+            1596,
+            2110
           ],
           [
-            10839.0,
-            4311.0,
-            5966.0,
-            1597.0,
-            2110.0
+            10839,
+            4311,
+            5966,
+            1597,
+            2110
           ],
           [
             10846.5,
-            4314.0,
-            5969.0,
-            1598.0,
-            2110.0
+            4314,
+            5969,
+            1598,
+            2110
           ],
           [
-            10854.0,
-            4317.0,
-            5972.0,
-            1599.0,
-            2111.0
+            10854,
+            4317,
+            5972,
+            1599,
+            2111
           ],
           [
             10861.5,
-            4321.0,
-            5976.0,
-            1600.0,
-            2111.0
+            4321,
+            5976,
+            1600,
+            2111
           ],
           [
-            10869.0,
-            4324.0,
-            5980.0,
-            1601.0,
-            2112.0
+            10869,
+            4324,
+            5980,
+            1601,
+            2112
           ],
           [
             10876.5,
-            4327.0,
-            5984.0,
-            1603.0,
-            2112.0
+            4327,
+            5984,
+            1603,
+            2112
           ],
           [
-            10884.0,
-            4331.0,
-            5987.0,
-            1604.0,
-            2113.0
+            10884,
+            4331,
+            5987,
+            1604,
+            2113
           ],
           [
             10891.5,
-            4334.0,
-            5991.0,
-            1605.0,
-            2114.0
+            4334,
+            5991,
+            1605,
+            2114
           ],
           [
-            10899.0,
-            4337.0,
-            5995.0,
-            1606.0,
-            2114.0
+            10899,
+            4337,
+            5995,
+            1606,
+            2114
           ],
           [
             10906.5,
-            4340.0,
-            5998.0,
-            1607.0,
-            2115.0
+            4340,
+            5998,
+            1607,
+            2115
           ],
           [
-            10914.0,
-            4344.0,
-            6002.0,
-            1608.0,
-            2115.0
+            10914,
+            4344,
+            6002,
+            1608,
+            2115
           ],
           [
             10921.5,
-            4347.0,
-            6006.0,
-            1609.0,
-            2116.0
+            4347,
+            6006,
+            1609,
+            2116
           ],
           [
-            10929.0,
-            4350.0,
-            6010.0,
-            1610.0,
-            2117.0
+            10929,
+            4350,
+            6010,
+            1610,
+            2117
           ],
           [
             10936.5,
-            4354.0,
-            6014.0,
-            1611.0,
-            2118.0
+            4354,
+            6014,
+            1611,
+            2118
           ],
           [
-            10944.0,
-            4357.0,
-            6017.0,
-            1612.0,
-            2118.0
+            10944,
+            4357,
+            6017,
+            1612,
+            2118
           ],
           [
             10951.5,
-            4360.0,
-            6021.0,
-            1614.0,
-            2119.0
+            4360,
+            6021,
+            1614,
+            2119
           ],
           [
-            10959.0,
-            4363.0,
-            6025.0,
-            1615.0,
-            2120.0
+            10959,
+            4363,
+            6025,
+            1615,
+            2120
           ],
           [
             10966.5,
-            4367.0,
-            6029.0,
-            1617.0,
-            2121.0
+            4367,
+            6029,
+            1617,
+            2121
           ],
           [
-            10974.0,
-            4370.0,
-            6033.0,
-            1618.0,
-            2122.0
+            10974,
+            4370,
+            6033,
+            1618,
+            2122
           ],
           [
             10981.5,
-            4373.0,
-            6037.0,
-            1620.0,
-            2122.0
+            4373,
+            6037,
+            1620,
+            2122
           ],
           [
-            10989.0,
-            4376.0,
-            6041.0,
-            1621.0,
-            2122.0
+            10989,
+            4376,
+            6041,
+            1621,
+            2122
           ],
           [
             10996.5,
-            4379.0,
-            6044.0,
-            1623.0,
-            2123.0
+            4379,
+            6044,
+            1623,
+            2123
           ],
           [
-            11004.0,
-            4383.0,
-            6048.0,
-            1624.0,
-            2123.0
+            11004,
+            4383,
+            6048,
+            1624,
+            2123
           ],
           [
             11011.5,
-            4386.0,
-            6052.0,
-            1625.0,
-            2124.0
+            4386,
+            6052,
+            1625,
+            2124
           ],
           [
-            11019.0,
-            4390.0,
-            6056.0,
-            1627.0,
-            2124.0
+            11019,
+            4390,
+            6056,
+            1627,
+            2124
           ],
           [
             11026.5,
-            4393.0,
-            6060.0,
-            1628.0,
-            2124.0
+            4393,
+            6060,
+            1628,
+            2124
           ],
           [
-            11034.0,
-            4396.0,
-            6064.0,
-            1629.0,
-            2125.0
+            11034,
+            4396,
+            6064,
+            1629,
+            2125
           ],
           [
             11041.5,
-            4399.0,
-            6069.0,
-            1631.0,
-            2125.0
+            4399,
+            6069,
+            1631,
+            2125
           ],
           [
-            11049.0,
-            4402.0,
-            6073.0,
-            1632.0,
-            2125.0
+            11049,
+            4402,
+            6073,
+            1632,
+            2125
           ],
           [
             11056.5,
-            4405.0,
-            6077.0,
-            1634.0,
-            2126.0
+            4405,
+            6077,
+            1634,
+            2126
           ],
           [
-            11064.0,
-            4409.0,
-            6081.0,
-            1635.0,
-            2126.0
+            11064,
+            4409,
+            6081,
+            1635,
+            2126
           ],
           [
             11071.5,
-            4412.0,
-            6085.0,
-            1637.0,
-            2126.0
+            4412,
+            6085,
+            1637,
+            2126
           ],
           [
-            11079.0,
-            4415.0,
-            6090.0,
-            1638.0,
-            2126.0
+            11079,
+            4415,
+            6090,
+            1638,
+            2126
           ],
           [
             11086.5,
-            4418.0,
-            6094.0,
-            1639.0,
-            2127.0
+            4418,
+            6094,
+            1639,
+            2127
           ],
           [
-            11094.0,
-            4421.0,
-            6098.0,
-            1641.0,
-            2127.0
+            11094,
+            4421,
+            6098,
+            1641,
+            2127
           ],
           [
             11101.5,
-            4424.0,
-            6102.0,
-            1642.0,
-            2127.0
+            4424,
+            6102,
+            1642,
+            2127
           ],
           [
-            11109.0,
-            4428.0,
-            6105.0,
-            1643.0,
-            2127.0
+            11109,
+            4428,
+            6105,
+            1643,
+            2127
           ],
           [
             11116.5,
-            4431.0,
-            6109.0,
-            1645.0,
-            2127.0
+            4431,
+            6109,
+            1645,
+            2127
           ],
           [
-            11124.0,
-            4434.0,
-            6113.0,
-            1646.0,
-            2127.0
+            11124,
+            4434,
+            6113,
+            1646,
+            2127
           ],
           [
             11131.5,
-            4437.0,
-            6117.0,
-            1648.0,
-            2127.0
+            4437,
+            6117,
+            1648,
+            2127
           ],
           [
-            11139.0,
-            4440.0,
-            6121.0,
-            1649.0,
-            2128.0
+            11139,
+            4440,
+            6121,
+            1649,
+            2128
           ],
           [
             11146.5,
-            4443.0,
-            6125.0,
-            1651.0,
-            2128.0
+            4443,
+            6125,
+            1651,
+            2128
           ],
           [
-            11154.0,
-            4445.0,
-            6129.0,
-            1653.0,
-            2128.0
+            11154,
+            4445,
+            6129,
+            1653,
+            2128
           ],
           [
             11161.5,
-            4448.0,
-            6133.0,
-            1655.0,
-            2128.0
+            4448,
+            6133,
+            1655,
+            2128
           ],
           [
-            11169.0,
-            4450.0,
-            6137.0,
-            1657.0,
-            2128.0
+            11169,
+            4450,
+            6137,
+            1657,
+            2128
           ],
           [
             11176.5,
-            4453.0,
-            6141.0,
-            1659.0,
-            2128.0
+            4453,
+            6141,
+            1659,
+            2128
           ],
           [
-            11184.0,
-            4455.0,
-            6146.0,
-            1661.0,
-            2128.0
+            11184,
+            4455,
+            6146,
+            1661,
+            2128
           ],
           [
             11191.5,
-            4458.0,
-            6150.0,
-            1662.0,
-            2128.0
+            4458,
+            6150,
+            1662,
+            2128
           ],
           [
-            11199.0,
-            4460.0,
-            6154.0,
-            1664.0,
-            2128.0
+            11199,
+            4460,
+            6154,
+            1664,
+            2128
           ],
           [
             11206.5,
-            4463.0,
-            6159.0,
-            1665.0,
-            2128.0
+            4463,
+            6159,
+            1665,
+            2128
           ],
           [
-            11214.0,
-            4465.0,
-            6163.0,
-            1666.0,
-            2128.0
+            11214,
+            4465,
+            6163,
+            1666,
+            2128
           ],
           [
             11221.5,
-            4468.0,
-            6167.0,
-            1668.0,
-            2129.0
+            4468,
+            6167,
+            1668,
+            2129
           ],
           [
-            11229.0,
-            4471.0,
-            6172.0,
-            1669.0,
-            2129.0
+            11229,
+            4471,
+            6172,
+            1669,
+            2129
           ],
           [
             11236.5,
-            4474.0,
-            6176.0,
-            1670.0,
-            2129.0
+            4474,
+            6176,
+            1670,
+            2129
           ],
           [
-            11244.0,
-            4477.0,
-            6180.0,
-            1672.0,
-            2129.0
+            11244,
+            4477,
+            6180,
+            1672,
+            2129
           ],
           [
             11251.5,
-            4480.0,
-            6184.0,
-            1673.0,
-            2130.0
+            4480,
+            6184,
+            1673,
+            2130
           ],
           [
-            11259.0,
-            4483.0,
-            6188.0,
-            1675.0,
-            2130.0
+            11259,
+            4483,
+            6188,
+            1675,
+            2130
           ],
           [
             11266.5,
-            4486.0,
-            6192.0,
-            1676.0,
-            2130.0
+            4486,
+            6192,
+            1676,
+            2130
           ],
           [
-            11274.0,
-            4488.0,
-            6197.0,
-            1678.0,
-            2130.0
+            11274,
+            4488,
+            6197,
+            1678,
+            2130
           ],
           [
             11281.5,
-            4491.0,
-            6201.0,
-            1680.0,
-            2130.0
+            4491,
+            6201,
+            1680,
+            2130
           ],
           [
-            11289.0,
-            4494.0,
-            6206.0,
-            1681.0,
-            2131.0
+            11289,
+            4494,
+            6206,
+            1681,
+            2131
           ],
           [
             11296.5,
-            4497.0,
-            6210.0,
-            1682.0,
-            2132.0
+            4497,
+            6210,
+            1682,
+            2132
           ],
           [
-            11304.0,
-            4499.0,
-            6215.0,
-            1684.0,
-            2132.0
+            11304,
+            4499,
+            6215,
+            1684,
+            2132
           ],
           [
             11311.5,
-            4502.0,
-            6219.0,
-            1685.0,
-            2133.0
+            4502,
+            6219,
+            1685,
+            2133
           ],
           [
-            11319.0,
-            4505.0,
-            6224.0,
-            1687.0,
-            2134.0
+            11319,
+            4505,
+            6224,
+            1687,
+            2134
           ],
           [
             11326.5,
-            4508.0,
-            6228.0,
-            1688.0,
-            2134.0
+            4508,
+            6228,
+            1688,
+            2134
           ],
           [
-            11334.0,
-            4511.0,
-            6232.0,
-            1690.0,
-            2135.0
+            11334,
+            4511,
+            6232,
+            1690,
+            2135
           ],
           [
             11341.5,
-            4513.0,
-            6237.0,
-            1692.0,
-            2136.0
+            4513,
+            6237,
+            1692,
+            2136
           ],
           [
-            11349.0,
-            4516.0,
-            6242.0,
-            1694.0,
-            2137.0
+            11349,
+            4516,
+            6242,
+            1694,
+            2137
           ],
           [
             11356.5,
-            4518.0,
-            6246.0,
-            1697.0,
-            2138.0
+            4518,
+            6246,
+            1697,
+            2138
           ],
           [
-            11364.0,
-            4521.0,
-            6251.0,
-            1699.0,
-            2139.0
+            11364,
+            4521,
+            6251,
+            1699,
+            2139
           ],
           [
             11371.5,
-            4523.0,
-            6255.0,
-            1701.0,
-            2139.0
+            4523,
+            6255,
+            1701,
+            2139
           ],
           [
-            11379.0,
-            4526.0,
-            6259.0,
-            1704.0,
-            2140.0
+            11379,
+            4526,
+            6259,
+            1704,
+            2140
           ],
           [
             11386.5,
-            4528.0,
-            6264.0,
-            1706.0,
-            2141.0
+            4528,
+            6264,
+            1706,
+            2141
           ],
           [
-            11394.0,
-            4531.0,
-            6268.0,
-            1709.0,
-            2141.0
+            11394,
+            4531,
+            6268,
+            1709,
+            2141
           ],
           [
             11401.5,
-            4534.0,
-            6273.0,
-            1712.0,
-            2142.0
+            4534,
+            6273,
+            1712,
+            2142
           ],
           [
-            11409.0,
-            4537.0,
-            6277.0,
-            1714.0,
-            2142.0
+            11409,
+            4537,
+            6277,
+            1714,
+            2142
           ],
           [
             11416.5,
-            4540.0,
-            6282.0,
-            1717.0,
-            2141.0
+            4540,
+            6282,
+            1717,
+            2141
           ],
           [
-            11424.0,
-            4543.0,
-            6287.0,
-            1720.0,
-            2141.0
+            11424,
+            4543,
+            6287,
+            1720,
+            2141
           ],
           [
             11431.5,
-            4546.0,
-            6292.0,
-            1722.0,
-            2141.0
+            4546,
+            6292,
+            1722,
+            2141
           ],
           [
-            11439.0,
-            4548.0,
-            6296.0,
-            1725.0,
-            2141.0
+            11439,
+            4548,
+            6296,
+            1725,
+            2141
           ],
           [
             11446.5,
-            4550.0,
-            6300.0,
-            1727.0,
-            2142.0
+            4550,
+            6300,
+            1727,
+            2142
           ],
           [
-            11454.0,
-            4553.0,
-            6305.0,
-            1730.0,
-            2142.0
+            11454,
+            4553,
+            6305,
+            1730,
+            2142
           ],
           [
             11461.5,
-            4555.0,
-            6309.0,
-            1733.0,
-            2142.0
+            4555,
+            6309,
+            1733,
+            2142
           ],
           [
-            11469.0,
-            4558.0,
-            6313.0,
-            1736.0,
-            2142.0
+            11469,
+            4558,
+            6313,
+            1736,
+            2142
           ],
           [
             11476.5,
-            4561.0,
-            6317.0,
-            1740.0,
-            2143.0
+            4561,
+            6317,
+            1740,
+            2143
           ],
           [
-            11484.0,
-            4564.0,
-            6321.0,
-            1743.0,
-            2143.0
+            11484,
+            4564,
+            6321,
+            1743,
+            2143
           ],
           [
             11491.5,
-            4567.0,
-            6325.0,
-            1746.0,
-            2143.0
+            4567,
+            6325,
+            1746,
+            2143
           ],
           [
-            11499.0,
-            4570.0,
-            6329.0,
-            1749.0,
-            2143.0
+            11499,
+            4570,
+            6329,
+            1749,
+            2143
           ],
           [
             11506.5,
-            4572.0,
-            6333.0,
-            1752.0,
-            2143.0
+            4572,
+            6333,
+            1752,
+            2143
           ],
           [
-            11514.0,
-            4575.0,
-            6336.0,
-            1755.0,
-            2143.0
+            11514,
+            4575,
+            6336,
+            1755,
+            2143
           ],
           [
             11521.5,
-            4578.0,
-            6340.0,
-            1758.0,
-            2143.0
+            4578,
+            6340,
+            1758,
+            2143
           ],
           [
-            11529.0,
-            4581.0,
-            6344.0,
-            1761.0,
-            2142.0
+            11529,
+            4581,
+            6344,
+            1761,
+            2142
           ],
           [
             11536.5,
-            4584.0,
-            6347.0,
-            1764.0,
-            2142.0
+            4584,
+            6347,
+            1764,
+            2142
           ],
           [
-            11544.0,
-            4587.0,
-            6352.0,
-            1767.0,
-            2142.0
+            11544,
+            4587,
+            6352,
+            1767,
+            2142
           ],
           [
             11551.5,
-            4589.0,
-            6355.0,
-            1770.0,
-            2142.0
+            4589,
+            6355,
+            1770,
+            2142
           ],
           [
-            11559.0,
-            4592.0,
-            6359.0,
-            1773.0,
-            2141.0
+            11559,
+            4592,
+            6359,
+            1773,
+            2141
           ],
           [
             11566.5,
-            4595.0,
-            6363.0,
-            1776.0,
-            2140.0
+            4595,
+            6363,
+            1776,
+            2140
           ],
           [
-            11574.0,
-            4597.0,
-            6367.0,
-            1779.0,
-            2140.0
+            11574,
+            4597,
+            6367,
+            1779,
+            2140
           ],
           [
             11581.5,
-            4601.0,
-            6371.0,
-            1782.0,
-            2140.0
+            4601,
+            6371,
+            1782,
+            2140
           ],
           [
-            11589.0,
-            4603.0,
-            6375.0,
-            1784.0,
-            2140.0
+            11589,
+            4603,
+            6375,
+            1784,
+            2140
           ],
           [
             11596.5,
-            4606.0,
-            6378.0,
-            1787.0,
-            2141.0
+            4606,
+            6378,
+            1787,
+            2141
           ],
           [
-            11604.0,
-            4610.0,
-            6381.0,
-            1790.0,
-            2141.0
+            11604,
+            4610,
+            6381,
+            1790,
+            2141
           ],
           [
             11611.5,
-            4614.0,
-            6384.0,
-            1793.0,
-            2142.0
+            4614,
+            6384,
+            1793,
+            2142
           ],
           [
-            11619.0,
-            4618.0,
-            6386.0,
-            1796.0,
-            2143.0
+            11619,
+            4618,
+            6386,
+            1796,
+            2143
           ],
           [
             11626.5,
-            4622.0,
-            6389.0,
-            1800.0,
-            2144.0
+            4622,
+            6389,
+            1800,
+            2144
           ],
           [
-            11634.0,
-            4627.0,
-            6392.0,
-            1803.0,
-            2145.0
+            11634,
+            4627,
+            6392,
+            1803,
+            2145
           ],
           [
             11641.5,
-            4631.0,
-            6395.0,
-            1806.0,
-            2147.0
+            4631,
+            6395,
+            1806,
+            2147
           ],
           [
-            11649.0,
-            4636.0,
-            6398.0,
-            1808.0,
-            2148.0
+            11649,
+            4636,
+            6398,
+            1808,
+            2148
           ],
           [
             11656.5,
-            4641.0,
-            6400.0,
-            1810.0,
-            2150.0
+            4641,
+            6400,
+            1810,
+            2150
           ],
           [
-            11664.0,
-            4646.0,
-            6402.0,
-            1812.0,
-            2152.0
+            11664,
+            4646,
+            6402,
+            1812,
+            2152
           ],
           [
             11671.5,
-            4651.0,
-            6405.0,
-            1814.0,
-            2153.0
+            4651,
+            6405,
+            1814,
+            2153
           ],
           [
-            11679.0,
-            4655.0,
-            6408.0,
-            1817.0,
-            2153.0
+            11679,
+            4655,
+            6408,
+            1817,
+            2153
           ],
           [
             11686.5,
-            4659.0,
-            6410.0,
-            1819.0,
-            2154.0
+            4659,
+            6410,
+            1819,
+            2154
           ],
           [
-            11694.0,
-            4663.0,
-            6413.0,
-            1821.0,
-            2155.0
+            11694,
+            4663,
+            6413,
+            1821,
+            2155
           ],
           [
             11701.5,
-            4667.0,
-            6415.0,
-            1823.0,
-            2157.0
+            4667,
+            6415,
+            1823,
+            2157
           ],
           [
-            11709.0,
-            4670.0,
-            6417.0,
-            1824.0,
-            2158.0
+            11709,
+            4670,
+            6417,
+            1824,
+            2158
           ],
           [
             11716.5,
-            4674.0,
-            6420.0,
-            1826.0,
-            2158.0
+            4674,
+            6420,
+            1826,
+            2158
           ],
           [
-            11724.0,
-            4677.0,
-            6423.0,
-            1828.0,
-            2158.0
+            11724,
+            4677,
+            6423,
+            1828,
+            2158
           ],
           [
             11731.5,
-            4680.0,
-            6426.0,
-            1829.0,
-            2157.0
+            4680,
+            6426,
+            1829,
+            2157
           ],
           [
-            11739.0,
-            4683.0,
-            6429.0,
-            1830.0,
-            2156.0
+            11739,
+            4683,
+            6429,
+            1830,
+            2156
           ],
           [
             11746.5,
-            4687.0,
-            6432.0,
-            1832.0,
-            2155.0
+            4687,
+            6432,
+            1832,
+            2155
           ],
           [
-            11754.0,
-            4690.0,
-            6435.0,
-            1834.0,
-            2155.0
+            11754,
+            4690,
+            6435,
+            1834,
+            2155
           ],
           [
             11761.5,
-            4694.0,
-            6438.0,
-            1835.0,
-            2155.0
+            4694,
+            6438,
+            1835,
+            2155
           ],
           [
-            11769.0,
-            4697.0,
-            6442.0,
-            1836.0,
-            2156.0
+            11769,
+            4697,
+            6442,
+            1836,
+            2156
           ],
           [
             11776.5,
-            4701.0,
-            6445.0,
-            1836.0,
-            2158.0
+            4701,
+            6445,
+            1836,
+            2158
           ],
           [
-            11784.0,
-            4705.0,
-            6449.0,
-            1836.0,
-            2161.0
+            11784,
+            4705,
+            6449,
+            1836,
+            2161
           ],
           [
             11791.5,
-            4709.0,
-            6451.0,
-            1836.0,
-            2165.0
+            4709,
+            6451,
+            1836,
+            2165
           ],
           [
-            11799.0,
-            4713.0,
-            6455.0,
-            1835.0,
-            2168.0
+            11799,
+            4713,
+            6455,
+            1835,
+            2168
           ],
           [
             11806.5,
-            4717.0,
-            6458.0,
-            1833.0,
-            2171.0
+            4717,
+            6458,
+            1833,
+            2171
           ],
           [
-            11814.0,
-            4720.0,
-            6462.0,
-            1831.0,
-            2173.0
+            11814,
+            4720,
+            6462,
+            1831,
+            2173
           ],
           [
             11821.5,
-            4724.0,
-            6464.0,
-            1830.0,
-            2175.0
+            4724,
+            6464,
+            1830,
+            2175
           ],
           [
-            11829.0,
-            4726.0,
-            6466.0,
-            1827.0,
-            2177.0
+            11829,
+            4726,
+            6466,
+            1827,
+            2177
           ],
           [
             11836.5,
-            4730.0,
-            6468.0,
-            1825.0,
-            2179.0
+            4730,
+            6468,
+            1825,
+            2179
           ],
           [
-            11844.0,
-            4734.0,
-            6471.0,
-            1823.0,
-            2181.0
+            11844,
+            4734,
+            6471,
+            1823,
+            2181
           ],
           [
             11851.5,
-            4739.0,
-            6473.0,
-            1822.0,
-            2184.0
+            4739,
+            6473,
+            1822,
+            2184
           ],
           [
-            11859.0,
-            4741.0,
-            6475.0,
-            1821.0,
-            2187.0
+            11859,
+            4741,
+            6475,
+            1821,
+            2187
           ],
           [
             11866.5,
-            4745.0,
-            6476.0,
-            1821.0,
-            2190.0
+            4745,
+            6476,
+            1821,
+            2190
           ],
           [
-            11874.0,
-            4749.0,
-            6477.0,
-            1821.0,
-            2193.0
+            11874,
+            4749,
+            6477,
+            1821,
+            2193
           ],
           [
             11881.5,
-            4752.0,
-            6479.0,
-            1821.0,
-            2196.0
+            4752,
+            6479,
+            1821,
+            2196
           ],
           [
-            11889.0,
-            4755.0,
-            6482.0,
-            1822.0,
-            2200.0
+            11889,
+            4755,
+            6482,
+            1822,
+            2200
           ],
           [
             11896.5,
-            4758.0,
-            6485.0,
-            1822.0,
-            2202.0
+            4758,
+            6485,
+            1822,
+            2202
           ],
           [
-            11904.0,
-            4761.0,
-            6488.0,
-            1822.0,
-            2204.0
+            11904,
+            4761,
+            6488,
+            1822,
+            2204
           ],
           [
             11911.5,
-            4766.0,
-            6491.0,
-            1824.0,
-            2203.0
+            4766,
+            6491,
+            1824,
+            2203
           ],
           [
-            11919.0,
-            4772.0,
-            6497.0,
-            1823.0,
-            2201.0
+            11919,
+            4772,
+            6497,
+            1823,
+            2201
           ],
           [
             11926.5,
-            4780.0,
-            6505.0,
-            1823.0,
-            2196.0
+            4780,
+            6505,
+            1823,
+            2196
           ],
           [
-            11934.0,
-            4791.0,
-            6510.0,
-            1821.0,
-            2194.0
+            11934,
+            4791,
+            6510,
+            1821,
+            2194
           ],
           [
             11941.5,
-            4803.0,
-            6513.0,
-            1818.0,
-            2188.0
+            4803,
+            6513,
+            1818,
+            2188
           ],
           [
-            11949.0,
-            4817.0,
-            6516.0,
-            1815.0,
-            2184.0
+            11949,
+            4817,
+            6516,
+            1815,
+            2184
           ],
           [
             11956.5,
-            4832.0,
-            6519.0,
-            1815.0,
-            2187.0
+            4832,
+            6519,
+            1815,
+            2187
           ],
           [
-            11964.0,
-            4847.0,
-            6524.0,
-            1816.0,
-            2189.0
+            11964,
+            4847,
+            6524,
+            1816,
+            2189
           ],
           [
             11971.5,
-            4858.0,
-            6531.0,
-            1820.0,
-            2188.0
+            4858,
+            6531,
+            1820,
+            2188
           ],
           [
-            11979.0,
-            4867.0,
-            6540.0,
-            1828.0,
-            2193.0
+            11979,
+            4867,
+            6540,
+            1828,
+            2193
           ],
           [
             11986.5,
-            4870.0,
-            6549.0,
-            1833.0,
-            2197.0
+            4870,
+            6549,
+            1833,
+            2197
           ],
           [
-            11994.0,
-            4878.0,
-            6552.0,
-            1828.0,
-            2194.0
+            11994,
+            4878,
+            6552,
+            1828,
+            2194
           ]
         ]
       },
@@ -15856,7 +15856,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.204870037064329
           ],
           [
-            9.0,
+            9,
             0.08809082147117477,
             0.251332524843363,
             0.09853661001093823
@@ -15868,7 +15868,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.06285852292895446
           ],
           [
-            24.0,
+            24,
             0.00881307280237069,
             0.339465771614856,
             0.04046061050727789
@@ -15880,7 +15880,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.02587980515593719
           ],
           [
-            39.0,
+            39,
             -0.04798217207194195,
             0.446339879963922,
             0.01248085458138063
@@ -15889,10 +15889,10 @@ export const mockDetailData: MDHistoryDetailResponse = {
             46.5,
             -0.07411431445324053,
             0.504974906869191,
-            6.507444197840968e-05
+            0.00006507444197840968
           ],
           [
-            54.0,
+            54,
             -0.10286343323797,
             0.553226230250926,
             -0.01933228314955916
@@ -15904,7 +15904,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.03994004818301659
           ],
           [
-            69.0,
+            69,
             -0.159219209635076,
             0.656276746929581,
             -0.05364048541325558
@@ -15916,7 +15916,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.06246471641103465
           ],
           [
-            84.0,
+            84,
             -0.214207547983655,
             0.75991587045813,
             -0.07647288348580626
@@ -15928,7 +15928,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.0960682152285911
           ],
           [
-            99.0,
+            99,
             -0.2754743797922,
             0.850336745328083,
             -0.122559011842108
@@ -15940,7 +15940,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.142646219000488
           ],
           [
-            114.0,
+            114,
             -0.338561699772323,
             0.942560908642113,
             -0.175215356085166
@@ -15952,7 +15952,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.203164443818974
           ],
           [
-            129.0,
+            129,
             -0.401886557272485,
             1.0403436360866,
             -0.220862911776393
@@ -15964,7 +15964,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.236458099380782
           ],
           [
-            144.0,
+            144,
             -0.482652047220995,
             1.14018769207955,
             -0.260338608856012
@@ -15976,7 +15976,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.283753377250763
           ],
           [
-            159.0,
+            159,
             -0.562618617898043,
             1.24643619758231,
             -0.307457687727282
@@ -15988,7 +15988,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.336707114537614
           ],
           [
-            174.0,
+            174,
             -0.637743781832095,
             1.34921873066897,
             -0.365621810459173
@@ -16000,7 +16000,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.399625920650902
           ],
           [
-            189.0,
+            189,
             -0.715798094340799,
             1.43477201073589,
             -0.426435740203338
@@ -16012,7 +16012,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.446143712066922
           ],
           [
-            204.0,
+            204,
             -0.785198759966776,
             1.53166928794154,
             -0.478281981505113
@@ -16024,7 +16024,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.511894717220969
           ],
           [
-            219.0,
+            219,
             -0.858499504521341,
             1.61781505469624,
             -0.551473835328113
@@ -16036,7 +16036,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.585786591457952
           ],
           [
-            234.0,
+            234,
             -0.93631677226291,
             1.69876861285567,
             -0.625608142806604
@@ -16048,7 +16048,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.655837205495983
           ],
           [
-            249.0,
+            249,
             -0.997275528533242,
             1.79752768439761,
             -0.681163084504755
@@ -16060,7 +16060,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.706253739404848
           ],
           [
-            264.0,
+            264,
             -1.07203964286517,
             1.88994675459647,
             -0.72745898134707
@@ -16072,7 +16072,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.747413621943964
           ],
           [
-            279.0,
+            279,
             -1.14647965540986,
             1.9854236599476,
             -0.774730612036861
@@ -16084,7 +16084,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.795740624975622
           ],
           [
-            294.0,
+            294,
             -1.22475792723265,
             2.07694098249689,
             -0.815338855865281
@@ -16096,7 +16096,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.831886366763469
           ],
           [
-            309.0,
+            309,
             -1.29474033189342,
             2.18462021325861,
             -0.851903424845616
@@ -16108,7 +16108,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.88017566145328
           ],
           [
-            324.0,
+            324,
             -1.37338962766366,
             2.28887186120091,
             -0.89677442621424
@@ -16120,7 +16120,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.915148161709265
           ],
           [
-            339.0,
+            339,
             -1.42371972680995,
             2.40800705615604,
             -0.933181866509284
@@ -16132,7 +16132,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.957603926406126
           ],
           [
-            354.0,
+            354,
             -1.46562133505188,
             2.52789870234164,
             -0.977930906416172
@@ -16144,7 +16144,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.988541282300013
           ],
           [
-            369.0,
+            369,
             -1.51860456837547,
             2.63813038718618,
             -1.0106197552969
@@ -16156,7 +16156,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.03819140792111
           ],
           [
-            384.0,
+            384,
             -1.58345515808848,
             2.73684007395513,
             -1.06375100395416
@@ -16168,7 +16168,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.09311557974245
           ],
           [
-            399.0,
+            399,
             -1.65312114390613,
             2.83145668805274,
             -1.11618671924823
@@ -16180,7 +16180,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.13746464837778
           ],
           [
-            414.0,
+            414,
             -1.72874713622863,
             2.92888647019158,
             -1.17113200084906
@@ -16192,7 +16192,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.19940301053189
           ],
           [
-            429.0,
+            429,
             -1.81444269609249,
             3.02440119634952,
             -1.22926215161918
@@ -16204,7 +16204,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.26428865282291
           ],
           [
-            444.0,
+            444,
             -1.89433650543113,
             3.11731695802737,
             -1.30226678703757
@@ -16216,7 +16216,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.33264054853053
           ],
           [
-            459.0,
+            459,
             -1.98011966174748,
             3.2267429253121,
             -1.36540236999659
@@ -16228,7 +16228,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.39447961746811
           ],
           [
-            474.0,
+            474,
             -2.07392975243347,
             3.33309611014782,
             -1.43163651704875
@@ -16240,7 +16240,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.46514645399715
           ],
           [
-            489.0,
+            489,
             -2.16622913384628,
             3.43388801608153,
             -1.50754192565157
@@ -16252,7 +16252,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.54646301620704
           ],
           [
-            504.0,
+            504,
             -2.24109887467529,
             3.54383005176274,
             -1.58910481898649
@@ -16264,7 +16264,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.63943660205764
           ],
           [
-            519.0,
+            519,
             -2.3301115940805,
             3.63552818964497,
             -1.68915623802564
@@ -16276,7 +16276,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.7357771899755
           ],
           [
-            534.0,
+            534,
             -2.41914791941607,
             3.73868895308695,
             -1.77155256033402
@@ -16288,7 +16288,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.80479992744432
           ],
           [
-            549.0,
+            549,
             -2.49916878161446,
             3.85304691621849,
             -1.83993029093996
@@ -16300,7 +16300,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.86957409678694
           ],
           [
-            564.0,
+            564,
             -2.55732140188118,
             3.97950189897508,
             -1.8862502357658
@@ -16312,7 +16312,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.90322080325273
           ],
           [
-            579.0,
+            579,
             -2.61832353054669,
             4.10522166875983,
             -1.92178886866732
@@ -16324,7 +16324,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.94501957975622
           ],
           [
-            594.0,
+            594,
             -2.68017171260619,
             4.23441377751801,
             -1.95717910962264
@@ -16336,7 +16336,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.96804512656748
           ],
           [
-            609.0,
+            609,
             -2.72734519742021,
             4.37248622361824,
             -1.98468355282483
@@ -16348,7 +16348,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.99748053235032
           ],
           [
-            624.0,
+            624,
             -2.79252599612843,
             4.49276736799792,
             -2.01371034642882
@@ -16360,7 +16360,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.02293925579119
           ],
           [
-            639.0,
+            639,
             -2.85971548874893,
             4.60751460272681,
             -2.03845085948892
@@ -16372,7 +16372,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.05598060981837
           ],
           [
-            654.0,
+            654,
             -2.91067754487081,
             4.73108997351249,
             -2.07595206013749
@@ -16384,7 +16384,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.10244786328321
           ],
           [
-            669.0,
+            669,
             -2.96937087784626,
             4.85480809890104,
             -2.1296919015464
@@ -16396,7 +16396,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.15484092592474
           ],
           [
-            684.0,
+            684,
             -3.03091943892972,
             4.97908415865705,
             -2.18160383393102
@@ -16408,7 +16408,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.21413798053051
           ],
           [
-            699.0,
+            699,
             -3.0995249401227,
             5.09759162013257,
             -2.23621111544176
@@ -16420,7 +16420,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.26920417556752
           ],
           [
-            714.0,
+            714,
             -3.18088537357381,
             5.19755827329645,
             -2.29892786577324
@@ -16432,7 +16432,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.32814359623754
           ],
           [
-            729.0,
+            729,
             -3.26058154714515,
             5.30585467291775,
             -2.34869518028732
@@ -16444,7 +16444,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.37097899006788
           ],
           [
-            744.0,
+            744,
             -3.34221822421788,
             5.42295400806646,
             -2.39092954039032
@@ -16456,7 +16456,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.40353660517715
           ],
           [
-            759.0,
+            759,
             -3.43509405612273,
             5.53864544784884,
             -2.43041965705359
@@ -16468,7 +16468,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.46228344973598
           ],
           [
-            774.0,
+            774,
             -3.51507733804115,
             5.65431371170872,
             -2.48600748275464
@@ -16480,7 +16480,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.51177706767203
           ],
           [
-            789.0,
+            789,
             -3.5856781956326,
             5.77535080355631,
             -2.53888929952633
@@ -16492,7 +16492,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.56408419297154
           ],
           [
-            804.0,
+            804,
             -3.65746866528566,
             5.89176813067177,
             -2.59040615788959
@@ -16504,7 +16504,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.6164859597633
           ],
           [
-            819.0,
+            819,
             -3.71624334872644,
             6.01605088749703,
             -2.63962534866998
@@ -16516,7 +16516,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.668870627414
           ],
           [
-            834.0,
+            834,
             -3.7931881541025,
             6.12921528649165,
             -2.70697843370744
@@ -16528,7 +16528,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.7460490734598
           ],
           [
-            849.0,
+            849,
             -3.85041166043395,
             6.25307352142511,
             -2.78745583370069
@@ -16540,7 +16540,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.83084200731015
           ],
           [
-            864.0,
+            864,
             -3.91778438281449,
             6.37918147827543,
             -2.85736951662631
@@ -16552,7 +16552,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.87235345783009
           ],
           [
-            879.0,
+            879,
             -3.960766786953,
             6.52307849829749,
             -2.88462999439435
@@ -16564,7 +16564,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.89956218229242
           ],
           [
-            894.0,
+            894,
             -4.00422305413599,
             6.66412109992265,
             -2.91046702522617
@@ -16576,7 +16576,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.91323249980466
           ],
           [
-            909.0,
+            909,
             -4.05911295680103,
             6.80429518009435,
             -2.91681008734956
@@ -16588,7 +16588,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.92675948922416
           ],
           [
-            924.0,
+            924,
             -4.11285405976241,
             6.94910112791477,
             -2.92922331360411
@@ -16600,7 +16600,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.93669011004717
           ],
           [
-            939.0,
+            939,
             -4.16080789843826,
             7.09452438193473,
             -2.94551513834802
@@ -16612,7 +16612,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.94942273364298
           ],
           [
-            954.0,
+            954,
             -4.22370680838573,
             7.2218238436044,
             -2.95684340059443
@@ -16624,7 +16624,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.97035810676635
           ],
           [
-            969.0,
+            969,
             -4.30443260365189,
             7.33057027202802,
             -2.97927655359264
@@ -16636,7 +16636,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.98705892660873
           ],
           [
-            984.0,
+            984,
             -4.3641129645047,
             7.45924855971224,
             -2.99825245240939
@@ -16648,7 +16648,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.00706704407567
           ],
           [
-            999.0,
+            999,
             -4.41907069767561,
             7.59782096709791,
             -3.01199043475005
@@ -16660,7 +16660,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.01355839141794
           ],
           [
-            1014.0,
+            1014,
             -4.4647777505594,
             7.74982043837568,
             -3.02007697685398
@@ -16672,7 +16672,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.02460893667536
           ],
           [
-            1029.0,
+            1029,
             -4.52301117117167,
             7.90121167710718,
             -3.02414721175625
@@ -16684,7 +16684,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.03174126946536
           ],
           [
-            1044.0,
+            1044,
             -4.58105579062101,
             8.04374161714641,
             -3.03799000392887
@@ -16696,7 +16696,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.05470955199699
           ],
           [
-            1059.0,
+            1059,
             -4.6615454704497,
             8.15982003257941,
             -3.06620251468908
@@ -16708,7 +16708,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.06851514122669
           ],
           [
-            1074.0,
+            1074,
             -4.73535684508482,
             8.29754023633187,
             -3.062794727309
@@ -16720,7 +16720,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.06549827911462
           ],
           [
-            1089.0,
+            1089,
             -4.81371481094845,
             8.44204209245815,
             -3.06478442039564
@@ -16732,7 +16732,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.07286553714993
           ],
           [
-            1104.0,
+            1104,
             -4.90383107395945,
             8.56988513268111,
             -3.08679963647209
@@ -16744,7 +16744,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.10277598421095
           ],
           [
-            1119.0,
+            1119,
             -4.9916889405948,
             8.68965668138975,
             -3.11715374266923
@@ -16756,7 +16756,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13284767757872
           ],
           [
-            1134.0,
+            1134,
             -5.09310601488333,
             8.80232838089326,
             -3.1479333389906
@@ -16768,7 +16768,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.15890703231462
           ],
           [
-            1149.0,
+            1149,
             -5.18919511262862,
             8.93333073682144,
             -3.1635387728968
@@ -16780,7 +16780,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.1709624689492
           ],
           [
-            1164.0,
+            1164,
             -5.27662506171766,
             9.07765900585784,
             -3.17511051709521
@@ -16792,7 +16792,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.17749897306523
           ],
           [
-            1179.0,
+            1179,
             -5.35702373301003,
             9.22868026327474,
             -3.18525436755501
@@ -16804,7 +16804,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.18648571374391
           ],
           [
-            1194.0,
+            1194,
             -5.43212443469704,
             9.37655009816743,
             -3.17892420077401
@@ -16816,7 +16816,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.16462582520036
           ],
           [
-            1209.0,
+            1209,
             -5.50714608162687,
             9.52569892649609,
             -3.15030857727029
@@ -16828,7 +16828,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.14080719778499
           ],
           [
-            1224.0,
+            1224,
             -5.58715480641488,
             9.67082052950922,
             -3.13854801289963
@@ -16840,7 +16840,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.14097125778203
           ],
           [
-            1239.0,
+            1239,
             -5.67427013803107,
             9.8026656419776,
             -3.14132845507032
@@ -16852,7 +16852,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13857582716199
           ],
           [
-            1254.0,
+            1254,
             -5.76163008451537,
             9.93942462437346,
             -3.13704445349122
@@ -16864,7 +16864,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13369430212179
           ],
           [
-            1269.0,
+            1269,
             -5.85153262926844,
             10.0854458697173,
             -3.12410946513384
@@ -16876,7 +16876,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.12428206617218
           ],
           [
-            1284.0,
+            1284,
             -5.94832338701685,
             10.2192565883382,
             -3.12806069475397
@@ -16888,7 +16888,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13449716712901
           ],
           [
-            1299.0,
+            1299,
             -6.04023856762685,
             10.3525450570079,
             -3.13727661303722
@@ -16900,7 +16900,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13826973491539
           ],
           [
-            1314.0,
+            1314,
             -6.13066831097741,
             10.4881367518952,
             -3.1430853259281
@@ -16912,7 +16912,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13892562570121
           ],
           [
-            1329.0,
+            1329,
             -6.22469220098466,
             10.6263452446407,
             -3.14192363128815
@@ -16924,7 +16924,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.13390315953229
           ],
           [
-            1344.0,
+            1344,
             -6.32097772072053,
             10.766967254409,
             -3.13103716727622
@@ -16936,7 +16936,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.12569245388862
           ],
           [
-            1359.0,
+            1359,
             -6.41228409474464,
             10.9085415307874,
             -3.12106989909415
@@ -16948,7 +16948,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.11623078781258
           ],
           [
-            1374.0,
+            1374,
             -6.49493125901669,
             11.0447415526206,
             -3.11952794839566
@@ -16960,7 +16960,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.12405842076614
           ],
           [
-            1389.0,
+            1389,
             -6.56565620839523,
             11.18419247349,
             -3.1264935753803
@@ -16972,7 +16972,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.12839044381131
           ],
           [
-            1404.0,
+            1404,
             -6.63822283897604,
             11.3259289639954,
             -3.12838216465599
@@ -16984,7 +16984,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.12519526169155
           ],
           [
-            1419.0,
+            1419,
             -6.70333812720183,
             11.4747300150406,
             -3.11543168711856
@@ -16996,7 +16996,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.1077792172594
           ],
           [
-            1434.0,
+            1434,
             -6.77201557057446,
             11.6295153759415,
             -3.08880374822972
@@ -17008,7 +17008,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.07249919114119
           ],
           [
-            1449.0,
+            1449,
             -6.83525520894653,
             11.7957920858775,
             -3.05349478307
@@ -17020,7 +17020,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.03683972314712
           ],
           [
-            1464.0,
+            1464,
             -6.89423436073403,
             11.9659002910601,
             -3.01439152423031
@@ -17032,7 +17032,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.9928327985904
           ],
           [
-            1479.0,
+            1479,
             -6.94985290177603,
             12.1424283008471,
             -2.96698909092976
@@ -17044,7 +17044,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.94484021114246
           ],
           [
-            1494.0,
+            1494,
             -7.01029577374298,
             12.3254518184195,
             -2.91274727120762
@@ -17056,7 +17056,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.87237558838185
           ],
           [
-            1509.0,
+            1509,
             -7.08069150322212,
             12.5051473471663,
             -2.83738829092398
@@ -17068,7 +17068,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.80014706785929
           ],
           [
-            1524.0,
+            1524,
             -7.15601890673946,
             12.6817285898085,
             -2.76111745704815
@@ -17080,7 +17080,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.73044880603619
           ],
           [
-            1539.0,
+            1539,
             -7.23338241747557,
             12.8552610913815,
             -2.69579010404777
@@ -17092,7 +17092,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.66050627916805
           ],
           [
-            1554.0,
+            1554,
             -7.33531728857699,
             13.0144526240066,
             -2.63201236935239
@@ -17104,7 +17104,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.60668698649278
           ],
           [
-            1569.0,
+            1569,
             -7.45311167304848,
             13.1600041602772,
             -2.58612982724327
@@ -17116,7 +17116,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.57057344954262
           ],
           [
-            1584.0,
+            1584,
             -7.57794047460165,
             13.299718961859,
             -2.54644478484563
@@ -17128,7 +17128,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.51660285375402
           ],
           [
-            1599.0,
+            1599,
             -7.69097117665229,
             13.4436998129178,
             -2.4925453819701
@@ -17140,7 +17140,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.45159915810439
           ],
           [
-            1614.0,
+            1614,
             -7.78099730832264,
             13.6212926083417,
             -2.41232890207932
@@ -17152,7 +17152,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.37902756784084
           ],
           [
-            1629.0,
+            1629,
             -7.88698879851224,
             13.7656735220793,
             -2.35525517279191
@@ -17164,7 +17164,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.33146558301741
           ],
           [
-            1644.0,
+            1644,
             -7.97536287652571,
             13.9198223966401,
             -2.30310025550629
@@ -17176,7 +17176,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.27280020098758
           ],
           [
-            1659.0,
+            1659,
             -8.05088679554182,
             14.0843368358272,
             -2.23787663372667
@@ -17188,7 +17188,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.20709218214303
           ],
           [
-            1674.0,
+            1674,
             -8.11889260642536,
             14.2576559234296,
             -2.17815137841102
@@ -17200,7 +17200,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.15892403328377
           ],
           [
-            1689.0,
+            1689,
             -8.18030289672629,
             14.4361129796313,
             -2.13004110053292
@@ -17212,7 +17212,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.11133038481844
           ],
           [
-            1704.0,
+            1704,
             -8.23811513620839,
             14.6175395407649,
             -2.09613926227386
@@ -17224,7 +17224,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.07289886929465
           ],
           [
-            1719.0,
+            1719,
             -8.2976961748181,
             14.8085104738171,
             -2.04234359803983
@@ -17236,7 +17236,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.0093371512406
           ],
           [
-            1734.0,
+            1734,
             -8.35978524717476,
             14.9943484687273,
             -1.97371910390404
@@ -17248,7 +17248,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.93872761999071
           ],
           [
-            1749.0,
+            1749,
             -8.40778116730254,
             15.1906964311795,
             -1.90544278440553
@@ -17260,7 +17260,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.85620841876135
           ],
           [
-            1764.0,
+            1764,
             -8.43873787978921,
             15.410229399721,
             -1.81759754667452
@@ -17272,7 +17272,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.77465307469821
           ],
           [
-            1779.0,
+            1779,
             -8.50067633955517,
             15.6136008187556,
             -1.73102445018069
@@ -17284,7 +17284,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.68692419343094
           ],
           [
-            1794.0,
+            1794,
             -8.56246082917342,
             15.8245094617522,
             -1.6538675897842
@@ -17296,7 +17296,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.62808571889589
           ],
           [
-            1809.0,
+            1809,
             -8.62276300593487,
             16.0279167023529,
             -1.59937613161874
@@ -17308,7 +17308,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.57004596728686
           ],
           [
-            1824.0,
+            1824,
             -8.68484926520611,
             16.2309580315123,
             -1.54933716957402
@@ -17320,7 +17320,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.52909096879625
           ],
           [
-            1839.0,
+            1839,
             -8.74394202318988,
             16.4324914844015,
             -1.50782942531063
@@ -17332,7 +17332,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.49109763455556
           ],
           [
-            1854.0,
+            1854,
             -8.78480103772023,
             16.6361445609675,
             -1.48966702961529
@@ -17344,7 +17344,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.49202943770685
           ],
           [
-            1869.0,
+            1869,
             -8.83044004405021,
             16.8306363809198,
             -1.48498878809695
@@ -17356,7 +17356,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.46770253310861
           ],
           [
-            1884.0,
+            1884,
             -8.86767655038259,
             17.0392001023682,
             -1.45344825385472
@@ -17368,7 +17368,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.43829728338998
           ],
           [
-            1899.0,
+            1899,
             -8.90449805088291,
             17.2415868723863,
             -1.43287462968435
@@ -17380,7 +17380,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.42025621467342
           ],
           [
-            1914.0,
+            1914,
             -8.92955291706255,
             17.4472175649187,
             -1.4048141496484
@@ -17392,7 +17392,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.38683398713403
           ],
           [
-            1929.0,
+            1929,
             -8.95800502192747,
             17.6472451191903,
             -1.36526225117959
@@ -17404,7 +17404,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.33797887918569
           ],
           [
-            1944.0,
+            1944,
             -8.98543387911663,
             17.8569740768576,
             -1.31389371885686
@@ -17416,7 +17416,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.29064197426579
           ],
           [
-            1959.0,
+            1959,
             -9.02127469057472,
             18.0623602548646,
             -1.26967693231704
@@ -17428,7 +17428,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.26676660760627
           ],
           [
-            1974.0,
+            1974,
             -9.0675469765725,
             18.2400986598787,
             -1.25609357875248
@@ -17440,7 +17440,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.24838320869128
           ],
           [
-            1989.0,
+            1989,
             -9.10714191321453,
             18.4268405393043,
             -1.23643203184895
@@ -17452,7 +17452,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.21614980005225
           ],
           [
-            2004.0,
+            2004,
             -9.13888553373895,
             18.6258073931677,
             -1.19595738769686
@@ -17464,7 +17464,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.17169728163271
           ],
           [
-            2019.0,
+            2019,
             -9.16517799111057,
             18.8290087820777,
             -1.15793171802627
@@ -17476,7 +17476,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.14087213858259
           ],
           [
-            2034.0,
+            2034,
             -9.1953672934287,
             19.0332068265468,
             -1.12903801006475
@@ -17488,7 +17488,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.11542124964145
           ],
           [
-            2049.0,
+            2049,
             -9.23331510813011,
             19.2388000315124,
             -1.09765615504583
@@ -17500,7 +17500,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.07503190075531
           ],
           [
-            2064.0,
+            2064,
             -9.26983040748387,
             19.4464815901811,
             -1.05192370871505
@@ -17512,7 +17512,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.03063370851073
           ],
           [
-            2079.0,
+            2079,
             -9.29949406988126,
             19.6545618238498,
             -1.00209898447323
@@ -17524,7 +17524,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.964150706396992
           ],
           [
-            2094.0,
+            2094,
             -9.34183881550514,
             19.8618542343518,
             -0.924129318867788
@@ -17536,7 +17536,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.883979748896658
           ],
           [
-            2109.0,
+            2109,
             -9.40371565233327,
             20.0563190070647,
             -0.84455282736728
@@ -17548,7 +17548,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.804905690026466
           ],
           [
-            2124.0,
+            2124,
             -9.48435912759343,
             20.2377306737618,
             -0.770595295010542
@@ -17560,7 +17560,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.725918962363277
           ],
           [
-            2139.0,
+            2139,
             -9.58173381794134,
             20.4124801015697,
             -0.690119900038224
@@ -17572,7 +17572,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.647755075842149
           ],
           [
-            2154.0,
+            2154,
             -9.65854559397672,
             20.6018539156257,
             -0.609253206325361
@@ -17584,7 +17584,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.567969309748586
           ],
           [
-            2169.0,
+            2169,
             -9.72312782493264,
             20.7895710056875,
             -0.529692284542596
@@ -17596,7 +17596,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.502005610194925
           ],
           [
-            2184.0,
+            2184,
             -9.79211226434302,
             20.9725364763094,
             -0.481521750661061
@@ -17608,7 +17608,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.454040740628114
           ],
           [
-            2199.0,
+            2199,
             -9.8531103666219,
             21.1697873112901,
             -0.434431195082551
@@ -17620,7 +17620,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.409566829415697
           ],
           [
-            2214.0,
+            2214,
             -9.91562691817991,
             21.3622946547015,
             -0.388854349221331
@@ -17632,7 +17632,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.368910930404161
           ],
           [
-            2229.0,
+            2229,
             -9.950409792472,
             21.5710648747189,
             -0.345446049382425
@@ -17644,7 +17644,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.320663315484288
           ],
           [
-            2244.0,
+            2244,
             -9.95415872120098,
             21.794532912607,
             -0.282548221899643
@@ -17656,7 +17656,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.245297101434152
           ],
           [
-            2259.0,
+            2259,
             -9.95350028202591,
             22.0264153135897,
             -0.204660803797972
@@ -17668,7 +17668,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.168232918728277
           ],
           [
-            2274.0,
+            2274,
             -9.96573558957404,
             22.2411195447002,
             -0.144523656710246
@@ -17680,7 +17680,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.115188889906072
           ],
           [
-            2289.0,
+            2289,
             -9.97751669348451,
             22.4504273899703,
             -0.08260579176376809
@@ -17692,7 +17692,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.0636518146813486
           ],
           [
-            2304.0,
+            2304,
             -9.99586482298554,
             22.6568312614415,
             -0.03747306803095053
@@ -17704,7 +17704,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.003022300201056154
           ],
           [
-            2319.0,
+            2319,
             -10.0103245450736,
             22.8731555499444,
             0.03736857419686427
@@ -17716,7 +17716,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.07819012241349983
           ],
           [
-            2334.0,
+            2334,
             -10.0377961316762,
             23.0928714232323,
             0.118367508703382
@@ -17728,7 +17728,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.157759611554067
           ],
           [
-            2349.0,
+            2349,
             -10.0666307812165,
             23.2921260406272,
             0.175902554089846
@@ -17740,7 +17740,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.204390460369157
           ],
           [
-            2364.0,
+            2364,
             -10.0854759389772,
             23.5055440508731,
             0.239665890149146
@@ -17752,7 +17752,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.272704746749106
           ],
           [
-            2379.0,
+            2379,
             -10.1065096014116,
             23.7189869746305,
             0.299038362365753
@@ -17764,7 +17764,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.317943358242951
           ],
           [
-            2394.0,
+            2394,
             -10.1297316267687,
             23.909250008194,
             0.317652155147423
@@ -17776,7 +17776,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.318685484484836
           ],
           [
-            2409.0,
+            2409,
             -10.1233587792723,
             24.1053740461928,
             0.310658902435807
@@ -17788,7 +17788,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.30034812048381
           ],
           [
-            2424.0,
+            2424,
             -10.1444657522884,
             24.2879896096018,
             0.294415223986541
@@ -17800,7 +17800,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.295117751000476
           ],
           [
-            2439.0,
+            2439,
             -10.1869876476202,
             24.4776039556477,
             0.2991421217016
@@ -17812,7 +17812,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.299789600885687
           ],
           [
-            2454.0,
+            2454,
             -10.2164245307009,
             24.6669647366343,
             0.299275610159351
@@ -17824,7 +17824,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.302216529888142
           ],
           [
-            2469.0,
+            2469,
             -10.2470880617851,
             24.8631128376024,
             0.300373464455338
@@ -17836,7 +17836,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.289300724876188
           ],
           [
-            2484.0,
+            2484,
             -10.2945842489033,
             25.0452017748444,
             0.281875228264159
@@ -17848,7 +17848,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.274564471304931
           ],
           [
-            2499.0,
+            2499,
             -10.333328101778,
             25.235791516871,
             0.281755423080927
@@ -17860,7 +17860,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.272847139987942
           ],
           [
-            2514.0,
+            2514,
             -10.3769805745283,
             25.4056517130337,
             0.252314837761991
@@ -17872,7 +17872,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.241581557036749
           ],
           [
-            2529.0,
+            2529,
             -10.4146079128482,
             25.5785785025998,
             0.227421365834096
@@ -17884,7 +17884,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.203368164839721
           ],
           [
-            2544.0,
+            2544,
             -10.4745371466289,
             25.7251484386281,
             0.176499426386582
@@ -17896,7 +17896,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.153633453969576
           ],
           [
-            2559.0,
+            2559,
             -10.5251810930126,
             25.8729866106639,
             0.128586943973425
@@ -17908,7 +17908,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.09059954761405774
           ],
           [
-            2574.0,
+            2574,
             -10.5789196177769,
             25.9993721120778,
             0.04712896929073645
@@ -17920,7 +17920,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             0.005034526481694679
           ],
           [
-            2589.0,
+            2589,
             -10.6392139136651,
             26.1128778627633,
             -0.02984536171011948
@@ -17932,7 +17932,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.05618608202809979
           ],
           [
-            2604.0,
+            2604,
             -10.6985778391092,
             26.2402741334362,
             -0.08632649358560424
@@ -17944,7 +17944,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.115678691968223
           ],
           [
-            2619.0,
+            2619,
             -10.7579423644898,
             26.3606116552382,
             -0.152393437853875
@@ -17956,7 +17956,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.188078925352074
           ],
           [
-            2634.0,
+            2634,
             -10.8132148327121,
             26.4869279373576,
             -0.219038211129887
@@ -17968,7 +17968,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.253716109563695
           ],
           [
-            2649.0,
+            2649,
             -10.8638245913356,
             26.6115350386335,
             -0.292005983526693
@@ -17980,7 +17980,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.314346522332097
           ],
           [
-            2664.0,
+            2664,
             -10.8966819993098,
             26.7666438107472,
             -0.333403101132341
@@ -17992,7 +17992,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.343758709198684
           ],
           [
-            2679.0,
+            2679,
             -10.9310092722429,
             26.9288759763461,
             -0.367515444360519
@@ -18004,7 +18004,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.388889646641968
           ],
           [
-            2694.0,
+            2694,
             -10.9830510530468,
             27.0818987924622,
             -0.402332120869064
@@ -18016,7 +18016,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.422089718369691
           ],
           [
-            2709.0,
+            2709,
             -11.0260719183526,
             27.2371032198963,
             -0.441519962881885
@@ -18028,7 +18028,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.459157123205651
           ],
           [
-            2724.0,
+            2724,
             -11.0644443915255,
             27.3999361974548,
             -0.473596648332708
@@ -18040,7 +18040,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.485763998462311
           ],
           [
-            2739.0,
+            2739,
             -11.1098351117387,
             27.5626263443843,
             -0.511717801519337
@@ -18052,7 +18052,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.54146275507862
           ],
           [
-            2754.0,
+            2754,
             -11.1526718147581,
             27.7243569497628,
             -0.569429440132215
@@ -18064,7 +18064,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.592836772965128
           ],
           [
-            2769.0,
+            2769,
             -11.185659210797,
             27.8990588817761,
             -0.611115813924902
@@ -18076,7 +18076,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.615135688531489
           ],
           [
-            2784.0,
+            2784,
             -11.2173735468795,
             28.0926622655084,
             -0.616938086504145
@@ -18088,7 +18088,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.637625773114228
           ],
           [
-            2799.0,
+            2799,
             -11.2666809499531,
             28.2670819222607,
             -0.657644095412034
@@ -18100,7 +18100,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.673279938895646
           ],
           [
-            2814.0,
+            2814,
             -11.3152682065856,
             28.4410422218062,
             -0.692478669831628
@@ -18112,7 +18112,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.717113842595161
           ],
           [
-            2829.0,
+            2829,
             -11.3583202728078,
             28.605525133535,
             -0.735657155750217
@@ -18124,7 +18124,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.753184316400346
           ],
           [
-            2844.0,
+            2844,
             -11.4102749162741,
             28.7557050989345,
             -0.787783744532261
@@ -18136,7 +18136,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.817436560820985
           ],
           [
-            2859.0,
+            2859,
             -11.4617422643326,
             28.9033509087255,
             -0.84069728089076
@@ -18148,7 +18148,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.870412954123653
           ],
           [
-            2874.0,
+            2874,
             -11.5177043315118,
             29.044176015999,
             -0.91012834346853
@@ -18160,7 +18160,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -0.956674067144701
           ],
           [
-            2889.0,
+            2889,
             -11.5664598324365,
             29.1816275581869,
             -0.997027057034237
@@ -18172,7 +18172,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.03257098228606
           ],
           [
-            2904.0,
+            2904,
             -11.6032142141197,
             29.3335470698058,
             -1.06455974502697
@@ -18184,7 +18184,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.0956155844125
           ],
           [
-            2919.0,
+            2919,
             -11.6476372782268,
             29.4867522718645,
             -1.13033341827599
@@ -18196,7 +18196,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.16378958924162
           ],
           [
-            2934.0,
+            2934,
             -11.7256779166939,
             29.6312654039006,
             -1.19878517251977
@@ -18208,7 +18208,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.24297301116448
           ],
           [
-            2949.0,
+            2949,
             -11.8126117960451,
             29.7654682698813,
             -1.28289875145696
@@ -18220,7 +18220,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.31895273469451
           ],
           [
-            2964.0,
+            2964,
             -11.8967301518666,
             29.9128761242804,
             -1.35036948361056
@@ -18232,7 +18232,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.40175788051917
           ],
           [
-            2979.0,
+            2979,
             -12.0007052883822,
             30.03680143891,
             -1.45104893602081
@@ -18244,7 +18244,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.49820209990612
           ],
           [
-            2994.0,
+            2994,
             -12.1064321754633,
             30.1705756550308,
             -1.54428267300039
@@ -18256,7 +18256,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.58044876983052
           ],
           [
-            3009.0,
+            3009,
             -12.2024688977831,
             30.3132531509651,
             -1.62353185051169
@@ -18268,7 +18268,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.66255010340413
           ],
           [
-            3024.0,
+            3024,
             -12.2871191436034,
             30.4725317283877,
             -1.69279803689421
@@ -18280,7 +18280,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.72167340065969
           ],
           [
-            3039.0,
+            3039,
             -12.3612751618739,
             30.6382688899424,
             -1.74388631706451
@@ -18292,7 +18292,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.75730087603116
           ],
           [
-            3054.0,
+            3054,
             -12.4311810560517,
             30.8088016794832,
             -1.78156551905148
@@ -18304,7 +18304,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.80488832844238
           ],
           [
-            3069.0,
+            3069,
             -12.5094106786935,
             30.9685604911008,
             -1.82342749286286
@@ -18316,7 +18316,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.85561027037975
           ],
           [
-            3084.0,
+            3084,
             -12.5827294294987,
             31.1199653977722,
             -1.89821957654024
@@ -18328,7 +18328,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -1.94246297793772
           ],
           [
-            3099.0,
+            3099,
             -12.666211252342,
             31.2561324688362,
             -1.99173679257494
@@ -18340,7 +18340,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.03751755666463
           ],
           [
-            3114.0,
+            3114,
             -12.7479464498891,
             31.3874519774887,
             -2.08791257816631
@@ -18352,7 +18352,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.13596318420309
           ],
           [
-            3129.0,
+            3129,
             -12.8192413242863,
             31.5080738754903,
             -2.1945035574756
@@ -18364,7 +18364,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.26121103251964
           ],
           [
-            3144.0,
+            3144,
             -12.9026164346269,
             31.6123083376909,
             -2.32488386914612
@@ -18376,7 +18376,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.39159115300963
           ],
           [
-            3159.0,
+            3159,
             -12.9980488090218,
             31.7025324459735,
             -2.45485464120745
@@ -18388,7 +18388,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.51032933777599
           ],
           [
-            3174.0,
+            3174,
             -13.0949373180115,
             31.8054436649083,
             -2.56507001407401
@@ -18400,7 +18400,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.62857465677585
           ],
           [
-            3189.0,
+            3189,
             -13.1966718928938,
             31.9028772479964,
             -2.69152649219323
@@ -18412,7 +18412,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.75301456214415
           ],
           [
-            3204.0,
+            3204,
             -13.3150756486566,
             32.0051356165575,
             -2.80637256752709
@@ -18424,7 +18424,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.86360627804161
           ],
           [
-            3219.0,
+            3219,
             -13.4101321556219,
             32.1149610342025,
             -2.91504520787679
@@ -18436,7 +18436,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -2.97603189767471
           ],
           [
-            3234.0,
+            3234,
             -13.5005629515399,
             32.2347475698,
             -3.02787822543437
@@ -18448,7 +18448,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.08591633402208
           ],
           [
-            3249.0,
+            3249,
             -13.5889419300066,
             32.3522516989355,
             -3.15342930215355
@@ -18460,7 +18460,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.219302072659
           ],
           [
-            3264.0,
+            3264,
             -13.6680906213294,
             32.4636740147273,
             -3.30186580797943
@@ -18472,7 +18472,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.37784696831395
           ],
           [
-            3279.0,
+            3279,
             -13.7339471266132,
             32.5848351341197,
             -3.46254511427507
@@ -18484,7 +18484,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.54408365445468
           ],
           [
-            3294.0,
+            3294,
             -13.8025188645837,
             32.7171308061458,
             -3.62961076754801
@@ -18496,7 +18496,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.71748535097085
           ],
           [
-            3309.0,
+            3309,
             -13.8774766749504,
             32.8408881395348,
             -3.80673492031527
@@ -18508,7 +18508,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -3.90091680526826
           ],
           [
-            3324.0,
+            3324,
             -13.9366608583261,
             32.9577404545773,
             -3.99014865902702
@@ -18520,7 +18520,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.0692285742413
           ],
           [
-            3339.0,
+            3339,
             -13.9857192811403,
             33.0859902623919,
             -4.15485034163264
@@ -18532,7 +18532,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.22554733203336
           ],
           [
-            3354.0,
+            3354,
             -14.0249032143184,
             33.2289738708662,
             -4.29999276756178
@@ -18544,7 +18544,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.38040957440193
           ],
           [
-            3369.0,
+            3369,
             -14.0721978236601,
             33.3623456958226,
             -4.46074279356968
@@ -18556,7 +18556,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.54383754193552
           ],
           [
-            3384.0,
+            3384,
             -14.1195255755541,
             33.4856810121946,
             -4.63296939517473
@@ -18568,7 +18568,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.7100622148507
           ],
           [
-            3399.0,
+            3399,
             -14.1857816552824,
             33.6044803163836,
             -4.78566533648522
@@ -18580,7 +18580,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -4.86166982794661
           ],
           [
-            3414.0,
+            3414,
             -14.2508757888301,
             33.7182974660493,
             -4.93217883314463
@@ -18592,7 +18592,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.00308415157306
           ],
           [
-            3429.0,
+            3429,
             -14.3258960990825,
             33.8103697460706,
             -5.08851809235396
@@ -18604,7 +18604,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.15907520555369
           ],
           [
-            3444.0,
+            3444,
             -14.3977980960029,
             33.910889916537,
             -5.22212134705885
@@ -18616,7 +18616,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.28513553267798
           ],
           [
-            3459.0,
+            3459,
             -14.4660124275677,
             34.0132587134139,
             -5.34979248049725
@@ -18628,7 +18628,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.41072131297957
           ],
           [
-            3474.0,
+            3474,
             -14.5150529277815,
             34.1268145499191,
             -5.47008683649649
@@ -18640,7 +18640,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.52249776609179
           ],
           [
-            3489.0,
+            3489,
             -14.5633032046895,
             34.253406891817,
             -5.57245410267233
@@ -18652,7 +18652,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.61817882865426
           ],
           [
-            3504.0,
+            3504,
             -14.6145801936772,
             34.3785324842954,
             -5.66273706388712
@@ -18664,7 +18664,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.7032872980135
           ],
           [
-            3519.0,
+            3519,
             -14.655017188343,
             34.5073130393203,
             -5.75070870194174
@@ -18676,7 +18676,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.80323131291407
           ],
           [
-            3534.0,
+            3534,
             -14.6976754484745,
             34.6263585454871,
             -5.8444884747587
@@ -18688,7 +18688,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -5.89339659231866
           ],
           [
-            3549.0,
+            3549,
             -14.7328035846011,
             34.7457480132351,
             -5.96307568739619
@@ -18700,7 +18700,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.01168431051252
           ],
           [
-            3564.0,
+            3564,
             -14.7715374059794,
             34.861527832405,
             -6.07316808734454
@@ -18712,7 +18712,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.14127529452193
           ],
           [
-            3579.0,
+            3579,
             -14.8281014647122,
             34.9592310680446,
             -6.20413296067164
@@ -18724,7 +18724,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.26432964781348
           ],
           [
-            3594.0,
+            3594,
             -14.8697887827693,
             35.0630789608787,
             -6.3196533179456
@@ -18736,7 +18736,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.37779176317629
           ],
           [
-            3609.0,
+            3609,
             -14.8961584132054,
             35.1703042923466,
             -6.43716040144613
@@ -18748,7 +18748,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.48715403424645
           ],
           [
-            3624.0,
+            3624,
             -14.9294578119447,
             35.2891422572839,
             -6.53633123634367
@@ -18760,7 +18760,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.59010592023365
           ],
           [
-            3639.0,
+            3639,
             -14.9691916718372,
             35.4009442435196,
             -6.63982804030812
@@ -18772,7 +18772,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.69467551402203
           ],
           [
-            3654.0,
+            3654,
             -15.0070242591612,
             35.5123006983549,
             -6.76294794664353
@@ -18784,7 +18784,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.83021709632852
           ],
           [
-            3669.0,
+            3669,
             -15.0582936729288,
             35.6048136467186,
             -6.89736773325739
@@ -18796,7 +18796,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -6.96151249333374
           ],
           [
-            3684.0,
+            3684,
             -15.1224398433295,
             35.691135841758,
             -7.02809356881812
@@ -18808,7 +18808,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.09623885610322
           ],
           [
-            3699.0,
+            3699,
             -15.1933015935523,
             35.7733654343196,
             -7.16719666012069
@@ -18820,7 +18820,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.23698380444054
           ],
           [
-            3714.0,
+            3714,
             -15.2745908629692,
             35.8435030644212,
             -7.31029033376103
@@ -18832,7 +18832,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.37986878168698
           ],
           [
-            3729.0,
+            3729,
             -15.3521670314566,
             35.9189569785429,
             -7.43991911169374
@@ -18844,7 +18844,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.50008180581296
           ],
           [
-            3744.0,
+            3744,
             -15.4313739083846,
             35.9952616088096,
             -7.56267514128377
@@ -18856,7 +18856,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.62342276787832
           ],
           [
-            3759.0,
+            3759,
             -15.4929717949076,
             36.0854610334401,
             -7.68581526872261
@@ -18868,7 +18868,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.76295558139926
           ],
           [
-            3774.0,
+            3774,
             -15.5757944235044,
             36.1484495146049,
             -7.85010932036993
@@ -18880,7 +18880,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -7.94025281931914
           ],
           [
-            3789.0,
+            3789,
             -15.6640493099964,
             36.2064813952685,
             -8.02510696012504
@@ -18892,7 +18892,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.1172269551422
           ],
           [
-            3804.0,
+            3804,
             -15.7630101236511,
             36.2571003680521,
             -8.21612951655337
@@ -18904,7 +18904,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.30479289367759
           ],
           [
-            3819.0,
+            3819,
             -15.8718105105842,
             36.309492211419,
             -8.3928149350811
@@ -18916,7 +18916,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.47055424244228
           ],
           [
-            3834.0,
+            3834,
             -15.96076022397,
             36.3783872847657,
             -8.55019235120504
@@ -18928,7 +18928,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.62732194740509
           ],
           [
-            3849.0,
+            3849,
             -16.0362410493497,
             36.4621972845926,
             -8.70395177085367
@@ -18940,7 +18940,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.79980700511377
           ],
           [
-            3864.0,
+            3864,
             -16.1334037834395,
             36.5171572861889,
             -8.88818922620633
@@ -18952,7 +18952,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -8.99092311425852
           ],
           [
-            3879.0,
+            3879,
             -16.2427239965165,
             36.547687653347,
             -9.0903062598441
@@ -18964,7 +18964,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -9.18780314581671
           ],
           [
-            3894.0,
+            3894,
             -16.3542534357873,
             36.5836400639993,
             -9.30864456819629
@@ -18976,7 +18976,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -9.42311640731465
           ],
           [
-            3909.0,
+            3909,
             -16.470949342395,
             36.6243592644568,
             -9.52718731036925
@@ -18988,7 +18988,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -9.61716699564334
           ],
           [
-            3924.0,
+            3924,
             -16.5975681076572,
             36.6773962802105,
             -9.72022387207798
@@ -19000,7 +19000,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -9.82785430576622
           ],
           [
-            3939.0,
+            3939,
             -16.7292686344344,
             36.7234574333465,
             -9.94952766259397
@@ -19012,7 +19012,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -10.0639319041113
           ],
           [
-            3954.0,
+            3954,
             -16.8466528093393,
             36.7828275454005,
             -10.1721715411043
@@ -19024,7 +19024,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -10.2769587836774
           ],
           [
-            3969.0,
+            3969,
             -16.9419428686343,
             36.8551943941644,
             -10.3813489134299
@@ -19036,7 +19036,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -10.4824167025769
           ],
           [
-            3984.0,
+            3984,
             -17.02592140555,
             36.9497647445068,
             -10.5705188147065
@@ -19048,7 +19048,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -10.6767306800318
           ],
           [
-            3999.0,
+            3999,
             -17.1165189085075,
             37.0307448039794,
             -10.7694703537093
@@ -19060,7 +19060,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -10.8788700515617
           ],
           [
-            4014.0,
+            4014,
             -17.1988149759453,
             37.1181078696162,
             -10.9846248193703
@@ -19072,7 +19072,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.0937454922502
           ],
           [
-            4029.0,
+            4029,
             -17.2674295384756,
             37.2221841661018,
             -11.1801241731267
@@ -19084,7 +19084,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.2584111030803
           ],
           [
-            4044.0,
+            4044,
             -17.3217409930661,
             37.3409124152715,
             -11.328584828679
@@ -19096,7 +19096,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.395009438919
           ],
           [
-            4059.0,
+            4059,
             -17.3913795508534,
             37.4525016866992,
             -11.4552021250858
@@ -19108,7 +19108,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.510424918476
           ],
           [
-            4074.0,
+            4074,
             -17.4369641340599,
             37.5854107506038,
             -11.5585447638621
@@ -19120,7 +19120,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.6110049457993
           ],
           [
-            4089.0,
+            4089,
             -17.4548487416814,
             37.7452457479887,
             -11.6559373514659
@@ -19132,7 +19132,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.7183040806129
           ],
           [
-            4104.0,
+            4104,
             -17.4922728287876,
             37.8799737013348,
             -11.7820825343396
@@ -19144,7 +19144,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.8506232728968
           ],
           [
-            4119.0,
+            4119,
             -17.5513626961004,
             37.9994275372999,
             -11.9096477347026
@@ -19156,7 +19156,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -11.9698475156047
           ],
           [
-            4134.0,
+            4134,
             -17.5952102105948,
             38.1291074916272,
             -12.034696343013
@@ -19168,7 +19168,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.1064763703148
           ],
           [
-            4149.0,
+            4149,
             -17.6556047383624,
             38.2416588198981,
             -12.1732984325093
@@ -19180,7 +19180,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.259762855947
           ],
           [
-            4164.0,
+            4164,
             -17.7524106770038,
             38.3262323496948,
             -12.3422064614629
@@ -19192,7 +19192,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.4182724916663
           ],
           [
-            4179.0,
+            4179,
             -17.8698801903859,
             38.4134627348816,
             -12.4899005457673
@@ -19204,7 +19204,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.5621467339877
           ],
           [
-            4194.0,
+            4194,
             -17.9907667288515,
             38.4941917929396,
             -12.6205068134305
@@ -19216,7 +19216,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.6871167780439
           ],
           [
-            4209.0,
+            4209,
             -18.1091732399371,
             38.5772346861184,
             -12.7534638064828
@@ -19228,7 +19228,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.822424830338
           ],
           [
-            4224.0,
+            4224,
             -18.2559400701389,
             38.6423971131439,
             -12.885409735406
@@ -19240,7 +19240,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -12.9454531785582
           ],
           [
-            4239.0,
+            4239,
             -18.3944583097471,
             38.7125856765862,
             -13.0123403494157
@@ -19252,7 +19252,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.0739120386184
           ],
           [
-            4254.0,
+            4254,
             -18.5272615939917,
             38.790043583471,
             -13.1369039461313
@@ -19264,7 +19264,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.2053739429192
           ],
           [
-            4269.0,
+            4269,
             -18.6716674036767,
             38.8688671069228,
             -13.2759133493842
@@ -19276,7 +19276,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.3495648406013
           ],
           [
-            4284.0,
+            4284,
             -18.8283775800588,
             38.9391996272225,
             -13.4247448111817
@@ -19288,7 +19288,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.4908042973197
           ],
           [
-            4299.0,
+            4299,
             -18.9430939726131,
             39.0321022718759,
             -13.5563181087225
@@ -19300,7 +19300,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.6385139361526
           ],
           [
-            4314.0,
+            4314,
             -19.0721218832271,
             39.1071969317835,
             -13.7247901054823
@@ -19312,7 +19312,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.8047191762228
           ],
           [
-            4329.0,
+            4329,
             -19.2140394516199,
             39.1864979782221,
             -13.8759914856318
@@ -19324,7 +19324,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -13.9368817527952
           ],
           [
-            4344.0,
+            4344,
             -19.3540894471991,
             39.2713563611944,
             -13.9863433641877
@@ -19336,7 +19336,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.0378442614492
           ],
           [
-            4359.0,
+            4359,
             -19.5007889750485,
             39.3512263429762,
             -14.085116530055
@@ -19348,7 +19348,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.145028836653
           ],
           [
-            4374.0,
+            4374,
             -19.6491506780507,
             39.4235181440108,
             -14.1882641948756
@@ -19360,7 +19360,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.2291956390122
           ],
           [
-            4389.0,
+            4389,
             -19.7541451400539,
             39.5250573638157,
             -14.2585290671919
@@ -19372,7 +19372,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.2980156159056
           ],
           [
-            4404.0,
+            4404,
             -19.8741316512648,
             39.6227997616031,
             -14.3385873577334
@@ -19384,7 +19384,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.3831563110811
           ],
           [
-            4419.0,
+            4419,
             -20.0031953028871,
             39.7104740459575,
             -14.4227273517236
@@ -19396,7 +19396,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.4628637690281
           ],
           [
-            4434.0,
+            4434,
             -20.1177332927026,
             39.807405998869,
             -14.5046977119712
@@ -19408,7 +19408,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.5578343455951
           ],
           [
-            4449.0,
+            4449,
             -20.2424076210583,
             39.8744468645469,
             -14.6257332280602
@@ -19420,7 +19420,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.674114053729
           ],
           [
-            4464.0,
+            4464,
             -20.3632920900902,
             39.9415331488065,
             -14.7475528722593
@@ -19432,7 +19432,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.8223634309195
           ],
           [
-            4479.0,
+            4479,
             -20.4907949289387,
             39.98854160301,
             -14.9096835881975
@@ -19444,7 +19444,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -14.9920752853385
           ],
           [
-            4494.0,
+            4494,
             -20.59805885717,
             40.0557428954649,
             -15.0726445041799
@@ -19456,7 +19456,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.1504197419387
           ],
           [
-            4509.0,
+            4509,
             -20.7097434077994,
             40.110705068537,
             -15.2348437276512
@@ -19468,7 +19468,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.3300352870654
           ],
           [
-            4524.0,
+            4524,
             -20.8221060619331,
             40.1639954095776,
             -15.4050802471521
@@ -19480,7 +19480,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.4962792738904
           ],
           [
-            4539.0,
+            4539,
             -20.9293663766569,
             40.2131360232711,
             -15.57053185615
@@ -19492,7 +19492,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.6412989584296
           ],
           [
-            4554.0,
+            4554,
             -21.0525834568579,
             40.2575312373089,
             -15.7270841141542
@@ -19504,7 +19504,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.8050272758461
           ],
           [
-            4569.0,
+            4569,
             -21.1578643272527,
             40.3239779168999,
             -15.8656781825006
@@ -19516,7 +19516,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -15.9249228108818
           ],
           [
-            4584.0,
+            4584,
             -21.2777794414551,
             40.4021083091747,
             -15.9855134655619
@@ -19528,7 +19528,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -16.0528494530156
           ],
           [
-            4599.0,
+            4599,
             -21.4297864920646,
             40.4625288286022,
             -16.1194360304075
@@ -19540,7 +19540,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -16.1917355790063
           ],
           [
-            4614.0,
+            4614,
             -21.5699528536134,
             40.5177398479391,
             -16.2699123966904
@@ -19552,7 +19552,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -16.3536370586132
           ],
           [
-            4629.0,
+            4629,
             -21.6953624059024,
             40.5609147466029,
             -16.468352244627
@@ -19564,7 +19564,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -16.5758577847056
           ],
           [
-            4644.0,
+            4644,
             -21.8431439566965,
             40.5999788926286,
             -16.6759430713684
@@ -19576,7 +19576,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -16.7792879738063
           ],
           [
-            4659.0,
+            4659,
             -21.9841419071246,
             40.6377237989869,
             -16.8914029350127
@@ -19588,7 +19588,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -17.0105837419922
           ],
           [
-            4674.0,
+            4674,
             -22.1353832627987,
             40.6538640823588,
             -17.1286102639847
@@ -19600,7 +19600,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -17.2370962322949
           ],
           [
-            4689.0,
+            4689,
             -22.2741534252289,
             40.6736180324598,
             -17.3591745459063
@@ -19612,7 +19612,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -17.4838641641101
           ],
           [
-            4704.0,
+            4704,
             -22.3984643697046,
             40.6993362333625,
             -17.5905764869955
@@ -19624,7 +19624,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -17.7040286296706
           ],
           [
-            4719.0,
+            4719,
             -22.4961178338836,
             40.7294502056805,
             -17.8179845690867
@@ -19636,7 +19636,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -17.9321383146827
           ],
           [
-            4734.0,
+            4734,
             -22.6039971163114,
             40.7459694865141,
             -18.0568497895246
@@ -19648,7 +19648,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -18.1845596488529
           ],
           [
-            4749.0,
+            4749,
             -22.7183859600169,
             40.751459411657,
             -18.3015125381387
@@ -19660,7 +19660,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -18.4259780087462
           ],
           [
-            4764.0,
+            4764,
             -22.8324900967271,
             40.7408101214502,
             -18.5617180639711
@@ -19672,7 +19672,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -18.7009316164775
           ],
           [
-            4779.0,
+            4779,
             -22.9722139052468,
             40.7024002393597,
             -18.8389199006106
@@ -19684,7 +19684,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -18.9847042262877
           ],
           [
-            4794.0,
+            4794,
             -23.1177193903068,
             40.6611998119236,
             -19.1413576806016
@@ -19696,7 +19696,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -19.2868261654493
           ],
           [
-            4809.0,
+            4809,
             -23.2676238892553,
             40.6226322833475,
             -19.4316726289287
@@ -19708,7 +19708,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -19.5685093264522
           ],
           [
-            4824.0,
+            4824,
             -23.4437865133945,
             40.5805537125936,
             -19.7074841971632
@@ -19720,7 +19720,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -19.8502311530714
           ],
           [
-            4839.0,
+            4839,
             -23.6119032923398,
             40.5435067840369,
             -20.0020495306447
@@ -19732,7 +19732,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -20.1540653822442
           ],
           [
-            4854.0,
+            4854,
             -23.756275807073,
             40.5239858817479,
             -20.3022593643032
@@ -19744,7 +19744,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -20.4472180424704
           ],
           [
-            4869.0,
+            4869,
             -23.9300937322095,
             40.4996923313395,
             -20.592726454804
@@ -19756,7 +19756,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -20.7286084658964
           ],
           [
-            4884.0,
+            4884,
             -24.0850495525415,
             40.4983592097061,
             -20.8545373004246
@@ -19768,7 +19768,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -20.9821949435024
           ],
           [
-            4899.0,
+            4899,
             -24.2376172841981,
             40.4870487083389,
             -21.1075277122939
@@ -19780,7 +19780,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -21.2372774684716
           ],
           [
-            4914.0,
+            4914,
             -24.4178661061983,
             40.4582208733857,
             -21.3517719258876
@@ -19792,7 +19792,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -21.4482051636162
           ],
           [
-            4929.0,
+            4929,
             -24.6133111394728,
             40.4294932142306,
             -21.5530398963515
@@ -19804,7 +19804,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -21.6607713807683
           ],
           [
-            4944.0,
+            4944,
             -24.8286527682016,
             40.3886361802155,
             -21.7797160713282
@@ -19816,7 +19816,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -21.9037884075863
           ],
           [
-            4959.0,
+            4959,
             -25.04458594204,
             40.3420686601392,
             -22.0078210326129
@@ -19828,7 +19828,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -22.1004765109975
           ],
           [
-            4974.0,
+            4974,
             -25.2562042425251,
             40.3038545877704,
             -22.2012799405782
@@ -19840,7 +19840,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -22.3068948746007
           ],
           [
-            4989.0,
+            4989,
             -25.4514985004864,
             40.2594752501697,
             -22.4041044939542
@@ -19852,7 +19852,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -22.5021029694913
           ],
           [
-            5004.0,
+            5004,
             -25.6257576846099,
             40.2229615583179,
             -22.6250684655359
@@ -19864,7 +19864,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -22.7620984382443
           ],
           [
-            5019.0,
+            5019,
             -25.8095477213057,
             40.160130281477,
             -22.8985069900207
@@ -19876,7 +19876,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -23.0428620991176
           ],
           [
-            5034.0,
+            5034,
             -25.9840699745058,
             40.099808371567,
             -23.1827418048453
@@ -19888,7 +19888,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -23.337428654794
           ],
           [
-            5049.0,
+            5049,
             -26.1662166351776,
             40.0162291800417,
             -23.4810862816994
@@ -19900,7 +19900,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -23.6325163284761
           ],
           [
-            5064.0,
+            5064,
             -26.3489484041373,
             39.9239252922483,
             -23.7802173407095
@@ -19912,7 +19912,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -23.929855715164
           ],
           [
-            5079.0,
+            5079,
             -26.526083189959,
             39.8336374548429,
             -24.0896145236204
@@ -19924,7 +19924,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -24.2483023949355
           ],
           [
-            5094.0,
+            5094,
             -26.7162168949771,
             39.7358057306192,
             -24.3962258018191
@@ -19936,7 +19936,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -24.5557319031925
           ],
           [
-            5109.0,
+            5109,
             -26.8961860759125,
             39.6462259033769,
             -24.7005956903736
@@ -19948,7 +19948,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -24.8574318198624
           ],
           [
-            5124.0,
+            5124,
             -27.0651759246723,
             39.5649456970596,
             -25.0192173557095
@@ -19960,7 +19960,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -25.1622255394171
           ],
           [
-            5139.0,
+            5139,
             -27.2400042615918,
             39.4996658855159,
             -25.296349867635
@@ -19972,7 +19972,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -25.4308270817868
           ],
           [
-            5154.0,
+            5154,
             -27.4135479688735,
             39.4379315261517,
             -25.5739829859347
@@ -19984,7 +19984,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -25.7201298618019
           ],
           [
-            5169.0,
+            5169,
             -27.5917911726912,
             39.3723392472455,
             -25.8652874598431
@@ -19996,7 +19996,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -26.0122455994469
           ],
           [
-            5184.0,
+            5184,
             -27.7749043174105,
             39.3191275875151,
             -26.1518811978085
@@ -20008,7 +20008,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -26.2979510789814
           ],
           [
-            5199.0,
+            5199,
             -27.9458074071822,
             39.2908594048279,
             -26.4316070624016
@@ -20020,7 +20020,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -26.5734220509231
           ],
           [
-            5214.0,
+            5214,
             -28.1217740257447,
             39.2626307565649,
             -26.7057453220764
@@ -20032,7 +20032,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -26.8290030452405
           ],
           [
-            5229.0,
+            5229,
             -28.3071118335783,
             39.2426899128556,
             -26.9428287341089
@@ -20044,7 +20044,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -27.0702043801205
           ],
           [
-            5244.0,
+            5244,
             -28.5106658874099,
             39.1956988158581,
             -27.2047483892445
@@ -20056,7 +20056,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -27.3455255374447
           ],
           [
-            5259.0,
+            5259,
             -28.7128537159838,
             39.1383276004941,
             -27.4792146787672
@@ -20068,7 +20068,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -27.6095058088684
           ],
           [
-            5274.0,
+            5274,
             -28.9203831933246,
             39.0845752251749,
             -27.7418093813492
@@ -20080,7 +20080,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -27.8895631190034
           ],
           [
-            5289.0,
+            5289,
             -29.1432893668536,
             39.0032974373382,
             -28.038508698975
@@ -20092,7 +20092,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -28.2012715322999
           ],
           [
-            5304.0,
+            5304,
             -29.3771286590152,
             38.9011325238445,
             -28.3627760513603
@@ -20104,7 +20104,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -28.5210603874296
           ],
           [
-            5319.0,
+            5319,
             -29.6088386661031,
             38.8104093718054,
             -28.6688910448661
@@ -20116,7 +20116,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -28.8262517298126
           ],
           [
-            5334.0,
+            5334,
             -29.858477302648,
             38.7025468544138,
             -28.9982502118728
@@ -20128,7 +20128,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -29.1804533233935
           ],
           [
-            5349.0,
+            5349,
             -30.1075110565372,
             38.5818729353052,
             -29.3553647657899
@@ -20140,7 +20140,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -29.5315991106901
           ],
           [
-            5364.0,
+            5364,
             -30.3373134361491,
             38.4611729909115,
             -29.7213003069289
@@ -20152,7 +20152,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -29.9229833743046
           ],
           [
-            5379.0,
+            5379,
             -30.58955275645,
             38.3152382177118,
             -30.1190925924666
@@ -20164,7 +20164,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -30.3230801862823
           ],
           [
-            5394.0,
+            5394,
             -30.8380798154838,
             38.1616071218082,
             -30.5520419659612
@@ -20176,7 +20176,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -30.7724363377146
           ],
           [
-            5409.0,
+            5409,
             -31.0898044148378,
             37.9916264971685,
             -31.0036735877435
@@ -20188,7 +20188,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -31.2292207492796
           ],
           [
-            5424.0,
+            5424,
             -31.3724030429822,
             37.8165639507798,
             -31.4366366016199
@@ -20200,7 +20200,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -31.6502561462377
           ],
           [
-            5439.0,
+            5439,
             -31.654782605979,
             37.6542740697531,
             -31.8388509574207
@@ -20212,7 +20212,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -32.0403784853849
           ],
           [
-            5454.0,
+            5454,
             -31.9459430149882,
             37.5065619127077,
             -32.2232152582372
@@ -20224,7 +20224,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -32.3911863841098
           ],
           [
-            5469.0,
+            5469,
             -32.192847487482,
             37.4000339057103,
             -32.547902679528
@@ -20236,7 +20236,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -32.6962365060497
           ],
           [
-            5484.0,
+            5484,
             -32.3960077103562,
             37.3177131274165,
             -32.8450328278408
@@ -20248,7 +20248,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -32.9891403862004
           ],
           [
-            5499.0,
+            5499,
             -32.6010381722338,
             37.2457760126491,
             -33.115236265937
@@ -20260,7 +20260,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -33.2507507020034
           ],
           [
-            5514.0,
+            5514,
             -32.8135510607668,
             37.1834459912343,
             -33.3724080872844
@@ -20272,7 +20272,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -33.464704547147
           ],
           [
-            5529.0,
+            5529,
             -33.0123662153359,
             37.1447216763554,
             -33.5742411315398
@@ -20284,7 +20284,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -33.6649573977388
           ],
           [
-            5544.0,
+            5544,
             -33.2125137006958,
             37.1228101384927,
             -33.7645626120569
@@ -20296,7 +20296,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -33.86822676
           ],
           [
-            5559.0,
+            5559,
             -33.4077764062411,
             37.1105002421444,
             -33.9711294143631
@@ -20308,7 +20308,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -34.0845991148711
           ],
           [
-            5574.0,
+            5574,
             -33.6130554272137,
             37.0820146483975,
             -34.1911416314513
@@ -20320,7 +20320,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -34.2991439735871
           ],
           [
-            5589.0,
+            5589,
             -33.8105189351603,
             37.0555064331954,
             -34.4017318381187
@@ -20332,7 +20332,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -34.5175990966824
           ],
           [
-            5604.0,
+            5604,
             -34.0079920514611,
             37.0087388579256,
             -34.63935978866
@@ -20344,7 +20344,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -34.758156840534
           ],
           [
-            5619.0,
+            5619,
             -34.2299853512252,
             36.9547299258912,
             -34.8922109307273
@@ -20356,7 +20356,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -35.0251993235089
           ],
           [
-            5634.0,
+            5634,
             -34.4331969054551,
             36.9088480435654,
             -35.152790299479
@@ -20368,7 +20368,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -35.2696874159518
           ],
           [
-            5649.0,
+            5649,
             -34.583059275845,
             36.9044025898508,
             -35.3813439904221
@@ -20380,7 +20380,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -35.4839911672683
           ],
           [
-            5664.0,
+            5664,
             -34.7440442435304,
             36.9021359576746,
             -35.5957421839867
@@ -20392,7 +20392,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -35.708631600137
           ],
           [
-            5679.0,
+            5679,
             -34.892814283814,
             36.9008360669078,
             -35.8137854326623
@@ -20404,7 +20404,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -35.9111504196643
           ],
           [
-            5694.0,
+            5694,
             -35.0337945054587,
             36.9034242272649,
             -36.0004285652714
@@ -20416,7 +20416,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.072746322999
           ],
           [
-            5709.0,
+            5709,
             -35.1841133196893,
             36.922279343183,
             -36.1506458023316
@@ -20428,7 +20428,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.2440915926639
           ],
           [
-            5724.0,
+            5724,
             -35.3381083212497,
             36.9247273740782,
             -36.3230010314487
@@ -20440,7 +20440,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.3976351492084
           ],
           [
-            5739.0,
+            5739,
             -35.502891852991,
             36.9306065557904,
             -36.4760338334619
@@ -20452,7 +20452,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.5415471042814
           ],
           [
-            5754.0,
+            5754,
             -35.6885440756584,
             36.9362906085465,
             -36.6122563050179
@@ -20464,7 +20464,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.6851566076303
           ],
           [
-            5769.0,
+            5769,
             -35.8734472829465,
             36.9443867179965,
             -36.7511951844623
@@ -20476,7 +20476,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.8132450813008
           ],
           [
-            5784.0,
+            5784,
             -36.0573201108887,
             36.968596213968,
             -36.8830297300521
@@ -20488,7 +20488,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -36.9687291389581
           ],
           [
-            5799.0,
+            5799,
             -36.2586855342166,
             36.9482848225366,
             -37.0631374833987
@@ -20500,7 +20500,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -37.1772332853081
           ],
           [
-            5814.0,
+            5814,
             -36.4605501628737,
             36.9014058570511,
             -37.308309678219
@@ -20512,7 +20512,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -37.4160627265323
           ],
           [
-            5829.0,
+            5829,
             -36.6522859832294,
             36.8745415345185,
             -37.5057751907439
@@ -20524,7 +20524,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -37.6129624825665
           ],
           [
-            5844.0,
+            5844,
             -36.8693451341742,
             36.8228153889923,
             -37.7334049565465
@@ -20536,7 +20536,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -37.8471438635854
           ],
           [
-            5859.0,
+            5859,
             -37.0637604011522,
             36.7769023856042,
             -37.9614300279064
@@ -20548,7 +20548,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -38.073320211345
           ],
           [
-            5874.0,
+            5874,
             -37.2359927105885,
             36.7463761907797,
             -38.1772194528583
@@ -20560,7 +20560,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -38.2841358439621
           ],
           [
-            5889.0,
+            5889,
             -37.3955964102365,
             36.7243964809235,
             -38.4045163663355
@@ -20572,7 +20572,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -38.53265103647
           ],
           [
-            5904.0,
+            5904,
             -37.537720725347,
             36.6978108983648,
             -38.6515646535064
@@ -20584,7 +20584,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -38.7661768971859
           ],
           [
-            5919.0,
+            5919,
             -37.6939546598363,
             36.6710003687049,
             -38.8767090405281
@@ -20596,7 +20596,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -38.9872779957878
           ],
           [
-            5934.0,
+            5934,
             -37.8294404441576,
             36.6613880412638,
             -39.0916259104392
@@ -20608,7 +20608,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -39.1992221414342
           ],
           [
-            5949.0,
+            5949,
             -37.9736469597667,
             36.6308348967111,
             -39.3147144065228
@@ -20620,7 +20620,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -39.4385971099905
           ],
           [
-            5964.0,
+            5964,
             -38.101504431481,
             36.5912504388145,
             -39.5675911376491
@@ -20632,7 +20632,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -39.6747406297673
           ],
           [
-            5979.0,
+            5979,
             -38.2143681761253,
             36.5875327863029,
             -39.7613059402968
@@ -20644,7 +20644,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -39.8467892132906
           ],
           [
-            5994.0,
+            5994,
             -38.3219228348801,
             36.5974199640311,
             -39.9261195142894
@@ -20656,7 +20656,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -39.9857782724247
           ],
           [
-            6009.0,
+            6009,
             -38.4558740521182,
             36.6025405495458,
             -40.0689910516776
@@ -20668,7 +20668,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -40.1626187973567
           ],
           [
-            6024.0,
+            6024,
             -38.5828372578637,
             36.5889314649683,
             -40.2717020657315
@@ -20680,7 +20680,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -40.3683061033461
           ],
           [
-            6039.0,
+            6039,
             -38.7122000223256,
             36.5707186722399,
             -40.4801048878464
@@ -20692,7 +20692,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -40.6001409758849
           ],
           [
-            6054.0,
+            6054,
             -38.8853250456187,
             36.5321495897859,
             -40.7168263049087
@@ -20704,7 +20704,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -40.8329842734367
           ],
           [
-            6069.0,
+            6069,
             -39.0889888333688,
             36.4678781981192,
             -40.9674625592124
@@ -20716,7 +20716,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -41.1036514419975
           ],
           [
-            6084.0,
+            6084,
             -39.2752050795505,
             36.4032325050761,
             -41.226454749066
@@ -20728,7 +20728,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -41.3663464967949
           ],
           [
-            6099.0,
+            6099,
             -39.4816984798747,
             36.3208573206552,
             -41.5112488058348
@@ -20740,7 +20740,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -41.6581956487396
           ],
           [
-            6114.0,
+            6114,
             -39.7094798755909,
             36.2162082342159,
             -41.7960129870801
@@ -20752,7 +20752,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -41.9151632902112
           ],
           [
-            6129.0,
+            6129,
             -39.9389514226615,
             36.1362368088737,
             -42.0364224202575
@@ -20764,7 +20764,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -42.1791861053434
           ],
           [
-            6144.0,
+            6144,
             -40.2180062398833,
             36.0124235700386,
             -42.3036375364587
@@ -20776,7 +20776,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -42.4408725213468
           ],
           [
-            6159.0,
+            6159,
             -40.5078881262962,
             35.8741298532765,
             -42.5805750119975
@@ -20788,7 +20788,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -42.7303915670113
           ],
           [
-            6174.0,
+            6174,
             -40.7976046611382,
             35.7415425335823,
             -42.8675387596115
@@ -20800,7 +20800,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -43.0031072296723
           ],
           [
-            6189.0,
+            6189,
             -41.0819553867351,
             35.6081590537948,
             -43.1561105970089
@@ -20812,7 +20812,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -43.314835700407
           ],
           [
-            6204.0,
+            6204,
             -41.3640608898405,
             35.4715842664598,
             -43.4611149249806
@@ -20824,7 +20824,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -43.5915557073086
           ],
           [
-            6219.0,
+            6219,
             -41.6109225098058,
             35.3878451052808,
             -43.692434730357
@@ -20836,7 +20836,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -43.8003069606902
           ],
           [
-            6234.0,
+            6234,
             -41.8616870660281,
             35.3183896990455,
             -43.8964687448579
@@ -20848,7 +20848,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -43.9855471245849
           ],
           [
-            6249.0,
+            6249,
             -42.121532770719,
             35.2495369899916,
             -44.0750309675875
@@ -20860,7 +20860,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -44.1695918626898
           ],
           [
-            6264.0,
+            6264,
             -42.3427148783023,
             35.1885595826848,
             -44.2598220953098
@@ -20872,7 +20872,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -44.3454342616093
           ],
           [
-            6279.0,
+            6279,
             -42.5587593346287,
             35.1354879394685,
             -44.4311772475336
@@ -20884,7 +20884,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -44.5274095555993
           ],
           [
-            6294.0,
+            6294,
             -42.7666291610365,
             35.0737210567417,
             -44.6017128494978
@@ -20896,7 +20896,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -44.6762768825423
           ],
           [
-            6309.0,
+            6309,
             -42.9676946001381,
             35.0101082311203,
             -44.7557063095737
@@ -20908,7 +20908,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -44.8316444659
           ],
           [
-            6324.0,
+            6324,
             -43.1734311448127,
             34.9482484029365,
             -44.9416769822368
@@ -20920,7 +20920,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -45.046534298664
           ],
           [
-            6339.0,
+            6339,
             -43.3768426174104,
             34.8792303006231,
             -45.1753792037027
@@ -20932,7 +20932,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -45.2944434028319
           ],
           [
-            6354.0,
+            6354,
             -43.5673831030098,
             34.8221007557325,
             -45.3969784107723
@@ -20944,7 +20944,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -45.5041578072024
           ],
           [
-            6369.0,
+            6369,
             -43.7641431850952,
             34.7376023886166,
             -45.625483100706
@@ -20956,7 +20956,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -45.7419869970516
           ],
           [
-            6384.0,
+            6384,
             -44.0031781547185,
             34.6206446587659,
             -45.8532013323265
@@ -20968,7 +20968,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -45.9616456970239
           ],
           [
-            6399.0,
+            6399,
             -44.2376151985085,
             34.5124229273658,
             -46.0705371578308
@@ -20980,7 +20980,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -46.1858989514213
           ],
           [
-            6414.0,
+            6414,
             -44.5138376144773,
             34.3838238160465,
             -46.2852380773241
@@ -20992,7 +20992,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -46.3498714847527
           ],
           [
-            6429.0,
+            6429,
             -44.7718106710106,
             34.2901680258837,
             -46.4169063359271
@@ -21004,7 +21004,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -46.4950472841096
           ],
           [
-            6444.0,
+            6444,
             -45.0246960889042,
             34.1821831405752,
             -46.5782026093519
@@ -21016,7 +21016,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -46.6678971732729
           ],
           [
-            6459.0,
+            6459,
             -45.297290367053,
             34.0572562948877,
             -46.7772547891401
@@ -21028,7 +21028,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -46.8678302979419
           ],
           [
-            6474.0,
+            6474,
             -45.5337942844465,
             33.9502189047064,
             -46.9620758628908
@@ -21040,7 +21040,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -47.0440761718621
           ],
           [
-            6489.0,
+            6489,
             -45.7981433411129,
             33.8311355896588,
             -47.128010919021
@@ -21052,7 +21052,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -47.2236555119175
           ],
           [
-            6504.0,
+            6504,
             -46.0658278518118,
             33.6904961289211,
             -47.3340437821901
@@ -21064,7 +21064,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -47.4581580292645
           ],
           [
-            6519.0,
+            6519,
             -46.3604122300302,
             33.5102463361733,
             -47.6017605118785
@@ -21076,7 +21076,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -47.7207423969604
           ],
           [
-            6534.0,
+            6534,
             -46.6522400217285,
             33.3444193416748,
             -47.8368114669617
@@ -21088,7 +21088,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -47.9718083924005
           ],
           [
-            6549.0,
+            6549,
             -46.9842095252914,
             33.1489237456857,
             -48.1186643606444
@@ -21100,7 +21100,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -48.2753602517769
           ],
           [
-            6564.0,
+            6564,
             -47.3281824918938,
             32.9385955936572,
             -48.4339529965216
@@ -21112,7 +21112,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -48.5957462851097
           ],
           [
-            6579.0,
+            6579,
             -47.6776522001638,
             32.7308682391704,
             -48.7776868470837
@@ -21124,7 +21124,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -48.9591760778624
           ],
           [
-            6594.0,
+            6594,
             -48.0369038215323,
             32.5076792830979,
             -49.1329177458241
@@ -21136,7 +21136,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -49.3134309302032
           ],
           [
-            6609.0,
+            6609,
             -48.4317208221518,
             32.2518146961404,
             -49.4816186804841
@@ -21148,7 +21148,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -49.6262075511676
           ],
           [
-            6624.0,
+            6624,
             -48.7936771801016,
             32.0377541152233,
             -49.7705904489691
@@ -21160,7 +21160,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -49.9152945268971
           ],
           [
-            6639.0,
+            6639,
             -49.1378550507685,
             31.8371344337544,
             -50.0562839728046
@@ -21172,7 +21172,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -50.1843719987168
           ],
           [
-            6654.0,
+            6654,
             -49.4626899153761,
             31.6620302952303,
             -50.3192355683388
@@ -21184,7 +21184,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -50.4556404676883
           ],
           [
-            6669.0,
+            6669,
             -49.7445592137174,
             31.5081916477558,
             -50.577653431014
@@ -21196,7 +21196,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -50.7178369171123
           ],
           [
-            6684.0,
+            6684,
             -49.995981649559,
             31.3603349369274,
             -50.8568083052537
@@ -21208,7 +21208,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -50.9950091547269
           ],
           [
-            6699.0,
+            6699,
             -50.2088794983423,
             31.2238624364689,
             -51.1581329476514
@@ -21220,7 +21220,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -51.3234451622429
           ],
           [
-            6714.0,
+            6714,
             -50.4360913404425,
             31.0754874425195,
             -51.4816188849969
@@ -21232,7 +21232,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -51.6417748588793
           ],
           [
-            6729.0,
+            6729,
             -50.6433588803984,
             30.9492469610932,
             -51.781809833226
@@ -21244,7 +21244,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -51.9378782258717
           ],
           [
-            6744.0,
+            6744,
             -50.8325882623377,
             30.8322045811749,
             -52.0922131327201
@@ -21256,7 +21256,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -52.2708315870584
           ],
           [
-            6759.0,
+            6759,
             -51.0378234102281,
             30.6952798205552,
             -52.4409524885769
@@ -21268,7 +21268,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -52.6020569480474
           ],
           [
-            6774.0,
+            6774,
             -51.2412358845444,
             30.5749711934455,
             -52.7395873654758
@@ -21280,7 +21280,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -52.8645280102439
           ],
           [
-            6789.0,
+            6789,
             -51.4277505266757,
             30.4759846634653,
             -52.9969677713406
@@ -21292,7 +21292,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -53.1367109872941
           ],
           [
-            6804.0,
+            6804,
             -51.6050353900303,
             30.3755807182899,
             -53.2720997722869
@@ -21304,7 +21304,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -53.4071948120444
           ],
           [
-            6819.0,
+            6819,
             -51.7863824258518,
             30.278805596517,
             -53.5455061834879
@@ -21316,7 +21316,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -53.7064880246294
           ],
           [
-            6834.0,
+            6834,
             -52.0090490359662,
             30.1271225975394,
             -53.8824655075598
@@ -21328,7 +21328,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -54.0299603100642
           ],
           [
-            6849.0,
+            6849,
             -52.2057630250141,
             29.9837443368416,
             -54.1911014367798
@@ -21340,7 +21340,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -54.3384087089411
           ],
           [
-            6864.0,
+            6864,
             -52.4430026534319,
             29.8337324928835,
             -54.4895252054344
@@ -21352,7 +21352,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -54.6390616615955
           ],
           [
-            6879.0,
+            6879,
             -52.6585323765778,
             29.700218655563,
             -54.8026106839442
@@ -21364,7 +21364,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -54.9711022248359
           ],
           [
-            6894.0,
+            6894,
             -52.8558935226047,
             29.5633432594199,
             -55.1359234148404
@@ -21376,7 +21376,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -55.3155209133173
           ],
           [
-            6909.0,
+            6909,
             -53.0683174030186,
             29.4206096107704,
             -55.4881527854618
@@ -21388,7 +21388,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -55.6447450925509
           ],
           [
-            6924.0,
+            6924,
             -53.3021546361604,
             29.2787641680533,
             -55.7985498379727
@@ -21400,7 +21400,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -55.9415568412545
           ],
           [
-            6939.0,
+            6939,
             -53.5282853434926,
             29.1713606316255,
             -56.0747309553718
@@ -21412,7 +21412,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -56.2191599715208
           ],
           [
-            6954.0,
+            6954,
             -53.7460640420551,
             29.0605801841688,
             -56.3517849803784
@@ -21424,7 +21424,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -56.4848128385083
           ],
           [
-            6969.0,
+            6969,
             -53.9710280855732,
             28.9233260901111,
             -56.6276981758587
@@ -21436,7 +21436,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -56.7694271328379
           ],
           [
-            6984.0,
+            6984,
             -54.1793855543382,
             28.7965934421555,
             -56.9067487163535
@@ -21448,7 +21448,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -57.0371884817421
           ],
           [
-            6999.0,
+            6999,
             -54.3531508579691,
             28.7034780738779,
             -57.1526743479352
@@ -21460,7 +21460,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -57.2706734608795
           ],
           [
-            7014.0,
+            7014,
             -54.5613993522873,
             28.591121242303,
             -57.3820722749342
@@ -21472,7 +21472,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -57.4894418982465
           ],
           [
-            7029.0,
+            7029,
             -54.7828423951362,
             28.4651057171046,
             -57.5912808610228
@@ -21484,7 +21484,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -57.7057062680093
           ],
           [
-            7044.0,
+            7044,
             -55.0142137168012,
             28.3184212614167,
             -57.8146499950131
@@ -21496,7 +21496,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -57.9507851428961
           ],
           [
-            7059.0,
+            7059,
             -55.2558303806249,
             28.137839293858,
             -58.0928927187083
@@ -21508,7 +21508,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -58.2378436165887
           ],
           [
-            7074.0,
+            7074,
             -55.4980679121953,
             27.9550691250452,
             -58.3726377042998
@@ -21520,7 +21520,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -58.5113123878852
           ],
           [
-            7089.0,
+            7089,
             -55.770293017481,
             27.7628574496504,
             -58.6696616771897
@@ -21532,7 +21532,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -58.8210266079646
           ],
           [
-            7104.0,
+            7104,
             -56.0225853912444,
             27.5950818696011,
             -58.9770022886143
@@ -21544,7 +21544,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -59.1344439401472
           ],
           [
-            7119.0,
+            7119,
             -56.2626889870424,
             27.4451516225994,
             -59.295362361593
@@ -21556,7 +21556,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -59.4608910560066
           ],
           [
-            7134.0,
+            7134,
             -56.5291182161146,
             27.2845705713316,
             -59.6311979768397
@@ -21568,7 +21568,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -59.7964357900228
           ],
           [
-            7149.0,
+            7149,
             -56.7818617403459,
             27.1272404782231,
             -59.9644806436475
@@ -21580,7 +21580,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -60.1317399883902
           ],
           [
-            7164.0,
+            7164,
             -57.0531477037122,
             26.9682205509141,
             -60.2832502058199
@@ -21592,7 +21592,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -60.4340827633352
           ],
           [
-            7179.0,
+            7179,
             -57.3490367674743,
             26.8073543833511,
             -60.5755020099173
@@ -21604,7 +21604,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -60.716648018673
           ],
           [
-            7194.0,
+            7194,
             -57.6548145476451,
             26.6368448403076,
             -60.8695272612175
@@ -21616,7 +21616,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -61.0282813719634
           ],
           [
-            7209.0,
+            7209,
             -57.9787287263781,
             26.4373136735222,
             -61.2037507368857
@@ -21628,7 +21628,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -61.3669774988575
           ],
           [
-            7224.0,
+            7224,
             -58.2711437780408,
             26.2623623235483,
             -61.5205293407909
@@ -21640,7 +21640,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -61.6369896030152
           ],
           [
-            7239.0,
+            7239,
             -58.5277963861563,
             26.120790742261,
             -61.7859225049918
@@ -21652,7 +21652,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -61.916748079357
           ],
           [
-            7254.0,
+            7254,
             -58.753919095616,
             25.9843745640567,
             -62.0720264331542
@@ -21664,7 +21664,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -62.2338457464345
           ],
           [
-            7269.0,
+            7269,
             -58.9623455874241,
             25.8657991189146,
             -62.3834159147437
@@ -21676,7 +21676,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -62.5417913486693
           ],
           [
-            7284.0,
+            7284,
             -59.1672659985785,
             25.7563363891115,
             -62.6933322875934
@@ -21688,7 +21688,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -62.870642850237
           ],
           [
-            7299.0,
+            7299,
             -59.3825428401519,
             25.6197739113727,
             -63.017627076271
@@ -21700,7 +21700,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -63.2054093672751
           ],
           [
-            7314.0,
+            7314,
             -59.6068508733576,
             25.4351561709601,
             -63.4077056543213
@@ -21712,7 +21712,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -63.6017059073214
           ],
           [
-            7329.0,
+            7329,
             -59.8664246021851,
             25.2419848503228,
             -63.8184733597246
@@ -21724,7 +21724,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -64.0338668641939
           ],
           [
-            7344.0,
+            7344,
             -60.151272792753,
             25.0570585522073,
             -64.239603176658
@@ -21736,7 +21736,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -64.4329919972054
           ],
           [
-            7359.0,
+            7359,
             -60.4205643969819,
             24.8990543923971,
             -64.6372295843632
@@ -21748,7 +21748,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -64.8368346621664
           ],
           [
-            7374.0,
+            7374,
             -60.724097813255,
             24.7155730994822,
             -65.0486403910667
@@ -21760,7 +21760,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -65.2415973224933
           ],
           [
-            7389.0,
+            7389,
             -61.0027839790838,
             24.5447437486095,
             -65.4310244788867
@@ -21772,7 +21772,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -65.5909630696513
           ],
           [
-            7404.0,
+            7404,
             -61.3174692928242,
             24.3716796300155,
             -65.7365177548614
@@ -21784,7 +21784,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -65.8603506753343
           ],
           [
-            7419.0,
+            7419,
             -61.6182935335213,
             24.2231948976067,
             -65.9977427538172
@@ -21796,7 +21796,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -66.1322915680072
           ],
           [
-            7434.0,
+            7434,
             -61.9001255483381,
             24.0834795056021,
             -66.2648811638326
@@ -21808,7 +21808,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -66.4015644161297
           ],
           [
-            7449.0,
+            7449,
             -62.1939723114021,
             23.9321873713483,
             -66.5608750006076
@@ -21820,7 +21820,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -66.7000253098537
           ],
           [
-            7464.0,
+            7464,
             -62.4554691144386,
             23.8036445623923,
             -66.8210244428733
@@ -21832,7 +21832,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -66.9451961503612
           ],
           [
-            7479.0,
+            7479,
             -62.7142825943527,
             23.6808005841165,
             -67.0521941557487
@@ -21844,7 +21844,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -67.1611167216622
           ],
           [
-            7494.0,
+            7494,
             -62.9709757004985,
             23.5575085080819,
             -67.2780197584325
@@ -21856,7 +21856,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -67.3860532393098
           ],
           [
-            7509.0,
+            7509,
             -63.2494376378883,
             23.4323005947634,
             -67.4915405838546
@@ -21868,7 +21868,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -67.5983307143815
           ],
           [
-            7524.0,
+            7524,
             -63.5090368868685,
             23.3272226566447,
             -67.6988730405059
@@ -21880,7 +21880,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -67.7967030260922
           ],
           [
-            7539.0,
+            7539,
             -63.7735600564693,
             23.2250374492085,
             -67.8783436148767
@@ -21892,7 +21892,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -67.9558716837187
           ],
           [
-            7554.0,
+            7554,
             -63.9956539100521,
             23.1644150903406,
             -68.0256226975799
@@ -21904,7 +21904,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -68.1148999418279
           ],
           [
-            7569.0,
+            7569,
             -64.2386519299878,
             23.0741112770623,
             -68.2121251591134
@@ -21916,7 +21916,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -68.3075272391897
           ],
           [
-            7584.0,
+            7584,
             -64.5167325737147,
             22.9547025887414,
             -68.4276423128447
@@ -21928,7 +21928,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -68.5388728040238
           ],
           [
-            7599.0,
+            7599,
             -64.8035903639596,
             22.8092399042968,
             -68.6622625446609
@@ -21940,7 +21940,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -68.7859369634693
           ],
           [
-            7614.0,
+            7614,
             -65.0612140260951,
             22.6832519258532,
             -68.9174306060144
@@ -21952,7 +21952,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -69.048789540555
           ],
           [
-            7629.0,
+            7629,
             -65.341313575884,
             22.5326941657679,
             -69.1995406224961
@@ -21964,7 +21964,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -69.3445830848108
           ],
           [
-            7644.0,
+            7644,
             -65.6604288246106,
             22.3603279454203,
             -69.4983615205108
@@ -21976,7 +21976,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -69.6508154205885
           ],
           [
-            7659.0,
+            7659,
             -65.972545609686,
             22.1879486807546,
             -69.7877654021333
@@ -21988,7 +21988,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -69.9305509780852
           ],
           [
-            7674.0,
+            7674,
             -66.3101916317914,
             22.011777167552,
             -70.0713992933444
@@ -22000,7 +22000,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -70.2174023088861
           ],
           [
-            7689.0,
+            7689,
             -66.6193073547331,
             21.827367870944,
             -70.3863669542827
@@ -22012,7 +22012,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -70.5478495535616
           ],
           [
-            7704.0,
+            7704,
             -66.9113910399987,
             21.6433346104055,
             -70.707870323677
@@ -22024,7 +22024,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -70.8512141671114
           ],
           [
-            7719.0,
+            7719,
             -67.2095546064212,
             21.4854789407733,
             -70.9941879899991
@@ -22036,7 +22036,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -71.1400123848734
           ],
           [
-            7734.0,
+            7734,
             -67.4933252072049,
             21.3568986157687,
             -71.2832929168391
@@ -22048,7 +22048,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -71.4030692615003
           ],
           [
-            7749.0,
+            7749,
             -67.7704392197201,
             21.2326182090001,
             -71.537103158784
@@ -22060,7 +22060,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -71.6787998410609
           ],
           [
-            7764.0,
+            7764,
             -68.0672294369948,
             21.0759447366502,
             -71.8262910372765
@@ -22072,7 +22072,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -71.949862342414
           ],
           [
-            7779.0,
+            7779,
             -68.3770875745811,
             20.9242158065256,
             -72.0754830644154
@@ -22084,7 +22084,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -72.2167302532303
           ],
           [
-            7794.0,
+            7794,
             -68.6553791507128,
             20.7825405518072,
             -72.3476106080494
@@ -22096,7 +22096,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -72.4808668616689
           ],
           [
-            7809.0,
+            7809,
             -68.9815044513161,
             20.6140398560988,
             -72.5892085227619
@@ -22108,7 +22108,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -72.6783723535301
           ],
           [
-            7824.0,
+            7824,
             -69.2672520542875,
             20.4869181417428,
             -72.7928738540506
@@ -22120,7 +22120,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -72.8814081065796
           ],
           [
-            7839.0,
+            7839,
             -69.5448435562418,
             20.3712248105668,
             -72.9709033711746
@@ -22132,7 +22132,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.068971021429
           ],
           [
-            7854.0,
+            7854,
             -69.8435057409943,
             20.2354179117476,
             -73.1615862298009
@@ -22144,7 +22144,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.2517079752304
           ],
           [
-            7869.0,
+            7869,
             -70.0848155621897,
             20.1321418450144,
             -73.3271958755583
@@ -22156,7 +22156,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.4029379950173
           ],
           [
-            7884.0,
+            7884,
             -70.3170253379444,
             20.048160116378,
             -73.4861182680905
@@ -22168,7 +22168,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.5804883506868
           ],
           [
-            7899.0,
+            7899,
             -70.5782003034717,
             19.932703275133,
             -73.685214374745
@@ -22180,7 +22180,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.7917919004691
           ],
           [
-            7914.0,
+            7914,
             -70.8246549717443,
             19.8274141070725,
             -73.87286286721
@@ -22192,7 +22192,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -73.9715044688961
           ],
           [
-            7929.0,
+            7929,
             -71.0630554404684,
             19.7128453205365,
             -74.0978966056887
@@ -22204,7 +22204,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -74.2245733891466
           ],
           [
-            7944.0,
+            7944,
             -71.3607156534208,
             19.5462527935206,
             -74.3459376361186
@@ -22216,7 +22216,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -74.4487293017959
           ],
           [
-            7959.0,
+            7959,
             -71.6599595113688,
             19.406882016888,
             -74.5607473396177
@@ -22228,7 +22228,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -74.6981343672759
           ],
           [
-            7974.0,
+            7974,
             -71.9614599868851,
             19.2456380637059,
             -74.8391269848413
@@ -22240,7 +22240,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -75.0154814804392
           ],
           [
-            7989.0,
+            7989,
             -72.2426529437279,
             19.0614182221732,
             -75.1992954492863
@@ -22252,7 +22252,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -75.3714779841571
           ],
           [
-            8004.0,
+            8004,
             -72.5480002527039,
             18.8685765223138,
             -75.5256423652292
@@ -22264,7 +22264,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -75.6567143850404
           ],
           [
-            8019.0,
+            8019,
             -72.8312987416671,
             18.7064049680288,
             -75.7777060984042
@@ -22276,7 +22276,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -75.8735635632536
           ],
           [
-            8034.0,
+            8034,
             -73.1069681785916,
             18.5408172115424,
             -75.9968683161712
@@ -22288,7 +22288,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -76.1226143151769
           ],
           [
-            8049.0,
+            8049,
             -73.3925569579142,
             18.365753221077,
             -76.2508415874704
@@ -22300,7 +22300,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -76.3852597102108
           ],
           [
-            8064.0,
+            8064,
             -73.7020555116921,
             18.1655900733646,
             -76.5486219115992
@@ -22312,7 +22312,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -76.7137667918981
           ],
           [
-            8079.0,
+            8079,
             -74.0217799346014,
             17.9540845684721,
             -76.8702679726898
@@ -22324,7 +22324,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -77.019416755761
           ],
           [
-            8094.0,
+            8094,
             -74.3390569371157,
             17.7490064821475,
             -77.1566192123373
@@ -22336,7 +22336,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -77.322625436385
           ],
           [
-            8109.0,
+            8109,
             -74.660494825856,
             17.5187770555212,
             -77.477718610055
@@ -22348,7 +22348,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -77.6040372455384
           ],
           [
-            8124.0,
+            8124,
             -74.961127223852,
             17.3333444693968,
             -77.7153431089751
@@ -22360,7 +22360,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -77.8230169090513
           ],
           [
-            8139.0,
+            8139,
             -75.2799004521902,
             17.1479319897707,
             -77.9304619082423
@@ -22372,7 +22372,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -78.0216002499785
           ],
           [
-            8154.0,
+            8154,
             -75.5618859524418,
             16.9798558925736,
             -78.1411318008292
@@ -22384,7 +22384,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -78.2613266185804
           ],
           [
-            8169.0,
+            8169,
             -75.848543976808,
             16.7696061717531,
             -78.4018285344298
@@ -22396,7 +22396,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -78.528130947165
           ],
           [
-            8184.0,
+            8184,
             -76.16675500232,
             16.5308535080333,
             -78.6659130288594
@@ -22408,7 +22408,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -78.8207085336557
           ],
           [
-            8199.0,
+            8199,
             -76.5343698408469,
             16.2316218900093,
             -78.9951236795084
@@ -22420,7 +22420,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -79.1402149415648
           ],
           [
-            8214.0,
+            8214,
             -76.8809059097506,
             15.9663979170025,
             -79.3012257357657
@@ -22432,7 +22432,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -79.4551804484757
           ],
           [
-            8229.0,
+            8229,
             -77.217501776747,
             15.7097466823452,
             -79.6134598521987
@@ -22444,7 +22444,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -79.7617142623195
           ],
           [
-            8244.0,
+            8244,
             -77.5237788005411,
             15.4958384718454,
             -79.8993660516086
@@ -22456,7 +22456,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -80.0250154741891
           ],
           [
-            8259.0,
+            8259,
             -77.8238839398913,
             15.2908490366616,
             -80.1581711282773
@@ -22468,7 +22468,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -80.313431816137
           ],
           [
-            8274.0,
+            8274,
             -78.1766325874038,
             15.0470039709727,
             -80.4682555580457
@@ -22480,7 +22480,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -80.6438734883883
           ],
           [
-            8289.0,
+            8289,
             -78.5468502684015,
             14.7796269563504,
             -80.8208594683846
@@ -22492,7 +22492,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -80.9956280001537
           ],
           [
-            8304.0,
+            8304,
             -78.8680452151642,
             14.5435627547086,
             -81.1666949484964
@@ -22504,7 +22504,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -81.3486372665175
           ],
           [
-            8319.0,
+            8319,
             -79.2082413372646,
             14.288211138743,
             -81.5391494571047
@@ -22516,7 +22516,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -81.7230197271303
           ],
           [
-            8334.0,
+            8334,
             -79.5593487160468,
             14.0188509446801,
             -81.9042570683209
@@ -22528,7 +22528,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -82.0793785205838
           ],
           [
-            8349.0,
+            8349,
             -79.8853004349048,
             13.772581338057,
             -82.2305407738897
@@ -22540,7 +22540,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -82.3815563109733
           ],
           [
-            8364.0,
+            8364,
             -80.1625941632685,
             13.5682630904095,
             -82.5205269710921
@@ -22552,7 +22552,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -82.6667316324715
           ],
           [
-            8379.0,
+            8379,
             -80.4350359400456,
             13.3781818587675,
             -82.8051499437574
@@ -22564,7 +22564,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -82.9451855203548
           ],
           [
-            8394.0,
+            8394,
             -80.7204789451301,
             13.1707035147682,
             -83.1081035847456
@@ -22576,7 +22576,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -83.2689567012813
           ],
           [
-            8409.0,
+            8409,
             -80.9900196267433,
             12.9688498409429,
             -83.4160408060082
@@ -22588,7 +22588,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -83.5604170849206
           ],
           [
-            8424.0,
+            8424,
             -81.2713006832015,
             12.7515381893886,
             -83.7441771689584
@@ -22600,7 +22600,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -83.9273102823898
           ],
           [
-            8439.0,
+            8439,
             -81.5573923586244,
             12.5225353036792,
             -84.1060261851642
@@ -22612,7 +22612,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -84.2876280958929
           ],
           [
-            8454.0,
+            8454,
             -81.8452663115901,
             12.2751053190659,
             -84.4835110248862
@@ -22624,7 +22624,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -84.6852319564068
           ],
           [
-            8469.0,
+            8469,
             -82.1296447609839,
             12.0256632858586,
             -84.87228581231
@@ -22636,7 +22636,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -85.0629255565808
           ],
           [
-            8484.0,
+            8484,
             -82.4290441793979,
             11.7774955431442,
             -85.2452052425352
@@ -22648,7 +22648,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -85.4018002843552
           ],
           [
-            8499.0,
+            8499,
             -82.6973806537522,
             11.5861690615237,
             -85.5716535697176
@@ -22660,7 +22660,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -85.7663279422325
           ],
           [
-            8514.0,
+            8514,
             -82.9948472441521,
             11.3741921815618,
             -85.9625572679517
@@ -22672,7 +22672,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -86.1365838468766
           ],
           [
-            8529.0,
+            8529,
             -83.2704441090775,
             11.1909335546718,
             -86.3246096316806
@@ -22684,7 +22684,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -86.5180024728904
           ],
           [
-            8544.0,
+            8544,
             -83.560057450107,
             10.9793334481195,
             -86.677583440192
@@ -22696,7 +22696,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -86.826373575455
           ],
           [
-            8559.0,
+            8559,
             -83.8437424430681,
             10.7921591687734,
             -86.9784588289652
@@ -22708,7 +22708,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -87.1579769417963
           ],
           [
-            8574.0,
+            8574,
             -84.1269958860533,
             10.5794020082079,
             -87.3361632997656
@@ -22720,7 +22720,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -87.4997127458072
           ],
           [
-            8589.0,
+            8589,
             -84.3565022891672,
             10.4111457172726,
             -87.6542465090404
@@ -22732,7 +22732,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -87.7954098890758
           ],
           [
-            8604.0,
+            8604,
             -84.5796800829063,
             10.2527528935807,
             -87.9398785366369
@@ -22744,7 +22744,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -88.0813432081001
           ],
           [
-            8619.0,
+            8619,
             -84.7676399125224,
             10.120423447658,
             -88.2398227844585
@@ -22756,7 +22756,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -88.3839995633432
           ],
           [
-            8634.0,
+            8634,
             -84.928169788294,
             9.99518464298797,
             -88.5340118107804
@@ -22768,7 +22768,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -88.6867378917629
           ],
           [
-            8649.0,
+            8649,
             -85.0878084106888,
             9.8581770363911,
             -88.8667119262599
@@ -22780,7 +22780,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -89.026455610441
           ],
           [
-            8664.0,
+            8664,
             -85.2365493619647,
             9.73640099463797,
             -89.1885454267961
@@ -22792,7 +22792,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -89.3718900777579
           ],
           [
-            8679.0,
+            8679,
             -85.4042920882548,
             9.60232479643702,
             -89.5604563884185
@@ -22804,7 +22804,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -89.7465059363889
           ],
           [
-            8694.0,
+            8694,
             -85.5677475963423,
             9.46604334010643,
             -89.9234046474675
@@ -22816,7 +22816,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -90.0968439354387
           ],
           [
-            8709.0,
+            8709,
             -85.753781231135,
             9.3213290539892,
             -90.2394618148591
@@ -22828,7 +22828,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -90.3660660652527
           ],
           [
-            8724.0,
+            8724,
             -85.9264587601234,
             9.18064444253847,
             -90.5001671385384
@@ -22840,7 +22840,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -90.6370812678883
           ],
           [
-            8739.0,
+            8739,
             -86.1456416668684,
             8.98636633438352,
             -90.7906662478393
@@ -22852,7 +22852,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -90.9434183467528
           ],
           [
-            8754.0,
+            8754,
             -86.4289236975505,
             8.74845608097822,
             -91.1194849190795
@@ -22864,7 +22864,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -91.2853724758141
           ],
           [
-            8769.0,
+            8769,
             -86.7668579955268,
             8.48092353507599,
             -91.4666041825797
@@ -22876,7 +22876,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -91.6754266093781
           ],
           [
-            8784.0,
+            8784,
             -87.0962057400565,
             8.1947595909065,
             -91.8846094768401
@@ -22888,7 +22888,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -92.1049754247654
           ],
           [
-            8799.0,
+            8799,
             -87.4665942014025,
             7.88268348294803,
             -92.3195044317072
@@ -22900,7 +22900,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -92.5336123709895
           ],
           [
-            8814.0,
+            8814,
             -87.8332819290321,
             7.56340793230452,
             -92.7742489807604
@@ -22912,7 +22912,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -93.0301451870937
           ],
           [
-            8829.0,
+            8829,
             -88.1746255251735,
             7.24465159485829,
             -93.2719018316459
@@ -22924,7 +22924,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -93.5201995171315
           ],
           [
-            8844.0,
+            8844,
             -88.5303927837739,
             6.92577631263432,
             -93.7299226715377
@@ -22936,7 +22936,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -93.9553044260151
           ],
           [
-            8859.0,
+            8859,
             -88.8851574624812,
             6.60834407095413,
             -94.1810315869183
@@ -22948,7 +22948,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -94.4055384190905
           ],
           [
-            8874.0,
+            8874,
             -89.2117667261224,
             6.3144033235108,
             -94.598554103571
@@ -22960,7 +22960,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -94.7639504155394
           ],
           [
-            8889.0,
+            8889,
             -89.5024411007106,
             6.08445516894768,
             -94.9364607206439
@@ -22972,7 +22972,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -95.0938628731716
           ],
           [
-            8904.0,
+            8904,
             -89.7604718037171,
             5.89318078977902,
             -95.2578880221322
@@ -22984,7 +22984,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -95.4215838130152
           ],
           [
-            8919.0,
+            8919,
             -90.0017713487519,
             5.7149406917387,
             -95.5837736148533
@@ -22996,7 +22996,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -95.7127891000324
           ],
           [
-            8934.0,
+            8934,
             -90.2010960456853,
             5.59772909694665,
             -95.8066084868126
@@ -23008,7 +23008,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -95.8687742040265
           ],
           [
-            8949.0,
+            8949,
             -90.3570927080726,
             5.52084334747024,
             -95.9365467957637
@@ -23020,7 +23020,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -95.9915175556154
           ],
           [
-            8964.0,
+            8964,
             -90.5190566765895,
             5.44682094486165,
             -96.0657543903622
@@ -23032,7 +23032,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -96.1195790107274
           ],
           [
-            8979.0,
+            8979,
             -90.6341444220016,
             5.39464529213087,
             -96.1870657513529
@@ -23044,7 +23044,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -96.2723710116692
           ],
           [
-            8994.0,
+            8994,
             -90.7604140564121,
             5.31236553340936,
             -96.3917073052182
@@ -23056,7 +23056,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -96.4806842678766
           ],
           [
-            9009.0,
+            9009,
             -90.9295353387288,
             5.18804742465279,
             -96.6167096003223
@@ -23068,7 +23068,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -96.729454464159
           ],
           [
-            9024.0,
+            9024,
             -91.1137201974655,
             5.05853755195006,
             -96.8501390160703
@@ -23080,7 +23080,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -96.9851946337106
           ],
           [
-            9039.0,
+            9039,
             -91.2788317203228,
             4.92868468833478,
             -97.1133725373261
@@ -23092,7 +23092,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -97.2479066003814
           ],
           [
-            9054.0,
+            9054,
             -91.4979883792168,
             4.74493147230574,
             -97.3871357856374
@@ -23104,7 +23104,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -97.5518831022961
           ],
           [
-            9069.0,
+            9069,
             -91.6781838889357,
             4.57361871602297,
             -97.7186721795602
@@ -23116,7 +23116,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -97.8872142951684
           ],
           [
-            9084.0,
+            9084,
             -91.8676760304617,
             4.41972069922498,
             -98.057553020847
@@ -23128,7 +23128,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -98.2146645331277
           ],
           [
-            9099.0,
+            9099,
             -92.0061094534887,
             4.28342221543016,
             -98.3744806946388
@@ -23140,7 +23140,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -98.5315711662699
           ],
           [
-            9114.0,
+            9114,
             -92.1107339008919,
             4.16905037334795,
             -98.6870390122523
@@ -23152,7 +23152,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -98.8163880317239
           ],
           [
-            9129.0,
+            9129,
             -92.1820863985371,
             4.09535066137967,
             -98.9488466466718
@@ -23164,7 +23164,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -99.0890062131971
           ],
           [
-            9144.0,
+            9144,
             -92.2484232695421,
             4.04426996535698,
             -99.2224338566418
@@ -23176,7 +23176,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -99.3371728356378
           ],
           [
-            9159.0,
+            9159,
             -92.2941497403673,
             4.04029311877576,
             -99.4425484375345
@@ -23188,7 +23188,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -99.5463115667444
           ],
           [
-            9174.0,
+            9174,
             -92.3489489838222,
             4.0677023317222,
             -99.6310877252908
@@ -23200,7 +23200,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -99.7324496659386
           ],
           [
-            9189.0,
+            9189,
             -92.3894740851362,
             4.09717381849988,
             -99.853809988241
@@ -23212,7 +23212,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -99.962274918286
           ],
           [
-            9204.0,
+            9204,
             -92.4293889798999,
             4.11953623610544,
             -100.078348513368
@@ -23224,7 +23224,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -100.195414346742
           ],
           [
-            9219.0,
+            9219,
             -92.4337551111449,
             4.15267898950212,
             -100.312760069644
@@ -23236,7 +23236,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -100.435877125475
           ],
           [
-            9234.0,
+            9234,
             -92.4458517523022,
             4.18980450178389,
             -100.568014730058
@@ -23248,7 +23248,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -100.750183114389
           ],
           [
-            9249.0,
+            9249,
             -92.5120059308908,
             4.15003728980053,
             -100.966466970152
@@ -23260,7 +23260,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -101.182905771528
           ],
           [
-            9264.0,
+            9264,
             -92.6039746704063,
             4.09553956984106,
             -101.392673954145
@@ -23272,7 +23272,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -101.584417178711
           ],
           [
-            9279.0,
+            9279,
             -92.6748915344453,
             4.07571327686912,
             -101.761852838686
@@ -23284,7 +23284,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -101.925003729963
           ],
           [
-            9294.0,
+            9294,
             -92.75660612444,
             4.04638465266155,
             -102.102391128456
@@ -23296,7 +23296,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -102.278326252705
           ],
           [
-            9309.0,
+            9309,
             -92.8845513019664,
             3.994143821365,
             -102.49727866112
@@ -23308,7 +23308,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -102.730632834158
           ],
           [
-            9324.0,
+            9324,
             -93.049718940344,
             3.87556012822029,
             -102.97789330596
@@ -23320,7 +23320,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -103.209423066139
           ],
           [
-            9339.0,
+            9339,
             -93.2243101499909,
             3.75107295523099,
             -103.424529723086
@@ -23332,7 +23332,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -103.644258928232
           ],
           [
-            9354.0,
+            9354,
             -93.3811610737974,
             3.60684642929536,
             -103.903663617812
@@ -23344,7 +23344,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -104.186773365045
           ],
           [
-            9369.0,
+            9369,
             -93.5527892149189,
             3.41818901183121,
             -104.466218128083
@@ -23356,7 +23356,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -104.697135050598
           ],
           [
-            9384.0,
+            9384,
             -93.7115036283474,
             3.25288573793888,
             -104.959924645173
@@ -23368,7 +23368,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -105.219081065811
           ],
           [
-            9399.0,
+            9399,
             -93.8972402676454,
             3.05823612744152,
             -105.449252032031
@@ -23380,7 +23380,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -105.664857744329
           ],
           [
-            9414.0,
+            9414,
             -94.0578043103687,
             2.89786368910227,
             -105.851712136457
@@ -23392,7 +23392,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -106.060665613531
           ],
           [
-            9429.0,
+            9429,
             -94.2411794990361,
             2.71915173013485,
             -106.250791401424
@@ -23404,7 +23404,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -106.40952535722
           ],
           [
-            9444.0,
+            9444,
             -94.3661131674054,
             2.62350032425899,
             -106.551851287339
@@ -23416,7 +23416,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -106.693256911331
           ],
           [
-            9459.0,
+            9459,
             -94.5069040892378,
             2.5365559403415,
             -106.808546316415
@@ -23428,7 +23428,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -106.901439140018
           ],
           [
-            9474.0,
+            9474,
             -94.5841230289483,
             2.55644933302846,
             -107.002431774545
@@ -23440,7 +23440,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.101178604776
           ],
           [
-            9489.0,
+            9489,
             -94.6618194091537,
             2.57065304251545,
             -107.211132975948
@@ -23452,7 +23452,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.30832558886
           ],
           [
-            9504.0,
+            9504,
             -94.6726611802929,
             2.61918489549756,
             -107.39682187897
@@ -23464,7 +23464,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.463705433544
           ],
           [
-            9519.0,
+            9519,
             -94.6959631722568,
             2.66920610009,
             -107.50884585073
@@ -23476,7 +23476,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.561622521476
           ],
           [
-            9534.0,
+            9534,
             -94.6877218869003,
             2.7591929071863,
             -107.585203728897
@@ -23488,7 +23488,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.628886881104
           ],
           [
-            9549.0,
+            9549,
             -94.6773509581042,
             2.8413307005485,
             -107.696491824658
@@ -23500,7 +23500,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.731332747187
           ],
           [
-            9564.0,
+            9564,
             -94.6613896280669,
             2.95758976226318,
             -107.737686397551
@@ -23512,7 +23512,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.763496334335
           ],
           [
-            9579.0,
+            9579,
             -94.705858659919,
             3.04173838111739,
             -107.752662108091
@@ -23524,7 +23524,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.750394253957
           ],
           [
-            9594.0,
+            9594,
             -94.7589787529136,
             3.10665405727623,
             -107.76500176789
@@ -23536,7 +23536,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.78449494801
           ],
           [
-            9609.0,
+            9609,
             -94.7932044048687,
             3.16206331977066,
             -107.813009031889
@@ -23548,7 +23548,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.837796400681
           ],
           [
-            9624.0,
+            9624,
             -94.8416812079608,
             3.1924578648186,
             -107.844010908069
@@ -23560,7 +23560,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.862674842424
           ],
           [
-            9639.0,
+            9639,
             -94.9223481830511,
             3.21806480321815,
             -107.87382038936
@@ -23572,7 +23572,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.898604962151
           ],
           [
-            9654.0,
+            9654,
             -95.0156103737214,
             3.1927068575706,
             -107.954248489367
@@ -23584,7 +23584,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.026600232037
           ],
           [
-            9669.0,
+            9669,
             -95.1223405933963,
             3.14337739011328,
             -108.095123848626
@@ -23596,7 +23596,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.151092777084
           ],
           [
-            9684.0,
+            9684,
             -95.1798608052245,
             3.15057660528645,
             -108.213362633441
@@ -23608,7 +23608,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.278535724958
           ],
           [
-            9699.0,
+            9699,
             -95.21391539976,
             3.18162544387743,
             -108.33494803865
@@ -23620,7 +23620,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.413608528585
           ],
           [
-            9714.0,
+            9714,
             -95.2061632913531,
             3.22312888280982,
             -108.511863423619
@@ -23632,7 +23632,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.602420227642
           ],
           [
-            9729.0,
+            9729,
             -95.2097347405912,
             3.26696079178517,
             -108.666111647539
@@ -23644,7 +23644,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.696153413717
           ],
           [
-            9744.0,
+            9744,
             -95.2162262682217,
             3.33746370306503,
             -108.717564730978
@@ -23656,7 +23656,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.763815526169
           ],
           [
-            9759.0,
+            9759,
             -95.2077272459215,
             3.40444495271145,
             -108.781279144573
@@ -23668,7 +23668,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.792282224027
           ],
           [
-            9774.0,
+            9774,
             -95.1926858124585,
             3.49817431379355,
             -108.82392985836
@@ -23680,7 +23680,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.863658676109
           ],
           [
-            9789.0,
+            9789,
             -95.2195625503106,
             3.55345869654611,
             -108.904256678361
@@ -23692,7 +23692,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.955439206589
           ],
           [
-            9804.0,
+            9804,
             -95.2932596301956,
             3.55507883479699,
             -109.001241841638
@@ -23704,7 +23704,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.020588230794
           ],
           [
-            9819.0,
+            9819,
             -95.3609106142419,
             3.58739344472163,
             -109.007970862007
@@ -23716,7 +23716,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.001713778448
           ],
           [
-            9834.0,
+            9834,
             -95.4217189136233,
             3.64477912181934,
             -109.006220778078
@@ -23728,7 +23728,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.001186141634
           ],
           [
-            9849.0,
+            9849,
             -95.5137185672941,
             3.69359598056502,
             -109.026701645868
@@ -23740,7 +23740,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.049463263525
           ],
           [
-            9864.0,
+            9864,
             -95.5981834645116,
             3.76120567204183,
             -109.057425694189
@@ -23752,7 +23752,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.038595344661
           ],
           [
-            9879.0,
+            9879,
             -95.6471681592245,
             3.86194359948415,
             -109.00296460798
@@ -23764,7 +23764,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.985109451892
           ],
           [
-            9894.0,
+            9894,
             -95.6827163865322,
             3.95055241002858,
             -108.973477946986
@@ -23776,7 +23776,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.928267184575
           ],
           [
-            9909.0,
+            9909,
             -95.6808155002032,
             4.07899258523941,
             -108.844366110793
@@ -23788,7 +23788,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.802742699454
           ],
           [
-            9924.0,
+            9924,
             -95.7377967614759,
             4.16497568783035,
             -108.784287266742
@@ -23800,7 +23800,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.757497594589
           ],
           [
-            9939.0,
+            9939,
             -95.7348410283756,
             4.29600843544227,
             -108.734195168564
@@ -23812,7 +23812,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.710456201023
           ],
           [
-            9954.0,
+            9954,
             -95.7625079853851,
             4.424384155582,
             -108.703029227485
@@ -23824,7 +23824,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.675105295788
           ],
           [
-            9969.0,
+            9969,
             -95.8428664937135,
             4.52201212592385,
             -108.626494896207
@@ -23836,7 +23836,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.552398427585
           ],
           [
-            9984.0,
+            9984,
             -95.9708703573792,
             4.63785491176641,
             -108.489191523298
@@ -23848,7 +23848,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.417400932424
           ],
           [
-            9999.0,
+            9999,
             -96.1234834795541,
             4.7336048187301,
             -108.364572370231
@@ -23860,7 +23860,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.30648873617
           ],
           [
-            10014.0,
+            10014,
             -96.2850730848496,
             4.82664204699998,
             -108.253303679189
@@ -23872,7 +23872,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.17279143459
           ],
           [
-            10029.0,
+            10029,
             -96.4529831042385,
             4.91623336334388,
             -108.080847421132
@@ -23884,7 +23884,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.000825076929
           ],
           [
-            10044.0,
+            10044,
             -96.5882829935538,
             5.01137774111006,
             -107.932620221234
@@ -23896,7 +23896,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.870097576691
           ],
           [
-            10059.0,
+            10059,
             -96.7217699606,
             5.10442661684764,
             -107.81562111901
@@ -23908,7 +23908,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.775001081752
           ],
           [
-            10074.0,
+            10074,
             -96.9015784753596,
             5.15920690874355,
             -107.705774367713
@@ -23920,7 +23920,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.629684803543
           ],
           [
-            10089.0,
+            10089,
             -97.0413190329327,
             5.24699825351492,
             -107.531813971921
@@ -23932,7 +23932,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.434016494633
           ],
           [
-            10104.0,
+            10104,
             -97.1417637870637,
             5.34108795978556,
             -107.378344007001
@@ -23944,7 +23944,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.345406035217
           ],
           [
-            10119.0,
+            10119,
             -97.2741824771965,
             5.40932197097504,
             -107.332105016438
@@ -23956,7 +23956,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.322818531643
           ],
           [
-            10134.0,
+            10134,
             -97.3833795092322,
             5.46522047487329,
             -107.340685506902
@@ -23968,7 +23968,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.356124100098
           ],
           [
-            10149.0,
+            10149,
             -97.5032786049743,
             5.52198697237561,
             -107.394625807897
@@ -23980,7 +23980,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.45237689387
           ],
           [
-            10164.0,
+            10164,
             -97.6230912188831,
             5.60430487866984,
             -107.543897149166
@@ -23992,7 +23992,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.640284083579
           ],
           [
-            10179.0,
+            10179,
             -97.7961358736956,
             5.68360644171,
             -107.734099320404
@@ -24004,7 +24004,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -107.815733101614
           ],
           [
-            10194.0,
+            10194,
             -98.038553600305,
             5.74134864883976,
             -107.92498758653
@@ -24016,7 +24016,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.054073617178
           ],
           [
-            10209.0,
+            10209,
             -98.260012473673,
             5.77522040559699,
             -108.181638916877
@@ -24028,7 +24028,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.300714600545
           ],
           [
-            10224.0,
+            10224,
             -98.4421292712107,
             5.89630080187985,
             -108.397563293847
@@ -24040,7 +24040,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.499672232179
           ],
           [
-            10239.0,
+            10239,
             -98.6338593358466,
             6.06498586310587,
             -108.613145522175
@@ -24052,7 +24052,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -108.762918829111
           ],
           [
-            10254.0,
+            10254,
             -98.7695149446506,
             6.23246854408353,
             -108.91999055015
@@ -24064,7 +24064,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.038436677376
           ],
           [
-            10269.0,
+            10269,
             -98.8556218784056,
             6.43801910681874,
             -109.127167265499
@@ -24076,7 +24076,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.188599403629
           ],
           [
-            10284.0,
+            10284,
             -98.9250336263619,
             6.68258033072778,
             -109.261478398256
@@ -24088,7 +24088,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.357709357733
           ],
           [
-            10299.0,
+            10299,
             -99.0103354155682,
             6.84771170983051,
             -109.498107321965
@@ -24100,7 +24100,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.6441242411
           ],
           [
-            10314.0,
+            10314,
             -99.0841043899793,
             6.97561626061231,
             -109.775712918509
@@ -24112,7 +24112,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -109.8933472827
           ],
           [
-            10329.0,
+            10329,
             -99.1606757200918,
             7.11037326368819,
             -109.959518252816
@@ -24124,7 +24124,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.038696486291
           ],
           [
-            10344.0,
+            10344,
             -99.2424976320147,
             7.24016002126651,
             -110.139274112717
@@ -24136,7 +24136,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.173468186338
           ],
           [
-            10359.0,
+            10359,
             -99.2632799471279,
             7.37674662341119,
             -110.218115593863
@@ -24148,7 +24148,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.286828054806
           ],
           [
-            10374.0,
+            10374,
             -99.3166191847601,
             7.44671887839574,
             -110.392153446545
@@ -24160,7 +24160,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.513351125044
           ],
           [
-            10389.0,
+            10389,
             -99.4122465116429,
             7.49574865336793,
             -110.635535928194
@@ -24172,7 +24172,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.719033231401
           ],
           [
-            10404.0,
+            10404,
             -99.5108615883056,
             7.59982852180245,
             -110.826729417645
@@ -24184,7 +24184,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -110.931356626796
           ],
           [
-            10419.0,
+            10419,
             -99.6452837954463,
             7.68868026960204,
             -111.026681390553
@@ -24196,7 +24196,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -111.089765840356
           ],
           [
-            10434.0,
+            10434,
             -99.7465131108923,
             7.81671359032771,
             -111.152996981775
@@ -24208,7 +24208,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -111.207213012005
           ],
           [
-            10449.0,
+            10449,
             -99.8765192979833,
             7.91963562657091,
             -111.303721568902
@@ -24220,7 +24220,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -111.354443821739
           ],
           [
-            10464.0,
+            10464,
             -99.9942841320876,
             8.0531135347412,
             -111.401363246239
@@ -24232,7 +24232,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -111.476210491675
           ],
           [
-            10479.0,
+            10479,
             -100.094593389772,
             8.14496545808395,
             -111.556638565752
@@ -24244,7 +24244,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -111.680885468491
           ],
           [
-            10494.0,
+            10494,
             -100.210544595271,
             8.2147993058804,
             -111.814154249004
@@ -24256,7 +24256,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -112.000058747203
           ],
           [
-            10509.0,
+            10509,
             -100.316764987084,
             8.2657596683177,
             -112.150594072002
@@ -24268,7 +24268,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -112.333281638043
           ],
           [
-            10524.0,
+            10524,
             -100.451626762495,
             8.29461244039919,
             -112.553192561771
@@ -24280,7 +24280,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -112.787397807972
           ],
           [
-            10539.0,
+            10539,
             -100.662011144747,
             8.31043688679984,
             -112.966073511004
@@ -24292,7 +24292,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -113.097356709268
           ],
           [
-            10554.0,
+            10554,
             -100.813546141558,
             8.39536053278467,
             -113.207210543153
@@ -24304,7 +24304,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -113.344379763764
           ],
           [
-            10569.0,
+            10569,
             -100.948444728632,
             8.48049582558797,
             -113.486636598535
@@ -24316,7 +24316,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -113.61474942127
           ],
           [
-            10584.0,
+            10584,
             -101.070125299841,
             8.56618844208925,
             -113.715525371078
@@ -24328,7 +24328,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -113.788314764693
           ],
           [
-            10599.0,
+            10599,
             -101.234508018027,
             8.66539135078683,
             -113.87522834143
@@ -24340,7 +24340,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -113.967175557953
           ],
           [
-            10614.0,
+            10614,
             -101.47317492756,
             8.70629946150625,
             -114.076928415701
@@ -24352,7 +24352,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.194217822039
           ],
           [
-            10629.0,
+            10629,
             -101.724648982432,
             8.76243223931125,
             -114.272210741286
@@ -24364,7 +24364,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.395604640833
           ],
           [
-            10644.0,
+            10644,
             -101.981001112247,
             8.86376442251413,
             -114.454603789909
@@ -24376,7 +24376,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.494828493097
           ],
           [
-            10659.0,
+            10659,
             -102.256209011706,
             8.93776527100951,
             -114.522539463124
@@ -24388,7 +24388,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.564385627981
           ],
           [
-            10674.0,
+            10674,
             -102.506253735197,
             9.02286064730904,
             -114.595004670788
@@ -24400,7 +24400,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.621980377534
           ],
           [
-            10689.0,
+            10689,
             -102.699967678405,
             9.1166394482726,
             -114.664527211567
@@ -24412,7 +24412,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.736860799629
           ],
           [
-            10704.0,
+            10704,
             -102.900017050447,
             9.18162696397656,
             -114.814122515277
@@ -24424,7 +24424,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.808925497405
           ],
           [
-            10719.0,
+            10719,
             -103.066037729754,
             9.29859432667903,
             -114.858929892689
@@ -24436,7 +24436,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -114.918969434313
           ],
           [
-            10734.0,
+            10734,
             -103.215621050977,
             9.37637605577749,
             -115.007506511567
@@ -24448,7 +24448,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -115.099532529319
           ],
           [
-            10749.0,
+            10749,
             -103.422873953106,
             9.43104964856856,
             -115.236195876291
@@ -24460,7 +24460,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -115.382384506857
           ],
           [
-            10764.0,
+            10764,
             -103.591268654088,
             9.50020166001371,
             -115.478694422694
@@ -24472,7 +24472,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -115.581406453361
           ],
           [
-            10779.0,
+            10779,
             -103.75196217739,
             9.59358959869151,
             -115.697950283117
@@ -24484,7 +24484,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -115.808558130885
           ],
           [
-            10794.0,
+            10794,
             -103.899122926634,
             9.74723432659212,
             -115.93410801938
@@ -24496,7 +24496,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -116.060033207447
           ],
           [
-            10809.0,
+            10809,
             -103.922544674456,
             9.95692474897579,
             -116.20924192776
@@ -24508,7 +24508,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -116.360843499143
           ],
           [
-            10824.0,
+            10824,
             -103.915363971996,
             10.2257760046619,
             -116.502390048487
@@ -24520,7 +24520,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -116.66106663531
           ],
           [
-            10839.0,
+            10839,
             -103.97857721278,
             10.4517999049797,
             -116.856806420289
@@ -24532,7 +24532,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -116.975196036076
           ],
           [
-            10854.0,
+            10854,
             -103.970816011832,
             10.7448505816496,
             -117.068134840723
@@ -24544,7 +24544,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -117.146554551911
           ],
           [
-            10869.0,
+            10869,
             -103.908961042022,
             11.0622197058693,
             -117.208844855108
@@ -24556,7 +24556,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -117.259536337654
           ],
           [
-            10884.0,
+            10884,
             -103.812040478746,
             11.3808951658715,
             -117.341920088612
@@ -24568,7 +24568,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -117.458396750301
           ],
           [
-            10899.0,
+            10899,
             -103.716698022056,
             11.6623975505478,
             -117.614843488748
@@ -24580,7 +24580,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -117.759139617368
           ],
           [
-            10914.0,
+            10914,
             -103.669307150181,
             11.9338068376942,
             -117.914037210988
@@ -24592,7 +24592,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.018974849312
           ],
           [
-            10929.0,
+            10929,
             -103.625715279771,
             12.2548544144545,
             -118.073050792638
@@ -24604,7 +24604,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.18303126112
           ],
           [
-            10944.0,
+            10944,
             -103.669286495538,
             12.51556038024,
             -118.254254145618
@@ -24616,7 +24616,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.322226656185
           ],
           [
-            10959.0,
+            10959,
             -103.7148430087,
             12.8178776447036,
             -118.397996695954
@@ -24628,7 +24628,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.428874894252
           ],
           [
-            10974.0,
+            10974,
             -103.671295596345,
             13.242295817486,
             -118.437618055934
@@ -24640,7 +24640,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.468851527849
           ],
           [
-            10989.0,
+            10989,
             -103.582614164963,
             13.6524169268998,
             -118.483602191488
@@ -24652,7 +24652,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.471432708755
           ],
           [
-            11004.0,
+            11004,
             -103.380746162742,
             14.1203091946311,
             -118.462248763712
@@ -24664,7 +24664,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.428849966429
           ],
           [
-            11019.0,
+            11019,
             -103.117088026744,
             14.5681614459842,
             -118.443804582004
@@ -24676,7 +24676,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.492192381035
           ],
           [
-            11034.0,
+            11034,
             -102.889143284918,
             14.9400956717812,
             -118.541860716336
@@ -24688,7 +24688,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.595270488375
           ],
           [
-            11049.0,
+            11049,
             -102.655063908595,
             15.2916344367109,
             -118.630793694815
@@ -24700,7 +24700,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.64593559625
           ],
           [
-            11064.0,
+            11064,
             -102.486401253585,
             15.5623496220854,
             -118.743786781131
@@ -24712,7 +24712,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -118.898450381132
           ],
           [
-            11079.0,
+            11079,
             -102.371513698755,
             15.7748716742798,
             -119.019004925415
@@ -24724,7 +24724,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -119.148183635264
           ],
           [
-            11094.0,
+            11094,
             -102.207995777684,
             16.007493661969,
             -119.277352548185
@@ -24736,7 +24736,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -119.348852532187
           ],
           [
-            11109.0,
+            11109,
             -102.047907387078,
             16.1963307182821,
             -119.473538274286
@@ -24748,7 +24748,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -119.616970736598
           ],
           [
-            11124.0,
+            11124,
             -101.954583623912,
             16.3363138406396,
             -119.774048661641
@@ -24760,7 +24760,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -119.906713351522
           ],
           [
-            11139.0,
+            11139,
             -101.917599419471,
             16.4605521284621,
             -119.987747688817
@@ -24772,7 +24772,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.081239387156
           ],
           [
-            11154.0,
+            11154,
             -101.89145457313,
             16.6200496872355,
             -120.151620426577
@@ -24784,7 +24784,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.243302804425
           ],
           [
-            11169.0,
+            11169,
             -101.878435690554,
             16.7594808469401,
             -120.330664667813
@@ -24796,7 +24796,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.374529899224
           ],
           [
-            11184.0,
+            11184,
             -101.782450644444,
             16.9490778692138,
             -120.413883563151
@@ -24808,7 +24808,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.424808596859
           ],
           [
-            11199.0,
+            11199,
             -101.64429139118,
             17.1278521824401,
             -120.420459857402
@@ -24820,7 +24820,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.443406263392
           ],
           [
-            11214.0,
+            11214,
             -101.448329594502,
             17.2887928186983,
             -120.511093240992
@@ -24832,7 +24832,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.586297192431
           ],
           [
-            11229.0,
+            11229,
             -101.24498342531,
             17.399673962928,
             -120.68474523675
@@ -24844,7 +24844,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -120.780867672348
           ],
           [
-            11244.0,
+            11244,
             -101.166687054428,
             17.4299113130395,
             -120.931583652238
@@ -24856,7 +24856,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -121.025208562407
           ],
           [
-            11259.0,
+            11259,
             -101.048562121485,
             17.5330085874428,
             -121.114360217468
@@ -24868,7 +24868,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -121.232355931919
           ],
           [
-            11274.0,
+            11274,
             -100.907836615484,
             17.660799334618,
             -121.34612473978
@@ -24880,7 +24880,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -121.424329203505
           ],
           [
-            11289.0,
+            11289,
             -100.896389090061,
             17.7950355794708,
             -121.551161415995
@@ -24892,7 +24892,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -121.699516207629
           ],
           [
-            11304.0,
+            11304,
             -100.85336762274,
             17.9235502717816,
             -121.886811228264
@@ -24904,7 +24904,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -122.08338358306
           ],
           [
-            11319.0,
+            11319,
             -100.847828075527,
             18.0319055605367,
             -122.275877326426
@@ -24916,7 +24916,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -122.325901621121
           ],
           [
-            11334.0,
+            11334,
             -100.829767689597,
             18.2325063673031,
             -122.351136643504
@@ -24928,7 +24928,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -122.354356792287
           ],
           [
-            11349.0,
+            11349,
             -100.779960276608,
             18.4608154305442,
             -122.401749543009
@@ -24940,7 +24940,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -122.502354716208
           ],
           [
-            11364.0,
+            11364,
             -100.75800134219,
             18.6074872871637,
             -122.652465479723
@@ -24952,7 +24952,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -122.879869463578
           ],
           [
-            11379.0,
+            11379,
             -100.858928562279,
             18.6012522361316,
             -123.063495876995
@@ -24964,7 +24964,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.213009931957
           ],
           [
-            11394.0,
+            11394,
             -100.986937647994,
             18.6155547560849,
             -123.379845238858
@@ -24976,7 +24976,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.490948508736
           ],
           [
-            11409.0,
+            11409,
             -101.184668219784,
             18.6305525465561,
             -123.535362915744
@@ -24988,7 +24988,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.543421426333
           ],
           [
-            11424.0,
+            11424,
             -101.301844421244,
             18.6942202155394,
             -123.470696153477
@@ -25000,7 +25000,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.358539365823
           ],
           [
-            11439.0,
+            11439,
             -101.325386454526,
             18.854210003566,
             -123.300304366905
@@ -25012,7 +25012,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.261223005862
           ],
           [
-            11454.0,
+            11454,
             -101.321123821061,
             18.9420031051042,
             -123.235177553713
@@ -25024,7 +25024,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.274904322168
           ],
           [
-            11469.0,
+            11469,
             -101.449328337945,
             18.9888378583881,
             -123.306179597135
@@ -25036,7 +25036,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -123.507491765583
           ],
           [
-            11484.0,
+            11484,
             -101.743326309668,
             18.7444441065764,
             -123.793698416778
@@ -25048,7 +25048,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -124.039430973343
           ],
           [
-            11499.0,
+            11499,
             -102.129156963943,
             18.4321498458039,
             -124.299902752485
@@ -25060,7 +25060,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -124.518405202299
           ],
           [
-            11514.0,
+            11514,
             -102.629862187015,
             18.1478992547574,
             -124.734330760046
@@ -25072,7 +25072,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -124.868080605025
           ],
           [
-            11529.0,
+            11529,
             -103.112475526293,
             17.9198915466762,
             -125.034445483502
@@ -25084,7 +25084,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.145253254963
           ],
           [
-            11544.0,
+            11544,
             -103.638503206639,
             17.6560345668203,
             -125.277235632093
@@ -25096,7 +25096,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.344655380978
           ],
           [
-            11559.0,
+            11559,
             -104.050645537864,
             17.5001833337251,
             -125.296820677901
@@ -25108,7 +25108,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.257957237571
           ],
           [
-            11574.0,
+            11574,
             -104.460824303705,
             17.3190447895774,
             -125.26590152187
@@ -25120,7 +25120,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.433178160424
           ],
           [
-            11589.0,
+            11589,
             -105.043194156181,
             16.8578046710086,
             -125.646286228496
@@ -25132,7 +25132,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.836225014337
           ],
           [
-            11604.0,
+            11604,
             -105.735530110886,
             16.2968214301575,
             -126.015900774354
@@ -25144,7 +25144,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.154286282542
           ],
           [
-            11619.0,
+            11619,
             -106.604233612668,
             15.7687615062467,
             -126.282931863294
@@ -25156,7 +25156,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.390865993868
           ],
           [
-            11634.0,
+            11634,
             -107.504539854795,
             15.3120276761223,
             -126.542216961539
@@ -25168,7 +25168,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.696322300917
           ],
           [
-            11649.0,
+            11649,
             -108.434551238908,
             14.8366346121473,
             -126.78860900494
@@ -25180,7 +25180,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.938770643417
           ],
           [
-            11664.0,
+            11664,
             -108.836238636161,
             14.5608593726956,
             -127.120981466463
@@ -25192,7 +25192,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -127.215648814599
           ],
           [
-            11679.0,
+            11679,
             -109.496317370448,
             14.1924168080465,
             -127.168463729573
@@ -25204,7 +25204,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.974933123408
           ],
           [
-            11694.0,
+            11694,
             -110.078941088996,
             14.194684034071,
             -126.718133559162
@@ -25216,7 +25216,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.609902431617
           ],
           [
-            11709.0,
+            11709,
             -110.701193681559,
             14.0838490281296,
             -126.448531822913
@@ -25228,7 +25228,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -126.176395085831
           ],
           [
-            11724.0,
+            11724,
             -110.922598892893,
             14.1339274643825,
             -125.84536735624
@@ -25240,7 +25240,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.49534655839
           ],
           [
-            11739.0,
+            11739,
             -110.947869948495,
             14.2488486951154,
             -125.282654037125
@@ -25252,7 +25252,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.078623867736
           ],
           [
-            11754.0,
+            11754,
             -110.927218975362,
             14.5192180199473,
             -124.980180402997
@@ -25264,7 +25264,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -124.877861887575
           ],
           [
-            11769.0,
+            11769,
             -110.710334076488,
             14.7884238182993,
             -124.99484245008
@@ -25276,7 +25276,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.085428741182
           ],
           [
-            11784.0,
+            11784,
             -110.894360439003,
             14.5878656122754,
             -125.345462616015
@@ -25288,7 +25288,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.559029775241
           ],
           [
-            11799.0,
+            11799,
             -110.667719703504,
             14.5524308697577,
             -125.668418458547
@@ -25300,7 +25300,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.779481589501
           ],
           [
-            11814.0,
+            11814,
             -110.39146622913,
             14.4691426894744,
             -125.716333889359
@@ -25312,7 +25312,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.492077441021
           ],
           [
-            11829.0,
+            11829,
             -110.176895092336,
             14.4700232681135,
             -125.354390171353
@@ -25324,7 +25324,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.243138812687
           ],
           [
-            11844.0,
+            11844,
             -109.55510552174,
             14.531287327821,
             -125.176366118236
@@ -25336,7 +25336,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.313105450845
           ],
           [
-            11859.0,
+            11859,
             -109.209787476315,
             14.806907456267,
             -125.336530897614
@@ -25348,7 +25348,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.219629979306
           ],
           [
-            11874.0,
+            11874,
             -109.36244313646,
             15.2173646787436,
             -125.129694787068
@@ -25360,7 +25360,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.09115327643
           ],
           [
-            11889.0,
+            11889,
             -110.218765121051,
             15.3378667783145,
             -125.467110091915
@@ -25372,7 +25372,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.870733624421
           ],
           [
-            11904.0,
+            11904,
             -110.644514489287,
             15.6633966945774,
             -125.662927795961
@@ -25384,7 +25384,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.106831393576
           ],
           [
-            11919.0,
+            11919,
             -111.842666442704,
             15.6664111044392,
             -125.173704907702
@@ -25396,7 +25396,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -125.153998341767
           ],
           [
-            11934.0,
+            11934,
             -113.658619031303,
             14.5980913990214,
             -126.295212621866
@@ -25408,7 +25408,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -127.443623003636
           ],
           [
-            11949.0,
+            11949,
             -115.769331224408,
             12.8672461286774,
             -127.910869015866
@@ -25420,7 +25420,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -129.216870830522
           ],
           [
-            11964.0,
+            11964,
             -117.546044233173,
             11.4256439075134,
             -130.955434191041
@@ -25432,7 +25432,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -132.232177938322
           ],
           [
-            11979.0,
+            11979,
             -119.654496555224,
             10.6712295605325,
             -135.432832914015
@@ -25444,7 +25444,7 @@ export const mockDetailData: MDHistoryDetailResponse = {
             -139.992406042625
           ],
           [
-            11994.0,
+            11994,
             -122.525706854613,
             7.3419559341409,
             -143.617922006003

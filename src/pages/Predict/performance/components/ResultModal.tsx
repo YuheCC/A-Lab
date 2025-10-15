@@ -2,8 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import './ResultModal.css';
+import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
-import { Info } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon } from './ArrowIcons';
 
 interface PredictionResult {
   id: string;
@@ -116,15 +118,12 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
       status = 'Neutral';
     }
 
-    const baseConfidence = parseFloat((parsedProb * 100).toFixed(1));
+    const baseConfidence = parsedProb;
     if (!Number.isFinite(baseConfidence)) {
       return restrictedMetric();
     }
 
-    const adjustedConfidence =
-      parsedLabel === 0
-        ? parseFloat((100 - baseConfidence).toFixed(1))
-        : baseConfidence;
+    const adjustedConfidence = parseFloat(baseConfidence.toFixed(2));
 
     if (!Number.isFinite(adjustedConfidence)) {
       return restrictedMetric();
@@ -143,11 +142,32 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   const getProcessedResults = () => {
     // If the result object has raw API data, use it for processing
     if ((result as any).rawApiData) {
-      const apiData = (result as any).rawApiData;
+      let apiData = (result as any).rawApiData;
+      let quantification_result: any = {};
+      try{
+        const model_result = JSON.parse(apiData?.model_result);
+        apiData = {
+          ...apiData,
+          temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label.toString(),
+          temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob.toString(),
+          temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label.toString(),
+          temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob.toString(),
+          temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label.toString(),
+          temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob.toString(),
+          temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label.toString(),
+          temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob.toString(),
+          temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label.toString(),
+          temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob.toString()
+        };
+        quantification_result = model_result?.quantification_result ?? {};
+      } catch (error) {
+        console.error('Error parsing API data:', error);
+      }
+
       return {
         temp25: {
           cycleLife: processPerformanceMetric(
-            apiData.temperature_25_CL_prob ?? apiData.temperature_25_CL_prop,
+            quantification_result?.pred_cl_25 ?? apiData.temperature_25_CL_prob ?? apiData.temperature_25_CL_prop,
             apiData.temperature_25_CL_label
           ),
           ce: processPerformanceMetric(
@@ -155,13 +175,13 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             apiData.temperature_25_CE_label
           ),
           ratePerformance: processPerformanceMetric(
-            apiData.temperature_25_CR_prob ?? apiData.temperature_25_CR_prop,
+            quantification_result?.cr ??apiData.temperature_25_CR_prob ?? apiData.temperature_25_CR_prop,
             apiData.temperature_25_CR_label
           )
         },
         temp45: {
           cycleLife: processPerformanceMetric(
-            apiData.temperature_45_CL_prob ?? apiData.temperature_45_CL_prop,
+            quantification_result?.pred_cl_45 ?? apiData.temperature_45_CL_prob ?? apiData.temperature_45_CL_prop,
             apiData.temperature_45_CL_label
           ),
           ce: processPerformanceMetric(
@@ -216,6 +236,56 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
     return `${metric.confidence}%`;
   };
 
+  // Helper function to render result badge (same as PredictionModule)
+  const renderResultBadge = (metric: ProcessedMetric, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
+    const isPositive = metric.status === 'Positive';
+    const isNegative = metric.status === 'Negative';
+    
+    // 获取百分比数值
+    let percentValue = 0;
+    if (metric.confidence !== null) {
+      percentValue = Math.abs(metric.confidence);
+    }
+    
+    // 根据百分比值判断严重程度级别
+    let level = '';
+    if (percentValue < 5) {
+      level = 'light';
+    } else if (percentValue >= 5 && percentValue <= 25) {
+      level = 'medium';
+    } else if (percentValue > 25) {
+      level = 'dark';
+    }
+    
+    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
+    
+    // 选择箭头图标 - 使用自定义箭头
+    const ArrowIcon = isPositive ? ArrowUpIcon : isNegative ? ArrowDownIcon : null;
+    
+    // CE 只显示箭头
+    if (metricType === 'ce') {
+      return (
+        <div className={`performance-result-badge performance-result-badge--${badgeClass} performance-result-badge--ce-only`}>
+          <span className="performance-result-badge__arrow">
+            {ArrowIcon && <ArrowIcon size={16} />}
+          </span>
+        </div>
+      );
+    }
+    
+    // 其他指标显示箭头 + 百分比
+    const value = percentValue > 0 ? `${percentValue}%` : '';
+    
+    return (
+      <div className={`performance-result-badge performance-result-badge--${badgeClass}`}>
+        <span className="performance-result-badge__text">
+          {ArrowIcon && <ArrowIcon size={15} />}
+          {value && <span>{value}</span>}
+        </span>
+      </div>
+    );
+  };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -252,81 +322,60 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
               {t('performance.results.title')}
               <Tooltip
                 title={
-                  <div>
-                    <div style={{
-                      fontSize: '12px',
-                      lineHeight: '1.5',
-                      color: '#6b7280',
-                      marginBottom: '16px',
-                      paddingBottom: '12px',
-                      borderBottom: '1px solid #e5e7eb'
-                    }}>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
-                      <div style={{ marginBottom: '4px' }}><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
-                      <div><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
+                  <div className="result-tooltip">
+                    <div className="result-tooltip__section result-tooltip__section--description">
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
+                      <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ratePerformanceLabel')}:</strong> {t('performance.results.descriptions.ratePerformance')}</div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                      marginBottom: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#ef4444',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#dc2626',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.negativeTitle')}
-                        </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.negativeTip')}
-                        </div>
+                    <div className="result-tooltip__section">
+                      <div className="result-tooltip__indicator result-tooltip__indicator--positive">
+                        <ArrowUp className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.positiveTip')}</p>
                       </div>
+                      <div className="result-tooltip__indicator result-tooltip__indicator--negative">
+                        <ArrowDown className="result-tooltip__indicator-icon" />
+                        <p className="result-tooltip__indicator-text">{t('performance.results.negativeTip')}</p>
+                      </div> 
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px'
-                    }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10b981',
-                        flexShrink: 0,
-                        marginTop: '6px'
-                      }}></span>
-                      <div>
-                        <div style={{
-                          fontWeight: '600',
-                          fontSize: '14px',
-                          color: '#059669',
-                          marginBottom: '4px'
-                        }}>
-                          {t('performance.results.positiveTitle')}
+                    <div className="result-tooltip__section result-tooltip__section--badge">
+                      <div className="result-tooltip__badge-title">{t('performance.results.badgeTitle')}</div>
+                      <div className="result-tooltip__badge-grid">
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-light">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
                         </div>
-                        <div style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#6b7280',
-                          margin: 0
-                        }}>
-                          {t('performance.results.positiveTip')}
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-medium">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--gain-strong">
+                            <ArrowUp size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-light">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelLow')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-medium">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelMid')}</span>
+                        </div>
+                        <div className="result-tooltip__badge-item">
+                          <span className="result-tooltip__badge result-tooltip__badge--loss-strong">
+                            <ArrowDown size={12} />
+                          </span>
+                          <span className="result-tooltip__badge-label">{t('performance.results.badgeDescriptions.levelHigh')}</span>
                         </div>
                       </div>
                     </div>
@@ -364,100 +413,35 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
             
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
-              <div className="performance-grid">
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.cycleLife25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.cycleLife.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.cycleLife)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.cycleLife)}
-                  </div>
+              <div className="performance-results">
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                  {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ce25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.ce.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.ce)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.ce.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.ce)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ce25')}</div>
+                  {renderResultBadge(processedResults.temp25.ce, 'ce')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ratePerformance25')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp25.ratePerformance.status) }}
-                    >
-                      {getStatusText(processedResults.temp25.ratePerformance)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp25.ratePerformance.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp25.ratePerformance.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp25.ratePerformance)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                  {renderResultBadge(processedResults.temp25.ratePerformance, 'ratePerformance')}
                 </div>
               </div>
             </div>
 
             <div className="temperature-section">
               <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
-              <div className="performance-grid two-columns">
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.cycleLife45')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp45.cycleLife.status) }}
-                    >
-                      {getStatusText(processedResults.temp45.cycleLife)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp45.cycleLife.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp45.cycleLife.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp45.cycleLife)}
-                  </div>
+              <div className="performance-results">
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
+                  {renderResultBadge(processedResults.temp45.cycleLife, 'cycleLife')}
                 </div>
 
-                <div className="performance-item">
-                  <div className="perf-header">
-                    <span className="perf-label">{t('performance.results.performance.ce45')}</span>
-                    <span 
-                      className={`perf-status${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
-                      style={{ color: getStatusColor(processedResults.temp45.ce.status) }}
-                    >
-                      {getStatusText(processedResults.temp45.ce)}
-                    </span>
-                  </div>
-                  <div 
-                    className={`perf-value${processedResults.temp45.ce.isRestricted ? ' blurred-content' : ''}`}
-                    aria-label={processedResults.temp45.ce.isRestricted ? t('performance.results.status.restricted') : undefined}
-                  >
-                    {getConfidenceText(processedResults.temp45.ce)}
-                  </div>
+                <div className="result-item">
+                  <div className="result-label">{t('performance.results.performance.ce45')}</div>
+                  {renderResultBadge(processedResults.temp45.ce, 'ce')}
                 </div>
               </div>
             </div>

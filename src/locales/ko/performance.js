@@ -3,6 +3,8 @@ export default {
   title: "첨가제가 셀 성능에 미치는 영향",
   subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
   beta: "베타",
+  disclaimerTitle: "면책 조항",
+  disclaimer: "<strong>참고:</strong> 이 기능은 내부 테스트 데이터 및 정의된 벤치마크 전해액(용매: EC/EMC/DEC 비율 2:3:2; 염: 1M LiPF6/LiFSI; 첨가제: VC/LiDFP)을 사용하여 첨가제가 있는 셀과 없는 셀의 성능을 비교함으로써 새로운 첨가제의 영향을 평가합니다. 다른 셀 설계 또는 벤치마크 전해액에 적용할 경우 결과가 달라질 수 있습니다. 향후 업데이트에서는 사용자 정의 가능한 벤치마크 전해액, 다중 첨가제 평가 및 더 큰 설계 유연성을 지원하도록 기능을 확장할 예정입니다.",
   
   // Battery System Selection
   batterySystemSelection: {
@@ -84,11 +86,19 @@ export default {
   // Results
   results: {
     title: "셀 성능 예측",
-    titleTip: "부정적(Negative)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    titleTip: "부정적(Negative)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁘다는 것을 의미합니다.\n긍정적(Positive)은 지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋다는 것을 의미합니다.",
     negativeTitle: "부정적 (Negative)",
     positiveTitle: "긍정적 (Positive)",
-    negativeTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀과 동일하거나 더 나쁘다는 것을 의미합니다.",
-    positiveTip: "전해액 첨가제를 추가한 후 테스트 조건에서 셀의 성능이 벤치마크 셀보다 더 좋다는 것을 의미합니다.",
+    negativeTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁩니다.",
+    positiveTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋습니다.",
+    badgeTitle: "배지 색상 지표 (사이클 수명 및 비율 성능만 적용)",
+    badgeDescriptions: {
+      gainLabel: "성능 향상",
+      lossLabel: "성능 저하",
+      levelLow: "< 5%",
+      levelMid: "5%～25%",
+      levelHigh: "> 25%"
+    },
     descriptions: {
       ceLabel: "코로나빅 효율",
       cycleLifeLabel: "사이클 수명",

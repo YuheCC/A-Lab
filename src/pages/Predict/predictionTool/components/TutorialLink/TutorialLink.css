@@ -1,0 +1,238 @@
+/* Tutorial Link Container */
+.tutorial-link-container {
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: baseline;
+}
+
+.tutorial-link-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #56B26A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-weight: 500;
+  vertical-align: baseline;
+  line-height: 1.5;
+}
+
+.tutorial-link-text:hover {
+  color: #4a9d5a;
+  text-decoration: underline;
+}
+
+.tutorial-link-icon {
+  flex-shrink: 0;
+  margin-bottom: -2px;
+}
+
+/* Tutorial Modal Styles */
+.tutorial-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.tutorial-modal-container {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.tutorial-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tutorial-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.tutorial-modal-close-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.tutorial-modal-close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.tutorial-modal-content {
+  padding: 24px;
+  max-height: calc(90vh - 140px);
+  overflow-y: auto;
+}
+
+/* 图片区域样式 */
+.tutorial-image-section {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.tutorial-chart-image {
+  width: 60%;
+  max-width: 800px;
+  height: auto;
+  margin-bottom: 12px;
+}
+
+.tutorial-image-caption {
+  font-size: 14px;
+  color: #64748b;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 文字内容样式 */
+.tutorial-text-content {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1e293b;
+}
+
+.tutorial-main-list {
+  list-style: disc;
+  padding-left: 24px;
+  margin: 0;
+}
+
+.tutorial-main-list > li {
+  margin-bottom: 16px;
+  padding-left: 8px;
+}
+
+.tutorial-main-list > li:last-child {
+  margin-bottom: 0;
+}
+
+.tutorial-sub-list {
+  list-style: circle;
+  padding-left: 24px;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.tutorial-sub-list > li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.tutorial-sub-list > li:last-child {
+  margin-bottom: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .tutorial-link-text {
+    font-size: 13px;
+  }
+  
+  .tutorial-link-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .tutorial-modal-container {
+    width: 95%;
+    max-width: none;
+  }
+  
+  .tutorial-modal-header {
+    padding: 16px 20px;
+  }
+  
+  .tutorial-modal-title {
+    font-size: 16px;
+  }
+  
+  .tutorial-modal-content {
+    padding: 20px;
+  }
+
+  .tutorial-text-content {
+    font-size: 14px;
+  }
+
+  .tutorial-image-section {
+    margin-bottom: 24px;
+  }
+
+  .tutorial-main-list {
+    padding-left: 20px;
+  }
+
+  .tutorial-sub-list {
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutorial-link-text {
+    font-size: 12px;
+  }
+  
+  .tutorial-modal-header {
+    padding: 14px 16px;
+  }
+  
+  .tutorial-modal-title {
+    font-size: 15px;
+  }
+  
+  .tutorial-modal-content {
+    padding: 16px;
+  }
+
+  .tutorial-text-content {
+    font-size: 13px;
+  }
+
+  .tutorial-image-caption {
+    font-size: 12px;
+  }
+
+  .tutorial-main-list {
+    padding-left: 16px;
+  }
+
+  .tutorial-sub-list {
+    padding-left: 16px;
+    font-size: 12px;
+  }
+
+  .tutorial-main-list > li {
+    margin-bottom: 12px;
+  }
+}
+

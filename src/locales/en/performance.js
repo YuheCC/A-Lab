@@ -3,6 +3,8 @@ export default {
   title: "Impact of additive on cell performances",
   subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
+  disclaimerTitle: "Disclaimer",
+  disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using internal testing data and a defined benchmark electrolyte (Solvent: EC/EMC/DEC at 2:3:2; Salt: 1M LiPF6/LiFSI; Additive: VC/LiDFP). Results may differ when applied to alternative cell designs or benchmark electrolytes. Future updates will extend functionality to enable customizable benchmark electrolytes, multi-additive evaluations, and greater design flexibility.",
   
   // Battery System Selection
   batterySystemSelection: {
@@ -86,9 +88,17 @@ export default {
     title: "Cell Performance Prediction",
     negativeTitle: "Negative",
     positiveTitle: "Positive",
-    negativeTip: "means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
-    positiveTip: "means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
-    titleTip: "Negative means the cell will perform equal or worse under the testing condition after adding the electrolyte additive compared to the benchmark cell.\nPositive means the cell will perform better under the testing condition after adding the electrolyte additive compared to the benchmark cell.",
+    negativeTip: "After adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.",
+    positiveTip: "After adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
+    titleTip: "Negative means after adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.\nPositive means after adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
+    badgeTitle: "Badge Color Indicators (for cycle life and rate performance only)",
+    badgeDescriptions: {
+      gainLabel: "Performance gain",
+      lossLabel: "Performance loss",
+      levelLow: "< 5%",
+      levelMid: "5%～25%",
+      levelHigh: "> 25%"
+    },
     descriptions: {
       ceLabel: "Coulombic Efficiency",
       cycleLifeLabel: "Cycle life",

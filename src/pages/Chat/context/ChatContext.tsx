@@ -282,7 +282,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const chatHistoryData = await chatService.getChatHistory();
                 updateChatHistory(chatHistoryData);
                 const initialNonPinned = chatHistoryData.filter(item => !item.isPinned);
-                setHasMoreHistory(initialNonPinned.length > 0);
+                if(userPermissions === 'common' || !localStorage.getItem('token')){
+                    setHasMoreHistory(false);
+                } else {
+                    setHasMoreHistory(initialNonPinned.length > 0);
+                }
                 if (initialNonPinned.length > 0) {
                     const lastItem = initialNonPinned[initialNonPinned.length - 1];
                     setLastUpdatedAt(lastItem.updatedAt);
@@ -294,7 +298,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         initChatHistory();
-    }, [updateChatHistory]);
+    }, [updateChatHistory, userPermissions]);
 
     // 初始化时获取使用次数
     useEffect(() => {
@@ -503,9 +507,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const triggerMessageByMode = useCallback(async (sessionId: string, mode: ChatMode, chatId: number, historyMessages: Message[], answerId: string, extraOptions?: any) => {
         // 确保传递ragResultsCount
-        const finalExtraOptions = { 
-            ...extraOptions, 
-            numRagResults: ragResultsCount 
+        const finalExtraOptions = {
+            patentRagEnabled: true,
+            ...(extraOptions ?? {}),
+            numRagResults: ragResultsCount,
         };
         const normalizedMode = normalizeModeForBackend(mode);
         
@@ -631,13 +636,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const extraOptions: Record<string, any> = {
             numRagResults: ragResultsCount,
             llmComputePower: extra?.llmComputePower,
+            patentRagEnabled: true,
         };
         if (extra) {
             extraOptions.ragEnabled = extra.ragEnabled;
             extraOptions.disableLiteratureSearch = !extra.ragEnabled; // ragEnabled是反向的disableLiteratureSearch
             extraOptions.fullDeepSpace = extra.dump_state;
             extraOptions.toolsEnabled = extra.toolsEnabled;
-            extraOptions.patentRagEnabled = extra.patentRagEnabled;
+            if (typeof extra.patentRagEnabled === 'boolean') {
+                extraOptions.patentRagEnabled = extra.patentRagEnabled;
+            }
         }
 
         if (chatId) {
@@ -808,7 +816,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             const updatedHistory = [...pinned, ...mergedNonPinned];
             updateChatHistory(updatedHistory);
-            setHasMoreHistory(moreNonPinned.length > 0);
+            if(userPermissions === 'common' || !localStorage.getItem('token')){
+                setHasMoreHistory(false);
+            } else {
+                setHasMoreHistory(moreNonPinned.length > 0);
+            }
             if (moreNonPinned?.length > 0) {
                 const lastItem = mergedNonPinned[mergedNonPinned.length - 1];
                 setLastUpdatedAt(lastItem.updatedAt);
@@ -820,7 +832,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setLoadingMoreHistory(false);
         }
-    }, [loadingMoreHistory, hasMoreHistory, lastUpdatedAt, chatHistory, updateChatHistory]);
+    }, [loadingMoreHistory, hasMoreHistory, lastUpdatedAt, chatHistory, updateChatHistory, userPermissions]);
 
     // 处理侧边栏切换
     const handleToggleSidebar = useCallback(() => {

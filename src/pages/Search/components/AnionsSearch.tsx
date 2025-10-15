@@ -674,56 +674,60 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     { label: 'UMAP_Y', value: molecule.y, span: 1 },
                                                     { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
                                                 ]}>
-                                                <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
-                                                    <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                                        <CustomButton
-                                                            Icon={Star}
-                                                            style={{
-                                                                flexGrow: 1,
-                                                            }}
-                                                            onClick={() => {
-                                                                console.log('Add to Favorites payload (search):', molecule);
-                                                                handleAddToFavorites(molecule);
-                                                            }}
-                                                            loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
-                                                            loadingText="Saving..."
-                                                            successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
-                                                            errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
-                                                        >
-                                                            {t("chatbox.buttons.addToFavorites")}
-                                                        </CustomButton>
-                                                        {
-                                                        false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
-                                                            window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
-                                                            }}>
-                                                                {t("chatbox.buttons.viewInMolPort")}
-                                                            </CustomButton>
-                                                        }
-                                                    </div>
+                                                {
+                                                    isAuthenticated && (
+                                                        <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
+                                                            <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                                <CustomButton
+                                                                    Icon={Star}
+                                                                    style={{
+                                                                        flexGrow: 1,
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        console.log('Add to Favorites payload (search):', molecule);
+                                                                        handleAddToFavorites(molecule);
+                                                                    }}
+                                                                    loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                                    loadingText="Saving..."
+                                                                    successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
+                                                                    errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
+                                                                >
+                                                                    {t("chatbox.buttons.addToFavorites")}
+                                                                </CustomButton>
+                                                                {
+                                                                false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                                    window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
+                                                                    }}>
+                                                                        {t("chatbox.buttons.viewInMolPort")}
+                                                                    </CustomButton>
+                                                                }
+                                                            </div>
 
-                                                    {moleculeFavoriteStatus[molecule.smiles]?.error && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.smiles].error}
-                                                        </div>
-                                                    )}
+                                                            {moleculeFavoriteStatus[molecule.smiles]?.error && (
+                                                                <div className="error-message" style={{
+                                                                    marginTop: '8px',
+                                                                    color: 'red',
+                                                                    fontSize: '14px',
+                                                                    fontWeight: 'bold'
+                                                                }}>
+                                                                    {moleculeFavoriteStatus[molecule.smiles].error}
+                                                                </div>
+                                                            )}
 
-                                                    {/* Display find-friend error below favorites button if it exists */}
-                                                    {findClosestFriends && findFriendError && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {findFriendError}
+                                                            {/* Display find-friend error below favorites button if it exists */}
+                                                            {findClosestFriends && findFriendError && (
+                                                                <div className="error-message" style={{
+                                                                    marginTop: '8px',
+                                                                    color: 'red',
+                                                                    fontSize: '14px',
+                                                                    fontWeight: 'bold'
+                                                                }}>
+                                                                    {findFriendError}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
+                                                    )
+                                                }
                                             </MolCard>
                                         ))}
                                     </div>

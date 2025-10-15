@@ -154,7 +154,7 @@ const SettingModal = forwardRef((props, ref) => {
                 <div className="settings-modal-sidebar">
                   <button className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`} data-tab="account" onClick={() => setActiveTab('account')}>{t('settings.tabs.account')}</button>
                   <button className={`settings-tab ${activeTab === 'subscription' ? 'active' : ''}`} data-tab="subscription" onClick={() => setActiveTab('subscription')}>{t('settings.tabs.subscription')}</button>
-                  <button className={`settings-tab ${activeTab === 'preference' ? 'active' : ''}`} data-tab="preference" onClick={() => setActiveTab('preference')}>{t('settings.tabs.preference')}</button>
+                  {/* <button className={`settings-tab ${activeTab === 'preference' ? 'active' : ''}`} data-tab="preference" onClick={() => setActiveTab('preference')}>{t('settings.tabs.preference')}</button> */}
                 </div>
                 <div className="settings-modal-main">
                   <div className={`settings-panel ${activeTab === 'account' ? 'active' : ''}`} data-panel="account">
