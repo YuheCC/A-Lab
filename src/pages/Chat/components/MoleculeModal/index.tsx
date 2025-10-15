@@ -16,6 +16,51 @@ import type { Message } from '@/utils/messageUtils';
 import { useChatContext } from '../../context/ChatContext';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
 
+const inferIsAnionFromData = (
+    input?: Partial<MoleculeData> | Record<string, any> | null
+): boolean => {
+    if (!input) {
+        return false;
+    }
+
+    const rawFlag = (input as any).isAnion ?? (input as any).is_anion ?? (input as any).IS_ANION;
+    if (typeof rawFlag === 'string') {
+        const trimmed = rawFlag.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        return normalized === 'true' || normalized === '1' || normalized === 'yes';
+    }
+    if (typeof rawFlag === 'number') {
+        return rawFlag !== 0;
+    }
+    if (typeof rawFlag === 'boolean') {
+        return rawFlag;
+    }
+    if (rawFlag != null) {
+        return Boolean(rawFlag);
+    }
+
+    const rawCation = (input as any).cation ?? (input as any).CATION;
+    if (rawCation === undefined || rawCation === null) {
+        return false;
+    }
+    if (typeof rawCation === 'string') {
+        const trimmed = rawCation.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        if (normalized === 'none' || normalized === 'null' || normalized === 'n/a' || normalized === 'na') {
+            return false;
+        }
+        return true;
+    }
+
+    return Boolean(rawCation);
+};
+
 interface MoleculeModalProps {
     moleculeName?: string;
     molecule?: MoleculeData | null;  // 新增：完整的分子对象，允许 null
@@ -52,6 +97,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
+    const [useAnionDatabase, setUseAnionDatabase] = useState<boolean>(() => inferIsAnionFromData(molecule));
     const [structureWeight, setStructureWeight] = useState(0.75);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => {
@@ -98,6 +144,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
 
+    useEffect(() => {
+        if (molecule) {
+            setUseAnionDatabase(inferIsAnionFromData(molecule));
+        }
+    }, [molecule]);
+
     const favoriteCtx = useContext(FavoriteContext);
     const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
         // 构建与 Ask/Favorites 一致的数据结构
@@ -140,14 +192,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         // 构造分子对象传递给上层处理函数
         if (onFindSimilar && (molecule || rawOriginal)) {
-            const moleculeForCallback = molecule || {
-                name: name,
-                SMILES: currentSmiles || '',
-                ...rawOriginal
-            };
+            const inferredAnion = useAnionDatabase || inferIsAnionFromData(rawOriginal);
+            const moleculeForCallback: MoleculeData = molecule
+                ? {
+                    ...molecule,
+                    isAnion: molecule.isAnion ?? inferredAnion,
+                }
+                : {
+                    name,
+                    SMILES: currentSmiles || '',
+                    isAnion: inferredAnion,
+                    ...(rawOriginal || {}),
+                } as MoleculeData;
             onFindSimilar(moleculeForCallback);
         }
-        
+
         try {
             setIsSimilarLoading(true);
             let smilesToUse = currentSmiles;
@@ -539,10 +598,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     };
 
     const fetchOriginalDetails = async (name: string): Promise<{ props?: MoleculeProperties; smiles?: string; raw?: any; }> => {
-        let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(name)}`;
+        const params = new URLSearchParams();
+        params.set('molecule', name);
         if (isHighTier) {
-            queryUrl += '&query_type=molecule&use_35m=true';
+            params.set('query_type', 'molecule');
+            params.set('use_35m', 'true');
         }
+        if (useAnionDatabase) {
+            params.set('is_anion', 'true');
+            params.set('umap_type', 'anions');
+        }
+
+        const queryUrl = `${API_URL}/api/molecule_details?${params.toString()}`;
         const resp = await authFetch(queryUrl, { method: 'GET' });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
@@ -567,6 +634,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         }
         if (extraRequests.trim()) {
             payload.extra_requests = extraRequests;
+        }
+        if (useAnionDatabase) {
+            payload.is_anion = true;
         }
         if (isHighTier && rawOriginal) {
             // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
@@ -629,14 +699,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         if (molecule) {
             // 直接使用传入的完整分子对象，避免API请求
-            const properties = convertMoleculeDataToProperties(molecule);
-            setOriginalMoleculeProps(properties);
-            setCurrentSmiles(molecule.SMILES);
-            setRawOriginal(molecule);
-            setSimilarMolecules([]);
-            setSimilarRawList([]);
-            setShowSimilar(false);
-            setIsLoading(false);
+            if (!isCancelled) {
+                const properties = convertMoleculeDataToProperties(molecule);
+                setOriginalMoleculeProps(properties);
+                setCurrentSmiles(molecule.SMILES);
+                setRawOriginal(molecule);
+                setSimilarMolecules([]);
+                setSimilarRawList([]);
+                setShowSimilar(false);
+                setUseAnionDatabase(inferIsAnionFromData(molecule));
+                setIsLoading(false);
+            }
         } else {
             // 如果没有完整分子对象，则从API获取（向后兼容）
             const loadData = async () => {
@@ -650,6 +723,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     setSimilarMolecules([]);
                     setSimilarRawList([]);
                     setShowSimilar(false);
+                    setUseAnionDatabase(inferIsAnionFromData(original?.raw));
                 } catch (err) {
                     if (!isCancelled) {
                         setSimilarMolecules([]);
