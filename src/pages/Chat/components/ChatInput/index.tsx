@@ -80,7 +80,7 @@ const ChatInput: FC<ChatInputProps> = ({
   const [ignoreChatHistory, setIgnoreChatHistory] = useState<boolean>(false);
   const [disableLiteratureSearch, setDisableLiteratureSearch] = useState<boolean>(false);
   const [fullDeepSpace, setFullDeepSpace] = useState<boolean>(false);
-  const [enablePatentRag, setEnablePatentRag] = useState<boolean>(false);
+  const [disablePatentRag, setDisablePatentRag] = useState<boolean>(false);
   const [disableTools, setDisableTools] = useState<boolean>(false);
   const [publicNotice, setPublicNotice] = useState<string | null>(null);
   const publicNoticeTimerRef = useRef<number | null>(null);
@@ -183,7 +183,7 @@ const ChatInput: FC<ChatInputProps> = ({
       const extraPayload: Record<string, any> = {
         ignoreChatHistory,
         ragEnabled: !disableLiteratureSearch,
-        patentRagEnabled: enablePatentRag,
+        patentRagEnabled: !disablePatentRag,
         toolsEnabled: !disableTools,
         originalMode: currentMode,
       };
@@ -413,14 +413,14 @@ const ChatInput: FC<ChatInputProps> = ({
             <label className="option-item">
               <input
                 type="checkbox"
-                checked={enablePatentRag}
+                checked={disablePatentRag}
                 onChange={(e) => {
                   if (inputLocked) return;
-                  setEnablePatentRag(e.target.checked);
+                  setDisablePatentRag(e.target.checked);
                 }}
                 disabled={disabled || inputLocked}
               />
-              <span>Enable Patent RAG</span>
+              <span>Disable Patent RAG</span>
             </label>
             <label className="option-item">
               <input
