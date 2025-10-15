@@ -1127,9 +1127,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             </div>
             
             {/* 免责声明提示 */}
-            <div style={{ marginTop: '20px', fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}>
-              {t('performance.disclaimer')}
-            </div>
+            <div 
+              style={{ marginTop: '20px', fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}
+              dangerouslySetInnerHTML={{ __html: t('performance.disclaimer') }}
+            />
             
             <div className="results-card">
               <div className="temperature-tabs" data-active={activeTab}>
