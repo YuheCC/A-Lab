@@ -48,10 +48,6 @@ export default  [
     },
     {
         path: "/formulate",
-        redirect: "/formulate/new"
-    },
-    {
-        path: "/formulate/new",
         component: "FormulationNew"
     },
     {
