@@ -1,6 +1,6 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext } from "react";
+import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
@@ -20,6 +20,7 @@ import '../index.css';
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
 const API_URL = getAPIUrl();
 
@@ -139,6 +140,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
     const triggerAccessModal = useAccessModals();
+
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -652,20 +658,20 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 large={true}
                                                 cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
-                                                    { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2 },
-                                                    { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2 },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true}
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                                    { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2, show: canShowColumn('vdw_volume_angstroms3') },
+                                                    { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                                    { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
                                                 ]}>
                                                 {
                                                     isAuthenticated && (
@@ -737,21 +743,21 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 large={true}
                                                 cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
-                                                    { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³' },
-                                                    { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV' },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true}
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                                    { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³', show: canShowColumn('vdw_volume_angstroms3') },
+                                                    { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV', show: canShowColumn('fluoride_bde_ev') },
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]}
                                                 foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
                                                 ]}
                                             >
                                                 <div className="molecule-actions">

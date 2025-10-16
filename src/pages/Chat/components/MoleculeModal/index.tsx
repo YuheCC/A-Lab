@@ -321,6 +321,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return [];
     };
 
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
+
     const renderMoleculeCard = (
         name: string,
         properties: MoleculeProperties | Record<string, unknown>,
@@ -340,10 +345,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             cardHasCation ||
             useAnionDatabase
         );
-        const showPredictedMp = !cardIsAnion && isColumnVisibleForUser('predicted_MP_celsius', userPermissions);
-        const showPredictedBp = !cardIsAnion && isColumnVisibleForUser('predicted_BP_celsius', userPermissions);
-        const showPredictedFp = !cardIsAnion && isColumnVisibleForUser('predicted_FP_celsius', userPermissions);
         const fallbackValue = t('molecular.molCard.notAvailable');
+        const showSmiles = canShowColumn('smiles');
+        const showMolWeight = canShowColumn('molecular_weight');
+        const showPredictedMp = !cardIsAnion && canShowColumn('predicted_MP_celsius');
+        const showPredictedBp = !cardIsAnion && canShowColumn('predicted_BP_celsius');
+        const showPredictedFp = !cardIsAnion && canShowColumn('predicted_FP_celsius');
+        const showCombustion = !cardIsAnion && canShowColumn('combustion_enthalpy_ev');
+        const showHomo = canShowColumn('HOMO_eV');
+        const showLumo = canShowColumn('LUMO_eV');
+        const showEspMax = canShowColumn('ESP_max_eV');
+        const showEspMin = canShowColumn('ESP_min_eV');
+        const showCommercial = canShowColumn('commercial_score');
+        const showFunctionalGroups = canShowColumn('functional_groups');
+        const showMolecularVolume = cardIsAnion && canShowColumn('vdw_volume_angstroms3');
+        const showFluorideBde = cardIsAnion && canShowColumn('fluoride_bde_ev');
         const molecularVolumeDisplay = cardProperties.molecularVolume === undefined || cardProperties.molecularVolume === null || cardProperties.molecularVolume === ''
             ? fallbackValue
             : cardProperties.molecularVolume;
@@ -407,14 +423,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             </span>
                         </div>
                     )}
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.smiles || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.molecularWeight || '-'}</span>
-                    </div>
+                    {showSmiles && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.smiles || '-'}</span>
+                        </div>
+                    )}
+                    {showMolWeight && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.molecularWeight || '-'}</span>
+                        </div>
+                    )}
                     {showPredictedMp && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedMp')}:</span>
@@ -433,47 +453,58 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span className="molecule-card-property-value">{cardProperties.flashPoint || '-'}</span>
                         </div>
                     )}
-                    {cardIsAnion && (
+                    {showMolecularVolume && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">Molecular Volume:</span>
                             <span className="molecule-card-property-value">{molecularVolumeDisplay}</span>
                         </div>
                     )}
-                    {cardIsAnion && (
+                    {showFluorideBde && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">F Dissociation Energy:</span>
                             <span className="molecule-card-property-value">{fluorideBdeDisplay}</span>
                         </div>
                     )}
-                    {!cardIsAnion && (
+                    {showCombustion && (
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.combustionEnthalpy')}:</span>
                             <span className="molecule-card-property-value">{cardProperties.combustionEnthalpy || '-'}</span>
                         </div>
                     )}
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.homo')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.homo || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.lumo')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.lumo || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMax')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.espMax || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMin')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.espMin || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item commercial-viability">
-                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.commercialViability')}:</span>
-                        <span className="molecule-card-property-value">{cardProperties.commercialViability || t('molecular.moleculeModal.unknown')}</span>
-                    </div>
+                    {showHomo && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.homo')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.homo || '-'}</span>
+                        </div>
+                    )}
+                    {showLumo && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.lumo')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.lumo || '-'}</span>
+                        </div>
+                    )}
+                    {showEspMax && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMax')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.espMax || '-'}</span>
+                        </div>
+                    )}
+                    {showEspMin && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMin')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.espMin || '-'}</span>
+                        </div>
+                    )}
+                    {showCommercial && (
+                        <div className="molecule-card-property-item commercial-viability">
+                            <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.commercialViability')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.commercialViability || t('molecular.moleculeModal.unknown')}</span>
+                        </div>
+                    )}
                 </div>
                 
                 {/* 功能组：默认折叠，字段按 Ask 填充 */}
+                {showFunctionalGroups && (
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
@@ -502,6 +533,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         </div>
                     )}
                 </div>
+                )}
                 
                 {isOriginal && (
                     <>

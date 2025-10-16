@@ -48,8 +48,6 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
   if (!node) return null;
 
   // Check if user has permission to see predicted properties
-  const canSeePredictedProperties = isColumnVisibleForUser('predicted_MP_celsius', userPermissions);
-
   const nodeCation = node?.cation ?? node?.rawData?.cation ?? node?.rawData?.CATION;
 
   const copyToClipboard = () => {
@@ -97,14 +95,12 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
               {Object.entries(node.properties || {})
                 .filter(([key, value]) => {
                   console.log(key, value, molecularType);
-                  // Hide commercial_link row if value is "N/A"
-                  if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
+                  if (!isColumnVisibleForUser(key, userPermissions)) {
                     return false;
                   }
 
-                  // Hide predicted properties for users without proper permissions
-                  if (!canSeePredictedProperties && 
-                      (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
+                  // Hide commercial_link row if value is "N/A"
+                  if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
                   }
 

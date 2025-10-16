@@ -7,7 +7,7 @@ import { Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
 import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
-import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
@@ -361,23 +361,23 @@ const UMAPClusterPlotDeck = ({
         const properties = dataNode.properties || {};
 
         return [
-            { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2 },
-            { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER },
-            { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
+            { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2, show: isColumnVisibleForUser('smiles', userPermissions) },
+            { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER, show: isColumnVisibleForUser('cluster', userPermissions) },
+            { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol'), show: isColumnVisibleForUser('molecular_weight', userPermissions) },
             { 
                 label: t('molecular.umapPlot.properties.espMax'), 
                 value: properties.esp_max_eV, 
                 suffix: t('molecular.umapPlot.units.eV'),
-                show: molecularType === 'organic'
+                show: molecularType === 'organic' && isColumnVisibleForUser('ESP_max_eV', userPermissions)
             },
             { 
                 label: t('molecular.umapPlot.properties.espMin'), 
                 value: properties.esp_min_eV, 
                 suffix: t('molecular.umapPlot.units.eV'),
-                show: molecularType === 'organic'
+                show: molecularType === 'organic' && isColumnVisibleForUser('ESP_min_eV', userPermissions)
             },
-            { label: t('molecular.umapPlot.properties.homo'), value: properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
-            { label: t('molecular.umapPlot.properties.lumo'), value: properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
+            { label: t('molecular.umapPlot.properties.homo'), value: properties.homo_eV, suffix: t('molecular.umapPlot.units.eV'), show: isColumnVisibleForUser('HOMO_eV', userPermissions) },
+            { label: t('molecular.umapPlot.properties.lumo'), value: properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV'), show: isColumnVisibleForUser('LUMO_eV', userPermissions) },
             {
                 label: t('molecular.umapPlot.properties.predictedMp'), value: properties.predicted_mp,
                 suffix: t('molecular.umapPlot.units.celsius'),
@@ -395,19 +395,19 @@ const UMAPClusterPlotDeck = ({
             },
             {
                 label: 'Combustion Enthalpy', value: properties.combustion_enthalpy, suffix: ' eV',
-                show: molecularType === 'organic' && isHighTierUser(userPermissions)
+                show: molecularType === 'organic' && isColumnVisibleForUser('combustion_enthalpy_ev', userPermissions)
             },
             {
                 label: "Molecular Volume", 
                 value: properties.vdw_volume_angstroms3,
                 suffix: " Å³",
-                show: molecularType === "anions"
+                show: molecularType === "anions" && isColumnVisibleForUser('vdw_volume_angstroms3', userPermissions)
             },
             {
                 label: "F Dissociation Energy", 
                 suffix: " eV",
                 value: properties.fluoride_bde_ev,
-                show: molecularType === "anions"
+                show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
             }
         ];
     }, [molecularType, t, userPermissions]);

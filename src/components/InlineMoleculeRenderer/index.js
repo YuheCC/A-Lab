@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
-import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
 import './InlineMoleculeRenderer.css';
@@ -120,6 +120,11 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
   const hideTimerRef = useRef(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const [reasoningText, setReasoningText] = useState(null);
+
+  const canShowColumn = useCallback(
+    (columnId) => isColumnVisibleForUser(columnId, userPermissions),
+    [userPermissions]
+  );
 
   const handleMouseEnter = (e) => {
     if (data && data.length > 0) {
@@ -239,42 +244,44 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
     const isAnion = Boolean(moleculeData.is_anion ?? moleculeData.IS_ANION ?? normalizedCation);
 
     const propGroups = [
-      { label: 'SMILES', value: moleculeData.SMILES, span: 2 },
-      { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol' },
-      { label: 'UMAP X', value: moleculeData.UMAP_0?.toFixed(4) },
-      { label: 'UMAP Y', value: moleculeData.UMAP_1?.toFixed(4) },
-      { label: 'HOMO', value: moleculeData.HOMO_eV?.toFixed(4), suffix: ' eV' },
-      { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(4), suffix: ' eV' },
-      { label: 'ESP Max', value: moleculeData.ESP_max_eV?.toFixed(4), suffix: ' eV' },
-      { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV' },
+      { label: 'SMILES', value: moleculeData.SMILES, span: 2, show: canShowColumn('smiles') },
+      { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+      { label: 'UMAP X', value: moleculeData.UMAP_0?.toFixed(4), show: canShowColumn('umap_0') },
+      { label: 'UMAP Y', value: moleculeData.UMAP_1?.toFixed(4), show: canShowColumn('umap_1') },
+      { label: 'HOMO', value: moleculeData.HOMO_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('HOMO_eV') },
+      { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('LUMO_eV') },
+      { label: 'ESP Max', value: moleculeData.ESP_max_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+      { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('ESP_min_eV') },
     ];
 
     if (isAnion) {
       const volumeRaw = moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3;
       const fluorideBdeRaw = moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV;
-      propGroups.push(
-        {
+      if (canShowColumn('vdw_volume_angstroms3')) {
+        propGroups.push({
           label: 'Molecular Volume',
           value: volumeRaw !== undefined && volumeRaw !== null ? formatMaybeNumber(volumeRaw) : 'N/A',
           suffix: volumeRaw !== undefined && volumeRaw !== null ? ' Å³' : undefined,
-        },
-        {
+        });
+      }
+      if (canShowColumn('fluoride_bde_ev')) {
+        propGroups.push({
           label: 'F Dissociation Energy',
           value: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? formatMaybeNumber(fluorideBdeRaw) : 'N/A',
           suffix: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? ' eV' : undefined,
-        }
-      );
+        });
+      }
     } else {
-      if (isColumnVisibleForUser('predicted_MP_celsius', userPermissions)) {
+      if (canShowColumn('predicted_MP_celsius')) {
         propGroups.push({ label: 'Predicted MP', value: moleculeData.predicted_MP_celsius != null ? formatMaybeNumber(moleculeData.predicted_MP_celsius) : undefined, suffix: ' °C' });
       }
-      if (isColumnVisibleForUser('predicted_BP_celsius', userPermissions)) {
+      if (canShowColumn('predicted_BP_celsius')) {
         propGroups.push({ label: 'Predicted BP', value: moleculeData.predicted_BP_celsius != null ? formatMaybeNumber(moleculeData.predicted_BP_celsius) : undefined, suffix: ' °C' });
       }
-      if (isColumnVisibleForUser('predicted_FP_celsius', userPermissions)) {
+      if (canShowColumn('predicted_FP_celsius')) {
         propGroups.push({ label: 'Predicted FP', value: moleculeData.predicted_FP_celsius != null ? formatMaybeNumber(moleculeData.predicted_FP_celsius) : undefined, suffix: ' °C' });
       }
-      if (isHighTierUser(userPermissions)) {
+      if (canShowColumn('combustion_enthalpy_ev')) {
         propGroups.push({ label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV != null ? formatMaybeNumber(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined, suffix: ' eV' });
       }
     }
@@ -285,7 +292,8 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         label: 'Commercial Viability',
         value: renderAnionCommercialScore(moleculeData.COMMERCIAL_SCORE),
         span: 2,
-        wrap: true
+        wrap: true,
+        show: canShowColumn('commercial_score')
       });
     }
 
@@ -293,7 +301,9 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       propGroups.unshift(createLlmGradeProp(moleculeData.grade, moleculeData.reasoning, setReasoningText));
     }
 
-    return propGroups.filter(prop => prop.value !== undefined && prop.value !== null);
+    return propGroups
+      .filter(prop => prop.show !== false)
+      .filter(prop => prop.value !== undefined && prop.value !== null);
   };
 
   const propGroups = hoveredObject ? transformToMolCardProps(hoveredObject.data) : [];

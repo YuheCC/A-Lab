@@ -1,6 +1,6 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext } from "react";
+import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
@@ -20,7 +20,7 @@ import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
-import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
 const API_URL = getAPIUrl();
 
@@ -120,6 +120,11 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
     const triggerAccessModal = useAccessModals();
+
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -613,33 +618,33 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 large={true}
                                                 cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
+                                                        show: canShowColumn('predicted_MP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_BP_celsius', userPermissions)},
+                                                        show: canShowColumn('predicted_BP_celsius')},
                                                     { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
+                                                        show: canShowColumn('predicted_FP_celsius')
                                                     },
                                                     {
                                                         label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.properties?.combustion_enthalpy_ev || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: isHighTierUser(userPermissions)
+                                                        show: canShowColumn('combustion_enthalpy_ev')
                                                     },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true}
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                                    { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
                                                 ]}>
                                                 {
                                                     isAuthenticated && (
@@ -711,34 +716,34 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 large={true}
                                                 cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
+                                                        show: canShowColumn('predicted_MP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_BP_celsius', userPermissions)
+                                                        show: canShowColumn('predicted_BP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
-                                                        show: isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
+                                                        show: canShowColumn('predicted_FP_celsius')
                                                      },
                                                     { label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: isHighTierUser(userPermissions)
+                                                        show: canShowColumn('combustion_enthalpy_ev')
                                                     },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]} 
                                                 foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
                                                 ]}
                                             >
                                                 <div className="molecule-actions">
