@@ -349,20 +349,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Map 功能的值
   const getMapValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.map.viewOnly')}</div>
-            <div className="pricing-cell-description">{t('pricing.features.map.full')}</div>
-          </div>
-        );
-      }
-      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
-      const description = isEnterprise ? t('pricing.features.map.fullEnterprise') : t('pricing.features.map.full');
+      const featureData = t(`pricing.features.map.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-description">{description}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? '' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -371,26 +369,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Ask Lightning 的值
   const getAskLightningValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.ask.lightning.viewOnly')}</div>
-            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.lightning.viewOnlyExamples')})`}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'research') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.ask.lightning.limited')}</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.askLightning.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-text">{t('pricing.features.ask.lightning.unlimited')}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -399,26 +389,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Ask Pro 的值
   const getAskProValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.ask.pro.viewOnly')}</div>
-            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.pro.viewOnlyExamples')})`}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'research') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.ask.pro.limited')}</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.askPro.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-text">{t('pricing.features.ask.pro.unlimited')}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -427,37 +409,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Deep Space 的值
   const getDeepSpaceValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.ask.deepSpace.viewOnly')}</div>
-            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.deepSpace.viewOnlyExamples')})`}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'research') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.low')}</div>
-            <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.lowDetail')})</div>
-          </div>
-        );
-      }
-      if (plan.id === 'explorer') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.medium')}</div>
-            <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.mediumDetail')})</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.askDeepSpace.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.high')}</div>
-          <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.highDetail')})</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -466,30 +429,42 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Filter 的值
   const getFilterValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return <div className="pricing-cell-text gray">{t('pricing.features.search.filter.viewOnly')}</div>;
+      const featureData = t(`pricing.features.filter.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
+      if (!featureData.text && hasCheckIcon) {
+        return <CheckIcon />;
       }
-      return <CheckIcon />;
+      
+      return (
+        <div className="pricing-cell-content">
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
+        </div>
+      );
     });
   };
 
   // 获取 Search 的值
   const getSearchValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.search.search.viewOnly')}</div>
-            <div className="pricing-cell-description gray">{`(${t('pricing.features.search.search.viewOnlyExamples')})`}</div>
-          </div>
-        );
-      }
-      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
-      const description = isEnterprise ? t('pricing.features.search.search.fullEnterprise') : t('pricing.features.search.search.full');
+      const featureData = t(`pricing.features.searchSearch.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-description">{description}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -498,51 +473,42 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Find Friends 的值
   const getFindFriendsValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.search.findFriends.viewOnly')}</div>
-            <div className="pricing-cell-description gray">{`(${t('pricing.features.search.findFriends.viewOnlyExamples')})`}</div>
-          </div>
-        );
+      const featureData = t(`pricing.features.findFriends.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
+      if (!featureData.text && hasCheckIcon) {
+        return <CheckIcon />;
       }
-      return <CheckIcon />;
+      
+      return (
+        <div className="pricing-cell-content">
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
+        </div>
+      );
     });
   };
 
   // 获取 Intelligent Find Friends 的值
   const getIntelligentFindFriendsValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'basic') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text gray">{t('pricing.features.search.intelligentFindFriends.notAvailable')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'research') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.low')}</div>
-            <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.lowDetail')})</div>
-          </div>
-        );
-      }
-      if (plan.id === 'explorer') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.medium')}</div>
-            <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.mediumDetail')})</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.intelligentFindFriends.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = plan.id !== 'basic';
+      
       return (
         <div className="pricing-cell-content">
-          <CheckIcon />
-          <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.high')}</div>
-          <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.highDetail')})</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className="pricing-cell-description">{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -551,45 +517,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Formulate 的值
   const getFormulateValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'enterprise1') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise1')}</div>
-            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise1Note')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'enterprise2') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise2')}</div>
-            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise2Note')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'enterprise3') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise3')}</div>
-            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise3Note')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'joint') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.formulate.joint')}</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.formulate.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = !['basic', 'research', 'explorer', 'team'].includes(plan.id);
+      
       return (
         <div className="pricing-cell-content">
-          <div className="pricing-cell-text gray">{t('pricing.features.formulate.viewOnly')}</div>
-          <div className="pricing-cell-description gray">{`(${t('pricing.features.formulate.viewOnlyExamples')})`}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? '' : 'gray'}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -598,29 +537,20 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Design 的值
   const getDesignValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
-      if (isEnterprise) {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text" style={{ whiteSpace: 'pre-line' }}>
-              {t('pricing.features.design.cycleLifeFull')}
-            </div>
-          </div>
-        );
-      }
-      if (plan.id === 'explorer' || plan.id === 'team') {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-text">{t('pricing.features.design.cycleLife')}</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.design.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = !['basic', 'research'].includes(plan.id);
+      
       return (
         <div className="pricing-cell-content">
-          <div className="pricing-cell-text gray">{t('pricing.features.design.viewOnly')}</div>
-          <div className="pricing-cell-description gray">{`(${t('pricing.features.design.viewOnlyExamples')})`}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`} style={{ whiteSpace: 'pre-line' }}>
+              {featureData.text}
+            </div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -629,19 +559,18 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Predict 的值
   const getPredictValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
-      if (isEnterprise) {
-        return (
-          <div className="pricing-cell-content">
-            <CheckIcon />
-            <div className="pricing-cell-description">{t('pricing.features.predict.canUpload')}</div>
-          </div>
-        );
-      }
+      const featureData = t(`pricing.features.predict.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = ['enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(plan.id);
+      
       return (
         <div className="pricing-cell-content">
-          <div className="pricing-cell-text gray">{t('pricing.features.predict.viewOnly')}</div>
-          <div className="pricing-cell-description gray">{`(${t('pricing.features.predict.viewOnlyExamples')})`}</div>
+          {hasCheckIcon && <CheckIcon />}
+          {featureData.text && (
+            <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
+          )}
         </div>
       );
     });
@@ -650,49 +579,36 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Data Security On Cloud 的值
   const getDataSecurityValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'enterprise1') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise1Policy')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'enterprise2') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise2Policy')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'enterprise3') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise3Policy')}</div>
-          </div>
-        );
-      }
-      if (plan.id === 'joint') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.jointPolicy')}</div>
-          </div>
-        );
-      }
-      return <div className="pricing-cell-text">{t('pricing.features.dataSecurity.onlinePolicy')}</div>;
+      const featureData = t(`pricing.features.dataSecurityOnCloud.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      
+      return (
+        <div className="pricing-cell-content">
+          {featureData.text && (
+            <div className="pricing-cell-text">{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className="pricing-cell-description">{featureData.description}</div>
+          )}
+        </div>
+      );
     });
   };
 
   // 获取 Data Security On Prem 的值（仅用于Joint Development）
   const getDataSecurityOnPremValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
-      if (plan.id === 'joint') {
-        return (
-          <div className="pricing-cell-content">
-            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.jointPolicy')}</div>
-          </div>
-        );
-      }
-      return <div className="pricing-cell-text gray">-</div>;
+      const featureData = t(`pricing.features.dataSecurityOnPrem.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      
+      return (
+        <div className="pricing-cell-content">
+          {featureData.text && (
+            <div className={`pricing-cell-text ${plan.id !== 'joint' ? 'gray' : ''}`}>{featureData.text}</div>
+          )}
+          {featureData.description && (
+            <div className="pricing-cell-description">{featureData.description}</div>
+          )}
+        </div>
+      );
     });
   };
 
@@ -702,9 +618,9 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       <div className="pricing-table-body">
         {/* Map */}
         <div className="pricing-section-header">
-          <div className="pricing-section-title">{t('pricing.features.map.title')}</div>
+          <div className="pricing-section-title">{t('pricing.featureTitles.map')}</div>
         </div>
-        {renderFeatureRow('map', t('pricing.features.map.title'), getMapValues(plans))}
+        {renderFeatureRow('map', t('pricing.featureTitles.map'), getMapValues(plans))}
 
         {/* Ask */}
         <div 
@@ -715,34 +631,34 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
             <div className={`pricing-chevron-wrapper ${expandedSections.ask ? 'expanded' : ''}`}>
               <ChevronIcon />
             </div>
-            <span>{t('pricing.features.ask.title')}</span>
+            <span>{t('pricing.featureTitles.ask')}</span>
           </div>
         </div>
         {expandedSections.ask && (
           <>
             {renderFeatureRow(
               'ask-lightning',
-              t('pricing.features.ask.lightning.title'),
+              t('pricing.featureTitles.askLightning'),
               getAskLightningValues(plans),
               false,
               true,
-              t('pricing.features.ask.lightning.description')
+              t('pricing.featureTitles.askLightningDescription')
             )}
             {renderFeatureRow(
               'ask-pro',
-              t('pricing.features.ask.pro.title'),
+              t('pricing.featureTitles.askPro'),
               getAskProValues(plans),
               false,
               true,
-              t('pricing.features.ask.pro.description')
+              t('pricing.featureTitles.askProDescription')
             )}
             {renderFeatureRow(
               'ask-deepspace',
-              t('pricing.features.ask.deepSpace.title'),
+              t('pricing.featureTitles.askDeepSpace'),
               getDeepSpaceValues(plans),
               false,
               true,
-              t('pricing.features.ask.deepSpace.description')
+              t('pricing.featureTitles.askDeepSpaceDescription')
             )}
           </>
         )}
@@ -756,17 +672,17 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
             <div className={`pricing-chevron-wrapper ${expandedSections.search ? 'expanded' : ''}`}>
               <ChevronIcon />
             </div>
-            <span>{t('pricing.features.search.title')}</span>
+            <span>{t('pricing.featureTitles.search')}</span>
           </div>
         </div>
         {expandedSections.search && (
           <>
-            {renderFeatureRow('filter', t('pricing.features.search.filter.title'), getFilterValues(plans), false, true)}
-            {renderFeatureRow('search', t('pricing.features.search.search.title'), getSearchValues(plans), false, true)}
-            {renderFeatureRow('find-friends', t('pricing.features.search.findFriends.title'), getFindFriendsValues(plans), false, true)}
+            {renderFeatureRow('filter', t('pricing.featureTitles.filter'), getFilterValues(plans), false, true)}
+            {renderFeatureRow('search', t('pricing.featureTitles.searchSearch'), getSearchValues(plans), false, true)}
+            {renderFeatureRow('find-friends', t('pricing.featureTitles.findFriends'), getFindFriendsValues(plans), false, true)}
             {renderFeatureRow(
               'intelligent-find-friends',
-              t('pricing.features.search.intelligentFindFriends.title'),
+              t('pricing.featureTitles.intelligentFindFriends'),
               getIntelligentFindFriendsValues(plans),
               false,
               true
@@ -776,21 +692,21 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
 
         {/* Formulate */}
         <div className="pricing-section-header">
-          <div className="pricing-section-title">{t('pricing.features.formulate.title')}</div>
+          <div className="pricing-section-title">{t('pricing.featureTitles.formulate')}</div>
         </div>
-        {renderFeatureRow('formulate', t('pricing.features.formulate.title'), getFormulateValues(plans))}
+        {renderFeatureRow('formulate', t('pricing.featureTitles.formulate'), getFormulateValues(plans))}
 
         {/* Design */}
         <div className="pricing-section-header">
-          <div className="pricing-section-title">{t('pricing.features.design.title')}</div>
+          <div className="pricing-section-title">{t('pricing.featureTitles.design')}</div>
         </div>
-        {renderFeatureRow('design', t('pricing.features.design.title'), getDesignValues(plans))}
+        {renderFeatureRow('design', t('pricing.featureTitles.design'), getDesignValues(plans))}
 
         {/* Predict */}
         <div className="pricing-section-header">
-          <div className="pricing-section-title">{t('pricing.features.predict.title')}</div>
+          <div className="pricing-section-title">{t('pricing.featureTitles.predict')}</div>
         </div>
-        {renderFeatureRow('predict', t('pricing.features.predict.title'), getPredictValues(plans))}
+        {renderFeatureRow('predict', t('pricing.featureTitles.predict'), getPredictValues(plans))}
 
         {/* Data Security */}
         <div 
@@ -801,13 +717,13 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
             <div className={`pricing-chevron-wrapper ${expandedSections.dataSecurity ? 'expanded' : ''}`}>
               <ChevronIcon />
             </div>
-            <span>{t('pricing.features.dataSecurity.title')}</span>
+            <span>{t('pricing.featureTitles.dataSecurity')}</span>
           </div>
         </div>
         {expandedSections.dataSecurity && (
           <>
-            {renderFeatureRow('data-security-cloud', t('pricing.features.dataSecurity.onCloud'), getDataSecurityValues(plans), false, true)}
-            {plans.some(plan => plan.id === 'joint') && renderFeatureRow('data-security-prem', t('pricing.features.dataSecurity.onPrem'), getDataSecurityOnPremValues(plans), false, true)}
+            {renderFeatureRow('data-security-cloud', t('pricing.featureTitles.dataSecurityOnCloud'), getDataSecurityValues(plans), false, true)}
+            {plans.some(plan => plan.id === 'joint') && renderFeatureRow('data-security-prem', t('pricing.featureTitles.dataSecurityOnPrem'), getDataSecurityOnPremValues(plans), false, true)}
           </>
         )}
       </div>
