@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useContext } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
@@ -10,11 +10,58 @@ import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
 import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
+import { triggerLoginModal, triggerPricingModal } from '@/utils/authHelpers';
+import { buildQueryString } from '@/services/buildQueryString';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
 import { useChatContext } from '../../context/ChatContext';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
+
+const inferIsAnionFromData = (
+    input?: Partial<MoleculeData> | Record<string, any> | null
+): boolean => {
+    if (!input) {
+        return false;
+    }
+
+    const rawFlag = (input as any).isAnion ?? (input as any).is_anion ?? (input as any).IS_ANION;
+    if (typeof rawFlag === 'string') {
+        const trimmed = rawFlag.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        return normalized === 'true' || normalized === '1' || normalized === 'yes';
+    }
+    if (typeof rawFlag === 'number') {
+        return rawFlag !== 0;
+    }
+    if (typeof rawFlag === 'boolean') {
+        return rawFlag;
+    }
+    if (rawFlag != null) {
+        return Boolean(rawFlag);
+    }
+
+    const rawCation = (input as any).cation ?? (input as any).CATION;
+    if (rawCation === undefined || rawCation === null) {
+        return false;
+    }
+    if (typeof rawCation === 'string') {
+        const trimmed = rawCation.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        if (normalized === 'none' || normalized === 'null' || normalized === 'n/a' || normalized === 'na') {
+            return false;
+        }
+        return true;
+    }
+
+    return Boolean(rawCation);
+};
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -37,11 +84,15 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const { modeLimits } = useChatContext();
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
+    const normalizedPermissions = (userPermissions || '').toLowerCase();
+    const isFindFriendsLocked = !isAuthenticated || ['common', 'public', 'basic'].includes(normalizedPermissions);
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const prevMoleculeTypeRef = useRef('solvent');
     const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
     const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
@@ -52,6 +103,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
+    const [useAnionDatabase, setUseAnionDatabase] = useState<boolean>(() => inferIsAnionFromData(molecule));
+    const isAnionFindFriend = useAnionDatabase;
     const [structureWeight, setStructureWeight] = useState(0.75);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => {
@@ -63,14 +116,37 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const handleLockedAction = useCallback(() => {
+        if (!isAuthenticated) {
+            if (typeof window !== 'undefined') {
+                triggerLoginModal(window.location.pathname + window.location.search);
+            } else {
+                triggerLoginModal();
+            }
+            return;
+        }
+        triggerPricingModal(userPermissions);
+    }, [isAuthenticated, userPermissions]);
 
     const toggleAdvancedOptions = () => {
         setShowAdvanced(prev => !prev);
     };
 
+    const handleAdvancedToggle = useCallback(() => {
+        if (isFindFriendsLocked) {
+            handleLockedAction();
+            return;
+        }
+        toggleAdvancedOptions();
+    }, [handleLockedAction, isFindFriendsLocked]);
+
     const handleAdvancedToggleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
+            if (isFindFriendsLocked) {
+                handleLockedAction();
+                return;
+            }
             toggleAdvancedOptions();
         }
     };
@@ -85,6 +161,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 setStructureWeight(0.5);
                 break;
             case 'additive':
+            case 'salt':
                 setStructureWeight(1.0);
                 break;
             case 'solvent':
@@ -97,6 +174,31 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (isAnionFindFriend) {
+            if (selectedMoleculeType !== 'salt') {
+                prevMoleculeTypeRef.current = selectedMoleculeType;
+                setSelectedMoleculeType('salt');
+                onUpdateMoleculeType?.(moleculeName, 'salt');
+            }
+            setStructureWeight(1.0);
+            if (!showHypothetical) {
+                setShowHypothetical(true);
+            }
+        } else if (selectedMoleculeType === 'salt') {
+            const fallbackType = prevMoleculeTypeRef.current || 'solvent';
+            setSelectedMoleculeType(fallbackType);
+            onUpdateMoleculeType?.(moleculeName, fallbackType);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAnionFindFriend]);
+
+    useEffect(() => {
+        if (molecule) {
+            setUseAnionDatabase(inferIsAnionFromData(molecule));
+        }
+    }, [molecule]);
 
     const favoriteCtx = useContext(FavoriteContext);
     const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
@@ -140,14 +242,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         // 构造分子对象传递给上层处理函数
         if (onFindSimilar && (molecule || rawOriginal)) {
-            const moleculeForCallback = molecule || {
-                name: name,
-                SMILES: currentSmiles || '',
-                ...rawOriginal
-            };
+            const inferredAnion = useAnionDatabase || inferIsAnionFromData(rawOriginal);
+            const moleculeForCallback: MoleculeData = molecule
+                ? {
+                    ...molecule,
+                    isAnion: molecule.isAnion ?? inferredAnion,
+                }
+                : {
+                    name,
+                    SMILES: currentSmiles || '',
+                    isAnion: inferredAnion,
+                    ...(rawOriginal || {}),
+                } as MoleculeData;
             onFindSimilar(moleculeForCallback);
         }
-        
+
         try {
             setIsSimilarLoading(true);
             let smilesToUse = currentSmiles;
@@ -360,17 +469,59 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         <select
                             className="molecule-type-select"
                             value={selectedMoleculeType}
-                            onChange={handleMoleculeTypeChange}
+                            onChange={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                if (isAnionFindFriend) {
+                                    event.preventDefault();
+                                    return;
+                                }
+                                handleMoleculeTypeChange(event);
+                            }}
+                            onMouseDown={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                if (isAnionFindFriend) {
+                                    event.preventDefault();
+                                }
+                            }}
+                            aria-disabled={isFindFriendsLocked || isAnionFindFriend}
+                            style={{
+                                cursor: isFindFriendsLocked || isAnionFindFriend ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked || isAnionFindFriend ? 0.6 : 1,
+                            }}
                         >
-                            <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
-                            <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
-                            <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
-                            <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                            {isAnionFindFriend ? (
+                                <option value="salt">{t('molecular.moleculeModal.types.salt', 'Salt')}</option>
+                            ) : (
+                                <>
+                                    <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                                    <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
+                                    <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                                    <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                                </>
+                            )}
                         </select>
                         <button
                             className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
-                            onClick={() => handleFindSimilar(name)}
+                            onClick={() => {
+                                if (isFindFriendsLocked) {
+                                    handleLockedAction();
+                                    return;
+                                }
+                                handleFindSimilar(name);
+                            }}
                             disabled={isSimilarLoading}
+                            style={{
+                                cursor: isSimilarLoading ? 'wait' : isFindFriendsLocked ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked ? 0.5 : 1,
+                            }}
                         >
                             {isSimilarLoading ? (
                                 <div className="loading-spinner-small"></div>
@@ -413,8 +564,30 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         </InfoTooltip>
                         <select
                             value={computeLevel}
-                            onChange={(event) => setComputeLevel(event.target.value)}
-                            style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            onChange={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                setComputeLevel(event.target.value);
+                            }}
+                            onMouseDown={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                }
+                            }}
+                            aria-disabled={isFindFriendsLocked}
+                            style={{
+                                backgroundColor: isFindFriendsLocked ? '#f1f5f9' : 'white',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                padding: '4px',
+                                color: isFindFriendsLocked ? '#94a3b8' : undefined,
+                                cursor: isFindFriendsLocked ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked ? 0.6 : 1,
+                            }}
                         >
                             <option value="Disabled">{t('search.computeDisabled')}</option>
                             <option value="Low">{t('search.computeLow')}</option>
@@ -441,14 +614,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         role="button"
                         tabIndex={0}
                         aria-expanded={showAdvanced}
-                        onClick={toggleAdvancedOptions}
+                        onClick={handleAdvancedToggle}
                         onKeyDown={handleAdvancedToggleKeyDown}
                         style={{
                             marginTop: '12px',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '6px',
-                            cursor: 'pointer',
+                            cursor: isFindFriendsLocked ? 'not-allowed' : 'pointer',
                             color: '#2563eb',
                             fontWeight: 500,
                             fontSize: '13px',
@@ -457,6 +630,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             padding: '6px 10px',
                             backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
                             transition: 'background-color 0.2s',
+                            opacity: isFindFriendsLocked ? 0.5 : 1,
                         }}
                     >
                         <span>{t('search.advancedOptions')}</span>
@@ -477,6 +651,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setShowHypothetical={setShowHypothetical}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
+                            showStructureSlider={!isAnionFindFriend}
+                            readOnly={isFindFriendsLocked}
+                            onLockedClick={handleLockedAction}
                         />
                     )}
                     </>
@@ -539,10 +716,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     };
 
     const fetchOriginalDetails = async (name: string): Promise<{ props?: MoleculeProperties; smiles?: string; raw?: any; }> => {
-        let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(name)}`;
+        const params = new URLSearchParams();
+        params.set('molecule', name);
         if (isHighTier) {
-            queryUrl += '&query_type=molecule&use_35m=true';
+            params.set('query_type', 'molecule');
+            params.set('use_35m', 'true');
         }
+        if (useAnionDatabase) {
+            params.set('is_anion', 'true');
+            params.set('umap_type', 'anions');
+        }
+
+        const queryUrl = `${API_URL}/api/molecule_details?${params.toString()}`;
         const resp = await authFetch(queryUrl, { method: 'GET' });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
@@ -562,33 +747,42 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         if (molType) {
             payload.mol_type = molType;
         }
-        if (computeLevel !== 'Disabled') {
-            payload.llm_compute_power = computeLevel.toLowerCase();
+
+        const baseQuery = buildQueryString('', '', '', '', '');
+        const queryParts: string[] = baseQuery ? [baseQuery] : [];
+
+        if (selectedMoleculeType) {
+            const molTypeLabel = selectedMoleculeType;
+            queryParts.push(`I am looking for ${molTypeLabel} molecules.`);
         }
+        if (extraRequests.trim()) {
+            queryParts.push(`I have the following requirements: ${extraRequests.trim()}`);
+        }
+
+        const queryString = queryParts.join(' ').trim();
+        if (queryString) {
+            payload.query = queryString;
+        }
+
+        const computePowerEnabled = computeLevel !== 'Disabled';
+        if (computePowerEnabled) {
+            payload.llm_compute_power = computeLevel.toLowerCase();
+            const conversationLog = messages
+                .filter((message) => message.role === 'user' || message.role === 'assistant')
+                .map((message) => `${message.role === 'user' ? 'User' : 'Assistant'}: ${message.content ?? ''}`)
+                .join('\n\n');
+            if (conversationLog) {
+                payload.response = conversationLog;
+            }
+        }
+
         if (extraRequests.trim()) {
             payload.extra_requests = extraRequests;
         }
+        if (useAnionDatabase) {
+            payload.is_anion = true;
+        }
         if (isHighTier && rawOriginal) {
-            // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
-            let originalQuery: string | undefined = undefined;
-            let llmResponse: string | undefined = undefined;
-            
-            if (messages.length > 0) {
-                // 获取最新的用户消息和助手回复
-                for (let i = messages.length - 1; i >= 0; i--) {
-                    if (messages[i].role === 'assistant' && !llmResponse) {
-                        llmResponse = messages[i].content;
-                    } else if (messages[i].role === 'user' && !originalQuery) {
-                        originalQuery = messages[i].content;
-                    }
-                    
-                    // 一旦找到两个就停止
-                    if (originalQuery && llmResponse) {
-                        break;
-                    }
-                }
-            }
-
             const selectedMoleculeStr = [
                 `Name: ${rawOriginal?.name || 'N/A'}`,
                 `SMILES: ${rawOriginal?.SMILES || smiles}`,
@@ -602,8 +796,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 `Predicted BP: ${rawOriginal?.predicted_BP_celsius ?? 'N/A'} °C`
             ].join('\n');
             payload.selected_molecule_str = selectedMoleculeStr;
-            payload.query = originalQuery;
-            payload.response = llmResponse;
         }
 
         const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
@@ -629,14 +821,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         if (molecule) {
             // 直接使用传入的完整分子对象，避免API请求
-            const properties = convertMoleculeDataToProperties(molecule);
-            setOriginalMoleculeProps(properties);
-            setCurrentSmiles(molecule.SMILES);
-            setRawOriginal(molecule);
-            setSimilarMolecules([]);
-            setSimilarRawList([]);
-            setShowSimilar(false);
-            setIsLoading(false);
+            if (!isCancelled) {
+                const properties = convertMoleculeDataToProperties(molecule);
+                setOriginalMoleculeProps(properties);
+                setCurrentSmiles(molecule.SMILES);
+                setRawOriginal(molecule);
+                setSimilarMolecules([]);
+                setSimilarRawList([]);
+                setShowSimilar(false);
+                setUseAnionDatabase(inferIsAnionFromData(molecule));
+                setIsLoading(false);
+            }
         } else {
             // 如果没有完整分子对象，则从API获取（向后兼容）
             const loadData = async () => {
@@ -650,6 +845,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     setSimilarMolecules([]);
                     setSimilarRawList([]);
                     setShowSimilar(false);
+                    setUseAnionDatabase(inferIsAnionFromData(original?.raw));
                 } catch (err) {
                     if (!isCancelled) {
                         setSimilarMolecules([]);
