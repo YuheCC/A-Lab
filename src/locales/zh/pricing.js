@@ -368,19 +368,19 @@ export default {
       },
       enterprise1: {
         text: "≤100/月",
-        description: "（高）"
+        description: "（高，GPT-5-mini-medium, 2分钟）"
       },
       enterprise2: {
         text: "无限制",
-        description: "（高）"
+        description: "（高，GPT-5-mini-medium, 2分钟）"
       },
       enterprise3: {
         text: "无限制",
-        description: "（极致）"
+        description: "（极致，GPT-5-high, 10分钟）"
       },
       joint: {
         text: "无限制",
-        description: "（极致）"
+        description: "（极致，GPT-5-high, 10分钟）"
       }
     },
     formulate: {
@@ -413,7 +413,8 @@ export default {
         description: "6个性能指标1-2周内出结果：联系SES"
       },
       joint: {
-        text: "7个性能指标3天内出结果：无限制"
+        text: "7个性能指标3天内出结果：无限制",
+        description: "6个性能指标1-2周内出结果：联系SES"
       }
     },
     design: {

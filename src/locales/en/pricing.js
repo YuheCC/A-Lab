@@ -368,19 +368,19 @@ export default {
       },
       enterprise1: {
         text: "≤100/month",
-        description: "(High)"
+        description: "(High, GPT-5-mini-medium, 2min)"
       },
       enterprise2: {
         text: "Unlimited",
-        description: "(High)"
+        description: "(High, GPT-5-mini-medium, 2min)"
       },
       enterprise3: {
         text: "Unlimited",
-        description: "(Extreme)"
+        description: "(Extreme, GPT-5-high, 10min)"
       },
       joint: {
         text: "Unlimited",
-        description: "(Extreme)"
+        description: "(Extreme, GPT-5-high, 10min)"
       }
     },
     formulate: {
@@ -413,7 +413,8 @@ export default {
         description: "6 properties result in 1-2 weeks: contact SES"
       },
       joint: {
-        text: "7 properties result in 3 days: Unlimited"
+        text: "7 properties result in 3 days: Unlimited",
+        description: "6 properties result in 1-2 weeks: contact SES"
       }
     },
     design: {

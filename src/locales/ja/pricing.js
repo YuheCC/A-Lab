@@ -368,19 +368,19 @@ export default {
       },
       enterprise1: {
         text: "≤100/月",
-        description: "（高）"
+        description: "（高、GPT-5-mini-medium, 2分）"
       },
       enterprise2: {
         text: "無制限",
-        description: "（高）"
+        description: "（高、GPT-5-mini-medium, 2分）"
       },
       enterprise3: {
         text: "無制限",
-        description: "（エクストリーム）"
+        description: "（エクストリーム、GPT-5-high, 10分）"
       },
       joint: {
         text: "無制限",
-        description: "（エクストリーム）"
+        description: "（エクストリーム、GPT-5-high, 10分）"
       }
     },
     formulate: {
@@ -413,7 +413,8 @@ export default {
         description: "6つの特性が1-2週間で結果：SESに連絡"
       },
       joint: {
-        text: "7つの特性が3日で結果：無制限"
+        text: "7つの特性が3日で結果：無制限",
+        description: "6つの特性が1-2週間で結果：SESに連絡"
       }
     },
     design: {

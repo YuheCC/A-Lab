@@ -368,19 +368,19 @@ export default {
       },
       enterprise1: {
         text: "≤100/월",
-        description: "（높음）"
+        description: "（높음, GPT-5-mini-medium, 2분）"
       },
       enterprise2: {
         text: "무제한",
-        description: "（높음）"
+        description: "（높음, GPT-5-mini-medium, 2분）"
       },
       enterprise3: {
         text: "무제한",
-        description: "（극대화）"
+        description: "（극대화, GPT-5-high, 10분）"
       },
       joint: {
         text: "무제한",
-        description: "（극대화）"
+        description: "（극대화, GPT-5-high, 10분）"
       }
     },
     formulate: {
@@ -413,7 +413,8 @@ export default {
         description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
       },
       joint: {
-        text: "7가지 속성을 3일 내에 결과 제공: 무제한"
+        text: "7가지 속성을 3일 내에 결과 제공: 무제한",
+        description: "6가지 속성을 1-2주 내에 결과 제공: SES 연락"
       }
     },
     design: {
