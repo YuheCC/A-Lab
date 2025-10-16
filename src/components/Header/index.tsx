@@ -149,7 +149,7 @@ const Header = () => {
             <nav className="main-nav">
                 <NavLink 
                     to="/map" 
-                    className={`nav-item ${pathname === '/map' ? 'active' : ''}`}
+                    className={`nav-item nav-item-separated ${pathname === '/map' ? 'active' : ''}`}
                 >
                     {t('navigation.header.map')}
                 </NavLink>

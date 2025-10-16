@@ -419,16 +419,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             const model_result = JSON.parse(responseData.model_result);
             responseData = {
               ...responseData,
-              temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label.toString(),
-              temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob.toString(),
-              temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label.toString(),
-              temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob.toString(),
-              temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label.toString(),
-              temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob.toString(),
-              temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label.toString(),
-              temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob.toString(),
-              temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label.toString(),
-              temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob.toString()
+              temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label?.toString(),
+              temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob?.toString(),
+              temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label?.toString(),
+              temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob?.toString(),
+              temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label?.toString(),
+              temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob?.toString(),
+              temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label?.toString(),
+              temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob?.toString(),
+              temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label?.toString(),
+              temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob?.toString()
             };
           }
         } catch (error) {
@@ -1037,7 +1037,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               <h2>{t('performance.results.title')}</h2>
               <Tooltip
                 title={
-                  <div className="pm-result-tooltip">
+                  <div className="result-tooltip">
                     <div className="result-tooltip__section result-tooltip__section--description">
                       <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.cycleLifeLabel')}:</strong> {t('performance.results.descriptions.cycleLife')}</div>
                       <div className="result-tooltip__description"><strong>{t('performance.results.descriptions.ceLabel')}:</strong> {t('performance.results.descriptions.ce')}</div>
@@ -1117,10 +1117,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   }
                 }}
               >
-                <div className="pm-tip-icon-container">
+                <div className="tip-icon-container">
                   <Info
                     size={16}
-                    className="pm-tip-icon"
+                    className="tip-icon"
                   />
                 </div>
               </Tooltip>
