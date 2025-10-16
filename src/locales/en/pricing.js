@@ -81,7 +81,7 @@ export default {
   },
   enterprise1: {
     title: "Enterprise I",
-    description: "Access to Whole Molecular Universe (100M)",
+    description: "Access to Whole Molecular Universe (200M)",
     price: "",
     period: "",
     cta: "Contact Sales",
@@ -102,7 +102,7 @@ export default {
   },
   enterprise2: {
     title: "Enterprise II",
-    description: "Access to Whole Molecular Universe (100M)",
+    description: "Access to Whole Molecular Universe (200M)",
     price: "",
     period: "",
     cta: "Contact Sales",
@@ -123,7 +123,7 @@ export default {
   },
   enterprise3: {
     title: "Enterprise III",
-    description: "Access to Whole Molecular Universe (100M)",
+    description: "Access to Whole Molecular Universe (200M)",
     price: "",
     period: "",
     cta: "Contact Sales",
@@ -144,7 +144,7 @@ export default {
   },
   joint: {
     title: "Joint Development",
-    description: "Access to Whole Molecular Universe (100M)",
+    description: "Access to Whole Molecular Universe (200M)",
     price: "",
     period: "",
     cta: "Contact Sales",
@@ -172,7 +172,8 @@ export default {
     map: {
       title: "Map",
       viewOnly: "View only",
-      full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes"
+      full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes",
+      fullEnterprise: "200M Solvents, Additives & Diluents, 1M+ Salt Anions, Solid Electrolytes+"
     },
     ask: {
       title: "Ask",
@@ -216,7 +217,8 @@ export default {
         title: "Search",
         viewOnly: "View only",
         viewOnlyExamples: "1 example/category",
-        full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes"
+        full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes",
+        fullEnterprise: "200M Solvents, Additives & Diluents, 1M+ Salt Anions, Solid Electrolytes+"
       },
       findFriends: {
         title: "Find-Friends",
@@ -238,23 +240,37 @@ export default {
     formulate: {
       title: "Formulate",
       viewOnly: "View only",
-      viewOnlyExamples: "1 full example"
+      viewOnlyExamples: "1 full example",
+      enterprise1: "7 properties result in 3 days: ≤10/company/month",
+      enterprise1Note: "6 properties result in 1-2 weeks: contact SES",
+      enterprise2: "7 properties result in 3 days: ≤30/company/month",
+      enterprise2Note: "6 properties result in 1-2 weeks: contact SES",
+      enterprise3: "7 properties result in 3 days: ≤100/company/month",
+      enterprise3Note: "6 properties result in 1-2 weeks: contact SES",
+      joint: "7 properties result in 3 days: Unlimited"
     },
     design: {
       title: "Design",
       viewOnly: "View only",
       viewOnlyExamples: "1 full example",
-      cycleLife: "25°C Cycle Life"
+      cycleLife: "25°C Cycle Life",
+      cycleLifeFull: "25°C Cycle Life\n25°C CE/Rate Performance\n45°C Cycle Life\n45°C CE"
     },
     predict: {
       title: "Predict",
       viewOnly: "View only",
-      viewOnlyExamples: "1 full example"
+      viewOnlyExamples: "1 full example",
+      canUpload: "(can upload own data)"
     },
     dataSecurity: {
       title: "Data Security",
       onCloud: "On Cloud",
-      onlinePolicy: "Online policy"
+      onlinePolicy: "Online policy",
+      enterprise1Policy: "We commit to not give your data to your direct competitors (including our battery development team) or look at de-anonymized data without customer authorization, but we may use anonymized data to improve our software.",
+      enterprise2Policy: "We commit to not give your data to your direct competitors (including our battery development team) or use it for internal MU software development because some MU services are powered by numerous our software, we also anonymized data without customer authorization, but we will store it for debugging purposes. You own your data.",
+      enterprise3Policy: "If requested, we will not store your data at all. Storing anonymized data is still an option if customer wants us to have it to help him/her debug, but we can disable all data storage if requested. Your data still go through our servers and our 3rd party APIs. Support for compliance with SOC 2 / ISO 27001. Support for single-tenant MU server where other customers cannot access your server, and adding your data to this server.",
+      onPrem: "On Prem",
+      jointPolicy: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the Internet. Support for replacing some 3rd party MU providers and implementing some MU services locally (your choice). Full On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
     }
   },
   contactSales: {
