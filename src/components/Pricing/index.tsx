@@ -296,8 +296,8 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           return (
             <div key={plan.id} className="pricing-header-cell pricing-plan-cell">
               <div className="pricing-plan-title">{title}</div>
-              {subtitle && <div className="pricing-plan-subtitle">{subtitle}</div>}
               <div className="pricing-plan-description">{description}</div>
+              <div className="pricing-plan-subtitle">{subtitle ?? ""}</div>
               {price && (
                 <div className="pricing-plan-price-container">
                   <span className="pricing-plan-price">{price}</span>
