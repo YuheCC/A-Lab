@@ -311,6 +311,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (!isNaN(chatId)) {
                 loadChatHistory(chatId);
                 loadChatData(chatId);
+                // 切换聊天时也需要关闭 molecular panel
+                handleMoleculePanelClose();
             } else {
                 // id 存在但不是数字（如 "new"），按新聊天处理
                 startNewChat();
