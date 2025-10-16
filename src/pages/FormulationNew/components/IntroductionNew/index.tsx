@@ -64,7 +64,10 @@ const IntroductionNew: React.FC = () => {
             <Info size={16} style={{ marginRight: '8px', flexShrink: 0 }} />
             <span>{t('formulation.introductionNew.propertiesIntroNoteDescription')}</span>
           </p>
-          <button className="contact-team-button">
+          <button 
+            className="contact-team-button"
+            onClick={() => window.open('mailto:md-service@ses.ai')}
+          >
             {t('formulation.introductionNew.propertiesIntroNoteButton')}
           </button>
         </div>

@@ -145,7 +145,22 @@
     color: #9ca3af !important; /* Keep gray color on hover */
   }
   
+  .nav-item-separated {
+    margin-right: 32px;
+  }
   
+  .nav-item-separated::before {
+    content: '';
+    position: absolute;
+    right: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background-color: #d1d5db;
+    z-index: 1;
+  }
+
   /* Navigation Dropdown Styles */
   .nav-dropdown-container {
     position: relative;
