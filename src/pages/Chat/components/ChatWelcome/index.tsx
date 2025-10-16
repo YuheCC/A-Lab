@@ -81,7 +81,7 @@ const ChatWelcome: React.FC = () => {
     const [currentMode, setCurrentMode] = useState<ChatMode>(initialMode);
     const [disableLiterature, setDisableLiterature] = useState(false);
     const [fullDeepSpace, setFullDeepSpace] = useState(false);
-    const [enablePatentRag, setEnablePatentRag] = useState(false);
+    const [disablePatentRag, setDisablePatentRag] = useState(false);
     const [disableTools, setDisableTools] = useState(false);
 
     const [fallbackSelection, setFallbackSelection] = useState<string[]>([]);
@@ -212,7 +212,7 @@ const ChatWelcome: React.FC = () => {
     const buildExtraPayload = useCallback(() => {
         const extraPayload: Record<string, any> = {
             ragEnabled: !disableLiterature,
-            patentRagEnabled: enablePatentRag,
+            patentRagEnabled: !disablePatentRag,
             toolsEnabled: !disableTools,
             originalMode: currentMode,
         };
@@ -223,7 +223,7 @@ const ChatWelcome: React.FC = () => {
         const backendMode = backendModeMap[currentMode];
         const modeToSend: ChatMode = backendMode === 'deep-space' ? 'clarify' : backendMode;
         return { extraPayload, modeToSend };
-    }, [currentMode, disableLiterature, enablePatentRag, disableTools, fullDeepSpace]);
+    }, [currentMode, disableLiterature, disablePatentRag, disableTools, fullDeepSpace]);
 
     const handleSendMessageLocal = useCallback(() => {
         if (isPublic) {
@@ -490,14 +490,14 @@ const ChatWelcome: React.FC = () => {
                       <label className="checkbox-item">
                         <input
                           type="checkbox"
-                          checked={enablePatentRag}
+                          checked={disablePatentRag}
                           onChange={(e) => {
                             if (isPublic) return;
-                            setEnablePatentRag(e.target.checked);
+                            setDisablePatentRag(e.target.checked);
                           }}
                           disabled={isPublic}
                         />
-                        Enable Patent RAG
+                        Disable Patent RAG
                       </label>
                       <label className="checkbox-item">
                         <input
