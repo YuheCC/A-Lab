@@ -84,15 +84,15 @@ const DetailPage: React.FC = () => {
   const systemProperties = [
     {
       property: t('formulation.detail.density', 'Density (g/cm³)'),
-      value: resultData?.output_json?.system_properties?.['conductivity [mS/cm]']?.toFixed(4) || '1.2000'
+      value: resultData?.output_json?.system_properties?.['density [g/cm3]']?.toFixed(4) || ''
     },
     {
       property: t('formulation.detail.viscosity', 'Viscosity (cP)'),
-      value: resultData?.output_json?.system_properties?.['density [g/cm3]']?.toFixed(4) || '2.6600'
+      value: resultData?.output_json?.system_properties?.['viscosity [cP]']?.toFixed(4) || ''
     },
     {
       property: t('formulation.detail.conductivity', 'Conductivity (mS/cm)'),
-      value: resultData?.output_json?.system_properties?.['viscosity [cP]']?.toFixed(4) || '5.7600'
+      value: resultData?.output_json?.system_properties?.['conductivity [mS/cm]']?.toFixed(4) || ''
     }
   ];
 
