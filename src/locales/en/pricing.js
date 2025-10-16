@@ -168,6 +168,95 @@ export default {
     note: "Molecular Universe is free for students and educators.",
     verify: "Get Verified"
   },
+  features: {
+    map: {
+      title: "Map",
+      viewOnly: "View only",
+      full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes"
+    },
+    ask: {
+      title: "Ask",
+      lightning: {
+        title: "Lightning",
+        description: "GPT-5 mini medium + MU 1min",
+        viewOnly: "View only",
+        viewOnlyExamples: "2 examples",
+        limited: "≤50/day",
+        unlimited: "Unlimited"
+      },
+      pro: {
+        title: "Pro",
+        description: "GPT-5 mini high + MU Trim 20~40min",
+        viewOnly: "View only",
+        viewOnlyExamples: "1 example",
+        limited: "≤10/day",
+        unlimited: "Unlimited"
+      },
+      deepSpace: {
+        title: "Deep Space",
+        description: "GPT-5 high + MU 20~40min",
+        viewOnly: "View only",
+        viewOnlyExamples: "1 example",
+        low: "≤5/month",
+        lowDetail: "Low, GPT-5-nano-medium, 30sec",
+        medium: "≤10/month",
+        mediumDetail: "Medium, GPT-5-nano-high, 1min",
+        high: "≤10/person/month",
+        highDetail: "Medium, GPT-5-nano-high, 1min"
+      }
+    },
+    search: {
+      title: "Search",
+      filter: {
+        title: "Filter",
+        viewOnly: "View only",
+        available: "Available"
+      },
+      search: {
+        title: "Search",
+        viewOnly: "View only",
+        viewOnlyExamples: "1 example/category",
+        full: "1M Solvents, Additives & Diluents, 1M Salt Anions, Solid Electrolytes"
+      },
+      findFriends: {
+        title: "Find-Friends",
+        viewOnly: "View only",
+        viewOnlyExamples: "1 example/category",
+        available: "Available"
+      },
+      intelligentFindFriends: {
+        title: "Intelligent Find-Friends",
+        notAvailable: "-",
+        low: "≤10/month",
+        lowDetail: "Low, GPT-5-nano-medium, 30sec",
+        medium: "≤20/month",
+        mediumDetail: "Medium, GPT-5-nano-high, 1min",
+        high: "≤20/person/month",
+        highDetail: "Medium, GPT-5-nano-high, 1min"
+      }
+    },
+    formulate: {
+      title: "Formulate",
+      viewOnly: "View only",
+      viewOnlyExamples: "1 full example"
+    },
+    design: {
+      title: "Design",
+      viewOnly: "View only",
+      viewOnlyExamples: "1 full example",
+      cycleLife: "25°C Cycle Life"
+    },
+    predict: {
+      title: "Predict",
+      viewOnly: "View only",
+      viewOnlyExamples: "1 full example"
+    },
+    dataSecurity: {
+      title: "Data Security",
+      onCloud: "On Cloud",
+      onlinePolicy: "Online policy"
+    }
+  },
   contactSales: {
     title: "Contact Sales",
     enterprise1: "Enterprise I",

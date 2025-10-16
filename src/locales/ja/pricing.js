@@ -168,6 +168,95 @@ export default {
     note: "Molecular Universeは学生と教育関係者には無料です。",
     verify: "認証を受ける"
   },
+  features: {
+    map: {
+      title: "マップ",
+      viewOnly: "ビューのみ",
+      full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+    },
+    ask: {
+      title: "Ask",
+      lightning: {
+        title: "Lightning",
+        description: "GPT-5 mini medium + MU 1分",
+        viewOnly: "ビューのみ",
+        viewOnlyExamples: "2例",
+        limited: "≤50/日",
+        unlimited: "無制限"
+      },
+      pro: {
+        title: "プロ",
+        description: "GPT-5 mini high + MU Trim 20~40分",
+        viewOnly: "ビューのみ",
+        viewOnlyExamples: "1例",
+        limited: "≤10/日",
+        unlimited: "無制限"
+      },
+      deepSpace: {
+        title: "Deep Space",
+        description: "GPT-5 high + MU 20~40分",
+        viewOnly: "ビューのみ",
+        viewOnlyExamples: "1例",
+        low: "≤5/月",
+        lowDetail: "低、GPT-5-nano-medium, 30秒",
+        medium: "≤10/月",
+        mediumDetail: "中、GPT-5-nano-high, 1分",
+        high: "≤10/人/月",
+        highDetail: "中、GPT-5-nano-high, 1分"
+      }
+    },
+    search: {
+      title: "検索",
+      filter: {
+        title: "フィルター",
+        viewOnly: "ビューのみ",
+        available: "利用可能"
+      },
+      search: {
+        title: "検索",
+        viewOnly: "ビューのみ",
+        viewOnlyExamples: "1例/カテゴリ",
+        full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      findFriends: {
+        title: "Find-Friends",
+        viewOnly: "ビューのみ",
+        viewOnlyExamples: "1例/カテゴリ",
+        available: "利用可能"
+      },
+      intelligentFindFriends: {
+        title: "Intelligent Find-Friends",
+        notAvailable: "-",
+        low: "≤10/月",
+        lowDetail: "低、GPT-5-nano-medium, 30秒",
+        medium: "≤20/月",
+        mediumDetail: "中、GPT-5-nano-high, 1分",
+        high: "≤20/人/月",
+        highDetail: "中、GPT-5-nano-high, 1分"
+      }
+    },
+    formulate: {
+      title: "フォーミュレーション",
+      viewOnly: "ビューのみ",
+      viewOnlyExamples: "1つの完全な例"
+    },
+    design: {
+      title: "デザイン",
+      viewOnly: "ビューのみ",
+      viewOnlyExamples: "1つの完全な例",
+      cycleLife: "25°C サイクル寿命"
+    },
+    predict: {
+      title: "予測",
+      viewOnly: "ビューのみ",
+      viewOnlyExamples: "1つの完全な例"
+    },
+    dataSecurity: {
+      title: "データセキュリティ",
+      onCloud: "クラウド",
+      onlinePolicy: "オンラインポリシー"
+    }
+  },
   contactSales: {
     title: "営業担当者へのお問い合わせ",
     enterprise1: "エンタープライズ I",

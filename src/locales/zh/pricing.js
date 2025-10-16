@@ -168,6 +168,95 @@ export default {
     note: "分子宇宙对学生和教育工作者免费。",
     verify: "获取验证"
   },
+  features: {
+    map: {
+      title: "地图",
+      viewOnly: "仅查看",
+      full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质"
+    },
+    ask: {
+      title: "Ask",
+      lightning: {
+        title: "闪电",
+        description: "GPT-5 mini medium + MU 1分钟",
+        viewOnly: "仅查看",
+        viewOnlyExamples: "2个示例",
+        limited: "≤50/天",
+        unlimited: "无限制"
+      },
+      pro: {
+        title: "专业版",
+        description: "GPT-5 mini high + MU Trim 20~40分钟",
+        viewOnly: "仅查看",
+        viewOnlyExamples: "1个示例",
+        limited: "≤10/天",
+        unlimited: "无限制"
+      },
+      deepSpace: {
+        title: "深空",
+        description: "GPT-5 high + MU 20~40分钟",
+        viewOnly: "仅查看",
+        viewOnlyExamples: "1个示例",
+        low: "≤5/月",
+        lowDetail: "低，GPT-5-nano-medium, 30秒",
+        medium: "≤10/月",
+        mediumDetail: "中，GPT-5-nano-high, 1分钟",
+        high: "≤10/人/月",
+        highDetail: "中，GPT-5-nano-high, 1分钟"
+      }
+    },
+    search: {
+      title: "搜索",
+      filter: {
+        title: "筛选",
+        viewOnly: "仅查看",
+        available: "可用"
+      },
+      search: {
+        title: "搜索",
+        viewOnly: "仅查看",
+        viewOnlyExamples: "1个示例/类别",
+        full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质"
+      },
+      findFriends: {
+        title: "找好友",
+        viewOnly: "仅查看",
+        viewOnlyExamples: "1个示例/类别",
+        available: "可用"
+      },
+      intelligentFindFriends: {
+        title: "智能找好友",
+        notAvailable: "-",
+        low: "≤10/月",
+        lowDetail: "低，GPT-5-nano-medium, 30秒",
+        medium: "≤20/月",
+        mediumDetail: "中，GPT-5-nano-high, 1分钟",
+        high: "≤20/人/月",
+        highDetail: "中，GPT-5-nano-high, 1分钟"
+      }
+    },
+    formulate: {
+      title: "配方",
+      viewOnly: "仅查看",
+      viewOnlyExamples: "1个完整示例"
+    },
+    design: {
+      title: "设计",
+      viewOnly: "仅查看",
+      viewOnlyExamples: "1个完整示例",
+      cycleLife: "25°C循环寿命"
+    },
+    predict: {
+      title: "预测",
+      viewOnly: "仅查看",
+      viewOnlyExamples: "1个完整示例"
+    },
+    dataSecurity: {
+      title: "数据安全",
+      onCloud: "云端",
+      onlinePolicy: "在线政策"
+    }
+  },
   contactSales: {
     title: "联系销售",
     enterprise1: "企业版 I",
