@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useAuthStore } from "@/models/useAuth";
 import { filterLabels } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { useContext } from "react";
 import { FavoriteContext } from "@/layouts";
 
@@ -47,7 +48,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
   if (!node) return null;
 
   // Check if user has permission to see predicted properties
-  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
+  const canSeePredictedProperties = isColumnVisibleForUser('predicted_MP_celsius', userPermissions);
 
   const nodeCation = node?.cation ?? node?.rawData?.cation ?? node?.rawData?.CATION;
 

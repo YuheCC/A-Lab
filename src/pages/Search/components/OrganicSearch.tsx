@@ -20,6 +20,7 @@ import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
 import '../index.css';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
+import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
 
 const API_URL = getAPIUrl();
 
@@ -616,19 +617,19 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
+                                                        show: isColumnVisibleForUser('predicted_BP_celsius', userPermissions)},
                                                     { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
                                                     },
                                                     {
                                                         label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.properties?.combustion_enthalpy_ev || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isHighTierUser(userPermissions)
                                                     },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
@@ -714,19 +715,19 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isColumnVisibleForUser('predicted_BP_celsius', userPermissions)
                                                      },
                                                     { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
                                                      },
                                                     { label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
+                                                        show: isHighTierUser(userPermissions)
                                                     },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },

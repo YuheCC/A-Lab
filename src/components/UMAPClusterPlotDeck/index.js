@@ -7,6 +7,7 @@ import { Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
 import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
+import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
 import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
@@ -380,21 +381,21 @@ const UMAPClusterPlotDeck = ({
             {
                 label: t('molecular.umapPlot.properties.predictedMp'), value: properties.predicted_mp,
                 suffix: t('molecular.umapPlot.units.celsius'),
-                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
             },
             {
                 label: t('molecular.umapPlot.properties.predictedBp'), value: properties.predicted_bp,
                 suffix: t('molecular.umapPlot.units.celsius'),
-                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_BP_celsius', userPermissions)
             },
             {
                 label: 'Predicted FP', value: properties.predicted_fp,
                 suffix: ' °C',
-                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
             },
             {
                 label: 'Combustion Enthalpy', value: properties.combustion_enthalpy, suffix: ' eV',
-                show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
+                show: molecularType === 'organic' && isHighTierUser(userPermissions)
             },
             {
                 label: "Molecular Volume", 

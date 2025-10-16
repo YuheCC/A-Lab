@@ -16,6 +16,8 @@ export interface MoleculeData {
   predicted_BP_celsius?: number;
   predicted_FP_celsius?: number;
   COMBUSTION_ENTHALPY_EV?: number;
+  vdw_volume_angstroms3?: number;
+  fluoride_bde_ev?: number;
   COMMERCIAL_SCORE?: number;
   COMMERCIAL_LINK?: string;
   functional_groups?: string;

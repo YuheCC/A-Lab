@@ -6,6 +6,8 @@ export type MoleculeProperties = {
   boilingPoint?: string;
   flashPoint?: string;
   combustionEnthalpy?: string;
+  molecularVolume?: string | number;
+  fluorineBondDissociationEnergy?: string | number;
   homo?: string | number;
   lumo?: string | number;
   espMax?: string | number;
@@ -102,6 +104,8 @@ class MoleculeService {
     const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
     const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
     const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+    const vdwVolume = raw?.vdw_volume_angstroms3 ?? raw?.VDW_VOLUME_ANGSTROMS3 ?? raw?.vdwVolumeAngstroms3;
+    const fluorideBde = raw?.fluoride_bde_ev ?? raw?.FLUORIDE_BDE_EV ?? raw?.fluorideBdeEv;
     const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;
     const lumo = raw?.LUMO_eV ?? raw?.LUMO ?? raw?.lumo;
     const espMax = raw?.ESP_max_eV ?? raw?.ESP_MAX ?? raw?.espMax;
@@ -121,6 +125,8 @@ class MoleculeService {
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
         flashPoint: predictedFp != null ? `${predictedFp}` : '-',
         combustionEnthalpy: combustionEnthalpy != null ? `${combustionEnthalpy}` : '-',
+        molecularVolume: vdwVolume != null ? `${vdwVolume}` : undefined,
+        fluorineBondDissociationEnergy: fluorideBde != null ? `${fluorideBde}` : undefined,
         homo: homo != null ? Number(homo) : undefined,
         lumo: lumo != null ? Number(lumo) : undefined,
         espMax: espMax != null ? Number(espMax) : undefined,
@@ -289,5 +295,3 @@ class MoleculeService {
 }
 
 export const moleculeService = MoleculeService.getInstance();
-
-

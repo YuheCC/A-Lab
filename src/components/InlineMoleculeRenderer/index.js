@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
+import { isColumnVisibleForUser, isHighTierUser } from '@/constants/columnAccess';
 import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
 import './InlineMoleculeRenderer.css';
@@ -173,6 +174,8 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         predicted_BP_celsius: moleculeData.predicted_BP_celsius,
         predicted_FP_celsius: moleculeData.predicted_FP_celsius,
         COMBUSTION_ENTHALPY_EV: moleculeData.COMBUSTION_ENTHALPY_EV,
+        vdw_volume_angstroms3: moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3,
+        fluoride_bde_ev: moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV,
         COMMERCIAL_SCORE: moleculeData.COMMERCIAL_SCORE,
         COMMERCIAL_LINK: moleculeData.COMMERCIAL_LINK,
         functional_groups: moleculeData.functional_groups || "[]",
@@ -231,6 +234,10 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
   const transformToMolCardProps = (moleculeData) => {
     if (!moleculeData) return [];
 
+    const rawCation = moleculeData.cation ?? moleculeData.CATION;
+    const normalizedCation = typeof rawCation === 'string' ? rawCation.trim() : rawCation;
+    const isAnion = Boolean(moleculeData.is_anion ?? moleculeData.IS_ANION ?? normalizedCation);
+
     const propGroups = [
       { label: 'SMILES', value: moleculeData.SMILES, span: 2 },
       { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol' },
@@ -242,14 +249,34 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV' },
     ];
 
-    // Add permission-restricted properties
-    if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
+    if (isAnion) {
+      const volumeRaw = moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3;
+      const fluorideBdeRaw = moleculeData.fluoride_bde_ev ?? moleculeData.FLUORIDE_BDE_EV;
       propGroups.push(
-        { label: 'Predicted MP', value: moleculeData.predicted_MP_celsius?.toFixed(4), suffix: ' °C' },
-        { label: 'Predicted BP', value: moleculeData.predicted_BP_celsius?.toFixed(4), suffix: ' °C' },
-        { label: 'Predicted FP', value: moleculeData.predicted_FP_celsius?.toFixed(4), suffix: ' °C' },
-        { label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV?.toFixed(4) || '0', suffix: ' eV' }
+        {
+          label: 'Molecular Volume',
+          value: volumeRaw !== undefined && volumeRaw !== null ? formatMaybeNumber(volumeRaw) : 'N/A',
+          suffix: volumeRaw !== undefined && volumeRaw !== null ? ' Å³' : undefined,
+        },
+        {
+          label: 'F Dissociation Energy',
+          value: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? formatMaybeNumber(fluorideBdeRaw) : 'N/A',
+          suffix: fluorideBdeRaw !== undefined && fluorideBdeRaw !== null ? ' eV' : undefined,
+        }
       );
+    } else {
+      if (isColumnVisibleForUser('predicted_MP_celsius', userPermissions)) {
+        propGroups.push({ label: 'Predicted MP', value: moleculeData.predicted_MP_celsius != null ? formatMaybeNumber(moleculeData.predicted_MP_celsius) : undefined, suffix: ' °C' });
+      }
+      if (isColumnVisibleForUser('predicted_BP_celsius', userPermissions)) {
+        propGroups.push({ label: 'Predicted BP', value: moleculeData.predicted_BP_celsius != null ? formatMaybeNumber(moleculeData.predicted_BP_celsius) : undefined, suffix: ' °C' });
+      }
+      if (isColumnVisibleForUser('predicted_FP_celsius', userPermissions)) {
+        propGroups.push({ label: 'Predicted FP', value: moleculeData.predicted_FP_celsius != null ? formatMaybeNumber(moleculeData.predicted_FP_celsius) : undefined, suffix: ' °C' });
+      }
+      if (isHighTierUser(userPermissions)) {
+        propGroups.push({ label: 'Combustion Enthalpy', value: moleculeData.COMBUSTION_ENTHALPY_EV != null ? formatMaybeNumber(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined, suffix: ' eV' });
+      }
     }
 
     // Add commercial score if available

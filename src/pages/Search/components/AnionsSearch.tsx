@@ -68,6 +68,8 @@ interface MoleculeData {
         combustion_enthalpy_ev?: number;
         commercial_score: number;
         commercial_link?: string;
+        vdw_volume_angstroms3?: number;
+        fluoride_bde_ev?: number;
     };
     rawData: any;
 }
@@ -87,6 +89,8 @@ interface SimilarMolecule {
     COMMERCIAL_SCORE: number;
     COMMERCIAL_LINK?: string;
     functional_groups?: string;
+    VDW_VOLUME_ANGSTROMS3?: number;
+    FLUORIDE_BDE_EV?: number;
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
@@ -307,6 +311,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                         predicted_bp: mol.predicted_BP_celsius,
                         predicted_fp_celsius: mol.predicted_FP_celsius,
                         combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                        vdw_volume_angstroms3: mol.vdw_volume_angstroms3 ?? mol.VDW_VOLUME_ANGSTROMS3,
+                        fluoride_bde_ev: mol.fluoride_bde_ev ?? mol.FLUORIDE_BDE_EV,
                         commercial_score: mol.COMMERCIAL_SCORE,
                         commercial_link: mol.COMMERCIAL_LINK,
                     },
@@ -649,21 +655,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
-                                                    { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                     },
-                                                    { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                    },
-                                                    {
-                                                        label: t('search.properties.combustionEnthalpy'),
-                                                        value: molecule.properties?.combustion_enthalpy_ev || '0.00',
-                                                        span: 2,
-                                                        suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                    },
+                                                    { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2 },
+                                                    { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2 },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
@@ -747,21 +740,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
                                                     buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
-                                                    { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                     },
-                                                    { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                     },
-                                                    { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
-                                                     },
-                                                    { label: t('search.properties.combustionEnthalpy'),
-                                                        value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
-                                                        span: 2,
-                                                        suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
-                                                    },
+                                                    { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³' },
+                                                    { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV' },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
                                                     { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
                                                     { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
