@@ -1,0 +1,549 @@
+/* Pricing Component - Table Layout Styles */
+
+.pricing-component {
+  /* ==================== 布局容器 ==================== */
+  &.pricing-section {
+    scroll-margin-top: 80px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 20px;
+
+    h2 {
+      font-size: 1.9rem;
+      margin-bottom: 1.5rem;
+      color: #111827;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    > div:first-child {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h2 {
+        margin: 0;
+      }
+
+      a {
+        color: #1c7c54;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 20px;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #145a3e;
+        }
+      }
+    }
+
+    > div[style*="textAlign"] {
+      padding: 24px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+  }
+
+  /* ==================== 定价切换器样式 ==================== */
+  .pricing-switcher {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0 !important;
+    margin-bottom: 32px !important;
+    background: none !important;
+  }
+
+  .pricing-switch-btn {
+    background: #fff !important;
+    color: #364153 !important;
+    border: 1px solid #d1d5dc !important;
+    border-right: none !important;
+    border-radius: 10px 0 0 10px !important;
+    padding: 8px 32px !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    cursor: pointer !important;
+    transition: background 0.18s, color 0.18s, border 0.18s !important;
+    outline: none !important;
+    box-shadow: none !important;
+    position: relative !important;
+    z-index: 1 !important;
+    min-width: 120px !important;
+
+    &:last-child {
+      border-radius: 0 10px 10px 0 !important;
+      border-right: 1px solid #d1d5dc !important;
+    }
+
+    &.active {
+      background: #101828 !important;
+      color: #fff !important;
+      border-color: #101828 !important;
+      z-index: 2 !important;
+    }
+  }
+
+  /* ==================== 定价分组样式 ==================== */
+  .pricing-group {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+
+  /* ==================== 表格容器 ==================== */
+  .pricing-table-wrapper {
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .pricing-table {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #d1d5dc;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+
+  /* ==================== 表格头部（套餐信息区）==================== */
+  .pricing-table-header {
+    display: grid;
+    grid-template-columns: 150px repeat(4, 1fr);
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    min-height: 166px;
+  }
+
+  .pricing-header-cell {
+    padding: 12px;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  .pricing-header-empty {
+    background: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+  }
+
+  .pricing-plan-cell {
+    position: relative;
+  }
+
+  .pricing-plan-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #101828;
+    margin-bottom: 4px;
+    line-height: 17.5px;
+    letter-spacing: -0.15px;
+  }
+
+  .pricing-plan-subtitle {
+    font-size: 9px;
+    color: #1447e6;
+    background: #eff6ff;
+    padding: 2px 6px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+    line-height: 9px;
+    letter-spacing: 0.167px;
+  }
+
+  .pricing-plan-description {
+    font-size: 10px;
+    color: #4a5565;
+    margin-bottom: 12px;
+    line-height: 13px;
+    letter-spacing: 0.117px;
+  }
+
+  .pricing-plan-price-container {
+    margin-bottom: 12px;
+  }
+
+  .pricing-plan-price {
+    font-size: 20px;
+    font-weight: 400;
+    color: #00a63e;
+    line-height: 20px;
+    letter-spacing: -0.45px;
+  }
+
+  .pricing-plan-period {
+    font-size: 10px;
+    font-weight: 400;
+    color: #6a7282;
+    margin-left: 4px;
+    line-height: 10px;
+    letter-spacing: 0.117px;
+  }
+
+  .pricing-plan-button {
+    width: 100%;
+    background: #00a63e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 27px;
+    line-height: 15px;
+
+    &:hover:not(:disabled) {
+      background: #008f35;
+    }
+
+    &:disabled {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &.secondary {
+      background: #00a63e;
+      color: white;
+    }
+  }
+
+  /* ==================== 表格主体（功能对比区）==================== */
+  .pricing-table-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 功能分类标题行 */
+  .pricing-section-header {
+    display: grid;
+    grid-template-columns: 150px repeat(4, 1fr);
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    min-height: 29px;
+
+    &.pricing-section-collapsible {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+  }
+
+  .pricing-section-title {
+    grid-column: 1 / -1;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #101828;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 16px;
+  }
+
+  /* 功能对比行 */
+  .pricing-feature-row {
+    display: grid;
+    grid-template-columns: 150px repeat(4, 1fr);
+    border-bottom: 1px solid #f3f4f6;
+    min-height: 28px;
+
+    &.sub-row {
+      background: #fff;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .pricing-feature-label {
+    padding: 6px 12px;
+    border-right: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 10px;
+    color: #101828;
+    line-height: 15px;
+    letter-spacing: 0.117px;
+
+    &.sub-label {
+      background: #fff;
+      padding-left: 12px;
+    }
+  }
+
+  .pricing-feature-label-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pricing-feature-label-title {
+    font-size: 10px;
+    color: #101828;
+    line-height: 15px;
+    letter-spacing: 0.117px;
+  }
+
+  .pricing-feature-label-description {
+    font-size: 9px;
+    color: #4a5565;
+    line-height: 13.5px;
+    letter-spacing: 0.167px;
+  }
+
+  .pricing-feature-cell {
+    padding: 6px 12px;
+    border-right: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    color: #364153;
+    line-height: 15px;
+    letter-spacing: 0.117px;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  /* 单元格内容 */
+  .pricing-cell-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .pricing-cell-text {
+    font-size: 10px;
+    color: #364153;
+    text-align: center;
+    line-height: 15px;
+    letter-spacing: 0.117px;
+
+    &.gray {
+      color: #6a7282;
+    }
+  }
+
+  .pricing-cell-description {
+    font-size: 9px;
+    color: #6a7282;
+    text-align: center;
+    line-height: 13.5px;
+    letter-spacing: 0.167px;
+    word-wrap: break-word;
+    max-width: 200px;
+
+    &.gray {
+      color: #6a7282;
+    }
+  }
+
+  /* ==================== 图标样式 ==================== */
+  .pricing-check-icon {
+    flex-shrink: 0;
+  }
+
+  .pricing-chevron-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+
+    &.expanded {
+      transform: rotate(180deg);
+    }
+  }
+
+  .pricing-chevron-icon {
+    flex-shrink: 0;
+  }
+
+  .pricing-info-icon {
+    flex-shrink: 0;
+  }
+
+  /* ==================== 企业版表格适配 ==================== */
+  .pricing-group[data-group="business"] {
+    .pricing-table-header {
+      grid-template-columns: 150px repeat(4, 1fr);
+    }
+
+    .pricing-section-header,
+    .pricing-feature-row {
+      grid-template-columns: 150px repeat(4, 1fr);
+    }
+  }
+
+  /* ==================== 移动端适配 ==================== */
+  @media (max-width: 768px) {
+    &.pricing-section {
+      scroll-margin-top: 60px;
+      padding: 20px 12px;
+
+      h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+    }
+
+    .pricing-switcher {
+      margin-bottom: 24px !important;
+    }
+
+    .pricing-switch-btn {
+      padding: 6px 20px !important;
+      font-size: 13px !important;
+      min-width: 100px !important;
+    }
+
+    /* 移动端横向滚动 */
+    .pricing-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+
+      &::after {
+        content: '← 左右滑动查看更多 →';
+        display: block;
+        text-align: center;
+        padding: 12px;
+        color: #6a7282;
+        font-size: 12px;
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+      }
+    }
+
+    .pricing-table {
+      min-width: 900px;
+    }
+
+    .pricing-table-header {
+      grid-template-columns: 120px repeat(4, 200px);
+    }
+
+    .pricing-section-header,
+    .pricing-feature-row {
+      grid-template-columns: 120px repeat(4, 200px);
+    }
+
+    .pricing-group[data-group="business"] {
+      .pricing-table-header {
+        grid-template-columns: 120px repeat(4, 200px);
+      }
+
+      .pricing-section-header,
+      .pricing-feature-row {
+        grid-template-columns: 120px repeat(4, 200px);
+      }
+    }
+  }
+
+  /* 小屏手机适配 */
+  @media (max-width: 480px) {
+    &.pricing-section {
+      padding: 20px 8px;
+
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    .pricing-switch-btn {
+      padding: 6px 16px !important;
+      font-size: 12px !important;
+      min-width: 90px !important;
+    }
+
+    .pricing-table {
+      min-width: 800px;
+    }
+
+    .pricing-table-header {
+      grid-template-columns: 100px repeat(4, 180px);
+    }
+
+    .pricing-section-header,
+    .pricing-feature-row {
+      grid-template-columns: 100px repeat(4, 180px);
+    }
+
+    .pricing-group[data-group="business"] {
+      .pricing-table-header {
+        grid-template-columns: 100px repeat(4, 180px);
+      }
+
+      .pricing-section-header,
+      .pricing-feature-row {
+        grid-template-columns: 100px repeat(4, 180px);
+      }
+    }
+  }
+
+  /* iPad Pro 适配 (1024px - 1200px) */
+  @media (min-width: 1024px) and (max-width: 1200px) {
+    &.pricing-section {
+      padding: 40px 24px;
+    }
+
+    .pricing-table-header {
+      grid-template-columns: 150px repeat(4, 1fr);
+    }
+
+    .pricing-section-header,
+    .pricing-feature-row {
+      grid-template-columns: 150px repeat(4, 1fr);
+    }
+  }
+
+  /* 横屏模式优化 */
+  @media (max-width: 900px) and (orientation: landscape) {
+    &.pricing-section {
+      padding: 20px 16px;
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .pricing-switcher {
+      margin-bottom: 20px !important;
+    }
+
+    .pricing-table {
+      margin: 16px 0;
+    }
+  }
+}
+

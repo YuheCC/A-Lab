@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import './Pricing.css';
+import './Pricing.less';
 import '@/components/SettingModal/settingModal.css';
 import { useNavigate } from 'umi';
 import { useAuthStore } from '@/models/useAuth';
@@ -325,13 +325,17 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     title: string,
     values: Array<string | React.ReactNode>,
     hasIcon?: boolean,
-    isSubRow?: boolean
+    isSubRow?: boolean,
+    description?: string
   ) => {
     return (
       <div className={`pricing-feature-row ${isSubRow ? 'sub-row' : ''}`} key={category}>
         <div className={`pricing-feature-label ${isSubRow ? 'sub-label' : ''}`}>
           {hasIcon && <InfoIcon />}
-          <span>{title}</span>
+          <div className="pricing-feature-label-content">
+            <div className="pricing-feature-label-title">{title}</div>
+            {description && <div className="pricing-feature-label-description">({description})</div>}
+          </div>
         </div>
         {values.map((value, idx) => (
           <div key={idx} className="pricing-feature-cell">
@@ -508,7 +512,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       if (plan.id === 'basic') {
         return (
           <div className="pricing-cell-content">
-            <CheckIcon />
             <div className="pricing-cell-text gray">{t('pricing.features.search.intelligentFindFriends.notAvailable')}</div>
           </div>
         );
@@ -618,24 +621,27 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           <>
             {renderFeatureRow(
               'ask-lightning',
-              `${t('pricing.features.ask.lightning.title')} (${t('pricing.features.ask.lightning.description')})`,
+              t('pricing.features.ask.lightning.title'),
               getAskLightningValues(plans),
               false,
-              true
+              true,
+              t('pricing.features.ask.lightning.description')
             )}
             {renderFeatureRow(
               'ask-pro',
-              `${t('pricing.features.ask.pro.title')} (${t('pricing.features.ask.pro.description')})`,
+              t('pricing.features.ask.pro.title'),
               getAskProValues(plans),
               false,
-              true
+              true,
+              t('pricing.features.ask.pro.description')
             )}
             {renderFeatureRow(
               'ask-deepspace',
-              `${t('pricing.features.ask.deepSpace.title')} (${t('pricing.features.ask.deepSpace.description')})`,
+              t('pricing.features.ask.deepSpace.title'),
               getDeepSpaceValues(plans),
               false,
-              true
+              true,
+              t('pricing.features.ask.deepSpace.description')
             )}
           </>
         )}
@@ -724,7 +730,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   }, [permission, myPermission]);
 
   return (
-    <section id="pricing" className={`pricing-section ${className}`}>
+    <section id="pricing" className={`pricing-component pricing-section ${className}`}>
       {showHeader && (
         <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
           <h2 style={{margin: 0}}>{t('pricing.title')}</h2>
