@@ -223,7 +223,7 @@ const FormulationNew: React.FC<FormulationTableProps> = () => {
                             <td className="solvent-info">
                               <div className="compound-list">
                                 {record.solvent_smiles_list.map((solvent, idx) => (
-                                  <div key={idx} className="compound-item">
+                                  <div key={idx} className="compound-item" title={solvent + ' (' + record.solvent_fractions[idx] + ')'}>
                                     {solvent}({record.solvent_fractions[idx]})
                                   </div>
                                 ))}

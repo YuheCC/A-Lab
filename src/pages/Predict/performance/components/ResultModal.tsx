@@ -148,16 +148,16 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
         const model_result = JSON.parse(apiData?.model_result);
         apiData = {
           ...apiData,
-          temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label.toString(),
-          temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob.toString(),
-          temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label.toString(),
-          temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob.toString(),
-          temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label.toString(),
-          temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob.toString(),
-          temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label.toString(),
-          temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob.toString(),
-          temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label.toString(),
-          temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob.toString()
+          temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label?.toString(),
+          temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob?.toString(),
+          temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label?.toString(),
+          temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob?.toString(),
+          temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label?.toString(),
+          temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob?.toString(),
+          temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label?.toString(),
+          temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob?.toString(),
+          temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label?.toString(),
+          temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob?.toString()
         };
         quantification_result = model_result?.quantification_result ?? {};
       } catch (error) {
