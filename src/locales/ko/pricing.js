@@ -168,6 +168,95 @@ export default {
     note: "분자 우주는 학생과 교육자에게 무료입니다.",
     verify: "인증받기"
   },
+  features: {
+    map: {
+      title: "분자 지도",
+      viewOnly: "뷰 전용",
+      full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질"
+    },
+    ask: {
+      title: "Ask",
+      lightning: {
+        title: "라이트닝",
+        description: "GPT-5 mini medium + MU 1분",
+        viewOnly: "뷰 전용",
+        viewOnlyExamples: "2예시",
+        limited: "≤50/일",
+        unlimited: "무제한"
+      },
+      pro: {
+        title: "프로",
+        description: "GPT-5 mini high + MU Trim 20~40분",
+        viewOnly: "뷰 전용",
+        viewOnlyExamples: "1예시",
+        limited: "≤10/일",
+        unlimited: "무제한"
+      },
+      deepSpace: {
+        title: "Deep Space",
+        description: "GPT-5 high + MU 20~40분",
+        viewOnly: "뷰 전용",
+        viewOnlyExamples: "1예시",
+        low: "≤5/월",
+        lowDetail: "낮음, GPT-5-nano-medium, 30초",
+        medium: "≤10/월",
+        mediumDetail: "중간, GPT-5-nano-high, 1분",
+        high: "≤10/인당/월",
+        highDetail: "중간, GPT-5-nano-high, 1분"
+      }
+    },
+    search: {
+      title: "검색하기",
+      filter: {
+        title: "조건별 검색",
+        viewOnly: "뷰 전용",
+        available: "사용 가능"
+      },
+      search: {
+        title: "검색하기",
+        viewOnly: "뷰 전용",
+        viewOnlyExamples: "1예시/카테고리",
+        full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질"
+      },
+      findFriends: {
+        title: "친구 찾기",
+        viewOnly: "뷰 전용",
+        viewOnlyExamples: "1예시/카테고리",
+        available: "사용 가능"
+      },
+      intelligentFindFriends: {
+        title: "지능형 친구 찾기",
+        notAvailable: "-",
+        low: "≤10/월",
+        lowDetail: "낮음, GPT-5-nano-medium, 30초",
+        medium: "≤20/월",
+        mediumDetail: "중간, GPT-5-nano-high, 1분",
+        high: "≤20/인당/월",
+        highDetail: "중간, GPT-5-nano-high, 1분"
+      }
+    },
+    formulate: {
+      title: "포뮬레이션",
+      viewOnly: "뷰 전용",
+      viewOnlyExamples: "1개 전체 예시"
+    },
+    design: {
+      title: "디자인",
+      viewOnly: "뷰 전용",
+      viewOnlyExamples: "1개 전체 예시",
+      cycleLife: "25°C 사이클 수명"
+    },
+    predict: {
+      title: "예측",
+      viewOnly: "뷰 전용",
+      viewOnlyExamples: "1개 전체 예시"
+    },
+    dataSecurity: {
+      title: "데이터 보안",
+      onCloud: "클라우드",
+      onlinePolicy: "온라인 정책"
+    }
+  },
   contactSales: {
     title: "영업 문의",
     enterprise1: "기업용 I",

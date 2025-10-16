@@ -1,13 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import './Pricing.css';
+import './Pricing.less';
 import '@/components/SettingModal/settingModal.css';
 import { useNavigate } from 'umi';
 import { useAuthStore } from '@/models/useAuth';
 import ContactSalesModal from '@/components/ContactSalesModal';
 import { sendEducationCode } from '@/services/auth';
 import { useMessage } from '@/components/MessageProvider';
-import { useEffect } from 'react';
 import { useLoginModal } from '@/components/LoginModal/hooks';
 
 type TierId = 'basic' | 'research' | 'explorer' | 'team' | 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
@@ -85,6 +84,28 @@ interface PricingProps {
   permission?: string | null;
 }
 
+// Checkmark icon component
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="pricing-check-icon">
+    <path d="M20 6L9 17L4 12" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Chevron icon component (for collapsible sections like Ask and Search)
+const ChevronIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="pricing-chevron-icon">
+    <path d="M6 9L12 15L18 9" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Info icon component (for Data Security)
+const InfoIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="pricing-info-icon">
+    <circle cx="12" cy="12" r="10" stroke="#6B7280" strokeWidth="2"/>
+    <path d="M12 16V12M12 8H12.01" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
 const Pricing = ({ showHeader = true, className = '', permission }: PricingProps) => {
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = useState<'personal' | 'business'>('personal');
@@ -94,10 +115,29 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   const [educationEmail, setEducationEmail] = useState('');
   const [educationError, setEducationError] = useState('');
   const [isSendingEducation, setIsSendingEducation] = useState(false);
+  
+  // 折叠状态管理（默认展开）
+  const [expandedSections, setExpandedSections] = useState<{
+    ask: boolean;
+    search: boolean;
+    dataSecurity: boolean;
+  }>({
+    ask: true,
+    search: true,
+    dataSecurity: true,
+  });
+  
   const navigate = useNavigate();
   const { userPermissions: myPermission, userInfo, isAuthenticated } = useAuthStore();
   const { success, error } = useMessage();
   const { openLoginModal } = useLoginModal();
+
+  const toggleSection = (section: 'ask' | 'search' | 'dataSecurity') => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   const handleGroupSwitch = (group: 'personal' | 'business') => {
     setActiveGroup(group);
@@ -119,10 +159,13 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     return myTierRank >= targetRank;
   };
 
-  const pricingUrlMap = useMemo(() => ({
-    explorer: explorer_url ? `${explorer_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
-    team: team_url ? `${team_url}?prefilled_email=${userInfo?.email ?? ''}` : '',
-  }), [userInfo?.email]);
+  const pricingUrlMap = useMemo(() => {
+    const email = localStorage.getItem('email') || userInfo?.email || '';
+    return {
+      explorer: explorer_url ? `${explorer_url}?prefilled_email=${email}` : '',
+      team: team_url ? `${team_url}?prefilled_email=${email}` : '',
+    };
+  }, [userInfo?.email]);
 
   const openEducationModal = () => {
     setShowEducationModal(true);
@@ -141,7 +184,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       return;
     }
 
-    // 邮箱格式验证
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(educationEmail.trim())) {
       setEducationError(t('settings.education.invalid'));
@@ -164,7 +206,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       setEducationEmail('');
       success(t('settings.education.success'));
       
-      // 跳转到验证页面
       navigate(`/verify-education?id=${data.verify_id}`);
 
     } catch (err: any) {
@@ -181,21 +222,16 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   };
 
   const clickButtonHandler = (tier: TierId) => {
-    // 企业版按钮（Enterprise I/II/III、Joint）不需要登录检查
     const isEnterprisePlan = isEnterpriseTier(tier) || tier === 'joint';
     
-    // 如果是 showHeader 的情况
     if (showHeader) {
-      // 如果不是企业版按钮（非 contact 按钮），跳转到 /map?showPricing
       if (!isEnterprisePlan) {
         navigate('/map?showPricing=true&permission=' + tier);
         return;
       }
-      // 如果是企业版按钮，继续执行下面的逻辑（打开 contact modal）
     }
     
     if (!isEnterprisePlan) {
-      // 个人计划按钮需要登录检查
       if (!localStorage.getItem('token')) {
         openLoginModal();
         return;
@@ -242,49 +278,432 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   }, [isAuthenticated, myTierRank, filteredBusinessPlans]);
 
   const noPlansAvailable = !showHeader && isAuthenticated && availablePersonalPlans.length === 0 && availableBusinessPlans.length === 0;
-  const personalGroupDisabled = !showHeader && availablePersonalPlans.length === 0;
-  const businessGroupDisabled = !showHeader && availableBusinessPlans.length === 0;
 
-  const renderPlanCard = (plan: PlanConfig) => {
-    const title = t(`pricing.${plan.key}.title`);
-    const description = t(`pricing.${plan.key}.description`);
-    const price = t(`pricing.${plan.key}.price`);
-    const period = t(`pricing.${plan.key}.period`);
-    const cta = t(`pricing.${plan.key}.cta`);
-    const details = t(`pricing.${plan.key}.details`, { returnObjects: true }) as string[];
-    const detailItems = Array.isArray(details) ? details : [];
-    const subtitle = t(`pricing.${plan.key}.subtitle`, { defaultValue: '' }) as string;
-    const isDisabled = hasPermission(plan.id);
-    const buttonClass = ['pricing-btn', plan.buttonVariant === 'secondary' ? 'secondary' : '']
-      .filter(Boolean)
-      .join(' ');
-
+  // 渲染表格头部（套餐信息）
+  const renderTableHeader = (plans: PlanConfig[]) => {
     return (
-      <div className={`pricing-card ${plan.highlight ? 'highlight' : ''}`} key={plan.id}>
-        <div className="pricing-card-top">
-          <div className="pricing-title">{title}</div>
-          <div className="pricing-subtitle">{subtitle}</div>
-          <div className="pricing-access">{description}</div>
-          {(price || period) && (
-            <div className="pricing-price">
-              {price}
-              <span className="pricing-unit">{period}</span>
+      <div className="pricing-table-header">
+        <div className="pricing-header-cell pricing-header-empty"></div>
+        {plans.map((plan) => {
+          const title = t(`pricing.${plan.key}.title`);
+          const description = t(`pricing.${plan.key}.description`);
+          const price = t(`pricing.${plan.key}.price`);
+          const period = t(`pricing.${plan.key}.period`);
+          const cta = t(`pricing.${plan.key}.cta`);
+          const subtitle = t(`pricing.${plan.key}.subtitle`, { defaultValue: '' }) as string;
+          const isDisabled = hasPermission(plan.id);
+          
+          return (
+            <div key={plan.id} className="pricing-header-cell pricing-plan-cell">
+              <div className="pricing-plan-title">{title}</div>
+              <div className="pricing-plan-description">{description}</div>
+              <div className="pricing-plan-subtitle">{subtitle ?? ""}</div>
+              {price && (
+                <div className="pricing-plan-price-container">
+                  <span className="pricing-plan-price">{price}</span>
+                  {period && <span className="pricing-plan-period">{period}</span>}
+                </div>
+              )}
+              <button
+                disabled={isDisabled}
+                onClick={() => clickButtonHandler(plan.id)}
+                className={`pricing-plan-button ${plan.buttonVariant === 'secondary' ? 'secondary' : ''}`}
+                data-permission={plan.id}
+              >
+                {cta}
+              </button>
             </div>
-          )}
+          );
+        })}
+      </div>
+    );
+  };
+
+  // 渲染功能对比行
+  const renderFeatureRow = (
+    category: string,
+    title: string,
+    values: Array<string | React.ReactNode>,
+    hasIcon?: boolean,
+    isSubRow?: boolean,
+    description?: string
+  ) => {
+    return (
+      <div className={`pricing-feature-row ${isSubRow ? 'sub-row' : ''}`} key={category}>
+        <div className={`pricing-feature-label ${isSubRow ? 'sub-label' : ''}`}>
+          {hasIcon && <InfoIcon />}
+          <div className="pricing-feature-label-content">
+            <div className="pricing-feature-label-title">{title}</div>
+            {description && <div className="pricing-feature-label-description">({description})</div>}
+          </div>
         </div>
-        <button
-          disabled={isDisabled}
-          onClick={() => clickButtonHandler(plan.id)}
-          className={buttonClass}
-          data-permission={plan.id}
+        {values.map((value, idx) => (
+          <div key={idx} className="pricing-feature-cell">
+            {value}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // 获取 Map 功能的值
+  const getMapValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.map.viewOnly')}</div>
+            <div className="pricing-cell-description">{t('pricing.features.map.full')}</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-description">{t('pricing.features.map.full')}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Ask Lightning 的值
+  const getAskLightningValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.ask.lightning.viewOnly')}</div>
+            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.lightning.viewOnlyExamples')})`}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'research') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.ask.lightning.limited')}</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-text">{t('pricing.features.ask.lightning.unlimited')}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Ask Pro 的值
+  const getAskProValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.ask.pro.viewOnly')}</div>
+            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.pro.viewOnlyExamples')})`}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'research') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.ask.pro.limited')}</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-text">{t('pricing.features.ask.pro.unlimited')}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Deep Space 的值
+  const getDeepSpaceValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.ask.deepSpace.viewOnly')}</div>
+            <div className="pricing-cell-description gray">{`(${t('pricing.features.ask.deepSpace.viewOnlyExamples')})`}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'research') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.low')}</div>
+            <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.lowDetail')})</div>
+          </div>
+        );
+      }
+      if (plan.id === 'explorer') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.medium')}</div>
+            <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.mediumDetail')})</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-text">{t('pricing.features.ask.deepSpace.high')}</div>
+          <div className="pricing-cell-description">({t('pricing.features.ask.deepSpace.highDetail')})</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Filter 的值
+  const getFilterValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return <div className="pricing-cell-text gray">{t('pricing.features.search.filter.viewOnly')}</div>;
+      }
+      return <CheckIcon />;
+    });
+  };
+
+  // 获取 Search 的值
+  const getSearchValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.search.search.viewOnly')}</div>
+            <div className="pricing-cell-description gray">{`(${t('pricing.features.search.search.viewOnlyExamples')})`}</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-description">{t('pricing.features.search.search.full')}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Find Friends 的值
+  const getFindFriendsValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.search.findFriends.viewOnly')}</div>
+            <div className="pricing-cell-description gray">{`(${t('pricing.features.search.findFriends.viewOnlyExamples')})`}</div>
+          </div>
+        );
+      }
+      return <CheckIcon />;
+    });
+  };
+
+  // 获取 Intelligent Find Friends 的值
+  const getIntelligentFindFriendsValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'basic') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text gray">{t('pricing.features.search.intelligentFindFriends.notAvailable')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'research') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.low')}</div>
+            <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.lowDetail')})</div>
+          </div>
+        );
+      }
+      if (plan.id === 'explorer') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.medium')}</div>
+            <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.mediumDetail')})</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <CheckIcon />
+          <div className="pricing-cell-text">{t('pricing.features.search.intelligentFindFriends.high')}</div>
+          <div className="pricing-cell-description">({t('pricing.features.search.intelligentFindFriends.highDetail')})</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Formulate 的值
+  const getFormulateValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      return (
+        <div className="pricing-cell-content">
+          <div className="pricing-cell-text gray">{t('pricing.features.formulate.viewOnly')}</div>
+          <div className="pricing-cell-description gray">{`(${t('pricing.features.formulate.viewOnlyExamples')})`}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Design 的值
+  const getDesignValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'explorer' || plan.id === 'team') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.design.cycleLife')}</div>
+          </div>
+        );
+      }
+      return (
+        <div className="pricing-cell-content">
+          <div className="pricing-cell-text gray">{t('pricing.features.design.viewOnly')}</div>
+          <div className="pricing-cell-description gray">{`(${t('pricing.features.design.viewOnlyExamples')})`}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Predict 的值
+  const getPredictValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      return (
+        <div className="pricing-cell-content">
+          <div className="pricing-cell-text gray">{t('pricing.features.predict.viewOnly')}</div>
+          <div className="pricing-cell-description gray">{`(${t('pricing.features.predict.viewOnlyExamples')})`}</div>
+        </div>
+      );
+    });
+  };
+
+  // 获取 Data Security 的值
+  const getDataSecurityValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      return <div className="pricing-cell-text">{t('pricing.features.dataSecurity.onlinePolicy')}</div>;
+    });
+  };
+
+  // 渲染表格主体
+  const renderTableBody = (plans: PlanConfig[]) => {
+    return (
+      <div className="pricing-table-body">
+        {/* Map */}
+        <div className="pricing-section-header">
+          <div className="pricing-section-title">{t('pricing.features.map.title')}</div>
+        </div>
+        {renderFeatureRow('map', t('pricing.features.map.title'), getMapValues(plans))}
+
+        {/* Ask */}
+        <div 
+          className="pricing-section-header pricing-section-collapsible" 
+          onClick={() => toggleSection('ask')}
         >
-          {cta}
-        </button>
-        <ul className="pricing-features">
-          {detailItems.map((detail, index) => (
-            <li key={index}>{detail}</li>
-          ))}
-        </ul>
+          <div className="pricing-section-title">
+            <div className={`pricing-chevron-wrapper ${expandedSections.ask ? 'expanded' : ''}`}>
+              <ChevronIcon />
+            </div>
+            <span>{t('pricing.features.ask.title')}</span>
+          </div>
+        </div>
+        {expandedSections.ask && (
+          <>
+            {renderFeatureRow(
+              'ask-lightning',
+              t('pricing.features.ask.lightning.title'),
+              getAskLightningValues(plans),
+              false,
+              true,
+              t('pricing.features.ask.lightning.description')
+            )}
+            {renderFeatureRow(
+              'ask-pro',
+              t('pricing.features.ask.pro.title'),
+              getAskProValues(plans),
+              false,
+              true,
+              t('pricing.features.ask.pro.description')
+            )}
+            {renderFeatureRow(
+              'ask-deepspace',
+              t('pricing.features.ask.deepSpace.title'),
+              getDeepSpaceValues(plans),
+              false,
+              true,
+              t('pricing.features.ask.deepSpace.description')
+            )}
+          </>
+        )}
+
+        {/* Search */}
+        <div 
+          className="pricing-section-header pricing-section-collapsible" 
+          onClick={() => toggleSection('search')}
+        >
+          <div className="pricing-section-title">
+            <div className={`pricing-chevron-wrapper ${expandedSections.search ? 'expanded' : ''}`}>
+              <ChevronIcon />
+            </div>
+            <span>{t('pricing.features.search.title')}</span>
+          </div>
+        </div>
+        {expandedSections.search && (
+          <>
+            {renderFeatureRow('filter', t('pricing.features.search.filter.title'), getFilterValues(plans), false, true)}
+            {renderFeatureRow('search', t('pricing.features.search.search.title'), getSearchValues(plans), false, true)}
+            {renderFeatureRow('find-friends', t('pricing.features.search.findFriends.title'), getFindFriendsValues(plans), false, true)}
+            {renderFeatureRow(
+              'intelligent-find-friends',
+              t('pricing.features.search.intelligentFindFriends.title'),
+              getIntelligentFindFriendsValues(plans),
+              false,
+              true
+            )}
+          </>
+        )}
+
+        {/* Formulate */}
+        <div className="pricing-section-header">
+          <div className="pricing-section-title">{t('pricing.features.formulate.title')}</div>
+        </div>
+        {renderFeatureRow('formulate', t('pricing.features.formulate.title'), getFormulateValues(plans))}
+
+        {/* Design */}
+        <div className="pricing-section-header">
+          <div className="pricing-section-title">{t('pricing.features.design.title')}</div>
+        </div>
+        {renderFeatureRow('design', t('pricing.features.design.title'), getDesignValues(plans))}
+
+        {/* Predict */}
+        <div className="pricing-section-header">
+          <div className="pricing-section-title">{t('pricing.features.predict.title')}</div>
+        </div>
+        {renderFeatureRow('predict', t('pricing.features.predict.title'), getPredictValues(plans))}
+
+        {/* Data Security */}
+        <div 
+          className="pricing-section-header pricing-section-collapsible" 
+          onClick={() => toggleSection('dataSecurity')}
+        >
+          <div className="pricing-section-title">
+            <div className={`pricing-chevron-wrapper ${expandedSections.dataSecurity ? 'expanded' : ''}`}>
+              <ChevronIcon />
+            </div>
+            <span>{t('pricing.features.dataSecurity.title')}</span>
+          </div>
+        </div>
+        {expandedSections.dataSecurity && renderFeatureRow('data-security', t('pricing.features.dataSecurity.onCloud'), getDataSecurityValues(plans))}
       </div>
     );
   };
@@ -307,15 +726,11 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       setActiveGroup('business');
     }
   
-    if(myPermission)clickButtonHandler(normalized);
+    if(myPermission) clickButtonHandler(normalized);
   }, [permission, myPermission]);
 
-  useEffect(() => {
-    console.log('activeGroup', activeGroup);
-  }, [activeGroup]);
-
   return (
-    <section id="pricing" className={`pricing-section ${className}`}>
+    <section id="pricing" className={`pricing-component pricing-section ${className}`}>
       {showHeader && (
         <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
           <h2 style={{margin: 0}}>{t('pricing.title')}</h2>
@@ -340,18 +755,26 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
         </button>
       </div>
 
+      {/* Personal Plans Table */}
       {filteredPersonalPlans.length > 0 && (
         <div className={`pricing-group ${activeGroup === 'personal' ? 'active' : ''}`} data-group="personal">
-          <div className="pricing-grid">
-            {filteredPersonalPlans.map((plan) => renderPlanCard(plan))}
+          <div className="pricing-table-wrapper">
+            <div className="pricing-table">
+              {renderTableHeader(filteredPersonalPlans)}
+              {renderTableBody(filteredPersonalPlans)}
+            </div>
           </div>
         </div>
       )}
 
+      {/* Business Plans Table */}
       {filteredBusinessPlans.length > 0 && (
         <div className={`pricing-group ${activeGroup === 'business' ? 'active' : ''}`} data-group="business">
-          <div className="pricing-grid">
-            {filteredBusinessPlans.map((plan) => renderPlanCard(plan))}
+          <div className="pricing-table-wrapper">
+            <div className="pricing-table">
+              {renderTableHeader(filteredBusinessPlans)}
+              {renderTableBody(filteredBusinessPlans)}
+            </div>
           </div>
         </div>
       )}
@@ -361,10 +784,6 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           {t('pricing.noHigherPlansMessage', 'You already have the highest level available. Contact us if you need anything else.')}
         </div>
       )}
-      
-      {/* <div className="pricing-footer-note">
-        {t('pricing.footer.note')} <span className="pricing-verify-link">{t('pricing.footer.verify')}</span>
-      </div> */}
       
       <ContactSalesModal
         isOpen={contactModalOpen}
@@ -423,4 +842,4 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   );
 };
 
-export default Pricing; 
+export default Pricing;

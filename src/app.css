@@ -1929,7 +1929,7 @@
   
   #newsfeed, #motivation, #features, #pricing {
     scroll-margin-top: 80px;
-    max-width: 1200px;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
     padding-top: 0;
