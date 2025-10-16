@@ -514,7 +514,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     });
   };
 
-  // 获取 Formulate 的值
+  // 获取 Formulate 的值（主文本）
   const getFormulateValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
       const featureData = t(`pricing.features.formulate.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
@@ -526,8 +526,21 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           {featureData.text && (
             <div className={`pricing-cell-text ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.text}</div>
           )}
+        </div>
+      );
+    });
+  };
+
+  // 获取 Formulate 的值（描述）
+  const getFormulateDescriptionValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      const featureData = t(`pricing.features.formulate.${plan.id}`, { returnObjects: true }) as { text?: string; description?: string };
+      const hasCheckIcon = !['basic', 'research', 'explorer', 'team'].includes(plan.id);
+      
+      return (
+        <div className="pricing-cell-content">
           {featureData.description && (
-            <div className={`pricing-cell-description ${!hasCheckIcon ? '' : 'gray'}`}>{featureData.description}</div>
+            <div className={`pricing-cell-description ${!hasCheckIcon ? 'gray' : ''}`}>{featureData.description}</div>
           )}
         </div>
       );
@@ -695,6 +708,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           <div className="pricing-section-title">{t('pricing.featureTitles.formulate')}</div>
         </div>
         {renderFeatureRow('formulate', t('pricing.featureTitles.formulate'), getFormulateValues(plans))}
+        {renderFeatureRow('formulate-description', '', getFormulateDescriptionValues(plans), false, true)}
 
         {/* Design */}
         <div className="pricing-section-header">
