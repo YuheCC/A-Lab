@@ -492,13 +492,13 @@ export default {
         text: "We commit to not give your data to your direct competitors (including our battery development team) or look at de-anonymized data without customer authorization, but we may use anonymized data to improve our software."
       },
       enterprise2: {
-        text: "We commit to not give your data to your direct competitors (including our battery development team) or use it for internal MU software development because some MU services are powered by numerous our software, we also anonymized data without customer authorization, but we will store it for debugging purposes. You own your data."
+        text: "We commit to not give your data to your direct competitors (including our battery development team or use it for internal MU software development), or look at de-anonymized data without your authorization, but we still store it for debugging purposes. You own your data."
       },
       enterprise3: {
-        text: "If requested, we will not store your data at all. Storing anonymized data is still an option if customer wants us to have it to help him/her debug, but we can disable all data storage if requested. Your data still go through our servers and our 3rd party APIs. Support for compliance with SOC 2 / ISO 27001. Support for single-tenant MU server where other customers cannot access your server, and adding your data to this server."
+        text: "If requested, we will not store your data at all. Storing anonymized data is still an option if customer wants us to have it to help them debug, but we can disable all data storage if requested. Your data still go through our servers and our 3rd party APIs. Support for compliance with SOC 2 / ISO 27001. Support for single-tenant MU server where other customers cannot access your server, and adding your data to this server."
       },
       joint: {
-        text: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the Internet. Support for replacing some 3rd party MU providers and implementing some MU services locally (your choice). Full On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
+        text: "-"
       }
     },
     dataSecurityOnPrem: {
@@ -521,10 +521,10 @@ export default {
         text: "-"
       },
       enterprise3: {
-        text: "-"
+        text: "We install our MU software and databases on your server. Your server must be connected to the internet, and your data still flows through our 1st and 3rd party APIs."
       },
       joint: {
-        text: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the Internet. Support for replacing some 3rd party MU providers and implementing some MU services locally (your choice). Full On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
+        text: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the internet. Support for replacing some 3rd party API providers and implementing some MU services locally (your choice).Full On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
       }
     }
   },
