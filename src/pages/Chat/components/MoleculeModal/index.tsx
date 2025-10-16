@@ -517,7 +517,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                                 }
                                 handleFindSimilar(name);
                             }}
-                            disabled={isSimilarLoading}
+                            disabled={isSimilarLoading || showSimilar}
                             style={{
                                 cursor: isSimilarLoading ? 'wait' : isFindFriendsLocked ? 'not-allowed' : 'pointer',
                                 opacity: isFindFriendsLocked ? 0.5 : 1,
