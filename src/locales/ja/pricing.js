@@ -81,7 +81,7 @@ export default {
   },
   enterprise1: {
     title: "エンタープライズ I",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -102,7 +102,7 @@ export default {
   },
   enterprise2: {
     title: "エンタープライズ II",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -123,7 +123,7 @@ export default {
   },
   enterprise3: {
     title: "エンタープライズ III",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -144,7 +144,7 @@ export default {
   },
   joint: {
     title: "共同開発",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -167,6 +167,366 @@ export default {
   footer: {
     note: "Molecular Universeは学生と教育関係者には無料です。",
     verify: "認証を受ける"
+  },
+  featureTitles: {
+    map: "マップ",
+    ask: "Ask",
+    askLightning: "Lightning",
+    askLightningDescription: "GPT-5 mini medium + MU 1分",
+    askPro: "プロ",
+    askProDescription: "GPT-5 mini high + MU Trim 20~40分",
+    askDeepSpace: "Deep Space",
+    askDeepSpaceDescription: "GPT-5 high + MU 20~40分",
+    search: "検索",
+    filter: "フィルター",
+    searchSearch: "検索",
+    findFriends: "Find-Friends",
+    intelligentFindFriends: "Intelligent Find-Friends",
+    formulate: "フォーミュレーション",
+    design: "デザイン",
+    predict: "予測",
+    dataSecurity: "データセキュリティ",
+    dataSecurityOnCloud: "クラウド",
+    dataSecurityOnPrem: "オンプレミス"
+  },
+  features: {
+    map: {
+      basic: {
+        text: "ビューのみ",
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      research: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      explorer: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      team: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      enterprise1: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      enterprise2: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      enterprise3: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      joint: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      }
+    },
+    askLightning: {
+      basic: {
+        text: "ビューのみ",
+        description: "（2例）"
+      },
+      research: {
+        text: "≤50/日"
+      },
+      explorer: {
+        text: "無制限"
+      },
+      team: {
+        text: "無制限"
+      },
+      enterprise1: {
+        text: "無制限"
+      },
+      enterprise2: {
+        text: "無制限"
+      },
+      enterprise3: {
+        text: "無制限"
+      },
+      joint: {
+        text: "無制限"
+      }
+    },
+    askPro: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1例）"
+      },
+      research: {
+        text: "≤10/日"
+      },
+      explorer: {
+        text: "無制限"
+      },
+      team: {
+        text: "無制限"
+      },
+      enterprise1: {
+        text: "無制限"
+      },
+      enterprise2: {
+        text: "無制限"
+      },
+      enterprise3: {
+        text: "無制限"
+      },
+      joint: {
+        text: "無制限"
+      }
+    },
+    askDeepSpace: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1例）"
+      },
+      research: {
+        text: "≤5/月"
+      },
+      explorer: {
+        text: "≤10/月"
+      },
+      team: {
+        text: "≤10/人/月"
+      },
+      enterprise1: {
+        text: "≤100/月"
+      },
+      enterprise2: {
+        text: "無制限"
+      },
+      enterprise3: {
+        text: "無制限"
+      },
+      joint: {
+        text: "無制限"
+      }
+    },
+    filter: {
+      basic: {
+        text: "ビューのみ"
+      },
+      research: {},
+      explorer: {},
+      team: {},
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
+    },
+    searchSearch: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1例/カテゴリ）"
+      },
+      research: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      explorer: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      team: {
+        description: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      },
+      enterprise1: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      enterprise2: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      enterprise3: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      },
+      joint: {
+        description: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
+      }
+    },
+    findFriends: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1例/カテゴリ）"
+      },
+      research: {},
+      explorer: {},
+      team: {},
+      enterprise1: {},
+      enterprise2: {},
+      enterprise3: {},
+      joint: {}
+    },
+    intelligentFindFriends: {
+      basic: {
+        text: "-"
+      },
+      research: {
+        text: "≤10/月",
+        description: "（低、GPT-5-nano-medium, 30秒）"
+      },
+      explorer: {
+        text: "≤20/月",
+        description: "（中、GPT-5-nano-high, 1分）"
+      },
+      team: {
+        text: "≤20/人/月",
+        description: "（中、GPT-5-nano-high, 1分）"
+      },
+      enterprise1: {
+        text: "≤100/月",
+        description: "（高、GPT-5-mini-medium, 2分）"
+      },
+      enterprise2: {
+        text: "無制限",
+        description: "（高、GPT-5-mini-medium, 2分）"
+      },
+      enterprise3: {
+        text: "無制限",
+        description: "（エクストリーム、GPT-5-high, 10分）"
+      },
+      joint: {
+        text: "無制限",
+        description: "（エクストリーム、GPT-5-high, 10分）"
+      }
+    },
+    formulate: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      research: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      explorer: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      team: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      enterprise1: {
+        text: "7つの特性が3日で結果：≤10/会社/月",
+        description: "6つの特性が1-2週間で結果：SESに連絡"
+      },
+      enterprise2: {
+        text: "7つの特性が3日で結果：≤30/会社/月",
+        description: "6つの特性が1-2週間で結果：SESに連絡"
+      },
+      enterprise3: {
+        text: "7つの特性が3日で結果：≤100/会社/月",
+        description: "6つの特性が1-2週間で結果：SESに連絡"
+      },
+      joint: {
+        text: "7つの特性が3日で結果：無制限",
+        description: "6つの特性が1-2週間で結果：SESに連絡"
+      }
+    },
+    design: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      research: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      explorer: {
+        text: "25°C サイクル寿命"
+      },
+      team: {
+        text: "25°C サイクル寿命"
+      },
+      enterprise1: {
+        text: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
+      },
+      enterprise2: {
+        text: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
+      },
+      enterprise3: {
+        text: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
+      },
+      joint: {
+        text: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
+      }
+    },
+    predict: {
+      basic: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      research: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      explorer: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      team: {
+        text: "ビューのみ",
+        description: "（1つの完全な例）"
+      },
+      enterprise1: {
+        description: "（独自データをアップロード可能）"
+      },
+      enterprise2: {
+        description: "（独自データをアップロード可能）"
+      },
+      enterprise3: {
+        description: "（独自データをアップロード可能）"
+      },
+      joint: {
+        description: "（独自データをアップロード可能）"
+      }
+    },
+    dataSecurityOnCloud: {
+      basic: {
+        text: "オンラインポリシー"
+      },
+      research: {
+        text: "オンラインポリシー"
+      },
+      explorer: {
+        text: "オンラインポリシー"
+      },
+      team: {
+        text: "オンラインポリシー"
+      },
+      enterprise1: {
+        text: "当社は、お客様のデータを直接の競合他社（当社のバッテリー開発チームを含む）に提供しない、またはお客様の許可なく匿名化解除されたデータを閲覧しないことを約束しますが、匿名化されたデータをソフトウェアの改善に使用する場合があります。"
+      },
+      enterprise2: {
+        text: "当社は、お客様のデータを直接の競合他社（当社のバッテリー開発チームを含む、または内部MUソフトウェア開発への使用）に提供しない、またはお客様の許可なく匿名化解除されたデータを閲覧しないことを約束しますが、デバッグ目的で保存します。データはお客様のものです。"
+      },
+      enterprise3: {
+        text: "ご要望があれば、お客様のデータを一切保存しません。お客様がデバッグのサポートを希望する場合は、匿名化されたデータを保存するオプションがありますが、ご要望があればすべてのデータ保存を無効にできます。お客様のデータは引き続き当社のサーバーとサードパーティAPIを経由します。SOC 2 / ISO 27001準拠のサポート。他のお客様がアクセスできないシングルテナントMUサーバーのサポートと、このサーバーへのデータ追加をサポートします。"
+      },
+      joint: {
+        text: "-"
+      }
+    },
+    dataSecurityOnPrem: {
+      basic: {
+        text: "-"
+      },
+      research: {
+        text: "-"
+      },
+      explorer: {
+        text: "-"
+      },
+      team: {
+        text: "-"
+      },
+      enterprise1: {
+        text: "-"
+      },
+      enterprise2: {
+        text: "-"
+      },
+      enterprise3: {
+        text: "お客様のサーバーにMUソフトウェアとデータベースをインストールします。サーバーはインターネットに接続されている必要があり、お客様のデータは引き続き当社のファーストパーティおよびサードパーティAPIを経由します。"
+      },
+      joint: {
+        text: "部分オンプレミス：お客様のサーバーにMUソフトウェアとデータベースをインストールします。サーバーはインターネットに接続されている必要があります。一部のサードパーティAPIプロバイダーの置き換えと、一部のMUサービスのローカル実装をサポート（お客様が選択）。\n完全オンプレミス：お客様のサーバーにMUソフトウェアとデータベースをインストールします。すべてのMUサービスはローカルで実行され、サーバーはエアギャップされます。"
+      }
+    }
   },
   contactSales: {
     title: "営業担当者へのお問い合わせ",

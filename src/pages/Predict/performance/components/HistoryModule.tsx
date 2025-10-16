@@ -4,6 +4,7 @@ import { type PerformanceHistoryItem } from '@/services/prediction/performance';
 import { getHistoryList, getHistoryDetail, deleteHistory, getBatterySystemOptions, isMockRecord } from '../model';
 import './HistoryModule.css';
 import { normalizeServerDate } from '@/utils/messageUtils';
+import { ArrowUpIcon } from './ArrowIcons';
 
 interface BatterySystem {
   id: string;
@@ -118,16 +119,16 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
       const model_result = JSON.parse(originalApiData?.model_result || '{}');
       apiData = {
         ...apiData,
-        temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label.toString(),
-        temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob.toString(),
-        temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label.toString(),
-        temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob.toString(),
-        temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label.toString(),
-        temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob.toString(),
-        temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label.toString(),
-        temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob.toString(),
-        temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label.toString(),
-        temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob.toString()
+        temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label?.toString(),
+        temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob?.toString(),
+        temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label?.toString(),
+        temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob?.toString(),
+        temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label?.toString(),
+        temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob?.toString(),
+        temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label?.toString(),
+        temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob?.toString(),
+        temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label?.toString(),
+        temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob?.toString()
       };
     } catch (error) {
       console.error('Error parsing API data:', error);
@@ -427,19 +428,27 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
                       className="result-tag"
                       style={{ 
                         color: temp25Style.color,
-                        backgroundColor: temp25Style.backgroundColor
+                        backgroundColor: temp25Style.backgroundColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
                       }}
                     >
-                      25°C: {stats.temp25.positiveCount}/{stats.temp25.totalCount} {t('performance.results.status.positive')}
+                      <span>25°C: {stats.temp25.positiveCount}/{stats.temp25.totalCount}</span>
+                      <ArrowUpIcon size={12} color={temp25Style.color} />
                     </span>
                     <span 
                       className="result-tag"
                       style={{ 
                         color: temp45Style.color,
-                        backgroundColor: temp45Style.backgroundColor
+                        backgroundColor: temp45Style.backgroundColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
                       }}
                     >
-                      45°C: {stats.temp45.positiveCount}/{stats.temp45.totalCount} {t('performance.results.status.positive')}
+                      <span>45°C: {stats.temp45.positiveCount}/{stats.temp45.totalCount}</span>
+                      <ArrowUpIcon size={12} color={temp45Style.color} />
                     </span>
                   </div>
                 </div>

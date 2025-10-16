@@ -12,7 +12,7 @@ export default defineConfig({
   },
   define: {
     'ShowFindFriendsAdvancedOptions': true,
-    'BASE_URL': "https://demo-api.ses.ai",
+    'BASE_URL': "https://llm-staging.ses.ai",
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },

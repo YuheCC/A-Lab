@@ -68,6 +68,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 localStorage.removeItem('username');
                 localStorage.removeItem('permissions');
                 localStorage.removeItem('organization_name');
+                localStorage.removeItem('email');
                 set({
                     isAuthenticated: false,
                     userPermissions: 'research',
@@ -91,6 +92,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (data.organization_name) {
                 localStorage.setItem('organization_name', data.organization_name);
             }
+            if (data.email) {
+                localStorage.setItem('email', data.email);
+            }
 
             set({
                 isAuthenticated: true,
@@ -108,6 +112,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.removeItem('username');
             localStorage.removeItem('permissions');
             localStorage.removeItem('organization_name');
+            localStorage.removeItem('email');
             set({
                 isAuthenticated: false,
                 userPermissions: 'research',
@@ -141,10 +146,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('username', data.username);
-            localStorage.setItem('permissions', data.permissions);            
+            localStorage.setItem('permissions', data.permissions);
             localStorage.setItem('isAdvancedTier', isAdvancedTier ? 'true' : 'false');
             if (data.organization_name) {
                 localStorage.setItem('organization_name', data.organization_name);
+            }
+            if (data.email) {
+                localStorage.setItem('email', data.email);
             }
             return { success: response?.ok !== false, data: data, message: data.message || data.detail || "" };
             
@@ -160,6 +168,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem('username');
         localStorage.removeItem('permissions');
         localStorage.removeItem('organization_name');
+        localStorage.removeItem('email');
         set({
             isAuthenticated: false,
             token: null,

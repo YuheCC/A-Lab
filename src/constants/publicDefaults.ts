@@ -3,7 +3,7 @@ export const PUBLIC_SEARCH_LOCKED_VALUES = {
   anionInput: "LiBF4, LiFSI",
   sse: {
     activeTab: "formula" as const,
-    formulaInput: "Li11P2(S3Cl)3",
+    formulaInput: "Li6PS5Cl",
   },
   findFriends: {
     moleculeType: "additive",

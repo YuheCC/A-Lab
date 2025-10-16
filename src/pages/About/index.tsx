@@ -148,7 +148,7 @@ const AboutPage = () => {
               "{t('about.quote')}"<br/>
               <span style={{fontSize:'1rem',fontStyle:'normal'}}>{t('about.quoteSource')}</span>
           </div>
-          <div className="content-sections">
+          <div className="content-sections" style={{maxWidth: '1500px'}}>
               <section id="newsfeed">
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.newsfeed.title')}</h2>

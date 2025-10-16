@@ -470,31 +470,31 @@
 
 /* CE 箭头的颜色和边框 */
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--positive-light {
-  border: 1px solid #ffe2e2;
+  border: 1px solid #008236;
 }
 
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--positive-medium {
   color: #00c950;
-  border: 1px solid #ffe2e2;
+  border: 1px solid #00c950;
 }
 
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--positive-dark {
   color: #008236;
-  border: 1px solid #ffe2e2;
+  border: 1px solid #008236;
 }
 
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--negative-light {
-  border: 1px solid #ffe2e2;
+  border: 1px solid #c10007;
 }
 
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--negative-medium {
   color: #fb2c36;
-  border: 1px solid #ffe2e2;
+  border: 1px solid #fb2c36;
 }
 
 .pm-performance-result-badge--ce-only.pm-performance-result-badge--negative-dark {
   color: #c10007;
-  border: 1px solid #ffe2e2;
+  border: 1px solid #c10007;
 }
 
 .pm-performance-result-badge__arrow {
