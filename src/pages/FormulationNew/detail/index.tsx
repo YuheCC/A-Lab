@@ -84,20 +84,20 @@ const DetailPage: React.FC = () => {
   const systemProperties = [
     {
       property: t('formulation.detail.density', 'Density (g/cm³)'),
-      value: resultData?.system_properties?.density?.toFixed(4) || '1.2000'
+      value: resultData?.output_json?.system_properties?.['conductivity [mS/cm]']?.toFixed(4) || '1.2000'
     },
     {
       property: t('formulation.detail.viscosity', 'Viscosity (cP)'),
-      value: resultData?.system_properties?.viscosity?.toFixed(4) || '2.6600'
+      value: resultData?.output_json?.system_properties?.['density [g/cm3]']?.toFixed(4) || '2.6600'
     },
     {
       property: t('formulation.detail.conductivity', 'Conductivity (mS/cm)'),
-      value: resultData?.system_properties?.conductivity?.toFixed(4) || '5.7600'
+      value: resultData?.output_json?.system_properties?.['viscosity [cP]']?.toFixed(4) || '5.7600'
     }
   ];
 
   // 动态生成集群分析数据
-  const clusterAnalysis = resultData?.output_json?.cluster?.map(item => ({
+  const clusterAnalysis = resultData?.output_json?.cluster?.map((item: any) => ({
     size: item.size,
     category: item.category,
     fraction: `${(item.fraction * 100).toFixed(1)}%`
@@ -292,7 +292,7 @@ const DetailPage: React.FC = () => {
                 <span>{t('formulation.results.category', 'Category')}</span>
                 <span>{t('formulation.results.fraction', 'Fraction')}</span>
               </div>
-              {clusterAnalysis.map((item, index) => (
+              {clusterAnalysis.map((item: any, index: number) => (
                 <div key={index} className="table-row">
                   <span>{item.size}</span>
                   <span className="category-cell">
