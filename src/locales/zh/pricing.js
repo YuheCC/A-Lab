@@ -81,7 +81,7 @@ export default {
   },
   enterprise1: {
     title: "企业版 I",
-    description: "访问完整分子宇宙（1亿）",
+    description: "访问完整分子宇宙（2亿）",
     price: "",
     period: "",
     cta: "联系销售",
@@ -102,7 +102,7 @@ export default {
   },
   enterprise2: {
     title: "企业版 II",
-    description: "访问完整分子宇宙（1亿）",
+    description: "访问完整分子宇宙（2亿）",
     price: "",
     period: "",
     cta: "联系销售",
@@ -123,7 +123,7 @@ export default {
   },
   enterprise3: {
     title: "企业版 III",
-    description: "访问完整分子宇宙（1亿）",
+    description: "访问完整分子宇宙（2亿）",
     price: "",
     period: "",
     cta: "联系销售",
@@ -144,7 +144,7 @@ export default {
   },
   joint: {
     title: "联合开发",
-    description: "访问完整分子宇宙（1亿）",
+    description: "访问完整分子宇宙（2亿）",
     price: "",
     period: "",
     cta: "联系销售",
@@ -172,7 +172,8 @@ export default {
     map: {
       title: "地图",
       viewOnly: "仅查看",
-      full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质"
+      full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质",
+      fullEnterprise: "200M 溶剂、添加剂和稀释剂，1M+ 盐阴离子，固体电解质+"
     },
     ask: {
       title: "Ask",
@@ -216,7 +217,8 @@ export default {
         title: "搜索",
         viewOnly: "仅查看",
         viewOnlyExamples: "1个示例/类别",
-        full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质"
+        full: "1M 溶剂、添加剂和稀释剂，1M 盐阴离子，固体电解质",
+        fullEnterprise: "200M 溶剂、添加剂和稀释剂，1M+ 盐阴离子，固体电解质+"
       },
       findFriends: {
         title: "找好友",
@@ -238,23 +240,37 @@ export default {
     formulate: {
       title: "配方",
       viewOnly: "仅查看",
-      viewOnlyExamples: "1个完整示例"
+      viewOnlyExamples: "1个完整示例",
+      enterprise1: "7个性能指标3天内出结果：≤10次/公司/月",
+      enterprise1Note: "6个性能指标1-2周内出结果：联系SES",
+      enterprise2: "7个性能指标3天内出结果：≤30次/公司/月",
+      enterprise2Note: "6个性能指标1-2周内出结果：联系SES",
+      enterprise3: "7个性能指标3天内出结果：≤100次/公司/月",
+      enterprise3Note: "6个性能指标1-2周内出结果：联系SES",
+      joint: "7个性能指标3天内出结果：无限制"
     },
     design: {
       title: "设计",
       viewOnly: "仅查看",
       viewOnlyExamples: "1个完整示例",
-      cycleLife: "25°C循环寿命"
+      cycleLife: "25°C循环寿命",
+      cycleLifeFull: "25°C循环寿命\n25°C CE/倍率性能\n45°C循环寿命\n45°C CE"
     },
     predict: {
       title: "预测",
       viewOnly: "仅查看",
-      viewOnlyExamples: "1个完整示例"
+      viewOnlyExamples: "1个完整示例",
+      canUpload: "（可上传自己的数据）"
     },
     dataSecurity: {
       title: "数据安全",
       onCloud: "云端",
-      onlinePolicy: "在线政策"
+      onlinePolicy: "在线政策",
+      enterprise1Policy: "我们承诺不将您的数据提供给您的直接竞争对手（包括我们的电池开发团队），也不会在未经客户授权的情况下查看去匿名化的数据，但我们可能会使用匿名化数据来改进我们的软件。",
+      enterprise2Policy: "我们承诺不将您的数据提供给您的直接竞争对手（包括我们的电池开发团队），也不会将其用于内部MU软件开发，因为某些MU服务由我们的众多软件提供支持，我们也会在未经客户授权的情况下匿名化数据，但我们会保存它以用于调试。您拥有您的数据。",
+      enterprise3Policy: "如有要求，我们将完全不存储您的数据。如果客户希望我们帮助调试，仍可选择存储匿名化数据，但如有要求，我们可以禁用所有数据存储。您的数据仍会通过我们的服务器和第三方API。支持符合SOC 2/ISO 27001标准。支持单租户MU服务器，其他客户无法访问您的服务器，并将您的数据添加到此服务器。",
+      onPrem: "本地部署",
+      jointPolicy: "部分本地部署：我们在您的服务器上安装MU软件和数据库。您的服务器必须连接到互联网。支持替换部分第三方MU提供商，并在本地实现某些MU服务（您可以选择）。完全本地部署：我们在您的服务器上安装MU软件和数据库。所有MU服务都在本地执行，您的服务器与外界隔离。"
     }
   },
   contactSales: {

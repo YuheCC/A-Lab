@@ -357,10 +357,12 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           </div>
         );
       }
+      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
+      const description = isEnterprise ? t('pricing.features.map.fullEnterprise') : t('pricing.features.map.full');
       return (
         <div className="pricing-cell-content">
           <CheckIcon />
-          <div className="pricing-cell-description">{t('pricing.features.map.full')}</div>
+          <div className="pricing-cell-description">{description}</div>
         </div>
       );
     });
@@ -482,10 +484,12 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
           </div>
         );
       }
+      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
+      const description = isEnterprise ? t('pricing.features.search.search.fullEnterprise') : t('pricing.features.search.search.full');
       return (
         <div className="pricing-cell-content">
           <CheckIcon />
-          <div className="pricing-cell-description">{t('pricing.features.search.search.full')}</div>
+          <div className="pricing-cell-description">{description}</div>
         </div>
       );
     });
@@ -547,6 +551,41 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Formulate 的值
   const getFormulateValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
+      if (plan.id === 'enterprise1') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise1')}</div>
+            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise1Note')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'enterprise2') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise2')}</div>
+            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise2Note')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'enterprise3') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.formulate.enterprise3')}</div>
+            <div className="pricing-cell-description">{t('pricing.features.formulate.enterprise3Note')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'joint') {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text">{t('pricing.features.formulate.joint')}</div>
+          </div>
+        );
+      }
       return (
         <div className="pricing-cell-content">
           <div className="pricing-cell-text gray">{t('pricing.features.formulate.viewOnly')}</div>
@@ -559,6 +598,17 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Design 的值
   const getDesignValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
+      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
+      if (isEnterprise) {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-text" style={{ whiteSpace: 'pre-line' }}>
+              {t('pricing.features.design.cycleLifeFull')}
+            </div>
+          </div>
+        );
+      }
       if (plan.id === 'explorer' || plan.id === 'team') {
         return (
           <div className="pricing-cell-content">
@@ -579,6 +629,15 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
   // 获取 Predict 的值
   const getPredictValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
+      const isEnterprise = isEnterpriseTier(plan.id) || plan.id === 'joint';
+      if (isEnterprise) {
+        return (
+          <div className="pricing-cell-content">
+            <CheckIcon />
+            <div className="pricing-cell-description">{t('pricing.features.predict.canUpload')}</div>
+          </div>
+        );
+      }
       return (
         <div className="pricing-cell-content">
           <div className="pricing-cell-text gray">{t('pricing.features.predict.viewOnly')}</div>
@@ -588,10 +647,52 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
     });
   };
 
-  // 获取 Data Security 的值
+  // 获取 Data Security On Cloud 的值
   const getDataSecurityValues = (plans: PlanConfig[]) => {
     return plans.map((plan) => {
+      if (plan.id === 'enterprise1') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise1Policy')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'enterprise2') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise2Policy')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'enterprise3') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.enterprise3Policy')}</div>
+          </div>
+        );
+      }
+      if (plan.id === 'joint') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.jointPolicy')}</div>
+          </div>
+        );
+      }
       return <div className="pricing-cell-text">{t('pricing.features.dataSecurity.onlinePolicy')}</div>;
+    });
+  };
+
+  // 获取 Data Security On Prem 的值（仅用于Joint Development）
+  const getDataSecurityOnPremValues = (plans: PlanConfig[]) => {
+    return plans.map((plan) => {
+      if (plan.id === 'joint') {
+        return (
+          <div className="pricing-cell-content">
+            <div className="pricing-cell-text">{t('pricing.features.dataSecurity.jointPolicy')}</div>
+          </div>
+        );
+      }
+      return <div className="pricing-cell-text gray">-</div>;
     });
   };
 
@@ -703,7 +804,12 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
             <span>{t('pricing.features.dataSecurity.title')}</span>
           </div>
         </div>
-        {expandedSections.dataSecurity && renderFeatureRow('data-security', t('pricing.features.dataSecurity.onCloud'), getDataSecurityValues(plans))}
+        {expandedSections.dataSecurity && (
+          <>
+            {renderFeatureRow('data-security-cloud', t('pricing.features.dataSecurity.onCloud'), getDataSecurityValues(plans), false, true)}
+            {plans.some(plan => plan.id === 'joint') && renderFeatureRow('data-security-prem', t('pricing.features.dataSecurity.onPrem'), getDataSecurityOnPremValues(plans), false, true)}
+          </>
+        )}
       </div>
     );
   };

@@ -81,7 +81,7 @@ export default {
   },
   enterprise1: {
     title: "기업용 I",
-    description: "Molecular Universe 전체 접근 (100M)",
+    description: "Molecular Universe 전체 접근 (200M)",
     price: "",
     period: "",
     cta: "영업팀에 문의하기",
@@ -102,7 +102,7 @@ export default {
   },
   enterprise2: {
     title: "기업용 II",
-    description: "Molecular Universe 전체 접근 (100M)",
+    description: "Molecular Universe 전체 접근 (200M)",
     price: "",
     period: "",
     cta: "영업팀에 문의하기",
@@ -123,7 +123,7 @@ export default {
   },
   enterprise3: {
     title: "기업용 III",
-    description: "Molecular Universe 전체 접근 (100M)",
+    description: "Molecular Universe 전체 접근 (200M)",
     price: "",
     period: "",
     cta: "영업팀에 문의하기",
@@ -144,7 +144,7 @@ export default {
   },
   joint: {
     title: "공동 개발 파트너십",
-    description: "Molecular Universe 전체 접근 (100M)",
+    description: "Molecular Universe 전체 접근 (200M)",
     price: "",
     period: "",
     cta: "영업팀에 문의하기",
@@ -172,7 +172,8 @@ export default {
     map: {
       title: "분자 지도",
       viewOnly: "뷰 전용",
-      full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질"
+      full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질",
+      fullEnterprise: "200M 용매, 첨가제 및 희석제, 1M+ 염 음이온, 고체 전해질+"
     },
     ask: {
       title: "Ask",
@@ -216,7 +217,8 @@ export default {
         title: "검색하기",
         viewOnly: "뷰 전용",
         viewOnlyExamples: "1예시/카테고리",
-        full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질"
+        full: "1M 용매, 첨가제 및 희석제, 1M 염 음이온, 고체 전해질",
+        fullEnterprise: "200M 용매, 첨가제 및 희석제, 1M+ 염 음이온, 고체 전해질+"
       },
       findFriends: {
         title: "친구 찾기",
@@ -238,23 +240,37 @@ export default {
     formulate: {
       title: "포뮬레이션",
       viewOnly: "뷰 전용",
-      viewOnlyExamples: "1개 전체 예시"
+      viewOnlyExamples: "1개 전체 예시",
+      enterprise1: "7가지 속성을 3일 내에 결과 제공: ≤10/회사/월",
+      enterprise1Note: "6가지 속성을 1-2주 내에 결과 제공: SES 연락",
+      enterprise2: "7가지 속성을 3일 내에 결과 제공: ≤30/회사/월",
+      enterprise2Note: "6가지 속성을 1-2주 내에 결과 제공: SES 연락",
+      enterprise3: "7가지 속성을 3일 내에 결과 제공: ≤100/회사/월",
+      enterprise3Note: "6가지 속성을 1-2주 내에 결과 제공: SES 연락",
+      joint: "7가지 속성을 3일 내에 결과 제공: 무제한"
     },
     design: {
       title: "디자인",
       viewOnly: "뷰 전용",
       viewOnlyExamples: "1개 전체 예시",
-      cycleLife: "25°C 사이클 수명"
+      cycleLife: "25°C 사이클 수명",
+      cycleLifeFull: "25°C 사이클 수명\n25°C CE/레이트 성능\n45°C 사이클 수명\n45°C CE"
     },
     predict: {
       title: "예측",
       viewOnly: "뷰 전용",
-      viewOnlyExamples: "1개 전체 예시"
+      viewOnlyExamples: "1개 전체 예시",
+      canUpload: "(자체 데이터 업로드 가능)"
     },
     dataSecurity: {
       title: "데이터 보안",
       onCloud: "클라우드",
-      onlinePolicy: "온라인 정책"
+      onlinePolicy: "온라인 정책",
+      enterprise1Policy: "당사는 귀하의 데이터를 직접 경쟁업체(당사의 배터리 개발 팀 포함)에 제공하지 않으며, 고객 승인 없이 익명화되지 않은 데이터를 보지 않을 것을 약속하지만, 소프트웨어 개선을 위해 익명화된 데이터를 사용할 수 있습니다.",
+      enterprise2Policy: "당사는 귀하의 데이터를 직접 경쟁업체(당사의 배터리 개발 팀 포함)에 제공하지 않으며, 내부 MU 소프트웨어 개발에 사용하지 않을 것을 약속합니다. 일부 MU 서비스는 당사의 다수 소프트웨어에 의해 구동되므로, 고객 승인 없이 데이터를 익명화하지만 디버깅 목적으로 저장합니다. 데이터는 귀하의 것입니다.",
+      enterprise3Policy: "요청하는 경우 귀하의 데이터를 전혀 저장하지 않습니다. 고객이 디버깅에 도움을 받고자 하는 경우 익명화된 데이터를 저장하는 옵션이 여전히 있지만, 요청하면 모든 데이터 저장을 비활성화할 수 있습니다. 귀하의 데이터는 여전히 당사의 서버와 제3자 API를 통과합니다. SOC 2 / ISO 27001 준수 지원. 다른 고객이 액세스할 수 없는 단일 테넌트 MU 서버 지원 및 이 서버에 데이터 추가를 지원합니다.",
+      onPrem: "온프레미스",
+      jointPolicy: "부분 온프레미스: 귀하의 서버에 MU 소프트웨어 및 데이터베이스를 설치합니다. 서버는 인터넷에 연결되어 있어야 합니다. 일부 제3자 MU 공급자 교체 및 일부 MU 서비스의 로컬 구현 지원(귀하의 선택). 완전 온프레미스: 귀하의 서버에 MU 소프트웨어 및 데이터베이스를 설치합니다. 모든 MU 서비스는 로컬에서 수행되며 서버는 에어갭됩니다."
     }
   },
   contactSales: {

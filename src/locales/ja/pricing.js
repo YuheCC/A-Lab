@@ -81,7 +81,7 @@ export default {
   },
   enterprise1: {
     title: "エンタープライズ I",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -102,7 +102,7 @@ export default {
   },
   enterprise2: {
     title: "エンタープライズ II",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -123,7 +123,7 @@ export default {
   },
   enterprise3: {
     title: "エンタープライズ III",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -144,7 +144,7 @@ export default {
   },
   joint: {
     title: "共同開発",
-    description: "完全なMolecular Universe（100M）へのアクセス",
+    description: "完全なMolecular Universe（200M）へのアクセス",
     price: "",
     period: "",
     cta: "営業担当者へのお問い合わせ",
@@ -172,7 +172,8 @@ export default {
     map: {
       title: "マップ",
       viewOnly: "ビューのみ",
-      full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+      full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質",
+      fullEnterprise: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
     },
     ask: {
       title: "Ask",
@@ -216,7 +217,8 @@ export default {
         title: "検索",
         viewOnly: "ビューのみ",
         viewOnlyExamples: "1例/カテゴリ",
-        full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質"
+        full: "1M 溶媒、添加剤と希釈剤、1M 塩アニオン、固体電解質",
+        fullEnterprise: "200M 溶媒、添加剤と希釈剤、1M+ 塩アニオン、固体電解質+"
       },
       findFriends: {
         title: "Find-Friends",
@@ -238,23 +240,37 @@ export default {
     formulate: {
       title: "フォーミュレーション",
       viewOnly: "ビューのみ",
-      viewOnlyExamples: "1つの完全な例"
+      viewOnlyExamples: "1つの完全な例",
+      enterprise1: "7つの特性が3日で結果：≤10/会社/月",
+      enterprise1Note: "6つの特性が1-2週間で結果：SESに連絡",
+      enterprise2: "7つの特性が3日で結果：≤30/会社/月",
+      enterprise2Note: "6つの特性が1-2週間で結果：SESに連絡",
+      enterprise3: "7つの特性が3日で結果：≤100/会社/月",
+      enterprise3Note: "6つの特性が1-2週間で結果：SESに連絡",
+      joint: "7つの特性が3日で結果：無制限"
     },
     design: {
       title: "デザイン",
       viewOnly: "ビューのみ",
       viewOnlyExamples: "1つの完全な例",
-      cycleLife: "25°C サイクル寿命"
+      cycleLife: "25°C サイクル寿命",
+      cycleLifeFull: "25°Cサイクル寿命\n25°C CE/レート性能\n45°Cサイクル寿命\n45°C CE"
     },
     predict: {
       title: "予測",
       viewOnly: "ビューのみ",
-      viewOnlyExamples: "1つの完全な例"
+      viewOnlyExamples: "1つの完全な例",
+      canUpload: "（独自データをアップロード可能）"
     },
     dataSecurity: {
       title: "データセキュリティ",
       onCloud: "クラウド",
-      onlinePolicy: "オンラインポリシー"
+      onlinePolicy: "オンラインポリシー",
+      enterprise1Policy: "当社は、お客様のデータを直接の競合他社（当社のバッテリー開発チームを含む）に提供しない、またはお客様の許可なく匿名化解除されたデータを閲覧しないことを約束しますが、匿名化されたデータをソフトウェアの改善に使用する場合があります。",
+      enterprise2Policy: "当社は、お客様のデータを直接の競合他社（当社のバッテリー開発チームを含む）に提供しない、または内部MUソフトウェア開発に使用しないことを約束します。一部のMUサービスは当社の多数のソフトウェアによって提供されているため、お客様の許可なくデータを匿名化しますが、デバッグ目的で保存します。データはお客様のものです。",
+      enterprise3Policy: "ご要望があれば、お客様のデータを一切保存しません。お客様がデバッグのサポートを希望する場合は、匿名化されたデータを保存するオプションがありますが、ご要望があればすべてのデータ保存を無効にできます。お客様のデータは引き続き当社のサーバーとサードパーティAPIを経由します。SOC 2 / ISO 27001準拠のサポート。他のお客様がアクセスできないシングルテナントMUサーバーのサポートと、このサーバーへのデータ追加をサポートします。",
+      onPrem: "オンプレミス",
+      jointPolicy: "部分オンプレミス：お客様のサーバーにMUソフトウェアとデータベースをインストールします。サーバーはインターネットに接続されている必要があります。一部のサードパーティMUプロバイダーの置き換えと、一部のMUサービスのローカル実装をサポート（お客様が選択）。完全オンプレミス：お客様のサーバーにMUソフトウェアとデータベースをインストールします。すべてのMUサービスはローカルで実行され、サーバーはエアギャップされます。"
     }
   },
   contactSales: {
