@@ -52,8 +52,13 @@ export const getHistoryList = async (params?: any): Promise<{
       };
     }
 
-    // 返回真实数据
-    return response;
+    // 合并真实数据和mock数据，mock数据放在最前面
+    return {
+      data: {
+        data: [...mockListData, ...response.data.data],
+        total: mockListData.length + response.data.total
+      }
+    };
   } catch (error) {
     console.error('Failed to fetch history list, falling back to mock data:', error);
     // 接口调用失败时，返回mock数据
