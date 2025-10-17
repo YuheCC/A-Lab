@@ -50,7 +50,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // 权限判断
   const isHighTier = useMemo(() => {
-    return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
+    return ['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
   const canShowColumn = useCallback(
