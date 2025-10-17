@@ -46,7 +46,7 @@ interface ProcessedMetric {
 const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   const { t } = useTranslation();
   const userPermissions = useAuthStore((state: any) => state.userPermissions);
-
+  const isMock = (result as any)?.rawApiData?.isMock;
   // 权限判断
   const isHighTier = useMemo(() => {
     return ['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '');
@@ -418,7 +418,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
               </Tooltip>
             </h3>
             
-            {isHighTier ? (
+            {isHighTier || isMock ? (
               <>
                 <div className="temperature-section">
                   <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
