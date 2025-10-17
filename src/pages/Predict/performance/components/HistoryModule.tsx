@@ -39,6 +39,8 @@ interface PredictionResult {
     cycling: string;
   };
   rawApiData?: PerformanceHistoryItem;
+  temperature_25_label_0_count?: number;
+  temperature_45_label_0_count?: number;
 }
 
 interface FilterState {
@@ -156,7 +158,9 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
         cycling: apiData.llm_analysis_result ? t('performance.analysisStatus.available') : t('performance.analysisStatus.notAvailable')
       },
       // Include raw API data for proper processing in ResultModal
-      rawApiData: apiData
+      rawApiData: apiData,
+      temperature_25_label_0_count: apiData.temperature_25_label_0_count,
+      temperature_45_label_0_count: apiData.temperature_45_label_0_count
     };
   };
 
@@ -395,10 +399,10 @@ const HistoryModule: React.FC<HistoryModuleProps> = ({ onViewDetails, onNewPredi
         ) : (
           filteredData.map((record) => {
             // Calculate separate temperature statistics for this record
-            const stats = record.rawApiData ? calculateTemperatureStats(record.rawApiData) : { 
-              temp25: { positiveCount: 0, totalCount: 3, ratio: 0 },
-              temp45: { positiveCount: 0, totalCount: 2, ratio: 0 }
-            };
+            const stats = { 
+              temp25: { positiveCount: record.temperature_25_label_0_count || 0, totalCount: 3, ratio: record.temperature_25_label_0_count ? record.temperature_25_label_0_count / 3 : 0 },
+              temp45: { positiveCount: record.temperature_45_label_0_count || 0, totalCount: 2, ratio: record.temperature_45_label_0_count ? record.temperature_45_label_0_count / 2 : 0 }
+            } as const;
             const temp25Style = getStatusColorAndClass(stats.temp25.ratio);
             const temp45Style = getStatusColorAndClass(stats.temp45.ratio);
             

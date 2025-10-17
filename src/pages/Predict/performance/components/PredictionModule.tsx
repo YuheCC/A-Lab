@@ -1179,8 +1179,9 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 {t('performance.results.temperatureTabs.temp25')}
               </button>
               <button 
-                className={`pm-temp-tab ${activeTab === '45c' ? 'active' : ''}`}
-                onClick={() => setActiveTab('45c')}
+                className={`pm-temp-tab ${activeTab === '45c' ? 'active' : ''} ${!isHighTier ? 'disabled' : ''}`}
+                onClick={() => isHighTier && setActiveTab('45c')}
+                disabled={!isHighTier}
               >
                 {t('performance.results.temperatureTabs.temp45')}
               </button>
@@ -1194,26 +1195,28 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                     {renderResultBadge(resultsData['25c'].cycleLife, 'cycleLife')}
                   </div>
 
-                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="pm-result-label">{t('performance.results.performance.ce25')}</div>
-                    {renderResultBadge(resultsData['25c'].ce, 'ce')}
-                  </div>
+                  <div className={`pm-results-group ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
+                    <div className="pm-result-item">
+                      <div className="pm-result-label">{t('performance.results.performance.ce25')}</div>
+                      {renderResultBadge(resultsData['25c'].ce, 'ce')}
+                    </div>
 
-                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
-                    <div className="pm-result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                    {renderResultBadge(resultsData['25c'].ratePerformance, 'ratePerformance')}
+                    <div className="pm-result-item">
+                      <div className="pm-result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                      {renderResultBadge(resultsData['25c'].ratePerformance, 'ratePerformance')}
+                    </div>
                   </div>
                 </div>
               )}
 
               {activeTab === '45c' && (
-                <div className="pm-performance-results">
-                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                <div className={`pm-performance-results ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
+                  <div className="pm-result-item">
                     <div className="pm-result-label">{t('performance.results.performance.cycleLife45')}</div>
                     {renderResultBadge(resultsData['45c'].cycleLife, 'cycleLife')}
                   </div>
 
-                  <div className={`pm-result-item ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('navigation.upgradeConfirmation.upgradeViewTitle')}>
+                  <div className="pm-result-item">
                     <div className="pm-result-label">{t('performance.results.performance.ce45')}</div>
                     {renderResultBadge(resultsData['45c'].ce, 'ce')}
                   </div>

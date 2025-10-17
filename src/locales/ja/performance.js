@@ -91,6 +91,7 @@ export default {
     positiveTitle: "ポジティブ (Positive)",
     negativeTip: "指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルと同等またはそれ以下になります。",
     positiveTip: "指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルより優れます。",
+    upgradeToViewMetrics: "25°Cおよび45°Cのより多くのメトリクスを表示するにはプランをアップグレードしてください",
     badgeTitle: "バッジカラー指標（サイクル寿命とレート性能のみ適用）",
     badgeDescriptions: {
       gainLabel: "性能向上",
