@@ -13,6 +13,7 @@ import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from './CustomSelect';
 import { PricingContext } from '@/layouts/index';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
 interface SystemSpec {
   cathode: string;
@@ -52,6 +53,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     return ['admin', 'enterprise', 'enterprise1', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
+  const canShowColumn = useCallback(
+    (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+    [userPermissions]
+  );
   
   // 新增状态：分子详情相关
   const [moleculeDetails, setMoleculeDetails] = useState<MoleculeDetails | null>(null);
@@ -907,89 +912,122 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   
                   <div className="pm-molecule-properties">
                     <div className="pm-properties-grid">
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.smiles')}</label>
-                          <span>{moleculeDetails.properties.smiles || '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.espMin')}</label>
-                          <span>{typeof moleculeDetails.properties.espMin === 'number' ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' : moleculeDetails.properties.espMin || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.molecularWeight')}</label>
-                          <span>{typeof moleculeDetails.properties.molecularWeight === 'number' ? moleculeDetails.properties.molecularWeight.toFixed(2) : moleculeDetails.properties.molecularWeight || '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.predictedMp')}</label>
-                          <span>{moleculeDetails.properties.meltingPoint || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.umapX')}</label>
-                          <span>{moleculeDetails.properties.umapX !== undefined ? moleculeDetails.properties.umapX.toFixed(4) : '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.predictedBp')}</label>
-                          <span>{moleculeDetails.properties.boilingPoint || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.umapY')}</label>
-                          <span>{moleculeDetails.properties.umapY !== undefined ? moleculeDetails.properties.umapY.toFixed(4) : '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.predictedFp')}</label>
-                          <span>{moleculeDetails.properties.flashPoint || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.homo')}</label>
-                          <span>{typeof moleculeDetails.properties.homo === 'number' ? moleculeDetails.properties.homo.toFixed(4) + ' eV' : moleculeDetails.properties.homo || '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.combustionEnthalpy')}</label>
-                          <span>{moleculeDetails.properties.combustionEnthalpy || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.lumo')}</label>
-                          <span>{typeof moleculeDetails.properties.lumo === 'number' ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' : moleculeDetails.properties.lumo || '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.commercialViability')}</label>
-                          <span>{moleculeDetails.properties.commercialViability || '-'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pm-property-row">
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.espMax')}</label>
-                          <span>{typeof moleculeDetails.properties.espMax === 'number' ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' : moleculeDetails.properties.espMax || '-'}</span>
-                        </div>
-                        <div className="pm-property-item">
-                          <label>{t('performance.moleculeInfo.properties.functionalGroups')}</label>
-                          <span>{moleculeDetails.properties.functionalGroups ? (() => {
-                            try {
-                              const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
-                              return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
-                            } catch {
-                              return moleculeDetails.properties.functionalGroups;
-                            }
-                          })() : '-'}</span>
-                        </div>
-                      </div>
+                      {(() => {
+                        // 定义所有属性配置
+                        const allProperties = [
+                          {
+                            label: t('performance.moleculeInfo.properties.smiles'),
+                            value: moleculeDetails.properties.smiles || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.espMin'),
+                            value: typeof moleculeDetails.properties.espMin === 'number' 
+                              ? moleculeDetails.properties.espMin.toFixed(2) + ' eV' 
+                              : moleculeDetails.properties.espMin || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.molecularWeight'),
+                            value: typeof moleculeDetails.properties.molecularWeight === 'number' 
+                              ? moleculeDetails.properties.molecularWeight.toFixed(2) 
+                              : moleculeDetails.properties.molecularWeight || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.predictedMp'),
+                            value: moleculeDetails.properties.meltingPoint || '-',
+                            show: canShowColumn('predicted_mp_celsius')
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.umapX'),
+                            value: moleculeDetails.properties.umapX !== undefined 
+                              ? moleculeDetails.properties.umapX.toFixed(4) 
+                              : '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.predictedBp'),
+                            value: moleculeDetails.properties.boilingPoint || '-',
+                            show: canShowColumn('predicted_bp_celsius')
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.umapY'),
+                            value: moleculeDetails.properties.umapY !== undefined 
+                              ? moleculeDetails.properties.umapY.toFixed(4) 
+                              : '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.predictedFp'),
+                            value: moleculeDetails.properties.flashPoint || '-',
+                            show: canShowColumn('predicted_fp_celsius')
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.homo'),
+                            value: typeof moleculeDetails.properties.homo === 'number' 
+                              ? moleculeDetails.properties.homo.toFixed(4) + ' eV' 
+                              : moleculeDetails.properties.homo || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.combustionEnthalpy'),
+                            value: moleculeDetails.properties.combustionEnthalpy || '-',
+                            show: canShowColumn('combustion_enthalpy_ev')
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.lumo'),
+                            value: typeof moleculeDetails.properties.lumo === 'number' 
+                              ? moleculeDetails.properties.lumo.toFixed(4) + ' eV' 
+                              : moleculeDetails.properties.lumo || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.commercialViability'),
+                            value: moleculeDetails.properties.commercialViability || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.espMax'),
+                            value: typeof moleculeDetails.properties.espMax === 'number' 
+                              ? moleculeDetails.properties.espMax.toFixed(3) + ' eV' 
+                              : moleculeDetails.properties.espMax || '-',
+                            show: true
+                          },
+                          {
+                            label: t('performance.moleculeInfo.properties.functionalGroups'),
+                            value: moleculeDetails.properties.functionalGroups ? (() => {
+                              try {
+                                const groups = JSON.parse(moleculeDetails.properties.functionalGroups);
+                                return Array.isArray(groups) ? groups.join(', ') : moleculeDetails.properties.functionalGroups;
+                              } catch {
+                                return moleculeDetails.properties.functionalGroups;
+                              }
+                            })() : '-',
+                            show: true
+                          }
+                        ];
+
+                        // 过滤出需要显示的属性
+                        const visibleProperties = allProperties.filter(prop => prop.show);
+
+                        // 按两列布局分组
+                        const rows = [];
+                        for (let i = 0; i < visibleProperties.length; i += 2) {
+                          rows.push(visibleProperties.slice(i, i + 2));
+                        }
+
+                        return rows.map((row, rowIndex) => (
+                          <div className="pm-property-row" key={rowIndex}>
+                            {row.map((prop, propIndex) => (
+                              <div className="pm-property-item" key={propIndex}>
+                                <label>{prop.label}</label>
+                                <span>{prop.value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ));
+                      })()}
                     </div>
                   </div>
                 </div>
