@@ -91,6 +91,7 @@ export default {
     positiveTitle: "긍정적 (Positive)",
     negativeTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀과 동등하거나 더 나쁩니다.",
     positiveTip: "지정된 첨가제를 추가한 후 셀의 성능이 벤치마크 전해질을 사용한 셀보다 더 좋습니다.",
+    upgradeToViewMetrics: "25°C 및 45°C에서 더 많은 메트릭을 보려면 플랜을 업그레이드하세요",
     badgeTitle: "배지 색상 지표 (사이클 수명 및 비율 성능만 적용)",
     badgeDescriptions: {
       gainLabel: "성능 향상",

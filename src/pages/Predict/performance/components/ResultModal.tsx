@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import './ResultModal.css';
@@ -6,6 +6,7 @@ import './PerformanceTooltip.css';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { ArrowUpIcon, ArrowDownIcon } from './ArrowIcons';
+import { useAuthStore } from '@/models/useAuth';
 
 interface PredictionResult {
   id: string;
@@ -44,6 +45,12 @@ interface ProcessedMetric {
 
 const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
   const { t } = useTranslation();
+  const userPermissions = useAuthStore((state: any) => state.userPermissions);
+
+  // 权限判断
+  const isHighTier = useMemo(() => {
+    return ['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '');
+  }, [userPermissions]);
 
   const isMissingMetricValue = (value?: string | number | null) => {
     if (value === null || value === undefined) {
@@ -411,40 +418,59 @@ const ResultModal: React.FC<ResultModalProps> = ({ result, onClose }) => {
               </Tooltip>
             </h3>
             
-            <div className="temperature-section">
-              <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
-              <div className="performance-results">
-                <div className="result-item">
-                  <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                  {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
+            {isHighTier ? (
+              <>
+                <div className="temperature-section">
+                  <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
+                  <div className="performance-results">
+                    <div className="result-item">
+                      <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                      {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
+                    </div>
+
+                    <div className="result-item">
+                      <div className="result-label">{t('performance.results.performance.ce25')}</div>
+                      {renderResultBadge(processedResults.temp25.ce, 'ce')}
+                    </div>
+
+                    <div className="result-item">
+                      <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                      {renderResultBadge(processedResults.temp25.ratePerformance, 'ratePerformance')}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="result-item">
-                  <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                  {renderResultBadge(processedResults.temp25.ce, 'ce')}
-                </div>
+                <div className="temperature-section">
+                  <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
+                  <div className="performance-results">
+                    <div className="result-item">
+                      <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
+                      {renderResultBadge(processedResults.temp45.cycleLife, 'cycleLife')}
+                    </div>
 
-                <div className="result-item">
-                  <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                  {renderResultBadge(processedResults.temp25.ratePerformance, 'ratePerformance')}
+                    <div className="result-item">
+                      <div className="result-label">{t('performance.results.performance.ce45')}</div>
+                      {renderResultBadge(processedResults.temp45.ce, 'ce')}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="temperature-section">
+                <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
+                <div className="limited-preview">
+                  <div className="limited-preview-content">
+                    <div className="result-item-centered">
+                      <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                      {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
+                    </div>
+                    <div className="upgrade-prompt">
+                      {t('performance.results.upgradeToViewMetrics')}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="temperature-section">
-              <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
-              <div className="performance-results">
-                <div className="result-item">
-                  <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                  {renderResultBadge(processedResults.temp45.cycleLife, 'cycleLife')}
-                </div>
-
-                <div className="result-item">
-                  <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                  {renderResultBadge(processedResults.temp45.ce, 'ce')}
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           <div className="result-section">
