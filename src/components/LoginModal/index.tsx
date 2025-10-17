@@ -113,8 +113,7 @@ const LoginModal = ({ isOpen, onClose, redirectPath, onLogin }: LoginModalProps)
 
   const handleRegisterClick = () => {
     onClose();
-    pricingContext?.setPermission?.(null);
-    pricingContext?.setShowPricingOverlay?.(true);
+    navigate('/register');
   };
 
   const handleForgotPasswordClick = () => {
