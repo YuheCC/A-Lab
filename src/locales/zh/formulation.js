@@ -246,7 +246,7 @@ export default {
   results: {
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '溶剂化簇类型和分数分析',
+    clusterAnalysis: '离子缔合和微观分子簇结构分析',
     size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
@@ -298,7 +298,7 @@ export default {
     weightFraction: '质量分数',
     analysisResults: '分析结果',
     systemProperties: '体系性质',
-    clusterAnalysis: '溶剂化簇类型和分数分析',
+    clusterAnalysis: '离子缔合和微观分子簇结构分析',
     size: '第一溶剂化簇中阴离子的数量',
     category: '类别',
     fraction: '分数',
