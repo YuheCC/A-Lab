@@ -4,7 +4,7 @@ const RAW_HIGH_TIER_PERMISSIONS = [
   'enterprise1',
   'enterprise2',
   'enterprise3',
-  'joint',
+  // 'joint',
 ] as const;
 
 const RAW_LOW_TIER_BLOCKED_COLUMNS = [
