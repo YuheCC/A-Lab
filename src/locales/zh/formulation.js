@@ -88,7 +88,7 @@ export default {
     customSolubilityImageAlt: '溶解度预测',
     customSolubilityImageCaption:
       '我们的 MD 模拟精准预测典型锂盐 LiFSI 在 19 种不同化学结构与官能团溶剂中的溶解度。散点越接近对角线表示预测越准确，帮助在合成前建立模拟筛选信心。',
-    standardSolvationClusterTableName: '溶剂化簇类型与分数分析',
+    standardSolvationClusterTableName: '离子缔合和微观分子簇结构分析',
     table: {
       headers: {
         no: '编号',
