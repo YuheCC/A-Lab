@@ -89,14 +89,6 @@ const MoleculeInfo10 = ({ activeTab }: MoleculeInfo10Props) => {
                 </h2>
 
                 <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    {t('map.about.description1')}
-                </p>
-
-                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                    {t('map.about.description2')}
-                </p>
-
-                <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
                     {t('map.about.description3')}
                 </p>
 
