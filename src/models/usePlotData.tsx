@@ -3,7 +3,7 @@ import { authFetch, getAPIUrl } from "@/utils";
 
 const API_URL = getAPIUrl();
 
-const MAX_NODES = 200000;
+const MAX_NODES = 210000;
 
 let initialData = false;
 let isFetching = false; // 添加标志防止重复获取
