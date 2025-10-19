@@ -4,9 +4,15 @@ export default {
     map: "地图",
     ask: "智能问答",
     search: "搜索",
+    molecule: "分子",
     filter: "筛选",
     favorites: "收藏",
-    about: "关于"
+    predict: "预测",
+    design: "设计",
+    formulation: "配方",
+    about: "关于",
+    predictPerformance: "电芯性能预测",
+    predictionTool: "电池寿命预测",
   },
   
   // Navbar links
@@ -35,7 +41,8 @@ export default {
   userDropdown: {
     accountSettings: "账号设置",
     feedback: "意见与反馈",
-    logout: "退出登录"
+    logout: "退出登录",
+    login: "登录"
   },
   
   // Upgrade prompt
@@ -46,7 +53,8 @@ export default {
     title: "升级套餐",
     message: "是否升级套餐以使用更多功能？",
     confirm: "确认",
-    cancel: "取消"
+    cancel: "取消",
+    upgradeViewTitle: "升级套餐查看"
   },
   
   // Action buttons

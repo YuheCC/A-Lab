@@ -26,7 +26,9 @@ export default {
         function: "功能",
         functionOptions: {
             map: "地图",
-            regularAsk: "常规问答",
+            lightning: "闪电",
+            ask: "专业版",
+            fastDeepSpace: "快速 Deep Space",
             deepSpace: "深度空间",
             search: "搜索",
             filter: "筛选",

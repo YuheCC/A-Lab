@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { contactSales } from '@/services/auth';
 import './ContactSalesModal.css';
 
+type ContactPlanType = 'enterprise1' | 'enterprise2' | 'enterprise3' | 'joint';
+
 interface ContactSalesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  planType: 'enterprise' | 'joint';
+  planType: ContactPlanType;
+  userEmail?: string;
 }
 
-const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps) => {
+const ContactSalesModal = ({ isOpen, onClose, planType, userEmail }: ContactSalesModalProps) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +24,13 @@ const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // 自动填充 email（如果已登录）
+  useEffect(() => {
+    if (isOpen && userEmail) {
+      setFormData(prev => ({ ...prev, email: userEmail }));
+    }
+  }, [isOpen, userEmail]);
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -34,7 +44,8 @@ const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps
 
     try {
       const submitData = {
-        ...formData,
+        email: formData.email,
+        message: formData.message,
       };
 
       await contactSales(submitData);
@@ -108,7 +119,7 @@ const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps
                   required
                   disabled={isSubmitting}
                 />
-              </div>
+              </div> */}
 
               <div className="form-group">
                 <label htmlFor="email">{t('pricing.contactSales.form.email')} *</label>
@@ -123,7 +134,7 @@ const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps
                 />
               </div>
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label htmlFor="company">{t('pricing.contactSales.form.company')} *</label>
                 <input
                   type="text"
@@ -179,7 +190,7 @@ const ContactSalesModal = ({ isOpen, onClose, planType }: ContactSalesModalProps
                 <button
                   type="submit"
                   className="contact-sales-btn-submit"
-                  disabled={isSubmitting || !formData.message}
+                  disabled={isSubmitting || !formData.email}
                 >
                   {isSubmitting ? t('pricing.contactSales.buttons.submitting') : t('pricing.contactSales.buttons.submit')}
                 </button>

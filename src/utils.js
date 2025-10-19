@@ -1,3 +1,5 @@
+import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from './utils/authHelpers';
+
 export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
 
 const API_URL = getAPIUrl();
@@ -11,10 +13,35 @@ export const COMMERCIAL_SCORE_MAP = {
 }
 
 /**
+ * Append a cation to the beginning of a SMILES string when needed so that
+ * molecule renderers show the full ionic pair. The backend may sometimes
+ * return the cation separately; this helper normalises the output.
+ *
+ * @param {string} smiles Base SMILES string returned from the API.
+ * @param {string | null | undefined} cation Optional cation symbol such as `Li+`.
+ * @returns {string} SMILES string with the cation prefixed when provided.
+ */
+export const formatSmilesWithCation = (smiles, cation) => {
+  if (!smiles || typeof smiles !== 'string') return smiles;
+  if (!cation) return smiles;
+
+  const trimmed = String(cation).trim();
+  if (!trimmed) return smiles;
+
+  const bracketed = trimmed.startsWith('[') ? trimmed : `[${trimmed}]`;
+  const segments = smiles.split('.');
+  if (segments.some(segment => segment.trim() === bracketed)) {
+    return smiles;
+  }
+
+  return `${bracketed}.${smiles}`;
+};
+
+/**
  * Fetch wrapper that automatically attaches JWT to all requests
  * going to our backend. Also handles 401 responses by redirecting
  * to the login page.
- * @param {*} input 
+ * @param {*} input
  * @param {*} init 
  * @returns 
  */
@@ -51,6 +78,18 @@ export const authFetch = (input, init = {}) => {
     ) {
       redirectToLogin();
     }
+    // 402? → show pricing overlay (but not for GET requests)
+    const method = (init.method || 'GET').toUpperCase();
+    if (response.status === 402 && method !== 'GET') {
+      // Try to get permission info from response
+      response.clone().json().then((data) => {
+        const permission = data?.required_permission || null;
+        triggerPricingModal(permission);
+      }).catch(() => {
+        // If JSON parsing fails, just show pricing modal without permission
+        triggerPricingModal(null);
+      });
+    }
     return response;
   });
 };
@@ -65,23 +104,29 @@ export const redirectToLogin = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   localStorage.removeItem('permissions');
+  localStorage.removeItem('organization_name');
 
   // Store the current URL to redirect back after login
   localStorage.setItem('redirectAfterLogin', current);
 
-  // Send them to the sign‑in screen **once**, carrying the original target.
-  window.history.pushState(
-    {},
-    '',
-    `/login?redirect=${encodeURIComponent(current)}`,
-  );
-  window.location.reload();
+  // 使用登录浮层而不是页面跳转
+  if (shouldShowLoginModal(window.location.pathname)) {
+    triggerLoginModal(current);
+  } else {
+    // 如果不应该显示浮层（比如在首页），则跳转到登录页面
+    window.history.pushState(
+      {},
+      '',
+      `/login?redirect=${encodeURIComponent(current)}`,
+    );
+    window.location.reload();
+  }
 };
 
 
 // Labels for filters
 export const filterLabels = {
-    molwt: "Molecular Weight",
+    molwt: "Molecular Weight（g/mol ）",
     homo_eV: "HOMO (eV)",
     lumo_eV: "LUMO (eV)",
     esp_max_eV: "Max ESP (eV)",
@@ -93,5 +138,7 @@ export const filterLabels = {
     commercial_score: "Commercial Viability",
     CLUSTER: "Cluster",
     functional_groups: "Functional Groups",
-    chemical_formula: "Chemical Formula"
+    chemical_formula: "Chemical Formula",
+    vdw_volume_angstroms3: "Molecular Volume（Å³）",
+    fluoride_bde_ev: "F Dissociation Energy（eV）"
 };

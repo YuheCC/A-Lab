@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 
-export type ChatMode = 'regular' | 'deep-space' | 'clarify';
+
+export type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask' ;
 
 export interface HeartbeatOptions {
   intervalMs?: number;
@@ -342,6 +343,13 @@ class GlobalWebSocketManager {
     // 兼容后端通过 message("chat-events", payload) 的新格式
     this.socket.on('chat-events', (...args: any[]) => {
       console.log('全局WebSocket收到 chat-events 事件:', ...args);
+      const payload = args.length > 1 ? args : args[0];
+      this.messageCallbacks.forEach(callback => callback(payload));
+    });
+
+    // 监听 cell-performance-events 事件
+    this.socket.on('cell-performance-events', (...args: any[]) => {
+      console.log('全局WebSocket收到 cell-performance-events 事件:', ...args);
       const payload = args.length > 1 ? args : args[0];
       this.messageCallbacks.forEach(callback => callback(payload));
     });

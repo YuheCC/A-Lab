@@ -1,9 +1,13 @@
 export default {
+    public: 'Public',
     common: 'Basic',
-    research: 'Education',
+    research: 'Research',
     explorer: 'Explorer',
     team: 'Team',
     enterprise: 'Enterprise',
-    joint: 'Joint',
+    enterprise1: 'Enterprise I',
+    enterprise2: 'Enterprise II',
+    enterprise3: 'Enterprise III',
+    joint: 'JointDev',
     admin: 'Admin'
 }; 

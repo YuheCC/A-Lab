@@ -8,6 +8,7 @@ import NodePopup from "@/components/NodePopup";
 const InorganicMolecules = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
 
@@ -39,7 +40,7 @@ const InorganicMolecules = () => {
     return (
         <>
             {/* UMAP Visualization in the middle (50%) */}
-            <div className="search-umap-section" style={{ position: 'relative' }}>
+            <div className="map-umap-section" style={{ position: 'relative' }}>
                 {/* Info icon with tooltip */}
                 <div 
                     style={{
@@ -110,7 +111,9 @@ const InorganicMolecules = () => {
                         <UMAPClusterPlotDeck
                             data={data}
                             userPermissions={userPermissions}
+                            isAuthenticated={isAuthenticated}
                             molecularType="inorganic"
+                            enableAutoHover
                             onClick={(node: any) => {
                                 setNode(node);
                                 nodePopupRef.current?.show();
@@ -123,7 +126,7 @@ const InorganicMolecules = () => {
                     )}
                 </div>
             </div>
-            <NodePopup node={node} ref={nodePopupRef} molecularType="inorganic"/>
+            <NodePopup key="inorganicNodePopup" node={node} ref={nodePopupRef} molecularType="inorganic"/>
         </>
     )
 };

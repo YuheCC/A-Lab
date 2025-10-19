@@ -9,6 +9,7 @@ export default {
         accountInfo: 'アカウント情報',
         name: '名前',
         email: 'メールアドレス',
+        notAvailable: '該当なし',
         password: 'パスワードの変更',
         modify: '変更'
     },

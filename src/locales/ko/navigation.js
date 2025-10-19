@@ -4,9 +4,15 @@ export default {
     map: "분자 지도",
     ask: "질문하기",
     search: "검색하기",
+    molecule: "분자",
     filter: "조건별 검색",
     favorites: "즐겨찾기",
-    about: "소개"
+    predict: "예측",
+    design: "디자인",
+    formulation: "조합",
+    about: "소개",
+    predictPerformance: "셀 성능 예측",
+    predictionTool: "배터리 수명 예측",
   },
   
   // Navbar links
@@ -35,7 +41,8 @@ export default {
   userDropdown: {
     accountSettings: "계정 설정",
     feedback: "피드백 및 제안",
-    logout: "로그아웃"
+    logout: "로그아웃",
+    login: "로그인"
   },
   
   // Upgrade prompt
@@ -46,7 +53,8 @@ export default {
     title: "플랜 업그레이드",
     message: "더 많은 기능을 사용하려면 플랜을 업그레이드하시겠습니까?",
     confirm: "확인",
-    cancel: "취소"
+    cancel: "취소",
+    upgradeViewTitle: "플랜 업그레이드 보기"
   },
   
   // Action buttons

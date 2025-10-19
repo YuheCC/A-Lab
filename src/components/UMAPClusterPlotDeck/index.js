@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect, Fragment } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
 import { CompositeLayer } from 'deck.gl';
@@ -6,6 +6,9 @@ import { House, ZoomIn, ZoomOut } from 'lucide-react';
 import { Tooltip } from '@mui/material';
 import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
+import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
 const hexToRgb = (hex) => {
@@ -19,7 +22,7 @@ const hexToRgb = (hex) => {
 
 const X_STRETCH = 1.3;
 
-const fitToData = (data, containerDimensions, prevViewState = null) => {
+const fitToData = (data, containerDimensions, prevViewState = null, zoomOffset = 0.3) => {
     if (!data || data.length === 0) {
         return {
             longitude: 3.7,
@@ -80,7 +83,6 @@ const fitToData = (data, containerDimensions, prevViewState = null) => {
     const baseZoom = Math.log2((minContainerDimension * targetFillRatio) / (maxRange || 1));
     
     // Add zoom offset for more detailed view (increase this value for more zoom)
-    const zoomOffset = 0.3; // 增加1.5个缩放级别
     const zoom = Math.max(0, Math.min(20, baseZoom + zoomOffset));
 
     if (prevViewState) {
@@ -268,10 +270,15 @@ const UMAPClusterPlotDeck = ({
     highlightedData = [],
     highlightedSimilarData = [],
     userPermissions,
+    isAuthenticated,
     onClick,
-    molecularType = 'organic'
+    molecularType = 'organic',
+    zoomOffset = 0.3,
+    enableAutoHover = true
 }) => {
     const { t } = useTranslation();
+    const normalizedPermissions = (userPermissions || '').toLowerCase();
+    const isBasicTierUser = !isAuthenticated || ['common', 'public', 'basic'].includes(normalizedPermissions);
 
     const [viewState, setViewState] = useState({
         longitude: 3.7,
@@ -286,12 +293,13 @@ const UMAPClusterPlotDeck = ({
     const [containerReady, setContainerReady] = useState(false);
     const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
     const [hoveredObject, setHoveredObject] = useState(null);
+    const [autoHoverLayouts, setAutoHoverLayouts] = useState([]);
 
     const clampBounds = useMemo(() => calculateClampBounds(data), [data]);
 
     const onHover = useCallback((info) => {
-        if (info && info.object) {
-            setHoveredObject(info.object);
+        if (info && info.object && info.object.hasFullData) {
+            setHoveredObject(info);
         } else {
             setHoveredObject(null);
         }
@@ -327,23 +335,255 @@ const UMAPClusterPlotDeck = ({
 
 
     // Handle point click
-    const handlePointClick = useCallback(() => {
-        if (!hoveredObject || !hoveredObject.object) return;
+    const handlePointClick = useCallback((info) => {
+        if (!info || !info.object || !info.object.hasFullData) {
+            return;
+        }
+
         setHoveredObject(null);
+        onHover(null);
         // Call the onClick handler with the plotly data in the expected format
-        onClick(hoveredObject.object);
-    }, [onClick, hoveredObject]);
+        onClick(info.object);
+    }, [onClick, onHover]);
+
+    const resolveCation = useCallback((dataNode) => {
+        if (!dataNode) {
+            return undefined;
+        }
+        return dataNode.cation ?? dataNode.rawData?.cation ?? dataNode.rawData?.CATION;
+    }, []);
+
+    const buildHoverPropGroups = useCallback((dataNode) => {
+        if (!dataNode) {
+            return [];
+        }
+
+        const properties = dataNode.properties || {};
+
+        return [
+            { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2, show: isColumnVisibleForUser('smiles', userPermissions) },
+            { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER, show: isColumnVisibleForUser('cluster', userPermissions) },
+            { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol'), show: isColumnVisibleForUser('molecular_weight', userPermissions) },
+            { 
+                label: t('molecular.umapPlot.properties.espMax'), 
+                value: properties.esp_max_eV, 
+                suffix: t('molecular.umapPlot.units.eV'),
+                show: molecularType === 'organic' && isColumnVisibleForUser('ESP_max_eV', userPermissions)
+            },
+            { 
+                label: t('molecular.umapPlot.properties.espMin'), 
+                value: properties.esp_min_eV, 
+                suffix: t('molecular.umapPlot.units.eV'),
+                show: molecularType === 'organic' && isColumnVisibleForUser('ESP_min_eV', userPermissions)
+            },
+            { label: t('molecular.umapPlot.properties.homo'), value: properties.homo_eV, suffix: t('molecular.umapPlot.units.eV'), show: isColumnVisibleForUser('HOMO_eV', userPermissions) },
+            { label: t('molecular.umapPlot.properties.lumo'), value: properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV'), show: isColumnVisibleForUser('LUMO_eV', userPermissions) },
+            {
+                label: t('molecular.umapPlot.properties.predictedMp'), value: properties.predicted_mp,
+                suffix: t('molecular.umapPlot.units.celsius'),
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_MP_celsius', userPermissions)
+            },
+            {
+                label: t('molecular.umapPlot.properties.predictedBp'), value: properties.predicted_bp,
+                suffix: t('molecular.umapPlot.units.celsius'),
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_BP_celsius', userPermissions)
+            },
+            {
+                label: 'Predicted FP', value: properties.predicted_fp,
+                suffix: ' °C',
+                show: molecularType === 'organic' && isColumnVisibleForUser('predicted_FP_celsius', userPermissions)
+            },
+            {
+                label: 'Combustion Enthalpy', value: properties.combustion_enthalpy, suffix: ' eV',
+                show: molecularType === 'organic' && isColumnVisibleForUser('combustion_enthalpy_ev', userPermissions)
+            },
+            {
+                label: "Molecular Volume", 
+                value: properties.vdw_volume_angstroms3,
+                suffix: " Å³",
+                show: molecularType === "anions" && isColumnVisibleForUser('vdw_volume_angstroms3', userPermissions)
+            },
+            {
+                label: "F Dissociation Energy", 
+                suffix: " eV",
+                value: properties.fluoride_bde_ev,
+                show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
+            }
+        ];
+    }, [molecularType, t, userPermissions]);
 
     // Calculate bounds from data to fit the view
     useEffect(() => {
         if (containerReady) {
             if (isManipulated) {
-                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState));
+                setViewState(prevViewState => fitToData(data, containerDimensions, prevViewState, zoomOffset));
             } else {
-                setViewState(fitToData(data, containerDimensions));
+                setViewState(fitToData(data, containerDimensions, null, zoomOffset));
             }
         }
-    }, [containerDimensions, data, containerReady]);
+    }, [containerDimensions, data, containerReady, zoomOffset]);
+
+    const fullDataNodes = useMemo(() => data.filter(node => node?.hasFullData), [data]);
+    const shouldAutoShowHover = useMemo(() => {
+        if (!enableAutoHover) {
+            return false;
+        }
+
+        if (fullDataNodes.length === 0) {
+            return false;
+        }
+
+        if (data.length > 0 && data.length <= AUTO_HOVER_MOLECULE_THRESHOLD) {
+            return true;
+        }
+
+        return fullDataNodes.length <= AUTO_HOVER_MOLECULE_THRESHOLD;
+    }, [enableAutoHover, data.length, fullDataNodes.length]);
+
+    const autoHoverNodes = useMemo(() => (shouldAutoShowHover ? fullDataNodes : []), [fullDataNodes, shouldAutoShowHover]);
+
+    useEffect(() => {
+        if (!shouldAutoShowHover || autoHoverNodes.length === 0) {
+            setAutoHoverLayouts([]);
+            return;
+        }
+
+        if (!containerDimensions.width || !containerDimensions.height) {
+            return;
+        }
+
+        const viewport = new WebMercatorViewport({
+            width: containerDimensions.width,
+            height: containerDimensions.height,
+            longitude: viewState.longitude,
+            latitude: viewState.latitude,
+            zoom: viewState.zoom,
+            pitch: viewState.pitch,
+            bearing: viewState.bearing
+        });
+
+        const BASE_CARD_WIDTH = 460;
+        const BASE_CARD_HEIGHT = 260;
+        const BASE_CARD_GAP = 16;
+        const COMPACT_CARD_WIDTH = 360;
+        const COMPACT_CARD_HEIGHT = 200;
+        const COMPACT_STACK_HEIGHT = 170;
+        const COMPACT_CARD_GAP = 4;
+        const MARGIN = 12;
+
+        const cardWidth = isBasicTierUser ? COMPACT_CARD_WIDTH : BASE_CARD_WIDTH;
+        const cardHeight = isBasicTierUser ? COMPACT_CARD_HEIGHT : BASE_CARD_HEIGHT;
+        const cardGap = isBasicTierUser ? COMPACT_CARD_GAP : BASE_CARD_GAP;
+        const stackingHeight = isBasicTierUser ? COMPACT_STACK_HEIGHT : cardHeight;
+
+        const layouts = autoHoverNodes.map((node, index) => {
+            const [projectedX, projectedY] = viewport.project([X_STRETCH * node.x, node.y]);
+
+            if (!Number.isFinite(projectedX) || !Number.isFinite(projectedY)) {
+                return null;
+            }
+
+            const anchorLeft = projectedX;
+            const anchorTop = projectedY;
+
+            const containerWidth = containerDimensions.width;
+            const containerHeight = containerDimensions.height;
+
+            const isVisible = anchorLeft >= -cardWidth && anchorLeft <= containerWidth + cardWidth &&
+                anchorTop >= -cardHeight && anchorTop <= containerHeight + cardHeight;
+
+            if (!isVisible) {
+                return null;
+            }
+
+            let cardLeft;
+            let cardTop;
+
+            if (isBasicTierUser) {
+                const availableHeight = Math.max(0, containerHeight - 2 * MARGIN);
+                const cardsPerColumn = Math.max(1, Math.floor((availableHeight + cardGap) / (stackingHeight + cardGap)));
+                const columnIndex = Math.floor(index / cardsPerColumn);
+                const rowIndex = index % cardsPerColumn;
+
+                if (molecularType === 'anions') {
+                    cardLeft = (containerWidth - MARGIN - cardWidth) - columnIndex * (cardWidth + cardGap);
+                } else {
+                    cardLeft = MARGIN + columnIndex * (cardWidth + cardGap);
+                }
+
+                cardTop = MARGIN + rowIndex * (stackingHeight + cardGap);
+
+                cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - cardWidth - MARGIN);
+                cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - cardHeight - MARGIN);
+            } else {
+                const candidateOffsets = [
+                    { offsetX: cardGap, offsetY: -cardGap - cardHeight },
+                    { offsetX: cardGap, offsetY: cardGap },
+                    { offsetX: -cardGap - cardWidth, offsetY: -cardGap - cardHeight },
+                    { offsetX: -cardGap - cardWidth, offsetY: cardGap }
+                ];
+
+                for (const candidate of candidateOffsets) {
+                    const potentialLeft = anchorLeft + candidate.offsetX;
+                    const potentialTop = anchorTop + candidate.offsetY;
+
+                    const fitsHorizontally = potentialLeft >= MARGIN && (potentialLeft + cardWidth) <= containerWidth - MARGIN;
+                    const fitsVertically = potentialTop >= MARGIN && (potentialTop + cardHeight) <= containerHeight - MARGIN;
+
+                    if (fitsHorizontally && fitsVertically) {
+                        cardLeft = potentialLeft;
+                        cardTop = potentialTop;
+                        break;
+                    }
+                }
+
+                if (cardLeft === undefined || cardTop === undefined) {
+                    const fallback = candidateOffsets[0];
+                    cardLeft = anchorLeft + fallback.offsetX;
+                    cardTop = anchorTop + fallback.offsetY;
+
+                    cardLeft = Math.min(Math.max(cardLeft, MARGIN), containerWidth - cardWidth - MARGIN);
+                    cardTop = Math.min(Math.max(cardTop, MARGIN), containerHeight - cardHeight - MARGIN);
+                }
+            }
+
+            const cardRight = cardLeft + cardWidth;
+            const cardBottom = cardTop + cardHeight;
+
+            let targetX;
+            if (anchorLeft < cardLeft) {
+                targetX = cardLeft;
+            } else if (anchorLeft > cardRight) {
+                targetX = cardRight;
+            } else {
+                targetX = anchorLeft;
+            }
+
+            let targetY;
+            if (anchorTop < cardTop) {
+                targetY = cardTop;
+            } else if (anchorTop > cardBottom) {
+                targetY = cardBottom;
+            } else {
+                targetY = anchorTop;
+            }
+
+            return {
+                node,
+                index,
+                anchor: { left: anchorLeft, top: anchorTop },
+                card: { left: cardLeft, top: cardTop, width: cardWidth, height: cardHeight },
+                line: {
+                    startX: anchorLeft,
+                    startY: anchorTop,
+                    endX: targetX,
+                    endY: targetY
+                }
+            };
+        }).filter(Boolean);
+
+        setAutoHoverLayouts(layouts);
+    }, [autoHoverNodes, shouldAutoShowHover, containerDimensions, viewState, isBasicTierUser, molecularType]);
 
     const layers = [
         useMemo(() =>
@@ -361,25 +601,23 @@ const UMAPClusterPlotDeck = ({
                 opacity: 0.3,
                 pickable: true,
                 autoHighlight: true,
+                highlightedObjectIndex: hoveredObject?.index ?? -1,
                 onHover: info => {
-                    if (info.object) {
+                    if (info.object && info.object.hasFullData) {
                         onHover(info);
-                        setHoveredObject(info);
                     } else {
                         onHover(null);
-                        setHoveredObject(null);
                     }
                 },
                 onClick: info => {
-                    if (info.object) {
+                    if (info.object && info.object.hasFullData) {
                         handlePointClick(info);
                     } else {
                         onHover(null);
-                        setHoveredObject(null);
                     }
                 },
             })
-            , [data, onHover, handlePointClick]),
+            , [data, onHover, handlePointClick, hoveredObject]),
         useMemo(() =>
             new MarkerWithLabelLayer({
                 id: 'similar-markers',
@@ -497,7 +735,7 @@ const UMAPClusterPlotDeck = ({
         // Reset view state to initial
         setHoveredObject(null);
         onHover(null);
-        setViewState(fitToData(data, containerDimensions));
+        setViewState(fitToData(data, containerDimensions, null, zoomOffset));
         setIsManipulated(false);
     };
 
@@ -563,9 +801,8 @@ const UMAPClusterPlotDeck = ({
                 });
             }}
             onClick={(info) => {
-                if (info.layer === null) {
+                if (info.layer === null || !info.object || !info.object.hasFullData) {
                     onHover(null);
-                    setHoveredObject(null);
                 } else {
                     handlePointClick(info);
                 }
@@ -582,40 +819,114 @@ const UMAPClusterPlotDeck = ({
                 ref={hoverRef}
                 style={position}
                 showMoreDetails={true}
+                cation={resolveCation(hoveredObject.object)}
                 onMouseEnter={() => {
                     setHoveredObject(null);
                     onHover(null);
                 }}
-                propGroups={[
-                    { label: t('molecular.nodePopup.smiles'), value: hoveredObject.object.smiles, span: 2 },
-                    { label: t('molecular.umapPlot.properties.cluster'), value: hoveredObject.object.properties.CLUSTER },
-                    { label: t('molecular.umapPlot.properties.molWeight'), value: hoveredObject.object.properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol') },
-                    { label: t('molecular.umapPlot.properties.espMax'), value: hoveredObject.object.properties.esp_max_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.espMin'), value: hoveredObject.object.properties.esp_min_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.homo'), value: hoveredObject.object.properties.homo_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    { label: t('molecular.umapPlot.properties.lumo'), value: hoveredObject.object.properties.lumo_eV, suffix: t('molecular.umapPlot.units.eV') },
-                    {
-                        label: t('molecular.umapPlot.properties.predictedMp'), value: hoveredObject.object.properties.predicted_mp,
-                        suffix: t('molecular.umapPlot.units.celsius'),
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: t('molecular.umapPlot.properties.predictedBp'), value: hoveredObject.object.properties.predicted_bp,
-                        suffix: t('molecular.umapPlot.units.celsius'),
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: 'Predicted FP', value: hoveredObject.object.properties.predicted_fp,
-                        suffix: ' °C',
-                        show: molecularType === 'organic' && (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    },
-                    {
-                        label: 'Combustion Enthalpy', value: hoveredObject.object.properties.combustion_enthalpy, suffix: ' eV',
-                        show: (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint')
-                    }
-                ]}
+                propGroups={buildHoverPropGroups(hoveredObject.object)}
             />
         ) : null}
+        {autoHoverLayouts.map(layout => {
+            const { anchor, card, line, index: layoutIndex, node } = layout;
+
+            const badgeStyle = {
+                position: 'absolute',
+                left: anchor.left,
+                top: anchor.top,
+                transform: 'translate(-50%, -50%)',
+                width: 22,
+                height: 22,
+                borderRadius: '9999px',
+                backgroundColor: '#ffffff',
+                border: '2px solid #2563eb',
+                color: '#2563eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '11px',
+                fontWeight: 600,
+                boxShadow: '0 2px 6px rgba(15, 23, 42, 0.18)',
+                pointerEvents: 'none',
+                zIndex: 950
+            };
+
+            const lineLeft = Math.min(line.startX, line.endX);
+            const lineTop = Math.min(line.startY, line.endY);
+            let lineWidth = Math.abs(line.endX - line.startX);
+            let lineHeight = Math.abs(line.endY - line.startY);
+            let lineStartX = line.startX - lineLeft;
+            let lineStartY = line.startY - lineTop;
+            let lineEndX = line.endX - lineLeft;
+            let lineEndY = line.endY - lineTop;
+
+            if (lineWidth === 0) {
+                lineWidth = 2;
+                lineStartX = 1;
+                lineEndX = 1;
+            }
+
+            if (lineHeight === 0) {
+                lineHeight = 2;
+                lineStartY = 1;
+                lineEndY = 1;
+            }
+
+            return (
+                <Fragment key={`auto-hover-${node.id}`}>
+                    <div style={badgeStyle}>{layoutIndex + 1}</div>
+                    {/* Removed connecting line per request to declutter map */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: card.left,
+                            top: card.top,
+                            width: card.width,
+                            pointerEvents: 'none',
+                            zIndex: 960
+                        }}
+                    >
+                        <div
+                            style={{
+                                position: 'relative',
+                                pointerEvents: 'auto',
+                                backgroundColor: '#ffffff',
+                                borderRadius: '12px',
+                                boxShadow: '0 18px 42px rgba(15, 23, 42, 0.24)'
+                            }}
+                        >
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '-11px',
+                                    left: '14px',
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: '9999px',
+                                    backgroundColor: '#2563eb',
+                                    color: '#ffffff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    boxShadow: '0 6px 14px rgba(37, 99, 235, 0.35)'
+                                }}
+                            >
+                                {layoutIndex + 1}
+                            </div>
+                            <MolCard
+                                showMoreDetails={false}
+                                style={{ width: '100%', pointerEvents: 'auto' }}
+                                cation={resolveCation(node)}
+                                compact={isBasicTierUser}
+                                propGroups={buildHoverPropGroups(node)}
+                            />
+                        </div>
+                    </div>
+                </Fragment>
+            );
+        })}
     </div>
 }
 

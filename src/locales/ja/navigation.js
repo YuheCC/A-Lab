@@ -4,9 +4,15 @@ export default {
     map: "マップ",
     ask: "尋ねる",
     search: "検索",
+    molecule: "分子",
     filter: "フィルター",
     favorites: "お気に入り",
+    predict: "予測",
+    design: "デザイン",
     about: "概要",
+    formulation: "配方",
+    predictPerformance: "セル性能予測",
+    predictionTool: "バッテリー寿命予測",
   },
 
   // Navbar links
@@ -35,7 +41,8 @@ export default {
   userDropdown: {
     accountSettings: "アカウント設定",
     feedback: "フィードバックと提案",
-    logout: "ログアウト"
+    logout: "ログアウト",
+    login: "ログイン"
   },
 
   // Upgrade prompt
@@ -46,7 +53,8 @@ export default {
     title: "プランのアップグレード",
     message: "より多くの機能を利用するためにプランをアップグレードしますか？",
     confirm: "確認",
-    cancel: "キャンセル"
+    cancel: "キャンセル",
+    upgradeViewTitle: "プランのアップグレード 表示"
   },
 
   // Action buttons

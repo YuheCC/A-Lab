@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Pricing from '../../components/Pricing';
 import './abou.css';
 import { MessageProvider } from '@/components/MessageProvider';
+import { LoginModalProvider } from '@/components/LoginModal/context';
 
 // About Page component
 const AboutPage = () => {
@@ -64,7 +65,7 @@ const AboutPage = () => {
       date: t('about.newsfeed.releaseDate3'),
       title: t('about.newsfeed.release3'),
       content: t('about.newsfeed.releaseAbout3'),
-      href: null,
+      href: 'https://www.businesswire.com/news/home/20251007024181/en/SES-AI-Enhances-Leadership-of-Material-Discovery-in-Battery-Industry-with-Newest-Version-of-Molecular-Universe-and-Enterprise-Level-Subscription-Offerings',
     },
     {
       key: 'release2',
@@ -147,7 +148,7 @@ const AboutPage = () => {
               "{t('about.quote')}"<br/>
               <span style={{fontSize:'1rem',fontStyle:'normal'}}>{t('about.quoteSource')}</span>
           </div>
-          <div className="content-sections">
+          <div className="content-sections" style={{maxWidth: '1500px'}}>
               <section id="newsfeed">
                   <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
                       <h2 style={{margin: 0}}>{t('about.newsfeed.title')}</h2>
@@ -231,11 +232,6 @@ const AboutPage = () => {
                     <p>{t('about.whyBuilding.targetMission')}</p>
                     <p>{t('about.whyBuilding.computation')}</p>
                     <p>{t('about.whyBuilding.solution')}</p>
-                    <h4 style={{marginTop:'2em'}}>{t('about.whyBuilding.aboutMU0Title')}</h4>
-                    <p>{t('about.whyBuilding.aboutMU0Desc')}</p>
-                    <p>{t('about.whyBuilding.largestDb')}</p>
-                    <p>{t('about.whyBuilding.umap')}</p>
-                    <p>{t('about.whyBuilding.invitation')}</p>
                     <p><b>{t('about.whyBuilding.makeContact')}</b></p>
                   </div>
               </section>
@@ -278,6 +274,13 @@ const AboutPage = () => {
                             {t('about.features.formulate.title')}
                           </div>
                           <div 
+                            className={`feature-tab ${activeFeature === 'design' ? 'active' : ''}`} 
+                            data-feature="design"
+                            onClick={() => handleFeatureClick('design')}
+                          >
+                            {t('about.features.design.title')}
+                          </div>
+                          <div 
                             className={`feature-tab ${activeFeature === 'predict' ? 'active' : ''}`} 
                             data-feature="predict"
                             onClick={() => handleFeatureClick('predict')}
@@ -314,6 +317,10 @@ const AboutPage = () => {
                           <div className="feature-detail" data-feature="formulate" style={{display: activeFeature === 'formulate' ? 'block' : 'none'}}>
                               <h3>{t('about.features.formulate.title')}</h3>
                               <p>{t('about.features.formulate.description')}</p>
+                          </div>
+                          <div className="feature-detail" data-feature="design" style={{display: activeFeature === 'design' ? 'block' : 'none'}}>
+                              <h3>{t('about.features.design.title')}</h3>
+                              <p>{t('about.features.design.description')}</p>
                           </div>
                           <div className="feature-detail" data-feature="predict" style={{display: activeFeature === 'predict' ? 'block' : 'none'}}>
                               <h3>{t('about.features.predict.title')}</h3>
@@ -374,9 +381,11 @@ const AboutPage = () => {
 
 const AboutPageWithProvider = () => {
   return (
-    <MessageProvider>
-      <AboutPage />
-    </MessageProvider>
+    <LoginModalProvider>
+      <MessageProvider>
+        <AboutPage />
+      </MessageProvider>
+    </LoginModalProvider>
   );
 };
 

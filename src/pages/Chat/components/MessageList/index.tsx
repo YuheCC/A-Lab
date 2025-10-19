@@ -5,14 +5,15 @@ import MessageEdit from '../MessageEdit';
 import './MessageList.css';
 import { InlineMoleculeRenderer } from '@/components/InlineMoleculeRenderer/index.js';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { 
-  Message, 
-  getMessageRole, 
-  isUserMessage, 
-  isAssistantMessage, 
+import {
+  Message,
+  getMessageRole,
+  isUserMessage,
+  isAssistantMessage,
   isSystemMessage,
   normalizeServerDate
 } from '@/utils/messageUtils';
+import type { ToolStats } from '@/utils/messageUtils';
 
 // 检查内容是否包含内联分子的辅助函数
 const hasInlineMolecules = (content: string): boolean => {
@@ -49,7 +50,9 @@ const SupplementalData: React.FC<{
 
       {open && (
         <div className="extra-data-wrapper">
-          {Object.entries(data).map(([key, value]) => (
+          {Object.entries(data)
+            .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats')
+            .map(([key, value]) => (
             <ExtraDataSection
               key={key}
               title={key}
@@ -64,9 +67,9 @@ const SupplementalData: React.FC<{
 };
 
 // ExtraData展开/折叠组件，用于显示补充信息
-const ExtraDataSection: React.FC<{ 
-  title: string; 
-  content: string; 
+const ExtraDataSection: React.FC<{
+  title: string;
+  content: string;
   onMoleculeClick?: (moleculeName: string) => void;
 }> = ({ title, content, onMoleculeClick }) => {
   const [open, setOpen] = useState(false);
@@ -86,16 +89,51 @@ const ExtraDataSection: React.FC<{
   );
 };
 
+const ToolStatsDisplay: React.FC<{ toolStats?: ToolStats }> = ({ toolStats }) => {
+  if (!toolStats) return null;
+
+  const statMappings: { key: keyof ToolStats; label: string }[] = [
+    { key: 'papers_examined', label: 'Papers examined' },
+    { key: 'papers_studied', label: 'Papers deeply studied' },
+    { key: 'molecules_considered', label: 'Molecules examined' }
+  ];
+
+  const items: { key: keyof ToolStats; label: string; value: number }[] = [];
+
+  statMappings.forEach(({ key, label }) => {
+    const rawValue = toolStats[key];
+    if (rawValue === undefined || rawValue === null || rawValue === 0) {
+      return;
+    }
+    items.push({ key, label, value: rawValue });
+  });
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="tool-stats">
+      {items.map(({ key, label, value }) => (
+        <div key={String(key)} className="tool-stats__item">
+          <span className="tool-stats__label">{label}</span>
+          <span className="tool-stats__value">{value.toLocaleString()}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // 使用共享的Message类型，这里不需要重复定义
 
 // 定义组件 Props
 interface MessageListProps {
   messages?: Message[];
   onCopyMessage?: (content: string) => void;
-  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'deep-space' | 'clarify') => void;
+  onRegenerateMessage?: (messageId: string, mode?: 'regular' | 'clarify' | 'lightning' | 'ask' | 'ask-oss' | 'deep-space' | 'deep-space-oss') => void;
   onMoleculeClick?: (moleculeName: string) => void;
   onEditMessage?: (messageId: string, newText: string) => void;
-  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'deep-space' | 'clarify') => Promise<void>;
+  onMessageUpdate?: (messageId: string, newText: string, mode?: 'regular' | 'clarify' | 'lightning' | 'ask' | 'ask-oss' | 'deep-space' | 'deep-space-oss') => Promise<void>;
   className?: string;
 }
 
@@ -431,20 +469,29 @@ const MessageList: FC<MessageListProps> = ({
           {isAssistantMessage(message) && thinkingTarget && thinkingTarget.id === message.id && (!message.content || String(message.content).trim() === '') ? (
             <div className="message">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>{t('chatbox.status.thinking') || '思考中'}</span>
                 <span style={{ fontVariantNumeric: 'tabular-nums', color: '#6b7280' }}>{thinkingElapsedLabel}</span>
               </div>
             </div>
           ) : (
             <div className="message">
+              {isAssistantMessage(message) && (
+                <ToolStatsDisplay toolStats={message.toolStats} />
+              )}
               <InlineMoleculeRenderer content={message.content} onMoleculeClick={forwardMoleculeClick} />
               {/* 渲染extraData - 仅助手消息显示 */}
-              {isAssistantMessage(message) && message.extraData && Object.keys(message.extraData).length > 0 && (
-                <SupplementalData
-                  data={message.extraData as Record<string, any>}
-                  onMoleculeClick={forwardMoleculeClick}
-                />
-              )}
+              {(() => {
+                if (!isAssistantMessage(message) || !message.extraData) return null;
+                const filteredEntries = Object.entries(message.extraData as Record<string, any>)
+                  .filter(([key]) => key !== 'tool_stats' && key !== 'toolStats');
+                if (filteredEntries.length === 0) return null;
+                const filteredData = Object.fromEntries(filteredEntries);
+                return (
+                  <SupplementalData
+                    data={filteredData as Record<string, any>}
+                    onMoleculeClick={forwardMoleculeClick}
+                  />
+                );
+              })()}
             </div>
           )}
           {renderMessageActions(message)}

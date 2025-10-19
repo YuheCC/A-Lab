@@ -5,6 +5,8 @@ import { setupResponsiveLayout, toggleMoleculePanelExpansion, type LayoutDimensi
 export interface MoleculeData {
   name: string;
   SMILES: string;
+  cation?: string;
+  isAnion?: boolean;
   molecular_weight?: number;
   HOMO_eV?: number;
   LUMO_eV?: number;
@@ -14,11 +16,15 @@ export interface MoleculeData {
   predicted_BP_celsius?: number;
   predicted_FP_celsius?: number;
   COMBUSTION_ENTHALPY_EV?: number;
+  vdw_volume_angstroms3?: number;
+  fluoride_bde_ev?: number;
   COMMERCIAL_SCORE?: number;
   COMMERCIAL_LINK?: string;
   functional_groups?: string;
   UMAP_0?: number;
   UMAP_1?: number;
+  grade?: number;
+  reasoning?: string;
 }
 
 export interface MoleculePanelState {
@@ -117,19 +123,29 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
     const targetMoleculeName = molecule?.name || molecule?.SMILES;
     
     if (state.isVisible && currentMoleculeName === targetMoleculeName) {
-      // 如果已经显示相同分子，则切换展开状态
-      toggleExpansion();
+      // 如果已经显示相同分子，确保面板保持展开状态（支持多次查询）
+      if (!state.isExpanded) {
+        toggleExpansion();
+      }
+      // 否则保持当前展开状态，让 MoleculeModal 内部处理重新查询
     } else {
       // 显示新分子并展开
       showPanel(molecule, true);
     }
-  }, [state.isVisible, state.currentMolecule, showPanel, toggleExpansion]);
+  }, [state.isVisible, state.isExpanded, state.currentMolecule, showPanel, toggleExpansion]);
 
   // 设置响应式布局监听
   useEffect(() => {
-    const cleanupLayout = setupResponsiveLayout(state.isExpanded, (dimensions) => {
-      setState(prev => ({ ...prev, dimensions }));
-    });
+    const cleanupLayout = setupResponsiveLayout(
+      state.isExpanded, 
+      (dimensions) => {
+        setState(prev => ({ ...prev, dimensions }));
+      },
+      {
+        debounceMs: 150,  // 防抖延迟150ms
+        threshold: 50     // 宽度变化阈值50px
+      }
+    );
 
     return cleanupLayout;
   }, [state.isExpanded]);

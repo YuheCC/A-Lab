@@ -51,6 +51,11 @@ const HistoryItem: FC<HistoryItemProps> = ({
   }, [isRenaming]);
 
   const handleChatClick = (e: React.MouseEvent) => {
+    // 防止事件冒泡到li元素
+    if ((e.target as HTMLElement).closest('.chat-menu-btn') || 
+        (e.target as HTMLElement).closest('.chat-rename-input')) {
+      return;
+    }
     e.preventDefault();
     // 先更新状态，确保立即反映选中状态
     onChatClick?.(chatId);
@@ -105,7 +110,11 @@ const HistoryItem: FC<HistoryItemProps> = ({
   };
 
   return (
-    <li className={`${isPinned ? 'pinned' : ''} ${isActive ? 'active' : ''}`.trim()}>
+    <li 
+      className={`${isPinned ? 'pinned' : ''} ${isActive ? 'active' : ''}`.trim()}
+      onClick={handleChatClick}
+      style={{ cursor: 'pointer' }}
+    >
       {isRenaming ? (
         <input
           ref={inputRef}
@@ -117,15 +126,13 @@ const HistoryItem: FC<HistoryItemProps> = ({
           className="chat-rename-input"
         />
       ) : (
-        <a
-          href="#"
+        <span
           className={`recent-chat ${isActive ? 'active' : ''}`}
           aria-current={isActive ? 'page' : undefined}
           data-chat-id={chatId}
-          onClick={handleChatClick}
         >
           {title}
-        </a>
+        </span>
       )}
       
       <IconButton

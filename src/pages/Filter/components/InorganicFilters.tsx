@@ -289,6 +289,7 @@ const InorganicFilters = () => {
                 highlightedData={[]}
                 highlightedSimilarData={[]}
                 userPermissions={userPermissions}
+                isAuthenticated={isAuthenticated}
                 molecularType="inorganic"
                 onClick={(node: Node) => {
                     console.log(node);
@@ -301,17 +302,17 @@ const InorganicFilters = () => {
                 {loading ? t('explorer.loadingMap') : error ? t('explorer.errorLoadingData') : t('explorer.noDataAvailable')}
             </div>
         ))
-    }, [filteredGraphData, loading, error, userPermissions, t]);
+    }, [filteredGraphData, loading, error, userPermissions, isAuthenticated, t]);
 
     return (
         <>
-            <div className="search-umap-container">
-                <div className="search-umap-section">
-                    <div className="graph-container search-graph">
+            <div className="filter-umap-container">
+                <div className="filter-umap-section">
+                    <div className="graph-container filter-graph">
                         {memoizedPlot}
                     </div>
                 </div>
-                <div className="search-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
+                <div className="filter-interface-section" style={{ flex: '0.8', padding: '20px', overflowY: 'auto', backgroundColor: '#f9f9f9', borderRadius: '8px', marginRight: '40px' }}>
                     <h2>
                         {t('explorer.filtersTitle')}
                         {activeFilterCount > 0 && (

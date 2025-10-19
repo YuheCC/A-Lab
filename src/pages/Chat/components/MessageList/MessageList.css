@@ -51,6 +51,29 @@
   border-bottom-left-radius: 4px;
 }
 
+.tool-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.tool-stats__item {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.tool-stats__label {
+  font-weight: 500;
+}
+
+.tool-stats__value {
+  font-variant-numeric: tabular-nums;
+}
+
 /* 化学分子样式 */
 .chemical-molecule {
   color: #56B26A;

@@ -15,7 +15,7 @@ export default {
     title: "What is Molecular Universe?",
     intro1: "Much like Magellan first made contact with the stars as navigation tools;",
     intro2: "Or how the Hubble Telescope made contact with galaxies far, far away;",
-    intro3: "Or the Human Genome Project looked deep inside our DNA and made contact with every microscopic amino acid that defines our genetic code;",
+    intro3: "Or the Human Genome Project looked deep inside our DNA and made contact with every genetic code that defines the sequence of amino acids guiding our protein construction;",
     intro4: "SES AI has made contact with a never-before-seen 512-dimensional universe of small molecules - mapped into a 2-dimensional searchable tool - the Molecular Universe. The intent of this new map is to help battery researchers and accelerate the discovery of new materials for their next big ideas.",
     
     advantages: "The unique and fundamental advantages of Molecular Universe include:",
@@ -81,12 +81,17 @@ export default {
     
     formulate: {
       title: "Formulate",
-      description: "Having mapped the world’s largest molecular databases, for the first time, we are venturing beyond the molecular universe, and into the formulation universe, which involves much higher dimensions of complexity. Electrolytes are more than just single molecules, they are formulations consisting of ions dissociated and solved by solvent molecules, which interact in various manners among themselves. Here we have developed advanced computation chemistry tools such as molecular dynamics simulations driven by polarizable force fields that have achieved unprecedented accuracy, scale and speed for prediction of formulation level properties including viscosity, solubility, miscibility, conductivity, etc. Users can enter their desired formulations, and we will compute their properties."
+      description: "Having mapped the world's largest molecular databases, for the first time, we are venturing beyond the molecular universe, and into the formulation universe, which involves much higher dimensions of complexity. Electrolytes are more than just single molecules, they are formulations consisting of ions dissociated and solved by solvent molecules, which interact in various manners among themselves. Here we have developed advanced computation chemistry tools such as molecular dynamics simulations driven by polarizable force fields that have achieved unprecedented accuracy, scale and speed for prediction of formulation level properties including viscosity, solubility, miscibility, conductivity, etc. Users can enter their desired formulations, and we will compute their properties."
+    },
+
+    design: {
+      title: "Design",
+      description: "Having explored the formulation universe, we continue our journey into the cell universe, an even higher dimension of complexity. Ultimately the cell level performance is what users care about most, since the final product is neither a molecule nor formulation, but a complete cell. We are truly in uncharted territory, as currently there are no known methodologies for connecting molecule and formulation properties to cell performance, the interfaces and interphases are simply beyond what first-principle can predict. Fortunately, the power of AI and machine learning, grounded in our massive effort to meticulously collect cell experimental performance data over diverse chemistries and as functions of different molecules and formulations is showing promise. Users can select a particular cell chemistry and different unknown molecules from the Molecular Universe to see their impact on cell performance and accurately predict cycle life."
     },
 
     predict: {
       title: "Predict",
-      description: "Having explored the formulation universe, we continue our journey into the cell universe, an even higher dimension of complexity. Ultimately the cell level performance is what users care about most, since the final product is neither a molecule nor formulation, but a complete cell. We are truly in uncharted territory, as currently there are no known methodologies for connecting molecule and formulation properties to cell performance, the interfaces and interphases are simply beyond what first-principle can predict. Fortunately, the power of AI and machine learning, grounded in our massive effort to meticulously collect cell experimental performance data over diverse chemistries and as functions of different molecules and formulations is showing promise. Users can select a particular cell chemistry and different unknown molecules from the Molecular Universe to see their impact on cell performance and accurately predict cycle life. Users can even blindly input data of early cell cycle life, and MU-1 will predict end of life, all without any prior knowledge of the input cell chemistry or test environment. "
+      description: "Users can blindly input data of early cell cycle life, and MU-1 will predict end of life, all without any prior knowledge of the input cell chemistry or test environment."
     }
   },
   

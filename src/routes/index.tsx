@@ -1,5 +1,5 @@
 export default  [
-    { path: "/", redirect: "/map" },
+    { path: "/", redirect: "/map", layout: false },
     {
         path: "/about",
         component: "About",
@@ -29,6 +29,38 @@ export default  [
     {
         path: "/favorites",
         component: "Favorites"
+    },
+    {
+        path: "/predict",
+        component: "PredictionTool"
+    },
+    {
+        path: "/predict/create",
+        component: "PredictionTool/create"
+    },
+    {
+        path: "/predict/detail",
+        component: "PredictionTool/detail"
+    },
+    {
+        path: '/design',
+        component: "Predict/performance"
+    },
+    {
+        path: "/formulate",
+        component: "FormulationNew"
+    },
+    {
+        path: "/formulate/result-tip",
+        component: "FormulationNew/result-tip"
+    },
+    {
+        path: "/formulate/create",
+        component: "FormulationNew/create"
+    },
+    {
+        path: "/formulate/detail",
+        component: "FormulationNew/detail"
     },
     {
         path: "/ask",

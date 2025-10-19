@@ -1,4 +1,5 @@
 import type { Message } from '@/pages/Chat/components/MessageList';
+import type { ToolStats } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '@/pages/Chat/components/History';
 import request from '@/services/request';
 import { getAPIUrl } from '@/utils';
@@ -11,7 +12,8 @@ export interface ChatResponse {
 
 export interface ChatRequest {
   message: string;
-  mode: 'regular' | 'deep-space';
+
+  mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify';
   chatId?: string;
 }
 
@@ -42,6 +44,50 @@ export class ChatService {
     return isNaN(parsed.getTime()) ? new Date(trimmed) : parsed;
   }
 
+  private normalizePinnedFlag(input: any): boolean {
+    if (input === null || input === undefined) return false;
+    if (typeof input === 'boolean') return input;
+    if (typeof input === 'number') return input !== 0;
+    if (typeof input === 'string') {
+      const normalized = input.trim().toLowerCase();
+      if (!normalized) return false;
+      if (['true', '1', 'yes', 'y', 'on'].includes(normalized)) return true;
+      if (['false', '0', 'no', 'n', 'off'].includes(normalized)) return false;
+      return true;
+    }
+    return false;
+  }
+
+  private parseToolStats(input: any): ToolStats | undefined {
+    const source = input;
+    if (!source || typeof source !== 'object') {
+      return undefined;
+    }
+
+    const parseStat = (value: any): number | undefined => {
+      if (value === undefined || value === null) return undefined;
+      if (typeof value === 'number') return value;
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : undefined;
+    };
+
+    const stats: ToolStats = {
+      papers_examined: parseStat(source.papers_examined ?? source.papersExamined),
+      papers_studied: parseStat(source.papers_studied ?? source.papersStudied),
+      molecules_considered: parseStat(source.molecules_considered ?? source.moleculesConsidered)
+    };
+
+    if (
+      stats.papers_examined === undefined &&
+      stats.papers_studied === undefined &&
+      stats.molecules_considered === undefined
+    ) {
+      return undefined;
+    }
+
+    return stats;
+  }
+
   /**
    * 映射后端消息数据到前端Message格式
    * 主要处理字段名转换：extra_data -> extraData
@@ -59,14 +105,17 @@ export class ChatService {
       ...serverMessage,
       // 将后端的extra_data映射为前端的extraData
       extraData: extraData,
+      toolStats: this.parseToolStats(serverMessage.tool_stats ?? serverMessage.toolStats),
       // 确保时间戳格式正确
       timestamp: serverMessage.timestamp ? this.normalizeServerDate(serverMessage.timestamp) : undefined,
       // 移除后端的extra_data字段，避免重复
-      extra_data: undefined
+      extra_data: undefined,
+      tool_stats: undefined
     };
   }
 
-  async sendMessage(message: string, mode: 'regular' | 'deep-space' = 'regular', chatId?: string): Promise<ChatResponse> {
+
+  async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
       const resp = await request('/chat/send', {
         method: 'POST',
@@ -110,7 +159,8 @@ export class ChatService {
   openChatStream(options: {
     chatId?: string;
     message?: string;
-    mode?: 'regular' | 'deep-space';
+
+    mode?: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify';
     path?: string;
     protocols?: string[];
     websocketOnly?: boolean; // 新增选项：是否仅使用WebSocket
@@ -171,14 +221,18 @@ export class ChatService {
         method: 'GET',
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
-      return (resp.data || [])?.map((item: any) => ({
-        ...item,
-        chatId: item.id,
-        title: item.session_name,
-        timestamp: this.normalizeServerDate(item.updated_at),
-        isPinned: true,
-        updatedAt: item.updated_at, // 保存原始updated_at用于分页
-      })) || [];
+
+      const list = Array.isArray(resp.data) ? resp.data : [];
+      return list
+        .map((item: any) => ({
+          ...item,
+          chatId: item.id,
+          title: item.session_name,
+          timestamp: this.normalizeServerDate(item.updated_at),
+          isPinned: this.normalizePinnedFlag(item.pinned),
+          updatedAt: item.updated_at, // 保存原始updated_at用于分页
+        }))
+        .filter(item => item.isPinned);
     } catch (error) {
       console.error('Failed to get pinned chat list:', error);
       return [];
@@ -203,7 +257,7 @@ export class ChatService {
         chatId: item.id,
         title: item.session_name,
         timestamp: this.normalizeServerDate(item.updated_at),
-        isPinned: item.pinned,
+        isPinned: this.normalizePinnedFlag(item.pinned),
         updatedAt: item.updated_at, // 保存原始updated_at用于分页
       })) || [];
     } catch (error) {
@@ -307,7 +361,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsUser(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -325,7 +379,8 @@ export class ChatService {
           webSearchClient: "Tavily",
           numRagResults: extraOptions?.numRagResults,
           toolsEnabled: extraOptions?.toolsEnabled,
-          patentRagEnabled: extraOptions?.patentRagEnabled,
+          patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
+          llm_compute_power: extraOptions?.llmComputePower,
         },
       });
       if ((resp as any).ok === false || resp.status >= 400) throw new Error(`HTTP error! status: ${resp.status}`);
@@ -336,7 +391,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsDeepSpace(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -352,7 +407,8 @@ export class ChatService {
         webSearchClient: "Tavily",
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
-        patentRagEnabled: extraOptions?.patentRagEnabled,
+        patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
+        llm_compute_power: extraOptions?.llmComputePower,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数
@@ -372,7 +428,7 @@ export class ChatService {
     }
   }
 
-  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; }): Promise<string> {
+  async triggerMessageAsClarify(chatId: number, answerId: string, messages: any[], sessionId: string, model: string = 'o3', extraOptions?: { ragEnabled?: boolean; disableLiteratureSearch?: boolean; fullDeepSpace?: boolean; numRagResults?: number; toolsEnabled?: boolean; patentRagEnabled?: boolean; llmComputePower?: string; }): Promise<string> {
     try {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
@@ -388,7 +444,8 @@ export class ChatService {
         webSearchClient: "Tavily",
         numRagResults: extraOptions?.numRagResults,
         toolsEnabled: extraOptions?.toolsEnabled,
-        patentRagEnabled: extraOptions?.patentRagEnabled,
+        patentRagEnabled: extraOptions?.patentRagEnabled ?? true,
+        llm_compute_power: extraOptions?.llmComputePower,
       };
       
       // 如果启用了fullDeepSpace，添加dump_state参数

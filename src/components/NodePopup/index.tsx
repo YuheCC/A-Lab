@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useAuthStore } from "@/models/useAuth";
 import { filterLabels } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { useContext } from "react";
 import { FavoriteContext } from "@/layouts";
 
@@ -12,7 +13,7 @@ const API_URL = getAPIUrl();
 
 interface NodePopupProps {
   node: any;
-  molecularType?: 'organic' | 'inorganic';
+  molecularType?: 'organic' | 'inorganic' | 'anions';
 }
 
 // NodePopup component for displaying molecule information
@@ -47,7 +48,7 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
   if (!node) return null;
 
   // Check if user has permission to see predicted properties
-  const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
+  const nodeCation = node?.cation ?? node?.rawData?.cation ?? node?.rawData?.CATION;
 
   const copyToClipboard = () => {
     const nodeData = JSON.stringify(node.rawData, null, 2);
@@ -66,8 +67,21 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
         <button className="close-button white-text" onClick={() => setShow(false)}>×</button>
         <h2 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.title')}</h2>
         <div className="popup-data">
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <MolViewer2D smile={node.smiles} theme="dark"/>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: '20px',
+              width: '100%',
+            }}
+          >
+            <MolViewer2D
+              smile={node.smiles}
+              cation={nodeCation}
+              theme="dark"
+              style={{ margin: '0 auto' }}
+            />
           </div>
           <h3 className="white-text" style={{ textAlign: 'center' }}>{t('molecular.nodePopup.smiles')}</h3>
           <p className="dark-field" style={{ textAlign: 'center' }}>{node.smiles}</p>
@@ -80,36 +94,70 @@ const NodePopup = forwardRef(({ node, molecularType = 'organic'  }: NodePopupPro
             <tbody>
               {Object.entries(node.properties || {})
                 .filter(([key, value]) => {
+                  console.log(key, value, molecularType);
+                  if (!isColumnVisibleForUser(key, userPermissions)) {
+                    return false;
+                  }
+
                   // Hide commercial_link row if value is "N/A"
                   if (key === 'commercial_link' && (value === 'N/A' || value === null || value === undefined)) {
                     return false;
                   }
-                  
-                  // Hide predicted properties for users without proper permissions
-                  if (!canSeePredictedProperties && 
-                      (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'predicted_fp_celsius')) {
+
+                  if(molecularType === 'anions' && (key === 'combustion_enthalpy' || key === 'esp_min_eV' || key === 'esp_max_eV' || key === 'chemical_formula')) {
                     return false;
                   }
 
-                  if (molecularType === 'inorganic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups' || key === 'commercial_score')) {
+                  if (molecularType !== 'organic' && (key === 'predicted_mp' || key === 'predicted_bp' || key === 'predicted_fp' || key === 'functional_groups')) {
                     return false;
                   }
-                  
+
+                  if (molecularType === 'inorganic' && key === 'commercial_score') {
+                    return false;
+                  }
+
+                  if(molecularType !== 'anions' && (key === 'vdw_volume_angstroms3' || key === 'fluoride_bde_ev')) {
+                    return false;
+                  }
+
                   return true;
                 })
                 .map(([key, value]) => (
                 <tr key={key}>
                   <td className="property-name white-text">{filterLabels[key as keyof typeof filterLabels] || key}</td>
                   <td className="property-value white-text">
-                    {value !== null && value !== undefined
-                      ? key === 'commercial_score' && typeof value === 'number'
-                        ? COMMERCIAL_SCORE_MAP[value as keyof typeof COMMERCIAL_SCORE_MAP] || 'N/A'
-                        : typeof value === 'number'
-                          ? key === 'CLUSTER'
-                            ? Math.round(value)
-                            : value.toFixed(4)
-                          : value.toString()
-                      : 'N/A'}
+                    {(() => {
+                      if (value === null || value === undefined) {
+                        return 'N/A';
+                      }
+
+                      if (key === 'commercial_score') {
+                        const numericValue = typeof value === 'number' ? value : Number(value);
+                        const mapped = COMMERCIAL_SCORE_MAP[numericValue as keyof typeof COMMERCIAL_SCORE_MAP];
+
+                        if (mapped) {
+                          return mapped;
+                        }
+
+                        if (!Number.isNaN(numericValue) && molecularType === 'anions') {
+                          return numericValue.toString();
+                        }
+
+                        if (typeof value === 'string' && value.trim() !== '') {
+                          return value;
+                        }
+
+                        return 'N/A';
+                      }
+
+                      if (typeof value === 'number') {
+                        return key === 'CLUSTER'
+                          ? Math.round(value)
+                          : value.toFixed(4);
+                      }
+
+                      return value.toString();
+                    })()}
                   </td>
                 </tr>
               ))}

@@ -4,11 +4,12 @@ export default {
     },
     input: {
         placeholder: "배터리, 배터리 화학 또는 관련 주제에 대한 질문이라면 무엇이든 물어보세요.",
+        placeholderPublic: "계정을 만들고 배터리, 배터리 화학 또는 관련 주제에 대해 무엇이든 물어보세요.",
         sendButton: "전송"
     },
     chat: {
         newChat: "새 채팅",
-        newExpoler: "새 탐험",
+        newExpoler: "새 채팅",
         newChatSubtitle: "새로운 대화를 시작하고 분자 우주의 신비를 탐험해보세요",
         searchChat: "채팅 검색",
         historyTitle: "채팅 기록",
@@ -25,10 +26,24 @@ export default {
         modes: {
             regular: "일반 문답",
             deepSpace: "딥 스페이스",
+            lightning: "라이트닝",
+            ask: "프로",
+            askOss: "Ask OSS",
+            deepSpaceOss: "Deep Space OSS",
+            fastDeepSpace: "빠른 딥 스페이스",
             regularDescription: "기본 Q&A 모드로, 일상적인 배터리 관련 질문에 적합합니다. 정확하고 간결한 답변을 제공합니다.",
-            deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
-            regularRemaining: "오늘 남은 횟수: {{count}}회",
+            deepSpaceDescription: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 20-40분입니다.",
+            lightningDescription: "최소 연산으로 빠른 응답",
+            askDescription: "최대 연산으로 최고의 품질 제공",
+            askOssDescription: "관리자 전용 오픈소스 120B 연산으로 Ask 워크플로를 실행합니다.",
+            deepSpaceOssDescription: "관리자 전용 오픈소스 120B 연산으로 Deep Space 에이전트를 구동합니다.",
+            fastDeepSpaceDescription: "낮은 연산 자원으로 더 빠른 결과를 제공하는 다중 에이전트 연구.",            regularRemaining: "오늘 남은 횟수: {{count}}회",
             deepSpaceRemaining: "이번 달 남은 횟수: {{count}}회",
+            lightningLimitLabel: "Ask 라이트닝 오늘 남은 횟수: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask 프로 오늘 남은 횟수: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "딥 스페이스 이번 달 남은 횟수: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: " 무료 버전은 더 약한 LLM을 사용합니다. 가장 강력한 모델을 사용하려면 업그레이드하세요.",
             betaBadge: "베타"
         },
         recommendedQuestions: [
@@ -74,7 +89,7 @@ export default {
         ignoreChatHistory: "채팅 기록 무시",
         disableLiteratureSearch: "문헌 검색 비활성화",
         enterDeepSpace: "딥 스페이스 진입 (BETA)",
-        deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 10-20분입니다.",
+        deepSpaceTooltip: "배터리 질문을 분석하고 문헌과 분자 데이터베이스를 검색한 후 협력하여 연구급 답변을 작성하는 LLM 에이전트 팀입니다. 응답 시간은 20-40분입니다.",
         admin: "관리자",
         fullDeepSpace: "전체 딥 스페이스",
         disableTools: "도구 비활성화"
@@ -85,6 +100,7 @@ export default {
         reachedLimit: "월간 쿼리 한도에 도달했습니다. 도움이 필요하시면 관리자에게 문의하세요."
     },
     status: {
+        connectingToServer: "서버에 연결 중...",
         thinking: "사고 중",
         searching: "검색 중",
         searchingDatabase: "데이터베이스 검색 중",
@@ -93,7 +109,7 @@ export default {
         noMoleculesFound: "분자를 찾을 수 없습니다.",
         findMoleculesFailed: "분자 찾기에 실패했습니다. 나중에 다시 시도해주세요.",
         clarifyingQuestions: "곧 몇 가지 명확한 질문에 답변을 요청할 수 있습니다.",
-        deepSpaceWorking: "딥 스페이스 멀티 에이전트 LLM이 작업 중입니다. 질문의 복잡성에 따라 응답하는 데 10-20분이 걸릴 수 있습니다."
+        deepSpaceWorking: "딥 스페이스 멀티 에이전트 LLM이 작업 중입니다. 질문의 복잡성에 따라 응답하는 데 20-40분이 걸릴 수 있습니다."
     },
     buttons: {
         findMolecules: "분자 찾기",
@@ -154,6 +170,16 @@ export default {
         feedbackError: "피드백 제출 오류:",
         copyError: "복사 실패:",
         generalError: "오류"
+    },
+    publicAccess: {
+        bannerMessage: "계정을 만들거나 로그인하면 {{feature}}를 사용할 수 있습니다.",
+        dismiss: "닫기",
+        features: {
+            askInput: "Ask",
+            lightning: "라이트닝",
+            pro: "프로",
+            deepSpace: "딥 스페이스"
+        }
     },
     supplementalData: "부가 데이터",
     history: {

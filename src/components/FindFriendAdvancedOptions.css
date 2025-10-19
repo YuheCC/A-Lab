@@ -1,0 +1,271 @@
+/* ==============================================
+   Find Friend Advanced Options Styling
+   Matches molecular detail card design language
+   ============================================== */
+
+.find-friend-advanced-options {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 8px;
+    font-family: inherit;
+}
+
+/* Section styling */
+.ff-advanced-section {
+    margin-bottom: 12px;
+}
+
+.ff-advanced-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Label styling - matches molecular card property labels */
+.ff-advanced-label {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 4px;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Input field styling - matches molecular card design */
+.ff-advanced-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.ff-advanced-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.ff-advanced-input:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Textarea specific styling */
+.ff-advanced-textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    min-height: 60px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.ff-advanced-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Select dropdown styling - matches molecular card selects */
+.ff-advanced-select {
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 6px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 28px;
+    min-width: 120px;
+}
+
+.ff-advanced-select:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.ff-advanced-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.ff-advanced-select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Range slider styling */
+.ff-range-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.ff-range-label {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.ff-range-value {
+    font-size: 10px;
+    color: #1e293b;
+    font-weight: 600;
+    font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    min-width: 32px;
+    text-align: center;
+}
+
+.ff-advanced-range {
+    flex: 1;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.ff-advanced-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ff-advanced-range::-webkit-slider-thumb:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+}
+
+.ff-advanced-range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.ff-advanced-range::-moz-range-thumb:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+}
+
+.ff-info-icon {
+    margin-left: 4px;
+    cursor: help;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+.ff-info-icon:hover {
+    color: #2563eb;
+}
+
+/* Horizontal field layout for battery options */
+.ff-field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ff-field-row .ff-advanced-label {
+    margin-bottom: 0;
+    min-width: 60px;
+    flex-shrink: 0;
+}
+
+.ff-field-row .ff-advanced-select {
+    flex: 1;
+    min-width: 120px;
+}
+
+.ff-field-row .ff-advanced-input {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* Custom input styling for inline custom fields */
+.ff-custom-input {
+    margin-left: 8px;
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.ff-custom-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.ff-custom-input:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .ff-field-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ff-field-row .ff-advanced-label {
+        min-width: auto;
+    }
+    
+    .ff-range-container {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .ff-range-label {
+        align-self: flex-start;
+    }
+}

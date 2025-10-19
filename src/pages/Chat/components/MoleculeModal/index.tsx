@@ -1,14 +1,68 @@
-import { useEffect, useMemo, useState, useContext } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Info } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
+import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
+import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
+import { triggerLoginModal, triggerPricingModal } from '@/utils/authHelpers';
+import { buildQueryString } from '@/services/buildQueryString';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
+import { useChatContext } from '../../context/ChatContext';
+import { formatQueryLimitLabel } from '@/utils/queryLimit';
+
+const inferIsAnionFromData = (
+    input?: Partial<MoleculeData> | Record<string, any> | null
+): boolean => {
+    if (!input) {
+        return false;
+    }
+
+    const rawFlag = (input as any).isAnion ?? (input as any).is_anion ?? (input as any).IS_ANION;
+    if (typeof rawFlag === 'string') {
+        const trimmed = rawFlag.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        return normalized === 'true' || normalized === '1' || normalized === 'yes';
+    }
+    if (typeof rawFlag === 'number') {
+        return rawFlag !== 0;
+    }
+    if (typeof rawFlag === 'boolean') {
+        return rawFlag;
+    }
+    if (rawFlag != null) {
+        return Boolean(rawFlag);
+    }
+
+    const rawCation = (input as any).cation ?? (input as any).CATION;
+    if (rawCation === undefined || rawCation === null) {
+        return false;
+    }
+    if (typeof rawCation === 'string') {
+        const trimmed = rawCation.trim();
+        if (!trimmed) {
+            return false;
+        }
+        const normalized = trimmed.toLowerCase();
+        if (normalized === 'none' || normalized === 'null' || normalized === 'n/a' || normalized === 'na') {
+            return false;
+        }
+        return true;
+    }
+
+    return Boolean(rawCation);
+};
 
 interface MoleculeModalProps {
     moleculeName?: string;
@@ -31,10 +85,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const { modeLimits } = useChatContext();
     const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
     const API_URL = getAPIUrl();
+    const normalizedPermissions = (userPermissions || '').toLowerCase();
+    const isFindFriendsLocked = !isAuthenticated || ['common', 'public', 'basic'].includes(normalizedPermissions);
     const [isFunctionalGroupsExpanded, setIsFunctionalGroupsExpanded] = useState(false);
-    const [selectedMoleculeType, setSelectedMoleculeType] = useState('all');
+    const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
+    const prevMoleculeTypeRef = useRef('solvent');
+    const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
@@ -43,17 +104,102 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [currentSmiles, setCurrentSmiles] = useState<string | undefined>(undefined);
     const [rawOriginal, setRawOriginal] = useState<any | undefined>(undefined);
     const [showSimilar, setShowSimilar] = useState(false);
-    const defaultCompute = useMemo(() => (
-        ['research', 'explorer', 'team'].includes(userPermissions || '') ? 'Low' : 'High'
-    ), [userPermissions]);
-    const [computeLevel, setComputeLevel] = useState(defaultCompute);
-    useEffect(() => {
-        setComputeLevel(defaultCompute);
-    }, [defaultCompute]);
+    const [useAnionDatabase, setUseAnionDatabase] = useState<boolean>(() => inferIsAnionFromData(molecule));
+    const isAnionFindFriend = useAnionDatabase;
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => {
+        if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
+        if (["team", "explorer"].includes(userPermissions || '')) return 'Medium';
+        return 'Low';
+    }, [userPermissions]);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const handleLockedAction = useCallback(() => {
+        if (!isAuthenticated) {
+            if (typeof window !== 'undefined') {
+                triggerLoginModal(window.location.pathname + window.location.search);
+            } else {
+                triggerLoginModal();
+            }
+            return;
+        }
+        triggerPricingModal(userPermissions);
+    }, [isAuthenticated, userPermissions]);
+
+    const toggleAdvancedOptions = () => {
+        setShowAdvanced(prev => !prev);
+    };
+
+    const handleAdvancedToggle = useCallback(() => {
+        if (isFindFriendsLocked) {
+            handleLockedAction();
+            return;
+        }
+        toggleAdvancedOptions();
+    }, [handleLockedAction, isFindFriendsLocked]);
+
+    const handleAdvancedToggleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (isFindFriendsLocked) {
+                handleLockedAction();
+                return;
+            }
+            toggleAdvancedOptions();
+        }
+    };
 
     const handleClose = () => {
         onClose?.();
     };
+
+    useEffect(() => {
+        switch (selectedMoleculeType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+            case 'salt':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMoleculeType]);
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
+
+    useEffect(() => {
+        if (isAnionFindFriend) {
+            if (selectedMoleculeType !== 'salt') {
+                prevMoleculeTypeRef.current = selectedMoleculeType;
+                setSelectedMoleculeType('salt');
+                onUpdateMoleculeType?.(moleculeName, 'salt');
+            }
+            setStructureWeight(1.0);
+            if (!showHypothetical) {
+                setShowHypothetical(true);
+            }
+        } else if (selectedMoleculeType === 'salt') {
+            const fallbackType = prevMoleculeTypeRef.current || 'solvent';
+            setSelectedMoleculeType(fallbackType);
+            onUpdateMoleculeType?.(moleculeName, fallbackType);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAnionFindFriend]);
+
+    useEffect(() => {
+        if (molecule) {
+            setUseAnionDatabase(inferIsAnionFromData(molecule));
+        }
+    }, [molecule]);
 
     const favoriteCtx = useContext(FavoriteContext);
     const handleAddToFavoritesByRaw = (raw: any, props?: MoleculeProperties | Record<string, unknown>) => {
@@ -97,14 +243,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         // 构造分子对象传递给上层处理函数
         if (onFindSimilar && (molecule || rawOriginal)) {
-            const moleculeForCallback = molecule || {
-                name: name,
-                SMILES: currentSmiles || '',
-                ...rawOriginal
-            };
+            const inferredAnion = useAnionDatabase || inferIsAnionFromData(rawOriginal);
+            const moleculeForCallback: MoleculeData = molecule
+                ? {
+                    ...molecule,
+                    isAnion: molecule.isAnion ?? inferredAnion,
+                }
+                : {
+                    name,
+                    SMILES: currentSmiles || '',
+                    isAnion: inferredAnion,
+                    ...(rawOriginal || {}),
+                } as MoleculeData;
             onFindSimilar(moleculeForCallback);
         }
-        
+
         try {
             setIsSimilarLoading(true);
             let smilesToUse = currentSmiles;
@@ -118,7 +271,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 raw = original?.raw;
             }
             if (smilesToUse) {
-                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, selectedMoleculeType);
+                const molType = selectedMoleculeType === 'additive' ? selectedAdditiveSubtype : selectedMoleculeType;
+                const { list, raws } = await fetchSimilarBySmiles(smilesToUse, raw, molType);
                 setSimilarMolecules(list);
                 setSimilarRawList(raws);
                 setShowSimilar(true);
@@ -131,16 +285,26 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value;
         setSelectedMoleculeType(newType);
+        if (newType === 'additive') {
+            setSelectedAdditiveSubtype('A');
+        }
         onUpdateMoleculeType?.(moleculeName, newType);
     };
 
-    const toggleFunctionalGroups = () => {
-        setIsFunctionalGroupsExpanded(!isFunctionalGroupsExpanded);
+    const handleAdditiveSubtypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAdditiveSubtype(event.target.value);
     };
 
-    const renderMoleculeStructure = (smiles?: string) => {
+    const toggleFunctionalGroups = (cardId: string) => {
+        setExpandedCards(prev => ({
+            ...prev,
+            [cardId]: !prev[cardId]
+        }));
+    };
+
+    const renderMoleculeStructure = (smiles?: string, cation?: string) => {
         return smiles ? (
-            <MolViewer2D smile={smiles} />
+            <MolViewer2D smile={smiles} cation={cation} />
         ) : (
             <div style={{ width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('molecular.molCard.loading')}
@@ -157,7 +321,53 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return [];
     };
 
-    const renderMoleculeCard = (name: string, properties: MoleculeProperties | Record<string, unknown>, isOriginal = false, raw?: any) => {
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
+
+    const renderMoleculeCard = (
+        name: string,
+        properties: MoleculeProperties | Record<string, unknown>,
+        isOriginal = false,
+        raw?: any,
+        grade?: number,
+        reasoning?: string,
+        cardId?: string
+    ) => {
+        const cardProperties = properties as MoleculeProperties;
+        const cardHasCation = typeof cardProperties.cation === 'string'
+            ? cardProperties.cation.trim().length > 0
+            : Boolean(cardProperties.cation);
+        const cardIsAnion = Boolean(
+            inferIsAnionFromData(raw) ||
+            inferIsAnionFromData(cardProperties) ||
+            cardHasCation ||
+            useAnionDatabase
+        );
+        const fallbackValue = t('molecular.molCard.notAvailable');
+        const showSmiles = canShowColumn('smiles');
+        const showMolWeight = canShowColumn('molecular_weight');
+        const showPredictedMp = !cardIsAnion && canShowColumn('predicted_MP_celsius');
+        const showPredictedBp = !cardIsAnion && canShowColumn('predicted_BP_celsius');
+        const showPredictedFp = !cardIsAnion && canShowColumn('predicted_FP_celsius');
+        const showCombustion = !cardIsAnion && canShowColumn('combustion_enthalpy_ev');
+        const showHomo = canShowColumn('HOMO_eV');
+        const showLumo = canShowColumn('LUMO_eV');
+        const showEspMax = canShowColumn('ESP_max_eV');
+        const showEspMin = canShowColumn('ESP_min_eV');
+        const showCommercial = canShowColumn('commercial_score');
+        const showFunctionalGroups = canShowColumn('functional_groups');
+        const showMolecularVolume = cardIsAnion && canShowColumn('vdw_volume_angstroms3');
+        const showFluorideBde = cardIsAnion && canShowColumn('fluoride_bde_ev');
+        const molecularVolumeDisplay = cardProperties.molecularVolume === undefined || cardProperties.molecularVolume === null || cardProperties.molecularVolume === ''
+            ? fallbackValue
+            : cardProperties.molecularVolume;
+        const fluorideBdeDisplay = cardProperties.fluorineBondDissociationEnergy === undefined || cardProperties.fluorineBondDissociationEnergy === null || cardProperties.fluorineBondDissociationEnergy === ''
+            ? fallbackValue
+            : cardProperties.fluorineBondDissociationEnergy;
+        const uniqueCardId = cardId || (isOriginal ? 'original' : `${name}-${cardProperties.smiles || Math.random()}`);
+        const isFunctionalGroupsExpanded = expandedCards[uniqueCardId] || false;
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -200,74 +410,105 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
                 <div className="molecule-card-structure">
                     <div className="molecule-structure-diagram">
-                        {renderMoleculeStructure((properties as MoleculeProperties).smiles)}
+                        {renderMoleculeStructure(cardProperties.smiles, cardProperties.cation)}
                     </div>
                 </div>
                 <div className="molecule-card-properties">
-                    {
-                        (raw?.grade != null || raw?.GRADE != null) && (
-                            <div className="molecule-card-property-item">
-                                <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.llmGrade')}:</span>
-                                <span className="molecule-card-property-value">
-                                    {raw?.grade ?? raw?.GRADE ?? '-'}{raw?.grade != null || raw?.GRADE != null ? '/10' : ''}
-                                    {(raw?.reasoning || raw?.REASONING) && (
-                                        <Info size={14} style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={() => alert(raw?.reasoning || raw?.REASONING)} />
-                                    )}
-                                </span>
-                            </div>
-                        )
-                    }
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).smiles || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).molecularWeight || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedMp')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).meltingPoint || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedBp')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).boilingPoint || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.predictedFp')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).flashPoint || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.combustionEnthalpy')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).combustionEnthalpy || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.homo')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).homo || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.lumo')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).lumo || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMax')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).espMax || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item">
-                        <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMin')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).espMin || '-'}</span>
-                    </div>
-                    <div className="molecule-card-property-item commercial-viability">
-                        <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.commercialViability')}:</span>
-                        <span className="molecule-card-property-value">{(properties as MoleculeProperties).commercialViability || t('molecular.moleculeModal.unknown')}</span>
-                    </div>
+                    {grade !== undefined && grade !== null && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">LLM Grade:</span>
+                            <span className="molecule-card-property-value">
+                                {grade}
+                                <ReasoningButton reasoning={reasoning} onShow={setReasoningText} />
+                            </span>
+                        </div>
+                    )}
+                    {showSmiles && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.smiles || '-'}</span>
+                        </div>
+                    )}
+                    {showMolWeight && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.molWeight')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.molecularWeight || '-'}</span>
+                        </div>
+                    )}
+                    {showPredictedMp && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedMp')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.meltingPoint || '-'}</span>
+                        </div>
+                    )}
+                    {showPredictedBp && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.predictedBp')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.boilingPoint || '-'}</span>
+                        </div>
+                    )}
+                    {showPredictedFp && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.predictedFp')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.flashPoint || '-'}</span>
+                        </div>
+                    )}
+                    {showMolecularVolume && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">Molecular Volume:</span>
+                            <span className="molecule-card-property-value">{molecularVolumeDisplay}</span>
+                        </div>
+                    )}
+                    {showFluorideBde && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">F Dissociation Energy:</span>
+                            <span className="molecule-card-property-value">{fluorideBdeDisplay}</span>
+                        </div>
+                    )}
+                    {showCombustion && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.combustionEnthalpy')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.combustionEnthalpy || '-'}</span>
+                        </div>
+                    )}
+                    {showHomo && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.homo')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.homo || '-'}</span>
+                        </div>
+                    )}
+                    {showLumo && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.lumo')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.lumo || '-'}</span>
+                        </div>
+                    )}
+                    {showEspMax && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMax')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.espMax || '-'}</span>
+                        </div>
+                    )}
+                    {showEspMin && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.umapPlot.properties.espMin')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.espMin || '-'}</span>
+                        </div>
+                    )}
+                    {showCommercial && (
+                        <div className="molecule-card-property-item commercial-viability">
+                            <span className="molecule-card-property-label">{t('molecular.moleculeModal.properties.commercialViability')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.commercialViability || t('molecular.moleculeModal.unknown')}</span>
+                        </div>
+                    )}
                 </div>
                 
                 {/* 功能组：默认折叠，字段按 Ask 填充 */}
+                {showFunctionalGroups && (
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
-                        onClick={toggleFunctionalGroups}
+                        onClick={() => toggleFunctionalGroups(uniqueCardId)}
                     >
                         <svg className={`chevron-icon ${isFunctionalGroupsExpanded ? 'rotated' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
@@ -292,34 +533,202 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         </div>
                     )}
                 </div>
+                )}
                 
                 {isOriginal && (
+                    <>
                     <div className="molecule-card-actions">
-                            <select
-                                className="molecule-type-select"
-                                value={selectedMoleculeType}
-                                onChange={handleMoleculeTypeChange}
-                            >
-                                <option value="all">{t('molecular.moleculeModal.types.all')}</option>
-                                <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
-                                <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
-                                <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
-                            </select>
-                            <button
-                                className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
-                                onClick={() => handleFindSimilar(name)}
-                                disabled={isSimilarLoading}
-                            >
-                                {isSimilarLoading ? (
-                                    <div className="loading-spinner-small"></div>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-                                    </svg>
-                                )}
-                                <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
-                            </button>
+                        <select
+                            className="molecule-type-select"
+                            value={selectedMoleculeType}
+                            onChange={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                if (isAnionFindFriend) {
+                                    event.preventDefault();
+                                    return;
+                                }
+                                handleMoleculeTypeChange(event);
+                            }}
+                            onMouseDown={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                if (isAnionFindFriend) {
+                                    event.preventDefault();
+                                }
+                            }}
+                            aria-disabled={isFindFriendsLocked || isAnionFindFriend}
+                            style={{
+                                cursor: isFindFriendsLocked || isAnionFindFriend ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked || isAnionFindFriend ? 0.6 : 1,
+                            }}
+                        >
+                            {isAnionFindFriend ? (
+                                <option value="salt">{t('molecular.moleculeModal.types.salt', 'Salt')}</option>
+                            ) : (
+                                <>
+                                    <option value="solvent">{t('molecular.moleculeModal.types.solvent')}</option>
+                                    <option value="cosolvent">{t('molecular.moleculeModal.types.cosolvent')}</option>
+                                    <option value="diluent">{t('molecular.moleculeModal.types.diluent')}</option>
+                                    <option value="additive">{t('molecular.moleculeModal.types.additive')}</option>
+                                </>
+                            )}
+                        </select>
+                        <button
+                            className={`molecule-card-btn find-similar ${isSimilarLoading ? 'loading' : ''}`}
+                            onClick={() => {
+                                if (isFindFriendsLocked) {
+                                    handleLockedAction();
+                                    return;
+                                }
+                                handleFindSimilar(name);
+                            }}
+                            disabled={isSimilarLoading}
+                            style={{
+                                cursor: isSimilarLoading ? 'wait' : isFindFriendsLocked ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked ? 0.5 : 1,
+                            }}
+                        >
+                            {isSimilarLoading ? (
+                                <div className="loading-spinner-small"></div>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                                </svg>
+                            )}
+                            <span>{isSimilarLoading ? t('molecular.molCard.loading') : t('molecular.moleculeModal.findSimilar')}</span>
+                        </button>
                     </div>
+                    {selectedMoleculeType === 'additive' && (
+                        <div style={{ marginTop: '8px' }}>
+                            <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
+                            <select
+                                value={selectedAdditiveSubtype}
+                                onChange={handleAdditiveSubtypeChange}
+                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                            >
+                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
+                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
+                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
+                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
+                            </select>
+                        </div>
+                    )}
+                    <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                        <InfoTooltip
+                            title={(
+                                <InfoTooltipContent
+                                    title={t('search.intelligentFindFriendsLabel')}
+                                    description={t('search.intelligentFindFriendsTooltip')}
+                                    remainingLabel={formatQueryLimitLabel(modeLimits.findFriendLLM, t, 'search.intelligentFindFriendsLimitLabel')}
+                                />
+                            )}
+                            placement="top"
+                        >
+                            <Info size={16} className="ff-info-icon" />
+                        </InfoTooltip>
+                        <select
+                            value={computeLevel}
+                            onChange={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                    return;
+                                }
+                                setComputeLevel(event.target.value);
+                            }}
+                            onMouseDown={(event) => {
+                                if (isFindFriendsLocked) {
+                                    event.preventDefault();
+                                    handleLockedAction();
+                                }
+                            }}
+                            aria-disabled={isFindFriendsLocked}
+                            style={{
+                                backgroundColor: isFindFriendsLocked ? '#f1f5f9' : 'white',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                padding: '4px',
+                                color: isFindFriendsLocked ? '#94a3b8' : undefined,
+                                cursor: isFindFriendsLocked ? 'not-allowed' : 'pointer',
+                                opacity: isFindFriendsLocked ? 0.6 : 1,
+                            }}
+                        >
+                            <option value="Disabled">{t('search.computeDisabled')}</option>
+                            <option value="Low">{t('search.computeLow')}</option>
+                            <option
+                                value="Medium"
+                                disabled={userPermissions === 'research'}
+                                title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                            >
+                                {t('search.computeMedium')}
+                                {userPermissions === 'research' ? ' 🔒' : ''}
+                            </option>
+                            <option
+                                value="High"
+                                disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                                title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                            >
+                                {t('search.computeHigh')}
+                                {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                            </option>
+                            {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        </select>
+                    </div>
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={showAdvanced}
+                        onClick={handleAdvancedToggle}
+                        onKeyDown={handleAdvancedToggleKeyDown}
+                        style={{
+                            marginTop: '12px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            cursor: isFindFriendsLocked ? 'not-allowed' : 'pointer',
+                            color: '#2563eb',
+                            fontWeight: 500,
+                            fontSize: '13px',
+                            border: '1px solid #2563eb',
+                            borderRadius: '6px',
+                            padding: '6px 10px',
+                            backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                            transition: 'background-color 0.2s',
+                            opacity: isFindFriendsLocked ? 0.5 : 1,
+                        }}
+                    >
+                        <span>{t('search.advancedOptions')}</span>
+                        {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </div>
+                    {showAdvanced && (
+                        <FindFriendAdvancedOptions
+                            extraRequests={extraRequests}
+                            setExtraRequests={setExtraRequests}
+                            selectedMolType={selectedMoleculeType}
+                            setSelectedMolType={setSelectedMoleculeType}
+                            additiveSubtype={selectedAdditiveSubtype}
+                            setAdditiveSubtype={setSelectedAdditiveSubtype}
+                            computeLevel={computeLevel}
+                            structureWeight={structureWeight}
+                            setStructureWeight={setStructureWeight}
+                            showHypothetical={showHypothetical}
+                            setShowHypothetical={setShowHypothetical}
+                            userPermissions={userPermissions || undefined}
+                            showBatteryFields={false}
+                            showStructureSlider={!isAnionFindFriend}
+                            readOnly={isFindFriendsLocked}
+                            onLockedClick={handleLockedAction}
+                        />
+                    )}
+                    </>
                 )}
             </div>
         );
@@ -328,11 +737,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     // 将后端字段映射到面板展示字段
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
+        const cation = raw?.cation ?? raw?.CATION;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
         const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
-        const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+        const combustionEnthalpy = raw?.COMBUSTION_ENTHALPY_EV ?? raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+        const vdwVolume = raw?.vdw_volume_angstroms3 ?? raw?.VDW_VOLUME_ANGSTROMS3 ?? raw?.vdwVolumeAngstroms3;
+        const fluorideBde = raw?.fluoride_bde_ev ?? raw?.FLUORIDE_BDE_EV ?? raw?.fluorideBdeEv;
         const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;
         const lumo = raw?.LUMO_eV ?? raw?.LUMO ?? raw?.lumo;
         const espMax = raw?.ESP_max_eV ?? raw?.ESP_MAX ?? raw?.espMax;
@@ -342,11 +754,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
 
         return {
             smiles,
+            cation,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
             flashPoint: predictedFp != null ? `${predictedFp} °C` : undefined,
             combustionEnthalpy: combustionEnthalpy != null ? String(combustionEnthalpy) : undefined,
+            molecularVolume: vdwVolume != null ? `${vdwVolume} Å³` : undefined,
+            fluorineBondDissociationEnergy: fluorideBde != null ? `${fluorideBde} eV` : undefined,
             homo: homo != null ? String(homo) : undefined,
             lumo: lumo != null ? String(lumo) : undefined,
             espMax: espMax != null ? String(espMax) : undefined,
@@ -359,14 +774,19 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const convertMoleculeDataToProperties = (moleculeData: MoleculeData): MoleculeProperties => {
         const commercialScore = moleculeData?.COMMERCIAL_SCORE;
         const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
+        const vdwVolume = (moleculeData as any).vdw_volume_angstroms3 ?? (moleculeData as any).VDW_VOLUME_ANGSTROMS3;
+        const fluorideBde = (moleculeData as any).fluoride_bde_ev ?? (moleculeData as any).FLUORIDE_BDE_EV;
 
         return {
             smiles: moleculeData.SMILES,
+            cation: moleculeData.cation,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,
             flashPoint: moleculeData.predicted_FP_celsius != null ? `${moleculeData.predicted_FP_celsius} °C` : undefined,
             combustionEnthalpy: moleculeData.COMBUSTION_ENTHALPY_EV != null ? String(moleculeData.COMBUSTION_ENTHALPY_EV) : undefined,
+            molecularVolume: vdwVolume != null ? `${vdwVolume} Å³` : undefined,
+            fluorineBondDissociationEnergy: fluorideBde != null ? `${fluorideBde} eV` : undefined,
             homo: moleculeData.HOMO_eV != null ? String(moleculeData.HOMO_eV) : undefined,
             lumo: moleculeData.LUMO_eV != null ? String(moleculeData.LUMO_eV) : undefined,
             espMax: moleculeData.ESP_max_eV != null ? String(moleculeData.ESP_max_eV) : undefined,
@@ -376,10 +796,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     };
 
     const fetchOriginalDetails = async (name: string): Promise<{ props?: MoleculeProperties; smiles?: string; raw?: any; }> => {
-        let queryUrl = `${API_URL}/api/molecule_details?molecule=${encodeURIComponent(name)}`;
+        const params = new URLSearchParams();
+        params.set('molecule', name);
         if (isHighTier) {
-            queryUrl += '&query_type=molecule&use_35m=true';
+            params.set('query_type', 'molecule');
+            params.set('use_35m', 'true');
         }
+        if (useAnionDatabase) {
+            params.set('is_anion', 'true');
+            params.set('umap_type', 'anions');
+        }
+
+        const queryUrl = `${API_URL}/api/molecule_details?${params.toString()}`;
         const resp = await authFetch(queryUrl, { method: 'GET' });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
@@ -392,35 +820,49 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const fetchSimilarBySmiles = async (smiles: string, rawOriginal?: any, molType?: string): Promise<{ list: SimilarMolecule[]; raws: any[] }> => {
         const payload: any = {
             smiles,
-            use_35m: isHighTier
+            use_35m: isHighTier,
+            structure_weight: structureWeight,
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
         };
-        if (molType && molType !== 'all') {
+        if (molType) {
             payload.mol_type = molType;
         }
-        if (computeLevel !== 'Disabled') {
+
+        const baseQuery = buildQueryString('', '', '', '', '');
+        const queryParts: string[] = baseQuery ? [baseQuery] : [];
+
+        if (selectedMoleculeType) {
+            const molTypeLabel = selectedMoleculeType;
+            queryParts.push(`I am looking for ${molTypeLabel} molecules.`);
+        }
+        if (extraRequests.trim()) {
+            queryParts.push(`I have the following requirements: ${extraRequests.trim()}`);
+        }
+
+        const queryString = queryParts.join(' ').trim();
+        if (queryString) {
+            payload.query = queryString;
+        }
+
+        const computePowerEnabled = computeLevel !== 'Disabled';
+        if (computePowerEnabled) {
             payload.llm_compute_power = computeLevel.toLowerCase();
+            const conversationLog = messages
+                .filter((message) => message.role === 'user' || message.role === 'assistant')
+                .map((message) => `${message.role === 'user' ? 'User' : 'Assistant'}: ${message.content ?? ''}`)
+                .join('\n\n');
+            if (conversationLog) {
+                payload.response = conversationLog;
+            }
+        }
+
+        if (extraRequests.trim()) {
+            payload.extra_requests = extraRequests;
+        }
+        if (useAnionDatabase) {
+            payload.is_anion = true;
         }
         if (isHighTier && rawOriginal) {
-            // 从 messages 中提取 query 和 response，参考 Ask 页面的逻辑
-            let originalQuery: string | undefined = undefined;
-            let llmResponse: string | undefined = undefined;
-            
-            if (messages.length > 0) {
-                // 获取最新的用户消息和助手回复
-                for (let i = messages.length - 1; i >= 0; i--) {
-                    if (messages[i].role === 'assistant' && !llmResponse) {
-                        llmResponse = messages[i].content;
-                    } else if (messages[i].role === 'user' && !originalQuery) {
-                        originalQuery = messages[i].content;
-                    }
-                    
-                    // 一旦找到两个就停止
-                    if (originalQuery && llmResponse) {
-                        break;
-                    }
-                }
-            }
-
             const selectedMoleculeStr = [
                 `Name: ${rawOriginal?.name || 'N/A'}`,
                 `SMILES: ${rawOriginal?.SMILES || smiles}`,
@@ -434,8 +876,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 `Predicted BP: ${rawOriginal?.predicted_BP_celsius ?? 'N/A'} °C`
             ].join('\n');
             payload.selected_molecule_str = selectedMoleculeStr;
-            payload.query = originalQuery;
-            payload.response = llmResponse;
         }
 
         const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
@@ -448,7 +888,9 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const items = Array.isArray(data?.similar_molecules) ? data.similar_molecules : [];
         const mapped: SimilarMolecule[] = items.map((it: any) => ({
             name: it?.name || it?.SMILES || 'Unknown',
-            properties: mapDetailsToProperties(it)
+            properties: mapDetailsToProperties(it),
+            grade: it?.grade,
+            reasoning: it?.reasoning,
         }));
         return { list: mapped, raws: items };
     };
@@ -459,14 +901,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         
         if (molecule) {
             // 直接使用传入的完整分子对象，避免API请求
-            const properties = convertMoleculeDataToProperties(molecule);
-            setOriginalMoleculeProps(properties);
-            setCurrentSmiles(molecule.SMILES);
-            setRawOriginal(molecule);
-            setSimilarMolecules([]);
-            setSimilarRawList([]);
-            setShowSimilar(false);
-            setIsLoading(false);
+            if (!isCancelled) {
+                const properties = convertMoleculeDataToProperties(molecule);
+                setOriginalMoleculeProps(properties);
+                setCurrentSmiles(molecule.SMILES);
+                setRawOriginal(molecule);
+                setSimilarMolecules([]);
+                setSimilarRawList([]);
+                setShowSimilar(false);
+                setUseAnionDatabase(inferIsAnionFromData(molecule));
+                setIsLoading(false);
+            }
         } else {
             // 如果没有完整分子对象，则从API获取（向后兼容）
             const loadData = async () => {
@@ -480,6 +925,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     setSimilarMolecules([]);
                     setSimilarRawList([]);
                     setShowSimilar(false);
+                    setUseAnionDatabase(inferIsAnionFromData(original?.raw));
                 } catch (err) {
                     if (!isCancelled) {
                         setSimilarMolecules([]);
@@ -498,6 +944,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const similarCountText = useMemo(() => t('molecular.moleculeModal.similarWithCount', { count: similarMolecules.length }), [t, similarMolecules.length]);
 
     return (
+        <>
         <div className="molecule-panel expanded" style={{ display: 'block', opacity: 1, transform: 'translateX(0px)', transition: '0.3s' }}>
             <div className="molecule-panel-header">
                 <div className="molecule-panel-title">
@@ -514,7 +961,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     <div className="similar-molecules-comparison">
                         <div className="original-molecule-section">
                             <h4 style={{fontWeight: '400'}} className="section-title">{t('molecular.moleculeModal.original')}</h4>
-                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal)}
+                            {renderMoleculeCard(molecule?.name || moleculeName, originalMoleculeProps || {}, true, rawOriginal, molecule?.grade, molecule?.reasoning)}
                         </div>
                 {showSimilar && (
                     <div className="similar-molecules-section">
@@ -527,7 +974,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <div className="similar-molecules-grid">
                                 {similarMolecules.map((molecule, index) => (
                                     <div key={index}>
-                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index])}
+                                        {renderMoleculeCard(molecule.name, molecule.properties, false, similarRawList[index], (molecule as any).grade, (molecule as any).reasoning, `similar-${index}`)}
                                     </div>
                                 ))}
                             </div>
@@ -538,6 +985,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 </div>
             </div>
         </div>
+        <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+        </>
     );
 };
 

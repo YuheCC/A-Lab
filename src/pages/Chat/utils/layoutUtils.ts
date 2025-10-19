@@ -76,27 +76,58 @@ export function applyLayoutVariables(
  * 监听窗口大小变化并自动调整布局
  * @param isExpanded 分子面板是否展开
  * @param callback 布局变化回调函数
+ * @param options 配置选项
  * @returns 清理函数
  */
 export function setupResponsiveLayout(
   isExpanded: boolean = false,
-  callback?: (dimensions: LayoutDimensions) => void
+  callback?: (dimensions: LayoutDimensions) => void,
+  options: {
+    debounceMs?: number;
+    threshold?: number;
+  } = {}
 ): () => void {
+  const { debounceMs = 150, threshold = 50 } = options;
+  let lastWidth = window.innerWidth;
+  let timeoutId: NodeJS.Timeout | null = null;
+
   const handleResize = () => {
-    const dimensions = calculateLayoutDimensions(isExpanded, window.innerWidth);
+    const currentWidth = window.innerWidth;
+    
+    // 只有当窗口宽度变化超过阈值时才触发重新计算
+    if (Math.abs(currentWidth - lastWidth) < threshold) {
+      return;
+    }
+    
+    lastWidth = currentWidth;
+    const dimensions = calculateLayoutDimensions(isExpanded, currentWidth);
     applyLayoutVariables(dimensions);
     callback?.(dimensions);
+  };
+
+  const debouncedHandleResize = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    
+    timeoutId = setTimeout(() => {
+      handleResize();
+      timeoutId = null;
+    }, debounceMs);
   };
 
   // 初始化
   handleResize();
 
   // 监听窗口大小变化
-  window.addEventListener('resize', handleResize);
+  window.addEventListener('resize', debouncedHandleResize);
 
   // 返回清理函数
   return () => {
-    window.removeEventListener('resize', handleResize);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    window.removeEventListener('resize', debouncedHandleResize);
   };
 }
 

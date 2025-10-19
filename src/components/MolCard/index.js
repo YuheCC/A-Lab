@@ -64,7 +64,18 @@ export const PropItem = ({ prop }) => {
 const MolCard = (props) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const { showMoreDetails = false, large = false, vertical = false, propGroups = [], foldPropGroups = [], name, children, ...domProps } = props;
+    const {
+        showMoreDetails = false,
+        large = false,
+        vertical = false,
+        propGroups = [],
+        foldPropGroups = [],
+        name,
+        children,
+        cation,
+        compact = false,
+        ...domProps
+    } = props;
 
     // Validate propGroups structure
     // - Check if propGroups is an array of arrays
@@ -87,13 +98,21 @@ const MolCard = (props) => {
         return <div className='molcard-container' {...domProps}><div className='deck-error'>{t('molecular.molCard.noMoleculeData')}</div></div>;
     }
 
+    const moleculeSize = compact ? 140 : 200;
+    const containerClassName = [
+        'molcard-container',
+        large ? 'molcard-large' : '',
+        vertical ? 'molcard-vertical' : '',
+        compact ? 'molcard-compact' : ''
+    ].filter(Boolean).join(' ');
+
     return (
-        <div className={`molcard-container ${large ? 'molcard-large': ''} ${vertical ? 'molcard-vertical': ''}`} {...domProps}>
+        <div className={containerClassName} {...domProps}>
             <div style={{ display: 'flex', flexFlow: vertical ? 'column' : 'row', width: '100%' }}>
                 <div className='molcard-visualization' translate='no'>
-                    {smileString ? <MolViewer2D smile={smileString} width={200} height={200} /> : <div style={{
-                        width: '150px',
-                        height: '150px',
+                    {smileString ? <MolViewer2D smile={smileString} cation={cation} width={moleculeSize} height={moleculeSize} /> : <div style={{
+                        width: `${moleculeSize}px`,
+                        height: `${moleculeSize}px`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'

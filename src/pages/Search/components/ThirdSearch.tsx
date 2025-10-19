@@ -1,8 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
 import './third.css';
 import { authFetch, getAPIUrl } from '@/utils';
+import { useAuthStore } from '@/models/useAuth';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
 
 const BASE_URL = getAPIUrl();
 
@@ -11,10 +14,24 @@ interface SearchResult {
     [key: string]: any;
 }
 
-const ThirdSearch: React.FC = () => {
+const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = false }) => {
     const { t } = useTranslation();
-    const [molecularFormula, setMolecularFormula] = useState<string>('');
-    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>('atLeastElements');
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
+    const triggerAccessModal = useAccessModals();
+    const [molecularFormula, setMolecularFormula] = useState<string>(
+        isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput : ''
+    );
+    const [activeTab, setActiveTab] = useState<'elements' | 'atLeastElements' | 'formula'>(
+        isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.sse.activeTab : 'atLeastElements'
+    );
+    useEffect(() => {
+        if (!isPublic) return;
+        setMolecularFormula(PUBLIC_SEARCH_LOCKED_VALUES.sse.formulaInput);
+        setActiveTab(PUBLIC_SEARCH_LOCKED_VALUES.sse.activeTab);
+    }, [isPublic]);
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -27,6 +44,9 @@ const ThirdSearch: React.FC = () => {
     const [selectedRecord, setSelectedRecord] = useState<SearchResult | null>(null);
 
     const handleFormulaChange = (value: string) => {
+        if (isPublic) {
+            return;
+        }
         setMolecularFormula(value);
     };
 
@@ -67,9 +87,20 @@ const ThirdSearch: React.FC = () => {
                     setTotalCount(results.length);
                 }
                 
-            } catch (err) {
+            } catch (err: any) {
                 console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+                // 检查是否是未登录错误（401）或者token不存在
+                const token = localStorage.getItem('token');
+                const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+                if (!token || isUnauthorized) {
+                    // 未登录或401错误时不显示错误信息
+                    setError('');
+                } else {
+                    // 已登录且非401错误时显示错误信息
+                    setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -77,6 +108,9 @@ const ThirdSearch: React.FC = () => {
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isPublic) {
+            return;
+        }
         setMolecularFormula(e.target.value);
     };
 
@@ -109,16 +143,16 @@ const ThirdSearch: React.FC = () => {
         justifyContent: 'center'
     };
 
-    const materialsButtonStyle: React.CSSProperties = {
-        backgroundColor: '#f8f9fa',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        padding: '8px 16px',
-        fontSize: '14px',
-        color: '#555',
-        cursor: 'pointer',
-        fontWeight: '500'
-    };
+     const materialsButtonStyle: React.CSSProperties = {
+         backgroundColor: '#f8f9fa',
+         border: '1px solid #ddd',
+         borderRadius: '4px',
+         padding: '8px 16px',
+         fontSize: '14px',
+         color: '#555',
+         cursor: 'pointer',
+         fontWeight: '500'
+     };
 
     // 自定义输入框样式，完全覆盖库的样式
     const customInputStyle: React.CSSProperties = {
@@ -164,7 +198,7 @@ const ThirdSearch: React.FC = () => {
     const mainContentStyle: React.CSSProperties = {
         backgroundColor: 'white',
         padding: '20px',
-        margin: '0 20px 20px 20px',
+        margin: '0px 0px 0px 0px',
         borderRadius: '8px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         display: 'flex',
@@ -336,9 +370,20 @@ const ThirdSearch: React.FC = () => {
                 });
             }
             
-        } catch (err) {
+        } catch (err: any) {
             console.error(t('thirdSearch.searchErrorWithDetails', { error: err instanceof Error ? err.message : 'Unknown error' }), err);
-            setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = err?.response?.status === 401 || err?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setError('');
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+            }
         } finally {
             setIsLoading(false);
         }
@@ -358,6 +403,10 @@ const ThirdSearch: React.FC = () => {
 
     // 触发对应索引的li元素点击事件的函数
     const triggerLiClick = (index: number) => {
+        if (isPublic) {
+            triggerAccessModal();
+            return;
+        }
         setTimeout(() => {
             const modeSwitcher = ref.current?.querySelector('.mpc-pt-mode-switcher');
             if (modeSwitcher) {
@@ -428,18 +477,18 @@ const ThirdSearch: React.FC = () => {
         margin: '10px 0'
     };
 
-    const noResultsStyle: React.CSSProperties = {
-        textAlign: 'center',
-        padding: '60px 40px',
-        color: '#666',
-        fontSize: '16px',
-        fontStyle: 'italic',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '12px',
-        border: '2px dashed #dee2e6',
-        margin: '40px 0',
-        lineHeight: '1.6'
-    };
+const noResultsStyle: React.CSSProperties = {
+    textAlign: 'center',
+    padding: '60px 40px',
+    color: '#666',
+    fontSize: '16px',
+    fontStyle: 'italic',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '12px',
+    border: '2px dashed #dee2e6',
+    margin: '40px 0',
+    lineHeight: '1.6'
+};
 
     // 分页组件样式
     const paginationContainerStyle: React.CSSProperties = {
@@ -605,23 +654,69 @@ const ThirdSearch: React.FC = () => {
         <>
             <div style={containerStyle} className="third-search-container-new">
                 {/* 顶部说明条 */}
-                <div style={headerBannerStyle}>
-                    {t('thirdSearch.headerBanner')}
-                </div>
+                
 
                 {/* 搜索栏 */}
                 <div style={searchBarStyle}>
-                    <button style={materialsButtonStyle}>{t('thirdSearch.materialsButton')}</button>
+                    <button
+                        type="button"
+                        style={{
+                            ...materialsButtonStyle,
+                            opacity: isPublic ? 0.6 : 1,
+                            cursor: isPublic ? 'not-allowed' : materialsButtonStyle?.cursor || 'pointer',
+                        }}
+                        onClick={(event) => {
+                            if (isPublic) {
+                                event.preventDefault();
+                                triggerAccessModal();
+                            }
+                        }}
+                        aria-disabled={isPublic}
+                    >
+                        {t('thirdSearch.materialsButton')}
+                    </button>
                     
                     {/* 自定义输入框，替代库的输入框 */}
                     <input
-                        style={customInputStyle}
+                        style={{
+                            ...customInputStyle,
+                            backgroundColor: isPublic ? '#f0f0f0' : customInputStyle.backgroundColor,
+                            cursor: isPublic ? 'not-allowed' : 'text',
+                        }}
                         value={molecularFormula}
                         onChange={handleInputChange}
+                        readOnly={isPublic}
                         placeholder=""
+                        onMouseDown={(event) => {
+                            if (isPublic) {
+                                event.preventDefault();
+                                triggerAccessModal();
+                            }
+                        }}
+                        onFocus={(event) => {
+                            if (isPublic) {
+                                event.target.blur();
+                                triggerAccessModal();
+                            }
+                        }}
                     />
-                    
-                    <button style={iconButtonStyle} title={t('thirdSearch.periodicTableTooltip')} onClick={() => setInputShow(!inputShow)}>
+
+                    <button
+                        style={{
+                            ...iconButtonStyle,
+                            opacity: isPublic ? 0.5 : 1,
+                            cursor: isPublic ? 'not-allowed' : iconButtonStyle.cursor,
+                        }}
+                        title={t('thirdSearch.periodicTableTooltip')}
+                        onClick={() => {
+                            if (isPublic) {
+                                triggerAccessModal();
+                                return;
+                            }
+                            setInputShow(!inputShow);
+                        }}
+                        aria-disabled={isPublic}
+                    >
                         <div style={{ 
                             width: '16px', 
                             height: '12px', 
@@ -653,28 +748,49 @@ const ThirdSearch: React.FC = () => {
                             <>
                                 <div style={tabContainerStyle}>
                                     <button 
-                                        style={activeTab === 'elements' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'elements' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 0.5 : 1,
+                                            cursor: isPublic ? 'not-allowed' : 'pointer',
+                                        }}
                                         onClick={() => {
                                             setActiveTab('elements');
-                                            triggerLiClick(0);
+                                            if (!isPublic) {
+                                                triggerLiClick(0);
+                                            }
                                         }}
+                                        aria-disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.onlyElements')}
                                     </button>
                                     <button 
-                                        style={activeTab === 'atLeastElements' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'atLeastElements' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 0.5 : 1,
+                                            cursor: isPublic ? 'not-allowed' : 'pointer',
+                                        }}
                                         onClick={() => {
                                             setActiveTab('atLeastElements');
-                                            triggerLiClick(1);
+                                            if (!isPublic) {
+                                                triggerLiClick(1);
+                                            }
                                         }}
+                                        aria-disabled={isPublic}
                                     >
                                         {t('thirdSearch.tabs.atLeastElements')}
                                     </button>
                                     <button 
-                                        style={activeTab === 'formula' ? activeTabStyle : tabStyle}
+                                        style={{
+                                            ...(activeTab === 'formula' ? activeTabStyle : tabStyle),
+                                            opacity: isPublic ? 1 : 1,
+                                            cursor: isPublic ? 'default' : 'pointer',
+                                        }}
                                         onClick={() => {
+                                            if (activeTab === 'formula') return;
                                             setActiveTab('formula');
-                                            triggerLiClick(2);
+                                            if (!isPublic) {
+                                                triggerLiClick(2);
+                                            }
                                         }}
                                     >
                                         {t('thirdSearch.tabs.formula')}
@@ -682,21 +798,35 @@ const ThirdSearch: React.FC = () => {
                                 </div>
 
                                 {/* MaterialsInput组件 - 通过CSS隐藏输入框，只显示周期表 */}
-                                <div ref={ref} style={materialsInputContainerStyle} className="materials-input-container">
-                                    <MaterialsInput
-                                        value={molecularFormula}
-                                        onChange={handleFormulaChange}
-                                        placeholder=""
-                                        label=""
-                                        allowedInputTypes={['formula', 'elements', 'chemical_system']}
-                                        periodicTableMode="toggle"
-                                        showTypeDropdown={false}
-                                        showSubmitButton={false}
-                                    />
+                                <div
+                                    ref={ref}
+                                    style={{
+                                        ...materialsInputContainerStyle,
+                                        opacity: isPublic ? 0.5 : 1,
+                                    }}
+                                    className="materials-input-container"
+                                    onClick={() => {
+                                        if (isPublic) {
+                                            triggerAccessModal();
+                                        }
+                                    }}
+                                >
+                                    <div style={{ pointerEvents: isPublic ? 'none' : 'auto' }}>
+                                        <MaterialsInput
+                                            value={molecularFormula}
+                                            onChange={handleFormulaChange}
+                                            placeholder=""
+                                            label=""
+                                            allowedInputTypes={['formula', 'elements', 'chemical_system']}
+                                            periodicTableMode="toggle"
+                                            showTypeDropdown={false}
+                                            showSubmitButton={false}
+                                        />
+                                    </div>
                                 </div>
-                            </>
-                        )
-                    }   
+                             </>
+                         )
+                     }   
 
                     {/* 搜索结果展示区域 */}
                     <div style={resultsContainerStyle}>
@@ -774,29 +904,29 @@ const ThirdSearch: React.FC = () => {
                                     {t('thirdSearch.pageInfo', { current: currentPage, total: totalPages })} ({t('thirdSearch.totalItems', { count: totalCount })})
                                 </div>
 
-                                {/* 页码按钮 */}
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                    let pageNum;
-                                    if (totalPages <= 5) {
-                                        pageNum = i + 1;
-                                    } else if (currentPage <= 3) {
-                                        pageNum = i + 1;
-                                    } else if (currentPage >= totalPages - 2) {
-                                        pageNum = totalPages - 4 + i;
-                                    } else {
-                                        pageNum = currentPage - 2 + i;
-                                    }
+                                 {/* 页码按钮 */}
+                                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                     let pageNum;
+                                     if (totalPages <= 5) {
+                                         pageNum = i + 1;
+                                     } else if (currentPage <= 3) {
+                                         pageNum = i + 1;
+                                     } else if (currentPage >= totalPages - 2) {
+                                         pageNum = totalPages - 4 + i;
+                                     } else {
+                                         pageNum = currentPage - 2 + i;
+                                     }
 
-                                    return (
-                                        <button
-                                            key={pageNum}
-                                            style={currentPage === pageNum ? activePageButtonStyle : paginationButtonStyle}
-                                            onClick={() => handlePageChange(pageNum)}
-                                        >
-                                            {pageNum}
-                                        </button>
-                                    );
-                                })}
+                                     return (
+                                         <button
+                                             key={pageNum}
+                                             style={currentPage === pageNum ? activePageButtonStyle : paginationButtonStyle}
+                                             onClick={() => handlePageChange(pageNum)}
+                                         >
+                                             {pageNum}
+                                         </button>
+                                     );
+                                 })}
 
                                 {/* 下一页按钮 */}
                                 <button

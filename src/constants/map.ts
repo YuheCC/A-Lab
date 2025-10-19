@@ -1,0 +1,1 @@
+export const AUTO_HOVER_MOLECULE_THRESHOLD = 5;

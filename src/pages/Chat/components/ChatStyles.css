@@ -279,7 +279,8 @@ body.chat-page-body {
     opacity: 1;
 }
 
-.history-nav li a {
+.history-nav li a,
+.history-nav li .recent-chat {
     display: block;
     text-decoration: none;
     color: #374151;
@@ -1029,12 +1030,98 @@ body.chat-page-body {
     padding: 6px 10px;
 }
 
-.new-chat-input-wrapper .beta-badge {
+.new-chat-input-wrapper .beta-badge,
+.new-chat-input-wrapper .lite-badge {
     font-size: 9px;
     padding: 1px 4px;
     background: #56B26A; /* 主题色背景 */
     color: #ffffff; /* 白色文字 */
     margin-left: 4px;
+}
+
+/* 公共用户访问提示样式 */
+.public-access-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #92400e;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.chat-input-container .public-access-banner {
+    margin-bottom: 10px;
+}
+
+.public-access-banner__close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+}
+
+.public-access-banner__close:hover {
+    color: #b45309;
+}
+
+.public-textarea-guard {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    align-items: stretch;
+}
+
+.public-textarea-guard textarea:disabled {
+    cursor: not-allowed;
+}
+
+.public-access-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    border: none;
+    cursor: not-allowed;
+    padding: 0;
+    margin: 0;
+    z-index: 3;
+}
+
+.public-access-overlay.mode {
+    border-radius: 8px;
+}
+
+.public-access-overlay:focus-visible {
+    outline: 2px solid #56B26A;
+    outline-offset: 2px;
+}
+
+.mode-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+}
+
+.mode-btn-wrapper + .mode-btn-wrapper {
+    margin-left: 2px;
+}
+
+.public-locked {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.public-locked:hover {
+    background: transparent;
+    color: inherit;
 }
 
 /* 推荐问题样式 */
@@ -1250,7 +1337,8 @@ body.chat-page-body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.beta-badge {
+.beta-badge,
+.lite-badge {
     background: #56B26A; /* 主题色背景 */
     color: #ffffff; /* 白色文字 */
     font-size: 10px;

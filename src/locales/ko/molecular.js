@@ -28,10 +28,18 @@ export default {
     functionalGroupList: "에테르, 케탈, 탄산에스터, 에스터",
     unknown: "알 수 없음",
     types: {
-      all: "모든 유형",
       solvent: "용매",
+      cosolvent: "공용매",
       diluent: "희석제",
-      additive: "첨가제"
+      additive: "첨가제",
+      salt: "Salt"
+    },
+    additiveSubtypes: {
+      title: "첨가제 서브카테고리",
+      seiPromoter: "SEI 활성화제",
+      sideReactionSuppressor: "부사상 반응 억제제",
+      dendriteSuppressor: "덴드리트 억제제",
+      interfacialStabilityImprover: "표면 안정성 향상제"
     },
     properties: {
       predictedFp: "예상 인화점",

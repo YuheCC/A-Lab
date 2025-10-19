@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import InfoTooltip from '@/components/InfoTooltip';
 import { CircleHelp, Pen } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import MolEditor from '../MolEditor';
@@ -8,29 +8,62 @@ import benPenSvg from '@/assets/svg/benPen.svg';
 
 
 // SearchInput now maintains its own internal input state.
-const SearchInput = React.memo(({ onSearch, disabled }) => {
+const SearchInput = React.memo(({
+  onSearch,
+  disabled,
+  initialValue = "",
+  lockInput = false,
+  initialEditorOpen = true,
+  lockMolEditorToggle = false,
+  allowSubmitWhenLocked = false,
+  onLockedClick,
+}) => {
   const { t } = useTranslation();
-  const [showMolEditor, setShowMolEditor] = useState(true);
-  const [inputValue, setInputValue] = useState("");
+  const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
+  const [inputValue, setInputValue] = useState(initialValue);
+
+  useEffect(() => {
+    setInputValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    if (lockMolEditorToggle) {
+      setShowMolEditor(initialEditorOpen);
+    }
+  }, [lockMolEditorToggle, initialEditorOpen]);
+
+  const handleLockedClick = () => {
+    if (typeof onLockedClick === 'function') {
+      onLockedClick();
+    }
+  };
 
   const handleChange = (e) => {
+    if (lockInput) {
+      handleLockedClick();
+      return;
+    }
     setInputValue(e.target.value);
   };
 
   const handleMolChange = (mol) => {
+    if (lockInput) return;
     // If the molecule is valid, update the inputValue
     if (mol) {
       setInputValue(mol);
     }
   }
 
+  const isSubmitDisabled = disabled || (lockInput && !allowSubmitWhenLocked);
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isSubmitDisabled) {
       onSearch(inputValue);
     }
   };
 
   const handleClickSend = () => {
+    if (isSubmitDisabled) return;
     onSearch(inputValue);
   }
 
@@ -53,17 +86,27 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
   return (
     <div className={`search-bar-container ${showMolEditor ? 'open' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
       <div className='search-input-container'>
-        <Tooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
-          <div 
-            className='control-icon pen-icon' 
-            style={{ marginLeft: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
+        <InfoTooltip title={t('search.drawMolecule', 'Draw molecule')} placement="top">
+          <div
+            className='control-icon pen-icon'
+            style={{
+              marginLeft: '8px',
+              cursor: lockMolEditorToggle ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              opacity: lockMolEditorToggle ? 0.5 : 1,
+            }}
             onClick={() => {
+              if (lockMolEditorToggle) {
+                handleLockedClick();
+                return;
+              }
               setShowMolEditor(!showMolEditor);
             }}
           >
             <NewPenIcon />
           </div>
-        </Tooltip>
+        </InfoTooltip>
         <input
           type="text"
           className="search-input"
@@ -71,9 +114,31 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          readOnly={lockInput}
           disabled={disabled}
+          onClick={() => {
+            if (lockInput) {
+              handleLockedClick();
+            }
+          }}
+          onFocus={(e) => {
+            if (lockInput) {
+              e.target.blur();
+              handleLockedClick();
+            }
+          }}
+          onMouseDown={(e) => {
+            if (lockInput) {
+              e.preventDefault();
+              handleLockedClick();
+            }
+          }}
+          style={{
+            cursor: lockInput ? 'not-allowed' : 'text',
+            backgroundColor: lockInput ? '#f0f2f5' : undefined,
+          }}
         />
-        <Tooltip
+        <InfoTooltip
           title={<>
             <div style={{ whiteSpace: 'pre-line', width: '300px' }} dangerouslySetInnerHTML={{ __html: t('search.searchTooltip', { pubChemUrl }) }} />
           </>}
@@ -84,20 +149,20 @@ const SearchInput = React.memo(({ onSearch, disabled }) => {
             color: '#999',
             cursor: 'pointer',
           }}/>
-        </Tooltip>
+        </InfoTooltip>
         <button
           className="search-button"
           onClick={handleClickSend}
-          disabled={disabled}
+          disabled={isSubmitDisabled}
         >
           {t('search.searchButton')}
         </button>
       </div>
-      {showMolEditor && <MolEditor onMolChange={handleMolChange} style={{
+      {showMolEditor && !lockMolEditorToggle && <MolEditor onMolChange={handleMolChange} style={{
         marginTop: 5,
         border: 'none',
         boxShadow: 'none',
-      }}/>}
+      }}/>} 
     </div>
   );
 });

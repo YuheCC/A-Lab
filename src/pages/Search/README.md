@@ -47,12 +47,12 @@ src/pages/Search/
 ### 有机分子搜索
 - 基础接口: `/search`
 - 高级接口: `/search-35` (admin/enterprise/joint权限)
-- 相似分子: `/find-friend-with-image`
+- 相似分子: `/api/llm/find-friend-with-image`
 
 ### 无机分子搜索
 - 基础接口: `/search-inorganic`
 - 高级接口: `/search-inorganic-35` (admin/enterprise/joint权限)
-- 相似分子: `/find-friend-inorganic`
+- 相似分子: `/llm/find-friend-inorganic`
 
 ## 分子属性显示
 

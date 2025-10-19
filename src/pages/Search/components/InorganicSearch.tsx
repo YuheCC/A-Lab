@@ -2,25 +2,33 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip } from "@mui/material";
+import FindFriendOptions from "./FindFriendOptions";
+import { buildQueryString } from "@/services/buildQueryString";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import { useQueryLimit } from '@/hooks/useQueryLimit';
+import InorganicFilter, { InorganicFilterRef } from './InorganicFilter';
 
 const API_URL = getAPIUrl();
 
 // 定义无机分子数据类型
 interface InorganicMoleculeData {
     smiles: string;
+    cation?: string;
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -40,6 +48,7 @@ interface InorganicMoleculeData {
 
 interface InorganicSimilarMolecule {
     SMILES: string;
+    cation?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -49,6 +58,8 @@ interface InorganicSimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     cluster: number;
     // 无机分子特有的属性
     sulfur_content?: number;
@@ -60,6 +71,7 @@ interface InorganicSimilarMolecule {
 const InorganicSearch = () => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -76,13 +88,76 @@ const InorganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<InorganicSimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({});
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [selectedMolType, setSelectedMolType] = useState("");
+    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => 'Disabled', []);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const { limits: queryLimits } = useQueryLimit();
+
+    // 界面模式切换状态
+    const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
+    const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
+    const inorganicFilterRef = useRef<InorganicFilterRef>(null);
+    const [cathode, setCathode] = useState('');
+    const [anode, setAnode] = useState('');
+    const [salt, setSalt] = useState('');
+    const [solvent, setSolvent] = useState('');
+    const [metric, setMetric] = useState('');
+
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<InorganicMoleculeData[]>([]);
+
+    // 处理界面模式切换
+    const handleModeSwitch = (mode: 'search' | 'filter') => {
+        if (mode !== interfaceMode) {
+            // 重置当前模式的状态
+            if (interfaceMode === 'search') {
+                // 重置搜索状态
+                setsearchResults(null);
+                setsearchedMolecules(null);
+                setHighlightedMolecules([]);
+                setHighlightedSimilarMolecules([]);
+                setSimilarMoleculeImages({});
+                setSearchError(null);
+                setSearchWarning(null);
+                setFindFriendError(null);
+                setAmbiguousOptions(null);
+            } else {
+                // 重置过滤状态
+                inorganicFilterRef.current?.resetFilters();
+            }
+            setInterfaceMode(mode);
+        }
+    };
 
     // 添加拖拽分隔条的状态
     const [leftPanelWidth, setLeftPanelWidth] = useState(60);
@@ -144,7 +219,7 @@ const InorganicSearch = () => {
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
 
     // 处理无机分子搜索结果
-    const handleSearchedInorganicMolecules = async (response: Response, select_first = false): Promise<InorganicMoleculeData[] | null> => {
+    const handleSearchedInorganicMolecules = async (response: Response, select_first = false): Promise<{ formattedMolecules: InorganicMoleculeData[] | null; ambiguity: any }> => {
         let formattedMolecules: InorganicMoleculeData[] | null = null;
         let ambiguity = null;
         try {
@@ -154,9 +229,12 @@ const InorganicSearch = () => {
                     formattedMolecules = data.molecule_details.map((mol: any) => {
                         return {
                             smiles: mol.SMILES,
+                            cation: mol.cation ?? mol.CATION,
                             x: mol.UMAP_0,
                             y: mol.UMAP_1,
                             image: mol.image,
+                            grade: mol.grade,
+                            reasoning: mol.reasoning,
                             properties: {
                                 molwt: mol.molecular_weight,
                                 homo_eV: mol.HOMO_eV,
@@ -178,7 +256,7 @@ const InorganicSearch = () => {
                         const formattedMolecule = formattedMolecules[0];
                         setsearchedMolecules([formattedMolecule]);
                         setsearchResults([formattedMolecule.image || '']);
-                        
+
                         if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
                             formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
                             setHighlightedMolecules([formattedMolecule]);
@@ -217,10 +295,10 @@ const InorganicSearch = () => {
 
         try {
             // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-inorganic`;
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched inorganic molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -240,47 +318,50 @@ const InorganicSearch = () => {
                 if (formattedMolecules.length > 1) {
                     setSearchWarning(t('search.multipleMoleculesWarning'));
                 } else {
-                    const formattedMolecule = formattedMolecules[0];
-
-                    // 使用无机分子的find-friend接口
+                    const smilesArray = formattedMolecules
+                        .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                        .filter((s) => !!s);
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const payload = {
-                        is_inorganic: true,
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        molecule_type: 'inorganic',
-                        ...(selectedMolType && { mol_type: selectedMolType })
-                    };
+                    const computeEnabled = computeLevel !== 'Disabled';
+                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
+
+                    let computeToSend = computeLevel;
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
+                        setSearchWarning(t('search.computeWarning'));
+                        computeToSend = 'Low';
+                        setComputeLevel('Low');
+                    }
+
+                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
+
+                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<InorganicSimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            showHypothetical,
+                            includeQuery,
+                            queryString,
+                            isInorganic: true,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar inorganic molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: InorganicSimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: InorganicSimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
@@ -300,8 +381,9 @@ const InorganicSearch = () => {
 
     return (
         <>
-            <div 
-                className="search-umap-container" 
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+            <div
+                className="search-umap-container"
                 style={{ paddingLeft: '0', marginLeft: '0' }}
                 ref={containerRef}
             >
@@ -323,11 +405,13 @@ const InorganicSearch = () => {
                     }}>
                         {data.length > 0 ? (
                             <UMAPClusterPlotDeck
-                                data={data}
-                                highlightedData={highlightedMolecules}
-                                highlightedSimilarData={highlightedSimilarMolecules}
+                                data={interfaceMode === 'filter' ? filteredPlotData : data}
+                                highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
+                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="inorganic"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -352,7 +436,7 @@ const InorganicSearch = () => {
 
                 {/* Search interface on the right */}
                 <div 
-                    className="search-interface-section" 
+                    className={`search-interface-section ${interfaceMode === 'filter' ? 'filter-mode' : ''}`} 
                     style={{
                         width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
                         flex: 'none',
@@ -362,42 +446,91 @@ const InorganicSearch = () => {
                         borderRadius: '8px'
                     }}
                 >
-                    {/* Search bar container */}
-                    <SearchInput
-                        onSearch={handleSearch}
-                        disabled={searchLoading}
-                    />
+                    {/* 模式切换按钮 */}
+                    <div className="mode-switch-container" style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '20px',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'search' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('search')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'search' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'search' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'search' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.search', '搜索')}
+                        </button>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'filter' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('filter')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'filter' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'filter' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'filter' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.filter', '过滤')}
+                        </button>
+                    </div>
+
+                    {/* 根据模式显示不同的界面 */}
+                    {interfaceMode === 'search' ? (
+                        <>
+                            {/* Search bar container */}
+                            <SearchInput
+                                onSearch={handleSearch}
+                                disabled={searchLoading}
+                            />
 
                     {/* Add "Find closest friends" checkbox and mol type selector */}
-                    {/* <div className="search-options">
-                        <label className="search-option">
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={findClosestFriends}
-                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                    />
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span>{t('search.findFriendsLabel')}</span>
-                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                        </Tooltip>
-                                    </div>
-                                    
-                                </div>
-                                <div style={{
-                                    color: '#555',
-                                    fontSize: '14px',
-                                }}>
-                                {t('search.findFriendsDescription')}
-                                </div>
-                            </div>
-                        </label>
-                    </div> */}
+                            <FindFriendOptions
+                                findClosestFriends={findClosestFriends}
+                                setFindClosestFriends={setFindClosestFriends}
+                                extraRequests={extraRequests}
+                                setExtraRequests={setExtraRequests}
+                                showAdvanced={showAdvanced}
+                                setShowAdvanced={setShowAdvanced}
+                                selectedMolType={selectedMolType}
+                                setSelectedMolType={setSelectedMolType}
+                                additiveSubtype={additiveSubtype}
+                                setAdditiveSubtype={setAdditiveSubtype}
+                                computeLevel={computeLevel}
+                                setComputeLevel={setComputeLevel}
+                                structureWeight={structureWeight}
+                                setStructureWeight={setStructureWeight}
+                                showHypothetical={showHypothetical}
+                                setShowHypothetical={setShowHypothetical}
+                                cathode={cathode}
+                                setCathode={setCathode}
+                                anode={anode}
+                                setAnode={setAnode}
+                                salt={salt}
+                                setSalt={setSalt}
+                                solvent={solvent}
+                                setSolvent={setSolvent}
+                                metric={metric}
+                                setMetric={setMetric}
+                                userPermissions={userPermissions}
+                                findFriendLimitInfo={queryLimits.findFriendLLM}
+                            />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -430,8 +563,10 @@ const InorganicSearch = () => {
                                                 name={t('search.moleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
@@ -505,8 +640,10 @@ const InorganicSearch = () => {
                                                 name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
                                                     { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
                                                     { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                     { label: 'Cluster', value: molecule.cluster, span: 2 },
                                                     { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
@@ -604,9 +741,16 @@ const InorganicSearch = () => {
                             )
                         )}
                     </div>
+                        </>
+                    ) : (
+                        <InorganicFilter
+                            ref={inorganicFilterRef}
+                            onDataFiltered={setFilteredPlotData}
+                        />
+                    )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} molecularType="inorganic"/>
+            <NodePopup key="inorganicNodePopup" ref={nodePopupRef} node={node} molecularType="inorganic"/>
         </>
     );
 };

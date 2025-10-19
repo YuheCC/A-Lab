@@ -1,26 +1,38 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext } from "react";
+import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { findFriends } from "@/services/findFriends";
+import { buildQueryString } from "@/services/buildQueryString";
 import { usePlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Info, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import { Tooltip } from "@mui/material";
+import FindFriendOptions from "./FindFriendOptions";
+import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
+import { useQueryLimit } from '@/hooks/useQueryLimit';
+import OrganicFilter, { OrganicFilterRef } from './OrganicFilter';
+import '../index.css';
+import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
+import { useAccessModals } from '@/hooks/useAccessModals';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
 const API_URL = getAPIUrl();
 
 // 定义类型
 interface MoleculeData {
     smiles: string;
+    cation?: string;
     x: number;
     y: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -40,6 +52,7 @@ interface MoleculeData {
 
 interface SimilarMolecule {
     SMILES: string;
+    cation?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -55,11 +68,16 @@ interface SimilarMolecule {
     UMAP_0: number;
     UMAP_1: number;
     image?: string;
+    grade?: number;
+    reasoning?: string;
 }
 
-const OrganicSearch = () => {
+const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -75,13 +93,97 @@ const OrganicSearch = () => {
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [selectedMolType, setSelectedMolType] = useState("");
+    const [structureWeight, setStructureWeight] = useState(0.75);
+    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    useEffect(() => {
+        switch (selectedMolType) {
+            case 'diluent':
+                setStructureWeight(0.5);
+                break;
+            case 'additive':
+                setStructureWeight(1.0);
+                break;
+            case 'solvent':
+            case 'cosolvent':
+            default:
+                setStructureWeight(0.75);
+        }
+    }, [selectedMolType]);
+    const [extraRequests, setExtraRequests] = useState('');
+    const defaultCompute = useMemo(() => 'Disabled', []);
+    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
+    const [showHypothetical, setShowHypothetical] = useState(false);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const buildGradeProp = (grade?: number, reasoning?: string) =>
+        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+    const { limits: queryLimits } = useQueryLimit();
+    const triggerAccessModal = useAccessModals();
+
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
+
+    // 界面模式切换状态
+    const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
+    const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
+    const organicFilterRef = useRef<OrganicFilterRef>(null);
+    const [cathode, setCathode] = useState('');
+    const [anode, setAnode] = useState('');
+    const [salt, setSalt] = useState('');
+    const [solvent, setSolvent] = useState('');
+    const [metric, setMetric] = useState('');
+
+    useEffect(() => {
+        setComputeLevel(defaultCompute);
+    }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isPublic) return;
+        setFindClosestFriends(false);
+        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
+        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
+        setShowHypothetical(false);
+        setShowAdvanced(false);
+        setExtraRequests('');
+        setCathode('');
+        setAnode('');
+        setSalt('');
+        setSolvent('');
+        setMetric('');
+    }, [isPublic]);
 
     // Add state for find-friend error message
     const [findFriendError, setFindFriendError] = useState<string | null>(null);
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
+
+    // 处理界面模式切换
+    const handleModeSwitch = (mode: 'search' | 'filter') => {
+        if (mode !== interfaceMode) {
+            // 重置当前模式的状态
+            if (interfaceMode === 'search') {
+                // 重置搜索状态
+                setsearchResults(null);
+                setsearchedMolecules(null);
+                setHighlightedMolecules([]);
+                setHighlightedSimilarMolecules([]);
+                setSimilarMoleculeImages({});
+                setSearchError(null);
+                setSearchWarning(null);
+                setFindFriendError(null);
+                setAmbiguousOptions(null);
+            } else {
+                // 重置过滤状态
+                organicFilterRef.current?.resetFilters();
+            }
+            setInterfaceMode(mode);
+        }
+    };
 
     // 添加拖拽分隔条的状态
     const [leftPanelWidth, setLeftPanelWidth] = useState(60); // 左侧面板宽度百分比
@@ -136,64 +238,81 @@ const OrganicSearch = () => {
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
 
     // Update handleSearch function
-    const handleSearchedMolecules = async (response: Response, select_first = false): Promise<MoleculeData[] | null> => {
+    const handleSearchedMolecules = async (
+        response: Response,
+        select_first = false
+    ): Promise<{ formattedMolecules: MoleculeData[] | null; ambiguity: any }> => {
         let formattedMolecules: MoleculeData[] | null = null;
-        let ambiguity = null;
+        let ambiguity: any = null;
         try {
             const data = await response.json();
-            if (data.found) {
-                if (data.molecule_details && data.molecule_details.length > 0) {
-                    formattedMolecules = data.molecule_details.map((mol: any) => {
-                        return {
-                            smiles: mol.SMILES,
-                            x: mol.UMAP_0,
-                            y: mol.UMAP_1,
-                            image: mol.image, // Add image to the molecule data
-                            properties: {
-                                molwt: mol.molecular_weight,
-                                homo_eV: mol.HOMO_eV,
-                                lumo_eV: mol.LUMO_eV,
-                                esp_min_eV: mol.ESP_min_eV,
-                                esp_max_eV: mol.ESP_max_eV,
-                                functional_groups: mol.functional_groups,
-                                predicted_mp: mol.predicted_MP_celsius,
-                                predicted_bp: mol.predicted_BP_celsius,
-                                predicted_fp_celsius: mol.predicted_FP_celsius,
-                                combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
-                                commercial_score: mol.COMMERCIAL_SCORE,
-                                commercial_link: mol.COMMERCIAL_LINK
-                            },
-                            rawData: mol
-                        };
-                    });
-                    if (select_first && formattedMolecules) {
-                        // Only store the first molecule (as a list of one) and its image
-                        const formattedMolecule = formattedMolecules[0];
-                        setsearchedMolecules([formattedMolecule]);
-                        setsearchResults([formattedMolecule.image || '']);
-                        
-                        if (formattedMolecule.x !== null && formattedMolecule.y !== null &&
-                            formattedMolecule.x !== undefined && formattedMolecule.y !== undefined) {
-                            setHighlightedMolecules([formattedMolecule]);
-                        }
-                    } else if (formattedMolecules) {
-                        // Store all molecules and their images
-                        setsearchedMolecules(formattedMolecules);
-                        setsearchResults(formattedMolecules.map((mol) => mol.image || ''));
 
-                        // Don't filter out null values for highlightedMolecules as that messes up indexing
-                        // - deckgl handles null values gracefully
-                        if (formattedMolecules.length > 0) {
-                            setHighlightedMolecules(formattedMolecules);
-                        }
+            // Normalize to an array of result envelopes
+            const envelopes: any[] = Array.isArray(data) ? data : [data];
+
+            // If any envelope reports ambiguity, capture it
+            const ambiguousEnv = envelopes.find((env) => env && env.message === 'Ambiguous molecule abbreviation');
+            if (ambiguousEnv) {
+                ambiguity = ambiguousEnv.options ?? null;
+            }
+
+            // Collect all molecule_details from all successful envelopes
+            const allDetails: any[] = envelopes
+                .filter((env) => env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0)
+                .flatMap((env) => env.molecule_details);
+
+            if (allDetails.length > 0) {
+                const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
+                    smiles: mol.SMILES,
+                    cation: mol.cation ?? mol.CATION,
+                    x: mol.UMAP_0,
+                    y: mol.UMAP_1,
+                    image: mol.image,
+                    grade: mol.grade,
+                    reasoning: mol.reasoning,
+                    properties: {
+                        molwt: mol.molecular_weight,
+                        homo_eV: mol.HOMO_eV,
+                        lumo_eV: mol.LUMO_eV,
+                        esp_min_eV: mol.ESP_min_eV,
+                        esp_max_eV: mol.ESP_max_eV,
+                        functional_groups: mol.functional_groups,
+                        predicted_mp: mol.predicted_MP_celsius,
+                        predicted_bp: mol.predicted_BP_celsius,
+                        predicted_fp_celsius: mol.predicted_FP_celsius,
+                        combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                        commercial_score: mol.COMMERCIAL_SCORE,
+                        commercial_link: mol.COMMERCIAL_LINK,
+                    },
+                    rawData: mol,
+                }));
+
+                if (select_first) {
+                    const first = mapped[0];
+                    setsearchedMolecules([first]);
+                    setsearchResults([first.image || '']);
+                    if (
+                        first.x !== null &&
+                        first.y !== null &&
+                        first.x !== undefined &&
+                        first.y !== undefined
+                    ) {
+                        setHighlightedMolecules([first]);
+                    }
+                } else {
+                    setsearchedMolecules(mapped);
+                    setsearchResults(mapped.map((m) => m.image || ''));
+                    if (mapped.length > 0) {
+                        setHighlightedMolecules(mapped);
                     }
                 }
-            } else if (data.message === 'Ambiguous molecule abbreviation') {
-                ambiguity = data.options;
+
+                formattedMolecules = mapped;
             }
         } catch (error) {
             console.error('Error processing searched molecules:', error);
         }
+
         return { formattedMolecules, ambiguity };
     };
 
@@ -213,13 +332,10 @@ const OrganicSearch = () => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search`;
-            if (userPermissions === 'admin' || userPermissions === 'enterprise' || userPermissions === 'joint') {
-                searchEndpoint = `${API_URL}/api/llm/search-35`;
-            }
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}`);
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -236,51 +352,54 @@ const OrganicSearch = () => {
             }
 
             if (formattedMolecules && findClosestFriends) {
-                // check if formattedMolecules has length > 1 - if so display warning
-                if (formattedMolecules.length > 1) {
-                    setSearchWarning(t('search.multipleMoleculesWarning'));
-                } else {
-                    const formattedMolecule = formattedMolecules[0];
+                // Build an array of seed SMILES from all returned molecules
+                const smilesArray = formattedMolecules
+                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                    .filter((s) => !!s);
 
-                    // Then fetch similar molecules
-                    // Prepare JSON payload for finding friends (default version, no extra params)
+                if (smilesArray.length === 0) {
+                    setSearchWarning(t('search.moleculeNotFound.title'));
+                } else {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
-                    const payload = {
-                        smiles: formattedMolecule.smiles.trim(),
-                        use_35m: isHighTier,
-                        ...(selectedMolType && { mol_type: selectedMolType })
-                    };
+                    const computeEnabled = computeLevel !== 'Disabled';
+                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
+
+                    let computeToSend = computeLevel;
+                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
+                        setSearchWarning(t('search.computeWarning'));
+                        computeToSend = 'Low';
+                        setComputeLevel('Low');
+                    }
+
+                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
+                    const parts: string[] = [baseQuery];
+                    if (selectedMolType) {
+                        parts.push(`I am looking for ${selectedMolType} molecules.`);
+                    }
+                    if (extraRequests.trim()) {
+                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+                    }
+                    const queryString = parts.join(' ');
+                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
+
+                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
 
                     try {
-                        const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+                            smiles: smilesArray,
+                            use35m: isHighTier,
+                            structureWeight,
+                            molType: molTypeToSend,
+                            computeLevel: computeToSend,
+                            showHypothetical,
+                            includeQuery,
+                            queryString,
                         });
-                        if (!response.ok) {
-                            throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const molecules: SimilarMolecule[] = data.similar_molecules;
 
                         if (molecules.length > 0) {
                             setHighlightedSimilarMolecules(molecules);
                         }
-
-                        // Fetch molecule visualizations for all similar molecules
-                        const imageResults = molecules.map((molecule: SimilarMolecule, index: number) => {
-                            const moleculeImageUrl = molecule.image;
-                            return { index, imageUrl: moleculeImageUrl };
-                        });
-
-                        // Create a map of molecule index to image URL
-                        const imageMap: {[key: number]: string} = {};
-                        imageResults.forEach(result => {
-                            if (result.imageUrl) {
-                                imageMap[result.index] = result.imageUrl;
-                            }
-                        });
 
                         setSimilarMoleculeImages(imageMap);
                     } catch (friendError) {
@@ -289,9 +408,20 @@ const OrganicSearch = () => {
                     }
                 }
             }
-        } catch (apiError) {
+        } catch (apiError: any) {
             console.error('Error checking Snowflake database:', apiError);
-            setSearchError(t('search.searchError'));
+
+            // 检查是否是未登录错误（401）或者token不存在
+            const token = localStorage.getItem('token');
+            const isUnauthorized = apiError?.response?.status === 401 || apiError?.status === 401;
+
+            if (!token || isUnauthorized) {
+                // 未登录或401错误时不显示错误信息
+                setSearchError(null);
+            } else {
+                // 已登录且非401错误时显示错误信息
+                setSearchError(t('search.searchError'));
+            }
         } finally {
             setSearchLoading(false);
             setLastSearch(searchInput);
@@ -299,18 +429,18 @@ const OrganicSearch = () => {
     };
 
     return (
+        // SEARCH PAGE CONTENT:
         <>
-            <div 
-                className="search-umap-container" 
-                style={{ paddingLeft: '0', marginLeft: '0' }}
+            <ReasoningModal text={reasoningText} onClose={() => setReasoningText(null)} />
+            <div
+                className="search-umap-container"
                 ref={containerRef}
             >
                 {/* UMAP Visualization on the left */}
-                <div 
+                <div
                     className="search-umap-section"
                     style={{
-                        width: `calc((100% - 120px) * ${leftPanelWidth} / 100)`,
-                        flex: 'none'
+                        flex: `0 0 ${leftPanelWidth}%`
                     }}
                 >
                     <div style={{ 
@@ -323,11 +453,14 @@ const OrganicSearch = () => {
                     }}>
                         {data.length > 0 ? (
                             <UMAPClusterPlotDeck
-                                data={data}
-                                highlightedData={highlightedMolecules}
-                                highlightedSimilarData={highlightedSimilarMolecules}
+                                zoomOffset={-0.3}
+                                data={interfaceMode === 'filter' ? filteredPlotData : data}
+                                highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
+                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
+                                isAuthenticated={isAuthenticated}
                                 molecularType="organic"
+                                enableAutoHover={false}
                                 onClick={(node: any) => {
                                     setNode(node);
                                     nodePopupRef.current?.show();
@@ -351,62 +484,106 @@ const OrganicSearch = () => {
                 />
 
                 {/* Search interface on the right */}
-                <div 
-                    className="search-interface-section" 
+                <div
+                    className={`search-interface-section ${interfaceMode === 'filter' ? 'filter-mode' : ''}`}
                     style={{
-                        width: `calc((100% - 120px) * ${100 - leftPanelWidth} / 100)`,
-                        flex: 'none',
-                        overflowY: 'auto',
-                        padding: '20px',
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '8px'
+                        flex: 1,
+                        minWidth: 0
                     }}
                 >
-                    {/* Search bar container */}
-                    <SearchInput
-                        onSearch={handleSearch}
-                        disabled={searchLoading}
-                    />
-
-                    {/* Add "Find closest friends" checkbox and mol type selector */}
-                    <div className="search-options">
-                        <label className="search-option">
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={findClosestFriends}
-                                        onChange={(e) => setFindClosestFriends(e.target.checked)}
-                                    />
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span>{t('search.findFriendsLabel')}</span>
-                                        <Tooltip title={t('search.findFriendsDescription')} placement="top">
-                                            <Info size={16} style={{ marginLeft: '4px', cursor: 'help' }} />
-                                        </Tooltip>
-                                    </div>
-                                    <select
-                                        value={selectedMolType}
-                                        onChange={e => setSelectedMolType(e.target.value)}
-                                        style={{ marginLeft: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                                    >
-                                        <option value="" disabled hidden>{t('search.moleculeTypes.selectMolType')}</option>
-                                        <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                                        <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                                        <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                                    </select>
-                                </div>
-                                <div style={{
-                                    color: '#555',
-                                    fontSize: '14px',
-                                }}>
-                                {t('search.findFriendsDescription')}
-                                </div>
-                            </div>
-                        </label>
+                    {/* 模式切换按钮 */}
+                    <div className="mode-switch-container" style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '20px',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'search' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('search')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'search' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'search' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'search' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.search', '搜索')}
+                        </button>
+                        <button
+                            className={`mode-switch-btn ${interfaceMode === 'filter' ? 'active' : ''}`}
+                            onClick={() => handleModeSwitch('filter')}
+                            style={{
+                                padding: '6px 12px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                backgroundColor: interfaceMode === 'filter' ? '#4CAF50' : '#fff',
+                                color: interfaceMode === 'filter' ? '#fff' : '#666',
+                                borderColor: interfaceMode === 'filter' ? '#4CAF50' : '#d1d5db'
+                            }}
+                        >
+                            {t('navigation.header.filter', '过滤')}
+                        </button>
                     </div>
+
+                    {/* 根据模式显示不同的界面 */}
+                    {interfaceMode === 'search' ? (
+                        <>
+                            {/* Search bar container */}
+                            <SearchInput
+                                onSearch={handleSearch}
+                                disabled={searchLoading}
+                                initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
+                                lockInput={isPublic}
+                                initialEditorOpen={!isPublic}
+                                lockMolEditorToggle={isPublic}
+                                allowSubmitWhenLocked={isPublic}
+                                onLockedClick={triggerAccessModal}
+                            />
+
+                            <FindFriendOptions
+                                findClosestFriends={findClosestFriends}
+                                setFindClosestFriends={setFindClosestFriends}
+                                extraRequests={extraRequests}
+                                setExtraRequests={setExtraRequests}
+                                showAdvanced={showAdvanced}
+                                setShowAdvanced={setShowAdvanced}
+                                selectedMolType={selectedMolType}
+                                setSelectedMolType={setSelectedMolType}
+                                additiveSubtype={additiveSubtype}
+                                setAdditiveSubtype={setAdditiveSubtype}
+                                computeLevel={computeLevel}
+                                setComputeLevel={setComputeLevel}
+                                structureWeight={structureWeight}
+                                setStructureWeight={setStructureWeight}
+                                showHypothetical={showHypothetical}
+                                setShowHypothetical={setShowHypothetical}
+                                cathode={cathode}
+                                setCathode={setCathode}
+                                anode={anode}
+                                setAnode={setAnode}
+                                salt={salt}
+                                setSalt={setSalt}
+                                solvent={solvent}
+                                setSolvent={setSolvent}
+                                metric={metric}
+                                setMetric={setMetric}
+                                userPermissions={userPermissions}
+                                findFriendLimitInfo={queryLimits.findFriendLLM}
+                                readOnly={isPublic}
+                                allowFindFriendsToggleWhenReadOnly={isPublic}
+                                onLockedClick={triggerAccessModal}
+                            />
 
                     <div className="search-results">
                         {searchLoading && (
@@ -439,84 +616,90 @@ const OrganicSearch = () => {
                                                 name={t('search.moleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
+                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                     { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('predicted_MP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2, 
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('predicted_BP_celsius')},
+                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
+                                                        show: canShowColumn('predicted_FP_celsius')
                                                     },
                                                     {
                                                         label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.properties?.combustion_enthalpy_ev || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('combustion_enthalpy_ev')
                                                     },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true}
+                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1 },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                                    { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
                                                 ]}>
-                                                <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
-                                                    <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                                        <CustomButton
-                                                            Icon={Star}
-                                                            style={{
-                                                                flexGrow: 1,
-                                                            }}
-                                                            onClick={() => {
-                                                                console.log('Add to Favorites payload (search):', molecule);
-                                                                handleAddToFavorites(molecule);
-                                                            }}
-                                                            loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
-                                                            loadingText="Saving..."
-                                                            successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
-                                                            errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
-                                                        >
-                                                            {t("chatbox.buttons.addToFavorites")}
-                                                        </CustomButton>
-                                                        {
-                                                        false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
-                                                            window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
-                                                            }}>
-                                                                {t("chatbox.buttons.viewInMolPort")}
-                                                            </CustomButton>
-                                                        }
-                                                    </div>
+                                                {
+                                                    isAuthenticated && (
+                                                        <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
+                                                            <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                                <CustomButton
+                                                                    Icon={Star}
+                                                                    style={{
+                                                                        flexGrow: 1,
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        console.log('Add to Favorites payload (search):', molecule);
+                                                                        handleAddToFavorites(molecule);
+                                                                    }}
+                                                                    loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                                    loadingText="Saving..."
+                                                                    successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
+                                                                    errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
+                                                                >
+                                                                    {t("chatbox.buttons.addToFavorites")}
+                                                                </CustomButton>
+                                                                {
+                                                                false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                                    window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
+                                                                    }}>
+                                                                        {t("chatbox.buttons.viewInMolPort")}
+                                                                    </CustomButton>
+                                                                }
+                                                            </div>
 
-                                                    {moleculeFavoriteStatus[molecule.smiles]?.error && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {moleculeFavoriteStatus[molecule.smiles].error}
-                                                        </div>
-                                                    )}
+                                                            {moleculeFavoriteStatus[molecule.smiles]?.error && (
+                                                                <div className="error-message" style={{
+                                                                    marginTop: '8px',
+                                                                    color: 'red',
+                                                                    fontSize: '14px',
+                                                                    fontWeight: 'bold'
+                                                                }}>
+                                                                    {moleculeFavoriteStatus[molecule.smiles].error}
+                                                                </div>
+                                                            )}
 
-                                                    {/* Display find-friend error below favorites button if it exists */}
-                                                    {findClosestFriends && findFriendError && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {findFriendError}
+                                                            {/* Display find-friend error below favorites button if it exists */}
+                                                            {findClosestFriends && findFriendError && (
+                                                                <div className="error-message" style={{
+                                                                    marginTop: '8px',
+                                                                    color: 'red',
+                                                                    fontSize: '14px',
+                                                                    fontWeight: 'bold'
+                                                                }}>
+                                                                    {findFriendError}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
+                                                    )
+                                                }
                                             </MolCard>
                                         ))}
                                     </div>
@@ -531,34 +714,36 @@ const OrganicSearch = () => {
                                                 name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                 showMoreDetails={false}
                                                 large={true}
+                                                cation={molecule.cation ?? (molecule as any)?.CATION}
                                                 propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
+                                                    buildGradeProp(molecule.grade, molecule.reasoning),
+                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                     { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('predicted_MP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('predicted_BP_celsius')
                                                      },
                                                     { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions === 'enterprise'
+                                                        show: canShowColumn('predicted_FP_celsius')
                                                      },
                                                     { label: t('search.properties.combustionEnthalpy'),
                                                         value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
                                                         span: 2,
                                                         suffix: ' eV',
-                                                        show: userPermissions === 'admin' || userPermissions === 'joint' || userPermissions
+                                                        show: canShowColumn('combustion_enthalpy_ev')
                                                     },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true}
+                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
                                                 ]} 
                                                 foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
+                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
                                                 ]}
                                             >
                                                 <div className="molecule-actions">
@@ -649,11 +834,18 @@ const OrganicSearch = () => {
                             )
                         )}
                     </div>
+                        </>
+                    ) : (
+                        <OrganicFilter
+                            ref={organicFilterRef}
+                            onDataFiltered={setFilteredPlotData}
+                        />
+                    )}
                 </div>
             </div>
-            <NodePopup ref={nodePopupRef} node={node} molecularType="organic"/>
+            <NodePopup key="organicNodePopup" ref={nodePopupRef} node={node} molecularType="organic"/>
         </>
-    );
+    )
 };
 
 export default OrganicSearch;

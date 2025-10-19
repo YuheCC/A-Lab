@@ -5,6 +5,8 @@ import ChatInput from './components/ChatInput';
 import MessageList from './components/MessageList';
 import MoleculeModal from './components/MoleculeModal';
 import { ChatProvider, useChatContext } from './context/ChatContext';
+import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '@/models/useAuth';
 
 const ChatContent: React.FC = () => {
     const {
@@ -17,6 +19,11 @@ const ChatContent: React.FC = () => {
         handleFindSimilar,
         messages,
     } = useChatContext();
+    const { t } = useTranslation();
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublic = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
 
     return (
         <>
@@ -28,7 +35,7 @@ const ChatContent: React.FC = () => {
                     </div>
                     {showInput && (
                         <>
-                            {!wsConnected && (
+                            {/* {!wsConnected && (
                                 <div style={{
                                     background: '#fff3cd',
                                     border: '1px solid #ffeaa7',
@@ -45,13 +52,16 @@ const ChatContent: React.FC = () => {
                                         width: '8px',
                                         height: '8px',
                                         borderRadius: '50%',
-                                        backgroundColor: '#ffc107',
-                                        animation: 'pulse 2s infinite'
-                                    }}></div>
-                                    正在连接服务器...
+                                    backgroundColor: '#ffc107',
+                                    animation: 'pulse 2s infinite'
+                                }}></div>
+                                    {t('chatbox.status.connectingToServer')}
                                 </div>
-                            )}
-                            <ChatInput disabled={isLoading || !wsConnected} />
+                            )} */}
+                            <ChatInput
+                                disabled={isLoading || !wsConnected || isPublic}
+                                inputLocked={isPublic}
+                            />
                         </>
                     )}
                 </main>

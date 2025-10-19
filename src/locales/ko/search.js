@@ -1,21 +1,76 @@
 export default {
     // Search Tabs
     tabs: {
-        organic: '유기 분자',
-        inorganic: '무기 분자',
+        organic: '용매, 첨가제 및 희석제',
+        inorganic: '무기 용매, 첨가제 및 희석제',
+        anions: '염 음이온',
         third: '고체 전해질'
     },
     
     // Search Input
-    searchPlaceholder: "SMILES 문자열, 분자명 또는 쿼리를 입력하세요",
+    searchPlaceholder: "SMILES 문자열, 분자명 또는 특성 쿼리를 입력하세요",
     searchButton: "검색",
     searchTooltip: '<p>유효한 쿼리는 분자의 모든 수치적 특성을 검색할 수 있습니다. 예시:</p><p>- "HOMO가 최대 -8인 모든 분자 찾기"<br/>- "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"</p><p>더 개방적인 쿼리의 경우 Ask를 사용하세요.</p><p>SMILES 문자열을 그리거나 찾으려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>을 방문하세요</p>',
     drawMolecule: "분자 그리기",
     
     // Search Options
     findFriendsLabel: '"친구" 찾기',
-    findFriendsDescription: '유사한 물리화학적 특성을 가진 분자들. "친구"는 의도적으로 유사한 구조의 분자들과 다양한 구조의 분자들을 모두 포함합니다. 목록은 물리화학적 특성이 쿼리 분자와 얼마나 유사한지에 따라 정렬됩니다.',
+    findFriendsDescription: '입력한 분자와 유사한 구조를 가지며, 아래의 배터리 사용 사례에 이론적으로 호환되는 물리화학적 특성을 가진 분자:',
     
+    searchRange: '검색 범위',
+    nearbyFriends: '가까운 친구들',
+    distantFriends: '먼 친구들',
+    searchRangeTooltip: '슬라이더를 왼쪽으로 이동하면 구조와 관계없이 사용 사례에 가장 적합한 물성의 분자를 우선합니다. 오른쪽으로 이동하면 입력한 분자와 구조가 가장 유사한 분자를 우선합니다.',
+    advancedOptions: '고급 옵션',
+    intelligentCompute: '지능형 친구 찾기 연산',
+    intelligentFindFriendsLabel: '지능형 "친구" 찾기',
+    intelligentFindFriendsTooltip: 'LLM으로 수백 개의 분자를 살펴보고, 사용 사례에 더 적합한 분자를 찾아보세요. 최상의 결과를 위해 계산 성능을 높이고 (고급 옵션)에서 배터리 시스템 정보를 입력하세요.',
+    intelligentFindFriendsLimitLabel: '이번 달 남은 횟수: {{remaining}} / {{limit}}',
+    showHypothetical: '가상 분자 표시',
+    showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
+    computeDisabled: '비활성화',
+    computeLow: '낮음',
+    computeMedium: '중간',
+    computeHigh: '높음',
+    computeExtreme: '극대',
+    cathode: '양극',
+    anode: '음극',
+    salt: '염',
+    solvent: '주요 용매',
+    performanceMetric: '원하는 성능 지표',
+    extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
+    extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',
+    custom: '사용자 정의',
+    upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
+    upgradeAccount: '계정을 업그레이드',
+    computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+    batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보:',
+
+    
+    searchRange: '검색 범위',
+    nearbyFriends: '가까운 친구들',
+    distantFriends: '먼 친구들',
+    searchRangeTooltip: '슬라이더를 왼쪽으로 이동하면 구조와 관계없이 사용 사례에 가장 적합한 물성의 분자를 우선합니다. 오른쪽으로 이동하면 입력한 분자와 구조가 가장 유사한 분자를 우선합니다.',
+    advancedOptions: '고급 옵션',
+    intelligentCompute: '지능형 친구 찾기 연산',
+    computeDisabled: '비활성화',
+    computeLow: '낮음',
+    computeMedium: '중간',
+    computeHigh: '높음',
+    computeExtreme: '극대',
+    cathode: '양극',
+    anode: '음극',
+    salt: '염',
+    solvent: '주요 용매',
+    performanceMetric: '원하는 성능 지표',
+    extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
+    extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',
+    custom: '사용자 정의',
+    upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
+    upgradeAccount: '계정을 업그레이드',
+    computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
+    intelligentFindFriendsLimitLabel: '이번 달 남은 횟수: {{remaining}} / {{limit}}',
+
     // Loading and Status Messages
     searching: "검색 중...",
     loadingMap: "분자 우주의 지도를 로딩 중",
@@ -52,13 +107,27 @@ export default {
     moleculeTypes: {
         selectMolType: "분자 유형",
         solvent: "용매",
+        cosolvent: "공용매",
         diluent: "희석제",
-        additive: "첨가제"
+        additive: "첨가제",
+        additiveSubtype: "첨가제 서브카테고리",
+        additiveOptions: {
+            seiPromoter: "SEI 활성화제",
+            sideReactionSuppressor: "부사상 반응 억제제",
+            dendriteSuppressor: "덴드리트 억제제",
+            interfacialStabilityImprover: "표면 안정성 향상제"
+        }
     },
     
     // Buttons and Actions
     addToFavorites: "즐겨찾기에 추가 ★",
     saving: "저장 중...",
+
+    // Favorites
+    favorites: {
+        favorites: "즐겨찾기",
+        goToFavorites: "즐겨찾기 페이지로 이동"
+    },
     
     // Warning and Error Messages
     multipleMoleculesWarning: "검색 조건과 일치하는 여러 분자가 발견되었습니다. 친구 찾기 기능이 비활성화되었습니다.",
@@ -81,4 +150,4 @@ export default {
     ambiguousQuery: {
         message: "쿼리가 모호합니다. 약어 {{query}}는 다음 분자 중 하나에 해당할 수 있습니다: {{options}}. 쿼리를 구체화해주세요."
     }
-}; 
+};

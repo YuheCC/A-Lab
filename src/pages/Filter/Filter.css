@@ -1,3 +1,37 @@
+/* 修复MUI Autocomplete下拉框z-index被遮挡问题 */
+.MuiAutocomplete-popper {
+    z-index: 9999 !important;
+}
+
+.MuiPopper-root {
+    z-index: 9999 !important;
+}
+
+/* 修复MUI Slider浮层标签z-index被遮挡问题 */
+.MuiSlider-valueLabel {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelOpen {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelContainer {
+    z-index: 10000 !important;
+}
+
+/* 确保过滤器包装器允许浮层显示 */
+.filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保滑块容器不截断浮层 */
+.sliders-container .filter-wrapper {
+    overflow: visible !important;
+    z-index: 1;
+}
+
 .filter-tabs-container {
     display: flex;
     justify-content: flex-start;
@@ -94,11 +128,11 @@
         font-size: 12px;
         min-width: 60px;
     }
-    
+
     .filter-tabs-container {
         padding: 0;
     }
-    
+
     .filter-tabs-wrapper {
         gap: 0;
     }
@@ -108,10 +142,70 @@
     .filter-tabs-wrapper {
         gap: 0;
     }
-    
+
     .filter-tab-button {
         min-width: 50px;
         font-size: 11px;
         padding: 5px 8px 8px 8px;
     }
+}
+
+/* Filter页面专用布局样式 - 避免与Search页面样式冲突 */
+.filter-umap-container {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 100px);
+    width: 100%;
+    gap: 20px;
+}
+
+.filter-umap-section {
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex;
+    background-color: white;
+    box-shadow: none;
+    border: none;
+    margin-right: 0;
+    height: 100%;
+    width: calc((100vh - 180px) * 0.86);
+}
+
+.filter-umap-section > div {
+    flex: 1;
+    display: flex;
+}
+
+.filter-umap-section .js-plotly-plot {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.filter-umap-section .plot-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.filter-interface-section {
+    flex: 0.75;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 0px;
+    overflow-y: auto;
+}
+
+.filter-umap-section .filter-graph {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+    background-color: white;
+    border: none;
 }

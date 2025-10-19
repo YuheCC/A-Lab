@@ -4,11 +4,12 @@ export default {
     },
     input: {
         placeholder: "バッテリー、バッテリー化学、または関連トピックに関するものなら何でも聞いてください。",
+        placeholderPublic: "アカウントを作成して、バッテリー、バッテリー化学、または関連トピックについて何でも質問してください。",
         sendButton: "送信"
     },
     chat: {
         newChat: "新しいチャット",
-        newExpoler: "新しい探索",
+        newExpoler: "新しいチャット",
         newChatSubtitle: "新しい会話を始めて、分子宇宙の神秘を探求しましょう",
         searchChat: "チャット検索",
         historyTitle: "チャット履歴",
@@ -25,10 +26,25 @@ export default {
         modes: {
             regular: "通常の質問",
             deepSpace: "ディープスペース",
+            lightning: "ライトニング",
+            ask: "プロ",
+            askOss: "Ask OSS",
+            deepSpaceOss: "Deep Space OSS",
+            fastDeepSpace: "高速ディープスペース",
             regularDescription: "基本的なQ&Aモード。日常的なバッテリー関連の質問に適しています。正確で簡潔な回答を提供します。",
             deepSpaceDescription: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
+            lightningDescription: "最低計算量で素早い回答。",
+            askDescription: "最大計算量で最高品質の回答。",
+            askOssDescription: "管理者専用のオープンソース120B計算リソースを使用するAskモードです。",
+            deepSpaceOssDescription: "管理者専用のオープンソース120B計算リソースでDeep Spaceエージェントを駆動します。",
+            fastDeepSpaceDescription: "少ない計算リソースでより迅速な結果を得るためのマルチエージェント研究。",
             regularRemaining: "今日の残り: {{count}}回",
             deepSpaceRemaining: "今月の残り: {{count}}回",
+            lightningLimitLabel: "Ask Lightning 本日の残り: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask プロ 本日の残り: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "ディープスペース 今月の残り: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: "無料版では性能の低いLLMを使用しています。最も強力なモデルを利用するにはアップグレードしてください。",
             betaBadge: "ベータ"
         },
         recommendedQuestions: [
@@ -76,8 +92,7 @@ export default {
         enterDeepSpace: "ディープスペースに入る (ベータ版)",
         deepSpaceTooltip: "LLMエージェントのチームがあなたのバッテリーに関する質問を分析し、文献と分子データベースを精査し、協力して研究レベルの回答を作成します。応答時間は10〜20分かかります。",
         admin: "管理者",
-        fullDeepSpace: "フルディープスペース",
-        disableTools: "ツールを無効にする"
+        fullDeepSpace: "フルディープスペース"
     },
     queryLimit: {
         queriesRemaining: "今日の残りクエリ数：",
@@ -85,6 +100,7 @@ export default {
         reachedLimit: "月間クエリ上限に達しました。サポートが必要な場合は管理者に連絡してください。"
     },
     status: {
+        connectingToServer: "サーバーに接続しています...",
         thinking: "考え中",
         searching: "検索中",
         searchingDatabase: "データベースを検索中",
@@ -154,6 +170,16 @@ export default {
         feedbackError: "フィードバック送信エラー：",
         copyError: "コピーに失敗しました：",
         generalError: "エラー"
+    },
+    publicAccess: {
+        bannerMessage: "アカウントを作成するかログインすると{{feature}}を利用できます。",
+        dismiss: "閉じる",
+        features: {
+            askInput: "Ask",
+            lightning: "ライトニング",
+            pro: "プロ",
+            deepSpace: "ディープスペース"
+        }
     },
     supplementalData: "補足データ",
     history: {

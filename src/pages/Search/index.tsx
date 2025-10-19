@@ -1,11 +1,23 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrganicSearch, InorganicSearch, ThirdSearch } from "./components";
+import AnionsSearch from "./components/AnionsSearch";
 import "./Search.css";
+import { useNavigate } from '@umijs/max';
+import { useAuthStore } from '@/models/useAuth';
 
 const Search = () => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'third'>('organic');
+    const [activeTab, setActiveTab] = useState<'organic' | 'inorganic' | 'anions' | 'third'>('organic');
+    const navigate = useNavigate();
+
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+    const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
+    const userPermissions = useAuthStore(state => state.userPermissions);
+    const isPublicUser = initialAuthLoaded && (!isAuthenticated || userPermissions === 'common');
+    const handleGoToFavorites = () => {
+        navigate('/favorites');
+    };
 
     return (
         <div>
@@ -25,22 +37,41 @@ const Search = () => {
                         {t('search.tabs.inorganic')}
                     </button> */}
                     <button
+                        onClick={() => setActiveTab('anions')}
+                        className={`search-tab-button ${activeTab === 'anions' ? 'active' : ''}`}
+                    >
+                        {t('search.tabs.anions')}
+                    </button>
+                    <button
                         onClick={() => setActiveTab('third')}
                         className={`search-tab-button ${activeTab === 'third' ? 'active' : ''}`}
                     >
                         {t('search.tabs.third')}
                     </button>
                 </div>
+                {
+                    activeTab !== 'third' && isAuthenticated && (
+                        <button
+                            className="favorites-enter-button"
+                            onClick={handleGoToFavorites}
+                            title={t('search.favorites.goToFavorites')}
+                        >
+                            {t('search.favorites.favorites')}
+                        </button>
+                    )
+                }
             </div>
 
             {/* Tab Content */}
             <div className="tab-content">
                 {activeTab === 'organic' ? (
-                    <OrganicSearch />
+                    <OrganicSearch isPublicUser={isPublicUser} />
                 ) : activeTab === 'inorganic' ? (
                     <InorganicSearch />
+                ) : activeTab === 'anions' ? (
+                    <AnionsSearch isPublicUser={isPublicUser} />
                 ) : (
-                    <ThirdSearch />
+                    <ThirdSearch isPublicUser={isPublicUser} />
                 )}
             </div>
         </div>

@@ -1,0 +1,445 @@
+.formulation-container .formulation-module {
+  background: #ffffff;
+  height: 100%;
+}
+
+.formulation-container .module-section {
+  padding: 24px 0;
+}
+
+.formulation-container .module-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.formulation-container .module-content-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.formulation-container .form-group {
+  margin-bottom: 24px;
+}
+
+.formulation-container .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.formulation-container .form-group label {
+  display: flex;
+  font-size: 14px;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.formulation-container .ion-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.formulation-container .ion-option {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.formulation-container .ion-option:hover:not(.disabled) {
+  border-color: #56B26A;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formulation-container .ion-option.selected {
+  border-color: #56B26A;
+  background: #f0f9f0;
+}
+
+.formulation-container .ion-option.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.formulation-container .ion-option.max-selected {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.formulation-container .ion-symbol {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.formulation-container .ion-name {
+  font-size: 11px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.formulation-container .ion-option.selected .ion-symbol {
+  color: #16A34A;
+  font-weight: 300;
+}
+
+.formulation-container .ion-option.selected .ion-name {
+  color: #16A34A;
+  font-weight: 500;
+}
+
+.formulation-container .coming-soon {
+  font-size: 10px;
+  color: #6b7280;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.formulation-container .concentration-input,
+.formulation-container .fraction-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+.formulation-container .concentration-input:focus,
+.formulation-container .fraction-input:focus {
+  outline: none;
+  border-color: #56B26A;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formulation-container .radio-group {
+  display: flex;
+  gap: 24px;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.formulation-container .radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.formulation-container .radio-option span {
+  line-height: 1;
+}
+
+.formulation-container .radio-option input[type="radio"] {
+  margin: 0;
+  width: 12px;
+  height: 12px;
+  accent-color: #16A34A;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.formulation-container .salt-summary {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.formulation-container .salt-summary h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 12px 0;
+}
+
+.formulation-container .summary-content p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.formulation-container .summary-content p:last-child {
+  margin-bottom: 0;
+}
+
+.formulation-container .summary-content .validation-status {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.formulation-container .summary-content .validation-status.valid {
+  color: #16A34A;
+}
+
+.formulation-container .summary-content .validation-status.invalid {
+  color: #dc2626;
+}
+
+.formulation-container .summary-content .validation-icon {
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 8px;
+}
+
+/* Submit Configuration Button */
+.formulation-container .submit-section {
+  padding: 24px 0;
+  background: #ffffff;
+}
+
+.formulation-container .submit-btn {
+  background: #1f2937;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  min-width: 180px;
+}
+
+.formulation-container .submit-btn:hover:not(:disabled) {
+  background: #111827;
+}
+
+.formulation-container .submit-btn:active:not(:disabled) {
+  background: #0f172a;
+}
+
+.formulation-container .submit-btn.calculating {
+  background: #1f2937;
+  cursor: not-allowed;
+  color: #ffffff;
+}
+
+.formulation-container .submit-btn.calculating::after {
+  content: '...';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: dots 1.5s linear infinite;
+}
+
+.formulation-container .submit-btn.calculated,
+.formulation-container .submit-btn.disabled,
+.formulation-container .submit-btn:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+  color: #ffffff;
+}
+
+@keyframes dots {
+  0%, 20% { opacity: 0; }
+  40% { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+
+/* Solvent Configuration Styles */
+.formulation-container .smiles-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.formulation-container .smiles-input-group {
+  flex: 1;
+  min-height: 68px; /* 为错误消息预留空间，防止抖动 */
+  display: flex;
+  flex-direction: column;
+}
+
+.formulation-container .fraction-input-group {
+  flex: 1;
+  min-height: 68px; /* 与smiles-input-group保持一致的高度 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.formulation-container .smiles-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+.formulation-container .smiles-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formulation-container .smiles-input.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.formulation-container .smiles-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.formulation-container .smiles-error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  min-height: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.formulation-container .fraction-input-with-remove {
+  width: 100%;
+}
+
+.formulation-container .remove-button-group {
+  display: flex;
+  align-items: start;
+  padding-top: 32px; /* 与label高度和margin保持一致 */
+  width: 32px;
+  justify-content: center;
+}
+
+.formulation-container .remove-solvent-btn {
+  background: transparent;
+  color: #6b7280;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.formulation-container .remove-solvent-btn:hover {
+  color: #ef4444;
+}
+
+.formulation-container .add-smiles-btn {
+  background: transparent;
+  color: #56B26A;
+  border: 1px dashed #56B26A;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: block;
+  margin: 0;
+  width: 100%;
+}
+
+.formulation-container .add-smiles-btn:hover:not(:disabled) {
+  background: rgba(86, 178, 106, 0.05);
+  border-color: #16A34A;
+  color: #16A34A;
+}
+
+.formulation-container .add-smiles-btn:disabled,
+.formulation-container .add-smiles-btn.disabled {
+  background: transparent;
+  color: #d1d5db;
+  border: 1px dashed #d1d5db;
+  cursor: not-allowed;
+}
+
+.formulation-container .add-smiles-btn:disabled:hover,
+.formulation-container .add-smiles-btn.disabled:hover {
+  background: transparent;
+  color: #d1d5db;
+  border: 1px dashed #d1d5db;
+}
+
+
+.formulation-container .solvent-summary {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.formulation-container .solvent-summary h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 12px 0;
+}
+
+@media (max-width: 768px) {
+  .formulation-container .smiles-input-row {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+
+  .formulation-container .smiles-input-group {
+    grid-column: 1 / -1;
+  }
+
+  .formulation-container .fraction-input-group {
+    min-width: auto;
+  }
+
+  .formulation-container .remove-button-group {
+    grid-row: 2;
+    grid-column: 2;
+    align-items: start;
+    padding-bottom: 0;
+    padding-top: 6px;
+  }
+}
+
+/* ResultTip 页面级样式 */
+.result-tip-page {
+  background: #ffffff;
+  width: 100%;
+  min-height: 100vh;
+  padding: 120px 20px 40px 20px;
+}
+
+@media (max-width: 640px) {
+  .result-tip-page {
+    padding: 80px 16px 32px 16px;
+  }
+}

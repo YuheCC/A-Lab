@@ -1,7 +1,42 @@
+/* 修复MUI Autocomplete下拉框z-index被遮挡问题 */
+.MuiAutocomplete-popper {
+    z-index: 9999 !important;
+}
+
+.MuiPopper-root {
+    z-index: 9999 !important;
+}
+
+/* 修复MUI Slider浮层标签z-index被遮挡问题 */
+.MuiSlider-valueLabel {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelOpen {
+    z-index: 10000 !important;
+}
+
+.MuiSlider-valueLabelContainer {
+    z-index: 10000 !important;
+}
+
+/* 确保过滤器包装器允许浮层显示 */
+.filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保滑块容器不截断浮层 */
+.sliders-container .filter-wrapper {
+    overflow: visible !important;
+    z-index: 1;
+}
+
 /* Search Page Tab Styles */
 .search-tabs-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
     margin: 0;
     padding: 0;
     background-color: #f5f5f5; /* 浅灰色背景，类似浏览器标签栏 */
@@ -64,6 +99,23 @@
     display: none;
 }
 
+/* 收藏按钮样式 */
+.favorites-enter-button {
+    padding: 8px 16px;
+    margin-right: 8px;
+    border: none;
+    background-color: transparent;
+    color: #56b26a;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 /* Tab内容区域过渡效果 */
 .tab-content {
     transition: opacity 0.3s ease;
@@ -95,13 +147,19 @@
         font-size: 12px;
         min-width: 60px;
     }
-    
+
     .search-tabs-container {
         padding: 0;
     }
-    
+
     .search-tabs-wrapper {
         gap: 0;
+    }
+
+    .favorites-enter-button {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-right: 4px;
     }
 }
 
@@ -109,11 +167,18 @@
     .search-tabs-wrapper {
         gap: 0;
     }
-    
+
     .search-tab-button {
         min-width: 50px;
         font-size: 11px;
         padding: 5px 8px 8px 8px;
+    }
+
+    .favorites-enter-button {
+        padding: 5px 8px;
+        font-size: 11px;
+        margin-right: 2px;
+        gap: 2px;
     }
 }
 
@@ -122,34 +187,110 @@
     display: flex;
     height: calc(100vh - 140px);
     position: relative;
+    width: 100%;
+    align-items: stretch;
+    gap: 0;
 }
 
 .search-umap-section {
-    flex: 1;
     position: relative;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     border-radius: 8px;
-    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .search-interface-section {
-    flex: 1;
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 8px;
     padding: 20px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 当在filter模式时，确保浮层不被截断 */
+.search-interface-section:has(.sliders-container) {
+    overflow: visible !important;
+}
+
+/* 为了兼容不支持:has的浏览器，添加特定类 */
+.search-interface-section.filter-mode {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的sliders容器不截断浮层 */
+.search-interface-section.filter-mode .sliders-container {
+    overflow: visible !important;
+}
+
+/* 确保filter模式下的filter包装器不截断浮层 */
+.search-interface-section.filter-mode .filter-wrapper {
+    overflow: visible !important;
+    position: relative;
+}
+
+/* 确保MUI Autocomplete的popper在filter模式下正确显示 */
+.search-interface-section.filter-mode .MuiAutocomplete-root {
+    position: relative;
+    z-index: 1;
+}
+
+.search-interface-section.filter-mode .functional-group-input-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* 特别针对Search页面filter模式的Slider浮层标签修复 */
+.search-interface-section.filter-mode .MuiSlider-valueLabel {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelOpen {
+    z-index: 10001 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-valueLabelContainer {
+    z-index: 10001 !important;
+}
+
+/* 确保Slider的mark标签也不会被截断 */
+.search-interface-section.filter-mode .MuiSlider-mark {
+    z-index: 2 !important;
+}
+
+.search-interface-section.filter-mode .MuiSlider-markLabel {
+    z-index: 2 !important;
 }
 
 .resize-divider {
     width: 4px;
-    background-color: #e0e0e0;
+    background-color: transparent;
     cursor: col-resize;
     transition: background-color 0.2s ease;
-    margin: 0 5px;
+    flex: 0 0 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resize-divider::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background-color: #d1d5db;
+    border-radius: 0.5px;
 }
 
 .resize-divider:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+.resize-divider:hover::after {
     background-color: #0066cc;
+    width: 2px;
 }
 
 .resize-divider:active {

@@ -3183,7 +3183,7 @@ body.dragging {
 }
 
 .analysis-tab.active {
-  background-color: #2196F3;
+  background-color: #56b26a;
   color: white;
 }
 
@@ -3378,7 +3378,7 @@ body.no-select {
   border-radius: 4px;
   padding: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 999;
 }
 
 .icon-controls-group  .control-icon {
@@ -3540,7 +3540,7 @@ body.no-select {
   background-color: #0052a3;
 }
 
-.chat-container.main-container {
+.chat-container.main-container, .predict-container.main-container, .formulation-container.main-container, .formulation-create-container.main-container {
   margin: 0;
   padding: 0;
 }

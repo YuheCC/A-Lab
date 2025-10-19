@@ -4,11 +4,12 @@ export default {
     },
     input: {
         placeholder: "随便问我关于电池、电池化学或相关主题的任何问题。",
+        placeholderPublic: "创建账户后即可向我询问关于电池、电池化学或相关主题的任何问题。",
         sendButton: "发送"
     },
     chat: {
-        newChat: "新探索",
-        newExpoler: "新探索",
+        newChat: "新聊天",
+        newExpoler: "新聊天",
         newChatSubtitle: "开始一段新的对话，探索分子宇宙的奥秘",
         searchChat: "搜索对话",
         historyTitle: "历史对话",
@@ -27,10 +28,24 @@ export default {
         modes: {
             regular: "常规问答",
             deepSpace: "深度搜索",
+            lightning: "闪电",
+            ask: "专业版",
+            askOss: "Ask OSS",
+            deepSpaceOss: "Deep Space OSS",
+            fastDeepSpace: "快速 Deep Space",
             regularDescription: "基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。",
-            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
-            regularRemaining: "今日剩余: {{count}}次",
+            deepSpaceDescription: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
+            lightningDescription: "最低算力，极速回复。",
+            askDescription: "高算力，提供最佳答案。",
+            askOssDescription: "仅限管理员：使用开源120B算力的 Ask 工作流。",
+            deepSpaceOssDescription: "仅限管理员：使用开源120B算力驱动 Deep Space 智能体。",
+            fastDeepSpaceDescription: "较低算力的多智能体研究，可实现更快速的结果。",            regularRemaining: "今日剩余: {{count}}次",
             deepSpaceRemaining: "本月剩余: {{count}}次",
+            lightningLimitLabel: "Ask 闪电今日剩余: {{remaining}} / {{limit}}",
+            proLimitLabel: "Ask 专业版今日剩余: {{remaining}} / {{limit}}",
+            deepSpaceLimitLabel: "深度搜索本月剩余: {{remaining}} / {{limit}}",
+            liteBadge: "LITE",
+            liteNotice: "免费版使用较弱的大模型，请升级以使用最强大的模型。",
             betaBadge: "Beta"
         },
         recommendedQuestions: [
@@ -76,7 +91,7 @@ export default {
         ignoreChatHistory: "忽略聊天历史",
         disableLiteratureSearch: "禁用文献搜索",
         enterDeepSpace: "进入深度搜索 (BETA)",
-        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。",
+        deepSpaceTooltip: "由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为20-40分钟。",
         admin: "管理员",
         fullDeepSpace: "全深度搜索",
         disableTools: "禁用工具"
@@ -87,6 +102,7 @@ export default {
         reachedLimit: "您已达到本月查询限制。请联系管理员寻求帮助。"
     },
     status: {
+        connectingToServer: "连接到服务器...",
         thinking: "思考中",
         searching: "搜索中",
         searchingDatabase: "搜索我们的数据库",
@@ -95,7 +111,7 @@ export default {
         noMoleculesFound: "未找到分子。",
         findMoleculesFailed: "查找分子失败。请稍后再试。",
         clarifyingQuestions: "我们可能会要求您稍后回答一些澄清问题。",
-        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要10-20分钟才能响应。"
+        deepSpaceWorking: "深空多智能体LLM现在正在工作，根据您问题的复杂程度，可能需要20-40分钟才能响应。"
     },
     buttons: {
         findMolecules: "查找分子",
@@ -156,6 +172,16 @@ export default {
         feedbackError: "提交反馈时出错：",
         copyError: "复制失败：",
         generalError: "错误"
+    },
+    publicAccess: {
+        bannerMessage: "创建账户或登录后即可使用{{feature}}。",
+        dismiss: "知道了",
+        features: {
+            askInput: "Ask",
+            lightning: "闪电",
+            pro: "专业版",
+            deepSpace: "深度搜索"
+        }
     },
     supplementalData: "补充数据",
     history: {
