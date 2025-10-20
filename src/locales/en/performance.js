@@ -113,11 +113,11 @@ export default {
       temp45: "45°C Performance"
     },
     performance: {
-      cycleLife25: "25°C Cycle Life",
-      ce25: "25°C Coulombic Efficiency",
-      ratePerformance25: "25°C Rate Performance",
-      cycleLife45: "45°C Cycle Life",
-      ce45: "45°C Coulombic Efficiency"
+      cycleLife25: "Cycle Life",
+      ce25: "Coulombic Efficiency",
+      ratePerformance25: "Rate Performance",
+      cycleLife45: "Cycle Life",
+      ce45: "Coulombic Efficiency"
     },
     status: {
       positive: "POSITIVE",
