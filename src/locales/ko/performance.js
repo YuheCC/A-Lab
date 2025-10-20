@@ -113,11 +113,11 @@ export default {
       temp45: "45°C 성능"
     },
     performance: {
-      cycleLife25: "25°C 사이클 수명",
-      ce25: "25°C 코로나빅 효율",
-      ratePerformance25: "25°C 비율 성능",
-      cycleLife45: "45°C 사이클 수명",
-      ce45: "45°C 코로나빅 효율"
+      cycleLife25: "사이클 수명",
+      ce25: "코로나빅 효율",
+      ratePerformance25: "비율 성능",
+      cycleLife45: "사이클 수명",
+      ce45: "코로나빅 효율"
     },
     status: {
       positive: "긍정적",
