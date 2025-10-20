@@ -521,10 +521,10 @@ export default {
         text: "-"
       },
       enterprise3: {
-        text: "We install our MU software and databases on your server. Your server must be connected to the internet, and your data still flows through our 1st and 3rd party APIs."
+        text: "We install our MU software and databases on your server. Your server must be connected to the internet, and your data still flows through our 1ˢᵗ and 3ʳᵈ party APIs."
       },
       joint: {
-        text: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the internet. Support for replacing some 3rd party API providers and implementing some MU services locally (your choice).Full On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
+        text: "Partial On-Prem: We install our MU software and databases on your server. Your server must be connected to the internet. Support for replacing some 3ʳᵈ party API providers and implementing some MU services locally (your choice).\n\nFull On-Prem: We install our MU software and databases on your server. All MU services are performed locally, your server is air-gapped."
       }
     }
   },

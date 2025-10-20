@@ -816,7 +816,7 @@ const Pricing = ({ showHeader = true, className = '', permission }: PricingProps
       )}
 
       {noPlansAvailable && (
-        <div style={{ textAlign: 'center', marginTop: '24px', color: '#6b7280' }}>
+        <div style={{ textAlign: 'center', margin: '24px 0', color: '#6b7280' }}>
           {t('pricing.noHigherPlansMessage', 'You already have the highest level available. Contact us if you need anything else.')}
         </div>
       )}
