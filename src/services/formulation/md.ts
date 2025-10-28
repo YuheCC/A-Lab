@@ -67,7 +67,7 @@ export interface MDHistoryDetailResponse {
 }
 
 export async function runMDSimulation(params: MDRunParams) {
-  return request('/api/md/run', {
+  return request('/api/formulate/run', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,20 +78,20 @@ export async function runMDSimulation(params: MDRunParams) {
 
 // MD历史记录相关接口
 export async function getMDHistoryList(params?: any) {
-  return request('/api/md/history/list', {
+  return request('/api/formulate/history/list', {
     method: 'GET',
     params,
   });
 }
 
 export async function getMDHistoryDetail(id: number) {
-  return request(`/api/md/history/detail?id=${id}`, {
+  return request(`/api/formulate/history/detail?id=${id}`, {
     method: 'GET',
   });
 }
 
 export async function deleteMDHistory(id: number) {
-  return request('/api/md/history/delete', {
+  return request('/api/formulate/history/delete', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

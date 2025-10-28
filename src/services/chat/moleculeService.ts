@@ -155,7 +155,7 @@ class MoleculeService {
       
       // 使用 molecular_details 接口，参考 MoleculeModal 的实现
       const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
-      let queryUrl = `${this.baseUrl}/api/molecule_details?query_type=smiles&molecule=${encodeURIComponent(name.trim())}`;
+      let queryUrl = `${this.baseUrl}/api/search/molecule_details?query_type=smiles&molecule=${encodeURIComponent(name.trim())}`;
       if (isHighTier) {
         queryUrl += '&use_35m=true';
       }
@@ -199,7 +199,7 @@ class MoleculeService {
   async getSimilarMolecules(name: string, type: string = 'all'): Promise<SimilarMolecule[]> {
     try {
       const { default: request } = await import('@/services/request');
-      const resp = await request('/molecule/similar', {
+      const resp = await request('/api/llm/molecule/similar', {
         method: 'GET',
         params: { name, type },
       });

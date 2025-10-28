@@ -59,7 +59,7 @@ export function createChatWebSocketStream(options: ChatStreamOptions): ChatStrea
 function createChatWebSocketStreamInternal(options: ChatStreamOptions, transports: string[]): ChatStreamHandle {
   const {
     baseUrl = (window as any).BASE_URL || '/api',
-    path = '/ws/socket.io',  // Socket.IO 默认路径
+    path = '/api/llm/ws/socket.io',  // Socket.IO 默认路径
     chatId,
     message,
     mode,
@@ -278,7 +278,7 @@ class GlobalWebSocketManager {
     }
 
     const baseUrl = BASE_URL || 'https://prod-api.ses.ai';
-    const path = '/ws/socket.io';
+    const path = '/api/llm/ws/socket.io';
     const socketUrl = buildSocketUrl(baseUrl);
     const token = localStorage.getItem('token') || '';
 

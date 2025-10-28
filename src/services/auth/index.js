@@ -6,7 +6,7 @@ export async function login(data) {
         formData.append(key, data[key]);
     });
 
-    return request("/login", {
+    return request("/api/user/login", {
         method: "POST",
         data: formData,
     });
@@ -18,7 +18,7 @@ export async function register(data) {
         formData.append(key, data[key]);
     });
     console.log(formData)
-    return request('/register', {
+    return request('/api/user/register', {
         method: "POST",
         data: formData,
     });
@@ -30,7 +30,7 @@ export async function resetPassword(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/reset-password', {
+    return request('/api/user/reset-password', {
         method: "POST",
         data: formData,
     });
@@ -42,7 +42,7 @@ export async function resetPasswordByToken(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/reset-password-token', {
+    return request('/api/user/reset-password-token', {
         method: "POST",
         data: formData,
     });
@@ -54,20 +54,20 @@ export async function redeemCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/redeem-code', {
+    return request('/api/user/redeem-code', {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verify() {    
-    return request('/verify-token', {
+    return request('/api/user/verify-token', {
         method: "GET",
     });
 }
 
 export async function verifyCode(params) {
-    return request('/verify-register-code', {
+    return request('/api/user/verify-register-code', {
         method: "GET",
         params,
     });
@@ -79,7 +79,7 @@ export async function verifyRedeemCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/redeem-new', {
+    return request('/api/user/redeem-new', {
         method: "POST",
         data: formData,
     });
@@ -91,14 +91,14 @@ export async function sendEducationCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/bind-edu-email', {
+    return request('/api/user/bind-edu-email', {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verifyEducationCode(params) {
-    return request('/verify-edu-code', {
+    return request('/api/user/verify-edu-code', {
         method: "GET",
         params,
     });
@@ -110,14 +110,14 @@ export async function sendForgotPasswordCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/forgot-password', {
+    return request('/api/user/forgot-password', {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verifyForgotPasswordCode(params) {
-    return request('/verify-forgot-password-code', {
+    return request('/api/user/verify-forgot-password-code', {
         method: "GET",
         params,
     });
@@ -129,7 +129,7 @@ export async function contactSales(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/contact-sales', {
+    return request('/api/user/contact-sales', {
         method: "POST",
         data: formData,
     });

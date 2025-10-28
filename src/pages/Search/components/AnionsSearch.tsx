@@ -370,7 +370,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
         try {
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search-new`;
+            let searchEndpoint = `${API_URL}/api/search/search-new`;
 
             // Fetch the searched molecule's properties
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=anions`);

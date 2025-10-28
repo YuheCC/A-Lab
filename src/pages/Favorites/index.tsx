@@ -142,7 +142,7 @@ const FavoritesGrid = () => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
-        const response = await authFetch(`${API_URL}/favorites-retrieve`);
+        const response = await authFetch(`${API_URL}/api/user/favorites-retrieve`);
 
         if (!response.ok) {
           throw new Error(`${t('favorites.errorLoadingFavorites')}: ${response.status} ${response.statusText}`);
@@ -291,7 +291,7 @@ const FavoritesGrid = () => {
     for (const favorite of favoritesData) {
       try {
         if (favorite.smiles) {
-          const response = await authFetch(`${API_URL}/api/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`);
+          const response = await authFetch(`${API_URL}/api/search/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`);
           
           if (response.ok) {
             const blob = await response.blob();
@@ -316,7 +316,7 @@ const FavoritesGrid = () => {
     }
     
     try {
-      const response = await authFetch(`${API_URL}/favorites-delete/${id}`, {
+      const response = await authFetch(`${API_URL}/api/user/favorites-delete/${id}`, {
         method: 'DELETE'
       });
 
@@ -374,7 +374,7 @@ const FavoritesGrid = () => {
     
     try {
       const deletePromises = selectedMolecules.map(molecule => 
-        authFetch(`${API_URL}/favorites-delete/${molecule.id}`, {
+        authFetch(`${API_URL}/api/user/favorites-delete/${molecule.id}`, {
           method: 'DELETE'
         })
       );

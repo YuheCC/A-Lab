@@ -200,7 +200,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchQueryLimit = useCallback(async () => {
         try {
             const API_URL = getAPIUrl();
-            const response = await authFetch(`${API_URL}/query_limit`, {
+            const response = await authFetch(`${API_URL}/api/user/query_limit`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
