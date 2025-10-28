@@ -64,7 +64,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
             setCurrentPage(1); // 重置到第一页
             
             try {
-                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${currentPage}&page_size=${pageSize}`);
+                const response = await authFetch(`${BASE_URL}/api/search/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${currentPage}&page_size=${pageSize}`);
                 
                 if (!response.ok) {
                     throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
@@ -338,7 +338,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
         setError('');
         
         try {
-            const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
+            const response = await authFetch(`${BASE_URL}/api/search/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
             
             if (!response.ok) {
                 throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
