@@ -1,10 +1,19 @@
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import type { QueryLimitInfo } from '@/types/queryLimit';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+  ADDITIVE_CATEGORY_LABEL_KEYS,
+  ADDITIVE_OPTIONS_BY_CATEGORY,
+  DEFAULT_ADDITIVE_CATEGORY,
+  DEFAULT_ADDITIVE_SUBTYPE,
+  getDefaultSubtypeForCategory,
+  isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 interface FindFriendOptionsProps {
   findClosestFriends: boolean;
@@ -15,6 +24,8 @@ interface FindFriendOptionsProps {
   setShowAdvanced: (v: boolean) => void;
   selectedMolType: string;
   setSelectedMolType: (v: string) => void;
+  additiveCategory: AdditiveCategoryType;
+  setAdditiveCategory: (v: AdditiveCategoryType) => void;
   additiveSubtype: string;
   setAdditiveSubtype: (v: string) => void;
   computeLevel: string;
@@ -53,6 +64,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setShowAdvanced,
   selectedMolType,
   setSelectedMolType,
+  additiveCategory,
+  setAdditiveCategory,
   additiveSubtype,
   setAdditiveSubtype,
   computeLevel,
@@ -112,6 +125,20 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
     t,
     'search.intelligentFindFriendsLimitLabel',
   );
+
+  const additiveOptionList = useMemo(
+    () => ADDITIVE_OPTIONS_BY_CATEGORY[additiveCategory],
+    [additiveCategory],
+  );
+
+  useEffect(() => {
+    if (selectedMolType !== 'additive') {
+      return;
+    }
+    if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+      setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+    }
+  }, [additiveCategory, additiveSubtype, selectedMolType, setAdditiveSubtype]);
 
   return (
     <>
@@ -176,11 +203,16 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                         opacity: readOnly ? 0.6 : 1,
                       }}
                     >
-                      <select
+                          <select
                         value={selectedMolType}
                         onChange={(e) => {
                             if (handleGuardedInteraction(e)) return;
-                            setSelectedMolType(e.target.value);
+                            const newType = e.target.value;
+                            setSelectedMolType(newType);
+                            if (selectedMolType !== 'additive' && newType === 'additive') {
+                              setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+                              setAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
+                            }
                           }}
                           style={{
                             backgroundColor: readOnly ? '#f1f5f9' : 'white',
@@ -201,31 +233,66 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                           <option value="additive">{t('search.moleculeTypes.additive')}</option>
                         </select>
                         {selectedMolType === 'additive' && (
-                          <select
-                            value={additiveSubtype}
-                            onChange={(e) => {
-                              if (handleGuardedInteraction(e)) return;
-                              setAdditiveSubtype(e.target.value);
-                            }}
-                            style={{
-                              backgroundColor: readOnly ? '#f1f5f9' : 'white',
-                              border: '1px solid #ccc',
-                              borderRadius: '4px',
-                              padding: '4px',
-                              color: readOnly ? '#94a3b8' : undefined,
-                              cursor: readOnly ? 'not-allowed' : 'pointer',
-                            }}
-                            aria-label={t('search.moleculeTypes.additiveSubtype')}
-                            onMouseDown={(event) => {
-                              if (handleGuardedInteraction(event)) return;
-                            }}
-                            aria-disabled={readOnly}
-                          >
-                            <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
-                            <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
-                            <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
-                            <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
-                          </select>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <select
+                              value={additiveCategory}
+                              onChange={(e) => {
+                                if (handleGuardedInteraction(e)) return;
+                                const newCategory = e.target.value as AdditiveCategoryType;
+                                setAdditiveCategory(newCategory);
+                                setAdditiveSubtype(getDefaultSubtypeForCategory(newCategory));
+                              }}
+                              style={{
+                                backgroundColor: readOnly ? '#f1f5f9' : 'white',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                padding: '4px',
+                                color: readOnly ? '#94a3b8' : undefined,
+                                cursor: readOnly ? 'not-allowed' : 'pointer',
+                              }}
+                              aria-label={t('search.moleculeTypes.additiveCategory')}
+                              onMouseDown={(event) => {
+                                if (handleGuardedInteraction(event)) return;
+                              }}
+                              aria-disabled={readOnly}
+                            >
+                              {Object.keys(ADDITIVE_CATEGORY_LABEL_KEYS).map((categoryKey) => (
+                                <option key={categoryKey} value={categoryKey}>
+                                  {t(
+                                    `search.moleculeTypes.additiveCategories.${ADDITIVE_CATEGORY_LABEL_KEYS[categoryKey as AdditiveCategoryType]}`,
+                                  )}
+                                </option>
+                              ))}
+                            </select>
+                            <select
+                              value={additiveSubtype}
+                              onChange={(e) => {
+                                if (handleGuardedInteraction(e)) return;
+                                setAdditiveSubtype(e.target.value);
+                              }}
+                              style={{
+                                backgroundColor: readOnly ? '#f1f5f9' : 'white',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                padding: '4px',
+                                color: readOnly ? '#94a3b8' : undefined,
+                                cursor: readOnly ? 'not-allowed' : 'pointer',
+                              }}
+                              aria-label={t('search.moleculeTypes.additiveSubtype')}
+                              onMouseDown={(event) => {
+                                if (handleGuardedInteraction(event)) return;
+                              }}
+                              aria-disabled={readOnly}
+                            >
+                              {additiveOptionList.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {t(
+                                    `search.moleculeTypes.additiveCategories.${option.labelKey}`,
+                                  )}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         )}
                       </div>
                     )}

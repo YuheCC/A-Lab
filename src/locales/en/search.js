@@ -108,11 +108,29 @@ export default {
         diluent: "Diluent",
         additive: "Additive",
         additiveSubtype: "Additive subcategory",
-        additiveOptions: {
-            seiPromoter: "SEI Promoter",
-            sideReactionSuppressor: "Side reaction suppressor",
-            dendriteSuppressor: "Dendrite suppressor",
-            interfacialStabilityImprover: "Interfacial stability improver"
+        additiveCategory: "Category",
+        additiveCategories: {
+            mechanistic: "Mechanistic",
+            outcome: "Outcome",
+            mechanisticOptions: {
+                seiStabilizer: "SEI Stabilizer",
+                ceiStabilizer: "CEI Stabilizer",
+                hfNeutralizer: "HF Neutralizer",
+                tmDissolutionSuppressor: "TM Dissolution Suppressor",
+                desolvationOptimizer: "Desolvation Optimizer",
+                dendriteSuppressor: "Dendrite suppressor",
+                polysulfideSuppressor: "Polysulfide suppressor",
+                gasSuppressor: "Gas suppressor",
+                flameRetardant: "Flame retardant"
+            },
+            outcomeOptions: {
+                fastCharging: "Fast charging",
+                highVoltage: "High voltage",
+                htCycling: "HT cycling",
+                htStorage: "HT storage",
+                ltCycling: "LT cycling",
+                rtCycling: "RT cycling"
+            }
         }
     },
     

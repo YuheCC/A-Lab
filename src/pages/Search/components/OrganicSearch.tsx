@@ -21,6 +21,13 @@ import '../index.css';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+    DEFAULT_ADDITIVE_CATEGORY,
+    DEFAULT_ADDITIVE_SUBTYPE,
+    getDefaultSubtypeForCategory,
+    isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 const API_URL = getAPIUrl();
 
@@ -95,14 +102,15 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.75);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
-    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
+    const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     useEffect(() => {
         switch (selectedMolType) {
             case 'diluent':
                 setStructureWeight(0.5);
                 break;
             case 'additive':
-                setStructureWeight(1.0);
+                setStructureWeight(0.9);
                 break;
             case 'solvent':
             case 'cosolvent':
@@ -144,6 +152,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         if (!isPublic) return;
         setFindClosestFriends(false);
         setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveCategory(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveCategory);
         setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
         setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
         setShowHypothetical(false);
@@ -161,6 +170,12 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
+
+    useEffect(() => {
+        if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+            setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+        }
+    }, [additiveCategory, additiveSubtype]);
 
     // 处理界面模式切换
     const handleModeSwitch = (mode: 'search' | 'filter') => {
@@ -560,6 +575,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 setShowAdvanced={setShowAdvanced}
                                 selectedMolType={selectedMolType}
                                 setSelectedMolType={setSelectedMolType}
+                                additiveCategory={additiveCategory}
+                                setAdditiveCategory={setAdditiveCategory}
                                 additiveSubtype={additiveSubtype}
                                 setAdditiveSubtype={setAdditiveSubtype}
                                 computeLevel={computeLevel}

@@ -18,6 +18,15 @@ import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
 import { useChatContext } from '../../context/ChatContext';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+    ADDITIVE_CATEGORY_LABEL_KEYS,
+    ADDITIVE_OPTIONS_BY_CATEGORY,
+    DEFAULT_ADDITIVE_CATEGORY,
+    DEFAULT_ADDITIVE_SUBTYPE,
+    getDefaultSubtypeForCategory,
+    isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 const inferIsAnionFromData = (
     input?: Partial<MoleculeData> | Record<string, any> | null
@@ -95,7 +104,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
     const prevMoleculeTypeRef = useRef('solvent');
     const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
-    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
+    const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
+    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
@@ -117,6 +127,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const additiveOptionList = useMemo(
+        () => ADDITIVE_OPTIONS_BY_CATEGORY[additiveCategory],
+        [additiveCategory],
+    );
     const handleLockedAction = useCallback(() => {
         if (!isAuthenticated) {
             if (typeof window !== 'undefined') {
@@ -162,6 +176,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 setStructureWeight(0.5);
                 break;
             case 'additive':
+                setStructureWeight(0.9);
+                break;
             case 'salt':
                 setStructureWeight(1.0);
                 break;
@@ -175,6 +191,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isValidAdditiveSubtype(additiveCategory, selectedAdditiveSubtype)) {
+            setSelectedAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+        }
+    }, [additiveCategory, selectedAdditiveSubtype]);
 
     useEffect(() => {
         if (isAnionFindFriend) {
@@ -285,14 +307,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value;
         setSelectedMoleculeType(newType);
-        if (newType === 'additive') {
-            setSelectedAdditiveSubtype('A');
+        if (selectedMoleculeType !== 'additive' && newType === 'additive') {
+            setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+            setSelectedAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
         }
         onUpdateMoleculeType?.(moleculeName, newType);
     };
 
     const handleAdditiveSubtypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAdditiveSubtype(event.target.value);
+    };
+
+    const handleAdditiveCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newCategory = event.target.value as AdditiveCategoryType;
+        setAdditiveCategory(newCategory);
+        setSelectedAdditiveSubtype(getDefaultSubtypeForCategory(newCategory));
     };
 
     const toggleFunctionalGroups = (cardId: string) => {
@@ -608,16 +637,35 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     {selectedMoleculeType === 'additive' && (
                         <div style={{ marginTop: '8px' }}>
                             <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
-                            <select
-                                value={selectedAdditiveSubtype}
-                                onChange={handleAdditiveSubtypeChange}
-                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                            >
-                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
-                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
-                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
-                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
-                            </select>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+                                <select
+                                    value={additiveCategory}
+                                    onChange={handleAdditiveCategoryChange}
+                                    style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                    aria-label={t('molecular.moleculeModal.additiveSubtypes.categoryLabel')}
+                                >
+                                    {Object.keys(ADDITIVE_CATEGORY_LABEL_KEYS).map((categoryKey) => (
+                                        <option key={categoryKey} value={categoryKey}>
+                                            {t(
+                                                `molecular.moleculeModal.additiveSubtypes.${ADDITIVE_CATEGORY_LABEL_KEYS[categoryKey as AdditiveCategoryType]}`,
+                                            )}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={selectedAdditiveSubtype}
+                                    onChange={handleAdditiveSubtypeChange}
+                                    style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                >
+                                    {additiveOptionList.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {t(
+                                                `molecular.moleculeModal.additiveSubtypes.${option.labelKey}`,
+                                            )}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     )}
                     <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>

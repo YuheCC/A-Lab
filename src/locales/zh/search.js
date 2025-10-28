@@ -110,11 +110,29 @@ export default {
         diluent: "稀释剂",
         additive: "添加剂",
         additiveSubtype: "添加剂子类别",
-        additiveOptions: {
-            seiPromoter: "SEI 促进剂",
-            sideReactionSuppressor: "副反应抑制剂",
-            dendriteSuppressor: "枝晶抑制剂",
-            interfacialStabilityImprover: "界面稳定性改进剂"
+        additiveCategory: "类别",
+        additiveCategories: {
+            mechanistic: "机理",
+            outcome: "结果",
+            mechanisticOptions: {
+                seiStabilizer: "SEI 稳定剂",
+                ceiStabilizer: "CEI 稳定剂",
+                hfNeutralizer: "HF 中和剂",
+                tmDissolutionSuppressor: "TM 溶解抑制剂",
+                desolvationOptimizer: "脱溶优化剂",
+                dendriteSuppressor: "枝晶抑制剂",
+                polysulfideSuppressor: "多硫化物抑制剂",
+                gasSuppressor: "气体抑制剂",
+                flameRetardant: "阻燃剂"
+            },
+            outcomeOptions: {
+                fastCharging: "快速充电",
+                highVoltage: "高电压",
+                htCycling: "高温循环",
+                htStorage: "高温存储",
+                ltCycling: "低温循环",
+                rtCycling: "室温循环"
+            }
         }
     },
     

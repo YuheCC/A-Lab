@@ -17,6 +17,13 @@ import { buildQueryString } from "@/services/buildQueryString";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import { useQueryLimit } from '@/hooks/useQueryLimit';
 import InorganicFilter, { InorganicFilterRef } from './InorganicFilter';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+    DEFAULT_ADDITIVE_CATEGORY,
+    DEFAULT_ADDITIVE_SUBTYPE,
+    getDefaultSubtypeForCategory,
+    isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 const API_URL = getAPIUrl();
 
@@ -89,7 +96,8 @@ const InorganicSearch = () => {
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({});
     const [findClosestFriends, setFindClosestFriends] = useState(false);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
-    const [additiveSubtype, setAdditiveSubtype] = useState('A');
+    const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
+    const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [structureWeight, setStructureWeight] = useState(0.75);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
@@ -117,7 +125,7 @@ const InorganicSearch = () => {
                 setStructureWeight(0.5);
                 break;
             case 'additive':
-                setStructureWeight(1.0);
+                setStructureWeight(0.9);
                 break;
             case 'solvent':
             case 'cosolvent':
@@ -135,6 +143,12 @@ const InorganicSearch = () => {
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<InorganicMoleculeData[]>([]);
+
+    useEffect(() => {
+        if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+            setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+        }
+    }, [additiveCategory, additiveSubtype]);
 
     // 处理界面模式切换
     const handleModeSwitch = (mode: 'search' | 'filter') => {
@@ -510,6 +524,8 @@ const InorganicSearch = () => {
                                 setShowAdvanced={setShowAdvanced}
                                 selectedMolType={selectedMolType}
                                 setSelectedMolType={setSelectedMolType}
+                                additiveCategory={additiveCategory}
+                                setAdditiveCategory={setAdditiveCategory}
                                 additiveSubtype={additiveSubtype}
                                 setAdditiveSubtype={setAdditiveSubtype}
                                 computeLevel={computeLevel}

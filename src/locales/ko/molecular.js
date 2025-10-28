@@ -36,10 +36,28 @@ export default {
     },
     additiveSubtypes: {
       title: "첨가제 서브카테고리",
-      seiPromoter: "SEI 활성화제",
-      sideReactionSuppressor: "부사상 반응 억제제",
-      dendriteSuppressor: "덴드리트 억제제",
-      interfacialStabilityImprover: "표면 안정성 향상제"
+      categoryLabel: "카테고리",
+      mechanistic: "메커니즘",
+      outcome: "결과",
+      mechanisticOptions: {
+        seiStabilizer: "SEI 안정화제",
+        ceiStabilizer: "CEI 안정화제",
+        hfNeutralizer: "HF 중화제",
+        tmDissolutionSuppressor: "전이금속 용출 억제제",
+        desolvationOptimizer: "탈용매 최적화제",
+        dendriteSuppressor: "덴드라이트 억제제",
+        polysulfideSuppressor: "폴리설파이드 억제제",
+        gasSuppressor: "가스 억제제",
+        flameRetardant: "난연제"
+      },
+      outcomeOptions: {
+        fastCharging: "고속 충전",
+        highVoltage: "고전압",
+        htCycling: "고온 사이클링",
+        htStorage: "고온 저장",
+        ltCycling: "저온 사이클링",
+        rtCycling: "상온 사이클링"
+      }
     },
     properties: {
       predictedFp: "예상 인화점",
