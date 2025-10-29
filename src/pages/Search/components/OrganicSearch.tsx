@@ -788,8 +788,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                                ...scoreProps,
                                                 buildGradeProp(molecule.grade, molecule.reasoning),
+                                                ...scoreProps,
                                                 { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                 { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
                                                     show: canShowColumn('predicted_MP_celsius')
