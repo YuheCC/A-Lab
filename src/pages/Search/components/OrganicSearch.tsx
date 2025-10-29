@@ -100,6 +100,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
     const [findClosestFriends, setFindClosestFriends] = useState(false);
+    const [findFriendsLoading, setFindFriendsLoading] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
     const [numResults, setNumResults] = useState(30);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
@@ -367,6 +368,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
             return;
         }
 
+        setFindFriendsLoading(true);
+        setFindFriendError(null);
+
         const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
         const computeEnabled = computeLevel !== 'Disabled';
         const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
@@ -412,6 +416,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         } catch (friendError) {
             console.error('Error finding similar molecules:', friendError);
             setFindFriendError(t('search.findFriendError'));
+        } finally {
+            setFindFriendsLoading(false);
         }
     };
 
@@ -433,6 +439,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         setSimilarMoleculeImages({}); // Reset similar molecule images
         setFindFriendError(null); // Reset find friend error
         setAmbiguousOptions(null); // Reset ambiguous search info
+        setFindFriendsLoading(false);
 
         try {
             if (shouldRunFindFriendsOnly) {
@@ -465,7 +472,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                         .map((m) => (m.smiles ? m.smiles.trim() : ''))
                         .filter((s) => !!s);
 
+                    setSearchLoading(false);
                     await runFindFriends(smilesArray);
+                    return;
                 }
             }
         } catch (apiError: any) {
@@ -766,6 +775,12 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 }
                                             </MolCard>
                                         ))}
+                                    </div>
+                                )}
+                                {findClosestFriends && findFriendsLoading && (
+                                    <div className="loading-container">
+                                        <div className="loading-spinner"></div>
+                                        <p>{t('search.searching')}</p>
                                     </div>
                                 )}
                                 {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
