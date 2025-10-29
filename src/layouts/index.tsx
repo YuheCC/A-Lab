@@ -126,7 +126,7 @@ const FullNavLayoutInner = () => {
             umap_y: molecule.y || null
           };
     
-          const response = await authFetch(`${API_URL}/favorites`, {
+          const response = await authFetch(`${API_URL}/api/user/favorites`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
