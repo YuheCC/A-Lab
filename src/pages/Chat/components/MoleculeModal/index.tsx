@@ -117,6 +117,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [useAnionDatabase, setUseAnionDatabase] = useState<boolean>(() => inferIsAnionFromData(molecule));
     const isAnionFindFriend = useAnionDatabase;
     const [structureWeight, setStructureWeight] = useState(0.75);
+    const [numResults, setNumResults] = useState(30);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => {
         if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
@@ -769,6 +770,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setStructureWeight={setStructureWeight}
                             showHypothetical={showHypothetical}
                             setShowHypothetical={setShowHypothetical}
+                            numResults={numResults}
+                            setNumResults={setNumResults}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
                             showStructureSlider={!isAnionFindFriend}
@@ -870,7 +873,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             smiles,
             use_35m: isHighTier,
             structure_weight: structureWeight,
-            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
+            num_results: numResults,
         };
         if (molType) {
             payload.mol_type = molType;

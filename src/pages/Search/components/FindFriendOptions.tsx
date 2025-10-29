@@ -34,6 +34,8 @@ interface FindFriendOptionsProps {
   setStructureWeight: (v: number) => void;
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  numResults: number;
+  setNumResults: (v: number) => void;
   cathode: string;
   setCathode: (v: string) => void;
   anode: string;
@@ -74,6 +76,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setStructureWeight,
   showHypothetical,
   setShowHypothetical,
+  numResults,
+  setNumResults,
   cathode,
   setCathode,
   anode,
@@ -399,6 +403,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setStructureWeight={setStructureWeight}
                 showHypothetical={showHypothetical}
                 setShowHypothetical={setShowHypothetical}
+                numResults={numResults}
+                setNumResults={setNumResults}
                 userPermissions={userPermissions}
                 cathode={cathode}
                 setCathode={setCathode}

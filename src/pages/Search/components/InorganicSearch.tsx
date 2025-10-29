@@ -99,6 +99,7 @@ const InorganicSearch = () => {
     const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
     const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [structureWeight, setStructureWeight] = useState(0.75);
+    const [numResults, setNumResults] = useState(30);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
@@ -371,6 +372,7 @@ const InorganicSearch = () => {
                             includeQuery,
                             queryString,
                             isInorganic: true,
+                            numResults,
                         });
 
                         if (molecules.length > 0) {
@@ -534,6 +536,8 @@ const InorganicSearch = () => {
                                 setStructureWeight={setStructureWeight}
                                 showHypothetical={showHypothetical}
                                 setShowHypothetical={setShowHypothetical}
+                                numResults={numResults}
+                                setNumResults={setNumResults}
                                 cathode={cathode}
                                 setCathode={setCathode}
                                 anode={anode}

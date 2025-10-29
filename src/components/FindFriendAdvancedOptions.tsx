@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import './FindFriendAdvancedOptions.css';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
@@ -18,6 +18,8 @@ interface AdvancedProps {
   // New in your changes
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  numResults: number;
+  setNumResults: (v: number) => void;
 
   userPermissions?: string;
 
@@ -49,8 +51,10 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
   showHypothetical,
   setShowHypothetical,
+  numResults,
+  setNumResults,
 
-  userPermissions: _userPermissions,
+  userPermissions,
 
   cathode = '', setCathode = () => {},
   anode = '', setAnode = () => {},
@@ -87,6 +91,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   const readOnlyFieldStyle: React.CSSProperties | undefined = isReadOnly
     ? { backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' }
     : undefined;
+  const numResultOptions = useMemo(() => {
+    const baseOptions = [5, 10, 20, 30];
+    const adminExtras = [50, 100, 250, 500];
+    const options = userPermissions === 'admin'
+      ? [...baseOptions, ...adminExtras]
+      : baseOptions;
+    return options.includes(numResults)
+      ? options
+      : [...options, numResults].sort((a, b) => a - b);
+  }, [numResults, userPermissions]);
 
   return (
     <div className="find-friend-advanced-options">
@@ -125,21 +139,61 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
       {/* Show hypothetical molecules (your new checkbox + tooltip) */}
       <div className="ff-advanced-section">
-        <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
-          <input
-            type="checkbox"
-            checked={showHypothetical}
-            onChange={(e) => {
-              if (handleGuardedInteraction(e)) return;
-              setShowHypothetical(e.target.checked);
-            }}
-            aria-disabled={isReadOnly}
-          />
-          <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
-          <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
-            <Info size={16} className="ff-info-icon" />
-          </InfoTooltip>
-        </label>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
+            <input
+              type="checkbox"
+              checked={showHypothetical}
+              onChange={(e) => {
+                if (handleGuardedInteraction(e)) return;
+                setShowHypothetical(e.target.checked);
+              }}
+              aria-disabled={isReadOnly}
+            />
+            <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
+            <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
+              <Info size={16} className="ff-info-icon" />
+            </InfoTooltip>
+          </label>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="ff-advanced-label">{t('search.resultsToDisplay', 'Results to display')}</span>
+            <select
+              value={numResults}
+              onChange={(e) => {
+                if (handleGuardedInteraction(e)) return;
+                setNumResults(Number(e.target.value));
+              }}
+              onMouseDown={(event) => {
+                if (handleGuardedInteraction(event)) return;
+              }}
+              style={{
+                padding: '4px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                backgroundColor: isReadOnly ? '#f1f5f9' : 'white',
+                color: isReadOnly ? '#94a3b8' : undefined,
+                cursor: isReadOnly ? 'not-allowed' : 'pointer',
+              }}
+              aria-label={t('search.resultsToDisplay', 'Results to display')}
+              aria-disabled={isReadOnly}
+            >
+              {numResultOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Extra requests (keep incoming formatting) */}
