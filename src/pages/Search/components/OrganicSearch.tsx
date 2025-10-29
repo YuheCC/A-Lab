@@ -181,27 +181,27 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         return null;
     };
 
-    const scaleScoreToFive = (value: number | null): number | null => {
+    const scaleScoreToTen = (value: number | null): number | null => {
         if (value === null) return null;
         const clamped = Math.min(Math.max(value, 0), 1);
-        return parseFloat((1 + clamped * 4).toFixed(1));
+        return parseFloat((1 + clamped * 9).toFixed(1));
     };
 
     const getScoreColor = (scaled: number): string => {
-        const normalized = Math.min(Math.max((scaled - 1) / 4, 0), 1);
+        const normalized = Math.min(Math.max((scaled - 1) / 9, 0), 1);
         const hue = normalized * 120;
         return `hsl(${Math.round(hue)}, 70%, 45%)`;
     };
 
     const buildScoreProp = (label: string, record: any, key: string) => {
         const rawValue = extractScoreValue(record, key);
-        const scaled = scaleScoreToFive(rawValue);
+        const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
             return null;
         }
         return {
             label,
-            value: `${scaled.toFixed(1)}/5`,
+            value: `${scaled.toFixed(1)}/10`,
             span: 2,
             color: getScoreColor(scaled),
         };
