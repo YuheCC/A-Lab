@@ -357,18 +357,64 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       console.log('predictionResults', predictionResults);
 
       // 使用SSE流式接收数据
+      console.log('[LLM Analysis] 开始请求SSE流...');
       const response = await requestLLMAnalysisStream(analysisParams);
-      console.log('LLM分析SSE响应:', response);
+      console.log('[LLM Analysis] SSE响应已获取:', {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+      });
 
       // 使用streamSSE解析SSE流
+      console.log('[LLM Analysis] 开始读取SSE流...');
+      let eventCount = 0;
       for await (const event of streamSSE(response)) {
-        console.log('收到SSE事件:', event);
+        eventCount++;
+        console.log(`[LLM Analysis] 收到第 ${eventCount} 个SSE事件:`, event);
 
         // 处理流式数据
-        if (event && typeof event === 'object') {
-          // 如果事件有data字段，追加到分析内容
-          if (event.data && typeof event.data === 'string') {
-            setAnalysisContent(prev => prev + event.data);
+        if (event) {
+          // 1) 直接是字符串
+          if (typeof event === 'string') {
+            setAnalysisContent(prev => prev + event);
+          }
+
+          // 2) 对象：优先取 answer 字段
+          if (typeof event === 'object') {
+            const answer = (event as any)?.answer;
+            if (typeof answer === 'string' && answer) {
+              setAnalysisContent(prev => prev + answer);
+            } else if (typeof (event as any)?.data === 'string') {
+              // 3) data 为字符串：若看起来像 JSON，再尝试解析提取 answer
+              const raw = (event as any).data as string;
+              const trimmed = raw.trim();
+              if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                try {
+                  const parsed = JSON.parse(trimmed);
+                  const inner = (parsed as any)?.answer ?? (parsed as any)?.content ?? trimmed;
+                  if (typeof inner === 'string') {
+                    setAnalysisContent(prev => prev + inner);
+                  }
+                } catch {
+                  try {
+                    // 宽松再试（与 streamSSE 保持一致的兼容性）
+                    // 动态导入避免顶层依赖耦合
+                    // @ts-ignore
+                    const JSON5 = (await import('json5')).default;
+                    const parsedLoose = JSON5.parse(trimmed);
+                    const innerLoose = parsedLoose?.answer ?? parsedLoose?.content ?? trimmed;
+                    if (typeof innerLoose === 'string') {
+                      setAnalysisContent(prev => prev + innerLoose);
+                    }
+                  } catch {
+                    setAnalysisContent(prev => prev + raw);
+                  }
+                }
+              } else {
+                setAnalysisContent(prev => prev + raw);
+              }
+            }
           }
 
           // 检查是否完成
@@ -376,13 +422,14 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             setIsAnalyzing(false);
             setHasAnalysisResult(true);
             setAnalysisStartTime(null);
-            console.log('LLM分析完成');
+            console.log('[LLM Analysis] 分析完成（通过done标志）');
             break;
           }
         }
       }
 
       // 流结束后，确保状态正确
+      console.log('[LLM Analysis] SSE流读取结束，共收到', eventCount, '个事件');
       setIsAnalyzing(false);
       setHasAnalysisResult(true);
       setAnalysisStartTime(null);

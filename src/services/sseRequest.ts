@@ -3,6 +3,11 @@
  * 用于处理流式响应的通用方法
  */
 
+import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from '@/utils/authHelpers';
+
+// 使用全局声明的 BASE_URL（在 typings.d.ts 中定义）
+declare const BASE_URL: string;
+
 interface SSERequestOptions {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     data?: any;
@@ -33,7 +38,7 @@ interface SSERequestOptions {
 export async function sseRequest(url: string, options: SSERequestOptions = {}): Promise<Response> {
     const { method = 'GET', data, params, headers = {} } = options;
 
-    // 获取 baseURL
+    // 获取 baseURL（使用全局声明的 BASE_URL）
     const baseURL = BASE_URL || 'https://prod-api.ses.ai';
 
     // 获取 token
@@ -84,11 +89,30 @@ export async function sseRequest(url: string, options: SSERequestOptions = {}): 
             localStorage.removeItem('organization_name');
 
             const current = window.location.pathname + window.location.search;
-            window.location.href = '/login?redirect=' + encodeURIComponent(current);
+
+            // 使用登录浮层而不是页面跳转（与 request.ts 保持一致）
+            if (shouldShowLoginModal(window.location.pathname)) {
+                triggerLoginModal(current);
+            } else {
+                // 如果不应该显示浮层，则跳转到登录页面
+                window.location.href = '/login?redirect=' + encodeURIComponent(current);
+            }
         }
 
-        // 402 需要升级权限（这里不处理 pricing modal，由调用方处理）
-        // 因为 SSE 通常是长连接，弹窗逻辑应该在调用前处理
+        // 402 处理 - 弹出 pricing 浮层（与 request.ts 保持一致，GET 请求除外）
+        const requestMethod = method.toUpperCase();
+        if (response.status === 402 && requestMethod !== 'GET') {
+            // 尝试获取响应中的 required_permission 信息
+            let permission = null;
+            try {
+                const errorData = await response.json();
+                permission = errorData?.required_permission || null;
+            } catch (e) {
+                // 如果解析失败，permission 保持为 null
+                console.warn('Failed to parse 402 response:', e);
+            }
+            triggerPricingModal(permission);
+        }
 
         throw new Error(`HTTP error! status: ${response.status}`);
     }

@@ -37,6 +37,7 @@
     "immer": "^10.1.1",
     "kekule": "^1.0.2",
     "lodash": "^4.17.21",
+    "json5": "^2.2.3",
     "lucide-react": "^0.511.0",
     "papaparse": "^5.5.2",
     "plotly.js": "^3.0.1",
