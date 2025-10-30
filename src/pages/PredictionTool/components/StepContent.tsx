@@ -163,7 +163,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 <input
                   id="file-upload"
                   type="file"
-                  accept=".csv,.xlsx,.xls"
+                  accept=".csv,.xlsx,.xls,.nda,.ndax"
                   onChange={handleFileUpload}
                   style={{ display: 'none' }}
                 />
