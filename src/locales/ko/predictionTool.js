@@ -17,10 +17,10 @@ export default {
     upload: {
         selectFile: "파일 선택",
         clickToUpload: "배터리 데이터 파일을 클릭하여 업로드",
-        subtitle: "현재 CSV 형식 파일만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
+        subtitle: "현재 CSV와 Neware 기본 파일 형식(NDA/NDAX)만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
         uploading: "파일 업로드 중...",
         waitText: "잠시만 기다려 주세요",
-        dataFormatTip: "📋 데이터 형식 요구사항",
+        dataFormatTip: "📋 CSV 데이터 형식 요구사항",
         sampleData: "샘플 데이터",
         requiredFields: "필수 필드:",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",

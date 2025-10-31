@@ -17,10 +17,10 @@ export default {
     upload: {
         selectFile: "Select File",
         clickToUpload: "Click to upload battery data file",
-        subtitle: "Currently only supports CSV format files, more file types will be supported in the future",
+        subtitle: "Currently only support CSV and the default file format of Neware (NDA/NDAX). More file types will be supported in the future",
         uploading: "Uploading file...",
         waitText: "Please wait",
-        dataFormatTip: "📋 Data Format Requirements",
+        dataFormatTip: "📋 CSV Data Format Requirements",
         sampleData: "Sample Data",
         requiredFields: "Required Fields:",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",
