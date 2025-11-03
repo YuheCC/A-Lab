@@ -55,7 +55,7 @@ export const ANION_ADDITIVE_OPTIONS_BY_CATEGORY: AdditiveOptionsByCategory = {
   ],
 };
 
-export const DEFAULT_ADDITIVE_CATEGORY: AdditiveCategoryType = 'mechanistic';
+export const DEFAULT_ADDITIVE_CATEGORY: AdditiveCategoryType = 'outcome';
 
 export const DEFAULT_ADDITIVE_SUBTYPE: Record<AdditiveCategoryType, string> = {
   mechanistic: 'A',

@@ -33,8 +33,10 @@ export default {
     },
     
     // Search Options
-    findFriendsLabel: 'and intended for the following battery use case:',
+    findFriendsLabel: 'intended as:',
     findFriendsDescription: 'Molecules with similar structures to your input molecules and physicochemical properties that are theoretically compatible with the following battery use case:',
+    useCaseTooltipTitle: 'SES molecule property optimizer',
+    useCaseTooltipDescription: "Enter what type of battery molecule you're looking for, and SES's molecule property optimizer will display results that are more likely to be compatible with your chosen use case.",
 
     searchRange: 'Search range',
     nearbyFriends: 'nearby friends',

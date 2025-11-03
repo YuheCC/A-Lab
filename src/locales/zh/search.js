@@ -33,8 +33,10 @@ export default {
     },
     
     // Search Options
-    findFriendsLabel: '以及希望符合以下电池使用场景：',
+    findFriendsLabel: '计划用途：',
     findFriendsDescription: '与您输入的分子具有相似结构，并且在理论上与以下电池使用场景相兼容的物理化学性质的分子：',
+    useCaseTooltipTitle: 'SES molecule property optimizer',
+    useCaseTooltipDescription: "Enter what type of battery molecule you're looking for, and SES's molecule property optimizer will display results that are more likely to be compatible with your chosen use case.",
 
     searchRange: '搜索范围',
     nearbyFriends: '附近的朋友',

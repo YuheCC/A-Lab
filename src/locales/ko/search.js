@@ -33,8 +33,10 @@ export default {
     },
     
     // Search Options
-    findFriendsLabel: '그리고 다음 배터리 사용 사례에 맞도록:',
+    findFriendsLabel: '의도된 용도:',
     findFriendsDescription: '입력한 분자와 유사한 구조를 가지며, 아래의 배터리 사용 사례에 이론적으로 호환되는 물리화학적 특성을 가진 분자:',
+    useCaseTooltipTitle: 'SES molecule property optimizer',
+    useCaseTooltipDescription: "Enter what type of battery molecule you're looking for, and SES's molecule property optimizer will display results that are more likely to be compatible with your chosen use case.",
     
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
