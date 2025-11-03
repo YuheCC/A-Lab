@@ -1,6 +1,5 @@
+import React, { useState, useEffect, useMemo } from 'react';
 import InfoTooltip from '@/components/InfoTooltip';
-import { CircleHelp, Pen } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
 import MolEditor from '../MolEditor';
 import './Search.css';
 import { useTranslation } from 'react-i18next';
@@ -13,14 +12,20 @@ const SearchInput = React.memo(({
   disabled,
   initialValue = "",
   lockInput = false,
-  initialEditorOpen = true,
+  initialEditorOpen,
   lockMolEditorToggle = false,
   allowSubmitWhenLocked = false,
   onLockedClick,
+  placeholder,
 }) => {
   const { t } = useTranslation();
-  const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
+  const resolvedInitialEditorOpen = initialEditorOpen ?? false;
+  const [showMolEditor, setShowMolEditor] = useState(resolvedInitialEditorOpen);
   const [inputValue, setInputValue] = useState(initialValue);
+  const resolvedPlaceholder = useMemo(
+    () => placeholder ?? t('search.searchPlaceholder'),
+    [placeholder, t],
+  );
 
   useEffect(() => {
     setInputValue(initialValue);
@@ -28,9 +33,9 @@ const SearchInput = React.memo(({
 
   useEffect(() => {
     if (lockMolEditorToggle) {
-      setShowMolEditor(initialEditorOpen);
+      setShowMolEditor(resolvedInitialEditorOpen);
     }
-  }, [lockMolEditorToggle, initialEditorOpen]);
+  }, [lockMolEditorToggle, resolvedInitialEditorOpen]);
 
   const handleLockedClick = () => {
     if (typeof onLockedClick === 'function') {
@@ -66,12 +71,6 @@ const SearchInput = React.memo(({
     if (isSubmitDisabled) return;
     onSearch(inputValue);
   }
-
-  const pubChemUrl = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html";
-
-  const handleTooltipClick = () => {
-    window.open(pubChemUrl, '_blank', 'noopener,noreferrer');
-  };
 
   // 使用外部 SVG 资源替代内联 SVG
   const NewPenIcon = () => (
@@ -110,7 +109,7 @@ const SearchInput = React.memo(({
         <input
           type="text"
           className="search-input"
-          placeholder={t('search.searchPlaceholder')}
+          placeholder={resolvedPlaceholder}
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -138,18 +137,6 @@ const SearchInput = React.memo(({
             backgroundColor: lockInput ? '#f0f2f5' : undefined,
           }}
         />
-        <InfoTooltip
-          title={<>
-            <div style={{ whiteSpace: 'pre-line', width: '300px' }} dangerouslySetInnerHTML={{ __html: t('search.searchTooltip', { pubChemUrl }) }} />
-          </>}
-        >
-          <CircleHelp size={18} style={{
-            marginLeft: '8px',
-            marginRight: '8px',
-            color: '#999',
-            cursor: 'pointer',
-          }}/>
-        </InfoTooltip>
         <button
           className="search-button"
           onClick={handleClickSend}

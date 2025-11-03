@@ -5,8 +5,6 @@ import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { Info } from 'lucide-react';
 
 interface AdvancedProps {
-  extraRequests: string;
-  setExtraRequests: (v: string) => void;
   selectedMolType: string;
   setSelectedMolType: (v: string) => void;
   additiveSubtype: string;
@@ -39,8 +37,6 @@ interface AdvancedProps {
 }
 
 const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
-  extraRequests,
-  setExtraRequests,
   selectedMolType,
   setSelectedMolType,
   additiveSubtype,
@@ -194,25 +190,6 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
             </select>
           </div>
         </div>
-      </div>
-
-      {/* Extra requests (keep incoming formatting) */}
-      <div className="ff-advanced-section">
-        <label className="ff-advanced-label">{t('search.extraRequests')}</label>
-          <textarea
-            value={extraRequests}
-            onChange={(e) => {
-              if (handleGuardedInteraction(e)) return;
-              setExtraRequests(e.target.value);
-            }}
-            placeholder={t('search.extraRequestsPlaceholder')}
-            className="ff-advanced-textarea"
-            readOnly={isReadOnly}
-            onMouseDown={(event) => {
-              handleGuardedInteraction(event);
-            }}
-            style={readOnlyFieldStyle}
-          />
       </div>
 
       {/* Optional recommendation text when battery fields are relevant */}

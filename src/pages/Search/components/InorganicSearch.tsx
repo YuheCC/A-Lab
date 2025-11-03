@@ -1,6 +1,6 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext } from "react";
+import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
 import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
@@ -8,7 +8,7 @@ import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
@@ -24,6 +24,8 @@ import {
     getDefaultSubtypeForCategory,
     isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
+import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
 const API_URL = getAPIUrl();
 
@@ -75,8 +77,18 @@ interface InorganicSimilarMolecule {
     halogen_content?: number;
 }
 
+const INORGANIC_PROPERTY_DEFINITIONS = [
+    { columnId: 'HOMO_eV', labelKey: 'search.properties.homo', fallback: 'HOMO' },
+    { columnId: 'LUMO_eV', labelKey: 'search.properties.lumo', fallback: 'LUMO' },
+    { columnId: 'ESP_min_eV', labelKey: 'search.properties.espMin', fallback: 'ESP Min' },
+    { columnId: 'ESP_max_eV', labelKey: 'search.properties.espMax', fallback: 'ESP Max' },
+    { columnId: 'molecular_weight', labelKey: 'search.properties.molecularWeight', fallback: 'Molecular Weight' },
+];
+
+const INORGANIC_SEARCH_PLACEHOLDER = 'ethylene carbonate, DTD, CCOC(=O)OCC';
+
 const InorganicSearch = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const nodePopupRef = useRef<any>(null);
@@ -94,7 +106,7 @@ const InorganicSearch = () => {
     const [searchedMolecules, setsearchedMolecules] = useState<InorganicMoleculeData[] | null>(null);
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<InorganicSimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({});
-    const [findClosestFriends, setFindClosestFriends] = useState(false);
+    const findClosestFriends = true;
     const [selectedMolType, setSelectedMolType] = useState('solvent');
     const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
     const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
@@ -109,6 +121,83 @@ const InorganicSearch = () => {
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
+
+    const canShowColumn = useCallback(
+        (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
+        [userPermissions]
+    );
+
+    const formatListForLocale = useCallback(
+        (items: string[]) => {
+            if (items.length === 0) {
+                return '';
+            }
+            try {
+                const formatter = new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' });
+                return formatter.format(items);
+            } catch (_error) {
+                return items.join(', ');
+            }
+        },
+        [i18n.language]
+    );
+
+    const accessiblePropertyLabels = useMemo(
+        () => INORGANIC_PROPERTY_DEFINITIONS
+            .filter(({ columnId }) => canShowColumn(columnId))
+            .map(({ labelKey, fallback }) => t(labelKey, fallback)),
+        [canShowColumn, t]
+    );
+
+    const propertyRangeBullet = useMemo(() => {
+        if (accessiblePropertyLabels.length === 0) {
+            return null;
+        }
+        const formatted = formatListForLocale(accessiblePropertyLabels);
+        return t('search.propertyConstraints.valueRangeBullet', { properties: formatted });
+    }, [accessiblePropertyLabels, formatListForLocale, t]);
+
+    const propertyConstraintBullets = useMemo(() => {
+        const bullets = [
+            t('search.propertyConstraints.atomCounts'),
+            canShowColumn('functional_groups') ? t('search.propertyConstraints.functionalGroups') : null,
+            canShowColumn('commercial_score') ? t('search.propertyConstraints.commercialAvailability') : null,
+            propertyRangeBullet,
+        ];
+        return bullets.filter(Boolean) as string[];
+    }, [t, canShowColumn, propertyRangeBullet]);
+
+    const searchTooltipLines = useMemo(() => {
+        const lines = t('search.similarityTooltip.lines', { returnObjects: true });
+        if (Array.isArray(lines)) {
+            return lines;
+        }
+        if (lines == null) {
+            return [];
+        }
+        return [String(lines)];
+    }, [t]);
+
+    const propertyTooltipDescription = useMemo(() => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p style={{ margin: 0 }}>{t('search.propertyConstraints.tooltipIntro')}</p>
+            {propertyConstraintBullets.length > 0 && (
+                <ul style={{ paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {propertyConstraintBullets.map((item) => (
+                        <li key={item}>{item}</li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    ), [propertyConstraintBullets, t]);
+
+    const searchTooltipDescription = useMemo(() => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {searchTooltipLines.map((line, index) => (
+                <p key={`${line}-${index}`} style={{ margin: 0 }}>{line}</p>
+            ))}
+        </div>
+    ), [searchTooltipLines]);
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -510,16 +599,66 @@ const InorganicSearch = () => {
                     {/* 根据模式显示不同的界面 */}
                     {interfaceMode === 'search' ? (
                         <>
-                            {/* Search bar container */}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    flexWrap: 'wrap',
+                                    marginBottom: '12px',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    color: '#0f172a',
+                                }}
+                            >
+                                <span>{t('search.similarityPrompt')}</span>
+                                <InfoTooltip
+                                    title={(
+                                        <InfoTooltipContent
+                                            title={t('search.similarityTooltip.title')}
+                                            description={searchTooltipDescription}
+                                        />
+                                    )}
+                                    placement="top"
+                                >
+                                    <Info size={16} className="ff-info-icon" />
+                                </InfoTooltip>
+                            </div>
+
                             <SearchInput
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
+                                initialEditorOpen={false}
+                                placeholder={INORGANIC_SEARCH_PLACEHOLDER}
                             />
 
-                    {/* Add "Find closest friends" checkbox and mol type selector */}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    flexWrap: 'wrap',
+                                    margin: '12px 0',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    color: '#0f172a',
+                                }}
+                            >
+                                <span>{t('search.propertyConstraints.intro')}</span>
+                                <InfoTooltip
+                                    title={(
+                                        <InfoTooltipContent
+                                            title={t('search.propertyConstraints.tooltipTitle')}
+                                            description={propertyTooltipDescription}
+                                        />
+                                    )}
+                                    placement="top"
+                                >
+                                    <Info size={16} className="ff-info-icon" />
+                                </InfoTooltip>
+                            </div>
+
                             <FindFriendOptions
-                                findClosestFriends={findClosestFriends}
-                                setFindClosestFriends={setFindClosestFriends}
                                 extraRequests={extraRequests}
                                 setExtraRequests={setExtraRequests}
                                 showAdvanced={showAdvanced}

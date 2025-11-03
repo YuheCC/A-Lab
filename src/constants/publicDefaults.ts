@@ -1,8 +1,8 @@
 import { DEFAULT_ADDITIVE_CATEGORY, DEFAULT_ADDITIVE_SUBTYPE } from './additiveCategories';
 
 export const PUBLIC_SEARCH_LOCKED_VALUES = {
-  organicInput: "EC, DTD, DMC",
-  anionInput: "LiBF4, LiFSI",
+  organicInput: "ethylene carbonate, DTD, CCOC(=O)OCC",
+  anionInput: "LiPF6, sodium tetrafluoroborate, O=S(=O)(F)[N-]S(=O)(=O)F",
   sse: {
     activeTab: "formula" as const,
     formulaInput: "Li6PS5Cl",

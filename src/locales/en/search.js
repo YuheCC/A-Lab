@@ -12,9 +12,28 @@ export default {
     searchButton: "Search",
     searchTooltip: '<p>Valid queries can search over any numerical properties of molecules. For example:</p><p>- "Find all molecules with HOMO at most -8"<br/>- "Find all molecules with LUMO at least -2 and molecular weight at most 200"</p><p>For more open-ended queries, use Ask.</p><p>To draw and look up SMILES strings, please click this icon or visit <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "Draw molecule",
+    similarityPrompt: 'Search for molecules that are structurally similar to:',
+    similarityTooltip: {
+        title: 'Search',
+        lines: [
+            'The Search algorithm will look up your molecules in our database and find similar molecules to them.',
+            'Enter a list of any number of molecules by SMILES string, molecule name, or common abbreviation.',
+            'Leave this box blank for an unbiased Search.',
+            'Click the drawing icon on the left to draw a custom molecule and automatically enter its SMILES string into this box.',
+        ],
+    },
+    propertyConstraints: {
+        intro: 'subject to the following property constraints:',
+        tooltipTitle: 'Custom property constraints',
+        tooltipIntro: 'Search supports a natural-language interface for tuning your Search results based on your desired molecular properties and structure. You can request any of the following:',
+        atomCounts: 'Desired atom counts of various elements',
+        functionalGroups: 'Desired presence or absence of certain functional groups',
+        commercialAvailability: 'Commercial availability',
+        valueRangeBullet: 'Value ranges or bounds for {{properties}}.',
+    },
     
     // Search Options
-    findFriendsLabel: 'Find "friends"',
+    findFriendsLabel: 'and intended for the following battery use case:',
     findFriendsDescription: 'Molecules with similar structures to your input molecules and physicochemical properties that are theoretically compatible with the following battery use case:',
 
     searchRange: 'Search range',
@@ -91,6 +110,8 @@ export default {
         lumo: "LUMO",
         espMin: "ESP Min",
         espMax: "ESP Max",
+        molecularVolume: "Molecular Volume",
+        fluorideBondDissociationEnergy: "F Bond Dissociation Energy",
         predictedMp: "Predicted Melting Point",
         predictedBp: "Predicted Boiling Point",
         predictedFp: "Predicted Flash Point",

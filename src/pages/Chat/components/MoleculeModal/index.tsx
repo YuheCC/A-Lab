@@ -736,6 +736,32 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
                         </select>
                     </div>
+                    <textarea
+                        value={extraRequests}
+                        onChange={(e) => {
+                            if (isFindFriendsLocked) {
+                                handleLockedAction();
+                                return;
+                            }
+                            setExtraRequests(e.target.value);
+                        }}
+                        placeholder={t('search.extraRequestsPlaceholder')}
+                        className="ff-advanced-textarea"
+                        readOnly={isFindFriendsLocked}
+                        onMouseDown={(event) => {
+                            if (isFindFriendsLocked) {
+                                event.preventDefault();
+                                handleLockedAction();
+                            }
+                        }}
+                        style={{
+                            marginTop: '12px',
+                            minHeight: '100px',
+                            backgroundColor: isFindFriendsLocked ? '#f1f5f9' : undefined,
+                            color: isFindFriendsLocked ? '#94a3b8' : undefined,
+                            cursor: isFindFriendsLocked ? 'not-allowed' : 'text',
+                        }}
+                    />
                     <div
                         role="button"
                         tabIndex={0}
@@ -764,8 +790,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
-                            extraRequests={extraRequests}
-                            setExtraRequests={setExtraRequests}
                             selectedMolType={selectedMoleculeType}
                             setSelectedMolType={setSelectedMoleculeType}
                             additiveSubtype={selectedAdditiveSubtype}
