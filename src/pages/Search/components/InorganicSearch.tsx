@@ -693,17 +693,9 @@ const InorganicSearch = () => {
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
+                                onSubmitSearch={() => searchInputRef.current?.submit?.()}
+                                submitDisabled={searchLoading}
                             />
-
-                            <div className="search-submit-container">
-                                <button
-                                    className="search-button"
-                                    onClick={() => searchInputRef.current?.submit?.()}
-                                    disabled={searchLoading}
-                                >
-                                    {t('search.searchButton')}
-                                </button>
-                            </div>
 
                     <div className="search-results">
                         {searchLoading && (

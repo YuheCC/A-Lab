@@ -68,6 +68,8 @@ interface FindFriendOptionsProps {
   onLockedClick?: () => void;
   additiveOptionsByCategory?: AdditiveOptionsByCategory;
   molTypeOptions?: MolTypeOption[];
+  onSubmitSearch?: () => void;
+  submitDisabled?: boolean;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -109,6 +111,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   onLockedClick,
   additiveOptionsByCategory,
   molTypeOptions,
+  onSubmitSearch,
+  submitDisabled,
 }) => {
   const { t } = useTranslation();
 
@@ -208,6 +212,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
 
   return (
     <>
+    <div>
       <div
         className="search-option"
         style={{
@@ -215,9 +220,10 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
           width: '100%',
           minWidth: 0,
           opacity: readOnly ? 0.6 : 1,
+          marginBottom: 0,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
           <textarea
             value={extraRequests}
             onChange={(e) => {
@@ -232,7 +238,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
             }}
             style={{
               ...readOnlyFieldStyle,
-              minHeight: '48px',
+              minHeight: '40px',
               padding: '12px',
               margin: 0,
               width: '100%',
@@ -241,14 +247,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
             aria-label={t('search.extraRequestsPlaceholder')}
           />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
-                gap: '12px',
+                gap: '8px',
                 width: '100%',
               }}
             >
@@ -288,25 +294,25 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                         setAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
                       }
                     }}
-                    style={selectBaseStyle(readOnly)}
-                    onMouseDown={(event) => {
-                      if (handleGuardedInteraction(event)) return;
-                    }}
-                    aria-disabled={readOnly}
-                  >
-                    {molTypeOptionList.map(({ value, labelKey }) => (
-                      <option key={value} value={value}>
-                        {t(`search.moleculeTypes.${labelKey}`, labelKey)}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedMolType === 'additive' && (
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      <select
-                        value={additiveCategory}
-                        onChange={(e) => {
-                          if (handleGuardedInteraction(e)) return;
-                          const newCategory = e.target.value as AdditiveCategoryType;
+                      style={selectBaseStyle(readOnly)}
+                      onMouseDown={(event) => {
+                        if (handleGuardedInteraction(event)) return;
+                      }}
+                      aria-disabled={readOnly}
+                    >
+                      {molTypeOptionList.map(({ value, labelKey }) => (
+                        <option key={value} value={value}>
+                          {t(`search.moleculeTypes.${labelKey}`, labelKey)}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedMolType === 'additive' && (
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <select
+                          value={additiveCategory}
+                          onChange={(e) => {
+                            if (handleGuardedInteraction(e)) return;
+                            const newCategory = e.target.value as AdditiveCategoryType;
                           setAdditiveCategory(newCategory);
                           setAdditiveSubtype(getDefaultSubtypeForCategory(newCategory));
                         }}
@@ -347,18 +353,18 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
               )}
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                opacity: readOnly ? 0.6 : 1,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  opacity: readOnly ? 0.6 : 1,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
                 <InfoTooltip
                   title={(
                     <InfoTooltipContent
@@ -432,41 +438,54 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 ) : (
                   <ChevronDown size={14} style={{ marginLeft: '6px' }} />
                 )}
+                </div>
               </div>
+
+            {showAdvanced && (
+              <FindFriendAdvancedOptions
+                selectedMolType={selectedMolType}
+                setSelectedMolType={setSelectedMolType}
+                additiveSubtype={additiveSubtype}
+                setAdditiveSubtype={setAdditiveSubtype}
+                computeLevel={computeLevel}
+                structureWeight={structureWeight}
+                setStructureWeight={setStructureWeight}
+                showHypothetical={showHypothetical}
+                setShowHypothetical={setShowHypothetical}
+                numResults={numResults}
+                setNumResults={setNumResults}
+                userPermissions={userPermissions}
+                cathode={cathode}
+                setCathode={setCathode}
+                anode={anode}
+                setAnode={setAnode}
+                salt={salt}
+                setSalt={setSalt}
+                solvent={solvent}
+                setSolvent={setSolvent}
+                metric={metric}
+                setMetric={setMetric}
+                showBatteryFields={showBatteryFields}
+                showStructureSlider={showStructureSlider}
+                structureSliderTooltip={structureSliderTooltip}
+                readOnly={readOnly}
+                onLockedClick={onLockedClick}
+              />
+            )}
+
+              {typeof onSubmitSearch === 'function' && (
+                <div className="search-submit-container">
+                  <button
+                    className="search-button"
+                    onClick={onSubmitSearch}
+                    disabled={submitDisabled}
+                  >
+                    {t('search.searchButton')}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          {showAdvanced && (
-            <FindFriendAdvancedOptions
-              selectedMolType={selectedMolType}
-              setSelectedMolType={setSelectedMolType}
-              additiveSubtype={additiveSubtype}
-              setAdditiveSubtype={setAdditiveSubtype}
-              computeLevel={computeLevel}
-              structureWeight={structureWeight}
-              setStructureWeight={setStructureWeight}
-              showHypothetical={showHypothetical}
-              setShowHypothetical={setShowHypothetical}
-              numResults={numResults}
-              setNumResults={setNumResults}
-              userPermissions={userPermissions}
-              cathode={cathode}
-              setCathode={setCathode}
-              anode={anode}
-              setAnode={setAnode}
-              salt={salt}
-              setSalt={setSalt}
-              solvent={solvent}
-              setSolvent={setSolvent}
-              metric={metric}
-              setMetric={setMetric}
-              showBatteryFields={showBatteryFields}
-              showStructureSlider={showStructureSlider}
-              structureSliderTooltip={structureSliderTooltip}
-              readOnly={readOnly}
-              onLockedClick={onLockedClick}
-            />
-          )}
         </div>
       </div>
     </>

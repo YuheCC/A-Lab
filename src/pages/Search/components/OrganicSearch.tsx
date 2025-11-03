@@ -795,17 +795,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
+                                onSubmitSearch={() => searchInputRef.current?.submit?.()}
+                                submitDisabled={searchLoading}
                             />
-
-                            <div className="search-submit-container">
-                                <button
-                                    className="search-button"
-                                    onClick={() => searchInputRef.current?.submit?.()}
-                                    disabled={searchLoading}
-                                >
-                                    {t('search.searchButton')}
-                                </button>
-                            </div>
 
                     <div className="search-results">
                         {searchLoading && (

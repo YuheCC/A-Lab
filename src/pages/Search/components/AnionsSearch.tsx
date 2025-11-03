@@ -862,17 +862,9 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 onLockedClick={triggerAccessModal}
                                 additiveOptionsByCategory={ANION_ADDITIVE_OPTIONS_BY_CATEGORY}
                                 molTypeOptions={ANION_MOL_TYPE_OPTIONS}
+                                onSubmitSearch={() => searchInputRef.current?.submit?.()}
+                                submitDisabled={searchLoading}
                             />
-
-                            <div className="search-submit-container">
-                                <button
-                                    className="search-button"
-                                    onClick={() => searchInputRef.current?.submit?.()}
-                                    disabled={searchLoading}
-                                >
-                                    {t('search.searchButton')}
-                                </button>
-                            </div>
 
                     <div className="search-results">
                         {searchLoading && (
