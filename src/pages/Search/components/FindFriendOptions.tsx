@@ -5,7 +5,7 @@ import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import type { QueryLimitInfo } from '@/types/queryLimit';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
-import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import type { AdditiveCategoryType, AdditiveOptionsByCategory } from '@/constants/additiveCategories';
 import {
   ADDITIVE_CATEGORY_LABEL_KEYS,
   ADDITIVE_OPTIONS_BY_CATEGORY,
@@ -14,6 +14,19 @@ import {
   getDefaultSubtypeForCategory,
   isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
+
+export interface MolTypeOption {
+  value: string;
+  /** Translation key under `search.moleculeTypes`. */
+  labelKey: string;
+}
+
+export const DEFAULT_MOL_TYPE_OPTIONS: MolTypeOption[] = [
+  { value: 'solvent', labelKey: 'solvent' },
+  { value: 'cosolvent', labelKey: 'cosolvent' },
+  { value: 'diluent', labelKey: 'diluent' },
+  { value: 'additive', labelKey: 'additive' },
+];
 
 interface FindFriendOptionsProps {
   findClosestFriends: boolean;
@@ -55,6 +68,8 @@ interface FindFriendOptionsProps {
   readOnly?: boolean;
   allowFindFriendsToggleWhenReadOnly?: boolean;
   onLockedClick?: () => void;
+  additiveOptionsByCategory?: AdditiveOptionsByCategory;
+  molTypeOptions?: MolTypeOption[];
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
@@ -97,6 +112,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   readOnly = false,
   allowFindFriendsToggleWhenReadOnly = false,
   onLockedClick,
+  additiveOptionsByCategory,
+  molTypeOptions,
 }) => {
   const { t } = useTranslation();
   const canToggleFindFriends = !readOnly || allowFindFriendsToggleWhenReadOnly;
@@ -130,19 +147,44 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
     'search.intelligentFindFriendsLimitLabel',
   );
 
+  const additiveOptionsMap = useMemo(
+    () => additiveOptionsByCategory ?? ADDITIVE_OPTIONS_BY_CATEGORY,
+    [additiveOptionsByCategory],
+  );
+
   const additiveOptionList = useMemo(
-    () => ADDITIVE_OPTIONS_BY_CATEGORY[additiveCategory],
-    [additiveCategory],
+    () => additiveOptionsMap[additiveCategory],
+    [additiveCategory, additiveOptionsMap],
+  );
+
+  const molTypeOptionList = useMemo(
+    () => molTypeOptions ?? DEFAULT_MOL_TYPE_OPTIONS,
+    [molTypeOptions],
   );
 
   useEffect(() => {
     if (selectedMolType !== 'additive') {
       return;
     }
-    if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+    if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype, additiveOptionsMap)) {
       setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
     }
-  }, [additiveCategory, additiveSubtype, selectedMolType, setAdditiveSubtype]);
+  }, [additiveCategory, additiveSubtype, additiveOptionsMap, selectedMolType, setAdditiveSubtype]);
+
+  useEffect(() => {
+    if (molTypeOptionList.some((option) => option.value === selectedMolType)) {
+      return;
+    }
+    const fallbackType = molTypeOptionList[0]?.value;
+    if (!fallbackType) {
+      return;
+    }
+    setSelectedMolType(fallbackType);
+    if (fallbackType === 'additive') {
+      setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+      setAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
+    }
+  }, [molTypeOptionList, selectedMolType, setSelectedMolType, setAdditiveCategory, setAdditiveSubtype]);
 
   return (
     <>
@@ -231,10 +273,11 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                           }}
                           aria-disabled={readOnly}
                         >
-                          <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                          <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
-                          <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                          <option value="additive">{t('search.moleculeTypes.additive')}</option>
+                          {molTypeOptionList.map(({ value, labelKey }) => (
+                            <option key={value} value={value}>
+                              {t(`search.moleculeTypes.${labelKey}`, labelKey)}
+                            </option>
+                          ))}
                         </select>
                         {selectedMolType === 'additive' && (
                           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

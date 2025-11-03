@@ -84,6 +84,7 @@ export default {
         solvent: "溶媒",
         cosolvent: "共溶媒",
         diluent: "希釈剤",
+        primarySalt: "主要塩",
         additive: "添加剤",
         additiveSubtype: "添加剤サブカテゴリ",
         additiveCategory: "カテゴリ",

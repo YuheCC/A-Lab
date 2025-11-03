@@ -109,6 +109,7 @@ export default {
         solvent: "용매",
         cosolvent: "공용매",
         diluent: "희석제",
+        primarySalt: "Primary Salt",
         additive: "첨가제",
         additiveSubtype: "첨가제 서브카테고리",
         additiveCategory: "카테고리",

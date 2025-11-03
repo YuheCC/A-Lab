@@ -106,6 +106,7 @@ export default {
         solvent: "Solvent",
         cosolvent: "Cosolvent",
         diluent: "Diluent",
+        primarySalt: "Primary Salt",
         additive: "Additive",
         additiveSubtype: "Additive subcategory",
         additiveCategory: "Category",

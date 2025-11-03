@@ -13,7 +13,7 @@ import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import FindFriendOptions from "./FindFriendOptions";
+import FindFriendOptions, { type MolTypeOption } from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
@@ -23,6 +23,7 @@ import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import type { AdditiveCategoryType } from '@/constants/additiveCategories';
 import {
+    ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
     getDefaultSubtypeForCategory,
@@ -30,6 +31,11 @@ import {
 } from '@/constants/additiveCategories';
 
 const API_URL = getAPIUrl();
+
+const ANION_MOL_TYPE_OPTIONS: MolTypeOption[] = [
+    { value: 'salt', labelKey: 'primarySalt' },
+    { value: 'additive', labelKey: 'additive' },
+];
 
 const renderAnionCommercialScore = (score?: number | string | null) => {
     if (score === null || score === undefined) {
@@ -137,7 +143,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [findFriendsLoading, setFindFriendsLoading] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
     const [numResults, setNumResults] = useState(30);
-    const [selectedMolType, setSelectedMolType] = useState('solvent');
+    const [selectedMolType, setSelectedMolType] = useState('salt');
     const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
     const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [extraRequests, setExtraRequests] = useState('');
@@ -211,7 +217,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
 
     useEffect(() => {
-        if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+        if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype, ANION_ADDITIVE_OPTIONS_BY_CATEGORY)) {
             setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
         }
     }, [additiveCategory, additiveSubtype]);
@@ -442,21 +448,27 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         }
 
         const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+        const molTypeLabel = selectedMolType === 'salt' ? 'Primary Salt' : selectedMolType;
+        const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
         const parts: string[] = [];
         if (baseQuery) {
             parts.push(baseQuery);
+        }
+        if (selectedMolType) {
+            parts.push(`I am looking for ${molTypeLabel} molecules.`);
         }
         if (extraRequests.trim()) {
             parts.push(`I have the following requirements: ${extraRequests.trim()}`);
         }
         const queryString = parts.join(' ').trim();
-        const includeQuery = optionsSpecified || !!extraRequests.trim();
+        const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
         try {
             const { molecules, imageMap } = await findFriends<SimilarMolecule>({
                 smiles: seedSmiles,
                 use35m: isHighTier,
                 structureWeight: allowEmptySeeds && seedSmiles.length === 0 ? 0 : structureWeight,
+                molType: molTypeToSend,
                 computeLevel: computeToSend,
                 showHypothetical,
                 includeQuery,
@@ -706,12 +718,13 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
-                                enableMolTypeSelector={isPublic ? true : false}
                                 showStructureSlider={false}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
                                 allowFindFriendsToggleWhenReadOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
+                                additiveOptionsByCategory={ANION_ADDITIVE_OPTIONS_BY_CATEGORY}
+                                molTypeOptions={ANION_MOL_TYPE_OPTIONS}
                             />
 
                     <div className="search-results">

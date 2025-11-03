@@ -22,6 +22,7 @@ import type { AdditiveCategoryType } from '@/constants/additiveCategories';
 import {
     ADDITIVE_CATEGORY_LABEL_KEYS,
     ADDITIVE_OPTIONS_BY_CATEGORY,
+    ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
     getDefaultSubtypeForCategory,
@@ -128,9 +129,13 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const additiveOptionsMap = useMemo(
+        () => (isAnionFindFriend ? ANION_ADDITIVE_OPTIONS_BY_CATEGORY : ADDITIVE_OPTIONS_BY_CATEGORY),
+        [isAnionFindFriend],
+    );
     const additiveOptionList = useMemo(
-        () => ADDITIVE_OPTIONS_BY_CATEGORY[additiveCategory],
-        [additiveCategory],
+        () => additiveOptionsMap[additiveCategory],
+        [additiveCategory, additiveOptionsMap],
     );
     const handleLockedAction = useCallback(() => {
         if (!isAuthenticated) {
@@ -194,10 +199,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     }, [defaultCompute]);
 
     useEffect(() => {
-        if (!isValidAdditiveSubtype(additiveCategory, selectedAdditiveSubtype)) {
+        if (!isValidAdditiveSubtype(additiveCategory, selectedAdditiveSubtype, additiveOptionsMap)) {
             setSelectedAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
         }
-    }, [additiveCategory, selectedAdditiveSubtype]);
+    }, [additiveCategory, additiveOptionsMap, selectedAdditiveSubtype]);
 
     useEffect(() => {
         if (isAnionFindFriend) {

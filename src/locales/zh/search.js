@@ -108,6 +108,7 @@ export default {
         solvent: "溶剂",
         cosolvent: "共溶剂",
         diluent: "稀释剂",
+        primarySalt: "主盐",
         additive: "添加剂",
         additiveSubtype: "添加剂子类别",
         additiveCategory: "类别",
