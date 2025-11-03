@@ -98,6 +98,8 @@ const InorganicSearch = () => {
     // 使用无机分子数据源
     const { data, loading, error, fetchData } = useInorganicPlotDataStore();
 
+    const searchInputRef = useRef<any>(null);
+
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -626,10 +628,12 @@ const InorganicSearch = () => {
                             </div>
 
                             <SearchInput
+                                ref={searchInputRef}
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
                                 initialEditorOpen={false}
                                 placeholder={INORGANIC_SEARCH_PLACEHOLDER}
+                                showSubmitButton={false}
                             />
 
                             <div
@@ -690,6 +694,16 @@ const InorganicSearch = () => {
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                             />
+
+                            <div className="search-submit-container">
+                                <button
+                                    className="search-button"
+                                    onClick={() => searchInputRef.current?.submit?.()}
+                                    disabled={searchLoading}
+                                >
+                                    {t('search.searchButton')}
+                                </button>
+                            </div>
 
                     <div className="search-results">
                         {searchLoading && (

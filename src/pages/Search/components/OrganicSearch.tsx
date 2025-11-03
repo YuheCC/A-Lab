@@ -103,8 +103,10 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
-    
+
     const { data, loading, error } = usePlotDataStore();
+
+    const searchInputRef = useRef<any>(null);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
@@ -721,6 +723,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                             </div>
 
                             <SearchInput
+                                ref={searchInputRef}
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
@@ -730,6 +733,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 allowSubmitWhenLocked={isPublic}
                                 onLockedClick={triggerAccessModal}
                                 placeholder={ORGANIC_SEARCH_PLACEHOLDER}
+                                showSubmitButton={false}
                             />
 
                             <div
@@ -792,6 +796,16 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 readOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
                             />
+
+                            <div className="search-submit-container">
+                                <button
+                                    className="search-button"
+                                    onClick={() => searchInputRef.current?.submit?.()}
+                                    disabled={searchLoading}
+                                >
+                                    {t('search.searchButton')}
+                                </button>
+                            </div>
 
                     <div className="search-results">
                         {searchLoading && (

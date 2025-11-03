@@ -137,6 +137,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
     const { data, loading, error, fetchData } = useAnionsPlotDataStore();
 
+    const searchInputRef = useRef<any>(null);
+
     // 组件挂载时获取数据
     useEffect(() => {
         if (data.length === 0) {
@@ -532,7 +534,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         }
 
         const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
-        const molTypeLabel = selectedMolType === 'salt' ? 'Primary Salt' : selectedMolType;
+        const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
         const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
         const parts: string[] = [];
         if (baseQuery) {
@@ -785,6 +787,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                             </div>
 
                             <SearchInput
+                                ref={searchInputRef}
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.anionInput : ''}
@@ -794,6 +797,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 allowSubmitWhenLocked={isPublic}
                                 onLockedClick={triggerAccessModal}
                                 placeholder={ANION_SEARCH_PLACEHOLDER}
+                                showSubmitButton={false}
                             />
 
                             <div
@@ -859,6 +863,16 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 additiveOptionsByCategory={ANION_ADDITIVE_OPTIONS_BY_CATEGORY}
                                 molTypeOptions={ANION_MOL_TYPE_OPTIONS}
                             />
+
+                            <div className="search-submit-container">
+                                <button
+                                    className="search-button"
+                                    onClick={() => searchInputRef.current?.submit?.()}
+                                    disabled={searchLoading}
+                                >
+                                    {t('search.searchButton')}
+                                </button>
+                            </div>
 
                     <div className="search-results">
                         {searchLoading && (
