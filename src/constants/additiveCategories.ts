@@ -31,6 +31,7 @@ export const ADDITIVE_OPTIONS_BY_CATEGORY: AdditiveOptionsByCategory = {
   outcome: [
     { value: 'Fast charging', labelKey: 'outcomeOptions.fastCharging' },
     { value: 'High voltage', labelKey: 'outcomeOptions.highVoltage' },
+    { value: 'hotbox (thermal)', labelKey: 'outcomeOptions.hotboxThermal' },
     { value: 'HT cycling', labelKey: 'outcomeOptions.htCycling' },
     { value: 'HT storage', labelKey: 'outcomeOptions.htStorage' },
     { value: 'LT cycling', labelKey: 'outcomeOptions.ltCycling' },

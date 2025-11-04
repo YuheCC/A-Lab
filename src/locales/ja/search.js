@@ -128,6 +128,7 @@ export default {
             outcomeOptions: {
                 fastCharging: "急速充電",
                 highVoltage: "高電圧",
+                hotboxThermal: "ホットボックス（熱処理）",
                 htCycling: "高温サイクル",
                 htStorage: "高温保存",
                 ltCycling: "低温サイクル",

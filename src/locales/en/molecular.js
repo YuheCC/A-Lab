@@ -53,6 +53,7 @@ export default {
       outcomeOptions: {
         fastCharging: "Fast charging",
         highVoltage: "High voltage",
+        hotboxThermal: "Hotbox (thermal)",
         htCycling: "HT cycling",
         htStorage: "HT storage",
         ltCycling: "LT cycling",
