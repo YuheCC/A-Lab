@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import Plotly from 'plotly.js-dist';
 import { authFetch, getAPIUrl } from '@/utils.js';
 import { useAuthStore } from '@/models/useAuth';
 import NodePopup from '@/components/NodePopup';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@umijs/max';
+import RadarChart from './components/RadarChart';
+import ESPChart from './components/ESPChart';
+import MOChart from './components/MOChart';
+import './index.less';
 
 const API_URL = getAPIUrl();
 
@@ -131,9 +134,6 @@ const FavoritesGrid = () => {
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
   const [startX, setStartX] = useState(0);
   const [startWidth, setStartWidth] = useState(0);
-  const spiderChartRef = useRef<HTMLDivElement>(null);
-  const espChartRef = useRef<HTMLDivElement>(null);
-  const moChartRef = useRef<HTMLDivElement>(null);
 
   // Helper function to check if user has admin or enterprise permissions
   const canSeePredictedProperties = isAuthenticated && (userPermissions === 'admin' || userPermissions === 'enterprise');
@@ -223,26 +223,7 @@ const FavoritesGrid = () => {
     }
   }, [sortConfig]);
 
-  // Update the chart whenever selected molecules change
-  useEffect(() => {
-    if (showAnalysis) {
-      if (activeTab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
-        updateSpiderChart();
-      } else if (activeTab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
-        updateESPChart();
-      } else if (activeTab === 'mo' && moChartRef.current) {
-        // MO chart always updates and shows reference points
-        updateMOChart();
-      }
-    }
-  }, [selectedMolecules, showAnalysis, activeTab]);
-
-  // Separate effect to ensure MO chart data is ready when molecules are selected
-  useEffect(() => {
-    if (moChartRef.current && showAnalysis && activeTab === 'mo') {
-      updateMOChart();
-    }
-  }, [selectedMolecules]);
+  // 图表更新现在由组件自己的 props 变化触发，无需手动调用
 
   // Column resizing handlers
   const handleMouseDown = (e: React.MouseEvent, columnKey: string) => {
@@ -1085,16 +1066,6 @@ const FavoritesGrid = () => {
 
   const handleShowAnalysis = () => {
     setShowAnalysis(true);
-    // Update the chart after state is updated
-    setTimeout(() => {
-      if (activeTab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
-        updateSpiderChart();
-      } else if (activeTab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
-        updateESPChart();
-      } else if (activeTab === 'mo' && moChartRef.current) {
-        updateMOChart();
-      }
-    }, 100);
   };
 
   const handleCloseAnalysis = () => {
@@ -1103,17 +1074,6 @@ const FavoritesGrid = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    if (showAnalysis) {
-      setTimeout(() => {
-        if (tab === 'radar' && spiderChartRef.current && selectedMolecules.length > 0) {
-          updateSpiderChart();
-        } else if (tab === 'esp' && espChartRef.current && selectedMolecules.length > 0) {
-          updateESPChart();
-        } else if (tab === 'mo' && moChartRef.current) {
-          updateMOChart();
-        }
-      }, 100);
-    }
   };
 
   // Handle clicks on chart points to show popup
@@ -1465,19 +1425,19 @@ const FavoritesGrid = () => {
           
           <div className="analysis-content">
             {activeTab === 'radar' && (
-              <div className="spider-chart-container">
-                <div ref={spiderChartRef} className="spider-chart"></div>
-              </div>
+              <RadarChart molecules={selectedMolecules} />
             )}
             {activeTab === 'esp' && (
-              <div className="esp-chart-container">
-                <div ref={espChartRef} className="esp-chart"></div>
-              </div>
+              <ESPChart
+                molecules={selectedMolecules}
+                onNodeClick={handlePointClick}
+              />
             )}
             {activeTab === 'mo' && (
-              <div className="mo-chart-container">
-                <div ref={moChartRef} className="mo-chart"></div>
-              </div>
+              <MOChart
+                molecules={selectedMolecules}
+                onNodeClick={handlePointClick}
+              />
             )}
           </div>
         </div>
