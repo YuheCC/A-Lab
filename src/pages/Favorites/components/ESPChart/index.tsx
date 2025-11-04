@@ -113,27 +113,43 @@ const ESPChart: React.FC<ESPChartProps> = ({ molecules, onNodeClick }) => {
       }
     });
 
-    // 绘制椭圆区域（使用 graphic 组件）
-    const graphicElements = ESP_REGIONS.map((region) => {
-      const path = calculateEllipsePath(
-        region.center[0],
-        region.center[1],
-        region.width / 2,
-        region.height / 2,
-        region.angle
-      );
+    // 绘制椭圆区域边界（使用 scatter series）
+    const ellipseSeries = ESP_REGIONS.map((region) => {
+      const ellipsePoints: [number, number][] = [];
+      const steps = 100; // 椭圆上的点数
+      const angleRad = (region.angle * Math.PI) / 180;
+      const rx = region.width / 2;
+      const ry = region.height / 2;
+      const cx = region.center[0];
+      const cy = region.center[1];
+
+      // 生成椭圆上的点
+      for (let i = 0; i <= steps; i++) {
+        const t = (i / steps) * 2 * Math.PI;
+        const x = rx * Math.cos(t);
+        const y = ry * Math.sin(t);
+
+        // 应用旋转
+        const rotatedX = x * Math.cos(angleRad) - y * Math.sin(angleRad);
+        const rotatedY = x * Math.sin(angleRad) + y * Math.cos(angleRad);
+
+        ellipsePoints.push([cx + rotatedX, cy + rotatedY]);
+      }
 
       return {
-        type: 'path',
-        shape: {
-          pathData: path,
+        name: `${region.label} region`,
+        type: 'line',
+        data: ellipsePoints,
+        smooth: true,
+        showSymbol: false,
+        lineStyle: {
+          color: region.color,
+          width: 2,
+          type: 'dashed' as const,
         },
-        style: {
-          fill: region.color,
-          opacity: region.opacity || 0.2,
-          stroke: region.color,
-          lineWidth: 2,
-          lineDash: [5, 5],
+        areaStyle: {
+          color: region.color,
+          opacity: region.opacity || 0.1,
         },
         silent: true,
         z: 0,
@@ -167,8 +183,8 @@ const ESPChart: React.FC<ESPChartProps> = ({ molecules, onNodeClick }) => {
           ...legendOrder.filter((type) => groupedData[type]),
           ...ESP_REGIONS.map((r) => `${r.label} region`),
         ],
-        top: 'bottom',
-        left: 'center',
+        top: '5%',
+        left: 'left',
         textStyle: AXIS_LABEL_STYLE,
       },
       xAxis: {
@@ -199,8 +215,7 @@ const ESPChart: React.FC<ESPChartProps> = ({ molecules, onNodeClick }) => {
           },
         },
       },
-      graphic: graphicElements,
-      series: series,
+      series: [...series, ...ellipseSeries],
     };
   }, [molecules, t]);
 

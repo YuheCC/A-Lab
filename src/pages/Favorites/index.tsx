@@ -1170,7 +1170,7 @@ const FavoritesGrid = () => {
       {!showAnalysis ? (
         <>
           <div className="favorites-header">
-            <div className="analysis-tabs">
+            <div className="analysis-tabs" style={{margin: "15px 0"}}>
               <button 
                 className={`analysis-tab ${activeTab === 'radar' ? 'active' : ''}`}
                 onClick={() => handleTabChange('radar')}
