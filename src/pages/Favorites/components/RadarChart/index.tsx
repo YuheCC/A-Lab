@@ -134,7 +134,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ molecules }) => {
         center: ['50%', '52%'],
         splitNumber: 4,
         shape: 'circle',
-        startAngle: 90, // 从右侧开始，与 Plotly 保持一致
+        startAngle: 70, // 从右侧开始，与 Plotly 保持一致
         name: {
           ...AXIS_LABEL_STYLE,
           color: '#666',
