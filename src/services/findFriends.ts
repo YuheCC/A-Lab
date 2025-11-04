@@ -11,6 +11,7 @@ interface FindFriendsOptions {
   isInorganic?: boolean;
   isAnion?: boolean;
   showHypothetical?: boolean;
+  numResults?: number;
 }
 
 export interface FindFriendsResult<T = any> {
@@ -30,6 +31,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     isInorganic = false,
     showHypothetical = false,
     isAnion = false,
+    numResults,
   } = options;
 
   const API_URL = getAPIUrl();
@@ -45,6 +47,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(isAnion && { is_anion: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
     commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
+    ...(typeof numResults === 'number' ? { num_results: numResults } : {}),
     ...(hasQuery && {
       query: queryString,
       response: 'No additional context is available for this query.',

@@ -314,8 +314,13 @@
 
 .search-option {
     display: flex;
-    align-items: flex-start;
-    cursor: pointer;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    flex: 0 1 100%;
+    align-self: flex-start;
+    margin-right: 0;
+    gap: 16px;
 }
 
 .search-option input[type="checkbox"] {
@@ -325,7 +330,17 @@
 
 /* 搜索结果样式 */
 .search-results {
-    margin-top: 20px;
+    margin-top: 16px;
+}
+
+.search-submit-container {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0 0;
+}
+
+.search-submit-container .search-button {
+    min-width: 160px;
 }
 
 .loading-container {

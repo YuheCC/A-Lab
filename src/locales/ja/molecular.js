@@ -36,10 +36,29 @@ export default {
     },
     additiveSubtypes: {
       title: "添加剤サブカテゴリ",
-      seiPromoter: "SEI促進剤",
-      sideReactionSuppressor: "副反応抑制剤",
-      dendriteSuppressor: "デンドライト抑制剤",
-      interfacialStabilityImprover: "界面安定性向上剤"
+      categoryLabel: "カテゴリ",
+      mechanistic: "メカニズム",
+      outcome: "成果",
+      mechanisticOptions: {
+        seiStabilizer: "SEI安定化剤",
+        ceiStabilizer: "CEI安定化剤",
+        hfNeutralizer: "HF中和剤",
+        tmDissolutionSuppressor: "遷移金属溶出抑制剤",
+        desolvationOptimizer: "脱溶媒化最適化剤",
+        dendriteSuppressor: "デンドライト抑制剤",
+        polysulfideSuppressor: "ポリスルフィド抑制剤",
+        gasSuppressor: "ガス抑制剤",
+        flameRetardant: "難燃剤"
+      },
+      outcomeOptions: {
+        fastCharging: "急速充電",
+        highVoltage: "高電圧",
+        hotboxThermal: "ホットボックス（熱処理）",
+        htCycling: "高温サイクル",
+        htStorage: "高温保存",
+        ltCycling: "低温サイクル",
+        rtCycling: "室温サイクル"
+      }
     },
     properties: {
       predictedFp: "予測引火点",

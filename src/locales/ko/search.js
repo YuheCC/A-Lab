@@ -12,10 +12,31 @@ export default {
     searchButton: "검색",
     searchTooltip: '<p>유효한 쿼리는 분자의 모든 수치적 특성을 검색할 수 있습니다. 예시:</p><p>- "HOMO가 최대 -8인 모든 분자 찾기"<br/>- "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"</p><p>더 개방적인 쿼리의 경우 Ask를 사용하세요.</p><p>SMILES 문자열을 그리거나 찾으려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>을 방문하세요</p>',
     drawMolecule: "분자 그리기",
+    similarityPrompt: '다음과 구조적으로 유사한 분자를 검색하세요:',
+    similarityTooltip: {
+        title: '검색',
+        lines: [
+            '검색 알고리즘은 입력한 분자를 데이터베이스에서 조회하여 유사한 분자를 찾아줍니다.',
+            'SMILES 문자열, 분자명 또는 일반적인 약어로 된 분자 목록을 얼마든지 입력하세요.',
+            '편향되지 않은 검색을 원한다면 이 상자를 비워 두세요.',
+            '왼쪽의 그리기 아이콘을 클릭하면 원하는 분자를 그려 SMILES 문자열을 자동으로 입력할 수 있습니다.',
+        ],
+    },
+    propertyConstraints: {
+        intro: '다음과 같은 물성 제약 조건을 적용합니다:',
+        tooltipTitle: '사용자 지정 물성 제약 조건',
+        tooltipIntro: 'Search는 원하는 분자 구조와 물성에 맞춰 결과를 조정할 수 있는 자연어 인터페이스를 지원합니다. 다음 항목을 요청할 수 있습니다:',
+        atomCounts: '원소별 원하는 원자 수',
+        functionalGroups: '특정 작용기의 존재 또는 부재',
+        commercialAvailability: '상용화 가능 여부',
+        valueRangeBullet: '{{properties}}에 대한 값 범위 또는 경계',
+    },
     
     // Search Options
-    findFriendsLabel: '"친구" 찾기',
+    findFriendsLabel: '의도된 용도:',
     findFriendsDescription: '입력한 분자와 유사한 구조를 가지며, 아래의 배터리 사용 사례에 이론적으로 호환되는 물리화학적 특성을 가진 분자:',
+    useCaseTooltipTitle: 'SES molecule property optimizer',
+    useCaseTooltipDescription: "Enter what type of battery molecule you're looking for, and SES's molecule property optimizer will display results that are more likely to be compatible with your chosen use case.",
     
     searchRange: '검색 범위',
     nearbyFriends: '가까운 친구들',
@@ -94,6 +115,8 @@ export default {
         lumo: "LUMO",
         espMin: "ESP Min",
         espMax: "ESP Max",
+        molecularVolume: "Molecular Volume",
+        fluorideBondDissociationEnergy: "F Bond Dissociation Energy",
         predictedMp: "Predicted Melting Point",
         predictedBp: "Predicted Boiling Point",
         predictedFp: "Predicted Flash Point",
@@ -109,13 +132,33 @@ export default {
         solvent: "용매",
         cosolvent: "공용매",
         diluent: "희석제",
+        primarySalt: "Primary Salt",
         additive: "첨가제",
         additiveSubtype: "첨가제 서브카테고리",
-        additiveOptions: {
-            seiPromoter: "SEI 활성화제",
-            sideReactionSuppressor: "부사상 반응 억제제",
-            dendriteSuppressor: "덴드리트 억제제",
-            interfacialStabilityImprover: "표면 안정성 향상제"
+        additiveCategory: "카테고리",
+        additiveCategories: {
+            mechanistic: "메커니즘",
+            outcome: "결과",
+            mechanisticOptions: {
+                seiStabilizer: "SEI 안정화제",
+                ceiStabilizer: "CEI 안정화제",
+                hfNeutralizer: "HF 중화제",
+                tmDissolutionSuppressor: "전이금속 용출 억제제",
+                desolvationOptimizer: "탈용매 최적화제",
+                dendriteSuppressor: "덴드라이트 억제제",
+                polysulfideSuppressor: "폴리설파이드 억제제",
+                gasSuppressor: "가스 억제제",
+                flameRetardant: "난연제"
+            },
+            outcomeOptions: {
+                fastCharging: "고속 충전",
+                highVoltage: "고전압",
+                hotboxThermal: "핫박스(열 처리)",
+                htCycling: "고온 사이클링",
+                htStorage: "고온 저장",
+                ltCycling: "저온 사이클링",
+                rtCycling: "상온 사이클링"
+            }
         }
     },
     

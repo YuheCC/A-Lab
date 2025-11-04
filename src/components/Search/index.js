@@ -1,26 +1,32 @@
-import InfoTooltip from '@/components/InfoTooltip';
-import { CircleHelp, Pen } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useImperativeHandle, forwardRef, useCallback } from 'react';
 import MolEditor from '../MolEditor';
 import './Search.css';
 import { useTranslation } from 'react-i18next';
 import benPenSvg from '@/assets/svg/benPen.svg';
+import InfoTooltip from '@/components/InfoTooltip';
 
 
 // SearchInput now maintains its own internal input state.
-const SearchInput = React.memo(({
+const SearchInputInner = ({
   onSearch,
   disabled,
   initialValue = "",
   lockInput = false,
-  initialEditorOpen = true,
+  initialEditorOpen,
   lockMolEditorToggle = false,
   allowSubmitWhenLocked = false,
   onLockedClick,
-}) => {
+  placeholder,
+  showSubmitButton = true,
+}, ref) => {
   const { t } = useTranslation();
-  const [showMolEditor, setShowMolEditor] = useState(initialEditorOpen);
+  const resolvedInitialEditorOpen = initialEditorOpen ?? false;
+  const [showMolEditor, setShowMolEditor] = useState(resolvedInitialEditorOpen);
   const [inputValue, setInputValue] = useState(initialValue);
+  const resolvedPlaceholder = useMemo(
+    () => placeholder ?? t('search.searchPlaceholder'),
+    [placeholder, t],
+  );
 
   useEffect(() => {
     setInputValue(initialValue);
@@ -28,9 +34,9 @@ const SearchInput = React.memo(({
 
   useEffect(() => {
     if (lockMolEditorToggle) {
-      setShowMolEditor(initialEditorOpen);
+      setShowMolEditor(resolvedInitialEditorOpen);
     }
-  }, [lockMolEditorToggle, initialEditorOpen]);
+  }, [lockMolEditorToggle, resolvedInitialEditorOpen]);
 
   const handleLockedClick = () => {
     if (typeof onLockedClick === 'function') {
@@ -56,21 +62,27 @@ const SearchInput = React.memo(({
 
   const isSubmitDisabled = disabled || (lockInput && !allowSubmitWhenLocked);
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !isSubmitDisabled) {
-      onSearch(inputValue);
+  const submit = useCallback(() => {
+    if (isSubmitDisabled) {
+      if (lockInput && typeof onLockedClick === 'function') {
+        onLockedClick();
+      }
+      return;
     }
-  };
-
-  const handleClickSend = () => {
-    if (isSubmitDisabled) return;
     onSearch(inputValue);
-  }
+  }, [isSubmitDisabled, lockInput, onLockedClick, onSearch, inputValue]);
 
-  const pubChemUrl = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html";
+  useImperativeHandle(ref, () => ({
+    submit,
+    getValue: () => inputValue,
+    isSubmitDisabled,
+  }), [submit, inputValue, isSubmitDisabled]);
 
-  const handleTooltipClick = () => {
-    window.open(pubChemUrl, '_blank', 'noopener,noreferrer');
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submit();
+    }
   };
 
   // 使用外部 SVG 资源替代内联 SVG
@@ -110,7 +122,7 @@ const SearchInput = React.memo(({
         <input
           type="text"
           className="search-input"
-          placeholder={t('search.searchPlaceholder')}
+          placeholder={resolvedPlaceholder}
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -138,25 +150,15 @@ const SearchInput = React.memo(({
             backgroundColor: lockInput ? '#f0f2f5' : undefined,
           }}
         />
-        <InfoTooltip
-          title={<>
-            <div style={{ whiteSpace: 'pre-line', width: '300px' }} dangerouslySetInnerHTML={{ __html: t('search.searchTooltip', { pubChemUrl }) }} />
-          </>}
-        >
-          <CircleHelp size={18} style={{
-            marginLeft: '8px',
-            marginRight: '8px',
-            color: '#999',
-            cursor: 'pointer',
-          }}/>
-        </InfoTooltip>
-        <button
-          className="search-button"
-          onClick={handleClickSend}
-          disabled={isSubmitDisabled}
-        >
-          {t('search.searchButton')}
-        </button>
+        {showSubmitButton && (
+          <button
+            className="search-button"
+            onClick={submit}
+            disabled={isSubmitDisabled}
+          >
+            {t('search.searchButton')}
+          </button>
+        )}
       </div>
       {showMolEditor && !lockMolEditorToggle && <MolEditor onMolChange={handleMolChange} style={{
         marginTop: 5,
@@ -165,6 +167,8 @@ const SearchInput = React.memo(({
       }}/>} 
     </div>
   );
-});
+};
+
+const SearchInput = React.memo(forwardRef(SearchInputInner));
 
 export default SearchInput;

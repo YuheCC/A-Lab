@@ -12,10 +12,31 @@ export default {
     searchButton: "搜索",
     searchTooltip: '<p>有效查询可以搜索分子的任何数值属性。例如：</p><p>- "查找HOMO最多为-8的所有分子"<br/>- "查找LUMO至少为-2且分子量最多为200的所有分子"</p><p>对于更开放式的查询，请使用智能问答功能。</p><p>要绘制和查找SMILES字符串，请点击此图标或访问 <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "绘制分子",
+    similarityPrompt: '搜索与下列分子在结构上相似的分子：',
+    similarityTooltip: {
+        title: '搜索',
+        lines: [
+            'Search 算法会在我们的数据库中查找你的分子，并找到与之相似的分子。',
+            '可以输入任意数量的分子，支持 SMILES 字符串、分子名称或常用缩写。',
+            '如果希望获得不带偏向的搜索结果，请将此输入框留空。',
+            '点击左侧的绘图图标，可以绘制自定义分子并自动将其 SMILES 字符串填入该输入框。',
+        ],
+    },
+    propertyConstraints: {
+        intro: '满足以下物性约束：',
+        tooltipTitle: '自定义物性约束',
+        tooltipIntro: 'Search 支持通过自然语言来调整搜索结果，以满足你对分子结构和物性的需求。你可以请求以下内容：',
+        atomCounts: '指定各元素的原子数',
+        functionalGroups: '指定某些官能团的存在或缺失',
+        commercialAvailability: '商业可得性',
+        valueRangeBullet: '{{properties}} 的数值范围或界限',
+    },
     
     // Search Options
-    findFriendsLabel: '查找"朋友"',
+    findFriendsLabel: '计划用途：',
     findFriendsDescription: '与您输入的分子具有相似结构，并且在理论上与以下电池使用场景相兼容的物理化学性质的分子：',
+    useCaseTooltipTitle: 'SES molecule property optimizer',
+    useCaseTooltipDescription: "Enter what type of battery molecule you're looking for, and SES's molecule property optimizer will display results that are more likely to be compatible with your chosen use case.",
 
     searchRange: '搜索范围',
     nearbyFriends: '附近的朋友',
@@ -93,6 +114,8 @@ export default {
         lumo: "LUMO",
         espMin: "ESP Min",
         espMax: "ESP Max",
+        molecularVolume: "Molecular Volume",
+        fluorideBondDissociationEnergy: "F Bond Dissociation Energy",
         predictedMp: "Predicted Melting Point",
         predictedBp: "Predicted Boiling Point",
         predictedFp: "Predicted Flash Point",
@@ -108,13 +131,33 @@ export default {
         solvent: "溶剂",
         cosolvent: "共溶剂",
         diluent: "稀释剂",
+        primarySalt: "主盐",
         additive: "添加剂",
         additiveSubtype: "添加剂子类别",
-        additiveOptions: {
-            seiPromoter: "SEI 促进剂",
-            sideReactionSuppressor: "副反应抑制剂",
-            dendriteSuppressor: "枝晶抑制剂",
-            interfacialStabilityImprover: "界面稳定性改进剂"
+        additiveCategory: "类别",
+        additiveCategories: {
+            mechanistic: "机理",
+            outcome: "结果",
+            mechanisticOptions: {
+                seiStabilizer: "SEI 稳定剂",
+                ceiStabilizer: "CEI 稳定剂",
+                hfNeutralizer: "HF 中和剂",
+                tmDissolutionSuppressor: "TM 溶解抑制剂",
+                desolvationOptimizer: "脱溶优化剂",
+                dendriteSuppressor: "枝晶抑制剂",
+                polysulfideSuppressor: "多硫化物抑制剂",
+                gasSuppressor: "气体抑制剂",
+                flameRetardant: "阻燃剂"
+            },
+            outcomeOptions: {
+                fastCharging: "快速充电",
+                highVoltage: "高电压",
+                hotboxThermal: "Hotbox（热处理）",
+                htCycling: "高温循环",
+                htStorage: "高温存储",
+                ltCycling: "低温循环",
+                rtCycling: "室温循环"
+            }
         }
     },
     

@@ -38,13 +38,33 @@ export const createLlmGradeProp = (
   grade: number | null | undefined,
   reasoning: string | undefined,
   onShow: (text: string) => void
-) => ({
-  label: 'LLM Grade',
-  value: grade,
-  span: 2,
-  suffix: '/10',
-  action: <ReasoningButton reasoning={reasoning} onShow={onShow} />,
-  show: grade !== null && grade !== undefined,
-});
+) => {
+  if (grade === null || grade === undefined || Number.isNaN(Number(grade))) {
+    return {
+      label: 'LLM Grade',
+      value: grade,
+      span: 2,
+      suffix: '/10',
+      action: <ReasoningButton reasoning={reasoning} onShow={onShow} />,
+      show: false,
+    };
+  }
+
+  const numericGrade = Number(grade);
+  const roundedValue = numericGrade.toFixed(1);
+  const clampedGrade = Math.min(Math.max(numericGrade, 1), 10);
+  const normalized = (clampedGrade - 1) / 9;
+  const hue = Math.round(normalized * 120);
+
+  return {
+    label: 'LLM Grade',
+    value: roundedValue,
+    span: 2,
+    suffix: '/10',
+    action: <ReasoningButton reasoning={reasoning} onShow={onShow} />,
+    show: true,
+    color: `hsl(${hue}, 70%, 45%)`,
+  };
+};
 
 export default ReasoningButton;

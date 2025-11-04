@@ -18,6 +18,16 @@ import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
 import { useChatContext } from '../../context/ChatContext';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+    ADDITIVE_CATEGORY_LABEL_KEYS,
+    ADDITIVE_OPTIONS_BY_CATEGORY,
+    ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
+    DEFAULT_ADDITIVE_CATEGORY,
+    DEFAULT_ADDITIVE_SUBTYPE,
+    getDefaultSubtypeForCategory,
+    isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 const inferIsAnionFromData = (
     input?: Partial<MoleculeData> | Record<string, any> | null
@@ -95,7 +105,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [selectedMoleculeType, setSelectedMoleculeType] = useState('solvent');
     const prevMoleculeTypeRef = useRef('solvent');
     const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
-    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState('A');
+    const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
+    const [selectedAdditiveSubtype, setSelectedAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [similarMolecules, setSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarRawList, setSimilarRawList] = useState<any[]>([]);
     const [originalMoleculeProps, setOriginalMoleculeProps] = useState<MoleculeProperties | undefined>();
@@ -107,6 +118,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [useAnionDatabase, setUseAnionDatabase] = useState<boolean>(() => inferIsAnionFromData(molecule));
     const isAnionFindFriend = useAnionDatabase;
     const [structureWeight, setStructureWeight] = useState(0.75);
+    const [numResults, setNumResults] = useState(30);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => {
         if (["admin", "enterprise", "joint"].includes(userPermissions || '')) return 'High';
@@ -117,6 +129,14 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
+    const additiveOptionsMap = useMemo(
+        () => (isAnionFindFriend ? ANION_ADDITIVE_OPTIONS_BY_CATEGORY : ADDITIVE_OPTIONS_BY_CATEGORY),
+        [isAnionFindFriend],
+    );
+    const additiveOptionList = useMemo(
+        () => additiveOptionsMap[additiveCategory],
+        [additiveCategory, additiveOptionsMap],
+    );
     const handleLockedAction = useCallback(() => {
         if (!isAuthenticated) {
             if (typeof window !== 'undefined') {
@@ -162,6 +182,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                 setStructureWeight(0.5);
                 break;
             case 'additive':
+                setStructureWeight(0.9);
+                break;
             case 'salt':
                 setStructureWeight(1.0);
                 break;
@@ -175,6 +197,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     useEffect(() => {
         setComputeLevel(defaultCompute);
     }, [defaultCompute]);
+
+    useEffect(() => {
+        if (!isValidAdditiveSubtype(additiveCategory, selectedAdditiveSubtype, additiveOptionsMap)) {
+            setSelectedAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+        }
+    }, [additiveCategory, additiveOptionsMap, selectedAdditiveSubtype]);
 
     useEffect(() => {
         if (isAnionFindFriend) {
@@ -285,14 +313,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const handleMoleculeTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value;
         setSelectedMoleculeType(newType);
-        if (newType === 'additive') {
-            setSelectedAdditiveSubtype('A');
+        if (selectedMoleculeType !== 'additive' && newType === 'additive') {
+            setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+            setSelectedAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
         }
         onUpdateMoleculeType?.(moleculeName, newType);
     };
 
     const handleAdditiveSubtypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAdditiveSubtype(event.target.value);
+    };
+
+    const handleAdditiveCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newCategory = event.target.value as AdditiveCategoryType;
+        setAdditiveCategory(newCategory);
+        setSelectedAdditiveSubtype(getDefaultSubtypeForCategory(newCategory));
     };
 
     const toggleFunctionalGroups = (cardId: string) => {
@@ -608,16 +643,35 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     {selectedMoleculeType === 'additive' && (
                         <div style={{ marginTop: '8px' }}>
                             <label style={{ marginRight: '4px' }}>{t('molecular.moleculeModal.additiveSubtypes.title')}</label>
-                            <select
-                                value={selectedAdditiveSubtype}
-                                onChange={handleAdditiveSubtypeChange}
-                                style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
-                            >
-                                <option value="A">{t('molecular.moleculeModal.additiveSubtypes.seiPromoter')}</option>
-                                <option value="C">{t('molecular.moleculeModal.additiveSubtypes.sideReactionSuppressor')}</option>
-                                <option value="F">{t('molecular.moleculeModal.additiveSubtypes.dendriteSuppressor')}</option>
-                                <option value="H">{t('molecular.moleculeModal.additiveSubtypes.interfacialStabilityImprover')}</option>
-                            </select>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+                                <select
+                                    value={additiveCategory}
+                                    onChange={handleAdditiveCategoryChange}
+                                    style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                    aria-label={t('molecular.moleculeModal.additiveSubtypes.categoryLabel')}
+                                >
+                                    {Object.keys(ADDITIVE_CATEGORY_LABEL_KEYS).map((categoryKey) => (
+                                        <option key={categoryKey} value={categoryKey}>
+                                            {t(
+                                                `molecular.moleculeModal.additiveSubtypes.${ADDITIVE_CATEGORY_LABEL_KEYS[categoryKey as AdditiveCategoryType]}`,
+                                            )}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={selectedAdditiveSubtype}
+                                    onChange={handleAdditiveSubtypeChange}
+                                    style={{ backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', padding: '4px' }}
+                                >
+                                    {additiveOptionList.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {t(
+                                                `molecular.moleculeModal.additiveSubtypes.${option.labelKey}`,
+                                            )}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     )}
                     <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -682,6 +736,32 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
                         </select>
                     </div>
+                    <textarea
+                        value={extraRequests}
+                        onChange={(e) => {
+                            if (isFindFriendsLocked) {
+                                handleLockedAction();
+                                return;
+                            }
+                            setExtraRequests(e.target.value);
+                        }}
+                        placeholder={t('search.extraRequestsPlaceholder')}
+                        className="ff-advanced-textarea"
+                        readOnly={isFindFriendsLocked}
+                        onMouseDown={(event) => {
+                            if (isFindFriendsLocked) {
+                                event.preventDefault();
+                                handleLockedAction();
+                            }
+                        }}
+                        style={{
+                            marginTop: '12px',
+                            minHeight: '100px',
+                            backgroundColor: isFindFriendsLocked ? '#f1f5f9' : undefined,
+                            color: isFindFriendsLocked ? '#94a3b8' : undefined,
+                            cursor: isFindFriendsLocked ? 'not-allowed' : 'text',
+                        }}
+                    />
                     <div
                         role="button"
                         tabIndex={0}
@@ -710,8 +790,6 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                     {showAdvanced && (
                         <FindFriendAdvancedOptions
-                            extraRequests={extraRequests}
-                            setExtraRequests={setExtraRequests}
                             selectedMolType={selectedMoleculeType}
                             setSelectedMolType={setSelectedMoleculeType}
                             additiveSubtype={selectedAdditiveSubtype}
@@ -721,6 +799,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             setStructureWeight={setStructureWeight}
                             showHypothetical={showHypothetical}
                             setShowHypothetical={setShowHypothetical}
+                            numResults={numResults}
+                            setNumResults={setNumResults}
                             userPermissions={userPermissions || undefined}
                             showBatteryFields={false}
                             showStructureSlider={!isAnionFindFriend}
@@ -822,7 +902,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             smiles,
             use_35m: isHighTier,
             structure_weight: structureWeight,
-            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3]
+            commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
+            num_results: numResults,
         };
         if (molType) {
             payload.mol_type = molType;

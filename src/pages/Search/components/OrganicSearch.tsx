@@ -9,7 +9,7 @@ import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
 import CustomButton from "@/components/CustomButton";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
@@ -21,6 +21,14 @@ import '../index.css';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
+import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import {
+    DEFAULT_ADDITIVE_CATEGORY,
+    DEFAULT_ADDITIVE_SUBTYPE,
+    getDefaultSubtypeForCategory,
+    isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
 
 const API_URL = getAPIUrl();
 
@@ -72,8 +80,22 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
+const ORGANIC_PROPERTY_DEFINITIONS = [
+    { columnId: 'HOMO_eV', labelKey: 'search.properties.homo', fallback: 'HOMO' },
+    { columnId: 'LUMO_eV', labelKey: 'search.properties.lumo', fallback: 'LUMO' },
+    { columnId: 'ESP_min_eV', labelKey: 'search.properties.espMin', fallback: 'ESP Min' },
+    { columnId: 'ESP_max_eV', labelKey: 'search.properties.espMax', fallback: 'ESP Max' },
+    { columnId: 'molecular_weight', labelKey: 'search.properties.molecularWeight', fallback: 'Molecular Weight' },
+    { columnId: 'combustion_enthalpy_ev', labelKey: 'search.properties.combustionEnthalpy', fallback: 'Combustion Enthalpy' },
+    { columnId: 'predicted_MP_celsius', labelKey: 'search.properties.predictedMp', fallback: 'Predicted Melting Point' },
+    { columnId: 'predicted_BP_celsius', labelKey: 'search.properties.predictedBp', fallback: 'Predicted Boiling Point' },
+    { columnId: 'predicted_FP_celsius', labelKey: 'search.properties.predictedFp', fallback: 'Predicted Flash Point' },
+];
+
+const ORGANIC_SEARCH_PLACEHOLDER = 'ethylene carbonate, DTD, CCOC(=O)OCC';
+
 const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
@@ -81,8 +103,10 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, setMoleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
-    
+
     const { data, loading, error } = usePlotDataStore();
+
+    const searchInputRef = useRef<any>(null);
 
     const [searchResults, setsearchResults] = useState<string[] | null>(null);
     const [lastSearch, setLastSearch] = useState<string | null>(null);
@@ -92,24 +116,13 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const [searchedMolecules, setsearchedMolecules] = useState<MoleculeData[] | null>(null);
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
-    const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [structureWeight, setStructureWeight] = useState(0.75);
+    const findClosestFriends = true;
+    const [findFriendsLoading, setFindFriendsLoading] = useState(false);
+    const [structureWeight, setStructureWeight] = useState(0.5);
+    const [numResults, setNumResults] = useState(30);
     const [selectedMolType, setSelectedMolType] = useState('solvent');
-    const [additiveSubtype, setAdditiveSubtype] = useState('A');
-    useEffect(() => {
-        switch (selectedMolType) {
-            case 'diluent':
-                setStructureWeight(0.5);
-                break;
-            case 'additive':
-                setStructureWeight(1.0);
-                break;
-            case 'solvent':
-            case 'cosolvent':
-            default:
-                setStructureWeight(0.75);
-        }
-    }, [selectedMolType]);
+    const [additiveCategory, setAdditiveCategory] = useState<AdditiveCategoryType>(DEFAULT_ADDITIVE_CATEGORY);
+    const [additiveSubtype, setAdditiveSubtype] = useState<string>(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
     const [extraRequests, setExtraRequests] = useState('');
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
@@ -125,6 +138,78 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         (columnId?: string | null) => isColumnVisibleForUser(columnId, userPermissions),
         [userPermissions]
     );
+
+    const formatListForLocale = useCallback(
+        (items: string[]) => {
+            if (items.length === 0) {
+                return '';
+            }
+            try {
+                const formatter = new Intl.ListFormat(i18n.language, { style: 'long', type: 'conjunction' });
+                return formatter.format(items);
+            } catch (_error) {
+                return items.join(', ');
+            }
+        },
+        [i18n.language]
+    );
+
+    const accessiblePropertyLabels = useMemo(
+        () => ORGANIC_PROPERTY_DEFINITIONS
+            .filter(({ columnId }) => canShowColumn(columnId))
+            .map(({ labelKey, fallback }) => t(labelKey, fallback)),
+        [canShowColumn, t]
+    );
+
+    const propertyRangeBullet = useMemo(() => {
+        if (accessiblePropertyLabels.length === 0) {
+            return null;
+        }
+        const formatted = formatListForLocale(accessiblePropertyLabels);
+        return t('search.propertyConstraints.valueRangeBullet', { properties: formatted });
+    }, [accessiblePropertyLabels, formatListForLocale, t]);
+
+    const propertyConstraintBullets = useMemo(() => {
+        const bullets = [
+            t('search.propertyConstraints.atomCounts'),
+            canShowColumn('functional_groups') ? t('search.propertyConstraints.functionalGroups') : null,
+            canShowColumn('commercial_score') ? t('search.propertyConstraints.commercialAvailability') : null,
+            propertyRangeBullet,
+        ];
+        return bullets.filter(Boolean) as string[];
+    }, [t, canShowColumn, propertyRangeBullet]);
+
+    const searchTooltipLines = useMemo(() => {
+        const lines = t('search.similarityTooltip.lines', { returnObjects: true });
+        if (Array.isArray(lines)) {
+            return lines;
+        }
+        if (lines == null) {
+            return [];
+        }
+        return [String(lines)];
+    }, [t]);
+
+    const propertyTooltipDescription = useMemo(() => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p style={{ margin: 0 }}>{t('search.propertyConstraints.tooltipIntro')}</p>
+            {propertyConstraintBullets.length > 0 && (
+                <ul style={{ paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {propertyConstraintBullets.map((item) => (
+                        <li key={item}>{item}</li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    ), [propertyConstraintBullets, t]);
+
+    const searchTooltipDescription = useMemo(() => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {searchTooltipLines.map((line, index) => (
+                <p key={`${line}-${index}`} style={{ margin: 0 }}>{line}</p>
+            ))}
+        </div>
+    ), [searchTooltipLines]);
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -142,8 +227,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
     useEffect(() => {
         if (!isPublic) return;
-        setFindClosestFriends(false);
         setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
+        setAdditiveCategory(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveCategory);
         setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
         setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
         setShowHypothetical(false);
@@ -154,6 +239,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         setSalt('');
         setSolvent('');
         setMetric('');
+        setNumResults(30);
     }, [isPublic]);
 
     // Add state for find-friend error message
@@ -161,6 +247,54 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
+
+    useEffect(() => {
+        if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype)) {
+            setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+        }
+    }, [additiveCategory, additiveSubtype]);
+
+    const extractScoreValue = (record: any, key: string): number | null => {
+        if (!record) return null;
+        const direct = record[key];
+        if (direct !== undefined && direct !== null) {
+            const numeric = Number(direct);
+            return Number.isNaN(numeric) ? null : numeric;
+        }
+        const upperKey = key.toUpperCase();
+        const upperValue = record[upperKey];
+        if (upperValue !== undefined && upperValue !== null) {
+            const numeric = Number(upperValue);
+            return Number.isNaN(numeric) ? null : numeric;
+        }
+        return null;
+    };
+
+    const scaleScoreToTen = (value: number | null): number | null => {
+        if (value === null) return null;
+        const clamped = Math.min(Math.max(value, 0), 1);
+        return parseFloat((1 + clamped * 9).toFixed(1));
+    };
+
+    const getScoreColor = (scaled: number): string => {
+        const normalized = Math.min(Math.max((scaled - 1) / 9, 0), 1);
+        const hue = normalized * 120;
+        return `hsl(${Math.round(hue)}, 70%, 45%)`;
+    };
+
+    const buildScoreProp = (label: string, record: any, key: string) => {
+        const rawValue = extractScoreValue(record, key);
+        const scaled = scaleScoreToTen(rawValue);
+        if (scaled === null) {
+            return null;
+        }
+        return {
+            label,
+            value: `${scaled.toFixed(1)}/10`,
+            span: 2,
+            color: getScoreColor(scaled),
+        };
+    };
 
     // 处理界面模式切换
     const handleModeSwitch = (mode: 'search' | 'filter') => {
@@ -316,8 +450,72 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         return { formattedMolecules, ambiguity };
     };
 
+    const runFindFriends = async (seedSmiles: string[], allowEmptySeeds = false) => {
+        if (seedSmiles.length === 0 && !allowEmptySeeds) {
+            setSearchWarning(t('search.moleculeNotFound.title'));
+            return;
+        }
+
+        setFindFriendsLoading(true);
+        setFindFriendError(null);
+
+        const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
+        const computeEnabled = computeLevel !== 'Disabled';
+        const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
+
+        let computeToSend = computeLevel;
+        if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
+            setSearchWarning(t('search.computeWarning'));
+            computeToSend = 'Low';
+            setComputeLevel('Low');
+        }
+
+        const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
+        const parts: string[] = [];
+        if (baseQuery) {
+            parts.push(baseQuery);
+        }
+        if (selectedMolType) {
+            parts.push(`I am looking for ${selectedMolType} molecules.`);
+        }
+        if (extraRequests.trim()) {
+            parts.push(`I have the following requirements: ${extraRequests.trim()}`);
+        }
+        const queryString = parts.join(' ').trim();
+        const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
+
+        const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
+
+        try {
+            const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+                smiles: seedSmiles,
+                use35m: isHighTier,
+                structureWeight: allowEmptySeeds && seedSmiles.length === 0 ? 0 : structureWeight,
+                molType: molTypeToSend,
+                computeLevel: computeToSend,
+                showHypothetical,
+                includeQuery,
+                queryString,
+                numResults,
+            });
+
+            setHighlightedSimilarMolecules(molecules);
+            setSimilarMoleculeImages(imageMap);
+        } catch (friendError) {
+            console.error('Error finding similar molecules:', friendError);
+            setFindFriendError(t('search.findFriendError'));
+        } finally {
+            setFindFriendsLoading(false);
+        }
+    };
+
     const handleSearch = async (searchInput: string) => {
-        if (!searchInput.trim()) return;
+        const trimmedInput = searchInput.trim();
+        const shouldRunFindFriendsOnly = trimmedInput.length === 0 && findClosestFriends;
+
+        if (!trimmedInput && !findClosestFriends) {
+            return;
+        }
 
         setSearchLoading(true);
         setSearchWarning(null);
@@ -329,83 +527,42 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         setSimilarMoleculeImages({}); // Reset similar molecule images
         setFindFriendError(null); // Reset find friend error
         setAmbiguousOptions(null); // Reset ambiguous search info
+        setFindFriendsLoading(false);
 
         try {
-            // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search-new`;
+            if (shouldRunFindFriendsOnly) {
+                setsearchResults([]);
+                await runFindFriends([], true);
+            } else {
+                // Determine which endpoint to use based on user permissions
+                const searchEndpoint = `${API_URL}/api/llm/search-new`;
 
-            // Fetch the searched molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
+                // Fetch the searched molecule's properties 
+                const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=organic`);
 
-            // Ratelimit handling
-            if (moleculeResponse.status === 429) {
-                setSearchWarning(t('search.tooManyRequests'));
-                setSearchLoading(false);
-                return;
-            }
+                // Ratelimit handling
+                if (moleculeResponse.status === 429) {
+                    setSearchWarning(t('search.tooManyRequests'));
+                    setSearchLoading(false);
+                    return;
+                }
 
-            const { formattedMolecules, ambiguity } = await handleSearchedMolecules(moleculeResponse);
+                const { formattedMolecules, ambiguity } = await handleSearchedMolecules(moleculeResponse);
 
-            if (ambiguity) {
-                setAmbiguousOptions(ambiguity);
-                return;
-            }
+                if (ambiguity) {
+                    setAmbiguousOptions(ambiguity);
+                    return;
+                }
 
-            if (formattedMolecules && findClosestFriends) {
-                // Build an array of seed SMILES from all returned molecules
-                const smilesArray = formattedMolecules
-                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
-                    .filter((s) => !!s);
+                if (formattedMolecules && findClosestFriends) {
+                    // Build an array of seed SMILES from all returned molecules
+                    const smilesArray = formattedMolecules
+                        .map((m) => (m.smiles ? m.smiles.trim() : ''))
+                        .filter((s) => !!s);
 
-                if (smilesArray.length === 0) {
-                    setSearchWarning(t('search.moleculeNotFound.title'));
-                } else {
-                    const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
-
-                    const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
-
-                    let computeToSend = computeLevel;
-                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
-                        setSearchWarning(t('search.computeWarning'));
-                        computeToSend = 'Low';
-                        setComputeLevel('Low');
-                    }
-
-                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
-                    const parts: string[] = [baseQuery];
-                    if (selectedMolType) {
-                        parts.push(`I am looking for ${selectedMolType} molecules.`);
-                    }
-                    if (extraRequests.trim()) {
-                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
-                    }
-                    const queryString = parts.join(' ');
-                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
-
-                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
-
-                    try {
-                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
-                            smiles: smilesArray,
-                            use35m: isHighTier,
-                            structureWeight,
-                            molType: molTypeToSend,
-                            computeLevel: computeToSend,
-                            showHypothetical,
-                            includeQuery,
-                            queryString,
-                        });
-
-                        if (molecules.length > 0) {
-                            setHighlightedSimilarMolecules(molecules);
-                        }
-
-                        setSimilarMoleculeImages(imageMap);
-                    } catch (friendError) {
-                        console.error('Error finding similar molecules:', friendError);
-                        setFindFriendError(t('search.findFriendError'));
-                    }
+                    setSearchLoading(false);
+                    await runFindFriends(smilesArray);
+                    return;
                 }
             }
         } catch (apiError: any) {
@@ -539,27 +696,81 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                     {/* 根据模式显示不同的界面 */}
                     {interfaceMode === 'search' ? (
                         <>
-                            {/* Search bar container */}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    flexWrap: 'wrap',
+                                    marginBottom: '12px',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    color: '#0f172a',
+                                }}
+                            >
+                                <span>{t('search.similarityPrompt')}</span>
+                                <InfoTooltip
+                                    title={(
+                                        <InfoTooltipContent
+                                            title={t('search.similarityTooltip.title')}
+                                            description={searchTooltipDescription}
+                                        />
+                                    )}
+                                    placement="top"
+                                >
+                                    <Info size={16} className="ff-info-icon" />
+                                </InfoTooltip>
+                            </div>
+
                             <SearchInput
+                                ref={searchInputRef}
                                 onSearch={handleSearch}
                                 disabled={searchLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
                                 lockInput={isPublic}
-                                initialEditorOpen={!isPublic}
+                                initialEditorOpen={false}
                                 lockMolEditorToggle={isPublic}
                                 allowSubmitWhenLocked={isPublic}
                                 onLockedClick={triggerAccessModal}
+                                placeholder={ORGANIC_SEARCH_PLACEHOLDER}
+                                showSubmitButton={false}
                             />
 
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    flexWrap: 'wrap',
+                                    margin: '12px 0',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    color: '#0f172a',
+                                }}
+                            >
+                                <span>{t('search.propertyConstraints.intro')}</span>
+                                <InfoTooltip
+                                    title={(
+                                        <InfoTooltipContent
+                                            title={t('search.propertyConstraints.tooltipTitle')}
+                                            description={propertyTooltipDescription}
+                                        />
+                                    )}
+                                    placement="top"
+                                >
+                                    <Info size={16} className="ff-info-icon" />
+                                </InfoTooltip>
+                            </div>
+
                             <FindFriendOptions
-                                findClosestFriends={findClosestFriends}
-                                setFindClosestFriends={setFindClosestFriends}
                                 extraRequests={extraRequests}
                                 setExtraRequests={setExtraRequests}
                                 showAdvanced={showAdvanced}
                                 setShowAdvanced={setShowAdvanced}
                                 selectedMolType={selectedMolType}
                                 setSelectedMolType={setSelectedMolType}
+                                additiveCategory={additiveCategory}
+                                setAdditiveCategory={setAdditiveCategory}
                                 additiveSubtype={additiveSubtype}
                                 setAdditiveSubtype={setAdditiveSubtype}
                                 computeLevel={computeLevel}
@@ -568,6 +779,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 setStructureWeight={setStructureWeight}
                                 showHypothetical={showHypothetical}
                                 setShowHypothetical={setShowHypothetical}
+                                numResults={numResults}
+                                setNumResults={setNumResults}
                                 cathode={cathode}
                                 setCathode={setCathode}
                                 anode={anode}
@@ -581,8 +794,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 userPermissions={userPermissions}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
-                                allowFindFriendsToggleWhenReadOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
+                                onSubmitSearch={() => searchInputRef.current?.submit?.()}
+                                submitDisabled={searchLoading}
                             />
 
                     <div className="search-results">
@@ -704,42 +918,66 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                         ))}
                                     </div>
                                 )}
+                                {findClosestFriends && findFriendsLoading && (
+                                    <div className="loading-container">
+                                        <div className="loading-spinner"></div>
+                                        <p>{t('search.searching')}</p>
+                                    </div>
+                                )}
                                 {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
                                     <div className="similar-molecules">
                                         <h3>{t('search.similarMolecules')}</h3>
-                                        {highlightedSimilarMolecules.map((molecule, index) => (
-                                            <MolCard
-                                                style={{ marginBottom: '20px' }}
-                                                key={index}
-                                                name={t('search.similarMoleculeNumber', { number: index + 1 })}
-                                                showMoreDetails={false}
-                                                large={true}
+                                        {highlightedSimilarMolecules.map((molecule, index) => {
+                                            const propertySuitabilityProp = buildScoreProp(
+                                                t('search.properties.propertySuitability', 'Property Suitability'),
+                                                molecule,
+                                                'property_suitability',
+                                            );
+                                            const structureSimilarityProp = buildScoreProp(
+                                                t('search.properties.structureSimilarity', 'Structure Similarity'),
+                                                molecule,
+                                                'structure_similarity',
+                                            );
+                                            const scoreProps = [propertySuitabilityProp, structureSimilarityProp].filter(
+                                                (prop): prop is { label: string; value: string; span: number; color: string } => Boolean(prop)
+                                            );
+
+                                            const propGroups = [
+                                                { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
+                                                buildGradeProp(molecule.grade, molecule.reasoning),
+                                                ...scoreProps,
+                                                { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                                { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
+                                                    show: canShowColumn('predicted_MP_celsius')
+                                                 },
+                                                { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
+                                                    show: canShowColumn('predicted_BP_celsius')
+                                                 },
+                                                { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
+                                                    show: canShowColumn('predicted_FP_celsius')
+                                                 },
+                                                { label: t('search.properties.combustionEnthalpy'),
+                                                    value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
+                                                    span: 2,
+                                                    suffix: ' eV',
+                                                    show: canShowColumn('combustion_enthalpy_ev')
+                                                },
+                                                { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
+                                            ];
+
+                                            return (
+                                                <MolCard
+                                                    style={{ marginBottom: '20px' }}
+                                                    key={index}
+                                                    name={t('search.similarMoleculeNumber', { number: index + 1 })}
+                                                    showMoreDetails={false}
+                                                    large={true}
                                                 cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
-                                                    { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_MP_celsius')
-                                                     },
-                                                    { label: t('search.properties.predictedBp'), value: molecule.predicted_BP_celsius, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_BP_celsius')
-                                                     },
-                                                    { label: t('search.properties.predictedFp'), value: molecule.predicted_FP_celsius, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_FP_celsius')
-                                                     },
-                                                    { label: t('search.properties.combustionEnthalpy'),
-                                                        value: molecule.COMBUSTION_ENTHALPY_EV || '0.00',
-                                                        span: 2,
-                                                        suffix: ' eV',
-                                                        show: canShowColumn('combustion_enthalpy_ev')
-                                                    },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
-                                                ]} 
+                                                propGroups={propGroups}
                                                 foldPropGroups={[
                                                     { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
                                                     { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
@@ -801,8 +1039,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                         )
                                                     }
                                                 </div>
-                                            </MolCard>
-                                        ))}
+                                                </MolCard>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>
