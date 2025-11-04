@@ -856,7 +856,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
-                                showStructureSlider={false}
                                 findFriendLimitInfo={queryLimits.findFriendLLM}
                                 readOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
