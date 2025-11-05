@@ -8,6 +8,7 @@ import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
+import ScoreBreakdownValue, { ScoreBreakdownItem } from '@/components/ScoreBreakdownValue';
 import CustomButton from "@/components/CustomButton";
 import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -308,20 +309,27 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         }
     }, [additiveCategory, additiveSubtype]);
 
-    const extractScoreValue = (record: any, key: string): number | null => {
-        if (!record) return null;
+    const getRecordField = (record: any, key: string) => {
+        if (!record || !key) return undefined;
         const direct = record[key];
         if (direct !== undefined && direct !== null) {
-            const numeric = Number(direct);
-            return Number.isNaN(numeric) ? null : numeric;
+            return direct;
         }
         const upperKey = key.toUpperCase();
-        const upperValue = record[upperKey];
-        if (upperValue !== undefined && upperValue !== null) {
-            const numeric = Number(upperValue);
-            return Number.isNaN(numeric) ? null : numeric;
+        if (upperKey) {
+            const upperValue = record[upperKey];
+            if (upperValue !== undefined && upperValue !== null) {
+                return upperValue;
+            }
         }
-        return null;
+        return undefined;
+    };
+
+    const extractScoreValue = (record: any, key: string): number | null => {
+        const value = getRecordField(record, key);
+        if (value === undefined) return null;
+        const numeric = Number(value);
+        return Number.isNaN(numeric) ? null : numeric;
     };
 
     const scaleScoreToTen = (value: number | null): number | null => {
@@ -336,17 +344,116 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         return `hsl(${Math.round(hue)}, 70%, 45%)`;
     };
 
-    const buildScoreProp = (label: string, record: any, key: string) => {
+    const buildSubscoreItems = (record: any, key: string): ScoreBreakdownItem[] => {
+        const source = getRecordField(record, key);
+        if (!source) return [];
+
+        type NormalizedSubscore = { label: string; scaled: number };
+        const normalized: NormalizedSubscore[] = [];
+
+        const addSubscore = (labelCandidate: unknown, valueCandidate: unknown) => {
+            if (valueCandidate === null || valueCandidate === undefined || valueCandidate === '') {
+                return;
+            }
+            const numeric = Number(valueCandidate);
+            if (Number.isNaN(numeric)) {
+                return;
+            }
+            const scaled = scaleScoreToTen(numeric);
+            if (scaled === null) {
+                return;
+            }
+            const labelString =
+                typeof labelCandidate === 'string' && labelCandidate.trim().length > 0
+                    ? labelCandidate
+                    : `Subscore ${normalized.length + 1}`;
+            normalized.push({ label: labelString, scaled });
+        };
+
+        const processEntry = (entry: unknown, fallbackLabel?: string) => {
+            if (entry === null || entry === undefined) {
+                return;
+            }
+            if (typeof entry === 'number' || typeof entry === 'string') {
+                addSubscore(fallbackLabel, entry);
+                return;
+            }
+            if (Array.isArray(entry)) {
+                if (entry.length === 0) return;
+                const [labelCandidate, valueCandidate] = entry;
+                addSubscore(
+                    typeof labelCandidate === 'string' ? labelCandidate : fallbackLabel,
+                    valueCandidate,
+                );
+                return;
+            }
+            if (typeof entry === 'object') {
+                const obj = entry as Record<string, unknown>;
+                const labelCandidate =
+                    obj.label ?? obj.name ?? obj.metric ?? obj.key ?? fallbackLabel;
+                const valueCandidate =
+                    obj.value ?? obj.score ?? obj.subscore ?? obj.result ?? obj.amount ?? obj.raw;
+
+                if (valueCandidate !== undefined) {
+                    addSubscore(labelCandidate, valueCandidate);
+                    return;
+                }
+
+                Object.entries(obj).forEach(([nestedLabel, nestedValue]) => {
+                    processEntry(nestedValue, nestedLabel);
+                });
+                return;
+            }
+        };
+
+        if (Array.isArray(source)) {
+            source.forEach((item, index) => {
+                processEntry(item, `Subscore ${index + 1}`);
+            });
+        } else if (typeof source === 'object') {
+            Object.entries(source as Record<string, unknown>).forEach(([label, value]) => {
+                processEntry(value, label);
+            });
+        } else {
+            processEntry(source);
+        }
+
+        return normalized.map((item, index) => ({
+            key: `${key}-${index}-${item.label}`,
+            label: item.label,
+            displayValue: `${item.scaled.toFixed(1)}/10`,
+            color: getScoreColor(item.scaled),
+        }));
+    };
+
+    const buildScoreProp = (label: string, record: any, key: string, subscoreKey?: string) => {
         const rawValue = extractScoreValue(record, key);
         const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
             return null;
         }
+
+        const displayValue = `${scaled.toFixed(1)}/10`;
+        const color = getScoreColor(scaled);
+        const subscores = subscoreKey ? buildSubscoreItems(record, subscoreKey) : [];
+
         return {
             label,
-            value: `${scaled.toFixed(1)}/10`,
+            value: displayValue,
             span: 2,
-            color: getScoreColor(scaled),
+            color,
+            ...(subscores.length
+                ? {
+                    valueNode: (
+                        <ScoreBreakdownValue
+                            label={label}
+                            value={displayValue}
+                            subscores={subscores}
+                        />
+                    ),
+                    disableAutoTooltip: true,
+                }
+                : {}),
         };
     };
 
@@ -979,11 +1086,13 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 t('search.properties.propertySuitability', 'Property Suitability'),
                                                 molecule,
                                                 'property_suitability',
+                                                'property_subscores',
                                             );
                                             const structureSimilarityProp = buildScoreProp(
                                                 t('search.properties.structureSimilarity', 'Structure Similarity'),
                                                 molecule,
                                                 'structure_similarity',
+                                                'structure_subscores',
                                             );
                                             const scoreProps = [propertySuitabilityProp, structureSimilarityProp].filter(
                                                 (prop): prop is { label: string; value: string; span: number; color: string } => Boolean(prop)
