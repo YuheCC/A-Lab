@@ -17,6 +17,7 @@ interface FindFriendsOptions {
 export interface FindFriendsResult<T = any> {
   molecules: T[];
   imageMap: { [key: number]: string };
+  messages: string[];
 }
 
 export async function findFriends<T = any>(options: FindFriendsOptions): Promise<FindFriendsResult<T>> {
@@ -66,6 +67,9 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
 
   const data = await response.json();
   const molecules: T[] = data.similar_molecules || [];
+  const messages: string[] = Array.isArray(data.messages)
+    ? data.messages.map((message: any) => String(message))
+    : [];
 
   const imageMap: { [key: number]: string } = {};
   molecules.forEach((mol: any, index: number) => {
@@ -74,5 +78,5 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     }
   });
 
-  return { molecules, imageMap };
+  return { molecules, imageMap, messages };
 }
