@@ -12,6 +12,7 @@ export default {
     searchButton: "検索",
     searchTooltip: '<p>有効なクエリは分子の任意の数値特性を検索できます。例：</p><p>- "HOMOが最大-8のすべての分子を検索"<br/>- "LUMOが最小-2で分子量が最大200のすべての分子を検索"</p><p>よりオープンなクエリについては、Askを使用してください。</p><p>SMILES文字列を描画して検索するには、このアイコンをクリックするか、<a>{{pubChemUrl}}</a>にアクセスしてください</p>',
     drawMolecule: "分子を描画",
+    importSmilesTooltip: 'SMILES を描画ツールにインポート。',
     similarityPrompt: '以下に構造が類似する分子を検索します:',
     similarityTooltip: {
         title: '検索',

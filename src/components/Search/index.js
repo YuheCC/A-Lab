@@ -160,11 +160,17 @@ const SearchInputInner = ({
           </button>
         )}
       </div>
-      {showMolEditor && !lockMolEditorToggle && <MolEditor onMolChange={handleMolChange} style={{
-        marginTop: 5,
-        border: 'none',
-        boxShadow: 'none',
-      }}/>} 
+      {showMolEditor && !lockMolEditorToggle && (
+        <MolEditor
+          onMolChange={handleMolChange}
+          getSmilesForImport={() => inputValue}
+          style={{
+            marginTop: 5,
+            border: 'none',
+            boxShadow: 'none',
+          }}
+        />
+      )} 
     </div>
   );
 };

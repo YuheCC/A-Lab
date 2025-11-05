@@ -12,6 +12,7 @@ export default {
     searchButton: "Search",
     searchTooltip: '<p>Valid queries can search over any numerical properties of molecules. For example:</p><p>- "Find all molecules with HOMO at most -8"<br/>- "Find all molecules with LUMO at least -2 and molecular weight at most 200"</p><p>For more open-ended queries, use Ask.</p><p>To draw and look up SMILES strings, please click this icon or visit <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "Draw molecule",
+    importSmilesTooltip: 'Import SMILES to drawing tool.',
     similarityPrompt: 'Search for molecules that are structurally similar to:',
     similarityTooltip: {
         title: 'Search',

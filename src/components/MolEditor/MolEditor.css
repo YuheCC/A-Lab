@@ -9,6 +9,35 @@
     background-color: #fff;
 }
 
+.mol-editor-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 8px 0;
+}
+
+.mol-editor-import-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #0f172a;
+}
+
+.mol-editor-import-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mol-editor-import-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
 .mol-editor {
     width: 100%;
     height: 100%;

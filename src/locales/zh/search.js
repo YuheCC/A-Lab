@@ -12,6 +12,7 @@ export default {
     searchButton: "搜索",
     searchTooltip: '<p>有效查询可以搜索分子的任何数值属性。例如：</p><p>- "查找HOMO最多为-8的所有分子"<br/>- "查找LUMO至少为-2且分子量最多为200的所有分子"</p><p>对于更开放式的查询，请使用智能问答功能。</p><p>要绘制和查找SMILES字符串，请点击此图标或访问 <a>{{pubChemUrl}}</a></p>',
     drawMolecule: "绘制分子",
+    importSmilesTooltip: '导入 SMILES 到绘图工具。',
     similarityPrompt: '搜索与下列分子在结构上相似的分子：',
     similarityTooltip: {
         title: '搜索',
