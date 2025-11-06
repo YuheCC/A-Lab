@@ -129,6 +129,8 @@ const ANION_PROPERTY_DEFINITIONS = [
 ];
 
 const ANION_SEARCH_PLACEHOLDER = 'LiPF6, sodium tetrafluoroborate, O=S(=O)(F)[N-]S(=O)(=O)F';
+const REMOVED_FILTER_WARNING_PREFIX = 'Removed property filters due to empty results';
+const MASKED_FILTER_WARNING_MESSAGE = 'Disabled some property filters due to empty results.';
 
 const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t, i18n } = useTranslation();
@@ -136,6 +138,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
     const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
+    const isAdminTierUser = userPermissions === 'admin';
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -255,6 +258,16 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             ))}
         </div>
     ), [searchTooltipLines]);
+
+    const getFindFriendDisplayMessage = useCallback(
+        (message: string) => {
+            if (!isAdminTierUser && message.includes(REMOVED_FILTER_WARNING_PREFIX)) {
+                return MASKED_FILTER_WARNING_MESSAGE;
+            }
+            return message;
+        },
+        [isAdminTierUser]
+    );
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
@@ -1132,7 +1145,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 <h3>{t('search.similarMolecules')}</h3>
                                 {findFriendMessages.map((message, messageIndex) => (
                                     <div key={`find-friend-warning-${messageIndex}`} className="warning-message">
-                                        <p>{message}</p>
+                                        <p>{getFindFriendDisplayMessage(message)}</p>
                                     </div>
                                 ))}
                                 {highlightedSimilarMolecules.map((molecule, index) => {
