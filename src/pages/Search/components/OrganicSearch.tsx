@@ -24,6 +24,7 @@ import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import type { AdditiveCategoryType } from '@/constants/additiveCategories';
 import {
     DEFAULT_ADDITIVE_CATEGORY,
@@ -38,6 +39,7 @@ const API_URL = getAPIUrl();
 interface MoleculeData {
     smiles: string;
     cation?: string;
+    casrn?: string;
     x: number;
     y: number;
     image?: string;
@@ -63,6 +65,7 @@ interface MoleculeData {
 interface SimilarMolecule {
     SMILES: string;
     cation?: string;
+    CASRN?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -526,6 +529,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
             const mapDetailToMolecule = (mol: any): MoleculeData => ({
                 smiles: mol.SMILES,
                 cation: mol.cation ?? mol.CATION,
+                casrn: mol.CASRN ?? mol.casrn,
                 x: mol.UMAP_0,
                 y: mol.UMAP_1,
                 image: mol.image,
@@ -995,6 +999,52 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                         const molecule = item.molecule;
                                         moleculeDisplayIndex += 1;
 
+                                        const casCandidate = molecule.casrn ?? molecule.rawData?.CASRN ?? molecule.rawData?.casrn ?? molecule.rawData?.cas ?? molecule.rawData?.CAS;
+                                        const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
+                                        const casProps = includeCas
+                                            ? [{
+                                                label: t('search.properties.casrn', 'CASRN'),
+                                                value: String(casCandidate),
+                                                span: 2,
+                                                show: true,
+                                            }]
+                                            : [];
+
+                                        const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+
+                                        const propGroups = [
+                                            { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
+                                            ...casProps,
+                                            ...(gradeProp ? [gradeProp] : []),
+                                            { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                            { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
+                                                show: canShowColumn('predicted_MP_celsius')
+                                             },
+                                            { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
+                                                show: canShowColumn('predicted_BP_celsius')},
+                                            { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
+                                                show: canShowColumn('predicted_FP_celsius')
+                                            },
+                                            {
+                                                label: t('search.properties.combustionEnthalpy'),
+                                                value: molecule.properties?.combustion_enthalpy_ev || '0.00',
+                                                span: 2,
+                                                suffix: ' eV',
+                                                show: canShowColumn('combustion_enthalpy_ev')
+                                            },
+                                            { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                            { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                            { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                            { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                            { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true, show: canShowColumn('commercial_score')}
+                                        ].filter(Boolean);
+
+                                        const foldPropGroups = [
+                                            { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
+                                            { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
+                                            { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
+                                        ];
+
                                         return (
                                             <MolCard
                                                 key={`searched-molecule-${molecule.smiles ?? index}`}
@@ -1002,35 +1052,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 showMoreDetails={false}
                                                 large={true}
                                                 cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
-                                                    { label: t('search.properties.predictedMp'), value: molecule.properties?.predicted_mp, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_MP_celsius')
-                                                     },
-                                                    { label: t('search.properties.predictedBp'), value: molecule.properties?.predicted_bp, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_BP_celsius')},
-                                                    { label: t('search.properties.predictedFp'), value: molecule.properties?.predicted_fp_celsius, suffix: '°C', span: 2,
-                                                        show: canShowColumn('predicted_FP_celsius')
-                                                    },
-                                                    {
-                                                        label: t('search.properties.combustionEnthalpy'),
-                                                        value: molecule.properties?.combustion_enthalpy_ev || '0.00',
-                                                        span: 2,
-                                                        suffix: ' eV',
-                                                        show: canShowColumn('combustion_enthalpy_ev')
-                                                    },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
-                                                    { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true, show: canShowColumn('commercial_score')}
-                                                ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
-                                                ]}>
+                                                propGroups={propGroups}
+                                                foldPropGroups={foldPropGroups}>
                                                 {
                                                     isAuthenticated && (
                                                         <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
@@ -1122,9 +1145,23 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 (prop): prop is { label: string; value: string; span: number; color: string } => Boolean(prop)
                                             );
 
+                                            const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
+                                            const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
+                                            const casProps = includeCas
+                                                ? [{
+                                                    label: t('search.properties.casrn', 'CASRN'),
+                                                    value: String(casCandidate),
+                                                    span: 2,
+                                                    show: true,
+                                                }]
+                                                : [];
+
+                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                                buildGradeProp(molecule.grade, molecule.reasoning),
+                                                ...casProps,
+                                                ...(gradeProp ? [gradeProp] : []),
                                                 ...scoreProps,
                                                 { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                 { label: t('search.properties.predictedMp'), value: molecule.predicted_MP_celsius, suffix: '°C', span: 2,
@@ -1147,7 +1184,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
                                                 { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
                                                 { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
-                                            ];
+                                            ].filter(Boolean);
 
                                             return (
                                                 <MolCard

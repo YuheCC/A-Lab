@@ -8,6 +8,7 @@ import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
 import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
@@ -359,9 +360,24 @@ const UMAPClusterPlotDeck = ({
         }
 
         const properties = dataNode.properties || {};
-
-        return [
+        const propGroups = [
             { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2, show: isColumnVisibleForUser('smiles', userPermissions) },
+        ];
+
+        if (ENABLE_CASRN_DISPLAY) {
+            const raw = dataNode.rawData ?? {};
+            const casValue = dataNode.casrn ?? raw.CASRN ?? raw.casrn ?? raw.cas ?? raw.CAS;
+            if (casValue) {
+                propGroups.push({
+                    label: t('molecular.nodePopup.casrn', 'CASRN'),
+                    value: String(casValue),
+                    span: 2,
+                    show: isColumnVisibleForUser('casrn', userPermissions),
+                });
+            }
+        }
+
+        propGroups.push(
             { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER, show: isColumnVisibleForUser('cluster', userPermissions) },
             { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol'), show: isColumnVisibleForUser('molecular_weight', userPermissions) },
             { 
@@ -409,7 +425,8 @@ const UMAPClusterPlotDeck = ({
                 value: properties.fluoride_bde_ev,
                 show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
             }
-        ];
+        );
+        return propGroups;
     }, [molecularType, t, userPermissions]);
 
     // Calculate bounds from data to fit the view

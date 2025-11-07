@@ -6,6 +6,7 @@ import MolCard from '@/components/MolCard/index.js';
 import { useAuthStore } from '@/models/useAuth';
 import { COMMERCIAL_SCORE_MAP } from '@/utils';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import rehypeRaw from 'rehype-raw';
 import { createLlmGradeProp, ReasoningModal } from '@/components/LlmGrade';
 import './InlineMoleculeRenderer.css';
@@ -169,6 +170,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         name: text,
         SMILES: moleculeData.SMILES,
         cation: normalizedCation,
+        CASRN: moleculeData.CASRN ?? moleculeData.casrn,
         isAnion,
         molecular_weight: moleculeData.molecular_weight,
         HOMO_eV: moleculeData.HOMO_eV,
@@ -245,6 +247,31 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
 
     const propGroups = [
       { label: 'SMILES', value: moleculeData.SMILES, span: 2, show: canShowColumn('smiles') },
+    ];
+
+    let casInserted = false;
+    if (ENABLE_CASRN_DISPLAY) {
+      const casValue = moleculeData.CASRN ?? moleculeData.casrn ?? moleculeData.cas ?? moleculeData.CAS ?? moleculeData?.rawData?.CASRN ?? moleculeData?.rawData?.casrn;
+      if (casValue) {
+        propGroups.push({
+          label: 'CASRN',
+          value: String(casValue),
+          span: 2,
+          show: canShowColumn('casrn'),
+        });
+        casInserted = true;
+      }
+    }
+
+    const gradeProp = moleculeData.grade !== undefined && moleculeData.grade !== null
+      ? createLlmGradeProp(moleculeData.grade, moleculeData.reasoning, setReasoningText)
+      : null;
+    if (gradeProp) {
+      const insertIndex = casInserted ? 2 : 1;
+      propGroups.splice(insertIndex, 0, gradeProp);
+    }
+
+    propGroups.push(
       { label: 'Mol Weight', value: moleculeData.molecular_weight, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
       { label: 'UMAP X', value: moleculeData.UMAP_0?.toFixed(4), show: canShowColumn('umap_0') },
       { label: 'UMAP Y', value: moleculeData.UMAP_1?.toFixed(4), show: canShowColumn('umap_1') },
@@ -252,7 +279,7 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
       { label: 'LUMO', value: moleculeData.LUMO_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('LUMO_eV') },
       { label: 'ESP Max', value: moleculeData.ESP_max_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('ESP_max_eV') },
       { label: 'ESP Min', value: moleculeData.ESP_min_eV?.toFixed(4), suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-    ];
+    );
 
     if (isAnion) {
       const volumeRaw = moleculeData.vdw_volume_angstroms3 ?? moleculeData.VDW_VOLUME_ANGSTROMS3;
@@ -295,10 +322,6 @@ const MoleculeLink = ({ text, data, style, onMoleculeClick }) => {
         wrap: true,
         show: canShowColumn('commercial_score')
       });
-    }
-
-    if (moleculeData.grade !== undefined && moleculeData.grade !== null) {
-      propGroups.unshift(createLlmGradeProp(moleculeData.grade, moleculeData.reasoning, setReasoningText));
     }
 
     return propGroups

@@ -109,6 +109,7 @@ export default {
     // Property Names (Professional terms - not translated according to rules)
     properties: {
         smiles: "SMILES",
+        casrn: "CASRN",
         chemicalFormula: "Chemical Formula",
         molecularWeight: "Molecular Weight",
         homo: "HOMO",

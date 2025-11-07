@@ -6,6 +6,7 @@ import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
@@ -234,9 +235,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         // 构建与 Ask/Favorites 一致的数据结构
         const smiles = raw?.SMILES || raw?.smiles || (props as MoleculeProperties | undefined)?.smiles;
         const properties = raw || {};
+        const casrn = raw?.CASRN ?? raw?.casrn ?? (properties as MoleculeProperties | undefined)?.casrn ?? null;
         const mappedNode = {
             smiles,
             properties: {
+                casrn,
                 molwt: properties?.molecular_weight ?? properties?.molecularWeight ?? null,
                 homo_eV: properties?.HOMO_eV ?? properties?.HOMO ?? properties?.homo ?? null,
                 lumo_eV: properties?.LUMO_eV ?? properties?.LUMO ?? properties?.lumo ?? null,
@@ -253,6 +256,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             },
             x: properties?.x ?? null,
             y: properties?.y ?? null,
+            CASRN: casrn ?? undefined,
         };
 
         if (onAddToFavorites) {
@@ -382,6 +386,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
         const fallbackValue = t('molecular.molCard.notAvailable');
         const showSmiles = canShowColumn('smiles');
+        const showCas = ENABLE_CASRN_DISPLAY && canShowColumn('casrn');
         const showMolWeight = canShowColumn('molecular_weight');
         const showPredictedMp = !cardIsAnion && canShowColumn('predicted_MP_celsius');
         const showPredictedBp = !cardIsAnion && canShowColumn('predicted_BP_celsius');
@@ -462,6 +467,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">{t('molecular.nodePopup.smiles')}:</span>
                             <span className="molecule-card-property-value">{cardProperties.smiles || '-'}</span>
+                        </div>
+                    )}
+                    {showCas && (
+                        <div className="molecule-card-property-item">
+                            <span className="molecule-card-property-label">{t('molecular.nodePopup.casrn', 'CASRN')}:</span>
+                            <span className="molecule-card-property-value">{cardProperties.casrn || '-'}</span>
                         </div>
                     )}
                     {showMolWeight && (
@@ -818,6 +829,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
         const cation = raw?.cation ?? raw?.CATION;
+        const casrn = raw?.CASRN ?? raw?.casrn ?? raw?.cas;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -835,6 +847,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         return {
             smiles,
             cation,
+            casrn: casrn ? String(casrn) : undefined,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
@@ -856,10 +869,12 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
         const vdwVolume = (moleculeData as any).vdw_volume_angstroms3 ?? (moleculeData as any).VDW_VOLUME_ANGSTROMS3;
         const fluorideBde = (moleculeData as any).fluoride_bde_ev ?? (moleculeData as any).FLUORIDE_BDE_EV;
+        const casrn = (moleculeData as any).CASRN ?? (moleculeData as any).casrn ?? (moleculeData as any).cas;
 
         return {
             smiles: moleculeData.SMILES,
             cation: moleculeData.cation,
+            casrn: casrn ? String(casrn) : undefined,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,

@@ -27,6 +27,7 @@ import {
 } from '@/constants/additiveCategories';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 
 const API_URL = getAPIUrl();
 
@@ -34,6 +35,7 @@ const API_URL = getAPIUrl();
 interface InorganicMoleculeData {
     smiles: string;
     cation?: string;
+    casrn?: string;
     x: number;
     y: number;
     image?: string;
@@ -59,6 +61,7 @@ interface InorganicMoleculeData {
 interface InorganicSimilarMolecule {
     SMILES: string;
     cation?: string;
+    CASRN?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -359,6 +362,7 @@ const InorganicSearch = () => {
             const mapDetailToMolecule = (mol: any): InorganicMoleculeData => ({
                 smiles: mol.SMILES,
                 cation: mol.cation ?? mol.CATION,
+                casrn: mol.CASRN ?? mol.casrn,
                 x: mol.UMAP_0,
                 y: mol.UMAP_1,
                 image: mol.image,
@@ -798,6 +802,38 @@ const InorganicSearch = () => {
                                             const molecule = item.molecule;
                                             moleculeDisplayIndex += 1;
 
+                                            const casCandidate = molecule.casrn ?? molecule.rawData?.CASRN ?? molecule.rawData?.casrn ?? molecule.rawData?.cas ?? molecule.rawData?.CAS;
+                                            const casProps = ENABLE_CASRN_DISPLAY && casCandidate
+                                                ? [{
+                                                    label: t('search.properties.casrn', 'CASRN'),
+                                                    value: String(casCandidate),
+                                                    span: 2,
+                                                }]
+                                                : [];
+                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+
+                                            const propGroups = [
+                                                { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
+                                                ...casProps,
+                                                ...(gradeProp ? [gradeProp] : []),
+                                                { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
+                                                { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
+                                                { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
+                                                { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
+                                                { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
+                                                { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
+                                                { label: 'Sulfur Content', value: molecule.properties?.sulfur_content, span: 2, suffix: ' %' },
+                                                { label: 'Oxygen Content', value: molecule.properties?.oxygen_content, span: 2, suffix: ' %' },
+                                                { label: 'Nitrogen Content', value: molecule.properties?.nitrogen_content, span: 2, suffix: ' %' },
+                                                { label: 'Halogen Content', value: molecule.properties?.halogen_content, span: 2, suffix: ' %' }
+                                            ].filter(Boolean);
+
+                                            const foldPropGroups = [
+                                                { label: 'UMAP_X', value: molecule.x, span: 1 },
+                                                { label: 'UMAP_Y', value: molecule.y, span: 1 },
+                                                { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
+                                            ];
+
                                             return (
                                                 <MolCard
                                                     key={`searched-molecule-${molecule.smiles ?? index}`}
@@ -805,24 +841,7 @@ const InorganicSearch = () => {
                                                     showMoreDetails={false}
                                                     large={true}
                                                     cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
-                                                    propGroups={[
-                                                        { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                        buildGradeProp(molecule.grade, molecule.reasoning),
-                                                        { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
-                                                        { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
-                                                        { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
-                                                        { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV' },
-                                                        { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV' },
-                                                        { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV' },
-                                                        { label: 'Sulfur Content', value: molecule.properties?.sulfur_content, span: 2, suffix: ' %' },
-                                                        { label: 'Oxygen Content', value: molecule.properties?.oxygen_content, span: 2, suffix: ' %' },
-                                                        { label: 'Nitrogen Content', value: molecule.properties?.nitrogen_content, span: 2, suffix: ' %' },
-                                                        { label: 'Halogen Content', value: molecule.properties?.halogen_content, span: 2, suffix: ' %' }
-                                                    ]} foldPropGroups={[
-                                                        { label: 'UMAP_X', value: molecule.x, span: 1 },
-                                                        { label: 'UMAP_Y', value: molecule.y, span: 1 },
-                                                        { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
-                                                    ]}>
+                                                    propGroups={propGroups} foldPropGroups={foldPropGroups}>
                                                     <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
                                                         <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                                             <CustomButton
@@ -879,83 +898,97 @@ const InorganicSearch = () => {
                                                 <p>{getFindFriendDisplayMessage(message)}</p>
                                             </div>
                                         ))}
-                                        {highlightedSimilarMolecules.map((molecule, index) => (
-                                            <MolCard
-                                                style={{ marginBottom: '20px' }}
-                                                key={index}
-                                                name={t('search.similarMoleculeNumber', { number: index + 1 })}
-                                                showMoreDetails={false}
-                                                large={true}
-                                                cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
-                                                    { label: 'Cluster', value: molecule.cluster, span: 2 },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    // 无机分子特有的属性
-                                                    { label: 'Sulfur Content', value: molecule.sulfur_content, span: 2, suffix: ' %' },
-                                                    { label: 'Oxygen Content', value: molecule.oxygen_content, span: 2, suffix: ' %' },
-                                                    { label: 'Nitrogen Content', value: molecule.nitrogen_content, span: 2, suffix: ' %' },
-                                                    { label: 'Halogen Content', value: molecule.halogen_content, span: 2, suffix: ' %' }
-                                                ]} 
-                                                foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
-                                                ]}
-                                            >
-                                                <div className="molecule-actions">
-                                                    <CustomButton
-                                                        Icon={Star}
-                                                        style={{
-                                                            flexGrow: 1,
-                                                        }}
-                                                        onClick={() => {
-                                                            console.log('Add to Favorites payload (inorganic search):', molecule);
-                                                            
-                                                            handleAddToFavorites({
-                                                                smiles: molecule.SMILES,
-                                                                properties: {
-                                                                    molwt: molecule.molecular_weight,
-                                                                    homo_eV: molecule.HOMO_eV,
-                                                                    lumo_eV: molecule.LUMO_eV,
-                                                                    esp_min_eV: molecule.ESP_min_eV,
-                                                                    esp_max_eV: molecule.ESP_max_eV,
-                                                                    functional_groups: molecule.functional_groups,
-                                                                    cluster: molecule.cluster,
-                                                                    sulfur_content: molecule.sulfur_content,
-                                                                    oxygen_content: molecule.oxygen_content,
-                                                                    nitrogen_content: molecule.nitrogen_content,
-                                                                    halogen_content: molecule.halogen_content
-                                                                },
-                                                                x: molecule.UMAP_0,
-                                                                y: molecule.UMAP_1
-                                                            });
-                                                        }}
-                                                        loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        loadingText={t('chatbox.buttons.addToFavoritesLoading')}
-                                                        successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
-                                                        errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
-                                                    >
-                                                        {t('chatbox.buttons.addToFavorites')}
-                                                    </CustomButton>
-                                                    {
-                                                        userPermissions === 'admin' && (
-                                                            <MoleculeFeedbackBox
-                                                                molecule={molecule}
-                                                                lastSearch={lastSearch}
-                                                                queryType="normal_ask"
-                                                                onClose={() => { }}
-                                                            />
-                                                        )
-                                                    }
-                                                </div>
-                                            </MolCard>
-                                        ))}
+                                        {highlightedSimilarMolecules.map((molecule, index) => {
+                                            const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
+                                            const casProps = ENABLE_CASRN_DISPLAY && casCandidate
+                                                ? [{
+                                                    label: t('search.properties.casrn', 'CASRN'),
+                                                    value: String(casCandidate),
+                                                    span: 2,
+                                                }]
+                                                : [];
+                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+
+                                            const propGroups = [
+                                                { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
+                                                ...casProps,
+                                                ...(gradeProp ? [gradeProp] : []),
+                                                { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
+                                                { label: 'Cluster', value: molecule.cluster, span: 2 },
+                                                { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
+                                                { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
+                                                { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
+                                                { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
+                                                { label: 'Sulfur Content', value: molecule.sulfur_content, span: 2, suffix: ' %' },
+                                                { label: 'Oxygen Content', value: molecule.oxygen_content, span: 2, suffix: ' %' },
+                                                { label: 'Nitrogen Content', value: molecule.nitrogen_content, span: 2, suffix: ' %' },
+                                                { label: 'Halogen Content', value: molecule.halogen_content, span: 2, suffix: ' %' }
+                                            ].filter(Boolean);
+
+                                            return (
+                                                <MolCard
+                                                    style={{ marginBottom: '20px' }}
+                                                    key={index}
+                                                    name={t('search.similarMoleculeNumber', { number: index + 1 })}
+                                                    showMoreDetails={false}
+                                                    large={true}
+                                                    cation={molecule.cation ?? (molecule as any)?.CATION}
+                                                    propGroups={propGroups} 
+                                                    foldPropGroups={[
+                                                        { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
+                                                        { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
+                                                        { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                    ]}
+                                                >
+                                                    <div className="molecule-actions">
+                                                        <CustomButton
+                                                            Icon={Star}
+                                                            style={{
+                                                                flexGrow: 1,
+                                                            }}
+                                                            onClick={() => {
+                                                                console.log('Add to Favorites payload (inorganic search):', molecule);
+                                                                
+                                                                handleAddToFavorites({
+                                                                    smiles: molecule.SMILES,
+                                                                    properties: {
+                                                                        molwt: molecule.molecular_weight,
+                                                                        homo_eV: molecule.HOMO_eV,
+                                                                        lumo_eV: molecule.LUMO_eV,
+                                                                        esp_min_eV: molecule.ESP_min_eV,
+                                                                        esp_max_eV: molecule.ESP_max_eV,
+                                                                        functional_groups: molecule.functional_groups,
+                                                                        cluster: molecule.cluster,
+                                                                        sulfur_content: molecule.sulfur_content,
+                                                                        oxygen_content: molecule.oxygen_content,
+                                                                        nitrogen_content: molecule.nitrogen_content,
+                                                                        halogen_content: molecule.halogen_content
+                                                                    },
+                                                                    x: molecule.UMAP_0,
+                                                                    y: molecule.UMAP_1
+                                                                });
+                                                            }}
+                                                            loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
+                                                            loadingText={t('chatbox.buttons.addToFavoritesLoading')}
+                                                            successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
+                                                            errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
+                                                        >
+                                                            {t('chatbox.buttons.addToFavorites')}
+                                                        </CustomButton>
+                                                        {
+                                                            userPermissions === 'admin' && (
+                                                                <MoleculeFeedbackBox
+                                                                    molecule={molecule}
+                                                                    lastSearch={lastSearch}
+                                                                    queryType="normal_ask"
+                                                                    onClose={() => { }}
+                                                                />
+                                                            )
+                                                        }
+                                                    </div>
+                                                </MolCard>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>
