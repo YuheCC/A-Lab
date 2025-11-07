@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { raiseResponseError } from '@/utils/errorHelpers';
 import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
@@ -459,6 +460,9 @@ const InorganicSearch = () => {
                 setSearchLoading(false);
                 return;
             }
+            if (!moleculeResponse.ok) {
+                await raiseResponseError(moleculeResponse, t('search.searchError'));
+            }
 
             const { formattedMolecules, ambiguity } = await handleSearchedInorganicMolecules(moleculeResponse);
 
@@ -527,9 +531,18 @@ const InorganicSearch = () => {
                     }
                 }
             }
-        } catch (apiError) {
+        } catch (apiError: any) {
             console.error('Error searching inorganic molecules:', apiError);
-            setSearchError(t('search.searchError'));
+
+            const token = localStorage.getItem('token');
+            const isUnauthorized = apiError?.response?.status === 401 || apiError?.status === 401;
+
+            if (!token || isUnauthorized) {
+                setSearchError(null);
+            } else {
+                const fallbackMessage = t('search.searchError');
+                setSearchError(apiError instanceof Error && apiError.message ? apiError.message : fallbackMessage);
+            }
         } finally {
             setSearchLoading(false);
             setLastSearch(searchInput);
@@ -947,7 +960,7 @@ const InorganicSearch = () => {
                                 )}
                             </div>
                         )}
-                        {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
+                        {(lastSearch && !searchLoading && !searchError && (searchedMolecules === null || searchedMolecules.length === 0)) && (
                             ambiguousOptions ? (
                                 <div className="molecule-not-found">
                                     <p>{t('search.ambiguousQuery.message', { query: lastSearch, options: ambiguousOptions })}</p>

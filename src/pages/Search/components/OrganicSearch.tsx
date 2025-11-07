@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { raiseResponseError } from '@/utils/errorHelpers';
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { usePlotDataStore } from "@/models/usePlotData";
@@ -699,6 +700,9 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                     setSearchLoading(false);
                     return;
                 }
+                if (!moleculeResponse.ok) {
+                    await raiseResponseError(moleculeResponse, t('search.searchError'));
+                }
 
                 const { formattedMolecules, ambiguity } = await handleSearchedMolecules(moleculeResponse);
 
@@ -730,7 +734,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                 setSearchError(null);
             } else {
                 // 已登录且非401错误时显示错误信息
-                setSearchError(t('search.searchError'));
+                const fallbackMessage = t('search.searchError');
+                setSearchError(apiError instanceof Error && apiError.message ? apiError.message : fallbackMessage);
             }
         } finally {
             setSearchLoading(false);
@@ -1219,7 +1224,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                         })}
                                     </div>
                         )}
-                        {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
+                        {(lastSearch && !searchLoading && !searchError && (searchedMolecules === null || searchedMolecules.length === 0)) && (
                             ambiguousOptions ? (
                                 <div className="molecule-not-found">
                                     <p>{t('search.ambiguousQuery.message', { query: lastSearch, options: ambiguousOptions })}</p>
