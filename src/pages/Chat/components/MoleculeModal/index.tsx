@@ -486,7 +486,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">LLM Grade:</span>
                             <span className="molecule-card-property-value">
-                                {grade}
+                                {typeof grade === 'number' && Number.isFinite(grade) ? grade.toFixed(2) : grade}
                                 <ReasoningButton reasoning={reasoning} onShow={setReasoningText} />
                             </span>
                         </div>

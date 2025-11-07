@@ -164,7 +164,7 @@ const InorganicSearch = () => {
     const scaleScoreToTen = (value: number | null): number | null => {
         if (value === null) return null;
         const clamped = Math.min(Math.max(value, 0), 1);
-        return parseFloat((1 + clamped * 9).toFixed(1));
+        return parseFloat((1 + clamped * 9).toFixed(2));
     };
 
     const getScoreColor = (scaled: number): string => {
@@ -250,7 +250,7 @@ const InorganicSearch = () => {
         return normalized.map((item, index) => ({
             key: `${key}-${index}-${item.label}`,
             label: item.label,
-            displayValue: `${item.scaled.toFixed(1)}/10`,
+            displayValue: `${item.scaled.toFixed(2)}/10`,
             color: getScoreColor(item.scaled),
         }));
     };
@@ -269,7 +269,7 @@ const InorganicSearch = () => {
             return null;
         }
 
-        const displayValue = `${scaled.toFixed(1)}/10`;
+        const displayValue = `${scaled.toFixed(2)}/10`;
         const color = getScoreColor(scaled);
         const subscores = subscoreKey ? buildSubscoreItems(record, subscoreKey) : [];
 
@@ -294,7 +294,7 @@ const InorganicSearch = () => {
             return null;
         }
 
-        const displayValue = `${scaled.toFixed(1)}/10`;
+        const displayValue = `${scaled.toFixed(2)}/10`;
         const color = getScoreColor(scaled);
 
         const gradeSummary = gradeDetails && gradeDetails.show !== false ? {
