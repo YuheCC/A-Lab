@@ -12,6 +12,7 @@ export default {
     searchButton: "검색",
     searchTooltip: '<p>유효한 쿼리는 분자의 모든 수치적 특성을 검색할 수 있습니다. 예시:</p><p>- "HOMO가 최대 -8인 모든 분자 찾기"<br/>- "LUMO가 최소 -2이고 분자량이 최대 200인 모든 분자 찾기"</p><p>더 개방적인 쿼리의 경우 Ask를 사용하세요.</p><p>SMILES 문자열을 그리거나 찾으려면 이 아이콘을 클릭하거나 <a>{{pubChemUrl}}</a>을 방문하세요</p>',
     drawMolecule: "분자 그리기",
+    importSmilesTooltip: 'SMILES를 그리기 도구로 가져오기.',
     similarityPrompt: '다음과 구조적으로 유사한 분자를 검색하세요:',
     similarityTooltip: {
         title: '검색',
@@ -109,8 +110,10 @@ export default {
     // Property Names (Professional terms - not translated according to rules)
     properties: {
         smiles: "SMILES",
+        casrn: "CAS #",
         chemicalFormula: "Chemical Formula",
         molecularWeight: "Molecular Weight",
+        overallScore: "Overall Score",
         homo: "HOMO",
         lumo: "LUMO",
         espMin: "ESP Min",

@@ -3,6 +3,7 @@ import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
 import './third.css';
 import { authFetch, getAPIUrl } from '@/utils';
+import { raiseResponseError } from '@/utils/errorHelpers';
 import { useAuthStore } from '@/models/useAuth';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
@@ -67,7 +68,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                 const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${currentPage}&page_size=${pageSize}`);
                 
                 if (!response.ok) {
-                    throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
+                    await raiseResponseError(response, t('thirdSearch.searchRequestFailed', { status: response.status }));
                 }
                 
                 const data = await response.json();
@@ -99,7 +100,8 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                     setError('');
                 } else {
                     // 已登录且非401错误时显示错误信息
-                    setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+                    const fallbackMessage = t('thirdSearch.searchError');
+                    setError(err instanceof Error && err.message ? err.message : fallbackMessage);
                 }
             } finally {
                 setIsLoading(false);
@@ -341,7 +343,7 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
             const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
             
             if (!response.ok) {
-                throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
+                await raiseResponseError(response, t('thirdSearch.searchRequestFailed', { status: response.status }));
             }
             
             const data = await response.json();
@@ -382,7 +384,8 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
                 setError('');
             } else {
                 // 已登录且非401错误时显示错误信息
-                setError(err instanceof Error ? err.message : t('thirdSearch.searchError'));
+                const fallbackMessage = t('thirdSearch.searchError');
+                setError(err instanceof Error && err.message ? err.message : fallbackMessage);
             }
         } finally {
             setIsLoading(false);

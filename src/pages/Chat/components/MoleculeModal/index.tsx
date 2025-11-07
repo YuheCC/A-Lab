@@ -6,6 +6,7 @@ import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { useAuthStore } from '@/models/useAuth';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D';
 import type { MoleculeData } from '@/pages/Chat/hooks/useMoleculePanel';
@@ -234,9 +235,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         // 构建与 Ask/Favorites 一致的数据结构
         const smiles = raw?.SMILES || raw?.smiles || (props as MoleculeProperties | undefined)?.smiles;
         const properties = raw || {};
+        const casrn = raw?.CASRN ?? raw?.casrn ?? (properties as MoleculeProperties | undefined)?.casrn ?? null;
         const mappedNode = {
             smiles,
             properties: {
+                casrn,
                 molwt: properties?.molecular_weight ?? properties?.molecularWeight ?? null,
                 homo_eV: properties?.HOMO_eV ?? properties?.HOMO ?? properties?.homo ?? null,
                 lumo_eV: properties?.LUMO_eV ?? properties?.LUMO ?? properties?.lumo ?? null,
@@ -253,6 +256,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             },
             x: properties?.x ?? null,
             y: properties?.y ?? null,
+            CASRN: casrn ?? undefined,
         };
 
         if (onAddToFavorites) {
@@ -348,7 +352,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     };
 
     const extractFunctionalGroups = (raw?: any, props?: any): string[] => {
-        let fg: any = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS ?? props?.functional_groups ?? props?.FUNCTIONAL_GROUPS;
+        let fg: any = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS ?? props?.functional_groups ?? props?.FUNCTIONAL_GROUPS ?? (props as MoleculeProperties | undefined)?.functionalGroups;
         if (Array.isArray(fg)) return fg as string[];
         if (typeof fg === 'string') {
             try { return JSON.parse(fg || '[]'); } catch { return []; }
@@ -382,6 +386,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         );
         const fallbackValue = t('molecular.molCard.notAvailable');
         const showSmiles = canShowColumn('smiles');
+        const showCas = ENABLE_CASRN_DISPLAY && canShowColumn('casrn');
         const showMolWeight = canShowColumn('molecular_weight');
         const showPredictedMp = !cardIsAnion && canShowColumn('predicted_MP_celsius');
         const showPredictedBp = !cardIsAnion && canShowColumn('predicted_BP_celsius');
@@ -393,6 +398,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const showEspMin = canShowColumn('ESP_min_eV');
         const showCommercial = canShowColumn('commercial_score');
         const showFunctionalGroups = canShowColumn('functional_groups');
+        const showUmapX = canShowColumn('umap_0');
+        const showUmapY = canShowColumn('umap_1');
         const showMolecularVolume = cardIsAnion && canShowColumn('vdw_volume_angstroms3');
         const showFluorideBde = cardIsAnion && canShowColumn('fluoride_bde_ev');
         const molecularVolumeDisplay = cardProperties.molecularVolume === undefined || cardProperties.molecularVolume === null || cardProperties.molecularVolume === ''
@@ -403,6 +410,32 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             : cardProperties.fluorineBondDissociationEnergy;
         const uniqueCardId = cardId || (isOriginal ? 'original' : `${name}-${cardProperties.smiles || Math.random()}`);
         const isFunctionalGroupsExpanded = expandedCards[uniqueCardId] || false;
+        const rawCasValue = raw?.CASRN ?? raw?.casrn ?? raw?.cas ?? raw?.CAS;
+        const casCollapseValue = cardProperties.casrn ?? (rawCasValue != null ? String(rawCasValue) : undefined);
+        const formatCoordinateValue = (value: any) => {
+            if (value === null || value === undefined || value === '') {
+                return fallbackValue;
+            }
+            const numeric = Number(value);
+            if (!Number.isNaN(numeric)) {
+                return numeric.toFixed(4);
+            }
+            if (typeof value === 'string') {
+                return value;
+            }
+            try {
+                return String(value);
+            } catch (_error) {
+                return fallbackValue;
+            }
+        };
+        const umapXRaw = cardProperties.umapX ?? raw?.UMAP_0 ?? raw?.umap_x ?? raw?.x;
+        const umapYRaw = cardProperties.umapY ?? raw?.UMAP_1 ?? raw?.umap_y ?? raw?.y;
+        const umapXDisplay = formatCoordinateValue(umapXRaw);
+        const umapYDisplay = formatCoordinateValue(umapYRaw);
+        const casCollapseDisplay = casCollapseValue ?? fallbackValue;
+        const shouldRenderCollapsibleSection = showFunctionalGroups || showCas || showUmapX || showUmapY;
+        const hasCollapsedProperties = showCas || showUmapX || showUmapY;
         return (
             <div className="molecule-card">
                 <div className="molecule-card-header">
@@ -453,7 +486,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                         <div className="molecule-card-property-item">
                             <span className="molecule-card-property-label">LLM Grade:</span>
                             <span className="molecule-card-property-value">
-                                {grade}
+                                {typeof grade === 'number' && Number.isFinite(grade) ? grade.toFixed(2) : grade}
                                 <ReasoningButton reasoning={reasoning} onShow={setReasoningText} />
                             </span>
                         </div>
@@ -538,8 +571,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     )}
                 </div>
                 
-                {/* 功能组：默认折叠，字段按 Ask 填充 */}
-                {showFunctionalGroups && (
+                {/* Collapsible additional properties */}
+                {shouldRenderCollapsibleSection && (
                 <div className="functional-groups-section">
                     <div 
                         className={`functional-groups-header ${isFunctionalGroupsExpanded ? 'expanded' : 'collapsed'}`} 
@@ -552,19 +585,45 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     </div>
                     {isFunctionalGroupsExpanded && (
                         <div className="functional-groups-content-new">
-                            <h4>{t('molecular.moleculeModal.functionalGroupsTitle')}</h4>
-                            {(() => {
-                                const groups = extractFunctionalGroups(raw, properties);
-                                return groups && groups.length > 0 ? (
-                                    <ul className="functional-groups-list">
-                                        {groups.map((g: any, idx: number) => (
-                                            <li key={idx}>{String(g)}</li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>{t('molecular.molCard.notAvailable')}</p>
-                                );
-                            })()}
+                            {hasCollapsedProperties && (
+                                <div className="molecule-card-properties collapsible-properties">
+                                    {showCas && (
+                                        <div className="molecule-card-property-item">
+                                            <span className="molecule-card-property-label">{t('molecular.nodePopup.casrn', 'CAS #')}:</span>
+                                            <span className="molecule-card-property-value">{casCollapseDisplay}</span>
+                                        </div>
+                                    )}
+                                    {showUmapX && (
+                                        <div className="molecule-card-property-item">
+                                            <span className="molecule-card-property-label">UMAP X:</span>
+                                            <span className="molecule-card-property-value">{umapXDisplay}</span>
+                                        </div>
+                                    )}
+                                    {showUmapY && (
+                                        <div className="molecule-card-property-item">
+                                            <span className="molecule-card-property-label">UMAP Y:</span>
+                                            <span className="molecule-card-property-value">{umapYDisplay}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {showFunctionalGroups && (
+                                <>
+                                    <h4>{t('molecular.moleculeModal.functionalGroupsTitle')}</h4>
+                                    {(() => {
+                                        const groups = extractFunctionalGroups(raw, properties);
+                                        return groups && groups.length > 0 ? (
+                                            <ul className="functional-groups-list">
+                                                {groups.map((g: any, idx: number) => (
+                                                    <li key={idx}>{String(g)}</li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p>{t('molecular.molCard.notAvailable')}</p>
+                                        );
+                                    })()}
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -818,6 +877,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     const mapDetailsToProperties = (raw: any): MoleculeProperties => {
         const smiles = raw?.SMILES || raw?.smiles || '';
         const cation = raw?.cation ?? raw?.CATION;
+        const casrn = raw?.CASRN ?? raw?.casrn ?? raw?.cas;
         const molecularWeight = raw?.molecular_weight != null ? String(raw.molecular_weight) : raw?.molecularWeight;
         const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
         const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -831,10 +891,21 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const espMin = raw?.ESP_min_eV ?? raw?.ESP_MIN ?? raw?.espMin;
         const commercialScore = raw?.commercial_score ?? raw?.COMMERCIAL_SCORE;
         const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
+        const functionalGroups = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS;
+        const umapX = raw?.UMAP_0 ?? raw?.umap_x ?? raw?.x;
+        const umapY = raw?.UMAP_1 ?? raw?.umap_y ?? raw?.y;
+        const normalizeCoordinate = (value: any) => {
+            if (value === null || value === undefined || value === '') {
+                return undefined;
+            }
+            const numeric = Number(value);
+            return Number.isNaN(numeric) ? undefined : numeric;
+        };
 
         return {
             smiles,
             cation,
+            casrn: casrn ? String(casrn) : undefined,
             molecularWeight: molecularWeight ? `${molecularWeight} g/mol` : undefined,
             meltingPoint: predictedMp != null ? `${predictedMp} °C` : undefined,
             boilingPoint: predictedBp != null ? `${predictedBp} °C` : undefined,
@@ -846,7 +917,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             lumo: lumo != null ? String(lumo) : undefined,
             espMax: espMax != null ? String(espMax) : undefined,
             espMin: espMin != null ? String(espMin) : undefined,
-            commercialViability
+            commercialViability,
+            umapX: normalizeCoordinate(umapX),
+            umapY: normalizeCoordinate(umapY),
+            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined)
         };
     };
 
@@ -856,10 +930,20 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const commercialViability = commercialScore != null ? COMMERCIAL_SCORE_MAP[commercialScore as keyof typeof COMMERCIAL_SCORE_MAP] : undefined;
         const vdwVolume = (moleculeData as any).vdw_volume_angstroms3 ?? (moleculeData as any).VDW_VOLUME_ANGSTROMS3;
         const fluorideBde = (moleculeData as any).fluoride_bde_ev ?? (moleculeData as any).FLUORIDE_BDE_EV;
+        const casrn = (moleculeData as any).CASRN ?? (moleculeData as any).casrn ?? (moleculeData as any).cas;
+        const functionalGroups = (moleculeData as any).functional_groups ?? (moleculeData as any).FUNCTIONAL_GROUPS;
+        const normalizeCoordinate = (value: any) => {
+            if (value === null || value === undefined || value === '') {
+                return undefined;
+            }
+            const numeric = Number(value);
+            return Number.isNaN(numeric) ? undefined : numeric;
+        };
 
         return {
             smiles: moleculeData.SMILES,
             cation: moleculeData.cation,
+            casrn: casrn ? String(casrn) : undefined,
             molecularWeight: moleculeData.molecular_weight != null ? `${moleculeData.molecular_weight} g/mol` : undefined,
             meltingPoint: moleculeData.predicted_MP_celsius != null ? `${moleculeData.predicted_MP_celsius} °C` : undefined,
             boilingPoint: moleculeData.predicted_BP_celsius != null ? `${moleculeData.predicted_BP_celsius} °C` : undefined,
@@ -871,7 +955,10 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             lumo: moleculeData.LUMO_eV != null ? String(moleculeData.LUMO_eV) : undefined,
             espMax: moleculeData.ESP_max_eV != null ? String(moleculeData.ESP_max_eV) : undefined,
             espMin: moleculeData.ESP_min_eV != null ? String(moleculeData.ESP_min_eV) : undefined,
-            commercialViability
+            commercialViability,
+            umapX: normalizeCoordinate((moleculeData as any).UMAP_0 ?? (moleculeData as any).umap_x ?? (moleculeData as any).x),
+            umapY: normalizeCoordinate((moleculeData as any).UMAP_1 ?? (moleculeData as any).umap_y ?? (moleculeData as any).y),
+            functionalGroups: Array.isArray(functionalGroups) ? JSON.stringify(functionalGroups) : (functionalGroups ?? undefined)
         };
     };
 

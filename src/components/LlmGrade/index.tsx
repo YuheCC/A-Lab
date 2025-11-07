@@ -51,7 +51,7 @@ export const createLlmGradeProp = (
   }
 
   const numericGrade = Number(grade);
-  const roundedValue = numericGrade.toFixed(1);
+  const roundedValue = numericGrade.toFixed(2);
   const clampedGrade = Math.min(Math.max(numericGrade, 1), 10);
   const normalized = (clampedGrade - 1) / 9;
   const hue = Math.round(normalized * 120);

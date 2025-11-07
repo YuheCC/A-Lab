@@ -2,12 +2,15 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
+import { raiseResponseError } from '@/utils/errorHelpers';
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
+import OverallScoreValue from '@/components/OverallScoreValue';
+import type { ScoreBreakdownItem } from '@/components/ScoreBreakdownValue';
 import CustomButton from "@/components/CustomButton";
 import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +26,7 @@ import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import type { AdditiveCategoryType } from '@/constants/additiveCategories';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import {
     ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
@@ -65,6 +69,7 @@ const renderAnionCommercialScore = (score?: number | string | null) => {
 interface MoleculeData {
     smiles: string;
     cation?: string;
+    casrn?: string;
     x: number;
     y: number;
     image?: string;
@@ -92,6 +97,7 @@ interface MoleculeData {
 interface SimilarMolecule {
     SMILES: string;
     cation?: string;
+    CASRN?: string;
     molecular_weight: number;
     HOMO_eV: number;
     LUMO_eV: number;
@@ -113,6 +119,10 @@ interface SimilarMolecule {
     reasoning?: string;
 }
 
+type SearchResultItem =
+    | { type: 'molecule'; molecule: MoleculeData }
+    | { type: 'warning'; message: string };
+
 const ANION_PROPERTY_DEFINITIONS = [
     { columnId: 'HOMO_eV', labelKey: 'search.properties.homo', fallback: 'HOMO' },
     { columnId: 'LUMO_eV', labelKey: 'search.properties.lumo', fallback: 'LUMO' },
@@ -124,6 +134,8 @@ const ANION_PROPERTY_DEFINITIONS = [
 ];
 
 const ANION_SEARCH_PLACEHOLDER = 'LiPF6, sodium tetrafluoroborate, O=S(=O)(F)[N-]S(=O)(=O)F';
+const REMOVED_FILTER_WARNING_PREFIX = 'Removed property filters due to empty results';
+const MASKED_FILTER_WARNING_MESSAGE = 'Disabled some property filters due to empty results.';
 
 const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t, i18n } = useTranslation();
@@ -131,6 +143,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const initialAuthLoaded = useAuthStore(state => state.initialAuthLoaded);
     const isPublic = isPublicUser || (initialAuthLoaded && (!isAuthenticated || userPermissions === 'common'));
+    const isAdminTierUser = userPermissions === 'admin';
     const nodePopupRef = useRef<any>(null);
     const [node, setNode] = useState<any>(null);
     const { moleculeFavoriteStatus, handleAddToFavorites } = useContext(FavoriteContext);
@@ -152,8 +165,10 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [searchError, setSearchError] = useState<string | null>(null);
     const [searchWarning, setSearchWarning] = useState<string | null>(null);
     const [searchedMolecules, setsearchedMolecules] = useState<MoleculeData[] | null>(null);
+    const [searchedResultItems, setSearchedResultItems] = useState<SearchResultItem[] | null>(null);
     const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
     const [, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
+    const [findFriendMessages, setFindFriendMessages] = useState<string[]>([]);
     const findClosestFriends = true;
     const [findFriendsLoading, setFindFriendsLoading] = useState(false);
     const [structureWeight, setStructureWeight] = useState(0.5);
@@ -249,6 +264,16 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         </div>
     ), [searchTooltipLines]);
 
+    const getFindFriendDisplayMessage = useCallback(
+        (message: string) => {
+            if (!isAdminTierUser && message.includes(REMOVED_FILTER_WARNING_PREFIX)) {
+                return MASKED_FILTER_WARNING_MESSAGE;
+            }
+            return message;
+        },
+        [isAdminTierUser]
+    );
+
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
@@ -308,26 +333,33 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         }
     }, [additiveCategory, additiveSubtype]);
 
-    const extractScoreValue = (record: any, key: string): number | null => {
-        if (!record) return null;
+    const getRecordField = (record: any, key: string) => {
+        if (!record || !key) return undefined;
         const direct = record[key];
         if (direct !== undefined && direct !== null) {
-            const numeric = Number(direct);
-            return Number.isNaN(numeric) ? null : numeric;
+            return direct;
         }
         const upperKey = key.toUpperCase();
-        const upperValue = record[upperKey];
-        if (upperValue !== undefined && upperValue !== null) {
-            const numeric = Number(upperValue);
-            return Number.isNaN(numeric) ? null : numeric;
+        if (upperKey) {
+            const upperValue = record[upperKey];
+            if (upperValue !== undefined && upperValue !== null) {
+                return upperValue;
+            }
         }
-        return null;
+        return undefined;
+    };
+
+    const extractScoreValue = (record: any, key: string): number | null => {
+        const value = getRecordField(record, key);
+        if (value === undefined) return null;
+        const numeric = Number(value);
+        return Number.isNaN(numeric) ? null : numeric;
     };
 
     const scaleScoreToTen = (value: number | null): number | null => {
         if (value === null) return null;
         const clamped = Math.min(Math.max(value, 0), 1);
-        return parseFloat((1 + clamped * 9).toFixed(1));
+        return parseFloat((1 + clamped * 9).toFixed(2));
     };
 
     const getScoreColor = (scaled: number): string => {
@@ -336,17 +368,153 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         return `hsl(${Math.round(hue)}, 70%, 45%)`;
     };
 
-    const buildScoreProp = (label: string, record: any, key: string) => {
+    const buildSubscoreItems = (record: any, key: string): ScoreBreakdownItem[] => {
+        const source = getRecordField(record, key);
+        if (!source) return [];
+
+        type NormalizedSubscore = { label: string; scaled: number };
+        const normalized: NormalizedSubscore[] = [];
+
+        const addSubscore = (labelCandidate: unknown, valueCandidate: unknown) => {
+            if (valueCandidate === null || valueCandidate === undefined || valueCandidate === '') {
+                return;
+            }
+            const numeric = Number(valueCandidate);
+            if (Number.isNaN(numeric)) {
+                return;
+            }
+            const scaled = scaleScoreToTen(numeric);
+            if (scaled === null) {
+                return;
+            }
+            const labelString =
+                typeof labelCandidate === 'string' && labelCandidate.trim().length > 0
+                    ? labelCandidate
+                    : `Subscore ${normalized.length + 1}`;
+            normalized.push({ label: labelString, scaled });
+        };
+
+        const processEntry = (entry: unknown, fallbackLabel?: string) => {
+            if (entry === null || entry === undefined) {
+                return;
+            }
+            if (typeof entry === 'number' || typeof entry === 'string') {
+                addSubscore(fallbackLabel, entry);
+                return;
+            }
+            if (Array.isArray(entry)) {
+                if (entry.length === 0) return;
+                const [labelCandidate, valueCandidate] = entry;
+                addSubscore(
+                    typeof labelCandidate === 'string' ? labelCandidate : fallbackLabel,
+                    valueCandidate,
+                );
+                return;
+            }
+            if (typeof entry === 'object') {
+                const obj = entry as Record<string, unknown>;
+                const labelCandidate =
+                    obj.label ?? obj.name ?? obj.metric ?? obj.key ?? fallbackLabel;
+                const valueCandidate =
+                    obj.value ?? obj.score ?? obj.subscore ?? obj.result ?? obj.amount ?? obj.raw;
+
+                if (valueCandidate !== undefined) {
+                    addSubscore(labelCandidate, valueCandidate);
+                    return;
+                }
+
+                Object.entries(obj).forEach(([nestedLabel, nestedValue]) => {
+                    processEntry(nestedValue, nestedLabel);
+                });
+                return;
+            }
+        };
+
+        if (Array.isArray(source)) {
+            source.forEach((item, index) => {
+                processEntry(item, `Subscore ${index + 1}`);
+            });
+        } else if (typeof source === 'object') {
+            Object.entries(source as Record<string, unknown>).forEach(([label, value]) => {
+                processEntry(value, label);
+            });
+        } else {
+            processEntry(source);
+        }
+
+        return normalized.map((item, index) => ({
+            key: `${key}-${index}-${item.label}`,
+            label: item.label,
+            displayValue: `${item.scaled.toFixed(2)}/10`,
+            color: getScoreColor(item.scaled),
+        }));
+    };
+
+    type ScoreSummary = {
+        label: string;
+        displayValue: string;
+        color: string;
+        subscores: ScoreBreakdownItem[];
+    };
+
+    const buildScoreSummary = (label: string, record: any, key: string, subscoreKey?: string): ScoreSummary | null => {
         const rawValue = extractScoreValue(record, key);
         const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
             return null;
         }
+
+        const displayValue = `${scaled.toFixed(2)}/10`;
+        const color = getScoreColor(scaled);
+        const subscores = subscoreKey ? buildSubscoreItems(record, subscoreKey) : [];
+
         return {
             label,
-            value: `${scaled.toFixed(1)}/10`,
+            displayValue,
+            color,
+            subscores,
+        };
+    };
+
+    const buildOverallScoreProp = (
+        record: any,
+        label: string,
+        propertySummary: ScoreSummary | null,
+        structureSummary: ScoreSummary | null,
+        gradeDetails: ReturnType<typeof createLlmGradeProp> | null
+    ) => {
+        const rawValue = extractScoreValue(record, 'overall_score');
+        const scaled = scaleScoreToTen(rawValue);
+        if (scaled === null) {
+            return null;
+        }
+
+        const displayValue = `${scaled.toFixed(2)}/10`;
+        const color = getScoreColor(scaled);
+
+        const gradeSummary = gradeDetails && gradeDetails.show !== false ? {
+            label: gradeDetails.label,
+            displayValue: `${gradeDetails.value}${gradeDetails.suffix ?? ''}`,
+            color: gradeDetails.color,
+            action: gradeDetails.action,
+        } : null;
+
+        return {
+            label,
+            value: displayValue,
             span: 2,
-            color: getScoreColor(scaled),
+            color,
+            disableAutoTooltip: true,
+            valueNode: (
+                <OverallScoreValue
+                    label={label}
+                    value={displayValue}
+                    valueColor={color}
+                    propertyScore={propertySummary || undefined}
+                    structureScore={structureSummary || undefined}
+                    llmGrade={gradeSummary || undefined}
+                />
+            ),
         };
     };
 
@@ -358,9 +526,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 // 重置搜索状态
                 setsearchResults(null);
                 setsearchedMolecules(null);
+                setSearchedResultItems(null);
                 setHighlightedMolecules([]);
                 setHighlightedSimilarMolecules([]);
                 setSimilarMoleculeImages({});
+                setFindFriendMessages([]);
                 setSearchError(null);
                 setSearchWarning(null);
                 setFindFriendError(null);
@@ -424,6 +594,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
     // Store ambiguous search options when backend indicates ambiguity
     const [ambiguousOptions, setAmbiguousOptions] = useState(null);
+    const hasSearchedResultItems = Boolean(searchedResultItems && searchedResultItems.length > 0);
 
     // Update handleSearch function
     const handleSearchedMolecules = async (
@@ -444,41 +615,56 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 ambiguity = ambiguousEnv.options ?? null;
             }
 
-            // Collect all molecule_details from all successful envelopes
-            const allDetails: any[] = envelopes
-                .filter((env) => env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0)
-                .flatMap((env) => env.molecule_details);
+            const resultItems: SearchResultItem[] = [];
+            const mappedMolecules: MoleculeData[] = [];
 
-            if (allDetails.length > 0) {
-                const mapped: MoleculeData[] = allDetails.map((mol: any) => ({
-                    smiles: mol.SMILES,
-                    cation: mol.cation ?? mol.CATION,
-                    x: mol.UMAP_0,
-                    y: mol.UMAP_1,
-                    image: mol.image,
-                    grade: mol.grade,
-                    reasoning: mol.reasoning,
-                    properties: {
-                        molwt: mol.molecular_weight,
-                        homo_eV: mol.HOMO_eV,
-                        lumo_eV: mol.LUMO_eV,
-                        esp_min_eV: mol.ESP_min_eV,
-                        esp_max_eV: mol.ESP_max_eV,
-                        functional_groups: mol.functional_groups,
-                        predicted_mp: mol.predicted_MP_celsius,
-                        predicted_bp: mol.predicted_BP_celsius,
-                        predicted_fp_celsius: mol.predicted_FP_celsius,
-                        combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
-                        vdw_volume_angstroms3: mol.vdw_volume_angstroms3 ?? mol.VDW_VOLUME_ANGSTROMS3,
-                        fluoride_bde_ev: mol.fluoride_bde_ev ?? mol.FLUORIDE_BDE_EV,
-                        commercial_score: mol.COMMERCIAL_SCORE,
-                        commercial_link: mol.COMMERCIAL_LINK,
-                    },
-                    rawData: mol,
-                }));
+            const mapDetailToMolecule = (mol: any): MoleculeData => ({
+                smiles: mol.SMILES,
+                cation: mol.cation ?? mol.CATION,
+                casrn: mol.CASRN ?? mol.casrn,
+                x: mol.UMAP_0,
+                y: mol.UMAP_1,
+                image: mol.image,
+                grade: mol.grade,
+                reasoning: mol.reasoning,
+                properties: {
+                    molwt: mol.molecular_weight,
+                    homo_eV: mol.HOMO_eV,
+                    lumo_eV: mol.LUMO_eV,
+                    esp_min_eV: mol.ESP_min_eV,
+                    esp_max_eV: mol.ESP_max_eV,
+                    functional_groups: mol.functional_groups,
+                    predicted_mp: mol.predicted_MP_celsius,
+                    predicted_bp: mol.predicted_BP_celsius,
+                    predicted_fp_celsius: mol.predicted_FP_celsius,
+                    combustion_enthalpy_ev: mol.COMBUSTION_ENTHALPY_EV,
+                    vdw_volume_angstroms3: mol.vdw_volume_angstroms3 ?? mol.VDW_VOLUME_ANGSTROMS3,
+                    fluoride_bde_ev: mol.fluoride_bde_ev ?? mol.FLUORIDE_BDE_EV,
+                    commercial_score: mol.COMMERCIAL_SCORE,
+                    commercial_link: mol.COMMERCIAL_LINK,
+                },
+                rawData: mol,
+            });
 
+            envelopes.forEach((env) => {
+                if (env && env.found && Array.isArray(env.molecule_details) && env.molecule_details.length > 0) {
+                    env.molecule_details.forEach((mol: any) => {
+                        const mapped = mapDetailToMolecule(mol);
+                        mappedMolecules.push(mapped);
+                        resultItems.push({ type: 'molecule', molecule: mapped });
+                    });
+                } else if (env && env.found === false) {
+                    if (env.message === 'Ambiguous molecule abbreviation') {
+                        return;
+                    }
+                    const warningMessage = env.message ? String(env.message) : t('search.moleculeNotFound.title');
+                    resultItems.push({ type: 'warning', message: warningMessage });
+                }
+            });
+
+            if (mappedMolecules.length > 0) {
                 if (select_first) {
-                    const first = mapped[0];
+                    const first = mappedMolecules[0];
                     setsearchedMolecules([first]);
                     setsearchResults([first.image || '']);
                     if (
@@ -490,17 +676,22 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                         setHighlightedMolecules([first]);
                     }
                 } else {
-                    setsearchedMolecules(mapped);
-                    setsearchResults(mapped.map((m) => m.image || ''));
-                    if (mapped.length > 0) {
-                        setHighlightedMolecules(mapped);
-                    }
+                    setsearchedMolecules(mappedMolecules);
+                    setsearchResults(mappedMolecules.map((m) => m.image || ''));
+                    setHighlightedMolecules(mappedMolecules);
                 }
 
-                formattedMolecules = mapped;
+                formattedMolecules = mappedMolecules;
+            } else {
+                setsearchedMolecules([]);
+                setsearchResults([]);
+                setHighlightedMolecules([]);
             }
+
+            setSearchedResultItems(resultItems);
         } catch (error) {
             console.error('Error processing searched molecules:', error);
+            setSearchedResultItems([]);
         }
 
         return { formattedMolecules, ambiguity };
@@ -516,6 +707,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
         setFindFriendsLoading(true);
         setFindFriendError(null);
+        setFindFriendMessages([]);
 
         const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
         const cVal = resolveCustomValue(cathode, cathodeCustom);
@@ -550,7 +742,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
 
         try {
-            const { molecules, imageMap } = await findFriends<SimilarMolecule>({
+            const { molecules, imageMap, messages } = await findFriends<SimilarMolecule>({
                 smiles: seedSmiles,
                 use35m: isHighTier,
                 structureWeight: allowEmptySeeds && seedSmiles.length === 0 ? 0 : structureWeight,
@@ -565,9 +757,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
             setHighlightedSimilarMolecules(molecules);
             setSimilarMoleculeImages(imageMap);
+            setFindFriendMessages(messages);
         } catch (friendError) {
             console.error('Error finding similar molecules:', friendError);
             setFindFriendError(t('search.findFriendError'));
+            setFindFriendMessages([]);
         } finally {
             setFindFriendsLoading(false);
         }
@@ -586,9 +780,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setSearchError(null);
         setsearchResults(null);
         setsearchedMolecules(null);
+        setSearchedResultItems(null);
         setHighlightedMolecules([]);
         setHighlightedSimilarMolecules([]);
         setSimilarMoleculeImages({}); // Reset similar molecule images
+        setFindFriendMessages([]);
         setFindFriendError(null); // Reset find friend error
         setAmbiguousOptions(null); // Reset ambiguous search info
         setFindFriendsLoading(false);
@@ -610,6 +806,9 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 setSearchWarning(t('search.tooManyRequests'));
                 setSearchLoading(false);
                 return;
+            }
+            if (!moleculeResponse.ok) {
+                await raiseResponseError(moleculeResponse, t('search.searchError'));
             }
 
             const { formattedMolecules, ambiguity } = await handleSearchedMolecules(moleculeResponse);
@@ -641,7 +840,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 setSearchError(null);
             } else {
                 // 已登录且非401错误时显示错误信息
-                setSearchError(t('search.searchError'));
+                const fallbackMessage = t('search.searchError');
+                setSearchError(apiError instanceof Error && apiError.message ? apiError.message : fallbackMessage);
             }
         } finally {
             setSearchLoading(false);
@@ -885,202 +1085,262 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                             </div>
                         )}
 
-                        {!searchLoading && !searchError && searchResults && (
+                        {!searchLoading && !searchError && searchedResultItems && searchedResultItems.length > 0 && (
                             <div>
-                                {searchedMolecules && searchedMolecules.length > 0 && (
-                                    <div className="molecule-properties">
-                                        <h3>{t('search.searchedMolecules')}</h3>
-                                        {searchedMolecules.map((molecule, index) => (
-                                            <MolCard
-                                                key={index}
-                                                name={t('search.moleculeNumber', { number: index + 1 })}
-                                                showMoreDetails={false}
-                                                large={true}
-                                                cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
-                                                    { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2, show: canShowColumn('vdw_volume_angstroms3') },
-                                                    { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },
-                                                    { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
-                                                    { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
-                                                    { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-                                                    { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
-                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true, show: canShowColumn('commercial_score')}
-                                                ]} foldPropGroups={[
-                                                    { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
-                                                    { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
-                                                ]}>
-                                                {
-                                                    isAuthenticated && (
-                                                        <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
-                                                            <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                                                <CustomButton
-                                                                    Icon={Star}
-                                                                    style={{
-                                                                        flexGrow: 1,
-                                                                    }}
-                                                                    onClick={() => {
-                                                                        console.log('Add to Favorites payload (search):', molecule);
-                                                                        handleAddToFavorites(molecule);
-                                                                    }}
-                                                                    loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
-                                                                    loadingText="Saving..."
-                                                                    successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
-                                                                    errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
-                                                                >
-                                                                    {t("chatbox.buttons.addToFavorites")}
-                                                                </CustomButton>
-                                                                {
-                                                                false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
-                                                                    window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
-                                                                    }}>
-                                                                        {t("chatbox.buttons.viewInMolPort")}
-                                                                    </CustomButton>
-                                                                }
-                                                            </div>
+                                <div className="molecule-properties">
+                                    <h3>{t('search.searchedMolecules')}</h3>
+                                    {(() => {
+                                        let moleculeDisplayIndex = 0;
+                                        return searchedResultItems.map((item, index) => {
+                                            if (item.type === 'warning') {
+                                                return (
+                                                    <div key={`searched-warning-${index}`} className="warning-message">
+                                                        <p>{item.message}</p>
+                                                    </div>
+                                                );
+                                            }
 
-                                                            {moleculeFavoriteStatus[molecule.smiles]?.error && (
-                                                                <div className="error-message" style={{
-                                                                    marginTop: '8px',
-                                                                    color: 'red',
-                                                                    fontSize: '14px',
-                                                                    fontWeight: 'bold'
-                                                                }}>
-                                                                    {moleculeFavoriteStatus[molecule.smiles].error}
-                                                                </div>
-                                                            )}
+                                            const molecule = item.molecule;
+                                            moleculeDisplayIndex += 1;
 
-                                                            {/* Display find-friend error below favorites button if it exists */}
-                                                            {findClosestFriends && findFriendError && (
-                                                                <div className="error-message" style={{
-                                                                    marginTop: '8px',
-                                                                    color: 'red',
-                                                                    fontSize: '14px',
-                                                                    fontWeight: 'bold'
-                                                                }}>
-                                                                    {findFriendError}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )
+                                            const casCandidate = molecule.casrn ?? molecule.rawData?.CASRN ?? molecule.rawData?.casrn ?? molecule.rawData?.cas ?? molecule.rawData?.CAS;
+                                            const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
+                                            const casFoldProp = includeCas
+                                                ? {
+                                                    label: t('search.properties.casrn', 'CAS #'),
+                                                    value: String(casCandidate),
+                                                    span: 2,
+                                                    show: true,
                                                 }
-                                            </MolCard>
-                                        ))}
-                                    </div>
-                                )}
-                                {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
-                                    <div className="similar-molecules">
-                                        <h3>{t('search.similarMolecules')}</h3>
-                                        {highlightedSimilarMolecules.map((molecule, index) => {
-                                            const propertySuitabilityProp = buildScoreProp(
-                                                t('search.properties.propertySuitability', 'Property Suitability'),
-                                                molecule,
-                                                'property_suitability',
-                                            );
-                                            const structureSimilarityProp = buildScoreProp(
-                                                t('search.properties.structureSimilarity', 'Structure Similarity'),
-                                                molecule,
-                                                'structure_similarity',
-                                            );
-                                            const scoreProps = [propertySuitabilityProp, structureSimilarityProp].filter(
-                                                (prop): prop is { label: string; value: string; span: number; color: string } => Boolean(prop)
-                                            );
+                                                : null;
+                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
 
                                             const propGroups = [
-                                                { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                                buildGradeProp(molecule.grade, molecule.reasoning),
-                                                ...scoreProps,
-                                                { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
-                                                { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³', show: canShowColumn('vdw_volume_angstroms3') },
-                                                { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV', show: canShowColumn('fluoride_bde_ev') },
-                                                { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
-                                                { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
-                                                { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-                                                { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
-                                                { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true, show: canShowColumn('commercial_score')}
+                                                { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
+                                                ...(gradeProp ? [gradeProp] : []),
+                                                { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                                { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2, show: canShowColumn('vdw_volume_angstroms3') },
+                                                { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },
+                                                { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                                { label: 'LUMO', value: molecule.properties?.lumo_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                                { label: 'ESP Min', value: molecule.properties?.esp_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                                { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                                { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.properties?.commercial_score), span: 4, wrap: true, show: canShowColumn('commercial_score')}
+                                            ].filter(Boolean);
+
+                                            const foldPropGroups = [
+                                                ...(casFoldProp ? [casFoldProp] : []),
+                                                { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
+                                                { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
+                                                { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
                                             ];
 
                                             return (
                                                 <MolCard
-                                                    style={{ marginBottom: '20px' }}
-                                                    key={index}
-                                                    name={t('search.similarMoleculeNumber', { number: index + 1 })}
+                                                    key={`searched-molecule-${molecule.smiles ?? index}`}
+                                                    name={t('search.moleculeNumber', { number: moleculeDisplayIndex })}
                                                     showMoreDetails={false}
                                                     large={true}
-                                                    cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                    propGroups={propGroups}
-                                                    foldPropGroups={[
-                                                        { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
-                                                        { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
-                                                        { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
-                                                    ]}
-                                                >
-                                                    <div className="molecule-actions">
-                                                    <CustomButton
-                                                        Icon={Star}
-                                                        style={{
-                                                            flexGrow: 1,
-                                                        }}
-                                                        onClick={() => {
-                                                            console.log('Add to Favorites payload (search):', molecule);
-
-                                                            // Get the raw commercial score (numeric 0-3)
-                                                            const rawCommercialScore = molecule.COMMERCIAL_SCORE;
-
-                                                            // Convert commercial score from numeric to descriptive text
-                                                            const commercialScoreText = renderAnionCommercialScore(rawCommercialScore) ?? null;
-
-                                                            handleAddToFavorites({
-                                                                smiles: molecule.SMILES,
-                                                                properties: {
-                                                                    molwt: molecule.molecular_weight,
-                                                                    homo_eV: molecule.HOMO_eV,
-                                                                    lumo_eV: molecule.LUMO_eV,
-                                                                    esp_min_eV: molecule.ESP_min_eV,
-                                                                    esp_max_eV: molecule.ESP_max_eV,
-                                                                    predicted_mp: molecule.predicted_MP_celsius,
-                                                                    predicted_bp: molecule.predicted_BP_celsius,
-                                                                    predicted_fp_celsius: molecule.predicted_FP_celsius,
-                                                                    combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
-                                                                    commercial_score: commercialScoreText,
-                                                                    functional_groups: molecule.functional_groups,
-                                                                    commercial_link: molecule.COMMERCIAL_LINK || null
-                                                                },
-                                                                x: molecule.UMAP_0,
-                                                                y: molecule.UMAP_1
-                                                            });
-                                                        }}
-                                                        loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        loadingText={t('chatbox.buttons.addToFavoritesLoading')}
-                                                        successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
-                                                        errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
-                                                    >
-                                                        {t('chatbox.buttons.addToFavorites')}
-                                                    </CustomButton>
+                                                    cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
+                                                    propGroups={propGroups} foldPropGroups={foldPropGroups}>
                                                     {
-                                                        userPermissions === 'admin' && (
-                                                            <MoleculeFeedbackBox
-                                                                fullWidth={false}
-                                                                molecule={molecule}
-                                                                lastSearch={lastSearch}
-                                                                queryType="normal_ask"
-                                                                contextContent1={''}
-                                                                contextContent2={''}
-                                                                contextContent3={''}
-                                                                useMultiAgent={false}
-                                                                onClose={() => { }}
-                                                            />
+                                                        isAuthenticated && (
+                                                            <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'center', width: '100%' }}>
+                                                                <div style={{ display: 'flex', flexFlow: 'row', gap: '5px', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                                    <CustomButton
+                                                                        Icon={Star}
+                                                                        style={{
+                                                                            flexGrow: 1,
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            console.log('Add to Favorites payload (search):', molecule);
+                                                                            handleAddToFavorites(molecule);
+                                                                        }}
+                                                                        loading={moleculeFavoriteStatus[molecule.smiles]?.loading}
+                                                                        loadingText="Saving..."
+                                                                        successMessage={moleculeFavoriteStatus[molecule.smiles]?.success}
+                                                                        errorMessage={moleculeFavoriteStatus[molecule.smiles]?.error}
+                                                                    >
+                                                                        {t("chatbox.buttons.addToFavorites")}
+                                                                    </CustomButton>
+                                                                    {
+                                                                    false && molecule.properties.commercial_link && <CustomButton Icon={ExternalLink} size="small" variant="outlined" onClick={() => {
+                                                                        window.open(molecule.properties.commercial_link, '_blank', 'noopener,noreferrer');
+                                                                        }}>
+                                                                            {t("chatbox.buttons.viewInMolPort")}
+                                                                        </CustomButton>
+                                                                    }
+                                                                </div>
+
+                                                                {moleculeFavoriteStatus[molecule.smiles]?.error && (
+                                                                    <div className="error-message" style={{
+                                                                        marginTop: '8px',
+                                                                        color: 'red',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: 'bold'
+                                                                    }}>
+                                                                        {moleculeFavoriteStatus[molecule.smiles].error}
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Display find-friend error below favorites button if it exists */}
+                                                                {findClosestFriends && findFriendError && (
+                                                                    <div className="error-message" style={{
+                                                                        marginTop: '8px',
+                                                                        color: 'red',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: 'bold'
+                                                                    }}>
+                                                                        {findFriendError}
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         )
                                                     }
-                                                    </div>
                                                 </MolCard>
                                             );
-                                        })}
+                                        });
+                                    })()}
+                                </div>
+                            </div>
+                        )}
+                        {findClosestFriends && !searchLoading && !searchError && (findFriendMessages.length > 0 || (highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0)) && (
+                            <div className="similar-molecules">
+                                <h3>{t('search.similarMolecules')}</h3>
+                                {findFriendMessages.map((message, messageIndex) => (
+                                    <div key={`find-friend-warning-${messageIndex}`} className="warning-message">
+                                        <p>{getFindFriendDisplayMessage(message)}</p>
                                     </div>
-                                )}
+                                ))}
+                                {highlightedSimilarMolecules.map((molecule, index) => {
+                                    const propertyScoreSummary = buildScoreSummary(
+                                        t('search.properties.propertySuitability', 'Property Suitability'),
+                                        molecule,
+                                        'property_suitability',
+                                        'property_subscores',
+                                    );
+                                    const structureScoreSummary = buildScoreSummary(
+                                        t('search.properties.structureSimilarity', 'Structure Similarity'),
+                                        molecule,
+                                        'structure_similarity',
+                                        'structure_subscores',
+                                    );
+
+                                    const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
+                                    const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
+                                    const casFoldProp = includeCas
+                                        ? {
+                                            label: t('search.properties.casrn', 'CAS #'),
+                                            value: String(casCandidate),
+                                            span: 2,
+                                            show: true,
+                                        }
+                                        : null;
+
+                                    const gradeDetails = createLlmGradeProp(
+                                        molecule.grade,
+                                        molecule.reasoning,
+                                        (text) => setReasoningText(text)
+                                    );
+
+                                    const overallScoreProp = buildOverallScoreProp(
+                                        molecule,
+                                        t('search.properties.overallScore', 'Overall Score'),
+                                        propertyScoreSummary,
+                                        structureScoreSummary,
+                                        gradeDetails
+                                    );
+
+                                    const propGroups = [
+                                        { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
+                                        ...(overallScoreProp ? [overallScoreProp] : []),
+                                        { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
+                                        { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³', show: canShowColumn('vdw_volume_angstroms3') },
+                                        { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV', show: canShowColumn('fluoride_bde_ev') },
+                                        { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
+                                        { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
+                                        { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
+                                        { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
+                                        { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true, show: canShowColumn('commercial_score')}
+                                    ].filter(Boolean);
+
+                                    return (
+                                        <MolCard
+                                            style={{ marginBottom: '20px' }}
+                                            key={index}
+                                            name={t('search.similarMoleculeNumber', { number: index + 1 })}
+                                            showMoreDetails={false}
+                                            large={true}
+                                            cation={molecule.cation ?? (molecule as any)?.CATION}
+                                            propGroups={propGroups}
+                                            foldPropGroups={[
+                                                ...(casFoldProp ? [casFoldProp] : []),
+                                                { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
+                                                { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
+                                                { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                            ]}
+                                        >
+                                            <div className="molecule-actions">
+                                                <CustomButton
+                                                    Icon={Star}
+                                                    style={{
+                                                        flexGrow: 1,
+                                                    }}
+                                                    onClick={() => {
+                                                        console.log('Add to Favorites payload (search):', molecule);
+
+                                                        // Get the raw commercial score (numeric 0-3)
+                                                        const rawCommercialScore = molecule.COMMERCIAL_SCORE;
+
+                                                        // Convert commercial score from numeric to descriptive text
+                                                        const commercialScoreText = renderAnionCommercialScore(rawCommercialScore) ?? null;
+
+                                                        handleAddToFavorites({
+                                                            smiles: molecule.SMILES,
+                                                            properties: {
+                                                                molwt: molecule.molecular_weight,
+                                                                homo_eV: molecule.HOMO_eV,
+                                                                lumo_eV: molecule.LUMO_eV,
+                                                                esp_min_eV: molecule.ESP_min_eV,
+                                                                esp_max_eV: molecule.ESP_max_eV,
+                                                                predicted_mp: molecule.predicted_MP_celsius,
+                                                                predicted_bp: molecule.predicted_BP_celsius,
+                                                                predicted_fp_celsius: molecule.predicted_FP_celsius,
+                                                                combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
+                                                                commercial_score: commercialScoreText,
+                                                                functional_groups: molecule.functional_groups,
+                                                                commercial_link: molecule.COMMERCIAL_LINK || null
+                                                            },
+                                                            x: molecule.UMAP_0,
+                                                            y: molecule.UMAP_1
+                                                        });
+                                                    }}
+                                                    loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
+                                                    loadingText={t('chatbox.buttons.addToFavoritesLoading')}
+                                                    successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
+                                                    errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
+                                                >
+                                                    {t('chatbox.buttons.addToFavorites')}
+                                                </CustomButton>
+                                                {
+                                                    userPermissions === 'admin' && (
+                                                        <MoleculeFeedbackBox
+                                                            fullWidth={false}
+                                                            molecule={molecule}
+                                                            lastSearch={lastSearch}
+                                                            queryType="normal_ask"
+                                                            contextContent1={''}
+                                                            contextContent2={''}
+                                                            contextContent3={''}
+                                                            useMultiAgent={false}
+                                                            onClose={() => { }}
+                                                        />
+                                                    )
+                                                }
+                                            </div>
+                                        </MolCard>
+                                    );
+                                })}
                             </div>
                         )}
                         {findClosestFriends && findFriendsLoading && (
@@ -1089,7 +1349,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 <p>{t('search.searching')}</p>
                             </div>
                         )}
-                        {(lastSearch && !searchLoading && (searchedMolecules === null || searchedMolecules.length === 0)) && (
+                        {(lastSearch && !searchLoading && !searchError && (searchedMolecules === null || searchedMolecules.length === 0)) && (
                             ambiguousOptions ? (
                                 <div className="molecule-not-found">
                                     <p>{t('search.ambiguousQuery.message', { query: lastSearch, options: ambiguousOptions })}</p>

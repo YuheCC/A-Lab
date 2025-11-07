@@ -26,6 +26,9 @@ const COLUMN_ALIASES: Record<string, string> = {
   esp_max_ev: 'esp_max_ev',
   espmin_ev: 'esp_min_ev',
   espmax_ev: 'esp_max_ev',
+  casrn: 'casrn',
+  cas: 'casrn',
+  cas_number: 'casrn',
   predicted_mp: 'predicted_mp_celsius',
   predicted_mp_celsius: 'predicted_mp_celsius',
   predicted_bp: 'predicted_bp_celsius',
@@ -99,4 +102,3 @@ export const isColumnVisibleForUser = (columnId?: string | null, permission?: st
   }
   return isHighTierUser(permission);
 };
-

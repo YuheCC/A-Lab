@@ -2,6 +2,7 @@ export default {
   nodePopup: {
     title: "Molecule Details",
     smiles: "SMILES",
+    casrn: "CAS #",
     umapCoordinates: "UMAP Coordinates",
     properties: "Properties",
     copyAllData: "Copy All Data",
@@ -53,11 +54,11 @@ export default {
       outcomeOptions: {
         fastCharging: "Fast charging",
         highVoltage: "High voltage",
-        hotboxThermal: "Hotbox (thermal)",
-        htCycling: "HT cycling",
-        htStorage: "HT storage",
-        ltCycling: "LT cycling",
-        rtCycling: "RT cycling"
+        hotboxThermal: "Inflammability",
+        htCycling: "High temp cycling",
+        htStorage: "High temp storage",
+        ltCycling: "Low temp cycling",
+        rtCycling: "Room temp cycling"
       }
     },
     properties: {
