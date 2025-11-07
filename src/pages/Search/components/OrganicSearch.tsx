@@ -101,7 +101,7 @@ const ORGANIC_PROPERTY_DEFINITIONS = [
     { columnId: 'predicted_FP_celsius', labelKey: 'search.properties.predictedFp', fallback: 'Predicted Flash Point' },
 ];
 
-const ORGANIC_SEARCH_PLACEHOLDER = 'ethylene carbonate, DTD, CCOC(=O)OCC';
+const ORGANIC_SEARCH_PLACEHOLDER = 'fluoroethylene carbonate, DTD, CCOC(=O)OCC, 96-49-1';
 const REMOVED_FILTER_WARNING_PREFIX = 'Removed property filters due to empty results';
 const MASKED_FILTER_WARNING_MESSAGE = 'Disabled some property filters due to empty results.';
 
