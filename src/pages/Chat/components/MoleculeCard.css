@@ -239,6 +239,10 @@
     border: 1px solid #e2e8f0; /* 添加边框 */
 }
 
+.collapsible-properties {
+    margin-bottom: 12px;
+}
+
 /* 商业可用性与其他属性在同一区域 */
 .molecule-card-property-item.commercial-viability {
     grid-column: 1 / -1; /* 跨越所有列 */

@@ -2,7 +2,7 @@ export default {
   nodePopup: {
     title: "分子の詳細",
     smiles: "SMILES",
-    casrn: "CASRN",
+    casrn: "CAS #",
     umapCoordinates: "UMAP座標",
     properties: "プロパティ",
     copyAllData: "すべてのデータをコピー",

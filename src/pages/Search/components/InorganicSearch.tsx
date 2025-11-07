@@ -8,6 +8,7 @@ import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
+import OverallScoreValue from '@/components/OverallScoreValue';
 import CustomButton from "@/components/CustomButton";
 import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -28,6 +29,7 @@ import {
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
+import type { ScoreBreakdownItem } from '@/components/ScoreBreakdownValue';
 
 const API_URL = getAPIUrl();
 
@@ -135,6 +137,191 @@ const InorganicSearch = () => {
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
+
+    const getRecordField = (record: any, key: string) => {
+        if (!record || !key) return undefined;
+        const direct = record[key];
+        if (direct !== undefined && direct !== null) {
+            return direct;
+        }
+        const upperKey = key.toUpperCase();
+        if (upperKey) {
+            const upperValue = record[upperKey];
+            if (upperValue !== undefined && upperValue !== null) {
+                return upperValue;
+            }
+        }
+        return undefined;
+    };
+
+    const extractScoreValue = (record: any, key: string): number | null => {
+        const value = getRecordField(record, key);
+        if (value === undefined) return null;
+        const numeric = Number(value);
+        return Number.isNaN(numeric) ? null : numeric;
+    };
+
+    const scaleScoreToTen = (value: number | null): number | null => {
+        if (value === null) return null;
+        const clamped = Math.min(Math.max(value, 0), 1);
+        return parseFloat((1 + clamped * 9).toFixed(1));
+    };
+
+    const getScoreColor = (scaled: number): string => {
+        const normalized = Math.min(Math.max((scaled - 1) / 9, 0), 1);
+        const hue = normalized * 120;
+        return `hsl(${Math.round(hue)}, 70%, 45%)`;
+    };
+
+    const buildSubscoreItems = (record: any, key: string): ScoreBreakdownItem[] => {
+        const source = getRecordField(record, key);
+        if (!source) return [];
+
+        type NormalizedSubscore = { label: string; scaled: number };
+        const normalized: NormalizedSubscore[] = [];
+
+        const addSubscore = (labelCandidate: unknown, valueCandidate: unknown) => {
+            if (valueCandidate === null || valueCandidate === undefined || valueCandidate === '') {
+                return;
+            }
+            const numeric = Number(valueCandidate);
+            if (Number.isNaN(numeric)) {
+                return;
+            }
+            const scaled = scaleScoreToTen(numeric);
+            if (scaled === null) {
+                return;
+            }
+            const labelString =
+                typeof labelCandidate === 'string' && labelCandidate.trim().length > 0
+                    ? labelCandidate
+                    : `Subscore ${normalized.length + 1}`;
+            normalized.push({ label: labelString, scaled });
+        };
+
+        const processEntry = (entry: unknown, fallbackLabel?: string) => {
+            if (entry === null || entry === undefined) {
+                return;
+            }
+            if (typeof entry === 'number' || typeof entry === 'string') {
+                addSubscore(fallbackLabel, entry);
+                return;
+            }
+            if (Array.isArray(entry)) {
+                if (entry.length === 0) return;
+                const [labelCandidate, valueCandidate] = entry;
+                addSubscore(
+                    typeof labelCandidate === 'string' ? labelCandidate : fallbackLabel,
+                    valueCandidate,
+                );
+                return;
+            }
+            if (typeof entry === 'object') {
+                const obj = entry as Record<string, unknown>;
+                const labelCandidate =
+                    obj.label ?? obj.name ?? obj.metric ?? obj.key ?? fallbackLabel;
+                const valueCandidate =
+                    obj.value ?? obj.score ?? obj.subscore ?? obj.result ?? obj.amount ?? obj.raw;
+
+                if (valueCandidate !== undefined) {
+                    addSubscore(labelCandidate, valueCandidate);
+                    return;
+                }
+
+                Object.entries(obj).forEach(([nestedLabel, nestedValue]) => {
+                    processEntry(nestedValue, nestedLabel);
+                });
+                return;
+            }
+        };
+
+        if (Array.isArray(source)) {
+            source.forEach((item, index) => {
+                processEntry(item, `Subscore ${index + 1}`);
+            });
+        } else if (typeof source === 'object') {
+            Object.entries(source as Record<string, unknown>).forEach(([label, value]) => {
+                processEntry(value, label);
+            });
+        } else {
+            processEntry(source);
+        }
+
+        return normalized.map((item, index) => ({
+            key: `${key}-${index}-${item.label}`,
+            label: item.label,
+            displayValue: `${item.scaled.toFixed(1)}/10`,
+            color: getScoreColor(item.scaled),
+        }));
+    };
+
+    type ScoreSummary = {
+        label: string;
+        displayValue: string;
+        color: string;
+        subscores: ScoreBreakdownItem[];
+    };
+
+    const buildScoreSummary = (label: string, record: any, key: string, subscoreKey?: string): ScoreSummary | null => {
+        const rawValue = extractScoreValue(record, key);
+        const scaled = scaleScoreToTen(rawValue);
+        if (scaled === null) {
+            return null;
+        }
+
+        const displayValue = `${scaled.toFixed(1)}/10`;
+        const color = getScoreColor(scaled);
+        const subscores = subscoreKey ? buildSubscoreItems(record, subscoreKey) : [];
+
+        return {
+            label,
+            displayValue,
+            color,
+            subscores,
+        };
+    };
+
+    const buildOverallScoreProp = (
+        record: any,
+        label: string,
+        propertySummary: ScoreSummary | null,
+        structureSummary: ScoreSummary | null,
+        gradeDetails: ReturnType<typeof createLlmGradeProp> | null
+    ) => {
+        const rawValue = extractScoreValue(record, 'overall_score');
+        const scaled = scaleScoreToTen(rawValue);
+        if (scaled === null) {
+            return null;
+        }
+
+        const displayValue = `${scaled.toFixed(1)}/10`;
+        const color = getScoreColor(scaled);
+
+        const gradeSummary = gradeDetails && gradeDetails.show !== false ? {
+            label: gradeDetails.label,
+            displayValue: `${gradeDetails.value}${gradeDetails.suffix ?? ''}`,
+            color: gradeDetails.color,
+            action: gradeDetails.action,
+        } : null;
+
+        return {
+            label,
+            value: displayValue,
+            span: 2,
+            color,
+            disableAutoTooltip: true,
+            valueNode: (
+                <OverallScoreValue
+                    label={label}
+                    value={displayValue}
+                    valueColor={color}
+                    propertyScore={propertySummary || undefined}
+                    structureScore={structureSummary || undefined}
+                    llmGrade={gradeSummary || undefined}
+                />
+            ),
+        };
+    };
     const { limits: queryLimits } = useQueryLimit();
 
     const canShowColumn = useCallback(
@@ -803,18 +990,17 @@ const InorganicSearch = () => {
                                             moleculeDisplayIndex += 1;
 
                                             const casCandidate = molecule.casrn ?? molecule.rawData?.CASRN ?? molecule.rawData?.casrn ?? molecule.rawData?.cas ?? molecule.rawData?.CAS;
-                                            const casProps = ENABLE_CASRN_DISPLAY && casCandidate
-                                                ? [{
-                                                    label: t('search.properties.casrn', 'CASRN'),
+                                            const casFoldProp = ENABLE_CASRN_DISPLAY && casCandidate
+                                                ? {
+                                                    label: t('search.properties.casrn', 'CAS #'),
                                                     value: String(casCandidate),
                                                     span: 2,
-                                                }]
-                                                : [];
+                                                }
+                                                : null;
                                             const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                ...casProps,
                                                 ...(gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                 { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
@@ -829,6 +1015,7 @@ const InorganicSearch = () => {
                                             ].filter(Boolean);
 
                                             const foldPropGroups = [
+                                                ...(casFoldProp ? [casFoldProp] : []),
                                                 { label: 'UMAP_X', value: molecule.x, span: 1 },
                                                 { label: 'UMAP_Y', value: molecule.y, span: 1 },
                                                 { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4 }
@@ -899,20 +1086,43 @@ const InorganicSearch = () => {
                                             </div>
                                         ))}
                                         {highlightedSimilarMolecules.map((molecule, index) => {
+                                            const propertyScoreSummary = buildScoreSummary(
+                                                t('search.properties.propertySuitability', 'Property Suitability'),
+                                                molecule,
+                                                'property_suitability',
+                                                'property_subscores'
+                                            );
+                                            const structureScoreSummary = buildScoreSummary(
+                                                t('search.properties.structureSimilarity', 'Structure Similarity'),
+                                                molecule,
+                                                'structure_similarity',
+                                                'structure_subscores'
+                                            );
                                             const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
-                                            const casProps = ENABLE_CASRN_DISPLAY && casCandidate
-                                                ? [{
-                                                    label: t('search.properties.casrn', 'CASRN'),
+                                            const casFoldProp = ENABLE_CASRN_DISPLAY && casCandidate
+                                                ? {
+                                                    label: t('search.properties.casrn', 'CAS #'),
                                                     value: String(casCandidate),
                                                     span: 2,
-                                                }]
-                                                : [];
-                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+                                                }
+                                                : null;
+                                            const gradeDetails = createLlmGradeProp(
+                                                molecule.grade,
+                                                molecule.reasoning,
+                                                (text) => setReasoningText(text)
+                                            );
+
+                                            const overallScoreProp = buildOverallScoreProp(
+                                                molecule,
+                                                t('search.properties.overallScore', 'Overall Score'),
+                                                propertyScoreSummary,
+                                                structureScoreSummary,
+                                                gradeDetails
+                                            );
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                ...casProps,
-                                                ...(gradeProp ? [gradeProp] : []),
+                                                ...(overallScoreProp ? [overallScoreProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
                                                 { label: 'Cluster', value: molecule.cluster, span: 2 },
                                                 { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
@@ -935,9 +1145,10 @@ const InorganicSearch = () => {
                                                     cation={molecule.cation ?? (molecule as any)?.CATION}
                                                     propGroups={propGroups} 
                                                     foldPropGroups={[
-                                                        { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
+                                                        ...(casFoldProp ? [casFoldProp] : []),
                                                         { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
                                                         { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
+                                                        { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
                                                     ]}
                                                 >
                                                     <div className="molecule-actions">

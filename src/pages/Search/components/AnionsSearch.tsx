@@ -9,7 +9,8 @@ import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
 import MolCard from "@/components/MolCard";
-import ScoreBreakdownValue, { ScoreBreakdownItem } from '@/components/ScoreBreakdownValue';
+import OverallScoreValue from '@/components/OverallScoreValue';
+import type { ScoreBreakdownItem } from '@/components/ScoreBreakdownValue';
 import CustomButton from "@/components/CustomButton";
 import { ExternalLink, Star, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -449,7 +450,14 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         }));
     };
 
-    const buildScoreProp = (label: string, record: any, key: string, subscoreKey?: string) => {
+    type ScoreSummary = {
+        label: string;
+        displayValue: string;
+        color: string;
+        subscores: ScoreBreakdownItem[];
+    };
+
+    const buildScoreSummary = (label: string, record: any, key: string, subscoreKey?: string): ScoreSummary | null => {
         const rawValue = extractScoreValue(record, key);
         const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
@@ -462,21 +470,51 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
         return {
             label,
+            displayValue,
+            color,
+            subscores,
+        };
+    };
+
+    const buildOverallScoreProp = (
+        record: any,
+        label: string,
+        propertySummary: ScoreSummary | null,
+        structureSummary: ScoreSummary | null,
+        gradeDetails: ReturnType<typeof createLlmGradeProp> | null
+    ) => {
+        const rawValue = extractScoreValue(record, 'overall_score');
+        const scaled = scaleScoreToTen(rawValue);
+        if (scaled === null) {
+            return null;
+        }
+
+        const displayValue = `${scaled.toFixed(1)}/10`;
+        const color = getScoreColor(scaled);
+
+        const gradeSummary = gradeDetails && gradeDetails.show !== false ? {
+            label: gradeDetails.label,
+            displayValue: `${gradeDetails.value}${gradeDetails.suffix ?? ''}`,
+            color: gradeDetails.color,
+            action: gradeDetails.action,
+        } : null;
+
+        return {
+            label,
             value: displayValue,
             span: 2,
             color,
-            ...(subscores.length
-                ? {
-                    valueNode: (
-                        <ScoreBreakdownValue
-                            label={label}
-                            value={displayValue}
-                            subscores={subscores}
-                        />
-                    ),
-                    disableAutoTooltip: true,
-                }
-                : {}),
+            disableAutoTooltip: true,
+            valueNode: (
+                <OverallScoreValue
+                    label={label}
+                    value={displayValue}
+                    valueColor={color}
+                    propertyScore={propertySummary || undefined}
+                    structureScore={structureSummary || undefined}
+                    llmGrade={gradeSummary || undefined}
+                />
+            ),
         };
     };
 
@@ -1067,19 +1105,18 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
                                             const casCandidate = molecule.casrn ?? molecule.rawData?.CASRN ?? molecule.rawData?.casrn ?? molecule.rawData?.cas ?? molecule.rawData?.CAS;
                                             const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
-                                            const casProps = includeCas
-                                                ? [{
-                                                    label: t('search.properties.casrn', 'CASRN'),
+                                            const casFoldProp = includeCas
+                                                ? {
+                                                    label: t('search.properties.casrn', 'CAS #'),
                                                     value: String(casCandidate),
                                                     span: 2,
                                                     show: true,
-                                                }]
-                                                : [];
+                                                }
+                                                : null;
                                             const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
-                                                ...casProps,
                                                 ...(gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                 { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2, show: canShowColumn('vdw_volume_angstroms3') },
@@ -1092,6 +1129,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                             ].filter(Boolean);
 
                                             const foldPropGroups = [
+                                                ...(casFoldProp ? [casFoldProp] : []),
                                                 { label: 'UMAP_X', value: molecule.x, span: 1, show: canShowColumn('umap_0') },
                                                 { label: 'UMAP_Y', value: molecule.y, span: 1, show: canShowColumn('umap_1') },
                                                 { label: 'Functional Groups', value: JSON.parse(molecule.properties?.functional_groups ?? "[]"), span: 4, show: canShowColumn('functional_groups') }
@@ -1175,39 +1213,47 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                     </div>
                                 ))}
                                 {highlightedSimilarMolecules.map((molecule, index) => {
-                                    const propertySuitabilityProp = buildScoreProp(
+                                    const propertyScoreSummary = buildScoreSummary(
                                         t('search.properties.propertySuitability', 'Property Suitability'),
                                         molecule,
                                         'property_suitability',
                                         'property_subscores',
                                     );
-                                    const structureSimilarityProp = buildScoreProp(
+                                    const structureScoreSummary = buildScoreSummary(
                                         t('search.properties.structureSimilarity', 'Structure Similarity'),
                                         molecule,
                                         'structure_similarity',
                                         'structure_subscores',
                                     );
-                                    const scoreProps = [propertySuitabilityProp, structureSimilarityProp].filter(
-                                        (prop): prop is { label: string; value: string; span: number; color: string } => Boolean(prop)
-                                    );
 
                                     const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
                                     const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
-                                    const casProps = includeCas
-                                        ? [{
-                                            label: t('search.properties.casrn', 'CASRN'),
+                                    const casFoldProp = includeCas
+                                        ? {
+                                            label: t('search.properties.casrn', 'CAS #'),
                                             value: String(casCandidate),
                                             span: 2,
                                             show: true,
-                                        }]
-                                        : [];
-                                    const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+                                        }
+                                        : null;
+
+                                    const gradeDetails = createLlmGradeProp(
+                                        molecule.grade,
+                                        molecule.reasoning,
+                                        (text) => setReasoningText(text)
+                                    );
+
+                                    const overallScoreProp = buildOverallScoreProp(
+                                        molecule,
+                                        t('search.properties.overallScore', 'Overall Score'),
+                                        propertyScoreSummary,
+                                        structureScoreSummary,
+                                        gradeDetails
+                                    );
 
                                     const propGroups = [
                                         { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                        ...casProps,
-                                        ...(gradeProp ? [gradeProp] : []),
-                                        ...scoreProps,
+                                        ...(overallScoreProp ? [overallScoreProp] : []),
                                         { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                         { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³', show: canShowColumn('vdw_volume_angstroms3') },
                                         { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV', show: canShowColumn('fluoride_bde_ev') },
@@ -1228,9 +1274,10 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                             cation={molecule.cation ?? (molecule as any)?.CATION}
                                             propGroups={propGroups}
                                             foldPropGroups={[
-                                                { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                                ...(casFoldProp ? [casFoldProp] : []),
                                                 { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
                                                 { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
+                                                { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
                                             ]}
                                         >
                                             <div className="molecule-actions">
