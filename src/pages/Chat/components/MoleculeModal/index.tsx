@@ -13,6 +13,7 @@ import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 import { ReasoningButton, ReasoningModal } from '@/components/LlmGrade';
 import { triggerLoginModal, triggerPricingModal } from '@/utils/authHelpers';
 import { buildQueryString } from '@/services/buildQueryString';
+import { getMoleculeDescription, hasMoleculeDescription } from '@/constants/moleculeDescriptions';
 
 import { FavoriteContext } from '@/layouts';
 import type { Message } from '@/utils/messageUtils';
@@ -83,7 +84,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
     onUpdateMoleculeType,
     messages = []
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const userPermissions = useAuthStore(state => state.userPermissions);
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
     const { modeLimits } = useChatContext();
@@ -346,6 +347,20 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             useAnionDatabase
         );
         const fallbackValue = t('molecular.molCard.notAvailable');
+
+        // 获取分子 tips（先尝试用 SMILES 查询，再用分子名称查询）
+        const currentLocale = i18n?.language || 'zh';
+        const localeKey = currentLocale.split('-')[0] as 'zh' | 'en' | 'ja' | 'ko';
+        let moleculeTips: string | undefined;
+
+        // 先尝试用 SMILES 查询
+        if (cardProperties.smiles && hasMoleculeDescription(cardProperties.smiles)) {
+            moleculeTips = getMoleculeDescription(cardProperties.smiles, localeKey);
+        }
+        // 如果没找到，再尝试用分子名称查询
+        if (!moleculeTips && hasMoleculeDescription(name)) {
+            moleculeTips = getMoleculeDescription(name, localeKey);
+        }
         const showSmiles = canShowColumn('smiles');
         const showMolWeight = canShowColumn('molecular_weight');
         const showPredictedMp = !cardIsAnion && canShowColumn('predicted_MP_celsius');
@@ -501,8 +516,18 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                             <span className="molecule-card-property-value">{cardProperties.commercialViability || t('molecular.moleculeModal.unknown')}</span>
                         </div>
                     )}
+                    {moleculeTips && (
+                        <div className="molecule-card-property-item" style={{ gridColumn: '1 / -1' }}>
+                            <span className="molecule-card-property-label">{t('molecular.moleculeModal.tips', 'Tips')}:</span>
+                            <span className="molecule-card-property-value" style={{
+                                whiteSpace: 'normal',
+                                wordBreak: 'break-word',
+                                lineHeight: '1.6'
+                            }}>{moleculeTips}</span>
+                        </div>
+                    )}
                 </div>
-                
+
                 {/* 功能组：默认折叠，字段按 Ask 填充 */}
                 {showFunctionalGroups && (
                 <div className="functional-groups-section">
