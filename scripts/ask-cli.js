@@ -100,6 +100,75 @@ async function readJsonResponse(response, context) {
   }
 }
 
+function normalizeErrorDetail(data, fallback = 'Unknown error') {
+  if (!data || typeof data !== 'object') {
+    return fallback;
+  }
+
+  const candidates = [
+    data.detail,
+    data.message,
+    data.error,
+    data.errors,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+
+    if (typeof candidate === 'string') {
+      const trimmed = candidate.trim();
+      if (trimmed) return trimmed;
+      continue;
+    }
+
+    if (Array.isArray(candidate)) {
+      const joined = candidate
+        .map((item) => {
+          if (item == null) return '';
+          if (typeof item === 'string') return item.trim();
+          try {
+            return JSON.stringify(item);
+          } catch {
+            return String(item);
+          }
+        })
+        .filter(Boolean)
+        .join('; ');
+      if (joined) return joined;
+      continue;
+    }
+
+    if (typeof candidate === 'object') {
+      try {
+        const serialized = JSON.stringify(candidate);
+        if (serialized) return serialized;
+      } catch {
+        // ignore serialization issues and keep looping
+      }
+    }
+  }
+
+  return fallback;
+}
+
+function createHttpError(context, response, data) {
+  const fallback = response?.statusText || 'Request failed';
+  const detail = normalizeErrorDetail(data, fallback);
+  const status = typeof response?.status === 'number' ? response.status : 0;
+  const message = `${context} (${status}): ${detail}`;
+
+  const error = new Error(message);
+  error.name = 'HttpError';
+  error.status = status;
+  error.context = context;
+  if (data !== undefined) {
+    error.data = data;
+  }
+  error.isHttpError = true;
+  error.isClientError = status >= 400 && status < 500;
+  return error;
+}
+
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -352,8 +421,7 @@ async function fetchChatDetail(baseUrl, token, chatId) {
 
   const data = await readJsonResponse(response, 'Chat detail');
   if (!response.ok || data?.ok === false) {
-    const detail = data?.detail || data?.message || response.statusText;
-    throw new Error(`Chat detail failed (${response.status}): ${detail}`);
+    throw createHttpError('Chat detail failed', response, data);
   }
 
   return data;
@@ -432,6 +500,8 @@ function extractAnswerFromChatDetail(chatData, { answerId, startedAt }) {
 async function waitForAskPolling(baseUrl, token, chatId, { answerId, startedAt, pollIntervalMs = 2000, timeoutMs = 180000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   let lastError = null;
+  let consecutiveErrors = 0;
+  const MAX_CONSECUTIVE_ERRORS = 3;
 
   while (Date.now() < deadline) {
     try {
@@ -441,8 +511,19 @@ async function waitForAskPolling(baseUrl, token, chatId, { answerId, startedAt, 
         return { content: match.content, payload: detail, message: match.message };
       }
       lastError = null;
+      consecutiveErrors = 0;
     } catch (error) {
       lastError = error;
+      consecutiveErrors += 1;
+
+      const status = typeof error?.status === 'number' ? error.status : null;
+      const isClientError = status && status >= 400 && status < 500;
+      const shouldAbortImmediately = isClientError && status !== 404;
+      const exhaustedRetries = consecutiveErrors >= MAX_CONSECUTIVE_ERRORS;
+
+      if (shouldAbortImmediately || exhaustedRetries) {
+        throw error;
+      }
     }
 
     await delay(pollIntervalMs);
@@ -467,8 +548,7 @@ async function createChat(baseUrl, token, title) {
 
   const data = await readJsonResponse(response, 'Create chat');
   if (!response.ok || data?.ok === false) {
-    const detail = data?.detail || data?.message || response.statusText;
-    throw new Error(`Chat creation failed (${response.status}): ${detail}`);
+    throw createHttpError('Chat creation failed', response, data);
   }
 
   const chatId = data?.id ?? data?.chat_id ?? data?.chatId;
@@ -496,8 +576,7 @@ async function createUserMessage(baseUrl, token, chatId, model, content) {
 
   const data = await readJsonResponse(response, 'Create message');
   if (!response.ok || data?.ok === false) {
-    const detail = data?.detail || data?.message || response.statusText;
-    throw new Error(`Message creation failed (${response.status}): ${detail}`);
+    throw createHttpError('Message creation failed', response, data);
   }
 
   const messageId = data?.id ?? data?.message_id ?? data?.messageId;
@@ -516,8 +595,7 @@ async function triggerAskRequest(baseUrl, token, payload) {
 
   const data = await readJsonResponse(response, 'Ask request');
   if (!response.ok || data?.ok === false) {
-    const detail = data?.detail || data?.message || response.statusText;
-    throw new Error(`Query failed (${response.status}): ${detail}`);
+    throw createHttpError('Query failed', response, data);
   }
 
   return data;
@@ -538,8 +616,7 @@ async function login(baseUrl, username, password) {
 
   const data = await readJsonResponse(response, 'Login');
   if (!response.ok || data?.ok === false) {
-    const detail = data?.detail || data?.message || response.statusText;
-    throw new Error(`Login failed (${response.status}): ${detail}`);
+    throw createHttpError('Login failed', response, data);
   }
 
   const token =
@@ -571,6 +648,7 @@ async function runAsk(baseUrl, {
     throw new Error('Socket connection is required before triggering Ask.');
   }
 
+  const modeTimeoutMs = resolveModeTimeoutMs(apiMode);
   const title = query.split('\n')[0]?.slice(0, 80) || 'CLI Ask Session';
   const { chatId } = await createChat(baseUrl, token, title);
   const startedAt = Date.now();
@@ -614,7 +692,7 @@ async function runAsk(baseUrl, {
     Object.entries(askPayload).filter(([, value]) => value !== undefined && value !== null),
   );
 
-  const streamWait = waitForAskResponse(socket, chatId, answerId, { timeoutMs: 180000 });
+  const streamWait = waitForAskResponse(socket, chatId, answerId, { timeoutMs: modeTimeoutMs });
 
   let data;
   try {
@@ -629,7 +707,7 @@ async function runAsk(baseUrl, {
     throw error;
   }
 
-  const STREAM_TIMEOUT_MS = 180000;
+  const STREAM_TIMEOUT_MS = modeTimeoutMs;
   let streamResult = null;
   let streamError = null;
   try {
@@ -667,9 +745,12 @@ async function runAsk(baseUrl, {
   if (shouldPoll) {
     delivery = 'poll';
     try {
+      const elapsed = Date.now() - startedAt;
+      const remainingMs = Math.max(modeTimeoutMs - elapsed, 2000);
       const pollResult = await waitForAskPolling(baseUrl, token, chatId, {
         answerId,
         startedAt,
+        timeoutMs: remainingMs,
       });
       if (pollResult?.content) {
         content = pollResult.content;
@@ -721,6 +802,14 @@ function normalizeMode(input) {
     return { label: 'pro', apiMode: 'ask', llmComputePower: 'high' };
   }
   throw new Error('Mode must be either "lightning" or "pro".');
+}
+
+function resolveModeTimeoutMs(apiMode) {
+  const normalized = typeof apiMode === 'string' ? apiMode.trim().toLowerCase() : '';
+  if (normalized === 'ask' || normalized === 'pro') {
+    return 12 * 60 * 1000;
+  }
+  return 4 * 60 * 1000;
 }
 
 function printHelp() {
