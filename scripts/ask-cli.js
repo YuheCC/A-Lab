@@ -100,6 +100,28 @@ async function readJsonResponse(response, context) {
   }
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function stripInlineMoleculeTags(input) {
+  if (typeof input !== 'string' || input.indexOf('<inline_molecule') === -1) {
+    return input;
+  }
+  return input.replace(
+    /<inline_molecule>([\s\S]*?)<\/inline_molecule>/g,
+    (match, inner) => {
+      try {
+        const parsed = JSON.parse(inner);
+        if (parsed && typeof parsed.text === 'string' && parsed.text.trim()) {
+          return parsed.text;
+        }
+      } catch (_) {}
+      return '';
+    },
+  );
+}
+
 function buildSocketUrl(apiBase) {
   if (!apiBase) return DEFAULT_BASE_URL;
   let normalized = apiBase.trim();
@@ -317,6 +339,121 @@ function waitForAskResponse(socket, chatId, answerId, { timeoutMs = 180000 } = {
   };
 }
 
+async function fetchChatDetail(baseUrl, token, chatId) {
+  const url = new URL(`${baseUrl}/api/chat/detail`);
+  url.searchParams.set('id', String(chatId));
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await readJsonResponse(response, 'Chat detail');
+  if (!response.ok || data?.ok === false) {
+    const detail = data?.detail || data?.message || response.statusText;
+    throw new Error(`Chat detail failed (${response.status}): ${detail}`);
+  }
+
+  return data;
+}
+
+function extractAnswerFromChatDetail(chatData, { answerId, startedAt }) {
+  const messages = Array.isArray(chatData?.messages) ? chatData.messages : [];
+  if (!messages.length) return null;
+
+  const answerIdStr = answerId ? String(answerId) : null;
+  const startedMs = startedAt ? Number(startedAt) : 0;
+
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const msg = messages[i] || {};
+    const role = typeof msg.role === 'string' ? msg.role.toLowerCase() : '';
+    const type = typeof msg.type === 'string' ? msg.type.toLowerCase() : '';
+    if (!['assistant', 'bot'].includes(role) && type !== 'bot') {
+      continue;
+    }
+
+    if (msg.is_running === true) {
+      continue;
+    }
+
+    const messageIdCandidates = [
+      msg.id,
+      msg.message_id,
+      msg.messageId,
+      msg.answer_id,
+      msg.answerId,
+    ]
+      .filter(Boolean)
+      .map((value) => String(value));
+
+    if (answerIdStr && messageIdCandidates.length > 0) {
+      const match = messageIdCandidates.some((candidate) => {
+        if (candidate === answerIdStr) return true;
+        if (candidate === `assistant-${answerIdStr}`) return true;
+        return false;
+      });
+      if (!match) {
+        continue;
+      }
+    }
+
+    if (startedMs) {
+      const tsRaw =
+        msg.timestamp ||
+        msg.updated_at ||
+        msg.updatedAt ||
+        msg.created_at ||
+        msg.createdAt;
+      if (tsRaw) {
+        const tsValue = Number(new Date(tsRaw));
+        if (!Number.isNaN(tsValue) && tsValue + 1000 < startedMs) {
+          continue;
+        }
+      }
+    }
+
+    const content =
+      (typeof msg.content === 'string' && msg.content.trim()) ||
+      (typeof msg.answer === 'string' && msg.answer.trim()) ||
+      (typeof msg.text === 'string' && msg.text.trim()) ||
+      '';
+    if (!content) {
+      continue;
+    }
+
+    return { content, message: msg };
+  }
+
+  return null;
+}
+
+async function waitForAskPolling(baseUrl, token, chatId, { answerId, startedAt, pollIntervalMs = 2000, timeoutMs = 180000 } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  let lastError = null;
+
+  while (Date.now() < deadline) {
+    try {
+      const detail = await fetchChatDetail(baseUrl, token, chatId);
+      const match = extractAnswerFromChatDetail(detail, { answerId, startedAt });
+      if (match) {
+        return { content: match.content, payload: detail, message: match.message };
+      }
+      lastError = null;
+    } catch (error) {
+      lastError = error;
+    }
+
+    await delay(pollIntervalMs);
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+  throw new Error('Timed out waiting for Ask response (polling).');
+}
+
 async function createChat(baseUrl, token, title) {
   const chatName = title && title.trim() ? title.trim() : 'CLI Ask Session';
   const response = await fetch(`${baseUrl}/api/chat/new`, {
@@ -436,6 +573,7 @@ async function runAsk(baseUrl, {
 
   const title = query.split('\n')[0]?.slice(0, 80) || 'CLI Ask Session';
   const { chatId } = await createChat(baseUrl, token, title);
+  const startedAt = Date.now();
   const { messageId, data: messageData } = await createUserMessage(baseUrl, token, chatId, model, query);
   const answerId =
     messageData?.answer?.id ??
@@ -486,17 +624,78 @@ async function runAsk(baseUrl, {
     try {
       await streamWait.promise;
     } catch {
-      // Intentionally swallow cancellation errors.
+      // swallow cancellation errors
     }
     throw error;
   }
 
-  const streamResult = await streamWait.promise;
+  const STREAM_TIMEOUT_MS = 180000;
+  let streamResult = null;
+  let streamError = null;
+  try {
+    streamResult = await Promise.race([
+      streamWait.promise,
+      (async () => {
+        await delay(STREAM_TIMEOUT_MS);
+        throw new Error('stream-timeout');
+      })(),
+    ]);
+  } catch (error) {
+    streamError = error;
+  }
+
+  streamWait.cancel();
+  streamWait.promise.catch(() => {});
+
+  let content = '';
+  let rawStream = null;
+  let rawPoll = null;
+  let delivery = 'stream';
+
+  if (streamResult && !streamError) {
+    content = streamResult?.content || '';
+    rawStream = streamResult?.payload || null;
+  } else if (streamResult && streamResult.content) {
+    content = streamResult.content;
+    rawStream = streamResult.payload || null;
+  }
+
+  const streamTimedOut = streamError && streamError.message === 'stream-timeout';
+  const streamCancelled = streamError && streamError.message === 'Stream cancelled.';
+  const shouldPoll = !content || streamTimedOut || streamCancelled;
+
+  if (shouldPoll) {
+    delivery = 'poll';
+    try {
+      const pollResult = await waitForAskPolling(baseUrl, token, chatId, {
+        answerId,
+        startedAt,
+      });
+      if (pollResult?.content) {
+        content = pollResult.content;
+      }
+      rawPoll = pollResult?.payload || null;
+    } catch (pollError) {
+      if (!content) {
+        if (data?.content) {
+          content = data.content;
+        } else {
+          throw pollError;
+        }
+      }
+    }
+  }
+
+  if (!content && data?.content) {
+    content = data.content;
+  }
+
   return {
-    content: streamResult?.content || data?.content || '',
+    content: stripInlineMoleculeTags(content || ''),
     raw: {
       initial: data,
-      stream: streamResult?.payload,
+      stream: rawStream,
+      poll: rawPoll,
     },
     meta: {
       chatId,
@@ -505,6 +704,7 @@ async function runAsk(baseUrl, {
       mode: apiMode,
       taskId: data?.task_id ?? data?.taskId,
       answerId,
+      delivery,
     },
   };
 }
