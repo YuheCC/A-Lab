@@ -135,8 +135,6 @@ const InorganicSearch = () => {
     const [showHypothetical, setShowHypothetical] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
-    const buildGradeProp = (grade?: number, reasoning?: string) =>
-        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
 
     const getRecordField = (record: any, key: string) => {
         if (!record || !key) return undefined;
@@ -288,7 +286,28 @@ const InorganicSearch = () => {
         structureSummary: ScoreSummary | null,
         gradeDetails: ReturnType<typeof createLlmGradeProp> | null
     ) => {
-        const rawValue = extractScoreValue(record, 'overall_score');
+        const overallCandidates: Array<{ key: string; label?: string }> = [
+            { key: 'overall_score', label },
+            { key: 'combined_score', label: t('search.properties.combinedScore', 'Combined Score') },
+            { key: 'property_suitability', label: t('search.properties.propertySuitability', 'Property Suitability') },
+        ];
+
+        let rawValue: number | null = null;
+        let resolvedLabel = label;
+
+        for (const candidate of overallCandidates) {
+            const candidateValue = extractScoreValue(record, candidate.key);
+            if (candidateValue !== null) {
+                rawValue = candidateValue;
+                resolvedLabel = candidate.label ?? label;
+                break;
+            }
+        }
+
+        if (rawValue === null) {
+            return null;
+        }
+
         const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
             return null;
@@ -305,14 +324,14 @@ const InorganicSearch = () => {
         } : null;
 
         return {
-            label,
+            label: resolvedLabel,
             value: displayValue,
             span: 2,
             color,
             disableAutoTooltip: true,
             valueNode: (
                 <OverallScoreValue
-                    label={label}
+                    label={resolvedLabel}
                     value={displayValue}
                     valueColor={color}
                     propertyScore={propertySummary || undefined}
@@ -623,7 +642,8 @@ const InorganicSearch = () => {
     };
 
     const handleSearch = async (searchInput: string) => {
-        if (!searchInput.trim()) return;
+        const trimmedInput = searchInput.trim();
+        if (!trimmedInput) return;
 
         setSearchLoading(true);
         setSearchWarning(null);
@@ -641,9 +661,13 @@ const InorganicSearch = () => {
         try {
             // 使用无机分子搜索接口
             let searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
+            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
 
             // Fetch the searched inorganic molecule's properties 
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
+            const moleculeResponse = await authFetch(
+                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=inorganic${molTypeParam}`
+            );
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -997,11 +1021,36 @@ const InorganicSearch = () => {
                                                     span: 2,
                                                 }
                                                 : null;
-                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+                                            const scoreSource = molecule.rawData ?? molecule;
+                                            const propertyScoreSummary = buildScoreSummary(
+                                                t('search.properties.propertySuitability', 'Property Suitability'),
+                                                scoreSource,
+                                                'property_suitability',
+                                                'property_subscores',
+                                            );
+                                            const structureScoreSummary = buildScoreSummary(
+                                                t('search.properties.structureSimilarity', 'Structure Similarity'),
+                                                scoreSource,
+                                                'structure_similarity',
+                                                'structure_subscores',
+                                            );
+                                            const gradeDetails = createLlmGradeProp(
+                                                molecule.grade,
+                                                molecule.reasoning,
+                                                (text) => setReasoningText(text)
+                                            );
+                                            const overallScoreProp = buildOverallScoreProp(
+                                                scoreSource,
+                                                t('search.properties.overallScore', 'Overall Score'),
+                                                propertyScoreSummary,
+                                                structureScoreSummary,
+                                                gradeDetails
+                                            );
+                                            const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4 },
-                                                ...(gradeProp ? [gradeProp] : []),
+                                                ...(overallScoreProp ? [overallScoreProp] : gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol' },
                                                 { label: 'Cluster', value: molecule.properties.cluster, span: 2 },
                                                 { label: 'HOMO', value: molecule.properties.homo_eV, span: 2, suffix: ' eV' },
