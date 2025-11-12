@@ -10,6 +10,7 @@ export default {
     predict: "예측",
     design: "디자인",
     formulation: "조합",
+    manufacturing: "생산 검사",
     about: "소개",
     predictPerformance: "셀 성능 예측",
     predictionTool: "배터리 수명 예측",

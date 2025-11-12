@@ -43,6 +43,10 @@ export default  [
         component: "PredictionTool/detail"
     },
     {
+        path: "/manufacturing",
+        component: "Manufacturing"
+    },
+    {
         path: '/design',
         component: "Predict/performance"
     },
