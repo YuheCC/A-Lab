@@ -1,5 +1,8 @@
-.module-nav-sidebar {
+// 使用 .manufacturing-container 作为父级选择器,提高样式优先级,避免被覆盖
+.manufacturing-container .module-nav-sidebar {
+  flex: 0 0 320px; // 固定宽度,不伸缩,避免页面切换时宽度抖动
   width: 320px;
+  box-sizing: border-box; // 让 width 包含 padding 和 border，保证总宽度为 320px
   background: #f9fafb;
   border-right: 1px solid #e5e7eb;
   padding: 24px 16px;
@@ -61,7 +64,6 @@
 
         .nav-text {
           color: #16a34a;
-          font-weight: 600;
         }
       }
     }
@@ -69,8 +71,10 @@
 }
 
 @media (max-width: 1024px) {
-  .module-nav-sidebar {
+  .manufacturing-container .module-nav-sidebar {
+    flex: 0 0 280px;
     width: 280px;
+    box-sizing: border-box;
     padding: 20px 12px;
 
     .module-navigation {
@@ -86,8 +90,10 @@
 }
 
 @media (max-width: 768px) {
-  .module-nav-sidebar {
+  .manufacturing-container .module-nav-sidebar {
+    flex: 0 0 100%;
     width: 100%;
+    box-sizing: border-box;
     min-height: auto;
     padding: 16px;
     border-right: none;
