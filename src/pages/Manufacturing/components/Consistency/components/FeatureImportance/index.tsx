@@ -239,30 +239,30 @@ const FeatureImportance: React.FC<FeatureImportanceProps> = ({ nodeId, data }) =
           })),
         },
         // 基准线
-        {
-          type: 'line',
-          markLine: {
-            silent: true,
-            symbol: 'none',
-            label: {
-              show: true,
-              position: 'insideEndTop',
-              formatter: `E[f(X)] = ${baseValue.toFixed(3)}`,
-              fontSize: 11,
-              color: '#666',
-            },
-            lineStyle: {
-              type: 'solid',
-              color: '#999',
-              width: 2,
-            },
-            data: [
-              {
-                xAxis: baseValue,
-              },
-            ],
-          },
-        },
+        // {
+        //   type: 'line',
+        //   markLine: {
+        //     silent: true,
+        //     symbol: 'none',
+        //     label: {
+        //       show: true,
+        //       position: 'insideEndTop',
+        //       formatter: `E[f(X)] = ${baseValue.toFixed(3)}`,
+        //       fontSize: 11,
+        //       color: '#666',
+        //     },
+        //     lineStyle: {
+        //       type: 'solid',
+        //       color: '#999',
+        //       width: 2,
+        //     },
+        //     data: [
+        //       {
+        //         xAxis: baseValue,
+        //       },
+        //     ],
+        //   },
+        // },
       ],
       tooltip: {
         trigger: 'axis',
