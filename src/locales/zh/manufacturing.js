@@ -105,5 +105,12 @@ export default {
       xAxisName: '平均|SHAP值|',
       seriesName: '特征重要性',
     },
+    scatter: {
+      title: 'SHAP散点图',
+      featureValue: '特征值',
+      shapValue: 'SHAP值',
+      high: '高',
+      low: '低',
+    },
   },
 };

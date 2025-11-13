@@ -1,35 +1,51 @@
 import type { EChartsOption } from 'echarts';
+import scatterData from './scat.json';
 
 // SHAP 特征重要性数据
 export const shapFeatureData = {
   features: [
-    'Process Data11',
-    'Process Data55',
-    'Process Data7',
-    'Process Data19',
-    'Process Data8',
-    'Process Data40',
-    'Process Data58',
-    'Process Data47',
-    'Process Data17',
-    'Process Data32',
-    'Process Data21',
-    'Process Data5',
-    'Process Data15',
-    'Process Data13',
-    'Process Data53',
-    'Process Data23',
-    'Process Data48',
-    'Process Data60',
-    'Process Data10',
-    'Process Data61',
+    "Process Data11",
+    "Process Data55",
+    "Process Data7",
+    "Process Data18",
+    "Process Data58",
+    "Process Data40",
+    "Process Data19",
+    "Process Data21",
+    "Process Data50",
+    "Process Data24",
+    "Process Data8",
+    "Process Data47",
+    "Process Data23",
+    "Process Data48",
+    "Process Data39",
+    "Process Data5",
+    "Process Data61",
+    "Process Data2",
+    "Process Data45",
+    "Process Data41"
   ],
   values: [
-    1.4161219596862793, 1.0078660249710083, 0.30046799778938293, 0.17237499356269836,
-    0.17076300084590912, 0.1671919971704483, 0.1469469964504242, 0.14220499992370605,
-    0.1208529993891716, 0.11656200140714645, 0.11290200054645538, 0.11133500188589096,
-    0.10330700129270554, 0.09625200182199478, 0.09605400264263153, 0.09489399939775467,
-    0.09398700296878815, 0.08991300314664841, 0.08948100358247757, 0.0893929973244667,
+    0.200081005692482,
+    0.12066899985074997,
+    0.024188999086618423,
+    0.016797000542283058,
+    0.013867000117897987,
+    0.013844000175595284,
+    0.012738999910652637,
+    0.01158900000154972,
+    0.010615999810397625,
+    0.010187000036239624,
+    0.009801000356674194,
+    0.0096220001578331,
+    0.008941000327467918,
+    0.008488999679684639,
+    0.00803299993276596,
+    0.007507000118494034,
+    0.006771999876946211,
+    0.006587000098079443,
+    0.006473999936133623,
+    0.005305000115185976
   ],
   colorStops: [
     { offset: 0, color: '#5470c6' },
@@ -37,23 +53,86 @@ export const shapFeatureData = {
   ],
 };
 
+// 处理散点图数据用于在柱状图旁边展示
+const prepareScatterDataForBar = () => {
+  const result: any[] = [];
+
+  shapFeatureData.features.forEach((featureName) => {
+    const featureData = (scatterData.scatterData as any)[featureName];
+    if (featureData) {
+      const { shap_values, feature_values } = featureData;
+      // 为每个特征创建散点数据
+      shap_values.forEach((shapValue: number, index: number) => {
+        result.push({
+          name: featureName,
+          value: [shapValue, featureName, feature_values[index]],
+          symbolSize: 6,
+        });
+      });
+    }
+  });
+
+  return result;
+};
+
 // 创建 ECharts 配置的函数，接收 i18n 翻译函数
 export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption => {
+  const scatterDataPoints = prepareScatterDataForBar();
+
+  // 计算所有特征值的范围用于visualMap
+  let minFeatureValue = Infinity;
+  let maxFeatureValue = -Infinity;
+  scatterDataPoints.forEach((point: any) => {
+    const featureValue = point.value[2];
+    minFeatureValue = Math.min(minFeatureValue, featureValue);
+    maxFeatureValue = Math.max(maxFeatureValue, featureValue);
+  });
+
   return {
     title: {
       text: t('manufacturing.charts.shap.title'),
       left: 'center',
     },
     tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow',
+      trigger: 'item',
+      formatter: (params: any) => {
+        if (params.seriesType === 'bar') {
+          return `${params.name}<br/>${t('manufacturing.charts.shap.seriesName')}: ${params.value}`;
+        } else {
+          return `${params.data.name}<br/>
+                  ${t('manufacturing.charts.scatter.shapValue')}: ${params.value[0].toFixed(4)}<br/>
+                  ${t('manufacturing.charts.scatter.featureValue')}: ${params.value[2].toFixed(4)}`;
+        }
       },
     },
-    xAxis: {
-      type: 'value',
-      name: t('manufacturing.charts.shap.xAxisName'),
+    legend: {
+      data: [t('manufacturing.charts.shap.seriesName'), t('manufacturing.charts.scatter.title')],
+      top: '5%',
     },
+    visualMap: {
+      min: minFeatureValue,
+      max: maxFeatureValue,
+      dimension: 2, // 根据特征值（第3个维度）进行颜色映射
+      orient: 'vertical',
+      right: '2%',
+      top: 'center',
+      text: [t('manufacturing.charts.scatter.high'), t('manufacturing.charts.scatter.low')],
+      calculable: true,
+      inRange: {
+        color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8',
+                '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'],
+      },
+      textStyle: {
+        color: '#333',
+      },
+    },
+    xAxis: [
+      {
+        type: 'value',
+        name: t('manufacturing.charts.shap.xAxisName'),
+        position: 'bottom',
+      },
+    ],
     yAxis: {
       type: 'category',
       data: shapFeatureData.features,
@@ -73,19 +152,27 @@ export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption 
             y2: 0,
             colorStops: shapFeatureData.colorStops,
           },
+          opacity: 0.3,
         },
         label: {
-          show: true,
-          position: 'right',
-          formatter: '{c}',
+          show: false, // 隐藏柱状图上的数值标签
         },
+        z: 1,
+      },
+      {
+        name: t('manufacturing.charts.scatter.title'),
+        type: 'scatter',
+        data: scatterDataPoints,
+        symbolSize: 6,
+        z: 2,
       },
     ],
     grid: {
       left: '15%',
-      right: '10%',
+      right: '15%',
       top: '15%',
       bottom: '10%',
     },
   };
 };
+

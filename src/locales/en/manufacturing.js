@@ -105,5 +105,12 @@ export default {
       xAxisName: 'Mean |SHAP Value|',
       seriesName: 'Feature Importance',
     },
+    scatter: {
+      title: 'SHAP Scatter Plot',
+      featureValue: 'Feature Value',
+      shapValue: 'SHAP Value',
+      high: 'High',
+      low: 'Low',
+    },
   },
 };
