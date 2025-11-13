@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './index.less';
 
 export interface TreeNode {
@@ -12,6 +13,7 @@ export interface TreeViewProps {
   max?: number;
   selectedId?: string;
   onSelect?: (node: TreeNode) => void;
+  defaultExpandedKeys?: string[]; // 默认展开的节点 ID
 }
 
 const TreeView: React.FC<TreeViewProps> = ({
@@ -19,8 +21,12 @@ const TreeView: React.FC<TreeViewProps> = ({
   max = 10,
   selectedId,
   onSelect,
+  defaultExpandedKeys = [],
 }) => {
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const { t } = useTranslation();
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
+    new Set(defaultExpandedKeys),
+  );
 
   // 处理节点展开/收起
   const toggleExpand = (nodeId: string) => {
@@ -77,7 +83,20 @@ const TreeView: React.FC<TreeViewProps> = ({
         </div>
         {hasChildren && isExpanded && !isCollapsed && (
           <div className="tree-node-children">
-            {node.children!.map((child) => renderTreeNode(child, level + 1))}
+            {node.children!.slice(0, max).map((child) => renderTreeNode(child, level + 1))}
+            {node.children!.length > max && (
+              <div
+                className="tree-node tree-node-collapsed"
+                style={{ paddingLeft: `${(level + 1) * 20}px` }}
+              >
+                <span className="tree-node-arrow-placeholder"></span>
+                <span className="tree-node-label">
+                  {t('manufacturing.modules.detection.result.showMore', {
+                    count: node.children!.length - max,
+                  })}
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -96,7 +115,9 @@ const TreeView: React.FC<TreeViewProps> = ({
           <div className="tree-node tree-node-collapsed" style={{ paddingLeft: 0 }}>
             <span className="tree-node-arrow-placeholder"></span>
             <span className="tree-node-label">
-              更多... (剩余 {collapsedCount} 项)
+              {t('manufacturing.modules.detection.result.showMore', {
+                count: collapsedCount,
+              })}
             </span>
           </div>
         )}

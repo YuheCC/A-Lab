@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactECharts from 'echarts-for-react';
 import TreeView, { TreeNode } from './TreeView';
@@ -14,25 +14,29 @@ interface DetectionProps {
   onBackToIntro?: () => void;
 }
 
-// 模拟 Tree 数据（12 个节点，用于测试 max=10 功能）
-const mockTreeData: TreeNode[] = Array.from({ length: 12 }, (_, i) => ({
-  id: String(i),
-  label: `检测批次 ${i}`,
-  children: [
-    { id: `${i}-1`, label: `检测点 1` },
-    { id: `${i}-2`, label: `检测点 2` },
-    { id: `${i}-3`, label: `检测点 3` },
-  ],
-}));
+interface TableRow {
+  type: string;
+  oh_value: string;
+}
 
-// 模拟 Table 数据生成函数
-const generateTableData = (nodeId: string) => {
-  const count = Math.floor(Math.random() * 20) + 10;
-  return Array.from({ length: count }, (_, i) => ({
-    index: i + 1,
-    x: Math.floor(Math.random() * 1000),
-    y: Math.floor(Math.random() * 800),
-  }));
+// 解析 CSV 数据
+const parseCSV = (csvText: string): TableRow[] => {
+  const lines = csvText.trim().split('\n');
+  const headers = lines[0].split(',');
+  const typeIndex = headers.indexOf('type');
+  const ohValueIndex = headers.indexOf('oh_value');
+
+  if (typeIndex === -1 || ohValueIndex === -1) {
+    return [];
+  }
+
+  return lines.slice(1).map((line) => {
+    const values = line.split(',');
+    return {
+      type: values[typeIndex],
+      oh_value: values[ohValueIndex],
+    };
+  });
 };
 
 type ImageType = 'raw' | 'point' | 'fullmark';
@@ -41,11 +45,50 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
   const { t } = useTranslation();
   const [selectedNodeId, setSelectedNodeId] = useState<string>('0');
   const [imageType, setImageType] = useState<ImageType>('raw');
+  const [csvData, setCsvData] = useState<Record<string, TableRow[]>>({});
+
+  // 模拟 Tree 数据（在最外侧增加 Detection List 父层）
+  const mockTreeData: TreeNode[] = useMemo(
+    () => [
+      {
+        id: 'detection-list',
+        label: t('manufacturing.modules.detection.result.tree.title'),
+        children: Array.from({ length: 12 }, (_, i) => ({
+          id: String(i),
+          label: `${i}`,
+        })),
+      },
+    ],
+    [t],
+  );
+
+  // 加载 CSV 数据
+  useEffect(() => {
+    const loadCSVData = async (id: string) => {
+      try {
+        const response = await fetch(`/manufacturing/detection/${id}_data.csv`);
+        if (response.ok) {
+          const text = await response.text();
+          const data = parseCSV(text);
+          setCsvData((prev) => ({ ...prev, [id]: data }));
+        }
+      } catch (error) {
+        console.error(`Failed to load CSV data for ${id}:`, error);
+      }
+    };
+
+    // 提取根节点 ID
+    const rootId = selectedNodeId.split('-')[0];
+    if (!csvData[rootId]) {
+      loadCSVData(rootId);
+    }
+  }, [selectedNodeId, csvData]);
 
   // 当前选中节点的表格数据
   const tableData = useMemo(() => {
-    return generateTableData(selectedNodeId);
-  }, [selectedNodeId]);
+    const rootId = selectedNodeId.split('-')[0];
+    return csvData[rootId] || [];
+  }, [selectedNodeId, csvData]);
 
   // 图片路径
   const imagePath = useMemo(() => {
@@ -74,14 +117,12 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
     <div className="detection-result-layout">
       {/* 左侧：Tree 组件 */}
       <div className="detection-left-panel">
-        <div className="panel-title">
-          {t('manufacturing.modules.detection.result.tree.title')}
-        </div>
         <TreeView
           data={mockTreeData}
           max={10}
           selectedId={selectedNodeId}
           onSelect={handleNodeSelect}
+          defaultExpandedKeys={['detection-list']}
         />
       </div>
 
@@ -201,7 +242,7 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
                 }}
               />
               <div className="image-placeholder" style={{ display: 'none' }}>
-                图片加载失败或不存在
+                {t('manufacturing.modules.detection.result.imageViewer.imageLoadError')}
                 <br />
                 <small>{imagePath}</small>
               </div>
@@ -218,23 +259,23 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
                 <table>
                   <thead>
                     <tr>
-                      <th>{t('manufacturing.modules.detection.result.table.index')}</th>
-                      <th>{t('manufacturing.modules.detection.result.table.x')}</th>
-                      <th>{t('manufacturing.modules.detection.result.table.y')}</th>
+                      <th>{t('manufacturing.modules.detection.result.table.type')}</th>
+                      <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {tableData.map((row) => (
-                      <tr key={row.index}>
-                        <td>{row.index}</td>
-                        <td>{row.x}</td>
-                        <td>{row.y}</td>
+                    {tableData.map((row, index) => (
+                      <tr key={index}>
+                        <td>{row.type}</td>
+                        <td>{row.oh_value}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               ) : (
-                <div className="empty-state">暂无数据</div>
+                <div className="empty-state">
+                  {t('manufacturing.modules.detection.result.table.noData')}
+                </div>
               )}
             </div>
           </div>
