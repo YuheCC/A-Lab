@@ -5,7 +5,10 @@
   scrollbar-gutter: stable; // 预留垂直滚动条空间
 
   .result-header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-bottom: 20px;
     padding: 16px 20px;
     background: #f8f9fa;
@@ -15,21 +18,21 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       background: #52c41a;
       color: #fff;
       border-radius: 50%;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 12px;
+      flex-shrink: 0;
     }
 
     .result-title {
       font-size: 18px;
       font-weight: 600;
       color: #333;
-      margin-bottom: 6px;
+      margin: 0;
     }
 
     .result-desc {
@@ -54,15 +57,15 @@
     scrollbar-gutter: stable; // 预留垂直滚动条空间
 
     .tree-section {
-      flex: 0 0 250px;
+      flex: 0 0 280px;
       background: #fff;
       border: 1px solid #e8e8e8;
       border-radius: 8px;
       padding: 16px;
-      overflow-y: scroll; // 使用scroll而不是auto，避免滚动条出现/消失导致的抖动
+      max-height: 800px; // 限制最大高度，避免 Tree 过高
+      overflow-y: auto; // 使用auto，内容不足时不显示滚动条
       overflow-x: hidden;
       scrollbar-gutter: stable; // 预留滚动条空间
-      align-self: stretch; // 自动匹配右侧内容高度
 
       .section-title {
         font-size: 14px;
@@ -75,6 +78,23 @@
 
       .tree-container {
         margin-top: 8px;
+
+        // Tree 节点样式优化
+        :global {
+          .ant-tree {
+            .ant-tree-node-content-wrapper {
+              // 叶子节点样式
+              &.ant-tree-node-content-wrapper-normal {
+                font-size: 13px;
+              }
+            }
+
+            // 调整缩进，使三级结构更紧凑
+            .ant-tree-indent-unit {
+              width: 16px;
+            }
+          }
+        }
       }
     }
 
