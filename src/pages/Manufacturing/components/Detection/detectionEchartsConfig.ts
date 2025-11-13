@@ -1,34 +1,40 @@
 import type { EChartsOption } from 'echarts';
 
-// 模拟数据：缺陷趋势
+// 导入真实数据文件
+import leftOhRangeData from './data/左侧oh极差分布.json';
+import leftOhStdData from './data/左侧oh标准差分布.json';
+import rightOhRangeData from './data/右侧oh极差分布.json';
+import rightOhStdData from './data/右侧oh标准差分布.json';
+
+// 左侧OH极差分布数据
 export const defectTrendData = {
-  xAxis: ['检测1', '检测2', '检测3', '检测4', '检测5', '检测6', '检测7', '检测8'],
-  values: [12, 15, 8, 18, 10, 14, 9, 11],
+  xAxis: leftOhRangeData.x,
+  values: leftOhRangeData.y,
 };
 
-// 模拟数据：置信度分布
+// 左侧OH标准差分布数据
 export const confidenceData = {
-  xAxis: ['0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
-  values: [5, 12, 28, 45, 68],
+  xAxis: leftOhStdData.x,
+  values: leftOhStdData.y,
 };
 
-// 模拟数据：区域分布
+// 右侧OH极差分布数据
 export const areaDistributionData = {
-  xAxis: ['区域A', '区域B', '区域C', '区域D', '区域E', '区域F'],
-  values: [23, 18, 32, 15, 27, 19],
+  xAxis: rightOhRangeData.x,
+  values: rightOhRangeData.y,
 };
 
-// 模拟数据：时间序列
+// 右侧OH标准差分布数据
 export const timeSeriesData = {
-  xAxis: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-  values: [45, 38, 52, 61, 48, 55, 42],
+  xAxis: rightOhStdData.x,
+  values: rightOhStdData.y,
 };
 
-// 缺陷趋势图表配置
+// 左侧OH极差分布图表配置
 export const getDefectTrendConfig = (t: (key: string) => string): EChartsOption => {
   return {
     title: {
-      text: t('manufacturing.modules.detection.charts.defectTrend'),
+      text: t('manufacturing.modules.detection.charts.leftOhRange'),
       left: 'center',
       textStyle: {
         fontSize: 14,
@@ -89,11 +95,11 @@ export const getDefectTrendConfig = (t: (key: string) => string): EChartsOption 
   };
 };
 
-// 置信度分布图表配置
+// 左侧OH标准差分布图表配置
 export const getConfidenceConfig = (t: (key: string) => string): EChartsOption => {
   return {
     title: {
-      text: t('manufacturing.modules.detection.charts.confidence'),
+      text: t('manufacturing.modules.detection.charts.leftOhStd'),
       left: 'center',
       textStyle: {
         fontSize: 14,
@@ -154,13 +160,13 @@ export const getConfidenceConfig = (t: (key: string) => string): EChartsOption =
   };
 };
 
-// 区域分布图表配置
+// 右侧OH极差分布图表配置
 export const getAreaDistributionConfig = (
   t: (key: string) => string,
 ): EChartsOption => {
   return {
     title: {
-      text: t('manufacturing.modules.detection.charts.areaDistribution'),
+      text: t('manufacturing.modules.detection.charts.rightOhRange'),
       left: 'center',
       textStyle: {
         fontSize: 14,
@@ -221,11 +227,11 @@ export const getAreaDistributionConfig = (
   };
 };
 
-// 时间序列图表配置
+// 右侧OH标准差分布图表配置
 export const getTimeSeriesConfig = (t: (key: string) => string): EChartsOption => {
   return {
     title: {
-      text: t('manufacturing.modules.detection.charts.timeSeries'),
+      text: t('manufacturing.modules.detection.charts.rightOhStd'),
       left: 'center',
       textStyle: {
         fontSize: 14,

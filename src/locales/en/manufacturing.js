@@ -31,10 +31,10 @@ export default {
         showMore: 'More... ({{count}} items remaining)',
       },
       charts: {
-        defectTrend: 'Defect Trend',
-        confidence: 'Confidence Distribution',
-        areaDistribution: 'Area Distribution',
-        timeSeries: 'Time Series',
+        leftOhRange: 'Left OH Range Distribution',
+        leftOhStd: 'Left OH Standard Deviation Distribution',
+        rightOhRange: 'Right OH Range Distribution',
+        rightOhStd: 'Right OH Standard Deviation Distribution',
       },
     },
     kvalue: {

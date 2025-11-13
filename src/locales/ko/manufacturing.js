@@ -31,10 +31,10 @@ export default {
         showMore: '더 보기... ({{count}}개 항목 남음)',
       },
       charts: {
-        defectTrend: '결함 추세',
-        confidence: '신뢰도 분포',
-        areaDistribution: '영역 분포',
-        timeSeries: '시계열',
+        leftOhRange: '왼쪽 OH 범위 분포',
+        leftOhStd: '왼쪽 OH 표준 편차 분포',
+        rightOhRange: '오른쪽 OH 범위 분포',
+        rightOhStd: '오른쪽 OH 표준 편차 분포',
       },
     },
     kvalue: {

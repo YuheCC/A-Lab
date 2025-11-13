@@ -31,10 +31,10 @@ export default {
         showMore: '更多... (剩余 {{count}} 项)',
       },
       charts: {
-        defectTrend: '缺陷趋势',
-        confidence: '置信度分布',
-        areaDistribution: '区域分布',
-        timeSeries: '时间序列',
+        leftOhRange: '左侧OH极差分布',
+        leftOhStd: '左侧OH标准差分布',
+        rightOhRange: '右侧OH极差分布',
+        rightOhStd: '右侧OH标准差分布',
       },
     },
     kvalue: {

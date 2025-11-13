@@ -31,10 +31,10 @@ export default {
         showMore: 'もっと見る... (残り{{count}}項目)',
       },
       charts: {
-        defectTrend: '欠陥トレンド',
-        confidence: '信頼度分布',
-        areaDistribution: 'エリア分布',
-        timeSeries: '時系列',
+        leftOhRange: '左側OH範囲分布',
+        leftOhStd: '左側OH標準偏差分布',
+        rightOhRange: '右側OH範囲分布',
+        rightOhStd: '右側OH標準偏差分布',
       },
     },
     kvalue: {
