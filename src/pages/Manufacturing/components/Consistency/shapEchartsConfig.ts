@@ -119,8 +119,8 @@ export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption 
       text: [t('manufacturing.charts.scatter.high'), t('manufacturing.charts.scatter.low')],
       calculable: true,
       inRange: {
-        color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8',
-                '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'],
+        color: ['#08519c', '#3182bd', '#6baed6', '#9ecae1', '#c6dbef',
+                '#e377c2', '#d62976', '#e8564d', '#f03b20', '#bd0026'],
       },
       textStyle: {
         color: '#333',
