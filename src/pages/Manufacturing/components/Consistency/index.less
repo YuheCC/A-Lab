@@ -1,0 +1,259 @@
+.consistency-result {
+  width: 100%;
+  padding: 20px;
+  overflow-x: hidden; // 防止水平滚动条
+  scrollbar-gutter: stable; // 预留垂直滚动条空间
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    .success-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #52c41a;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .result-desc {
+      font-size: 13px;
+      color: #666;
+
+      .filename {
+        color: #1890ff;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .result-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: flex-start;
+    overflow-x: hidden;
+    scrollbar-gutter: stable; // 预留垂直滚动条空间
+
+    .tree-section {
+      flex: 0 0 250px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-y: scroll; // 使用scroll而不是auto，避免滚动条出现/消失导致的抖动
+      overflow-x: hidden;
+      scrollbar-gutter: stable; // 预留滚动条空间
+      align-self: stretch; // 自动匹配右侧内容高度
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e8e8e8;
+      }
+
+      .tree-container {
+        margin-top: 8px;
+      }
+    }
+
+    .charts-section {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-content: flex-start;
+
+      .chart-wrapper {
+        background: #fff;
+        border: 1px solid #e8e8e8;
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        height: 552px; // 500px图表 + 标题区域约52px
+        flex-shrink: 0; // 不收缩
+
+        .chart-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 12px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #e8e8e8;
+          flex-shrink: 0;
+        }
+
+        > div {
+          flex: 0 0 500px;
+          overflow: hidden;
+        }
+
+        // 第一个图表：300px宽
+        &:first-child {
+          width: 350px;
+        }
+
+        // 第二个图表：600px宽
+        &:last-child {
+          width: 500px;
+        }
+      }
+    }
+  }
+
+  // 移除大屏幕的自适应宽度，保持固定300px
+
+  .analysis-summary {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+
+    .summary-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .summary-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 8px 0;
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+
+    .btn-secondary,
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #333;
+
+      &:hover {
+        border-color: #1890ff;
+        color: #1890ff;
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .btn-primary {
+      background: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+
+      &:hover {
+        background: #40a9ff;
+        border-color: #40a9ff;
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .consistency-result {
+    .result-content {
+      flex-direction: column;
+
+      .tree-section {
+        flex: 0 0 auto;
+        height: auto;
+        max-height: 400px;
+        overflow-y: auto;
+        align-self: auto;
+      }
+
+      .charts-section {
+        max-width: 100%;
+
+        .chart-wrapper {
+          flex-shrink: 0;
+
+          // 响应式下保持原有宽度
+          &:first-child {
+            width: 300px;
+          }
+
+          &:last-child {
+            width: 600px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .consistency-result {
+    padding: 16px;
+
+    .result-header {
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .result-content {
+      gap: 16px;
+
+      .tree-section {
+        max-height: 300px;
+      }
+
+      .charts-section {
+        gap: 16px;
+
+        .chart-wrapper {
+          padding: 12px;
+        }
+      }
+    }
+  }
+}

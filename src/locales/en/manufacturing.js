@@ -80,6 +80,9 @@ export default {
     relatedImages: 'Related Analysis Images',
     chartTitle: 'Analysis Results',
     chartPlaceholder: 'Chart Display Area',
+    treeView: {
+      title: 'Production Line Structure',
+    },
     stats: {
       score: 'Analysis Score',
       scoreDesc: 'Excellent performance',
@@ -111,6 +114,9 @@ export default {
       shapValue: 'SHAP Value',
       high: 'High',
       low: 'Low',
+    },
+    featureImportance: {
+      title: 'Feature Impact Analysis',
     },
   },
 };

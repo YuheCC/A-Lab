@@ -80,6 +80,9 @@ export default {
     relatedImages: '相关分析图像',
     chartTitle: '分析结果',
     chartPlaceholder: '图表展示区域',
+    treeView: {
+      title: '生产线结构',
+    },
     stats: {
       score: '分析评分',
       scoreDesc: '优秀表现',
@@ -111,6 +114,9 @@ export default {
       shapValue: 'SHAP值',
       high: '高',
       low: '低',
+    },
+    featureImportance: {
+      title: '特征影响力分析',
     },
   },
 };

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactECharts from 'echarts-for-react';
-import TreeView, { TreeNode } from './TreeView';
+import TreeView, { TreeNode } from '../TreeView';
 import {
   getDefectTrendConfig,
   getConfidenceConfig,

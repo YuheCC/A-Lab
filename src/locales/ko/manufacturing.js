@@ -77,6 +77,9 @@ export default {
     complete: '분석 완료!',
     fileAnalyzed: '분석된 파일',
     relatedImages: '관련 차트',
+    treeView: {
+      title: '생산 라인 구조',
+    },
     stats: {
       score: '종합 점수',
       scoreDesc: '여러 지표를 기반으로 한 종합 품질 점수',
@@ -101,6 +104,9 @@ export default {
       title: 'SHAP 특징 중요도 요약',
       xAxisName: '평균 |SHAP 값|',
       seriesName: '특징 중요도',
+    },
+    featureImportance: {
+      title: '특징 영향력 분석',
     },
   },
 };

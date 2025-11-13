@@ -77,6 +77,9 @@ export default {
     complete: '分析完了！',
     fileAnalyzed: '分析されたファイル',
     relatedImages: '関連グラフ',
+    treeView: {
+      title: '生産ライン構造',
+    },
     stats: {
       score: '総合スコア',
       scoreDesc: '複数の指標に基づく総合品質スコア',
@@ -101,6 +104,9 @@ export default {
       title: 'SHAP特徴重要度サマリー',
       xAxisName: '平均|SHAP値|',
       seriesName: '特徴重要度',
+    },
+    featureImportance: {
+      title: '特徴影響力分析',
     },
   },
 };
