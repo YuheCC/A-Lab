@@ -11,6 +11,29 @@ export default {
       description2: 'Through intelligent analysis of these high-dimensional, complex data, the system can automatically, rapidly, and precisely identify various potential defects in battery internals and electrode sheets, such as micro short circuits, lithium plating, electrode sheet wrinkles/breaks, uneven coating, foreign object inclusion, poor welding, etc. Its detection accuracy can reach micron level, significantly surpassing the limitations of traditional manual visual inspection or single detection methods.',
       imageTitle1: 'SES Lithium Battery CT AI Tool',
       imageTitle2: 'SES Ultrasonic AI Tool',
+      result: {
+        tree: {
+          title: 'Detection List',
+        },
+        imageViewer: {
+          title: 'Detection Images',
+          raw: 'Raw Image',
+          point: 'Point Markers',
+          fullmark: 'Full Markers',
+        },
+        table: {
+          title: 'Coordinate Data',
+          index: 'Index',
+          x: 'X Coordinate',
+          y: 'Y Coordinate',
+        },
+      },
+      charts: {
+        defectTrend: 'Defect Trend',
+        confidence: 'Confidence Distribution',
+        areaDistribution: 'Area Distribution',
+        timeSeries: 'Time Series',
+      },
     },
     kvalue: {
       title: 'K-Value Prediction & Cell Sorting',
@@ -73,5 +96,12 @@ export default {
     },
     backToIntro: 'Back to Introduction',
     exportReport: 'Export Report',
+  },
+  charts: {
+    shap: {
+      title: 'SHAP Feature Importance Summary',
+      xAxisName: 'Mean |SHAP Value|',
+      seriesName: 'Feature Importance',
+    },
   },
 };

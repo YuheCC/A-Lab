@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ModuleType } from '../ModuleNav';
 import StepIndicator from '../StepIndicator';
+import Consistency from '../Consistency';
+import Detection from '../Detection';
+import KValue from '../KValue';
+import Sorting from '../Sorting';
 import './index.less';
 
 interface ModuleContentProps {
@@ -268,96 +272,109 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
       {currentStep === 'result' && (
         <div className="step-content result-step active">
           <div className="result-content">
-            {/* 完成提示 */}
-            <div className="result-header">
-              <div className="success-icon">✓</div>
-              <h3 className="result-title">{t('manufacturing.result.complete')}</h3>
-              <p className="result-desc">
-                {t('manufacturing.result.fileAnalyzed')} <span className="filename">demo_data.csv</span> {t('manufacturing.result.fileSuccess')}
-              </p>
-            </div>
+            {/* 根据不同模块渲染不同的结果组件 */}
+            {activeModule === 'consistency' ? (
+              <Consistency onBackToIntro={handleBackToIntro} />
+            ) : activeModule === 'detection' ? (
+              <Detection onBackToIntro={handleBackToIntro} />
+            ) : activeModule === 'kvalue' ? (
+              <KValue onBackToIntro={handleBackToIntro} />
+            ) : activeModule === 'sorting' ? (
+              <Sorting onBackToIntro={handleBackToIntro} />
+            ) : (
+              <>
+                {/* 完成提示 */}
+                <div className="result-header">
+                  <div className="success-icon">✓</div>
+                  <h3 className="result-title">{t('manufacturing.result.complete')}</h3>
+                  <p className="result-desc">
+                    {t('manufacturing.result.fileAnalyzed')} <span className="filename">demo_data.csv</span> {t('manufacturing.result.fileSuccess')}
+                  </p>
+                </div>
 
-            {/* 相关图片展示 */}
-            {config.images.length > 0 && (
-              <div className="result-images-section">
-                <h3 className="images-section-title">{t('manufacturing.result.relatedImages')}</h3>
-                <div className={config.images.length > 1 ? 'result-images-grid' : 'result-image-single'}>
-                  {config.images.map((img, index) => (
-                    <div key={index} className="result-image-item">
-                      <h4 className="result-image-title">{img.title}</h4>
-                      <div className="result-image-wrapper">
-                        <img src={img.src} alt={img.title} />
-                      </div>
+                {/* 相关图片展示 */}
+                {config.images.length > 0 && (
+                  <div className="result-images-section">
+                    <h3 className="images-section-title">{t('manufacturing.result.relatedImages')}</h3>
+                    <div className={config.images.length > 1 ? 'result-images-grid' : 'result-image-single'}>
+                      {config.images.map((img, index) => (
+                        <div key={index} className="result-image-item">
+                          <h4 className="result-image-title">{img.title}</h4>
+                          <div className="result-image-wrapper">
+                            <img src={img.src} alt={img.title} />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                )}
+
+                {/* 统计卡片 */}
+                <div className="stats-cards">
+                  <div className="stat-card">
+                    <div className="stat-header">
+                      <span className="stat-label">{t('manufacturing.result.stats.score')}</span>
+                      <span className="stat-info">ℹ</span>
+                    </div>
+                    <div className="stat-value">96.8%</div>
+                    <div className="stat-desc">{t('manufacturing.result.stats.scoreDesc')}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-header">
+                      <span className="stat-label">{t('manufacturing.result.stats.passed')}</span>
+                      <span className="stat-info">ℹ</span>
+                    </div>
+                    <div className="stat-value">847/900</div>
+                    <div className="stat-desc">{t('manufacturing.result.stats.passedDesc')}</div>
+                  </div>
+                  <div className="stat-card warning">
+                    <div className="stat-header">
+                      <span className="stat-label">{t('manufacturing.result.stats.attention')}</span>
+                      <span className="stat-info">ℹ</span>
+                    </div>
+                    <div className="stat-value">53 {t('manufacturing.result.stats.items')}</div>
+                    <div className="stat-desc">{t('manufacturing.result.stats.attentionDesc')}</div>
+                  </div>
                 </div>
-              </div>
+
+                {/* 图表区域 */}
+                <div className="chart-section">
+                  <h3 className="chart-title">{t('manufacturing.result.chartTitle')}</h3>
+                  <div className="chart-placeholder">
+                    <div className="chart-placeholder-text">
+                      {t('manufacturing.result.chartPlaceholder', '图表展示区域')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 分析总结 */}
+                <div className="analysis-summary">
+                  <h4 className="summary-title">{t('manufacturing.result.summary.title')}</h4>
+                  <ul className="summary-list">
+                    <li>✓ {t('manufacturing.result.summary.point1')}</li>
+                    <li>✓ {t('manufacturing.result.summary.point2')}</li>
+                    <li>⚠ {t('manufacturing.result.summary.point3')}</li>
+                    <li>✓ {t('manufacturing.result.summary.point4')}</li>
+                  </ul>
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="result-actions">
+                  <button className="btn-secondary" onClick={handleBackToIntro}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M10 12l-4-4 4-4"/>
+                    </svg>
+                    {t('manufacturing.result.backToIntro')}
+                  </button>
+                  <button className="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 2v10m-4-6l4-4 4 4"/>
+                    </svg>
+                    {t('manufacturing.result.exportReport')}
+                  </button>
+                </div>
+              </>
             )}
-
-            {/* 统计卡片 */}
-            <div className="stats-cards">
-              <div className="stat-card">
-                <div className="stat-header">
-                  <span className="stat-label">{t('manufacturing.result.stats.score')}</span>
-                  <span className="stat-info">ℹ</span>
-                </div>
-                <div className="stat-value">96.8%</div>
-                <div className="stat-desc">{t('manufacturing.result.stats.scoreDesc')}</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-header">
-                  <span className="stat-label">{t('manufacturing.result.stats.passed')}</span>
-                  <span className="stat-info">ℹ</span>
-                </div>
-                <div className="stat-value">847/900</div>
-                <div className="stat-desc">{t('manufacturing.result.stats.passedDesc')}</div>
-              </div>
-              <div className="stat-card warning">
-                <div className="stat-header">
-                  <span className="stat-label">{t('manufacturing.result.stats.attention')}</span>
-                  <span className="stat-info">ℹ</span>
-                </div>
-                <div className="stat-value">53 {t('manufacturing.result.stats.items')}</div>
-                <div className="stat-desc">{t('manufacturing.result.stats.attentionDesc')}</div>
-              </div>
-            </div>
-
-            {/* 图表区域 */}
-            <div className="chart-section">
-              <h3 className="chart-title">{t('manufacturing.result.chartTitle')}</h3>
-              <div className="chart-placeholder">
-                <div className="chart-placeholder-text">
-                  {t('manufacturing.result.chartPlaceholder', '图表展示区域')}
-                </div>
-              </div>
-            </div>
-
-            {/* 分析总结 */}
-            <div className="analysis-summary">
-              <h4 className="summary-title">{t('manufacturing.result.summary.title')}</h4>
-              <ul className="summary-list">
-                <li>✓ {t('manufacturing.result.summary.point1')}</li>
-                <li>✓ {t('manufacturing.result.summary.point2')}</li>
-                <li>⚠ {t('manufacturing.result.summary.point3')}</li>
-                <li>✓ {t('manufacturing.result.summary.point4')}</li>
-              </ul>
-            </div>
-
-            {/* 操作按钮 */}
-            <div className="result-actions">
-              <button className="btn-secondary" onClick={handleBackToIntro}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M10 12l-4-4 4-4"/>
-                </svg>
-                {t('manufacturing.result.backToIntro')}
-              </button>
-              <button className="btn-primary">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 2v10m-4-6l4-4 4 4"/>
-                </svg>
-                {t('manufacturing.result.exportReport')}
-              </button>
-            </div>
           </div>
         </div>
       )}

@@ -11,6 +11,29 @@ export default {
       description2: '이러한 고차원 복잡한 데이터의 지능적 분석을 통해 시스템은 배터리 내부 및 전극 시트의 다양한 잠재적 결함(미세 단락, 리튬 도금, 전극 시트 주름/파손, 불균일한 코팅, 이물질 포함, 불량 용접 등)을 자동적으로, 신속하고 정확하게 식별할 수 있습니다. 감지 정확도는 마이크론 수준에 도달할 수 있으며, 기존의 수동 육안 검사 또는 단일 감지 방법의 한계를 크게 초과합니다.',
       imageTitle1: 'SES 리튬 배터리 CT AI 도구',
       imageTitle2: 'SES 초음파 AI 도구',
+      result: {
+        tree: {
+          title: '감지 목록',
+        },
+        imageViewer: {
+          title: '감지 이미지',
+          raw: '원본 이미지',
+          point: '포인트 마커',
+          fullmark: '전체 마커',
+        },
+        table: {
+          title: '좌표 데이터',
+          index: '번호',
+          x: 'X 좌표',
+          y: 'Y 좌표',
+        },
+      },
+      charts: {
+        defectTrend: '결함 추세',
+        confidence: '신뢰도 분포',
+        areaDistribution: '영역 분포',
+        timeSeries: '시계열',
+      },
     },
     kvalue: {
       title: 'K값 예측 및 셀 분류',
@@ -70,5 +93,12 @@ export default {
     },
     backToIntro: '소개로 돌아가기',
     exportReport: '보고서 내보내기',
+  },
+  charts: {
+    shap: {
+      title: 'SHAP 특징 중요도 요약',
+      xAxisName: '평균 |SHAP 값|',
+      seriesName: '특징 중요도',
+    },
   },
 };

@@ -11,6 +11,29 @@ export default {
       description2: 'これらの高次元で複雑なデータのインテリジェント解析により、システムは電池内部および電極シートの様々な潜在的欠陥（微小短絡、リチウム析出、電極シートのしわ/破断、不均一なコーティング、異物混入、不良溶接など）を自動的、迅速かつ正確に識別できます。検出精度はミクロンレベルに達し、従来の手動目視検査や単一検出方法の限界を大幅に超えています。',
       imageTitle1: 'SESリチウム電池CT AIツール',
       imageTitle2: 'SES超音波AIツール',
+      result: {
+        tree: {
+          title: '検出リスト',
+        },
+        imageViewer: {
+          title: '検出画像',
+          raw: '元画像',
+          point: 'ポイントマーカー',
+          fullmark: 'フルマーカー',
+        },
+        table: {
+          title: '座標データ',
+          index: '番号',
+          x: 'X座標',
+          y: 'Y座標',
+        },
+      },
+      charts: {
+        defectTrend: '欠陥トレンド',
+        confidence: '信頼度分布',
+        areaDistribution: 'エリア分布',
+        timeSeries: '時系列',
+      },
     },
     kvalue: {
       title: 'K値予測とセル選別',
@@ -70,5 +93,12 @@ export default {
     },
     backToIntro: '紹介に戻る',
     exportReport: 'レポートをエクスポート',
+  },
+  charts: {
+    shap: {
+      title: 'SHAP特徴重要度サマリー',
+      xAxisName: '平均|SHAP値|',
+      seriesName: '特徴重要度',
+    },
   },
 };

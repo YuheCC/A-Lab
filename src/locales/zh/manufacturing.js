@@ -11,6 +11,29 @@ export default {
       description2: '通过对这些高维、复杂数据的智能解析，系统可自动、快速且精准地识别电池内部及极片的各类潜在缺陷，如微短路、析锂、极片褶皱/断裂、涂布不均、异物夹杂、焊接不良等。其检测精度可达微米级别，显著超越传统人工目检或单一检测手段的局限。',
       imageTitle1: 'SES锂电池CT AI工具',
       imageTitle2: 'SES超声AI工具',
+      result: {
+        tree: {
+          title: '检测列表',
+        },
+        imageViewer: {
+          title: '检测图像',
+          raw: '原图',
+          point: '标记点',
+          fullmark: '完整标记',
+        },
+        table: {
+          title: '坐标数据',
+          index: '序号',
+          x: 'X坐标',
+          y: 'Y坐标',
+        },
+      },
+      charts: {
+        defectTrend: '缺陷趋势',
+        confidence: '置信度分布',
+        areaDistribution: '区域分布',
+        timeSeries: '时间序列',
+      },
     },
     kvalue: {
       title: 'K值预测与电芯分选',
@@ -73,5 +96,12 @@ export default {
     },
     backToIntro: '返回介绍',
     exportReport: '导出报告',
+  },
+  charts: {
+    shap: {
+      title: 'SHAP特征重要性摘要',
+      xAxisName: '平均|SHAP值|',
+      seriesName: '特征重要性',
+    },
   },
 };
