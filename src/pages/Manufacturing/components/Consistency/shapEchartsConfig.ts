@@ -79,14 +79,20 @@ const prepareScatterDataForBar = () => {
 export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption => {
   const scatterDataPoints = prepareScatterDataForBar();
 
-  // 计算所有特征值的范围用于visualMap
-  let minFeatureValue = Infinity;
-  let maxFeatureValue = -Infinity;
+  // 计算SHAP值的范围用于visualMap和x轴
+  let minShapValue = Infinity;
+  let maxShapValue = -Infinity;
   scatterDataPoints.forEach((point: any) => {
-    const featureValue = point.value[2];
-    minFeatureValue = Math.min(minFeatureValue, featureValue);
-    maxFeatureValue = Math.max(maxFeatureValue, featureValue);
+    const shapValue = point.value[0];
+    minShapValue = Math.min(minShapValue, shapValue);
+    maxShapValue = Math.max(maxShapValue, shapValue);
   });
+
+  // 添加10%的边距，避免边界数据被裁切
+  const range = maxShapValue - minShapValue;
+  const padding = range * 0.1;
+  minShapValue = minShapValue - padding;
+  maxShapValue = maxShapValue + padding;
 
   return {
     title: {
@@ -110,17 +116,16 @@ export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption 
       top: '5%',
     },
     visualMap: {
-      min: minFeatureValue,
-      max: maxFeatureValue,
-      dimension: 2, // 根据特征值（第3个维度）进行颜色映射
+      min: minShapValue,
+      max: maxShapValue,
+      dimension: 0, // 根据SHAP值（x轴，第1个维度）进行颜色映射
       orient: 'vertical',
       right: '2%',
       top: 'center',
       text: [t('manufacturing.charts.scatter.high'), t('manufacturing.charts.scatter.low')],
       calculable: true,
       inRange: {
-        color: ['#08519c', '#3182bd', '#6baed6', '#9ecae1', '#c6dbef',
-                '#e377c2', '#d62976', '#e8564d', '#f03b20', '#bd0026'],
+        color: ['#1e3a8a', '#3730a3', '#4c1d95', '#6b21a8', '#7e22ce', '#a21caf', '#be185d', '#db2777', '#e11d48'],
       },
       textStyle: {
         color: '#333',
@@ -131,6 +136,8 @@ export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption 
         type: 'value',
         name: t('manufacturing.charts.shap.xAxisName'),
         position: 'bottom',
+        min: minShapValue, // 设置x轴最小值
+        max: maxShapValue, // 设置x轴最大值，避免右侧空白
       },
     ],
     yAxis: {
