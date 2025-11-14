@@ -30,6 +30,7 @@ import type { AdditiveCategoryType } from '@/constants/additiveCategories';
 import {
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
+    getAdditiveSubtypeLabelKey,
     getDefaultSubtypeForCategory,
     isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
@@ -687,7 +688,19 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
             parts.push(baseQuery);
         }
         if (selectedMolType) {
-            parts.push(`I am looking for ${selectedMolType} molecules.`);
+            if (selectedMolType === 'additive') {
+                const additiveLabelKey = getAdditiveSubtypeLabelKey(additiveCategory, additiveSubtype);
+                const additiveLabel = additiveLabelKey
+                    ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
+                    : additiveSubtype;
+                const trimmedLabel = additiveLabel.trim();
+                const additiveQuery = trimmedLabel
+                    ? `I am looking for additive molecules for ${trimmedLabel}.`
+                    : 'I am looking for additive molecules.';
+                parts.push(additiveQuery);
+            } else {
+                parts.push(`I am looking for ${selectedMolType} molecules.`);
+            }
         }
         if (extraRequests.trim()) {
             parts.push(`I have the following requirements: ${extraRequests.trim()}`);

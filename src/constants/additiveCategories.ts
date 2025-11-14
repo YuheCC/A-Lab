@@ -69,6 +69,13 @@ export const isValidAdditiveSubtype = (
   optionsByCategory: AdditiveOptionsByCategory = ADDITIVE_OPTIONS_BY_CATEGORY,
 ): boolean => optionsByCategory[category]?.some((option) => option.value === subtype) ?? false;
 
+export const getAdditiveSubtypeLabelKey = (
+  category: AdditiveCategoryType,
+  subtype: string,
+  optionsByCategory: AdditiveOptionsByCategory = ADDITIVE_OPTIONS_BY_CATEGORY,
+): string | undefined =>
+  optionsByCategory[category]?.find((option) => option.value === subtype)?.labelKey;
+
 export const getDefaultSubtypeForCategory = (
   category: AdditiveCategoryType,
   defaults: Record<AdditiveCategoryType, string> = DEFAULT_ADDITIVE_SUBTYPE,

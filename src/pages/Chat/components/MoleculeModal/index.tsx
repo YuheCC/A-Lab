@@ -26,6 +26,7 @@ import {
     ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
+    getAdditiveSubtypeLabelKey,
     getDefaultSubtypeForCategory,
     isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
@@ -1000,8 +1001,23 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
         const queryParts: string[] = baseQuery ? [baseQuery] : [];
 
         if (selectedMoleculeType) {
-            const molTypeLabel = selectedMoleculeType;
-            queryParts.push(`I am looking for ${molTypeLabel} molecules.`);
+            if (selectedMoleculeType === 'additive') {
+                const additiveLabelKey = getAdditiveSubtypeLabelKey(
+                    additiveCategory,
+                    selectedAdditiveSubtype,
+                    additiveOptionsMap,
+                );
+                const additiveLabel = additiveLabelKey
+                    ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
+                    : selectedAdditiveSubtype;
+                const trimmedLabel = additiveLabel.trim();
+                const additiveQuery = trimmedLabel
+                    ? `I am looking for additive molecules for ${trimmedLabel}.`
+                    : 'I am looking for additive molecules.';
+                queryParts.push(additiveQuery);
+            } else {
+                queryParts.push(`I am looking for ${selectedMoleculeType} molecules.`);
+            }
         }
         if (extraRequests.trim()) {
             queryParts.push(`I have the following requirements: ${extraRequests.trim()}`);

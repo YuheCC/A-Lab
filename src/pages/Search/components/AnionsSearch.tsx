@@ -31,6 +31,7 @@ import {
     ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
+    getAdditiveSubtypeLabelKey,
     getDefaultSubtypeForCategory,
     isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
@@ -752,7 +753,23 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             parts.push(baseQuery);
         }
         if (selectedMolType) {
-            parts.push(`I am looking for ${molTypeLabel} molecules.`);
+            if (selectedMolType === 'additive') {
+                const additiveLabelKey = getAdditiveSubtypeLabelKey(
+                    additiveCategory,
+                    additiveSubtype,
+                    ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
+                );
+                const additiveLabel = additiveLabelKey
+                    ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
+                    : additiveSubtype;
+                const trimmedLabel = additiveLabel.trim();
+                const additiveQuery = trimmedLabel
+                    ? `I am looking for additive molecules for ${trimmedLabel}.`
+                    : 'I am looking for additive molecules.';
+                parts.push(additiveQuery);
+            } else {
+                parts.push(`I am looking for ${molTypeLabel} molecules.`);
+            }
         }
         if (extraRequests.trim()) {
             parts.push(`I have the following requirements: ${extraRequests.trim()}`);
