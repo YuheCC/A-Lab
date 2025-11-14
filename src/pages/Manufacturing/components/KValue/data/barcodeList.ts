@@ -171,31 +171,31 @@ export const ALL_BARCODES = [
   'U032S3EC4EEB03A274',
 ];
 
-// 从 kvalue.csv 提取的20个配置数据（包含 predict/actual/error）
+// 从 kvalue.csv 提取的20个配置数据（包含 predict/actual/error/index）
 export const CONFIGURED_BARCODE_DATA: Record<
   string,
-  { predict: number; actual: number; error: number }
+  { predict: number; actual: number; error: number; index: number }
 > = {
-  U032S3EB4EEB03A001: { predict: 0.03099063, actual: 0.0314, error: 1.3 },
-  U032S3EB5EEB03B002: { predict: 0.028933743, actual: 0.0287, error: 0.81 },
-  U032S3EB5EEB03B004: { predict: 0.030434087, actual: 0.0301, error: 1.11 },
-  U032S3EB5EEB03B005: { predict: 0.028998546, actual: 0.0287, error: 1.04 },
-  U032S3EB5EEB03C002: { predict: 0.0322628, actual: 0.0328, error: 1.64 },
-  U032S3EB5EEB03C003: { predict: 0.03118016, actual: 0.0314, error: 0.7 },
-  U032S3EB5EEB03C004: { predict: 0.032775007, actual: 0.0328, error: 0.08 },
-  U032S3EB5EEB03C005: { predict: 0.031221775, actual: 0.0314, error: 0.57 },
-  U032S3EB7EEB03A007: { predict: 0.021371597, actual: 0.0214, error: 0.13 },
-  U032S3EB7EEB03D002: { predict: 0.02034382, actual: 0.02, error: 1.72 },
-  U032S3EB7EEB03D005: { predict: 0.021354098, actual: 0.0214, error: 0.21 },
-  U032S3EB8EEB03A012: { predict: 0.019784655, actual: 0.02, error: 1.08 },
-  U032S3EBBEEB03A043: { predict: 0.0065709646, actual: 0.0067, error: 1.93 },
-  U032S3EBDEEB03A081: { predict: 0.008541726, actual: 0.0084, error: 1.69 },
-  U032S3EBFEEB03A106: { predict: 0.00566545, actual: 0.0057, error: 0.61 },
-  U032S3EBMEEB03A148: { predict: 0.006028493, actual: 0.006, error: 0.47 },
-  U032S3EBNEEB03A168: { predict: 0.0061809085, actual: 0.0063, error: 1.89 },
-  U032S3EBNEEB03A173: { predict: 0.006028493, actual: 0.006, error: 0.47 },
-  U032S3EBVEEB03A210: { predict: 0.006401695, actual: 0.0065, error: 1.51 },
-  U032S3EC3EEB03A247: { predict: 0.0060404325, actual: 0.0057, error: 5.97 },
+  U032S3EB4EEB03A001: { predict: 0.03099063, actual: 0.0314, error: 1.3, index: 0 },
+  U032S3EB5EEB03B002: { predict: 0.028933743, actual: 0.0287, error: 0.81, index: 5 },
+  U032S3EB5EEB03B004: { predict: 0.030434087, actual: 0.0301, error: 1.11, index: 7 },
+  U032S3EB5EEB03B005: { predict: 0.028998546, actual: 0.0287, error: 1.04, index: 8 },
+  U032S3EB5EEB03C002: { predict: 0.0322628, actual: 0.0328, error: 1.64, index: 9 },
+  U032S3EB5EEB03C003: { predict: 0.03118016, actual: 0.0314, error: 0.7, index: 10 },
+  U032S3EB5EEB03C004: { predict: 0.032775007, actual: 0.0328, error: 0.08, index: 11 },
+  U032S3EB5EEB03C005: { predict: 0.031221775, actual: 0.0314, error: 0.57, index: 12 },
+  U032S3EB7EEB03A007: { predict: 0.021371597, actual: 0.0214, error: 0.13, index: 13 },
+  U032S3EB7EEB03D002: { predict: 0.02034382, actual: 0.02, error: 1.72, index: 16 },
+  U032S3EB7EEB03D005: { predict: 0.021354098, actual: 0.0214, error: 0.21, index: 19 },
+  U032S3EB8EEB03A012: { predict: 0.019784655, actual: 0.02, error: 1.08, index: 21 },
+  U032S3EBBEEB03A043: { predict: 0.0065709646, actual: 0.0067, error: 1.93, index: 25 },
+  U032S3EBDEEB03A081: { predict: 0.008541726, actual: 0.0084, error: 1.69, index: 49 },
+  U032S3EBFEEB03A106: { predict: 0.00566545, actual: 0.0057, error: 0.61, index: 61 },
+  U032S3EBMEEB03A148: { predict: 0.006028493, actual: 0.006, error: 0.47, index: 81 },
+  U032S3EBNEEB03A168: { predict: 0.0061809085, actual: 0.0063, error: 1.89, index: 85 },
+  U032S3EBNEEB03A173: { predict: 0.006028493, actual: 0.006, error: 0.47, index: 90 },
+  U032S3EBVEEB03A210: { predict: 0.006401695, actual: 0.0065, error: 1.51, index: 98 },
+  U032S3EC3EEB03A247: { predict: 0.0060404325, actual: 0.0057, error: 5.97, index: 110 },
 };
 
 // Tree 最多显示的节点数量

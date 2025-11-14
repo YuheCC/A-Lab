@@ -48,6 +48,11 @@ export default {
           title: 'K値リスト',
         },
         loading: 'データを読み込み中...',
+        scatterChart: {
+          title: '散布図分布',
+          xAxisName: 'X',
+          yAxisName: 'Y',
+        },
         chart: {
           title: '電圧曲線',
           xAxisName: 'データポイント',

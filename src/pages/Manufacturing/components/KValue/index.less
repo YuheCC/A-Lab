@@ -1,8 +1,7 @@
 .kvalue-result-layout {
   display: flex;
   gap: 24px;
-  height: calc(100vh - 120px);
-  min-height: 700px;
+  min-height: calc(100vh - 120px);
   padding: 20px;
 
   .kvalue-left-panel {
@@ -12,6 +11,10 @@
     border-radius: 8px;
     padding: 16px;
     overflow-y: auto;
+    max-height: calc(100vh - 160px);
+    align-self: flex-start;
+    position: sticky;
+    top: 20px;
 
     .kvalue-panel-title {
       font-size: 16px;
@@ -28,15 +31,28 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  .kvalue-scatter-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+
+    .kvalue-scatter-wrapper {
+      flex: 1;
+      min-height: 0;
+    }
   }
 
   .kvalue-chart-section {
     background: #fff;
     border-radius: 8px;
     padding: 20px;
-    height: 500px;
+    height: 400px;
     display: flex;
     flex-direction: column;
 
@@ -165,8 +181,12 @@
 // 响应式调整
 @media (max-width: 1440px) {
   .kvalue-result-layout {
+    .kvalue-scatter-section {
+      height: 450px;
+    }
+
     .kvalue-chart-section {
-      height: 400px;
+      height: 450px;
     }
   }
 }
@@ -184,6 +204,10 @@
 
     .kvalue-right-panel {
       overflow-y: visible;
+    }
+
+    .kvalue-scatter-section {
+      height: 350px;
     }
 
     .kvalue-chart-section {

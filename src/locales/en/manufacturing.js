@@ -48,6 +48,11 @@ export default {
           title: 'K-Value List',
         },
         loading: 'Loading data...',
+        scatterChart: {
+          title: 'Scatter Distribution',
+          xAxisName: 'X',
+          yAxisName: 'Y',
+        },
         chart: {
           title: 'Voltage Curves',
           xAxisName: 'Data Point',

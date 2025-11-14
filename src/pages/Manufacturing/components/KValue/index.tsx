@@ -5,6 +5,9 @@ import TreeView, { TreeNode } from '../TreeView';
 import {
   getMultiCurveConfig,
   loadMultipleBarcodeData,
+  parseScatCSV,
+  getScatterConfig,
+  ScatterDataPoint,
 } from './kValueEchartsConfig';
 import {
   ALL_BARCODES,
@@ -22,6 +25,7 @@ const KValue: React.FC<KValueProps> = ({ onBackToIntro }) => {
   const { t } = useTranslation();
   const [selectedBarcode, setSelectedBarcode] = useState<string>(ALL_BARCODES[0]);
   const [voltageDataMap, setVoltageDataMap] = useState<Map<string, number[]>>(new Map());
+  const [scatterData, setScatterData] = useState<ScatterDataPoint[]>([]);
   const [loadingProgress, setLoadingProgress] = useState<{ loaded: number; total: number }>({
     loaded: 0,
     total: TOTAL_CSV_COUNT,
@@ -60,6 +64,30 @@ const KValue: React.FC<KValueProps> = ({ onBackToIntro }) => {
     loadData();
   }, []);
 
+  // 加载散点图数据
+  useEffect(() => {
+    const loadScatterData = async () => {
+      try {
+        // 从项目源代码中读取 CSV 数据
+        // 注意：这个文件需要被 Vite 处理为可访问的静态资源
+        const response = await fetch(
+          new URL('./data/scat.csv', import.meta.url).href,
+        );
+        if (!response.ok) {
+          console.warn(`Failed to load scatter data: ${response.status}`);
+          return;
+        }
+        const text = await response.text();
+        const parsedData = parseScatCSV(text);
+        setScatterData(parsedData);
+      } catch (error) {
+        console.error('Error loading scatter data:', error);
+      }
+    };
+
+    loadScatterData();
+  }, []);
+
   // 处理节点选择
   const handleNodeSelect = (node: TreeNode) => {
     // 如果选择的是根节点，不改变选中状态
@@ -80,6 +108,17 @@ const KValue: React.FC<KValueProps> = ({ onBackToIntro }) => {
     return CONFIGURED_BARCODE_DATA[selectedBarcode];
   }, [selectedBarcode]);
 
+  // 获取当前选中的 index
+  const selectedIndex = useMemo(() => {
+    return selectedBarcodeData?.index;
+  }, [selectedBarcodeData]);
+
+  // 获取散点图配置
+  const scatterOption = useMemo(
+    () => getScatterConfig(t, scatterData, selectedIndex),
+    [t, scatterData, selectedIndex],
+  );
+
   return (
     <div className="kvalue-result-layout">
       {/* 左侧：Tree 组件 */}
@@ -95,7 +134,18 @@ const KValue: React.FC<KValueProps> = ({ onBackToIntro }) => {
 
       {/* 右侧：内容区域 */}
       <div className="kvalue-right-panel">
-        {/* 上方：多曲线图 */}
+        {/* 上方：散点图 */}
+        <div className="kvalue-scatter-section">
+          <div className="kvalue-scatter-wrapper">
+            <ReactECharts
+              option={scatterOption}
+              style={{ height: '100%', width: '100%' }}
+              opts={{ renderer: 'svg' }}
+            />
+          </div>
+        </div>
+
+        {/* 中间：多曲线图 */}
         <div className="kvalue-chart-section">
           {isLoading ? (
             <div className="kvalue-loading-state">

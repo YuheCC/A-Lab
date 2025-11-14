@@ -7,6 +7,14 @@ export interface VoltageData {
   voltages: number[];
 }
 
+// 散点图数据类型定义
+export interface ScatterDataPoint {
+  x: number;
+  y: number;
+  color: string;
+  index: number;
+}
+
 /**
  * 获取多曲线图配置
  * @param t - 多语言翻译函数
@@ -227,5 +235,202 @@ export const loadMultipleBarcodeData = async (
   }
   
   return dataMap;
+};
+
+/**
+ * 解析 scat.csv 文件内容
+ * @param csvText - CSV 文件内容
+ * @returns 散点图数据数组
+ */
+export const parseScatCSV = (csvText: string): ScatterDataPoint[] => {
+  const lines = csvText.trim().split('\n');
+  
+  // 跳过第一行（header）
+  if (lines.length <= 1) {
+    return [];
+  }
+  
+  const scatterData: ScatterDataPoint[] = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    const parts = line.split(',');
+    if (parts.length >= 4) {
+      const index = parseInt(parts[0], 10);
+      const x = parseFloat(parts[1]);
+      const y = parseFloat(parts[2]);
+      const color = parts[3].trim();
+      
+      if (!isNaN(index) && !isNaN(x) && !isNaN(y) && color) {
+        scatterData.push({ x, y, color, index });
+      }
+    }
+  }
+  
+  return scatterData;
+};
+
+/**
+ * 获取散点图配置
+ * @param t - 多语言翻译函数
+ * @param scatterData - 散点图数据
+ * @param selectedIndex - 当前选中的 index（可选）
+ * @returns ECharts 配置对象
+ */
+export const getScatterConfig = (
+  t: (key: string) => string,
+  scatterData: ScatterDataPoint[],
+  selectedIndex?: number,
+): EChartsOption => {
+  // 按颜色分类数据
+  const redData = scatterData.filter((d) => d.color === 'red');
+  const greenData = scatterData.filter((d) => d.color === 'green');
+  
+  // 构建 series 数组
+  const series: any[] = [
+    {
+      name: 'Red',
+      type: 'scatter',
+      data: redData.map((d) => [d.x, d.y]),
+      itemStyle: {
+        color: '#ff4d4f',
+      },
+      symbolSize: 8,
+      z: 2,
+    },
+    {
+      name: 'Green',
+      type: 'scatter',
+      data: greenData.map((d) => [d.x, d.y]),
+      itemStyle: {
+        color: '#52c41a',
+      },
+      symbolSize: 8,
+      z: 2,
+    },
+  ];
+  
+  // 如果有选中的 index，添加高亮点
+  if (selectedIndex !== undefined) {
+    const selectedPoint = scatterData.find((d) => d.index === selectedIndex);
+    if (selectedPoint) {
+      series.push({
+        name: 'Selected',
+        type: 'scatter',
+        data: [[selectedPoint.x, selectedPoint.y]],
+        itemStyle: {
+          color: '#1890ff',
+          borderColor: '#fff',
+          borderWidth: 3,
+        },
+        symbolSize: 16,
+        z: 10,
+        tooltip: {
+          formatter: () => {
+            return `<div style="font-weight: 600;">Selected Point</div>
+                    <div>Index: ${selectedPoint.index}</div>
+                    <div>X: ${selectedPoint.x.toFixed(3)}</div>
+                    <div>Y: ${selectedPoint.y.toFixed(3)}</div>`;
+          },
+        },
+      });
+    }
+  }
+  
+  return {
+    title: {
+      text: t('manufacturing.modules.kvalue.result.scatterChart.title'),
+      left: 'center',
+      textStyle: {
+        fontSize: 16,
+        fontWeight: 600,
+      },
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) => {
+        if (params.seriesName === 'Selected') {
+          return params.data;
+        }
+        const dataIndex = params.dataIndex;
+        const pointData =
+          params.seriesName === 'Red'
+            ? redData[dataIndex]
+            : greenData[dataIndex];
+        return `<div style="margin-bottom: 4px; font-weight: 600;">${params.seriesName}</div>
+                <div>Index: ${pointData.index}</div>
+                <div>X: ${pointData.x.toFixed(3)}</div>
+                <div>Y: ${pointData.y.toFixed(3)}</div>`;
+      },
+    },
+    legend: {
+      data: ['Red', 'Green'],
+      top: 40,
+      itemWidth: 12,
+      itemHeight: 12,
+    },
+    grid: {
+      left: '8%',
+      right: '5%',
+      top: '20%',
+      bottom: '15%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'value',
+      name: t('manufacturing.modules.kvalue.result.scatterChart.xAxisName'),
+      nameLocation: 'middle',
+      nameGap: 30,
+      nameTextStyle: {
+        color: '#333',
+        fontSize: 12,
+        fontWeight: 500,
+      },
+      axisLabel: {
+        fontSize: 12,
+        color: '#333',
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#d9d9d9',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#f0f0f0',
+          type: 'dashed',
+        },
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: t('manufacturing.modules.kvalue.result.scatterChart.yAxisName'),
+      nameLocation: 'middle',
+      nameGap: 50,
+      nameTextStyle: {
+        color: '#333',
+        fontSize: 12,
+        fontWeight: 500,
+      },
+      axisLabel: {
+        fontSize: 12,
+        color: '#333',
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#d9d9d9',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#f0f0f0',
+          type: 'dashed',
+        },
+      },
+    },
+    series,
+  };
 };
 

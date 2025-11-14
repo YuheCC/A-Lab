@@ -48,6 +48,11 @@ export default {
           title: 'K값 목록',
         },
         loading: '데이터를 로드하는 중...',
+        scatterChart: {
+          title: '산점도 분포',
+          xAxisName: 'X',
+          yAxisName: 'Y',
+        },
         chart: {
           title: '전압 곡선',
           xAxisName: '데이터 포인트',
