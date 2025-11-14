@@ -155,40 +155,96 @@ const FeatureImportance: React.FC<FeatureImportanceProps> = ({ data }) => {
         },
       },
       series: [
-        // 透明占位（实现瀑布图效果）
+        // 箭头形状的影响条（自定义渲染）
         {
-          type: 'bar',
-          stack: 'total',
-          silent: true,
-          barWidth: 20,
-          itemStyle: {
-            color: 'transparent',
+          type: 'custom',
+          renderItem: (params: any, api: any) => {
+            const dataIndex = params.dataIndex;
+            const item = yAxisData[dataIndex];
+
+            // 获取起始和结束位置的像素坐标
+            const startCoord = api.coord([item.start, dataIndex]);
+            const endCoord = api.coord([item.end, dataIndex]);
+
+            // 计算柱状图的像素宽度
+            const width = Math.abs(endCoord[0] - startCoord[0]);
+
+            // 柱状图的高度
+            const barHeight = 25;
+
+            // 箭头宽度自适应：保证最小3px，最大占比16%，默认10%
+            const minArrowWidth = 3;
+            const maxArrowRatio = 0.16;
+            const defaultArrowRatio = 0.1;
+            const arrowWidth = Math.max(
+              minArrowWidth,
+              Math.min(width * maxArrowRatio, width * defaultArrowRatio)
+            );
+            const rectWidth = width - arrowWidth;
+
+            // 确定绘制方向（正影响向右，负影响向左）
+            const isPositive = item.impact > 0;
+            const x = startCoord[0];
+            const y = startCoord[1];
+
+            // 箭头的5个顶点坐标
+            let points;
+            if (isPositive) {
+              // 正影响：箭头指向右侧
+              points = [
+                [x, y - barHeight / 2],                    // 左下
+                [x, y + barHeight / 2],                    // 左上
+                [x + rectWidth, y + barHeight / 2],        // 矩形右上
+                [x + width, y],                            // 箭头尖端（右侧顶点）
+                [x + rectWidth, y - barHeight / 2],        // 矩形右下
+              ];
+            } else {
+              // 负影响：箭头指向左侧
+              points = [
+                [x + width, y - barHeight / 2],            // 右下
+                [x + width, y + barHeight / 2],            // 右上
+                [x + arrowWidth, y + barHeight / 2],       // 矩形左上
+                [x, y],                                    // 箭头尖端（左侧顶点）
+                [x + arrowWidth, y - barHeight / 2],       // 矩形左下
+              ];
+            }
+
+            // 返回箭头形状和标签
+            return {
+              type: 'group',
+              children: [
+                // 箭头多边形
+                {
+                  type: 'polygon',
+                  shape: { points },
+                  style: {
+                    fill: item.impact > 0 ? '#ff1744' : '#2962ff',
+                  },
+                  // 保留 hover 效果
+                  emphasis: {
+                    style: {
+                      opacity: 0.8,
+                    },
+                  },
+                },
+                // 右侧标签
+                {
+                  type: 'text',
+                  style: {
+                    text: `${item.impact > 0 ? '+' : ''}${item.impact.toFixed(4)}`,
+                    x: endCoord[0] + 5,
+                    y: y,
+                    textAlign: 'left',
+                    textVerticalAlign: 'middle',
+                    fontSize: 11,
+                    fill: '#333',
+                  },
+                },
+              ],
+            };
           },
-          data: yAxisData.map((item) => item.start),
-        },
-        // 实际的影响条
-        {
-          type: 'bar',
-          stack: 'total',
-          barWidth: 20,
-          label: {
-            show: true,
-            position: 'right',
-            formatter: (params: any) => {
-              const item = yAxisData[params.dataIndex];
-              if (!item) return '';
-              return `${item.impact > 0 ? '+' : ''}${item.impact.toFixed(4)}`;
-            },
-            fontSize: 11,
-            color: '#333',
-          },
-          data: yAxisData.map((item) => ({
-            value: Math.abs(item.impact),
-            impact: item.impact, // 保存原始 impact 值
-            itemStyle: {
-              color: item.impact > 0 ? '#ff1744' : '#2962ff',
-            },
-          })),
+          data: yAxisData,
+          z: 10, // 确保显示在最上层
         },
         // 基准线
         // {
