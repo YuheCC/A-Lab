@@ -43,6 +43,25 @@ export default {
       description2: 'K値予測結果と事前設定された品質基準に基づいて、システムは電池の迅速で正確な自動グレーディング（プレミアム、合格品、二次品、廃棄物など）を実行します。その価値は、電池バッチ内の高度に一貫した性能を確保すると同時に、生産ラインの選別効率を大幅に向上させ、セルの迅速な選別を可能にすることです。',
       imageTitle1: '化成データ',
       imageTitle2: '特徴抽出',
+      result: {
+        tree: {
+          title: 'K値リスト',
+        },
+        loading: 'データを読み込み中...',
+        chart: {
+          title: '電圧曲線',
+          xAxisName: 'データポイント',
+          yAxisName: '電圧 (V)',
+        },
+        table: {
+          title: 'K値予測結果',
+          barcode: 'バーコード',
+          predict: '予測値',
+          actual: '実測値',
+          error: '誤差',
+          noData: 'データがありません',
+        },
+      },
     },
     sorting: {
       title: 'パック一貫性選別',

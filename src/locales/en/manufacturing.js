@@ -43,6 +43,25 @@ export default {
       description2: 'Based on K-value prediction results and preset quality standards, the system performs rapid, precise automatic grading of batteries (such as premium, qualified, secondary, and scrap products). Its value lies in: ensuring highly consistent performance within battery batches while significantly improving production line sorting efficiency, making rapid cell sorting possible.',
       imageTitle1: 'Formation Data',
       imageTitle2: 'Feature Extraction',
+      result: {
+        tree: {
+          title: 'K-Value List',
+        },
+        loading: 'Loading data...',
+        chart: {
+          title: 'Voltage Curves',
+          xAxisName: 'Data Point',
+          yAxisName: 'Voltage (V)',
+        },
+        table: {
+          title: 'K-Value Prediction Results',
+          barcode: 'Barcode',
+          predict: 'Predicted',
+          actual: 'Actual',
+          error: 'Error',
+          noData: 'No data available',
+        },
+      },
     },
     sorting: {
       title: 'Pack Consistency Sorting',

@@ -43,6 +43,25 @@ export default {
       description2: '基于K值预测结果与预设质量标准，系统对电池进行快速、精准的自动分级（如优品、合格品、次品和废品）。其价值在于：在保证电池批次内性能高度一致的同时，显著提升生产线分选效率，让电芯的快速分选成为可能。',
       imageTitle1: '化成数据',
       imageTitle2: '特征提取',
+      result: {
+        tree: {
+          title: 'K值列表',
+        },
+        loading: '正在加载数据...',
+        chart: {
+          title: '电压曲线图',
+          xAxisName: '数据点',
+          yAxisName: '电压 (V)',
+        },
+        table: {
+          title: 'K值预测结果',
+          barcode: 'Barcode',
+          predict: '预测值',
+          actual: '实际值',
+          error: '误差',
+          noData: '暂无数据',
+        },
+      },
     },
     sorting: {
       title: 'Pack一致性分选',

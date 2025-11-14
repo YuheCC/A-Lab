@@ -42,17 +42,17 @@ const ModuleNav: React.FC<ModuleNavProps> = ({ activeModule, onModuleChange }) =
         </svg>
       ),
     },
-    {
-      key: 'sorting',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="3.33" y="3.33" width="13.34" height="2.5" stroke="currentColor" strokeWidth="1.67"/>
-          <circle cx="10" cy="16.67" r="2" fill="currentColor"/>
-          <path d="M5.71 10.42h8.58" stroke="currentColor" strokeWidth="1.67"/>
-          <ellipse cx="10" cy="7.08" rx="1.46" ry="1.25" stroke="currentColor" strokeWidth="1.67"/>
-        </svg>
-      ),
-    },
+    // {
+    //   key: 'sorting',
+    //   icon: (
+    //     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    //       <rect x="3.33" y="3.33" width="13.34" height="2.5" stroke="currentColor" strokeWidth="1.67"/>
+    //       <circle cx="10" cy="16.67" r="2" fill="currentColor"/>
+    //       <path d="M5.71 10.42h8.58" stroke="currentColor" strokeWidth="1.67"/>
+    //       <ellipse cx="10" cy="7.08" rx="1.46" ry="1.25" stroke="currentColor" strokeWidth="1.67"/>
+    //     </svg>
+    //   ),
+    // },
     {
       key: 'ultrasound',
       icon: (

@@ -43,6 +43,25 @@ export default {
       description2: 'K값 예측 결과 및 사전 설정된 품질 표준을 기반으로 시스템은 배터리의 신속하고 정확한 자동 등급 분류(프리미엄, 합격품, 2차 제품 및 폐기물 등)를 수행합니다. 그 가치는 배터리 배치 내에서 높은 일관성 있는 성능을 보장하면서 생산 라인 분류 효율을 크게 향상시켜 셀의 신속한 분류를 가능하게 하는 데 있습니다.',
       imageTitle1: '화성 데이터',
       imageTitle2: '특징 추출',
+      result: {
+        tree: {
+          title: 'K값 목록',
+        },
+        loading: '데이터를 로드하는 중...',
+        chart: {
+          title: '전압 곡선',
+          xAxisName: '데이터 포인트',
+          yAxisName: '전압 (V)',
+        },
+        table: {
+          title: 'K값 예측 결과',
+          barcode: '바코드',
+          predict: '예측값',
+          actual: '실측값',
+          error: '오차',
+          noData: '데이터가 없습니다',
+        },
+      },
     },
     sorting: {
       title: '팩 일관성 분류',
