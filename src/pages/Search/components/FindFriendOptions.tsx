@@ -52,8 +52,6 @@ interface FindFriendOptionsProps {
   setCathode: (v: string) => void;
   anode: string;
   setAnode: (v: string) => void;
-  salt: string;
-  setSalt: (v: string) => void;
   solvent: string;
   setSolvent: (v: string) => void;
   cellDesign: string;
@@ -97,8 +95,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setCathode,
   anode,
   setAnode,
-  salt,
-  setSalt,
   solvent,
   setSolvent,
   cellDesign,
@@ -463,8 +459,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setCathode={setCathode}
                 anode={anode}
                 setAnode={setAnode}
-                salt={salt}
-                setSalt={setSalt}
                 solvent={solvent}
                 setSolvent={setSolvent}
                 cellDesign={cellDesign}

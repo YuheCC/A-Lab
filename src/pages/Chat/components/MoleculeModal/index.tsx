@@ -997,7 +997,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.mol_type = molType;
         }
 
-        const baseQuery = buildQueryString('', '', '', '', '', '');
+        const baseQuery = buildQueryString('', '', '', '', '');
         const queryParts: string[] = baseQuery ? [baseQuery] : [];
 
         if (selectedMoleculeType) {

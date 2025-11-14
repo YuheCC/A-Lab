@@ -24,7 +24,6 @@ interface AdvancedProps {
   // Battery fields (text inputs instead of dropdowns)
   cathode?: string; setCathode?: (v: string) => void;
   anode?: string; setAnode?: (v: string) => void;
-  salt?: string; setSalt?: (v: string) => void;
   solvent?: string; setSolvent?: (v: string) => void;
   cellDesign?: string; setCellDesign?: (v: string) => void;
   metric?: string; setMetric?: (v: string) => void;
@@ -55,7 +54,6 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
   cathode = '', setCathode = () => {},
   anode = '', setAnode = () => {},
-  salt = '', setSalt = () => {},
   solvent = '', setSolvent = () => {},
   cellDesign = '', setCellDesign = () => {},
   metric = '', setMetric = () => {},
@@ -233,26 +231,6 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
                 onChange={(e) => {
                   if (handleGuardedInteraction(e)) return;
                   setAnode(e.target.value);
-                }}
-                className="ff-custom-input"
-                readOnly={isReadOnly}
-                onMouseDown={(event) => {
-                  handleGuardedInteraction(event);
-                }}
-                style={readOnlyFieldStyle}
-              />
-            </div>
-          </div>
-
-          <div className="ff-advanced-section">
-            <div className="ff-field-row">
-              <label className="ff-advanced-label">{t('search.salt')}:</label>
-              <input
-                type="text"
-                value={salt}
-                onChange={(e) => {
-                  if (handleGuardedInteraction(e)) return;
-                  setSalt(e.target.value);
                 }}
                 className="ff-custom-input"
                 readOnly={isReadOnly}
