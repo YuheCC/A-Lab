@@ -6,6 +6,7 @@ import Consistency from '../Consistency';
 import Detection from '../Detection';
 import KValue from '../KValue';
 import Sorting from '../Sorting';
+import Ultrasound from '../Ultrasound';
 import './index.less';
 
 interface ModuleContentProps {
@@ -62,6 +63,19 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
         {
           src: '/manufacturing/4-1.png',
           title: t('manufacturing.modules.sorting.imageTitle'),
+        },
+      ],
+    },
+    ultrasound: {
+      layout: 'no-column',
+      images: [
+        {
+          src: '/manufacturing/ultrasound/intro-1.png',
+          title: t('manufacturing.modules.ultrasound.imageTitle1'),
+        },
+        {
+          src: '/manufacturing/ultrasound/intro-2.png',
+          title: t('manufacturing.modules.ultrasound.imageTitle2'),
         },
       ],
     },
@@ -281,6 +295,8 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
               <KValue onBackToIntro={handleBackToIntro} />
             ) : activeModule === 'sorting' ? (
               <Sorting onBackToIntro={handleBackToIntro} />
+            ) : activeModule === 'ultrasound' ? (
+              <Ultrasound onBackToIntro={handleBackToIntro} />
             ) : (
               <>
                 {/* 完成提示 */}

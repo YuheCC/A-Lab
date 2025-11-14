@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './index.less';
 
-export type ModuleType = 'consistency' | 'detection' | 'kvalue' | 'sorting';
+export type ModuleType = 'consistency' | 'detection' | 'kvalue' | 'sorting' | 'ultrasound';
 
 interface ModuleNavProps {
   activeModule: ModuleType;
@@ -50,6 +50,15 @@ const ModuleNav: React.FC<ModuleNavProps> = ({ activeModule, onModuleChange }) =
           <circle cx="10" cy="16.67" r="2" fill="currentColor"/>
           <path d="M5.71 10.42h8.58" stroke="currentColor" strokeWidth="1.67"/>
           <ellipse cx="10" cy="7.08" rx="1.46" ry="1.25" stroke="currentColor" strokeWidth="1.67"/>
+        </svg>
+      ),
+    },
+    {
+      key: 'ultrasound',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.67" strokeLinecap="round"/>
+          <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="1.67"/>
         </svg>
       ),
     },
