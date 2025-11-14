@@ -219,12 +219,12 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
                   {t('manufacturing.upload.useDemoData')}
                 </button>
               </div>
-              <button className="btn-link">
+              {/* <button className="btn-link">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 2v12M2 8h12"/>
                 </svg>
                 {t('manufacturing.upload.downloadDemo')}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
