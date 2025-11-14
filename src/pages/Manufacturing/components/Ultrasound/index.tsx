@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactECharts from 'echarts-for-react';
 import TreeView, { TreeNode } from '../TreeView';
@@ -6,6 +6,9 @@ import {
   getFirstChartConfig,
   getSecondChartConfig,
   getThirdChartConfig,
+  loadUltrasoundData,
+  StateData,
+  MarkData,
 } from './ultrasoundEchartsConfig';
 import './index.less';
 
@@ -13,22 +16,49 @@ interface UltrasoundProps {
   onBackToIntro?: () => void;
 }
 
-type ImageType = 'img1' | 'img2';
+type ImageType = 'grays' | 'mask';
 
 const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
   const { t } = useTranslation();
-  const [selectedNodeId, setSelectedNodeId] = useState<string>('0');
-  const [imageType, setImageType] = useState<ImageType>('img1');
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('A37');
+  const [imageType, setImageType] = useState<ImageType>('grays');
+  
+  // 数据加载状态
+  const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const [state1Data, setState1Data] = useState<StateData | null>(null);
+  const [state2Data, setState2Data] = useState<StateData | null>(null);
+  const [state3Data, setState3Data] = useState<StateData | null>(null);
+  const [markData, setMarkData] = useState<MarkData | null>(null);
 
-  // 模拟 Tree 数据
+  // 加载数据
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setDataLoading(true);
+        const data = await loadUltrasoundData();
+        setState1Data(data.state1Data);
+        setState2Data(data.state2Data);
+        setState3Data(data.state3Data);
+        setMarkData(data.markData);
+      } catch (error) {
+        console.error('Failed to load ultrasound data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+
+  // Tree 数据 - 使用实际的节点 ID (A37, A38, A39)
   const mockTreeData: TreeNode[] = useMemo(
     () => [
       {
         id: 'ultrasound-list',
         label: t('manufacturing.modules.ultrasound.result.tree.title'),
-        children: Array.from({ length: 12 }, (_, i) => ({
-          id: String(i),
-          label: `${i}`,
+        children: ['A37', 'A38', 'A39'].map((id) => ({
+          id,
+          label: id,
         })),
       },
     ],
@@ -37,8 +67,8 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
 
   // 图片路径
   const imagePath = useMemo(() => {
-    const rootId = selectedNodeId.split('-')[0];
-    return `/manufacturing/ultrasound/${rootId}_${imageType}.jpg`;
+    const extension = imageType === 'grays' ? 'png' : 'jpg';
+    return `/manufacturing/ultrasound/${selectedNodeId}_${imageType}.${extension}`;
   }, [selectedNodeId, imageType]);
 
   // 处理节点选择
@@ -51,26 +81,31 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
     setImageType(type);
   };
 
-  // 获取当前选中节点的 index（用于参考线）
+  // 获取当前选中节点的 ID（用于参考线）
   const currentIndex = useMemo(() => {
-    const rootId = selectedNodeId.split('-')[0];
-    const index = parseInt(rootId, 10);
-    return isNaN(index) ? undefined : index;
+    // 如果选中的是子节点（A37, A38, A39），直接返回
+    if (['A37', 'A38', 'A39'].includes(selectedNodeId)) {
+      return selectedNodeId;
+    }
+    // 如果选中的是父节点，返回 undefined
+    return undefined;
   }, [selectedNodeId]);
 
   // 获取 ECharts 配置
-  const firstChartOption = useMemo(
-    () => getFirstChartConfig(t, currentIndex),
-    [t, currentIndex],
-  );
-  const secondChartOption = useMemo(
-    () => getSecondChartConfig(t, currentIndex),
-    [t, currentIndex],
-  );
-  const thirdChartOption = useMemo(
-    () => getThirdChartConfig(t, currentIndex),
-    [t, currentIndex],
-  );
+  const firstChartOption = useMemo(() => {
+    if (!state1Data || !markData) return null;
+    return getFirstChartConfig(t, state1Data, markData, currentIndex);
+  }, [t, state1Data, markData, currentIndex]);
+
+  const secondChartOption = useMemo(() => {
+    if (!state2Data || !markData) return null;
+    return getSecondChartConfig(t, state2Data, markData, currentIndex);
+  }, [t, state2Data, markData, currentIndex]);
+
+  const thirdChartOption = useMemo(() => {
+    if (!state3Data || !markData) return null;
+    return getThirdChartConfig(t, state3Data, markData, currentIndex);
+  }, [t, state3Data, markData, currentIndex]);
 
   return (
     <div className="ultrasound-result-layout">
@@ -88,35 +123,47 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
       {/* 右侧：内容区域 */}
       <div className="ultrasound-right-panel">
         {/* 上方：3 个 ECharts 图表 */}
-        <div className="ultrasound-charts-grid">
-          <div className="ultrasound-chart-card">
-            <div className="chart-wrapper">
-              <ReactECharts
-                option={firstChartOption}
-                style={{ height: '100%', width: '100%' }}
-                opts={{ renderer: 'svg' }}
-              />
+        {dataLoading ? (
+          <div className="ultrasound-loading">
+            {t('manufacturing.modules.ultrasound.loading') || 'Loading...'}
+          </div>
+        ) : (
+          <div className="ultrasound-charts-grid">
+            <div className="ultrasound-chart-card">
+              <div className="chart-wrapper">
+                {firstChartOption && (
+                  <ReactECharts
+                    option={firstChartOption}
+                    style={{ height: '100%', width: '100%' }}
+                    opts={{ renderer: 'svg' }}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="ultrasound-chart-card">
+              <div className="chart-wrapper">
+                {secondChartOption && (
+                  <ReactECharts
+                    option={secondChartOption}
+                    style={{ height: '100%', width: '100%' }}
+                    opts={{ renderer: 'svg' }}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="ultrasound-chart-card">
+              <div className="chart-wrapper">
+                {thirdChartOption && (
+                  <ReactECharts
+                    option={thirdChartOption}
+                    style={{ height: '100%', width: '100%' }}
+                    opts={{ renderer: 'svg' }}
+                  />
+                )}
+              </div>
             </div>
           </div>
-          <div className="ultrasound-chart-card">
-            <div className="chart-wrapper">
-              <ReactECharts
-                option={secondChartOption}
-                style={{ height: '100%', width: '100%' }}
-                opts={{ renderer: 'svg' }}
-              />
-            </div>
-          </div>
-          <div className="ultrasound-chart-card">
-            <div className="chart-wrapper">
-              <ReactECharts
-                option={thirdChartOption}
-                style={{ height: '100%', width: '100%' }}
-                opts={{ renderer: 'svg' }}
-              />
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* 下方：图片展示 */}
         <div className="ultrasound-bottom-section">
@@ -129,35 +176,35 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
             <div className="image-controls">
               <div className="radio-group">
                 <div
-                  className={`radio-item ${imageType === 'img1' ? 'selected' : ''}`}
-                  onClick={() => handleImageTypeChange('img1')}
+                  className={`radio-item ${imageType === 'grays' ? 'selected' : ''}`}
+                  onClick={() => handleImageTypeChange('grays')}
                 >
                   <input
                     type="radio"
-                    id="radio-img1"
+                    id="radio-grays"
                     name="imageType"
-                    value="img1"
-                    checked={imageType === 'img1'}
-                    onChange={() => handleImageTypeChange('img1')}
+                    value="grays"
+                    checked={imageType === 'grays'}
+                    onChange={() => handleImageTypeChange('grays')}
                   />
-                  <label htmlFor="radio-img1">
-                    {t('manufacturing.modules.ultrasound.result.imageViewer.img1')}
+                  <label htmlFor="radio-grays">
+                    {t('manufacturing.modules.ultrasound.result.imageViewer.grays')}
                   </label>
                 </div>
                 <div
-                  className={`radio-item ${imageType === 'img2' ? 'selected' : ''}`}
-                  onClick={() => handleImageTypeChange('img2')}
+                  className={`radio-item ${imageType === 'mask' ? 'selected' : ''}`}
+                  onClick={() => handleImageTypeChange('mask')}
                 >
                   <input
                     type="radio"
-                    id="radio-img2"
+                    id="radio-mask"
                     name="imageType"
-                    value="img2"
-                    checked={imageType === 'img2'}
-                    onChange={() => handleImageTypeChange('img2')}
+                    value="mask"
+                    checked={imageType === 'mask'}
+                    onChange={() => handleImageTypeChange('mask')}
                   />
-                  <label htmlFor="radio-img2">
-                    {t('manufacturing.modules.ultrasound.result.imageViewer.img2')}
+                  <label htmlFor="radio-mask">
+                    {t('manufacturing.modules.ultrasound.result.imageViewer.mask')}
                   </label>
                 </div>
               </div>

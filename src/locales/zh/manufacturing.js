@@ -56,14 +56,15 @@ export default {
       description2: '通过对超声波数据的深度学习分析，系统能够快速检测电池内部结构异常、分层、空隙等缺陷，检测精度达到微米级别，为电池生产质量控制提供可靠保障。',
       imageTitle1: '超声检测原理',
       imageTitle2: '缺陷识别示例',
+      loading: '正在加载数据...',
       result: {
         tree: {
           title: '检测列表',
         },
         imageViewer: {
           title: '超声图像',
-          img1: '图像1',
-          img2: '图像2',
+          grays: '灰度图',
+          mask: '掩膜图',
           imageLoadError: '图片加载失败或不存在',
         },
       },

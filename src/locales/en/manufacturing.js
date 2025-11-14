@@ -50,6 +50,30 @@ export default {
       description2: 'The algorithm achieves efficient pack-level sorting, abandoning traditional time-consuming and labor-intensive static full-capacity charge-discharge testing or single initial parameter (such as open-circuit voltage) matching methods. Instead, it deeply integrates multi-dimensional dynamic characterization of packs under quasi-operating condition data. It aims to significantly improve system integration efficiency and full lifecycle performance while reducing installation and maintenance costs.',
       imageTitle: 'Pack Consistency Distribution Visualization',
     },
+    ultrasound: {
+      title: 'Ultrasound Detection Analysis',
+      description: 'SES Ultrasound Detection System is an AI-assisted analysis tool based on ultrasonic technology, specifically designed for lithium-ion battery quality control. The system can accurately identify various potential defects inside batteries through ultrasonic signal acquisition and intelligent analysis.',
+      description2: 'Through deep learning analysis of ultrasonic data, the system can quickly detect internal structural abnormalities, delamination, voids and other defects in batteries, with detection accuracy reaching micron level, providing reliable assurance for battery production quality control.',
+      imageTitle1: 'Ultrasound Detection Principle',
+      imageTitle2: 'Defect Recognition Example',
+      loading: 'Loading data...',
+      result: {
+        tree: {
+          title: 'Detection List',
+        },
+        imageViewer: {
+          title: 'Ultrasound Images',
+          grays: 'Grayscale',
+          mask: 'Mask',
+          imageLoadError: 'Image failed to load or does not exist',
+        },
+      },
+      charts: {
+        chart1: 'Ultrasound Data Distribution Chart 1',
+        chart2: 'Ultrasound Data Distribution Chart 2',
+        chart3: 'Ultrasound Data Distribution Chart 3',
+      },
+    },
   },
   buttons: {
     startDemo: 'Start Demo',

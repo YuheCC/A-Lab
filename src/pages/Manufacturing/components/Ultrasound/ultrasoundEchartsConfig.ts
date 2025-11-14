@@ -1,45 +1,68 @@
 import type { EChartsOption } from 'echarts';
 
-// 占位数据 - 后续可以替换为实际数据文件
-// 用户可以将数据文件放在 public/manufacturing/ultrasound/ 目录下
-const mockData1 = {
-  xAxis: Array.from({ length: 50 }, (_, i) => `${i}`),
-  values: Array.from({ length: 50 }, () => Math.floor(Math.random() * 100) + 20),
+// 数据类型定义
+export interface StateData {
+  x: number[];
+  y: number[];
+  metadata?: {
+    data_points: number;
+    x_min: number;
+    x_max: number;
+    bandwidth: number;
+  };
+}
+
+export interface MarkData {
+  [key: string]: {
+    state1: number;
+    state2: number;
+    state3: number;
+  };
+}
+
+// 数据加载函数 - 从 public 目录动态加载
+export const loadUltrasoundData = async () => {
+  try {
+    const [state1Response, state2Response, state3Response, markResponse] = await Promise.all([
+      fetch('/manufacturing/ultrasound/state1.json'),
+      fetch('/manufacturing/ultrasound/state2.json'),
+      fetch('/manufacturing/ultrasound/state3.json'),
+      fetch('/manufacturing/ultrasound/mark.json'),
+    ]);
+
+    const state1Data = await state1Response.json();
+    const state2Data = await state2Response.json();
+    const state3Data = await state3Response.json();
+    const markData = await markResponse.json();
+
+    return {
+      state1Data,
+      state2Data,
+      state3Data,
+      markData,
+    };
+  } catch (error) {
+    console.error('Failed to load ultrasound data:', error);
+    throw error;
+  }
 };
 
-const mockData2 = {
-  xAxis: Array.from({ length: 50 }, (_, i) => `${i}`),
-  values: Array.from({ length: 50 }, () => Math.floor(Math.random() * 80) + 10),
-};
-
-const mockData3 = {
-  xAxis: Array.from({ length: 50 }, (_, i) => `${i}`),
-  values: Array.from({ length: 50 }, () => Math.floor(Math.random() * 120) + 30),
-};
-
-// 占位参考线数据 - 后续可以替换为实际的 remark.json
-// 格式: { "chart1": [val0, val1, val2, ...], "chart2": [...], "chart3": [...] }
-const mockRemarkData = {
-  chart1: Array.from({ length: 12 }, () => Math.random() * 100 + 20),
-  chart2: Array.from({ length: 12 }, () => Math.random() * 80 + 10),
-  chart3: Array.from({ length: 12 }, () => Math.random() * 120 + 30),
-};
-
-// 第一个图表配置
+// 第一个图表配置 (State 1)
 export const getFirstChartConfig = (
   t: (key: string) => string,
-  index?: number,
+  state1Data: StateData,
+  markData: MarkData,
+  index?: string,
 ): EChartsOption => {
-  // 根据 index 从参考数据获取参考线数值
   const remarkYValue =
-    index !== undefined && mockRemarkData.chart1?.[index]
-      ? mockRemarkData.chart1[index]
+    index && markData[index]?.state1
+      ? markData[index].state1
       : null;
 
   // 将 y 轴的值转换为 x 轴位置索引
   let remarkXAxisIndex = null;
   if (remarkYValue !== null) {
-    const yValues = mockData1.values;
+    const yValues = state1Data.y;
     let closestIndex = 0;
     let minDiff = Math.abs(yValues[0] - remarkYValue);
 
@@ -75,7 +98,7 @@ export const getFirstChartConfig = (
     },
     xAxis: {
       type: 'category',
-      data: mockData1.xAxis,
+      data: state1Data.x,
       axisLabel: {
         show: false,
       },
@@ -90,7 +113,7 @@ export const getFirstChartConfig = (
       {
         name: '数据1',
         type: 'line',
-        data: mockData1.values,
+        data: state1Data.y,
         smooth: true,
         lineStyle: {
           color: '#1890ff',
@@ -139,19 +162,21 @@ export const getFirstChartConfig = (
   };
 };
 
-// 第二个图表配置
+// 第二个图表配置 (State 2)
 export const getSecondChartConfig = (
   t: (key: string) => string,
-  index?: number,
+  state2Data: StateData,
+  markData: MarkData,
+  index?: string,
 ): EChartsOption => {
   const remarkYValue =
-    index !== undefined && mockRemarkData.chart2?.[index]
-      ? mockRemarkData.chart2[index]
+    index && markData[index]?.state2
+      ? markData[index].state2
       : null;
 
   let remarkXAxisIndex = null;
   if (remarkYValue !== null) {
-    const yValues = mockData2.values;
+    const yValues = state2Data.y;
     let closestIndex = 0;
     let minDiff = Math.abs(yValues[0] - remarkYValue);
 
@@ -187,7 +212,7 @@ export const getSecondChartConfig = (
     },
     xAxis: {
       type: 'category',
-      data: mockData2.xAxis,
+      data: state2Data.x,
       axisLabel: {
         show: false,
       },
@@ -202,7 +227,7 @@ export const getSecondChartConfig = (
       {
         name: '数据2',
         type: 'line',
-        data: mockData2.values,
+        data: state2Data.y,
         smooth: true,
         lineStyle: {
           color: '#52c41a',
@@ -251,19 +276,21 @@ export const getSecondChartConfig = (
   };
 };
 
-// 第三个图表配置
+// 第三个图表配置 (State 3)
 export const getThirdChartConfig = (
   t: (key: string) => string,
-  index?: number,
+  state3Data: StateData,
+  markData: MarkData,
+  index?: string,
 ): EChartsOption => {
   const remarkYValue =
-    index !== undefined && mockRemarkData.chart3?.[index]
-      ? mockRemarkData.chart3[index]
+    index && markData[index]?.state3
+      ? markData[index].state3
       : null;
 
   let remarkXAxisIndex = null;
   if (remarkYValue !== null) {
-    const yValues = mockData3.values;
+    const yValues = state3Data.y;
     let closestIndex = 0;
     let minDiff = Math.abs(yValues[0] - remarkYValue);
 
@@ -299,7 +326,7 @@ export const getThirdChartConfig = (
     },
     xAxis: {
       type: 'category',
-      data: mockData3.xAxis,
+      data: state3Data.y,
       axisLabel: {
         show: false,
       },
@@ -314,7 +341,7 @@ export const getThirdChartConfig = (
       {
         name: '数据3',
         type: 'line',
-        data: mockData3.values,
+        data: state3Data.y,
         smooth: true,
         lineStyle: {
           color: '#faad14',
