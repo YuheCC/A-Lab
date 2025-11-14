@@ -107,11 +107,31 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
     setImageType(type);
   };
 
+  // 获取当前选中节点的 index（用于参考线）
+  const currentIndex = useMemo(() => {
+    // 提取根节点 ID（如 "0-1" -> "0"，"detection-list" -> null）
+    const rootId = selectedNodeId.split('-')[0];
+    const index = parseInt(rootId, 10);
+    return isNaN(index) ? undefined : index;
+  }, [selectedNodeId]);
+
   // 获取 ECharts 配置
-  const defectTrendOption = useMemo(() => getDefectTrendConfig(t), [t]);
-  const confidenceOption = useMemo(() => getConfidenceConfig(t), [t]);
-  const areaDistributionOption = useMemo(() => getAreaDistributionConfig(t), [t]);
-  const timeSeriesOption = useMemo(() => getTimeSeriesConfig(t), [t]);
+  const defectTrendOption = useMemo(
+    () => getDefectTrendConfig(t, currentIndex),
+    [t, currentIndex],
+  );
+  const confidenceOption = useMemo(
+    () => getConfidenceConfig(t, currentIndex),
+    [t, currentIndex],
+  );
+  const areaDistributionOption = useMemo(
+    () => getAreaDistributionConfig(t, currentIndex),
+    [t, currentIndex],
+  );
+  const timeSeriesOption = useMemo(
+    () => getTimeSeriesConfig(t, currentIndex),
+    [t, currentIndex],
+  );
 
   return (
     <div className="detection-result-layout">
