@@ -439,6 +439,7 @@ const InorganicSearch = () => {
     const [anode, setAnode] = useState('');
     const [salt, setSalt] = useState('');
     const [solvent, setSolvent] = useState('');
+    const [cellDesign, setCellDesign] = useState('');
     const [metric, setMetric] = useState('');
 
     useEffect(() => {
@@ -697,7 +698,7 @@ const InorganicSearch = () => {
                     const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
 
                     const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
+                    const optionsSpecified = [cathode, anode, salt, solvent, cellDesign, metric].some(Boolean);
 
                     let computeToSend = computeLevel;
                     if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -706,7 +707,7 @@ const InorganicSearch = () => {
                         setComputeLevel('Low');
                     }
 
-                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
+                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, cellDesign, metric);
                     const parts: string[] = [];
                     if (baseQuery) {
                         parts.push(baseQuery);
@@ -718,8 +719,11 @@ const InorganicSearch = () => {
                                 ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
                                 : additiveSubtype;
                             const trimmedLabel = additiveLabel.trim();
-                            const additiveQuery = trimmedLabel
-                                ? `I am looking for additive molecules for ${trimmedLabel}.`
+                            const normalizedLabel = trimmedLabel
+                                ? trimmedLabel.charAt(0).toLowerCase() + trimmedLabel.slice(1)
+                                : trimmedLabel;
+                            const additiveQuery = normalizedLabel
+                                ? `I am looking for additive molecules for ${normalizedLabel}.`
                                 : 'I am looking for additive molecules.';
                             parts.push(additiveQuery);
                         } else {
@@ -983,6 +987,8 @@ const InorganicSearch = () => {
                                 setSalt={setSalt}
                                 solvent={solvent}
                                 setSolvent={setSolvent}
+                                cellDesign={cellDesign}
+                                setCellDesign={setCellDesign}
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}

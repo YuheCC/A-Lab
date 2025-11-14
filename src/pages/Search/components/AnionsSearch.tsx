@@ -285,6 +285,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [saltCustom, setSaltCustom] = useState('');
     const [solvent, setSolvent] = useState('');
     const [solventCustom, setSolventCustom] = useState('');
+    const [cellDesign, setCellDesign] = useState('');
     const [metric, setMetric] = useState('');
     const [metricCustom, setMetricCustom] = useState('');
 
@@ -315,6 +316,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setSaltCustom('');
         setSolvent('');
         setSolventCustom('');
+        setCellDesign('');
         setMetric('');
         setMetricCustom('');
         setNumResults(30);
@@ -736,7 +738,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         const svVal = resolveCustomValue(solvent, solventCustom);
         const mVal = resolveCustomValue(metric, metricCustom);
         const computeEnabled = computeLevel !== 'Disabled';
-        const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+        const optionsSpecified = [cVal, aVal, sVal, svVal, mVal, cellDesign].some(Boolean);
 
         let computeToSend = computeLevel;
         if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -745,7 +747,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             setComputeLevel('Low');
         }
 
-        const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+        const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, cellDesign, mVal);
         const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
         const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
         const parts: string[] = [];
@@ -763,8 +765,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                     ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
                     : additiveSubtype;
                 const trimmedLabel = additiveLabel.trim();
-                const additiveQuery = trimmedLabel
-                    ? `I am looking for additive molecules for ${trimmedLabel}.`
+                const normalizedLabel = trimmedLabel
+                    ? trimmedLabel.charAt(0).toLowerCase() + trimmedLabel.slice(1)
+                    : trimmedLabel;
+                const additiveQuery = normalizedLabel
+                    ? `I am looking for additive molecules for ${normalizedLabel}.`
                     : 'I am looking for additive molecules.';
                 parts.push(additiveQuery);
             } else {
@@ -1094,6 +1099,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 setSalt={setSalt}
                                 solvent={solvent}
                                 setSolvent={setSolvent}
+                                cellDesign={cellDesign}
+                                setCellDesign={setCellDesign}
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}

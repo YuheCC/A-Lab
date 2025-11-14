@@ -997,7 +997,7 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.mol_type = molType;
         }
 
-        const baseQuery = buildQueryString('', '', '', '', '');
+        const baseQuery = buildQueryString('', '', '', '', '', '');
         const queryParts: string[] = baseQuery ? [baseQuery] : [];
 
         if (selectedMoleculeType) {
@@ -1011,8 +1011,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
                     ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
                     : selectedAdditiveSubtype;
                 const trimmedLabel = additiveLabel.trim();
-                const additiveQuery = trimmedLabel
-                    ? `I am looking for additive molecules for ${trimmedLabel}.`
+                const normalizedLabel = trimmedLabel
+                    ? trimmedLabel.charAt(0).toLowerCase() + trimmedLabel.slice(1)
+                    : trimmedLabel;
+                const additiveQuery = normalizedLabel
+                    ? `I am looking for additive molecules for ${normalizedLabel}.`
                     : 'I am looking for additive molecules.';
                 queryParts.push(additiveQuery);
             } else {

@@ -26,6 +26,7 @@ interface AdvancedProps {
   anode?: string; setAnode?: (v: string) => void;
   salt?: string; setSalt?: (v: string) => void;
   solvent?: string; setSolvent?: (v: string) => void;
+  cellDesign?: string; setCellDesign?: (v: string) => void;
   metric?: string; setMetric?: (v: string) => void;
 
   showBatteryFields?: boolean;
@@ -56,6 +57,7 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   anode = '', setAnode = () => {},
   salt = '', setSalt = () => {},
   solvent = '', setSolvent = () => {},
+  cellDesign = '', setCellDesign = () => {},
   metric = '', setMetric = () => {},
 
   showBatteryFields = true,
@@ -271,6 +273,26 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
                 onChange={(e) => {
                   if (handleGuardedInteraction(e)) return;
                   setSolvent(e.target.value);
+                }}
+                className="ff-custom-input"
+                readOnly={isReadOnly}
+                onMouseDown={(event) => {
+                  handleGuardedInteraction(event);
+                }}
+                style={readOnlyFieldStyle}
+              />
+            </div>
+          </div>
+
+          <div className="ff-advanced-section">
+            <div className="ff-field-row">
+              <label className="ff-advanced-label">{t('search.cellDesign')}:</label>
+              <input
+                type="text"
+                value={cellDesign}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setCellDesign(e.target.value);
                 }}
                 className="ff-custom-input"
                 readOnly={isReadOnly}
