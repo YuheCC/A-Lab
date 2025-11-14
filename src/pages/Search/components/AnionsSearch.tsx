@@ -31,6 +31,7 @@ import {
     ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
     DEFAULT_ADDITIVE_CATEGORY,
     DEFAULT_ADDITIVE_SUBTYPE,
+    getAdditiveSubtypeLabelKey,
     getDefaultSubtypeForCategory,
     isValidAdditiveSubtype,
 } from '@/constants/additiveCategories';
@@ -182,8 +183,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [showHypothetical, setShowHypothetical] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
-    const buildGradeProp = (grade?: number, reasoning?: string) =>
-        createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
     const { limits: queryLimits } = useQueryLimit();
     const triggerAccessModal = useAccessModals();
 
@@ -286,6 +285,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [saltCustom, setSaltCustom] = useState('');
     const [solvent, setSolvent] = useState('');
     const [solventCustom, setSolventCustom] = useState('');
+    const [cellDesign, setCellDesign] = useState('');
     const [metric, setMetric] = useState('');
     const [metricCustom, setMetricCustom] = useState('');
 
@@ -316,6 +316,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setSaltCustom('');
         setSolvent('');
         setSolventCustom('');
+        setCellDesign('');
         setMetric('');
         setMetricCustom('');
         setNumResults(30);
@@ -483,7 +484,28 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         structureSummary: ScoreSummary | null,
         gradeDetails: ReturnType<typeof createLlmGradeProp> | null
     ) => {
-        const rawValue = extractScoreValue(record, 'overall_score');
+        const overallCandidates: Array<{ key: string; label?: string }> = [
+            { key: 'overall_score', label },
+            { key: 'combined_score', label: t('search.properties.combinedScore', 'Combined Score') },
+            { key: 'property_suitability', label: t('search.properties.propertySuitability', 'Property Suitability') },
+        ];
+
+        let rawValue: number | null = null;
+        let resolvedLabel = label;
+
+        for (const candidate of overallCandidates) {
+            const candidateValue = extractScoreValue(record, candidate.key);
+            if (candidateValue !== null) {
+                rawValue = candidateValue;
+                resolvedLabel = candidate.label ?? label;
+                break;
+            }
+        }
+
+        if (rawValue === null) {
+            return null;
+        }
+
         const scaled = scaleScoreToTen(rawValue);
         if (scaled === null) {
             return null;
@@ -500,14 +522,14 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         } : null;
 
         return {
-            label,
+            label: resolvedLabel,
             value: displayValue,
             span: 2,
             color,
             disableAutoTooltip: true,
             valueNode: (
                 <OverallScoreValue
-                    label={label}
+                    label={resolvedLabel}
                     value={displayValue}
                     valueColor={color}
                     propertyScore={propertySummary || undefined}
@@ -716,7 +738,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         const svVal = resolveCustomValue(solvent, solventCustom);
         const mVal = resolveCustomValue(metric, metricCustom);
         const computeEnabled = computeLevel !== 'Disabled';
-        const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
+        const optionsSpecified = [cVal, aVal, sVal, svVal, mVal, cellDesign].some(Boolean);
 
         let computeToSend = computeLevel;
         if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -725,7 +747,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             setComputeLevel('Low');
         }
 
-        const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
+        const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, cellDesign, mVal);
         const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
         const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
         const parts: string[] = [];
@@ -733,7 +755,26 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             parts.push(baseQuery);
         }
         if (selectedMolType) {
-            parts.push(`I am looking for ${molTypeLabel} molecules.`);
+            if (selectedMolType === 'additive') {
+                const additiveLabelKey = getAdditiveSubtypeLabelKey(
+                    additiveCategory,
+                    additiveSubtype,
+                    ANION_ADDITIVE_OPTIONS_BY_CATEGORY,
+                );
+                const additiveLabel = additiveLabelKey
+                    ? t(`search.moleculeTypes.additiveCategories.${additiveLabelKey}`)
+                    : additiveSubtype;
+                const trimmedLabel = additiveLabel.trim();
+                const normalizedLabel = trimmedLabel
+                    ? trimmedLabel.charAt(0).toLowerCase() + trimmedLabel.slice(1)
+                    : trimmedLabel;
+                const additiveQuery = normalizedLabel
+                    ? `I am looking for additive molecules for ${normalizedLabel}.`
+                    : 'I am looking for additive molecules.';
+                parts.push(additiveQuery);
+            } else {
+                parts.push(`I am looking for ${molTypeLabel} molecules.`);
+            }
         }
         if (extraRequests.trim()) {
             parts.push(`I have the following requirements: ${extraRequests.trim()}`);
@@ -797,9 +838,14 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             }
 
             const searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
+            const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
+            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
 
             // Fetch the searched molecule's properties
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=anions`);
+            const moleculeResponse = await authFetch(
+                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=anions${molTypeParam}`
+            );
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
@@ -1053,6 +1099,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 setSalt={setSalt}
                                 solvent={solvent}
                                 setSolvent={setSolvent}
+                                cellDesign={cellDesign}
+                                setCellDesign={setCellDesign}
                                 metric={metric}
                                 setMetric={setMetric}
                                 userPermissions={userPermissions}
@@ -1113,11 +1161,36 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                     show: true,
                                                 }
                                                 : null;
-                                            const gradeProp = buildGradeProp(molecule.grade, molecule.reasoning);
+                                            const scoreSource = molecule.rawData ?? molecule;
+                                            const propertyScoreSummary = buildScoreSummary(
+                                                t('search.properties.propertySuitability', 'Property Suitability'),
+                                                scoreSource,
+                                                'property_suitability',
+                                                'property_subscores',
+                                            );
+                                            const structureScoreSummary = buildScoreSummary(
+                                                t('search.properties.structureSimilarity', 'Structure Similarity'),
+                                                scoreSource,
+                                                'structure_similarity',
+                                                'structure_subscores',
+                                            );
+                                            const gradeDetails = createLlmGradeProp(
+                                                molecule.grade,
+                                                molecule.reasoning,
+                                                (text) => setReasoningText(text)
+                                            );
+                                            const overallScoreProp = buildOverallScoreProp(
+                                                scoreSource,
+                                                t('search.properties.overallScore', 'Overall Score'),
+                                                propertyScoreSummary,
+                                                structureScoreSummary,
+                                                gradeDetails
+                                            );
+                                            const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
-                                                ...(gradeProp ? [gradeProp] : []),
+                                                ...(overallScoreProp ? [overallScoreProp] : gradeProp ? [gradeProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
                                                 { label: 'Molecular Volume', value: molecule.properties?.vdw_volume_angstroms3, suffix: ' Å³', span: 2, show: canShowColumn('vdw_volume_angstroms3') },
                                                 { label: 'F Dissociation Energy', value: molecule.properties?.fluoride_bde_ev, suffix: ' eV', span: 2, show: canShowColumn('fluoride_bde_ev') },

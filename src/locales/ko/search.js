@@ -58,7 +58,8 @@ export default {
     cathode: '양극',
     anode: '음극',
     salt: '염',
-    solvent: '주요 용매',
+    solvent: '전해질 조성',
+    cellDesign: '셀 설계',
     performanceMetric: '원하는 성능 지표',
     extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
     extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',
@@ -66,7 +67,7 @@ export default {
     upgradeEnterprise: '엔터프라이즈 계정으로 업그레이드',
     upgradeAccount: '계정을 업그레이드',
     computeWarning: '지능형 친구 찾기의 높은 성능에는 추가 컨텍스트가 필요합니다. 계산 파워가 낮음으로 설정되었습니다.',
-    batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보:',
+    batteryInfoRecommendation: '지능형 친구 찾기가 가장 관련성 높은 분자를 찾도록 돕는 추천 배터리 정보: 양극, 음극, 염, 전해질 조성, 셀 설계, 원하는 성능 지표.',
 
     
     searchRange: '검색 범위',
@@ -83,7 +84,8 @@ export default {
     cathode: '양극',
     anode: '음극',
     salt: '염',
-    solvent: '주요 용매',
+    solvent: '전해질 조성',
+    cellDesign: '셀 설계',
     performanceMetric: '원하는 성능 지표',
     extraRequests: '사용자 지정 분자 제약(최상의 결과를 위해 지능형 친구 찾기를 활성화하세요):',
     extraRequestsPlaceholder: '에테르 작용기를 가진 분자만 표시합니다.',

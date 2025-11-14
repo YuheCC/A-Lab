@@ -56,6 +56,8 @@ interface FindFriendOptionsProps {
   setSalt: (v: string) => void;
   solvent: string;
   setSolvent: (v: string) => void;
+  cellDesign: string;
+  setCellDesign: (v: string) => void;
   metric: string;
   setMetric: (v: string) => void;
   userPermissions?: string;
@@ -99,6 +101,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setSalt,
   solvent,
   setSolvent,
+  cellDesign,
+  setCellDesign,
   metric,
   setMetric,
   userPermissions,
@@ -463,6 +467,8 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setSalt={setSalt}
                 solvent={solvent}
                 setSolvent={setSolvent}
+                cellDesign={cellDesign}
+                setCellDesign={setCellDesign}
                 metric={metric}
                 setMetric={setMetric}
                 showBatteryFields={showBatteryFields}
