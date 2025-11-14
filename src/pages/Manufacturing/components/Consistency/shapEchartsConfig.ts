@@ -125,7 +125,23 @@ export const getShapEchartsConfig = (t: (key: string) => string): EChartsOption 
       text: [t('manufacturing.charts.scatter.high'), t('manufacturing.charts.scatter.low')],
       calculable: true,
       inRange: {
-        color: ['#1e3a8a', '#3730a3', '#4c1d95', '#6b21a8', '#7e22ce', '#a21caf', '#be185d', '#db2777', '#e11d48'],
+        color: [
+          '#008afb', // 极浅蓝
+          '#0078f3', // 浅蓝色
+          '#3a68e7', // 天蓝色
+          '#8443c6', // 亮蓝色
+          '#893dc1', // 蓝色
+          '#ab16a7', // 深蓝色
+          '#c90097', // 更深蓝
+          '#d20091', // 极深蓝
+          '#e00185', // 靛蓝色
+          '#ce0093', // 深靛蓝色
+          '#fbb6d4', // 深靛蓝
+          '#f10172', // 深紫色
+          '#f90066', // 更深紫
+          '#ff005b',
+          '#ff0054'
+        ],
       },
       textStyle: {
         color: '#333',
