@@ -15,28 +15,47 @@ interface DetectionProps {
 }
 
 interface TableRow {
-  type: string;
+  type_nr: string;
   oh_value: string;
 }
 
+interface SplitTableData {
+  left: TableRow[];
+  right: TableRow[];
+}
+
 // 解析 CSV 数据
-const parseCSV = (csvText: string): TableRow[] => {
+const parseCSV = (csvText: string): SplitTableData => {
   const lines = csvText.trim().split('\n');
   const headers = lines[0].split(',');
   const typeIndex = headers.indexOf('type');
+  const typeNrIndex = headers.indexOf('type_nr');
   const ohValueIndex = headers.indexOf('oh_value');
 
-  if (typeIndex === -1 || ohValueIndex === -1) {
-    return [];
+  if (typeIndex === -1 || typeNrIndex === -1 || ohValueIndex === -1) {
+    return { left: [], right: [] };
   }
 
-  return lines.slice(1).map((line) => {
+  const leftData: TableRow[] = [];
+  const rightData: TableRow[] = [];
+
+  lines.slice(1).forEach((line) => {
+    if (!line.trim()) return;
     const values = line.split(',');
-    return {
-      type: values[typeIndex],
+    const type = values[typeIndex];
+    const rowData = {
+      type_nr: values[typeNrIndex],
       oh_value: values[ohValueIndex],
     };
+
+    if (type === 'left') {
+      leftData.push(rowData);
+    } else if (type === 'right') {
+      rightData.push(rowData);
+    }
   });
+
+  return { left: leftData, right: rightData };
 };
 
 type ImageType = 'raw' | 'point' | 'fullmark';
@@ -45,7 +64,7 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
   const { t } = useTranslation();
   const [selectedNodeId, setSelectedNodeId] = useState<string>('0');
   const [imageType, setImageType] = useState<ImageType>('raw');
-  const [csvData, setCsvData] = useState<Record<string, TableRow[]>>({});
+  const [csvData, setCsvData] = useState<Record<string, SplitTableData>>({});
 
   // 模拟 Tree 数据（在最外侧增加 Detection List 父层）
   const mockTreeData: TreeNode[] = useMemo(
@@ -87,7 +106,7 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
   // 当前选中节点的表格数据
   const tableData = useMemo(() => {
     const rootId = selectedNodeId.split('-')[0];
-    return csvData[rootId] || [];
+    return csvData[rootId] || { left: [], right: [] };
   }, [selectedNodeId, csvData]);
 
   // 图片路径
@@ -269,34 +288,65 @@ const Detection: React.FC<DetectionProps> = ({ onBackToIntro }) => {
             </div>
           </div>
 
-          {/* 右侧：Table */}
+          {/* 右侧：双表格 */}
           <div className="detection-table-section">
             <div className="table-header">
               {t('manufacturing.modules.detection.result.table.title')}
             </div>
-            <div className="table-wrapper">
-              {tableData.length > 0 ? (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>{t('manufacturing.modules.detection.result.table.type')}</th>
-                      <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tableData.map((row, index) => (
-                      <tr key={index}>
-                        <td>{row.type}</td>
-                        <td>{row.oh_value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="empty-state">
-                  {t('manufacturing.modules.detection.result.table.noData')}
+            <div className="dual-table-wrapper">
+              {/* Left OH Table */}
+              <div className="single-table-container">
+                <div className="table-sub-header">Left OH</div>
+                <div className="table-wrapper">
+                  {tableData.left.length > 0 ? (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.left.map((row, index) => (
+                          <tr key={index}>
+                            <td>{row.oh_value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="empty-state">
+                      {t('manufacturing.modules.detection.result.table.noData')}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+
+              {/* Right OH Table */}
+              <div className="single-table-container">
+                <div className="table-sub-header">Right OH</div>
+                <div className="table-wrapper">
+                  {tableData.right.length > 0 ? (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{t('manufacturing.modules.detection.result.table.ohValue')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.right.map((row, index) => (
+                          <tr key={index}>
+                            <td>{row.oh_value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="empty-state">
+                      {t('manufacturing.modules.detection.result.table.noData')}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
