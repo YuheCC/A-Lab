@@ -215,9 +215,6 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
             <div className="processing-header">
               <div className="loading-spinner"></div>
               <h3 className="processing-title">{t('manufacturing.processing.title')}</h3>
-              <p className="processing-text">
-                {t('manufacturing.processing.processing')}: <span className="processing-filename">demo_data.csv</span>
-              </p>
             </div>
 
             <div className="progress-section">
