@@ -7,10 +7,11 @@ import rightOhRangeData from './data/右侧oh极差分布.json';
 import rightOhStdData from './data/右侧oh标准差分布.json';
 import remarkData from './data/remark.json';
 
-// 左侧OH极差分布数据
+// 左侧OH极差分布数据（只取后一半）
+const halfIndex = Math.ceil(leftOhRangeData.x.length / 2);
 export const defectTrendData = {
-  xAxis: leftOhRangeData.x,
-  values: leftOhRangeData.y,
+  xAxis: leftOhRangeData.x.slice(halfIndex),
+  values: leftOhRangeData.y.slice(halfIndex),
 };
 
 // 左侧OH标准差分布数据
