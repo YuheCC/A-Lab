@@ -228,6 +228,39 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
               </div>
             </div>
           </div>
+
+          {/* 右侧：状态信息模块 */}
+          <div className="ultrasound-state-info">
+            <div className="state-info-header">
+              <div className="state-info-title">状态信息</div>
+            </div>
+            <div className="state-info-content">
+              <div className="state-item">
+                <div className="state-label">State1:</div>
+                <div className="state-value">
+                  {imageType === 'mask' && markData?.[selectedNodeId as keyof typeof markData]
+                    ? markData[selectedNodeId as keyof typeof markData].state1
+                    : ''}
+                </div>
+              </div>
+              <div className="state-item">
+                <div className="state-label">State2:</div>
+                <div className="state-value">
+                  {imageType === 'mask' && markData?.[selectedNodeId as keyof typeof markData]
+                    ? markData[selectedNodeId as keyof typeof markData].state2
+                    : ''}
+                </div>
+              </div>
+              <div className="state-item">
+                <div className="state-label">State3:</div>
+                <div className="state-value">
+                  {imageType === 'mask' && markData?.[selectedNodeId as keyof typeof markData]
+                    ? markData[selectedNodeId as keyof typeof markData].state3
+                    : ''}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

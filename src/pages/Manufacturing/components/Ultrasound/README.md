@@ -8,7 +8,7 @@
 
 ### 1. 图表数据 (state1.json, state2.json, state3.json)
 
-位置：`src/pages/Manufacturing/components/Ultrasound/data/`
+位置：`public/manufacturing/ultrasound/`
 
 每个 state 文件包含以下结构：
 
@@ -17,15 +17,17 @@
   "x": [0, 1, 2, ...],  // X轴数据点
   "y": [44.2, 55.8, ...],  // Y轴数据值
   "metadata": {
-    "unit": "单位",
-    "description": "描述信息"
+    "data_points": 1000,
+    "x_min": 0,
+    "x_max": 999,
+    "bandwidth": 0.5
   }
 }
 ```
 
 ### 2. 参考线数据 (mark.json)
 
-位置：`src/pages/Manufacturing/components/Ultrasound/data/mark.json`
+位置：`public/manufacturing/ultrasound/mark.json`
 
 结构说明：
 ```json
@@ -36,14 +38,14 @@
     "state3": 0      // 对应 state3 图表的参考线 Y 值
   },
   "A38": {
-    "state1": 45.1,
-    "state2": 54.9,
-    "state3": 0
+    "state1": 48.5,
+    "state2": 62.3,
+    "state3": 5.2
   },
   "A39": {
-    "state1": 43.8,
-    "state2": 56.2,
-    "state3": 0
+    "state1": 41.8,
+    "state2": 53.6,
+    "state3": 2.1
   }
 }
 ```
@@ -51,6 +53,7 @@
 - 键名为节点 ID（A37, A38, A39）
 - 每个节点包含三个状态的参考线数值
 - 参考线会在图表上显示为红色虚线
+- 数据从 public 目录通过 fetch 动态加载
 
 ### 3. 图像文件
 
@@ -87,6 +90,7 @@ import Ultrasound from '@/pages/Manufacturing/components/Ultrasound';
 2. **数据图表**：显示三个状态的超声数据分布图
 3. **参考线**：根据选中节点在图表上显示参考线
 4. **图像查看**：支持灰度图和掩膜图的切换查看
+5. **状态信息**：图像右侧显示当前节点的状态值（state1/state2/state3），仅在 mask 模式下显示数值
 
 ## 参考线计算逻辑
 
