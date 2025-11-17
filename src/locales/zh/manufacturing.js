@@ -189,4 +189,21 @@ export default {
       title: '样本特征影响分析',
     },
   },
+  predictResult: {
+    title: '预测结果 - Sample {{index}}',
+    barcode: 'Barcode',
+    predict: 'Predict',
+    actual: 'Actual',
+  },
+  status: {
+    normal: '正常',
+    abnormal: '异常',
+  },
+  messages: {
+    loadDataFailed: '加载预测结果数据失败',
+    loading: '加载中...',
+    imageLoadFailed: '无法加载图片 Sample {{index}}',
+    imageLoadError: '图片加载失败',
+    noData: '暂无数据',
+  }
 };

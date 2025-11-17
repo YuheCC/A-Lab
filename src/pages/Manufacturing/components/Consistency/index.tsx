@@ -112,7 +112,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
         setPredictData(parsedData);
       } catch (error) {
         console.error('Error loading predict data:', error);
-        message.error('加载预测结果数据失败');
+        message.error(t('manufacturing.messages.loadDataFailed'));
       } finally {
         setTableLoading(false);
       }
@@ -146,6 +146,20 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
   const currentSampleData = useMemo(() => {
     return predictData.find(item => item.barcode === String(selectedSampleIndex));
   }, [predictData, selectedSampleIndex]);
+
+  /**
+   * 翻译状态值
+   * @param value 原始状态值（异常/正常）
+   * @returns 翻译后的状态值
+   */
+  const translateStatus = (value: string): string => {
+    if (value === '异常') {
+      return t('manufacturing.status.abnormal');
+    } else if (value === '正常') {
+      return t('manufacturing.status.normal');
+    }
+    return value;
+  };
 
   return (
     <div className="consistency-result">
@@ -232,7 +246,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     zIndex: 1
                   }}>
-                    <Spin size="large" tip="加载中..." />
+                    <Spin size="large" tip={t('manufacturing.messages.loading')} />
                   </div>
                 )}
                 <img
@@ -249,12 +263,12 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                   onError={() => {
                     setImageLoading(false);
                     setImageError(true);
-                    message.error(`无法加载图片 Sample ${selectedSampleIndex}`);
+                    message.error(t('manufacturing.messages.imageLoadFailed', { index: selectedSampleIndex }));
                   }}
                 />
                 {imageError && (
                   <div style={{ color: '#999', fontSize: '14px' }}>
-                    图片加载失败
+                    {t('manufacturing.messages.imageLoadError')}
                   </div>
                 )}
               </div>
@@ -269,7 +283,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
             flexShrink: 0
           }}>
             <h3 className="section-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
-              预测结果 - Sample {selectedSampleIndex}
+              {t('manufacturing.predictResult.title', { index: selectedSampleIndex })}
             </h3>
             {tableLoading ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -278,31 +292,31 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
             ) : currentSampleData ? (
               <div style={{ display: 'flex', gap: '32px', fontSize: '14px' }}>
                 <div>
-                  <span style={{ color: '#666' }}>Barcode: </span>
+                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.barcode')}: </span>
                   <span style={{ fontWeight: 500 }}>{currentSampleData.barcode}</span>
                 </div>
                 <div>
-                  <span style={{ color: '#666' }}>Predict: </span>
+                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.predict')}: </span>
                   <span style={{
                     fontWeight: 500,
                     color: currentSampleData.predict === '异常' ? '#ff4d4f' : '#52c41a'
                   }}>
-                    {currentSampleData.predict}
+                    {translateStatus(currentSampleData.predict)}
                   </span>
                 </div>
                 <div>
-                  <span style={{ color: '#666' }}>Actual: </span>
+                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.actual')}: </span>
                   <span style={{
                     fontWeight: 500,
                     color: currentSampleData.actual === '异常' ? '#ff4d4f' : '#52c41a'
                   }}>
-                    {currentSampleData.actual}
+                    {translateStatus(currentSampleData.actual)}
                   </span>
                 </div>
               </div>
             ) : (
               <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
-                暂无数据
+                {t('manufacturing.messages.noData')}
               </div>
             )}
           </div>

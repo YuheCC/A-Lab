@@ -189,4 +189,21 @@ export default {
       title: 'サンプル特徴影響分析',
     },
   },
+  predictResult: {
+    title: '予測結果 - Sample {{index}}',
+    barcode: 'Barcode',
+    predict: 'Predict',
+    actual: 'Actual',
+  },
+  status: {
+    normal: '正常',
+    abnormal: '異常',
+  },
+  messages: {
+    loadDataFailed: '予測結果データの読み込みに失敗しました',
+    loading: '読み込み中...',
+    imageLoadFailed: '画像の読み込みに失敗しました Sample {{index}}',
+    imageLoadError: '画像の読み込みに失敗しました',
+    noData: 'データがありません',
+  },
 };

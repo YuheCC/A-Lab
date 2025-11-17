@@ -189,4 +189,21 @@ export default {
       title: 'Sample Feature Impact Analysis',
     },
   },
+  predictResult: {
+    title: 'Prediction Results - Sample {{index}}',
+    barcode: 'Barcode',
+    predict: 'Predict',
+    actual: 'Actual',
+  },
+  status: {
+    normal: 'Normal',
+    abnormal: 'Abnormal',
+  },
+  messages: {
+    loadDataFailed: 'Failed to load prediction result data',
+    loading: 'Loading...',
+    imageLoadFailed: 'Failed to load image Sample {{index}}',
+    imageLoadError: 'Image failed to load',
+    noData: 'No data available',
+  },
 };
