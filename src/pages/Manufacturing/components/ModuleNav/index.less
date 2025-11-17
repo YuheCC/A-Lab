@@ -1,0 +1,120 @@
+// 使用 .manufacturing-container 作为父级选择器,提高样式优先级,避免被覆盖
+.manufacturing-container .module-nav-sidebar {
+  flex: 0 0 320px; // 固定宽度,不伸缩,避免页面切换时宽度抖动
+  width: 320px;
+  box-sizing: border-box; // 让 width 包含 padding 和 border，保证总宽度为 320px
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 16px;
+  min-height: calc(100vh - 64px);
+
+  .module-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+      width: 100%;
+
+      .nav-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        color: #64748b;
+        transition: color 0.3s ease;
+      }
+
+      .nav-text {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+        line-height: 1.4;
+        word-break: keep-all;
+        white-space: normal;
+      }
+
+      &:hover {
+        border-color: #56B26A;
+        box-shadow: 0 2px 8px rgba(86, 178, 106, 0.1);
+
+        .nav-icon {
+          color: #56B26A;
+        }
+      }
+
+      &.active {
+        background: #f0fdf4;
+        border-color: #56B26A;
+        box-shadow: 0 2px 8px rgba(86, 178, 106, 0.15);
+
+        .nav-icon {
+          color: #56B26A;
+        }
+
+        .nav-text {
+          color: #16a34a;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .manufacturing-container .module-nav-sidebar {
+    flex: 0 0 280px;
+    width: 280px;
+    box-sizing: border-box;
+    padding: 20px 12px;
+
+    .module-navigation {
+      .nav-button {
+        padding: 12px;
+
+        .nav-text {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .manufacturing-container .module-nav-sidebar {
+    flex: 0 0 100%;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: auto;
+    padding: 16px;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+
+    .module-navigation {
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 8px;
+
+      .nav-button {
+        flex-direction: column;
+        min-width: 120px;
+        padding: 12px 8px;
+        gap: 8px;
+
+        .nav-text {
+          font-size: 12px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

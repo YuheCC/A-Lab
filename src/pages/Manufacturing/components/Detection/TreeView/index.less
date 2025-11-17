@@ -1,0 +1,125 @@
+.tree-view {
+  width: 100%;
+  user-select: none;
+}
+
+.tree-node-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+  position: relative;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &.tree-node-selected {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #d9f0ff;
+    }
+  }
+
+  &.tree-node-collapsed {
+    cursor: not-allowed;
+    opacity: 0.6;
+    color: #999;
+
+    &:hover {
+      background-color: transparent;
+    }
+
+    .tree-node-label {
+      font-style: italic;
+    }
+  }
+}
+
+.tree-node-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  font-size: 10px;
+  color: #666;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &.expanded {
+    transform: rotate(90deg);
+  }
+
+  &:hover {
+    color: #1890ff;
+  }
+}
+
+.tree-node-arrow-placeholder {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+}
+
+.tree-node-label {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node-children {
+  width: 100%;
+  position: relative;
+
+  // 为子节点容器添加竖线
+  &::before {
+    content: '';
+    position: absolute;
+    left: 19px; // 箭头位置 + 箭头宽度的一半
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #e8e8e8;
+  }
+
+  // 为每个子节点添加横线
+  .tree-node-wrapper {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 20px; // 节点高度的一半
+      width: 12px;
+      height: 1px;
+      background-color: #e8e8e8;
+    }
+  }
+
+  // 最后一个子节点的竖线只延伸到该节点中间
+  .tree-node-wrapper:last-child::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 20px;
+    bottom: 0;
+    width: 1px;
+    background-color: #fff; // 使用背景色覆盖竖线
+  }
+}

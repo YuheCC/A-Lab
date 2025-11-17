@@ -1,0 +1,60 @@
+[
+    {
+        "sample_index": 67,
+        "base_value": 0.3619235157966614,
+        "model_output": 0.8077577352523804,
+        "features": [
+            {
+                "feature_name": "Process Data54",
+                "feature_value": 104.7404359,
+                "shap_value": 0.21785134077072144
+            },
+            {
+                "feature_name": "Process Data10",
+                "feature_value": 9.784251979,
+                "shap_value": -0.13903020322322845
+            },
+            {
+                "feature_name": "Process Data23",
+                "feature_value": 46.03343219,
+                "shap_value": 0.08217816054821014
+            },
+            {
+                "feature_name": "Process Data59",
+                "feature_value": 373.0668107,
+                "shap_value": 0.07191789150238037
+            },
+            {
+                "feature_name": "Process Data6",
+                "feature_value": 3053.390905,
+                "shap_value": 0.03681441769003868
+            },
+            {
+                "feature_name": "Process Data1",
+                "feature_value": 57.10377441,
+                "shap_value": 0.03596150875091553
+            },
+            {
+                "feature_name": "Process Data39",
+                "feature_value": 3430.611576,
+                "shap_value": 0.03071192279458046
+            },
+            {
+                "feature_name": "Process Data4",
+                "feature_value": 3323.750453,
+                "shap_value": 0.030294032767415047
+            },
+            {
+                "feature_name": "Process Data46",
+                "feature_value": 107.3233883,
+                "shap_value": 0.026354221627116203
+            },
+            {
+                "feature_name": "others",
+                "feature_value": null,
+                "shap_value": 0.052780943628022214,
+                "details": "Process Data44, Process Data57, Process Data38, Process Data35, Process Data49, Process Data24, Process Data60, Process Data12, Process Data34, Process Data22, Process Data40, Process Data31, Process Data47, Process Data19, Process Data15, Process Data18, Process Data14, Process Data25, Process Data32, Process Data45, Process Data11, Process Data17, Process Data48, Process Data53, Process Data7, Process Data13, Process Data20, Process Data51, Process Data3, Process Data33, Process Data26, Process Data27, Process Data29, Process Data8, Process Data21, Process Data9, Process Data30, Process Data37, defect, Process Data5, Process Data2, Process Data56, Process Data16, Process Data41, Process Data58, Process Data28, Process Data52, Process Data42, Process Data36, Process Data43, Process Data50, Process Data55"
+            }
+        ]
+    }
+]

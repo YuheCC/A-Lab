@@ -11,6 +11,7 @@ export default {
     design: "デザイン",
     about: "概要",
     formulation: "配方",
+    manufacturing: "生産検査",
     predictPerformance: "セル性能予測",
     predictionTool: "バッテリー寿命予測",
   },
