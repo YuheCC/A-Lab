@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spin, message } from 'antd';
 import TreeView, { TreeNode } from '../TreeView';
@@ -6,6 +6,12 @@ import './index.less';
 
 interface ConsistencyProps {
   onBackToIntro?: () => void;
+}
+
+interface PredictResultData {
+  barcode: string;
+  predict: string;
+  actual: string;
 }
 
 /**
@@ -65,9 +71,55 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
   const [selectedSampleIndex, setSelectedSampleIndex] = useState<number>(0);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [imageError, setImageError] = useState<boolean>(false);
+  const [predictData, setPredictData] = useState<PredictResultData[]>([]);
+  const [tableLoading, setTableLoading] = useState<boolean>(false);
 
   // 生成 Tree 数据
   const treeData = useMemo(() => generateTreeData(), []);
+
+  // 解析 CSV 数据
+  const parseCSV = (csvText: string): PredictResultData[] => {
+    const lines = csvText.trim().split('\n');
+    const data: PredictResultData[] = [];
+
+    // 跳过表头，从第二行开始解析
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line) {
+        const [barcode, predict, actual] = line.split(',');
+        data.push({
+          barcode: barcode.trim(),
+          predict: predict.trim(),
+          actual: actual.trim(),
+        });
+      }
+    }
+
+    return data;
+  };
+
+  // 加载预测结果数据
+  useEffect(() => {
+    const loadPredictData = async () => {
+      setTableLoading(true);
+      try {
+        const response = await fetch('/manufacturing/consistency/predictResult.csv');
+        if (!response.ok) {
+          throw new Error('Failed to load predict result data');
+        }
+        const csvText = await response.text();
+        const parsedData = parseCSV(csvText);
+        setPredictData(parsedData);
+      } catch (error) {
+        console.error('Error loading predict data:', error);
+        message.error('加载预测结果数据失败');
+      } finally {
+        setTableLoading(false);
+      }
+    };
+
+    loadPredictData();
+  }, []);
 
   /**
    * 选择样本
@@ -89,6 +141,11 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
       selectSample(node.sampleIndex);
     }
   };
+
+  // 获取当前选择的样本数据
+  const currentSampleData = useMemo(() => {
+    return predictData.find(item => item.barcode === String(selectedSampleIndex));
+  }, [predictData, selectedSampleIndex]);
 
   return (
     <div className="consistency-result">
@@ -113,64 +170,141 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
           </div>
         </div>
 
-        {/* 右侧：图表区域 */}
-        <div className="charts-section">
-          {/* 上方：SHAP特征重要性图表 */}
-          <div className="chart-wrapper">
-            <h3 className="chart-title">{t('manufacturing.charts.shap.title')}</h3>
-            <div style={{ flex: 1, minHeight: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img
-                src="/manufacturing/consistency/images/summary.png"
-                alt="SHAP Feature Importance Summary"
-                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-              />
+        {/* 右侧：内容区域 */}
+        <div className="right-section" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
+          {/* 图表区域 - 动态布局 */}
+          <div className="charts-container" style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '16px',
+            flex: 1,
+            minHeight: 0
+          }}>
+            {/* SHAP特征重要性图表 */}
+            <div className="chart-wrapper" style={{
+              flex: '1 1 45%',
+              minWidth: '400px',
+              minHeight: '300px',
+              display: 'flex',
+              flexDirection: 'column',
+              border: '1px solid #e8e8e8',
+              borderRadius: '8px',
+              padding: '16px',
+              backgroundColor: '#fff'
+            }}>
+              <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+                {t('manufacturing.charts.shap.title')}
+              </h3>
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+                <img
+                  src="/manufacturing/consistency/images/summary.png"
+                  alt="SHAP Feature Importance Summary"
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                />
+              </div>
+            </div>
+
+            {/* 特征影响力分析图 */}
+            <div className="chart-wrapper" style={{
+              flex: '1 1 45%',
+              minWidth: '400px',
+              minHeight: '300px',
+              display: 'flex',
+              flexDirection: 'column',
+              border: '1px solid #e8e8e8',
+              borderRadius: '8px',
+              padding: '16px',
+              backgroundColor: '#fff'
+            }}>
+              <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+                {t('manufacturing.charts.featureImportance.title')}
+                <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
+              </h3>
+              <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+                {imageLoading && (
+                  <div style={{
+                    position: 'absolute',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    zIndex: 1
+                  }}>
+                    <Spin size="large" tip="加载中..." />
+                  </div>
+                )}
+                <img
+                  src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
+                  alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                    display: imageError ? 'none' : 'block'
+                  }}
+                  onLoad={() => setImageLoading(false)}
+                  onLoadStart={() => setImageLoading(true)}
+                  onError={() => {
+                    setImageLoading(false);
+                    setImageError(true);
+                    message.error(`无法加载图片 Sample ${selectedSampleIndex}`);
+                  }}
+                />
+                {imageError && (
+                  <div style={{ color: '#999', fontSize: '14px' }}>
+                    图片加载失败
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* 下方：特征影响力分析图（根据选中样本动态变化）*/}
-          <div className="chart-wrapper">
-            <h3 className="chart-title">
-              {t('manufacturing.charts.featureImportance.title')}
-              <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
+          {/* 预测结果 */}
+          <div className="predict-result-info" style={{
+            padding: '16px',
+            backgroundColor: '#f5f5f5',
+            borderRadius: '8px',
+            flexShrink: 0
+          }}>
+            <h3 className="section-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+              预测结果 - Sample {selectedSampleIndex}
             </h3>
-            <div style={{ flex: 1, minHeight: 0, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {imageLoading && (
-                <div style={{
-                  position: 'absolute',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  zIndex: 1
-                }}>
-                  <Spin size="large" tip="加载中..." />
+            {tableLoading ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <Spin />
+              </div>
+            ) : currentSampleData ? (
+              <div style={{ display: 'flex', gap: '32px', fontSize: '14px' }}>
+                <div>
+                  <span style={{ color: '#666' }}>Barcode: </span>
+                  <span style={{ fontWeight: 500 }}>{currentSampleData.barcode}</span>
                 </div>
-              )}
-              <img
-                src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
-                alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                  objectFit: 'contain',
-                  display: imageError ? 'none' : 'block'
-                }}
-                onLoad={() => setImageLoading(false)}
-                onLoadStart={() => setImageLoading(true)}
-                onError={() => {
-                  setImageLoading(false);
-                  setImageError(true);
-                  message.error(`无法加载图片 Sample ${selectedSampleIndex}`);
-                }}
-              />
-              {imageError && (
-                <div style={{ color: '#999', fontSize: '14px' }}>
-                  图片加载失败
+                <div>
+                  <span style={{ color: '#666' }}>Predict: </span>
+                  <span style={{
+                    fontWeight: 500,
+                    color: currentSampleData.predict === '异常' ? '#ff4d4f' : '#52c41a'
+                  }}>
+                    {currentSampleData.predict}
+                  </span>
                 </div>
-              )}
-            </div>
+                <div>
+                  <span style={{ color: '#666' }}>Actual: </span>
+                  <span style={{
+                    fontWeight: 500,
+                    color: currentSampleData.actual === '异常' ? '#ff4d4f' : '#52c41a'
+                  }}>
+                    {currentSampleData.actual}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
+                暂无数据
+              </div>
+            )}
           </div>
         </div>
       </div>
