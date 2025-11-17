@@ -189,4 +189,21 @@ export default {
       title: '샘플 특징 영향 분석',
     },
   },
+  predictResult: {
+    title: '예측 결과 - Sample {{index}}',
+    barcode: 'Barcode',
+    predict: 'Predict',
+    actual: 'Actual',
+  },
+  status: {
+    normal: '정상',
+    abnormal: '이상',
+  },
+  messages: {
+    loadDataFailed: '예측 결과 데이터 로드 실패',
+    loading: '로딩 중...',
+    imageLoadFailed: '이미지 로드 실패 Sample {{index}}',
+    imageLoadError: '이미지 로드 실패',
+    noData: '데이터 없음',
+  },
 };

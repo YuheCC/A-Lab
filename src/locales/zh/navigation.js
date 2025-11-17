@@ -10,7 +10,7 @@ export default {
     predict: "预测",
     design: "设计",
     formulation: "配方",
-    manufacturing: "生产检测",
+    manufacturing: "生产",
     about: "关于",
     predictPerformance: "电芯性能预测",
     predictionTool: "电池寿命预测",
