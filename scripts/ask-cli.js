@@ -680,7 +680,7 @@ async function runAsk(baseUrl, {
     numRagResults,
     toolsEnabled: true,
     patentRagEnabled: true,
-    useHermesExcludedLiteratureRag: true,
+    filterHermesSources: true,
     llm_compute_power: llmComputePower,
   };
 
