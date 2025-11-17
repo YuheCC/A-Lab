@@ -54,20 +54,21 @@ export const getFirstChartConfig = (
   markData: MarkData,
   index?: string,
 ): EChartsOption => {
-  const remarkYValue =
+  // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
+  const remarkXValue =
     index && markData[index]?.state1
       ? markData[index].state1
       : null;
 
-  // 将 y 轴的值转换为 x 轴位置索引
+  // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkYValue !== null) {
-    const yValues = state1Data.y;
+  if (remarkXValue !== null) {
+    const xValues = state1Data.x;
     let closestIndex = 0;
-    let minDiff = Math.abs(yValues[0] - remarkYValue);
+    let minDiff = Math.abs(xValues[0] - remarkXValue);
 
-    for (let i = 1; i < yValues.length; i++) {
-      const diff = Math.abs(yValues[i] - remarkYValue);
+    for (let i = 1; i < xValues.length; i++) {
+      const diff = Math.abs(xValues[i] - remarkXValue);
       if (diff < minDiff) {
         minDiff = diff;
         closestIndex = i;
@@ -147,7 +148,7 @@ export const getFirstChartConfig = (
               label: {
                 show: false,
                 position: 'end',
-                formatter: `参考值: ${remarkYValue?.toFixed(2)}`,
+                formatter: `参考值: ${remarkXValue?.toFixed(2)}`,
                 color: '#ff4d4f',
               },
               data: [
@@ -169,19 +170,21 @@ export const getSecondChartConfig = (
   markData: MarkData,
   index?: string,
 ): EChartsOption => {
-  const remarkYValue =
+  // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
+  const remarkXValue =
     index && markData[index]?.state2
       ? markData[index].state2
       : null;
 
+  // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkYValue !== null) {
-    const yValues = state2Data.y;
+  if (remarkXValue !== null) {
+    const xValues = state2Data.x;
     let closestIndex = 0;
-    let minDiff = Math.abs(yValues[0] - remarkYValue);
+    let minDiff = Math.abs(xValues[0] - remarkXValue);
 
-    for (let i = 1; i < yValues.length; i++) {
-      const diff = Math.abs(yValues[i] - remarkYValue);
+    for (let i = 1; i < xValues.length; i++) {
+      const diff = Math.abs(xValues[i] - remarkXValue);
       if (diff < minDiff) {
         minDiff = diff;
         closestIndex = i;
@@ -261,7 +264,7 @@ export const getSecondChartConfig = (
               label: {
                 show: false,
                 position: 'end',
-                formatter: `参考值: ${remarkYValue?.toFixed(2)}`,
+                formatter: `参考值: ${remarkXValue?.toFixed(2)}`,
                 color: '#ff4d4f',
               },
               data: [
@@ -283,19 +286,21 @@ export const getThirdChartConfig = (
   markData: MarkData,
   index?: string,
 ): EChartsOption => {
-  const remarkYValue =
+  // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
+  const remarkXValue =
     index && markData[index]?.state3
       ? markData[index].state3
       : null;
 
+  // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkYValue !== null) {
-    const yValues = state3Data.y;
+  if (remarkXValue !== null) {
+    const xValues = state3Data.x;
     let closestIndex = 0;
-    let minDiff = Math.abs(yValues[0] - remarkYValue);
+    let minDiff = Math.abs(xValues[0] - remarkXValue);
 
-    for (let i = 1; i < yValues.length; i++) {
-      const diff = Math.abs(yValues[i] - remarkYValue);
+    for (let i = 1; i < xValues.length; i++) {
+      const diff = Math.abs(xValues[i] - remarkXValue);
       if (diff < minDiff) {
         minDiff = diff;
         closestIndex = i;
@@ -326,10 +331,10 @@ export const getThirdChartConfig = (
     },
     xAxis: {
       type: 'category',
-      data: state3Data.y,
+      data: state3Data.x,
       axisLabel: {
         show: false,
-      },
+      }
     },
     yAxis: {
       type: 'value',
@@ -375,7 +380,7 @@ export const getThirdChartConfig = (
               label: {
                 show: false,
                 position: 'end',
-                formatter: `参考值: ${remarkYValue?.toFixed(2)}`,
+                formatter: `参考值: ${remarkXValue?.toFixed(2)}`,
                 color: '#ff4d4f',
               },
               data: [

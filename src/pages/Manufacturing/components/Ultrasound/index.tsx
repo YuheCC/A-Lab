@@ -134,6 +134,7 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
                 {firstChartOption && (
                   <ReactECharts
                     option={firstChartOption}
+                    notMerge={true}
                     style={{ height: '100%', width: '100%' }}
                     opts={{ renderer: 'svg' }}
                   />
@@ -145,6 +146,7 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
                 {secondChartOption && (
                   <ReactECharts
                     option={secondChartOption}
+                    notMerge={true}
                     style={{ height: '100%', width: '100%' }}
                     opts={{ renderer: 'svg' }}
                   />
@@ -156,6 +158,7 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
                 {thirdChartOption && (
                   <ReactECharts
                     option={thirdChartOption}
+                    notMerge={true}
                     style={{ height: '100%', width: '100%' }}
                     opts={{ renderer: 'svg' }}
                   />
