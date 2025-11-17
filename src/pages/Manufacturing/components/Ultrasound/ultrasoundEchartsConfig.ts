@@ -56,13 +56,13 @@ export const getFirstChartConfig = (
 ): EChartsOption => {
   // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
   const remarkXValue =
-    index && markData[index]?.state1
+    index && typeof markData[index]?.state1 === 'number'
       ? markData[index].state1
       : null;
 
   // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkXValue !== null) {
+  if (remarkXValue !== null && remarkXValue !== undefined) {
     const xValues = state1Data.x;
     let closestIndex = 0;
     let minDiff = Math.abs(xValues[0] - remarkXValue);
@@ -172,13 +172,13 @@ export const getSecondChartConfig = (
 ): EChartsOption => {
   // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
   const remarkXValue =
-    index && markData[index]?.state2
+    index && typeof markData[index]?.state2 === 'number'
       ? markData[index].state2
       : null;
 
   // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkXValue !== null) {
+  if (remarkXValue !== null && remarkXValue !== undefined) {
     const xValues = state2Data.x;
     let closestIndex = 0;
     let minDiff = Math.abs(xValues[0] - remarkXValue);
@@ -288,13 +288,13 @@ export const getThirdChartConfig = (
 ): EChartsOption => {
   // markData 中的值是 x 轴的实际坐标，需要在 x 轴数据中找到对应的索引
   const remarkXValue =
-    index && markData[index]?.state3
+    index && typeof markData[index]?.state3 === 'number'
       ? markData[index].state3
       : null;
 
   // 在 category 类型的 xAxis 中，markLine 的 xAxis 使用的是索引，所以需要找到对应的索引
   let remarkXAxisIndex = null;
-  if (remarkXValue !== null) {
+  if (remarkXValue !== null && remarkXValue !== undefined) {
     const xValues = state3Data.x;
     let closestIndex = 0;
     let minDiff = Math.abs(xValues[0] - remarkXValue);
