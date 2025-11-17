@@ -1,36 +1,11 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import ReactECharts from 'echarts-for-react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spin, message } from 'antd';
 import TreeView, { TreeNode } from '../TreeView';
-import FeatureImportance from './components/FeatureImportance';
-import { getShapEchartsConfig } from './shapEchartsConfig';
 import './index.less';
 
 interface ConsistencyProps {
   onBackToIntro?: () => void;
-}
-
-// JSON 数据结构定义
-interface Feature {
-  feature_name: string;
-  feature_value: number | null;
-  shap_value: number;
-  details?: string;
-}
-
-interface SampleData {
-  sample_index: number;
-  base_value: number;
-  model_output: number;
-  features: Feature[];
-}
-
-// 特征影响力数据格式
-export interface FeatureData {
-  name: string;
-  value: number;
-  impact: number;
 }
 
 /**
@@ -88,55 +63,19 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
   const { t } = useTranslation();
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [selectedSampleIndex, setSelectedSampleIndex] = useState<number>(0);
-  const [featureData, setFeatureData] = useState<FeatureData[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
 
   // 生成 Tree 数据
   const treeData = useMemo(() => generateTreeData(), []);
 
-  // 处理ECharts配置，使用多语言支持
-  const chartOption = useMemo(() => {
-    return getShapEchartsConfig(t);
-  }, [t]);
-
   /**
-   * 加载样本的特征影响力数据
+   * 选择样本
    * @param sampleIndex 样本索引 (0-565)
    */
-  const loadFeatureData = async (sampleIndex: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/manufacturing/consistency/${sampleIndex}.json`);
-      if (!response.ok) {
-        throw new Error(`Failed to load sample ${sampleIndex}`);
-      }
-
-      // JSON 文件是数组格式 [{ sample_index, base_value, ... }]
-      const dataArray = await response.json();
-      const data: SampleData = dataArray[0];
-
-      // 转换数据格式：JSON 格式 → FeatureData 格式
-      const convertedData: FeatureData[] = data.features.map(feature => ({
-        name: feature.feature_name,
-        value: feature.feature_value ?? 0,
-        impact: feature.shap_value,
-      }));
-
-      // 添加基准值作为最后一项
-      convertedData.push({
-        name: 'E[f(X)]',
-        value: data.base_value,
-        impact: 0,
-      });
-
-      setFeatureData(convertedData);
-      setSelectedSampleIndex(sampleIndex);
-    } catch (error) {
-      console.error('Error loading feature data:', error);
-      message.error(`加载数据失败 Sample ${sampleIndex}`);
-    } finally {
-      setLoading(false);
-    }
+  const selectSample = (sampleIndex: number) => {
+    setSelectedSampleIndex(sampleIndex);
+    setImageError(false);
   };
 
   /**
@@ -145,16 +84,11 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
   const handleNodeSelect = (node: TreeNode) => {
     setSelectedNode(node);
 
-    // 只有叶子节点才加载数据
+    // 只有叶子节点才选择样本
     if (node.sampleIndex !== undefined) {
-      loadFeatureData(node.sampleIndex);
+      selectSample(node.sampleIndex);
     }
   };
-
-  // 组件挂载时，默认加载 Sample 0
-  useEffect(() => {
-    loadFeatureData(0);
-  }, []);
 
   return (
     <div className="consistency-result">
@@ -184,11 +118,11 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
           {/* 上方：SHAP特征重要性图表 */}
           <div className="chart-wrapper">
             <h3 className="chart-title">{t('manufacturing.charts.shap.title')}</h3>
-            <div style={{ flex: 1, minHeight: 0 }}>
-              <ReactECharts
-                option={chartOption}
-                style={{ height: '100%', width: '100%' }}
-                opts={{ renderer: 'svg' }}
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img
+                src="/manufacturing/consistency/images/summary.png"
+                alt="SHAP Feature Importance Summary"
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
               />
             </div>
           </div>
@@ -199,18 +133,42 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
               {t('manufacturing.charts.featureImportance.title')}
               <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
             </h3>
-            <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
-              {loading ? (
+            <div style={{ flex: 1, minHeight: 0, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {imageLoading && (
                 <div style={{
+                  position: 'absolute',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: '100%'
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  zIndex: 1
                 }}>
                   <Spin size="large" tip="加载中..." />
                 </div>
-              ) : (
-                <FeatureImportance data={featureData || []} />
+              )}
+              <img
+                src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
+                alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  display: imageError ? 'none' : 'block'
+                }}
+                onLoad={() => setImageLoading(false)}
+                onLoadStart={() => setImageLoading(true)}
+                onError={() => {
+                  setImageLoading(false);
+                  setImageError(true);
+                  message.error(`无法加载图片 Sample ${selectedSampleIndex}`);
+                }}
+              />
+              {imageError && (
+                <div style={{ color: '#999', fontSize: '14px' }}>
+                  图片加载失败
+                </div>
               )}
             </div>
           </div>
