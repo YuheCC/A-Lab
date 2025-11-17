@@ -1,16 +1,25 @@
 export default {
   modules: {
     consistency: {
-      title: 'Intra-Batch Consistency Analysis',
-      description: 'With the explosive growth of the global new energy vehicle and energy storage industries, lithium battery production capacity demand has surged. However, battery cell production faces core pain points of poor consistency and large yield fluctuations. Traditional models relying on manual sampling and experience-based adjustments struggle to capture microscopic process fluctuations in real-time, leading to performance differences between batches, directly increasing after-sales costs and constraining capacity release. SES combines production processes, quality inspection, and downstream testing to analyze production process consistency and identify correlation factors affecting quality, effectively improving yield rates.',
-      imageTitle: 'Correlation Analysis of Defect Causes',
+      title: 'Quality Prediction and Correlation Analysis',
+      paragraph1: 'In the complex production process of lithium battery manufacturing with long chains and multiple processes, achieving precise quality control is a key challenge. Traditional methods relying on finished product inspection have obvious lag, often resulting in batch losses once defects are detected. To address this, we have built a full-process data collection system spanning from front-end electrode preparation (such as slurry mixing, coating, rolling) to back-end cell assembly (such as winding, stacking, electrolyte injection, formation and grading).',
+      paragraph2: 'By collecting massive process parameters from each process step in real-time (such as coating surface density, rolling thickness, electrolyte injection volume, etc.) and using advanced algorithms like machine learning to build predictive models, we can make early predictions of the battery\'s final key performance indicators (such as capacity, internal resistance, cycle life). When potential quality anomalies are predicted or defects are detected in final inspection, the system can further initiate correlation analysis to deeply trace and locate key processes and parameter fluctuation ranges that cause defects. This not only significantly advances quality monitoring nodes, achieving a transformation from "post-inspection" to "pre-prevention", but also provides precise data-driven decision support for process optimization, continuously improving product consistency and yield.',
+      dataSize: '565 samples',
+      dataType: 'Time series data',
+      dataSource: 'Production equipment/process/parameter data (anonymized)',
+      targetLabel: 'Classification target',
+      target: '0 (Normal), 1 (Abnormal)',
     },
     detection: {
-      title: 'AI-Assisted Defect Detection',
-      description: 'To improve lithium battery product safety, SES has developed an AI-assisted tool based on multi-modal characterization, specifically designed for lithium-ion battery production quality control with deep integration of artificial intelligence technology. The system utilizes key multi-modal characterization data (CT tomography, X-ray imaging, ultrasonic detection, etc.) obtained from production line sampling inspections to build a powerful AI analysis engine.',
-      description2: 'Through intelligent analysis of these high-dimensional, complex data, the system can automatically, rapidly, and precisely identify various potential defects in battery internals and electrode sheets, such as micro short circuits, lithium plating, electrode sheet wrinkles/breaks, uneven coating, foreign object inclusion, poor welding, etc. Its detection accuracy can reach micron level, significantly surpassing the limitations of traditional manual visual inspection or single detection methods.',
-      imageTitle1: 'SES Lithium Battery CT AI Tool',
-      imageTitle2: 'SES Ultrasonic AI Tool',
+      title: 'CT/X-ray Assisted Measurement and Anomaly Detection',
+      paragraph1: 'This application is an AI-powered intelligent analysis system for lithium battery CT/X-Ray images, designed to revolutionize traditional manual inspection methods. Through advanced deep learning algorithms, it automatically and precisely identifies electrode edges and positions inside batteries, completing one-click quantitative measurements of key dimensional indicators such as Overhang (electrode overhang) and alignment, and detecting anomalies.',
+      paragraph2: 'The technical principle involves training neural network models with large amounts of annotated battery CT images, enabling recognition accuracy that matches or exceeds human vision. It can quickly extract features from complex backgrounds, achieving pixel-level measurements with objective and traceable results.',
+      paragraph3: 'The software\'s significance is profound. It liberates quality inspectors from heavy, fatigue-prone subjective judgments, greatly improving inspection efficiency and consistency, effectively eliminating missed and false detections. This is crucial for ensuring lithium battery safety performance, optimizing production processes, and achieving intelligent manufacturing, making it a core tool for improving battery product quality control.',
+      dataSize: '23 samples',
+      dataType: 'Image data (stacked cell CT cross-sections)',
+      dataSource: 'Production equipment (anonymized)',
+      targetLabel: 'Quantification target',
+      target: 'Overhang, Alignment',
       result: {
         tree: {
           title: 'Detection List',
@@ -38,11 +47,15 @@ export default {
       },
     },
     kvalue: {
-      title: 'K-Value Prediction & Cell Sorting',
-      description: 'This system is a high-performance automatic sorting solution specifically designed for battery manufacturing. Its core function is to intelligently analyze charge-discharge data (voltage, current, time, etc.) obtained during the critical "formation" process, calculating and predicting the unique key performance indicator for each battery cell - the K-value (reflecting internal resistance characteristics).',
-      description2: 'Based on K-value prediction results and preset quality standards, the system performs rapid, precise automatic grading of batteries (such as premium, qualified, secondary, and scrap products). Its value lies in: ensuring highly consistent performance within battery batches while significantly improving production line sorting efficiency, making rapid cell sorting possible.',
-      imageTitle1: 'Formation Data',
-      imageTitle2: 'Feature Extraction',
+      title: 'K-Value Prediction and Batch Consistency Analysis',
+      paragraph1: 'This is an AI-based lithium battery cell quality prediction and analysis tool. It innovatively utilizes time series data such as voltage, current, and temperature from the formation process. Through machine learning models, it accurately predicts the K-value (capacity decay rate) of cells before grading and visually displays the consistency distribution of the entire batch.',
+      paragraph2: 'The core principle lies in that formation data precisely records the formation process of the cell\'s first charge and discharge, which contains key information determining its long-term performance. Our AI model can deeply mine this data and establish mapping relationships with final performance.',
+      paragraph3: 'The tool\'s significance is profound. It achieves forward-looking quality control and prediction. This not only helps to screen defective products in advance and optimize formation processes to improve cell yield, but also significantly improves production efficiency by shortening analysis and decision-making time after grading, accelerating production processes. It is a key tool for improving battery manufacturing yield and achieving intelligent and lean production.',
+      dataSize: '164 samples',
+      dataType: 'Time series data (formation)',
+      dataSource: 'Production equipment (anonymized)',
+      targetLabel: 'Prediction target',
+      target: 'K-value after grading',
       result: {
         tree: {
           title: 'K-Value List',
@@ -75,11 +88,15 @@ export default {
       imageTitle: 'Pack Consistency Distribution Visualization',
     },
     ultrasound: {
-      title: 'Ultrasound Detection Analysis',
-      description: 'SES Ultrasound Detection System is an AI-assisted analysis tool based on ultrasonic technology, specifically designed for lithium-ion battery quality control. The system can accurately identify various potential defects inside batteries through ultrasonic signal acquisition and intelligent analysis.',
-      description2: 'Through deep learning analysis of ultrasonic data, the system can quickly detect internal structural abnormalities, delamination, voids and other defects in batteries, with detection accuracy reaching micron level, providing reliable assurance for battery production quality control.',
-      imageTitle1: 'Ultrasound Detection Principle',
-      imageTitle2: 'Defect Recognition Example',
+      title: 'Electrolyte Wetting State Ultrasonic AI-Assisted Detection',
+      paragraph1: 'This software is a non-destructive testing tool for cell electrolyte wetting state based on ultrasonic waves and artificial intelligence. Its principle is similar to "ultrasound", analyzing signal attenuation and reflection differences produced by ultrasonic waves propagating inside cells due to different degrees of electrolyte wetting to detect internal states.',
+      paragraph2: 'The software\'s core function is to achieve AI quantification of wetting quality. We utilize deep learning models to extract features from complex ultrasonic signals, accurately quantifying wetting uniformity and automatically detecting anomalies such as insufficient wetting and local voids, transforming subjective experience into objective, quantifiable standards.',
+      paragraph3: 'The technology\'s significant advantages lie in its professionalism and uniqueness. Compared to methods like CT/X-Ray, ultrasound is extremely sensitive to acoustic characteristics of media such as liquids and bubbles, making it an ideal choice for characterizing wetting effects. We have embedded deep ultrasonic signal processing expertise into AI models, effectively lowering the technical threshold. Its non-destructive, efficient, online full-inspection characteristics can directly replace time-consuming standing processes, improving battery safety and production efficiency from the source, making it a key weapon for achieving closed-loop quality control.',
+      dataSize: '3 samples',
+      dataType: 'Image data (stacked cell ultrasound)',
+      dataSource: 'Production equipment (anonymized)',
+      targetLabel: 'Quantification target',
+      target: 'Cell wetting state',
       loading: 'Loading data...',
       result: {
         tree: {
@@ -98,6 +115,11 @@ export default {
         chart3: 'Ultrasound Data Distribution Chart 3',
       },
     },
+  },
+  dataLabels: {
+    dataSize: 'Sample Data Size',
+    dataType: 'Data Type',
+    dataSource: 'Data Source',
   },
   buttons: {
     startDemo: 'Start Demo',
