@@ -91,6 +91,7 @@ export default {
     negativeTip: "After adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.",
     positiveTip: "After adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
     titleTip: "Negative means after adding the specified additive, the cell will perform equally or worse than the cell with the benchmark electrolyte.\nPositive means after adding the specified additive, the cell will perform better than the cell with the benchmark electrolyte.",
+    upgradeToViewMetrics: "Upgrade to view more metrics at 25°C & 45°C",
     badgeTitle: "Badge Color Indicators (for cycle life and rate performance only)",
     badgeDescriptions: {
       gainLabel: "Performance gain",
@@ -112,11 +113,11 @@ export default {
       temp45: "45°C Performance"
     },
     performance: {
-      cycleLife25: "25°C Cycle Life",
-      ce25: "25°C Coulombic Efficiency",
-      ratePerformance25: "25°C Rate Performance",
-      cycleLife45: "45°C Cycle Life",
-      ce45: "45°C Coulombic Efficiency"
+      cycleLife25: "Cycle Life",
+      ce25: "Coulombic Efficiency",
+      ratePerformance25: "Rate Performance",
+      cycleLife45: "Cycle Life",
+      ce45: "Coulombic Efficiency"
     },
     status: {
       positive: "POSITIVE",

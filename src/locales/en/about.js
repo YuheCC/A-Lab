@@ -15,7 +15,7 @@ export default {
     title: "What is Molecular Universe?",
     intro1: "Much like Magellan first made contact with the stars as navigation tools;",
     intro2: "Or how the Hubble Telescope made contact with galaxies far, far away;",
-    intro3: "Or the Human Genome Project looked deep inside our DNA and made contact with every microscopic amino acid that defines our genetic code;",
+    intro3: "Or the Human Genome Project looked deep inside our DNA and made contact with every genetic code that defines the sequence of amino acids guiding our protein construction;",
     intro4: "SES AI has made contact with a never-before-seen 512-dimensional universe of small molecules - mapped into a 2-dimensional searchable tool - the Molecular Universe. The intent of this new map is to help battery researchers and accelerate the discovery of new materials for their next big ideas.",
     
     advantages: "The unique and fundamental advantages of Molecular Universe include:",

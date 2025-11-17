@@ -124,13 +124,16 @@ export function useMoleculePanel(setIsSidebarCollapsed?: (collapsed: boolean) =>
     const targetMoleculeName = molecule?.name || molecule?.SMILES;
     
     if (state.isVisible && currentMoleculeName === targetMoleculeName) {
-      // 如果已经显示相同分子，则切换展开状态
-      toggleExpansion();
+      // 如果已经显示相同分子，确保面板保持展开状态（支持多次查询）
+      if (!state.isExpanded) {
+        toggleExpansion();
+      }
+      // 否则保持当前展开状态，让 MoleculeModal 内部处理重新查询
     } else {
       // 显示新分子并展开
       showPanel(molecule, true);
     }
-  }, [state.isVisible, state.currentMolecule, showPanel, toggleExpansion]);
+  }, [state.isVisible, state.isExpanded, state.currentMolecule, showPanel, toggleExpansion]);
 
   // 设置响应式布局监听
   useEffect(() => {
