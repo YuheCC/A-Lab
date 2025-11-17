@@ -91,6 +91,7 @@ export default {
     positiveTitle: "ポジティブ (Positive)",
     negativeTip: "指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルと同等またはそれ以下になります。",
     positiveTip: "指定された添加剤を添加した後、セルの性能がベンチマーク電解液を使用したセルより優れます。",
+    upgradeToViewMetrics: "25°Cおよび45°Cのより多くのメトリクスを表示するにはプランをアップグレードしてください",
     badgeTitle: "バッジカラー指標（サイクル寿命とレート性能のみ適用）",
     badgeDescriptions: {
       gainLabel: "性能向上",
@@ -112,11 +113,11 @@ export default {
       temp45: "45°C性能"
     },
     performance: {
-      cycleLife25: "25°C サイクル寿命",
-      ce25: "25°C コロンビック効率",
-      ratePerformance25: "25°C レート性能",
-      cycleLife45: "45°C サイクル寿命",
-      ce45: "45°C コロンビック効率"
+      cycleLife25: "サイクル寿命",
+      ce25: "コロンビック効率",
+      ratePerformance25: "レート性能",
+      cycleLife45: "サイクル寿命",
+      ce45: "コロンビック効率"
     },
     status: {
       positive: "ポジティブ",

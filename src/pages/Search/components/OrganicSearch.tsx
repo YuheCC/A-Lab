@@ -241,7 +241,6 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const organicFilterRef = useRef<OrganicFilterRef>(null);
     const [cathode, setCathode] = useState('');
     const [anode, setAnode] = useState('');
-    const [salt, setSalt] = useState('');
     const [solvent, setSolvent] = useState('');
     const [cellDesign, setCellDesign] = useState('');
     const [metric, setMetric] = useState('');
@@ -261,7 +260,6 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         setExtraRequests('');
         setCathode('');
         setAnode('');
-        setSalt('');
         setSolvent('');
         setCellDesign('');
         setMetric('');
@@ -675,7 +673,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
         const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
         const computeEnabled = computeLevel !== 'Disabled';
-        const optionsSpecified = [cathode, anode, salt, solvent, cellDesign, metric].some(Boolean);
+        const optionsSpecified = [cathode, anode, solvent, cellDesign, metric].some(Boolean);
 
         let computeToSend = computeLevel;
         if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -684,7 +682,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
             setComputeLevel('Low');
         }
 
-        const baseQuery = buildQueryString(cathode, anode, salt, solvent, cellDesign, metric);
+        const baseQuery = buildQueryString(cathode, anode, solvent, cellDesign, metric);
         const parts: string[] = [];
         if (baseQuery) {
             parts.push(baseQuery);
@@ -1026,8 +1024,6 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 setCathode={setCathode}
                                 anode={anode}
                                 setAnode={setAnode}
-                                salt={salt}
-                                setSalt={setSalt}
                                 solvent={solvent}
                                 setSolvent={setSolvent}
                                 cellDesign={cellDesign}

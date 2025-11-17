@@ -91,6 +91,7 @@ export default {
     positiveTitle: "正面 (Positive)",
     negativeTip: "添加指定添加剂后，电池性能等于或差于使用基准电解液的电池。",
     positiveTip: "添加指定添加剂后，电池性能优于使用基准电解液的电池。",
+    upgradeToViewMetrics: "升级套餐以查看25°C和45°C的更多指标",
     badgeTitle: "Badge Color indicators（仅适用于循环寿命与倍率性能）",
     badgeDescriptions: {
       gainLabel: "性能提升",
@@ -112,11 +113,11 @@ export default {
       temp45: "45°C 性能"
     },
     performance: {
-      cycleLife25: "25°C 循环寿命",
-      ce25: "25°C 库伦效率",
-      ratePerformance25: "25°C 倍率性能",
-      cycleLife45: "45°C 循环寿命",
-      ce45: "45°C 库伦效率"
+      cycleLife25: "循环寿命",
+      ce25: "库伦效率",
+      ratePerformance25: "倍率性能",
+      cycleLife45: "循环寿命",
+      ce45: "库伦效率"
     },
     status: {
       positive: "正面",

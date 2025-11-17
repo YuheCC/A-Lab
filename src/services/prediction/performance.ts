@@ -32,6 +32,8 @@ export interface PerformanceHistoryItem {
     model_result?: string | null;
     created_at: string;
     updated_at: string;
+    temperature_25_label_0_count?: number | null;
+    temperature_45_label_0_count?: number | null;
 }
 
 export interface PerformanceHistoryResponse {

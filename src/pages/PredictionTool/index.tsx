@@ -65,7 +65,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
         second: '2-digit'
       }),
       batteryCount: apiData.barcode_count,
-      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(1)}${t('predictionTool.results.cycleUnit')}` : t('predictionTool.results.unknown'),
+      avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(0)}` : t('predictionTool.results.unknown'),
       avgCycleLife1: avgCycleLife1,
       avgCycleLife2: avgCycleLife2,
       isMock: apiData.isMock || false,
@@ -223,7 +223,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                               <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
                               <td className="file-name">{record.name}</td>
                               <td>{record.batteryCount}</td>
-                              <td>{record.avgCirculation}</td>
+                              <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
                               <td className="created-date">{formatDate(record.date)}</td>
                               <td className="actions-cell">
                                 <button

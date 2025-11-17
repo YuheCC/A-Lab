@@ -232,11 +232,6 @@ const AboutPage = () => {
                     <p>{t('about.whyBuilding.targetMission')}</p>
                     <p>{t('about.whyBuilding.computation')}</p>
                     <p>{t('about.whyBuilding.solution')}</p>
-                    <h4 style={{marginTop:'2em'}}>{t('about.whyBuilding.aboutMU0Title')}</h4>
-                    <p>{t('about.whyBuilding.aboutMU0Desc')}</p>
-                    <p>{t('about.whyBuilding.largestDb')}</p>
-                    <p>{t('about.whyBuilding.umap')}</p>
-                    <p>{t('about.whyBuilding.invitation')}</p>
                     <p><b>{t('about.whyBuilding.makeContact')}</b></p>
                   </div>
               </section>

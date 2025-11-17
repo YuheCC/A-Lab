@@ -107,7 +107,7 @@ class MoleculeService {
     const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
     const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
     const predictedFp = raw?.PREDICTED_FP_CELSIUS ?? raw?.predicted_FP_celsius ?? raw?.predicted_fp_celsius ?? raw?.predictedFp;
-    const combustionEnthalpy = raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
+    const combustionEnthalpy = raw?.COMBUSTION_ENTHALPY_EV ?? raw?.combustion_enthalpy_ev ?? raw?.combustionEnthalpy;
     const vdwVolume = raw?.vdw_volume_angstroms3 ?? raw?.VDW_VOLUME_ANGSTROMS3 ?? raw?.vdwVolumeAngstroms3;
     const fluorideBde = raw?.fluoride_bde_ev ?? raw?.FLUORIDE_BDE_EV ?? raw?.fluorideBdeEv;
     const homo = raw?.HOMO_eV ?? raw?.HOMO ?? raw?.homo;

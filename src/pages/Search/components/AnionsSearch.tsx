@@ -281,8 +281,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [cathodeCustom, setCathodeCustom] = useState('');
     const [anode, setAnode] = useState('');
     const [anodeCustom, setAnodeCustom] = useState('');
-    const [salt, setSalt] = useState('');
-    const [saltCustom, setSaltCustom] = useState('');
     const [solvent, setSolvent] = useState('');
     const [solventCustom, setSolventCustom] = useState('');
     const [cellDesign, setCellDesign] = useState('');
@@ -291,7 +289,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
     const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
     const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
-    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
     const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
     const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
 
@@ -312,8 +309,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setCathodeCustom('');
         setAnode('');
         setAnodeCustom('');
-        setSalt('');
-        setSaltCustom('');
         setSolvent('');
         setSolventCustom('');
         setCellDesign('');
@@ -734,11 +729,10 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
         const cVal = resolveCustomValue(cathode, cathodeCustom);
         const aVal = resolveCustomValue(anode, anodeCustom);
-        const sVal = resolveCustomValue(salt, saltCustom);
         const svVal = resolveCustomValue(solvent, solventCustom);
         const mVal = resolveCustomValue(metric, metricCustom);
         const computeEnabled = computeLevel !== 'Disabled';
-        const optionsSpecified = [cVal, aVal, sVal, svVal, mVal, cellDesign].some(Boolean);
+        const optionsSpecified = [cVal, aVal, svVal, mVal, cellDesign].some(Boolean);
 
         let computeToSend = computeLevel;
         if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
@@ -747,7 +741,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             setComputeLevel('Low');
         }
 
-        const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, cellDesign, mVal);
+        const baseQuery = buildQueryString(cVal, aVal, svVal, cellDesign, mVal);
         const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
         const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
         const parts: string[] = [];
@@ -1095,8 +1089,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 setCathode={setCathode}
                                 anode={anode}
                                 setAnode={setAnode}
-                                salt={salt}
-                                setSalt={setSalt}
                                 solvent={solvent}
                                 setSolvent={setSolvent}
                                 cellDesign={cellDesign}
