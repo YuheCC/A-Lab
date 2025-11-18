@@ -159,6 +159,7 @@ const Header = () => {
                 {renderNavLink('/formulate', t('navigation.header.formulation'), pathname === '/formulate', isCommonUser)}
                 {renderNavLink('/design', t('navigation.header.design'), pathname === '/design', isCommonUser)}
                 {renderNavLink('/predict', t('navigation.header.predict'), pathname === '/predict', isCommonUser)}
+                {renderNavLink('/manufacture', t('navigation.header.manufacturing'), pathname === '/manufacturing', isCommonUser)}
                 {/* <div 
                     className={`nav-dropdown-container ${isCommonUser ? 'disabled' : ''} ${isNavDropdownHovered ? 'hovered' : ''}`}
                     onMouseEnter={handleNavDropdownMouseEnter}
