@@ -20,6 +20,59 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
   const [currentStep, setCurrentStep] = useState<StepType>('intro');
   const [progress, setProgress] = useState(0);
 
+  // 模块配置
+  const moduleConfigs = {
+    consistency: {
+      layout: 'small-column',
+      images: [
+        {
+          src: '/manufacturing/1-3.png',
+          title: t('manufacturing.modules.consistency.imageTitle'),
+        },
+      ],
+    },
+    detection: {
+      layout: 'small-column',
+      images: [
+        {
+          src: '/manufacturing/3-1.png',
+          title: t('manufacturing.modules.detection.imageTitle'),
+        },
+      ],
+    },
+    kvalue: {
+      layout: 'no-column',
+      images: [
+        {
+          src: '/manufacturing/2-1.png',
+          title: t('manufacturing.modules.kvalue.imageTitle1'),
+        },
+        {
+          src: '/manufacturing/2-2.png',
+          title: t('manufacturing.modules.kvalue.imageTitle2'),
+        },
+      ],
+    },
+    sorting: {
+      layout: 'small-column',
+      images: [
+        {
+          src: '/manufacturing/4-1.png',
+          title: t('manufacturing.modules.sorting.imageTitle'),
+        },
+      ],
+    },
+    ultrasound: {
+      layout: 'small-column',
+      images: [
+        {
+          src: '/manufacturing/3-3.png',
+          title: t('manufacturing.modules.ultrasound.imageTitle'),
+        },
+      ],
+    },
+  };
+
   // 获取段落内容
   const getParagraphs = (module: ModuleType): string[] => {
     const paragraphs: string[] = [];
@@ -39,6 +92,9 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
     const key = `manufacturing.modules.${module}.dataSize`;
     return t(key) !== key;
   };
+
+  const config = moduleConfigs[activeModule];
+  const isGridLayout = config.images.length > 1;
 
   // 切换模块时重置到介绍页面
   useEffect(() => {
@@ -110,51 +166,65 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
       {/* 步骤 1: 介绍页面 */}
       {currentStep === 'intro' && (
         <div className="step-content intro-step active">
-          <div className="intro-layout vertical">
+          <div className={`intro-layout ${config.layout}`}>
             {/* 文字内容区域 */}
-            <div className="intro-text-section">
-
+            <div className="intro-text">
               {/* 段落内容 */}
               {getParagraphs(activeModule).length > 0 ? (
-                <div className="intro-paragraphs">
+                <>
                   {getParagraphs(activeModule).map((paragraph, index) => (
-                    <p key={index} className="intro-paragraph">
-                      {paragraph}
-                    </p>
+                    <p key={index}>{paragraph}</p>
                   ))}
-                </div>
+                </>
               ) : (
-                <div className="intro-text">
+                <>
                   <p>{t(`manufacturing.modules.${activeModule}.description`)}</p>
                   {t(`manufacturing.modules.${activeModule}.description2`) !== `manufacturing.modules.${activeModule}.description2` && (
                     <p>{t(`manufacturing.modules.${activeModule}.description2`)}</p>
                   )}
-                </div>
-              )}
-
-              {/* 数据信息卡片 */}
-              {hasDataInfo(activeModule) && (
-                <div className="data-info-cards">
-                  <div className="data-info-card">
-                    <div className="data-info-label">{t('manufacturing.dataLabels.dataSize')}</div>
-                    <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSize`)}</div>
-                  </div>
-                  <div className="data-info-card">
-                    <div className="data-info-label">{t('manufacturing.dataLabels.dataType')}</div>
-                    <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataType`)}</div>
-                  </div>
-                  <div className="data-info-card wide">
-                    <div className="data-info-label">{t('manufacturing.dataLabels.dataSource')}</div>
-                    <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSource`)}</div>
-                  </div>
-                  <div className="data-info-card wide">
-                    <div className="data-info-label">{t(`manufacturing.modules.${activeModule}.targetLabel`)}</div>
-                    <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.target`)}</div>
-                  </div>
-                </div>
+                </>
               )}
             </div>
+
+            {/* 图片展示区域 */}
+            {isGridLayout ? (
+              <div className="intro-images-grid">
+                {config.images.map((image, index) => (
+                  <div key={index} className="intro-image-item">
+                    <h4>{image.title}</h4>
+                    <img src={image.src} alt={image.title} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="intro-image">
+                <h4>{config.images[0].title}</h4>
+                <img src={config.images[0].src} alt={config.images[0].title} />
+              </div>
+            )}
           </div>
+
+          {/* 数据信息卡片 */}
+          {hasDataInfo(activeModule) && (
+            <div className="data-info-cards">
+              <div className="data-info-card">
+                <div className="data-info-label">{t('manufacturing.dataLabels.dataSize')}</div>
+                <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSize`)}</div>
+              </div>
+              <div className="data-info-card">
+                <div className="data-info-label">{t('manufacturing.dataLabels.dataType')}</div>
+                <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataType`)}</div>
+              </div>
+              <div className="data-info-card wide">
+                <div className="data-info-label">{t('manufacturing.dataLabels.dataSource')}</div>
+                <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSource`)}</div>
+              </div>
+              <div className="data-info-card wide">
+                <div className="data-info-label">{t(`manufacturing.modules.${activeModule}.targetLabel`)}</div>
+                <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.target`)}</div>
+              </div>
+            </div>
+          )}
 
           <div className="intro-actions">
             <button className="btn-primary start-demo-btn" onClick={handleStartDemo}>

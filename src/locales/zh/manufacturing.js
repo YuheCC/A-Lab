@@ -9,6 +9,7 @@ export default {
       dataSource: '生产设备/过程/参数数据（数据脱敏）',
       targetLabel: '分类目标',
       target: '0（正常），1（异常）',
+      imageTitle: '缺陷成因关联分析',
     },
     detection: {
       title: 'CT/Xray辅助测量及异常检测',
@@ -20,6 +21,7 @@ export default {
       dataSource: '生产设备（数据脱敏）',
       targetLabel: '量化目标',
       target: 'Overhang、对齐度',
+      imageTitle: 'SES锂电池CT AI工具',
       result: {
         tree: {
           title: '检测列表',
@@ -56,6 +58,8 @@ export default {
       dataSource: '生产设备（数据脱敏）',
       targetLabel: '预测目标',
       target: '分容后K值',
+      imageTitle1: '化成数据',
+      imageTitle2: '特征提取',
       result: {
         tree: {
           title: 'K值列表',
@@ -97,6 +101,7 @@ export default {
       dataSource: '生产设备（数据脱敏）',
       targetLabel: '量化目标',
       target: '电芯浸润状态',
+      imageTitle: 'SES超声AI工具',
       loading: '正在加载数据...',
       result: {
         tree: {
