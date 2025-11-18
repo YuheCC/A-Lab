@@ -9,6 +9,7 @@ export default {
       dataSource: 'Production equipment/process/parameter data (anonymized)',
       targetLabel: 'Classification target',
       target: '0 (Normal), 1 (Abnormal)',
+      imageTitle: 'Correlation Analysis of Defect Causes',
     },
     detection: {
       title: 'CT/X-ray Assisted Measurement and Anomaly Detection',
@@ -20,6 +21,7 @@ export default {
       dataSource: 'Production equipment (anonymized)',
       targetLabel: 'Quantification target',
       target: 'Overhang, Alignment',
+      imageTitle: 'SES Lithium Battery CT AI Tool',
       result: {
         tree: {
           title: 'Detection List',
@@ -56,6 +58,8 @@ export default {
       dataSource: 'Production equipment (anonymized)',
       targetLabel: 'Prediction target',
       target: 'K-value after grading',
+      imageTitle1: 'Formation Data',
+      imageTitle2: 'Feature Extraction',
       result: {
         tree: {
           title: 'K-Value List',
@@ -97,6 +101,7 @@ export default {
       dataSource: 'Production equipment (anonymized)',
       targetLabel: 'Quantification target',
       target: 'Cell wetting state',
+      imageTitle: 'SES Ultrasonic AI Tool',
       loading: 'Loading data...',
       result: {
         tree: {
