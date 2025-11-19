@@ -108,6 +108,9 @@ export default {
           mask: '마스크',
           imageLoadError: '이미지를 로드하지 못했거나 존재하지 않습니다',
         },
+        stateInfo: {
+          title: '상태 정보',
+        },
       },
       charts: {
         chart1: '배치 습윤 상태 1 분포도',

@@ -108,6 +108,9 @@ export default {
           mask: 'マスク',
           imageLoadError: '画像の読み込みに失敗したか、存在しません',
         },
+        stateInfo: {
+          title: '状態情報',
+        },
       },
       charts: {
         chart1: 'バッチ浸潤状態1分布図',
