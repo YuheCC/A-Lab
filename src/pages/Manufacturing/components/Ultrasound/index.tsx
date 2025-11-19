@@ -235,7 +235,9 @@ const Ultrasound: React.FC<UltrasoundProps> = ({ onBackToIntro }) => {
           {/* 右侧：状态信息模块 */}
           <div className="ultrasound-state-info">
             <div className="state-info-header">
-              <div className="state-info-title">状态信息</div>
+              <div className="state-info-title">
+                {t('manufacturing.modules.ultrasound.result.stateInfo.title')}
+              </div>
             </div>
             <div className="state-info-content">
               <div className="state-item">

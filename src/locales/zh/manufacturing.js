@@ -113,6 +113,9 @@ export default {
           mask: '掩膜图',
           imageLoadError: '图片加载失败或不存在',
         },
+        stateInfo: {
+          title: '状态信息',
+        },
       },
       charts: {
         chart1: '批次浸润状态1分布图',

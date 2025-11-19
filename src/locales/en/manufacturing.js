@@ -113,6 +113,9 @@ export default {
           mask: 'Mask',
           imageLoadError: 'Image failed to load or does not exist',
         },
+        stateInfo: {
+          title: 'State Information',
+        },
       },
       charts: {
         chart1: 'Batch Wetting State 1 Distribution',
