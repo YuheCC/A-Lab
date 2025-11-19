@@ -50,24 +50,21 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   };
 
   const handleOptionClick = (option: Option) => {
-    const isCurrentlySelected = value === option.name || (Number(option.id) === 1 && value === option.name);
+    const isCurrentlySelected = value === option.name;
 
     // 总是触发option点击事件，无论是否disabled或已选中
     onOptionClick?.(option, isCurrentlySelected);
 
     // 只有非disabled的option才能被选中
     if (!option.disabled) {
-      const newValue = Number(option.id) === 1 ? option.name : "";
-      onChange(newValue);
+      onChange(option.name);
       setIsOpen(false);
     }
   };
 
   const getDisplayValue = () => {
     if (!value) return placeholder;
-    const selectedOption = options.find(opt =>
-      opt.name === value || (Number(opt.id) === 1 && opt.name === value)
-    );
+    const selectedOption = options.find(opt => opt.name === value);
     return selectedOption?.name || value;
   };
 
@@ -96,7 +93,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               className={`custom-select-option ${
                 option.disabled ? 'disabled' : ''
               } ${
-                (value === option.name || (Number(option.id) === 1 && value === option.name)) ? 'selected' : ''
+                value === option.name ? 'selected' : ''
               }`}
               onClick={() => handleOptionClick(option)}
               role="option"
