@@ -44,7 +44,15 @@ export default  [
     },
     {
         path: '/design',
-        component: "Predict/performance"
+        component: "Design"
+    },
+    {
+        path: '/design/create',
+        component: "Design/create"
+    },
+    {
+        path: '/design/record',
+        component: "Design/record"
     },
     {
         path: "/formulate",
