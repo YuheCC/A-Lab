@@ -80,13 +80,13 @@ const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onCha
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="pagination-container">
-      <div className="pagination-info">
+    <div className="cc-pagination">
+      <div className="cc-pagination__info">
         {t('common.pagination.totalInfo', { total, pageSize })}
       </div>
-      <div className="pagination-controls">
+      <div className="cc-pagination__controls">
         <button
-          className="pagination-button pagination-prev"
+          className="cc-pagination__button cc-pagination__button--prev"
           onClick={handlePrevious}
           disabled={current === 1}
           title={t('common.pagination.previousPage')}
@@ -96,13 +96,13 @@ const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onCha
 
         {pageNumbers.map((page, index) => (
           page === '...' ? (
-            <span key={`ellipsis-${index}`} className="pagination-ellipsis">
+            <span key={`ellipsis-${index}`} className="cc-pagination__ellipsis">
               ...
             </span>
           ) : (
             <button
               key={page}
-              className={`pagination-button pagination-page ${current === page ? 'active' : ''}`}
+              className={`cc-pagination__button cc-pagination__button--page ${current === page ? 'cc-pagination__button--active' : ''}`}
               onClick={() => handlePageClick(page as number)}
             >
               {page}
@@ -111,7 +111,7 @@ const Pagination: React.FC<PaginationProps> = ({ current, total, pageSize, onCha
         ))}
 
         <button
-          className="pagination-button pagination-next"
+          className="cc-pagination__button cc-pagination__button--next"
           onClick={handleNext}
           disabled={current === totalPages}
           title={t('common.pagination.nextPage')}

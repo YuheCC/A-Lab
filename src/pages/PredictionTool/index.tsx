@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
-import Pagination from './components/Pagination';
+import Pagination from '@/components/Pagination';
 import './index.less';
 
 interface FileRecord {

@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
-import Introduction from './components/Introduction';
-import Pagination from './components/Pagination';
+import Introduction from '@/components/Introduction';
+import Pagination from '@/components/Pagination';
 import './index.less';
 
 interface HistoryRecord {
@@ -175,7 +175,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         <div className="design-tab-content">
           {activeTab === 'introduction' && (
             <div className="design-tab-panel">
-              <Introduction />
+              <Introduction
+                i18nKey="design.introduction.comingSoon"
+                defaultText="Introduction content coming soon..."
+              />
             </div>
           )}
 

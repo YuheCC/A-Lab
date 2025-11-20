@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useContext } from 're
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
-import { ArrowUpIcon, ArrowDownIcon } from '../ArrowIcons';
+import { ArrowUpIcon, ArrowDownIcon } from '@/components/PerformanceBadge';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
 import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
 import { globalWebSocketManager } from '@/services/chat/wsService';

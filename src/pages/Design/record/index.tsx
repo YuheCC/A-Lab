@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@mui/material';
-import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { getHistoryDetail } from '../model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import { useAuthStore } from '@/models/useAuth';
-import { ArrowUpIcon, ArrowDownIcon } from '../components/ArrowIcons';
+import PerformanceBadge, { PerformanceMetric } from '@/components/PerformanceBadge';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import './index.less';
 
@@ -169,49 +167,6 @@ const RecordPage: React.FC = () => {
     };
   };
 
-  const renderResultBadge = (metric: ProcessedMetric, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
-    const isPositive = metric.status === 'Positive';
-    const isNegative = metric.status === 'Negative';
-
-    let percentValue = 0;
-    if (metric.confidence !== null) {
-      percentValue = Math.abs(metric.confidence);
-    }
-
-    let level = '';
-    if (percentValue < 5) {
-      level = 'light';
-    } else if (percentValue >= 5 && percentValue <= 25) {
-      level = 'medium';
-    } else if (percentValue > 25) {
-      level = 'dark';
-    }
-
-    const badgeClass = `${isPositive ? 'positive' : isNegative ? 'negative' : 'unknown'}-${level}`;
-    const ArrowIcon = isPositive ? ArrowUpIcon : isNegative ? ArrowDownIcon : null;
-
-    if (metricType === 'ce') {
-      return (
-        <div className={`performance-result-badge performance-result-badge--${badgeClass} performance-result-badge--ce-only`}>
-          <span className="performance-result-badge__arrow">
-            {ArrowIcon && <ArrowIcon size={16} />}
-          </span>
-        </div>
-      );
-    }
-
-    const value = percentValue > 0 ? `${percentValue}%` : '';
-
-    return (
-      <div className={`performance-result-badge performance-result-badge--${badgeClass}`}>
-        <span className="performance-result-badge__text">
-          {ArrowIcon && <ArrowIcon size={15} />}
-          {value && <span>{value}</span>}
-        </span>
-      </div>
-    );
-  };
-
   const processedResults = getProcessedResults();
   const isMock = detailData?.isMock;
 
@@ -289,15 +244,15 @@ const RecordPage: React.FC = () => {
                     <div className="performance-results">
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                        {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
+                        <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
                       </div>
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                        {renderResultBadge(processedResults.temp25.ce, 'ce')}
+                        <PerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
                       </div>
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                        {renderResultBadge(processedResults.temp25.ratePerformance, 'ratePerformance')}
+                        <PerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
                       </div>
                     </div>
                   </div>
@@ -307,11 +262,11 @@ const RecordPage: React.FC = () => {
                     <div className="performance-results">
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                        {renderResultBadge(processedResults.temp45.cycleLife, 'cycleLife')}
+                        <PerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
                       </div>
                       <div className="result-item">
                         <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                        {renderResultBadge(processedResults.temp45.ce, 'ce')}
+                        <PerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
                       </div>
                     </div>
                   </div>
@@ -322,7 +277,7 @@ const RecordPage: React.FC = () => {
                   <div className="limited-preview">
                     <div className="result-item">
                       <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                      {renderResultBadge(processedResults.temp25.cycleLife, 'cycleLife')}
+                      <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
                     </div>
                     <div className="upgrade-prompt">
                       {t('performance.results.upgradeToViewMetrics')}
