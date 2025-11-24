@@ -43,6 +43,10 @@ export default  [
         component: "PredictionTool/detail"
     },
     {
+        path: "/predict/train",
+        component: "PredictionTool/train"
+    },
+    {
         path: '/design',
         component: "Design"
     },

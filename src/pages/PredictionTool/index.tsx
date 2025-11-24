@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
+import { Activity } from 'lucide-react';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
@@ -15,6 +16,7 @@ interface FileRecord {
   avgCirculation: string;
   avgCycleLife1: number;
   avgCycleLife2: number;
+  model?: string;
   isMock?: boolean;
   rawData?: any;
 }
@@ -32,16 +34,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
-  const getInitialTab = (): 'introduction' | 'records' => {
+  const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam : 'introduction';
+    return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam as 'introduction' | 'records' | 'models' : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introduction' | 'records'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'records' || tabParam === 'introduction')) {
+    if (tabParam && (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models')) {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('tab');
       setSearchParams(newSearchParams, { replace: true });
@@ -68,6 +70,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(0)}` : t('predictionTool.results.unknown'),
       avgCycleLife1: avgCycleLife1,
       avgCycleLife2: avgCycleLife2,
+      model: apiData.model || 'Li-ion Cycle Predictor v2.1',
       isMock: apiData.isMock || false,
       rawData: apiData
     };
@@ -102,6 +105,10 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     window.open('/predict/create', '_blank');
   };
 
+  const handleTrain = () => {
+    navigate('/predict/train');
+  };
+
   const handleViewDetails = (id: string) => {
     navigate(`/predict/detail?id=${id}`);
   };
@@ -131,7 +138,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setCurrentPage(page);
   };
 
-  const handleTabChange = (tab: 'introduction' | 'records') => {
+  const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
     setActiveTab(tab);
   };
 
@@ -159,6 +166,10 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
         <button className="new-prediction-button" onClick={handleNewPrediction}>
           + {t('predictionTool.history.newPrediction', 'New Prediction')}
         </button>
+        <button className="train-button" onClick={handleTrain}>
+          <Activity size={16} />
+          {t('predictionTool.history.train', 'Train')}
+        </button>
       </div>
 
       <div className="prediction-tool-table-container">
@@ -175,6 +186,12 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
               onClick={() => handleTabChange('records')}
             >
               {t('predictionTool.tabs.records', 'Records')}
+            </button>
+            <button
+              className={`prediction-tab ${activeTab === 'models' ? 'active' : ''}`}
+              onClick={() => handleTabChange('models')}
+            >
+              {t('predictionTool.tabs.models', 'Models')}
             </button>
           </div>
         </div>
@@ -206,6 +223,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                           <th>{t('predictionTool.list.columns.fileName', 'File Name')}</th>
                           <th>{t('predictionTool.list.columns.batteryCount', 'Battery Count')}</th>
                           <th>{t('predictionTool.list.columns.avgCycleLife', 'Avg Cycle Life')}</th>
+                          <th>{t('predictionTool.list.columns.model', 'Model')}</th>
                           <th>{t('predictionTool.list.columns.created', 'Created')}</th>
                           <th>{t('predictionTool.list.columns.actions', 'Actions')}</th>
                         </tr>
@@ -213,7 +231,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       <tbody>
                         {historyData.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="no-data">
+                            <td colSpan={7} className="no-data">
                               {t('predictionTool.history.noResults', 'No prediction records found.')}
                             </td>
                           </tr>
@@ -224,6 +242,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                               <td className="file-name">{record.name}</td>
                               <td>{record.batteryCount}</td>
                               <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
+                              <td>{record.model}</td>
                               <td className="created-date">{formatDate(record.date)}</td>
                               <td className="actions-cell">
                                 <button
@@ -255,6 +274,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                   />
                 </>
               )}
+            </div>
+          )}
+
+          {activeTab === 'models' && (
+            <div className="prediction-tab-panel">
+              <div className="no-data">
+                <p>Models content coming soon...</p>
+              </div>
             </div>
           )}
         </div>

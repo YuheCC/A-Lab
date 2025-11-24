@@ -67,7 +67,8 @@ export default {
     // Tabs
     tabs: {
         introduction: "소개",
-        records: "기록"
+        records: "기록",
+        models: "모델"
     },
 
     // List
@@ -77,6 +78,7 @@ export default {
             fileName: "파일명",
             batteryCount: "배터리 수",
             avgCycleLife: "평균 사이클 수명",
+            model: "모델",
             created: "생성 시간",
             actions: "작업"
         }
@@ -86,6 +88,7 @@ export default {
     history: {
         title: "예측 기록",
         newPrediction: "새 예측",
+        train: "학습",
         searchPlaceholder: "파일명으로 검색...",
         loadingText: "로딩 중...",
         error: "오류",

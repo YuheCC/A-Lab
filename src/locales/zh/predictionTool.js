@@ -67,7 +67,8 @@ export default {
     // Tabs
     tabs: {
         introduction: "简介",
-        records: "记录"
+        records: "记录",
+        models: "模型"
     },
 
     // List
@@ -77,6 +78,7 @@ export default {
             fileName: "文件名",
             batteryCount: "电芯数量",
             avgCycleLife: "平均循环寿命",
+            model: "模型",
             created: "创建时间",
             actions: "操作"
         }
@@ -86,6 +88,7 @@ export default {
     history: {
         title: "预测记录",
         newPrediction: "新增预测",
+        train: "训练",
         searchPlaceholder: "按文件名搜索...",
         loadingText: "加载中...",
         error: "错误",
@@ -173,5 +176,38 @@ export default {
         point3: '对于已知循环寿命的真实电芯，模型预测EOL在1321次循环时。',
         point3_sub1: '实际值为1261次循环（基于每个循环的容量保持率）或1351次循环（基于容量检查循环的容量保持率）。',
         point4: '预测误差仅为4.7%或2.2%，远优于简单线性外推法（800次循环）。'
+    },
+
+    // Train
+    train: {
+        title: "训练新模型",
+        back: "返回",
+        step1: {
+            title: "模型信息",
+            name: "模型名称",
+            namePlaceholder: "输入模型名称",
+            remarks: "备注（可选）",
+            remarksPlaceholder: "输入任何其他注释或备注"
+        },
+        step2: {
+            title: "基础模型",
+            modelName: "OSES-Base-v1",
+            badge: "基础模型"
+        },
+        step3: {
+            title: "训练数据集",
+            ratio: "训练-测试分割比例：",
+            ratioValue: "7 : 3",
+            ratioDesc: "70% 的数据集将用于训练，30% 用于测试",
+            upload: "上传数据集",
+            dragDrop: "将文件拖放到此处，或点击浏览",
+            formats: "支持的格式：CSV、XLSX（最大 50MB）",
+            chooseFile: "选择文件",
+            downloadSample: "下载示例"
+        },
+        startTraining: "开始训练",
+        errors: {
+            fileSize: "文件大小超过 50MB"
+        }
     }
 };
