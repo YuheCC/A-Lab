@@ -176,5 +176,38 @@ export default {
         point3: 'サイクル寿命が既知の実際のセルの場合、モデルは1321サイクル時にEOLを予測しました。',
         point3_sub1: '実測値は1261サイクル（各サイクルの容量保持率に基づく）または1351サイクル（容量チェックサイクルの容量保持率に基づく）です。',
         point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "Model Information",
+        modelId: "Model ID:",
+        back: "Back",
+        creator: "Creator:",
+        status: "Status:",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        created: "Created:",
+        remarks: "Remarks:",
+        baseModel: "Base Model",
+        trainingDataset: "Training Dataset",
+        datasetName: "Dataset Name:",
+        fileSize: "File Size:",
+        totalSamples: "Total Samples:",
+        ratio: "Train-Test Ratio:",
+        trainingResults: "Training Results",
+        accuracy: "Accuracy",
+        loss: "Loss",
+        epochs: "Epochs",
+        trainingTime: "Training Time",
+        validationScore: "Validation Score",
+        predictionRecords: "Prediction Records",
+        recordId: "ID",
+        fileName: "File Name",
+        batteryCount: "Battery Count",
+        avgCycleLife: "Avg Cycle Life",
+        actions: "Actions",
+        viewDetails: "View Details"
     }
 };

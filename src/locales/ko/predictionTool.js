@@ -176,5 +176,38 @@ export default {
         point3: '사이클 수명이 알려진 실제 셀의 경우 모델은 1321 사이클에서 EOL을 예측했습니다.',
         point3_sub1: '실측값은 1261 사이클(각 사이클의 용량 유지율 기준) 또는 1351 사이클(용량 확인 사이클의 용량 유지율 기준)입니다.',
         point4: '예측 오차는 4.7% 또는 2.2%로, 단순 선형 외삽법(800 사이클)보다 훨씬 우수합니다.'
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "Model Information",
+        modelId: "Model ID:",
+        back: "Back",
+        creator: "Creator:",
+        status: "Status:",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        created: "Created:",
+        remarks: "Remarks:",
+        baseModel: "Base Model",
+        trainingDataset: "Training Dataset",
+        datasetName: "Dataset Name:",
+        fileSize: "File Size:",
+        totalSamples: "Total Samples:",
+        ratio: "Train-Test Ratio:",
+        trainingResults: "Training Results",
+        accuracy: "Accuracy",
+        loss: "Loss",
+        epochs: "Epochs",
+        trainingTime: "Training Time",
+        validationScore: "Validation Score",
+        predictionRecords: "Prediction Records",
+        recordId: "ID",
+        fileName: "File Name",
+        batteryCount: "Battery Count",
+        avgCycleLife: "Avg Cycle Life",
+        actions: "Actions",
+        viewDetails: "View Details"
     }
 };

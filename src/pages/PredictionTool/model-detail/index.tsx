@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from '@umijs/max';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
 import './index.less';
 
@@ -36,6 +37,7 @@ interface ModelDetail {
 
 const ModelDetailPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Mock data based on Figma
   const [model] = useState<ModelDetail>({
@@ -95,6 +97,19 @@ const ModelDetailPage: React.FC = () => {
     navigate(`/predict/detail?id=${id}`);
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'online':
+        return t('predictionTool.modelDetail.statusOnline');
+      case 'trained':
+        return t('predictionTool.modelDetail.statusTrained');
+      case 'training':
+        return t('predictionTool.modelDetail.statusTraining');
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="model-detail-page-wrapper">
       <div className="model-detail-page">
@@ -102,36 +117,36 @@ const ModelDetailPage: React.FC = () => {
         <div className="page-header">
         <div className="header-content">
           <h1 className="title">{model.name}</h1>
-          <p className="subtitle">Model ID: {model.id}</p>
+          <p className="subtitle">{t('predictionTool.modelDetail.modelId')} {model.id}</p>
         </div>
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft size={16} />
-          返回
+          {t('predictionTool.modelDetail.back')}
         </button>
       </div>
 
       {/* Model Information */}
       <div className="detail-section">
-        <h2 className="section-title">Model Information</h2>
+        <h2 className="section-title">{t('predictionTool.modelDetail.title')}</h2>
         <div className="info-card">
           <div className="info-row">
-            <span className="label">Creator:</span>
+            <span className="label">{t('predictionTool.modelDetail.creator')}</span>
             <span className="value">{model.creator}</span>
           </div>
           <div className="info-row">
-            <span className="label">Status:</span>
+            <span className="label">{t('predictionTool.modelDetail.status')}</span>
             <span className="value">
               <span className="status-badge">
-                {model.status === 'online' ? '上线' : model.status === 'trained' ? '训练完成' : '训练中'}
+                {getStatusLabel(model.status)}
               </span>
             </span>
           </div>
           <div className="info-row">
-            <span className="label">Created:</span>
+            <span className="label">{t('predictionTool.modelDetail.created')}</span>
             <span className="value">{model.created_at}</span>
           </div>
           <div className="info-row">
-            <span className="label">Remarks:</span>
+            <span className="label">{t('predictionTool.modelDetail.remarks')}</span>
             <span className="value">{model.remarks}</span>
           </div>
         </div>
@@ -139,7 +154,7 @@ const ModelDetailPage: React.FC = () => {
 
       {/* Base Model */}
       <div className="detail-section">
-        <h2 className="section-title">Base Model</h2>
+        <h2 className="section-title">{t('predictionTool.modelDetail.baseModel')}</h2>
         <div className="info-card">
           <div className="info-row">
             <span className="value">{model.base_model}</span>
@@ -149,25 +164,25 @@ const ModelDetailPage: React.FC = () => {
 
       {/* Training Dataset */}
       <div className="detail-section">
-        <h2 className="section-title">Training Dataset</h2>
+        <h2 className="section-title">{t('predictionTool.modelDetail.trainingDataset')}</h2>
         <div className="info-card">
           <div className="info-row">
-            <span className="label">Dataset Name:</span>
+            <span className="label">{t('predictionTool.modelDetail.datasetName')}</span>
             <span className="value file-link">
               <FileText size={16} color="#00a63e" />
               {model.dataset.name}
             </span>
           </div>
           <div className="info-row">
-            <span className="label">File Size:</span>
+            <span className="label">{t('predictionTool.modelDetail.fileSize')}</span>
             <span className="value">{model.dataset.size}</span>
           </div>
           <div className="info-row">
-            <span className="label">Total Samples:</span>
+            <span className="label">{t('predictionTool.modelDetail.totalSamples')}</span>
             <span className="value">{model.dataset.samples.toLocaleString()}</span>
           </div>
           <div className="info-row">
-            <span className="label">Train-Test Ratio:</span>
+            <span className="label">{t('predictionTool.modelDetail.ratio')}</span>
             <span className="value">{model.dataset.ratio}</span>
           </div>
         </div>
@@ -176,27 +191,27 @@ const ModelDetailPage: React.FC = () => {
       {/* Training Results - Only show if status is trained or online */}
       {(model.status === 'trained' || model.status === 'online') && model.training_results && (
         <div className="detail-section">
-          <h2 className="section-title">Training Results</h2>
+          <h2 className="section-title">{t('predictionTool.modelDetail.trainingResults')}</h2>
           <div className="info-card">
              <div className="training-results-grid">
                <div className="result-card">
-                 <span className="result-label">Accuracy</span>
+                 <span className="result-label">{t('predictionTool.modelDetail.accuracy')}</span>
                  <span className="result-value">{model.training_results.accuracy}</span>
                </div>
                <div className="result-card">
-                 <span className="result-label">Loss</span>
+                 <span className="result-label">{t('predictionTool.modelDetail.loss')}</span>
                  <span className="result-value">{model.training_results.loss}</span>
                </div>
                <div className="result-card">
-                 <span className="result-label">Epochs</span>
+                 <span className="result-label">{t('predictionTool.modelDetail.epochs')}</span>
                  <span className="result-value">{model.training_results.epochs}</span>
                </div>
                <div className="result-card">
-                 <span className="result-label">Training Time</span>
+                 <span className="result-label">{t('predictionTool.modelDetail.trainingTime')}</span>
                  <span className="result-value">{model.training_results.training_time}</span>
                </div>
                <div className="result-card full-width">
-                 <span className="result-label">Validation Score</span>
+                 <span className="result-label">{t('predictionTool.modelDetail.validationScore')}</span>
                  <span className="result-value">{model.training_results.validation_score}</span>
                </div>
              </div>
@@ -207,17 +222,17 @@ const ModelDetailPage: React.FC = () => {
       {/* Prediction Records - Only show if status is online */}
       {model.status === 'online' && model.prediction_records && (
         <div className="detail-section">
-          <h2 className="section-title">Prediction Records</h2>
+          <h2 className="section-title">{t('predictionTool.modelDetail.predictionRecords')}</h2>
           <div className="records-table-container">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>File Name</th>
-                  <th>Battery Count</th>
-                  <th>Avg Cycle Life</th>
-                  <th>Created</th>
-                  <th>Actions</th>
+                  <th>{t('predictionTool.modelDetail.recordId')}</th>
+                  <th>{t('predictionTool.modelDetail.fileName')}</th>
+                  <th>{t('predictionTool.modelDetail.batteryCount')}</th>
+                  <th>{t('predictionTool.modelDetail.avgCycleLife')}</th>
+                  <th>{t('predictionTool.modelDetail.created')}</th>
+                  <th>{t('predictionTool.modelDetail.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -226,11 +241,11 @@ const ModelDetailPage: React.FC = () => {
                     <td>{record.id}</td>
                     <td>{record.file_name}</td>
                     <td>{record.battery_count}</td>
-                    <td>{record.avg_cycle_life} cycles</td>
+                    <td>{record.avg_cycle_life} {t('predictionTool.results.cycleUnit')}</td>
                     <td>{record.created_at}</td>
                     <td>
                       <button className="view-btn" onClick={() => handleViewRecord(record.id)}>
-                        View Details
+                        {t('predictionTool.modelDetail.viewDetails')}
                       </button>
                     </td>
                   </tr>
@@ -246,4 +261,3 @@ const ModelDetailPage: React.FC = () => {
 };
 
 export default ModelDetailPage;
-

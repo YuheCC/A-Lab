@@ -209,5 +209,38 @@ export default {
         errors: {
             fileSize: "File size exceeds 50MB"
         }
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "Model Information",
+        modelId: "Model ID:",
+        back: "Back",
+        creator: "Creator:",
+        status: "Status:",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        created: "Created:",
+        remarks: "Remarks:",
+        baseModel: "Base Model",
+        trainingDataset: "Training Dataset",
+        datasetName: "Dataset Name:",
+        fileSize: "File Size:",
+        totalSamples: "Total Samples:",
+        ratio: "Train-Test Ratio:",
+        trainingResults: "Training Results",
+        accuracy: "Accuracy",
+        loss: "Loss",
+        epochs: "Epochs",
+        trainingTime: "Training Time",
+        validationScore: "Validation Score",
+        predictionRecords: "Prediction Records",
+        recordId: "ID",
+        fileName: "File Name",
+        batteryCount: "Battery Count",
+        avgCycleLife: "Avg Cycle Life",
+        actions: "Actions",
+        viewDetails: "View Details"
     }
 };

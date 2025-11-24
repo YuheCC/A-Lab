@@ -209,5 +209,38 @@ export default {
         errors: {
             fileSize: "文件大小超过 50MB"
         }
+    },
+    
+    // Model Detail
+    modelDetail: {
+        title: "模型信息",
+        modelId: "模型 ID：",
+        back: "返回",
+        creator: "创建者：",
+        status: "状态：",
+        statusOnline: "上线",
+        statusTrained: "训练完成",
+        statusTraining: "训练中",
+        created: "创建时间：",
+        remarks: "备注：",
+        baseModel: "基础模型",
+        trainingDataset: "训练数据集",
+        datasetName: "数据集名称：",
+        fileSize: "文件大小：",
+        totalSamples: "总样本数：",
+        ratio: "训练-测试比例：",
+        trainingResults: "训练结果",
+        accuracy: "准确率",
+        loss: "损失",
+        epochs: "轮数",
+        trainingTime: "训练时长",
+        validationScore: "验证分数",
+        predictionRecords: "预测记录",
+        recordId: "ID",
+        fileName: "文件名",
+        batteryCount: "电芯数量",
+        avgCycleLife: "平均循环寿命",
+        actions: "操作",
+        viewDetails: "查看详情"
     }
 };
