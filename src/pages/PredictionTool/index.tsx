@@ -279,8 +279,35 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
           {activeTab === 'models' && (
             <div className="prediction-tab-panel">
-              <div className="no-data">
-                <p>Models content coming soon...</p>
+              {/* Temporary list to access the model detail page */}
+              <div className="records-table-wrapper">
+                <table className="records-table">
+                  <thead>
+                    <tr>
+                      <th>Model ID</th>
+                      <th>Model Name</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="record-id">M-2024-01</td>
+                      <td className="file-name">Li-ion Cycle Predictor v2.1</td>
+                      <td><span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>上线</span></td>
+                      <td className="created-date">2024/01/10</td>
+                      <td className="actions-cell">
+                        <button
+                          className="action-button view-button"
+                          onClick={() => navigate('/predict/model-detail?id=M-2024-01')}
+                        >
+                          {t('predictionTool.history.actions.viewDetails', 'View Details')}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
