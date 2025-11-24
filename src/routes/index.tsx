@@ -63,6 +63,14 @@ export default  [
         component: "Design/record"
     },
     {
+        path: '/design/model-detail',
+        component: "Design/model-detail"
+    },
+    {
+        path: '/design/train',
+        component: "Design/train"
+    },
+    {
         path: "/formulate",
         component: "FormulationNew"
     },

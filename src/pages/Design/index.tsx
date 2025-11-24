@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
+import { Activity } from 'lucide-react';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from '@/components/Introduction';
@@ -31,16 +32,16 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
-  const getInitialTab = (): 'introduction' | 'records' => {
+  const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     const tabParam = searchParams.get('tab');
-    return (tabParam === 'records' || tabParam === 'introduction') ? tabParam : 'introduction';
+    return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam as 'introduction' | 'records' | 'models' : 'introduction';
   };
 
-  const [activeTab, setActiveTab] = useState<'introduction' | 'records'>(getInitialTab());
+  const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'records' || tabParam === 'introduction')) {
+    if (tabParam && (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models')) {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('tab');
       setSearchParams(newSearchParams, { replace: true });
@@ -96,6 +97,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     window.open('/design/create', '_blank');
   };
 
+  const handleTrain = () => {
+    navigate('/design/train');
+  };
+
   const handleViewDetails = (id: string) => {
     navigate(`/design/record?id=${id}`);
   };
@@ -124,7 +129,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setCurrentPage(page);
   };
 
-  const handleTabChange = (tab: 'introduction' | 'records') => {
+  const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
     setActiveTab(tab);
   };
 
@@ -152,6 +157,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         <button className="new-design-button" onClick={handleNewDesign}>
           + {t('design.history.newDesign', 'New Design')}
         </button>
+        <button className="train-button" onClick={handleTrain}>
+          <Activity size={16} />
+          {t('design.history.train', 'Train')}
+        </button>
       </div>
 
       <div className="design-tool-table-container">
@@ -168,6 +177,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
               onClick={() => handleTabChange('records')}
             >
               {t('design.tabs.records', 'Records')}
+            </button>
+            <button
+              className={`design-tab ${activeTab === 'models' ? 'active' : ''}`}
+              onClick={() => handleTabChange('models')}
+            >
+              {t('design.tabs.models', 'Models')}
             </button>
           </div>
         </div>
@@ -251,6 +266,41 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   />
                 </>
               )}
+            </div>
+          )}
+
+          {activeTab === 'models' && (
+            <div className="design-tab-panel">
+              {/* Temporary list to access the model detail page */}
+              <div className="records-table-wrapper">
+                <table className="records-table">
+                  <thead>
+                    <tr>
+                      <th>{t('design.models.columns.modelId', 'Model ID')}</th>
+                      <th>{t('design.models.columns.modelName', 'Model Name')}</th>
+                      <th>{t('design.models.columns.status', 'Status')}</th>
+                      <th>{t('design.models.columns.created', 'Created')}</th>
+                      <th>{t('design.models.columns.actions', 'Actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="record-id">DM-2024-01</td>
+                      <td className="file-name">Electrolyte Design Model v1.0</td>
+                      <td><span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>{t('design.models.statusOnline', 'Online')}</span></td>
+                      <td className="created-date">2024/01/15</td>
+                      <td className="actions-cell">
+                        <button
+                          className="action-button view-button"
+                          onClick={() => navigate('/design/model-detail?id=DM-2024-01')}
+                        >
+                          {t('design.history.actions.viewDetails', 'View Details')}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

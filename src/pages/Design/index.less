@@ -25,13 +25,14 @@
     justify-content: flex-start;
     align-items: center;
     margin: 12px 24px 8px 0px;
+    gap: 16px;
   }
 
   .new-design-button {
     background: #1f2937;
     color: #ffffff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 500;
@@ -40,6 +41,26 @@
 
     &:hover {
       background: #374151;
+    }
+  }
+
+  .train-button {
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5dc;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: #f3f4f6;
+      border-color: #9ca3af;
     }
   }
 
@@ -158,6 +179,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: monospace;
+  }
+
+  .file-name {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .created-date {

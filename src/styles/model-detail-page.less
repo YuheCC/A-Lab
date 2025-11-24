@@ -1,0 +1,226 @@
+@import '@/styles/variables.less';
+
+// 通用模型详情页面样式
+.model-detail-page-wrapper {
+  background-color: white;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.model-detail-page {
+  padding: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    width: 100%;
+
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+      align-items: flex-start;
+      flex: 1;
+      min-width: 0;
+
+      .title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 36px;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: #6a7282;
+        line-height: 20px;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+      }
+    }
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 1px solid #d1d5dc;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 16px;
+      color: #364153;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      height: 42px;
+
+      &:hover {
+        background-color: #f8fafc;
+        border-color: #9ca3af;
+      }
+    }
+  }
+
+  .detail-section {
+    margin-bottom: 24px;
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .info-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 24px;
+
+      .info-row {
+        display: flex;
+        margin-bottom: 12px;
+        align-items: flex-start;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .label {
+          width: 160px;
+          font-size: 14px;
+          color: #4a5565;
+          flex-shrink: 0;
+          text-align: left;
+        }
+
+        .value {
+          font-size: 14px;
+          color: #101828;
+          flex: 1;
+          text-align: left;
+
+          &.file-link {
+            color: #00a63e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .status-badge {
+          background-color: #dcfce7;
+          color: #008236;
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 14px;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .training-results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
+    .result-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .result-label {
+        font-size: 12px;
+        color: #6a7282;
+        text-align: left;
+      }
+
+      .result-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #101828;
+        text-align: left;
+      }
+    }
+
+    .result-card.full-width {
+      grid-column: span 2;
+    }
+  }
+
+  .records-table-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 24px;
+    overflow: hidden;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        text-align: left;
+        padding: 10px 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0f172a;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      td {
+        padding: 14px 8px;
+        font-size: 14px;
+        color: #0f172a;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        vertical-align: middle;
+        text-align: left;
+
+        .view-btn {
+          padding: 6px 12px;
+          border-radius: 8px;
+          background: #f1f5f9;
+          color: #364153;
+          font-size: 14px;
+          font-weight: 500;
+          border: none;
+          cursor: pointer;
+          transition: background 0.2s;
+          white-space: nowrap;
+
+          &:hover {
+            background: #e2e8f0;
+          }
+        }
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+}
