@@ -163,7 +163,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 <input
                   id="file-upload"
                   type="file"
-                  accept=".csv,.xlsx,.xls"
+                  accept=".csv,.xlsx,.xls,.nda,.ndax"
                   onChange={handleFileUpload}
                   style={{ display: 'none' }}
                 />
@@ -387,7 +387,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   </table>
                 ) : (
                   <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic', marginLeft: '20px' }}>
-                    {t('predictionTool.results.noDetailedData')}
+                    {predictionResult.fail_reason_1 ?? predictionResult.fail_reason_2 ?? t('predictionTool.results.noDetailedData')}
                   </p>
                 )}
               </div>

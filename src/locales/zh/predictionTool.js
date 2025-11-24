@@ -17,10 +17,10 @@ export default {
     upload: {
         selectFile: "选择文件",
         clickToUpload: "点击上传电池数据文件",
-        subtitle: "目前仅支持CSV格式文件，后续将支持更多文件类型",
+        subtitle: "目前仅支持CSV和Neware默认文件格式（NDA/NDAX），后续将支持更多文件类型",
         uploading: "正在上传文件...",
         waitText: "请稍候",
-        dataFormatTip: "📋 数据格式要求",
+        dataFormatTip: "📋 CSV数据格式要求",
         sampleData: "样例数据",
         requiredFields: "必需字段：",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",
@@ -169,7 +169,7 @@ export default {
         point1: '"预测"可以使用前100个循环的时序数据预测循环寿命。',
         point1_sub1: 'NCM811/12%Si.-石墨搭配碳酸盐电解液',
         point1_sub2: '1C/1C循环，每100个循环进行0.33C/0.33C容量检查',
-        point2: '对于锂离子电池，预测精度可达到±5%。',
+        point2: '对于一般预测，准确度约为 ±15%。针对特定电池体系微调模型后，该体系的预测准确度可提升至 ±5% 左右。',
         point3: '对于已知循环寿命的真实电芯，模型预测EOL在1321次循环时。',
         point3_sub1: '实际值为1261次循环（基于每个循环的容量保持率）或1351次循环（基于容量检查循环的容量保持率）。',
         point4: '预测误差仅为4.7%或2.2%，远优于简单线性外推法（800次循环）。'
