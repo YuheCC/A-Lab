@@ -288,7 +288,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                   )}
                 </div>
               </div>
-              <div
+              {/* <div
                 role="button"
                 tabIndex={0}
                 aria-expanded={showAdvanced}
@@ -317,7 +317,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 ) : (
                   <ChevronDown size={14} style={{ marginLeft: '6px' }} />
                 )}
-              </div>
+              </div> */}
             </div>
             {showAdvanced && (
               <FindFriendAdvancedOptions
