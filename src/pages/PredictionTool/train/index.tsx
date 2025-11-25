@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
 import { Snackbar, Alert } from '@mui/material';
 import { trainModel } from '../model';
+import { useLoginModalContext } from '@/components/LoginModal/context';
 import './index.less';
 
 const TrainPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { openLoginModal } = useLoginModalContext();
   const [modelName, setModelName] = useState('');
   const [remarks, setRemarks] = useState('');
   const [baseModel, setBaseModel] = useState('OSES-Base-v1');
@@ -61,6 +63,14 @@ const TrainPage: React.FC = () => {
   };
 
   const handleStartTraining = async () => {
+    // Check if user is logged in first
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Open login modal directly without showing error message
+      openLoginModal();
+      return;
+    }
+
     // Validate required fields
     if (!modelName || !file) {
       setSnackbar({
