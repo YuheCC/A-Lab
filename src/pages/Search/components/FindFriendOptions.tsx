@@ -230,7 +230,7 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                       </div>
                     )}
                   </div>
-                  {findClosestFriends && (
+                  { false && findClosestFriends && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', opacity: readOnly ? 0.6 : 1 }}>
                       <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
                       <InfoTooltip
