@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
+import { Snackbar, Alert } from '@mui/material';
+import { trainModel } from '../model';
 import './index.less';
 
 const TrainPage: React.FC = () => {
@@ -12,6 +14,18 @@ const TrainPage: React.FC = () => {
   const [baseModel, setBaseModel] = useState('OSES-Base-v1');
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Loading and notification state
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const handleBack = () => {
     navigate(-1);
@@ -46,9 +60,52 @@ const TrainPage: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleStartTraining = () => {
-    // Placeholder for training logic
-    console.log('Start training with:', { modelName, remarks, baseModel, file });
+  const handleStartTraining = async () => {
+    // Validate required fields
+    if (!modelName || !file) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.errors.missingFields', 'Please fill in all required fields'),
+        severity: 'error',
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Call the train model API
+      const response = await trainModel({
+        model_name: modelName,
+        remark: remarks,
+        base_model_name: baseModel,
+        data_files: file,
+      });
+
+      // Show success notification
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.success', 'Model training started successfully'),
+        severity: 'success',
+      });
+
+      // Navigate to main page (models tab) after a short delay
+      setTimeout(() => {
+        navigate('/prediction-tool', { state: { activeTab: 'models' } });
+      }, 1500);
+    } catch (error: any) {
+      // Show error notification
+      setSnackbar({
+        open: true,
+        message: error.message || t('predictionTool.train.errors.failed', 'Failed to start training'),
+        severity: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -177,12 +234,32 @@ const TrainPage: React.FC = () => {
           <button
             className="submit-button"
             onClick={handleStartTraining}
-            disabled={!modelName || !file}
+            disabled={!modelName || !file || loading}
           >
-            {t('predictionTool.train.startTraining', 'Start Training')}
+            {loading
+              ? t('predictionTool.train.submitting', 'Submitting...')
+              : t('predictionTool.train.startTraining', 'Start Training')
+            }
           </button>
         </div>
       </div>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

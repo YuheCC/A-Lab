@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from '@umijs/max';
+import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { Activity } from 'lucide-react';
-import { getHistoryList, deleteHistory } from './model';
+import { getHistoryList, deleteHistory, getModelList, isMockModel } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
 import Pagination from '@/components/Pagination';
+import type { ModelListItem } from '@/services/model/training';
 import './index.less';
 
 interface FileRecord {
@@ -25,6 +26,7 @@ interface PredictionToolProps {}
 
 const PredictionTool: React.FC<PredictionToolProps> = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,19 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
+  // Models state
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelsData, setModelsData] = useState<ModelListItem[]>([]);
+  const [modelsCurrentPage, setModelsCurrentPage] = useState(1);
+  const [modelsPageSize] = useState(20);
+  const [modelsTotal, setModelsTotal] = useState(0);
+
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
+    // Check if navigation state has activeTab (from train page)
+    const stateTab = (location.state as any)?.activeTab;
+    if (stateTab === 'models') return 'models';
+
     const tabParam = searchParams.get('tab');
     return (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models') ? tabParam as 'introduction' | 'records' | 'models' : 'introduction';
   };
@@ -95,11 +109,31 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     }
   };
 
+  const fetchModelsData = async (page: number = modelsCurrentPage) => {
+    setModelsLoading(true);
+    setModelsError(null);
+
+    try {
+      const response = await getModelList({ page, page_size: modelsPageSize });
+      setModelsData(response.data);
+      setModelsTotal(response.total);
+    } catch (err) {
+      console.error('Failed to fetch models list:', err);
+      setModelsError(err instanceof Error ? err.message : t('predictionTool.models.loading.error', 'Failed to load models'));
+      setModelsData([]);
+      setModelsTotal(0);
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'records') {
       fetchHistoryData(currentPage);
+    } else if (activeTab === 'models') {
+      fetchModelsData(modelsCurrentPage);
     }
-  }, [activeTab, currentPage]);
+  }, [activeTab, currentPage, modelsCurrentPage]);
 
   const handleNewPrediction = () => {
     window.open('/predict/create', '_blank');
@@ -138,8 +172,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setCurrentPage(page);
   };
 
+  const handleModelsPageChange = (page: number) => {
+    setModelsCurrentPage(page);
+  };
+
   const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
     setActiveTab(tab);
+  };
+
+  const handleViewModelDetail = (modelId: number | string) => {
+    navigate(`/prediction-tool/model-detail?id=${modelId}`);
   };
 
   const formatDate = (dateString: string) => {
@@ -151,6 +193,19 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'online':
+        return { text: t('predictionTool.models.statusOnline', 'Online'), color: '#dcfce7', textColor: '#008236' };
+      case 'trained':
+        return { text: t('predictionTool.models.statusTrained', 'Trained'), color: '#dbeafe', textColor: '#1e40af' };
+      case 'training':
+        return { text: t('predictionTool.models.statusTraining', 'Training'), color: '#fef3c7', textColor: '#92400e' };
+      default:
+        return { text: status, color: '#f3f4f6', textColor: '#374151' };
+    }
   };
 
   return (
@@ -279,36 +334,82 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
           {activeTab === 'models' && (
             <div className="prediction-tab-panel">
-              {/* Temporary list to access the model detail page */}
-              <div className="records-table-wrapper">
-                <table className="records-table">
-                  <thead>
-                    <tr>
-                      <th>Model ID</th>
-                      <th>Model Name</th>
-                      <th>Status</th>
-                      <th>Created</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="record-id">M-2024-01</td>
-                      <td className="file-name">Li-ion Cycle Predictor v2.1</td>
-                      <td><span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>上线</span></td>
-                      <td className="created-date">2024/01/10</td>
-                      <td className="actions-cell">
-                        <button
-                          className="action-button view-button"
-                          onClick={() => navigate('/predict/model-detail?id=M-2024-01')}
-                        >
-                          {t('predictionTool.history.actions.viewDetails', 'View Details')}
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {modelsLoading ? (
+                <div className="loading-state">
+                  <p>{t('predictionTool.models.loadingText', 'Loading models...')}</p>
+                </div>
+              ) : modelsError ? (
+                <div className="error-state">
+                  <p>{t('predictionTool.models.error', 'Error')}: {modelsError}</p>
+                </div>
+              ) : (
+                <>
+                  <div className="records-table-wrapper">
+                    <table className="records-table">
+                      <thead>
+                        <tr>
+                          <th>{t('predictionTool.models.columns.modelId', 'Model ID')}</th>
+                          <th>{t('predictionTool.models.columns.modelName', 'Model Name')}</th>
+                          <th>{t('predictionTool.models.columns.baseModel', 'Base Model')}</th>
+                          <th>{t('predictionTool.models.columns.status', 'Status')}</th>
+                          <th>{t('predictionTool.models.columns.created', 'Created')}</th>
+                          <th>{t('predictionTool.models.columns.createdBy', 'Created By')}</th>
+                          <th>{t('predictionTool.models.columns.actions', 'Actions')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {modelsData.length === 0 ? (
+                          <tr>
+                            <td colSpan={7} className="no-data">
+                              {t('predictionTool.models.noResults', 'No models found.')}
+                            </td>
+                          </tr>
+                        ) : (
+                          modelsData.map((model) => {
+                            const statusInfo = getStatusLabel(model.status);
+                            return (
+                              <tr key={model.id}>
+                                <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>
+                                <td className="file-name">{model.model_name}</td>
+                                <td>{model.base_model_name}</td>
+                                <td>
+                                  <span
+                                    style={{
+                                      backgroundColor: statusInfo.color,
+                                      color: statusInfo.textColor,
+                                      padding: '2px 8px',
+                                      borderRadius: '4px',
+                                      fontSize: '14px'
+                                    }}
+                                  >
+                                    {statusInfo.text}
+                                  </span>
+                                </td>
+                                <td className="created-date">{formatDate(model.created_at)}</td>
+                                <td>{model.created_by}</td>
+                                <td className="actions-cell">
+                                  <button
+                                    className="action-button view-button"
+                                    onClick={() => handleViewModelDetail(model.id)}
+                                  >
+                                    {t('predictionTool.models.actions.viewDetails', 'View Details')}
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination
+                    current={modelsCurrentPage}
+                    total={modelsTotal}
+                    pageSize={modelsPageSize}
+                    onChange={handleModelsPageChange}
+                  />
+                </>
+              )}
             </div>
           )}
         </div>

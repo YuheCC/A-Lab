@@ -1,100 +1,147 @@
-import React, { useState } from 'react';
-import { useNavigate } from '@umijs/max';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
+import {
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  CircularProgress,
+} from '@mui/material';
+import { getModelDetail, deployModel, removeModel, isMockModel } from '../model';
+import type { ModelDetailResponse } from '@/services/model/training';
 import './index.less';
-
-// Mock types
-interface ModelDetail {
-  id: string;
-  name: string;
-  creator: string;
-  status: 'training' | 'trained' | 'online';
-  created_at: string;
-  remarks: string;
-  base_model: string;
-  dataset: {
-    name: string;
-    size: string;
-    samples: number;
-    ratio: string;
-  };
-  training_results?: {
-    accuracy: string;
-    loss: string;
-    epochs: number;
-    training_time: string;
-    validation_score: string;
-  };
-  prediction_records?: Array<{
-    id: string;
-    file_name: string;
-    battery_count: number;
-    avg_cycle_life: number; // cycles
-    created_at: string;
-  }>;
-}
 
 const ModelDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
 
-  // Mock data based on Figma
-  const [model] = useState<ModelDetail>({
-    id: 'M-2024-01',
-    name: 'Li-ion Cycle Predictor v2.1',
-    creator: 'Dr. Zhang Wei',
-    status: 'online', // Change this to 'training' or 'trained' to test other states
-    created_at: '2024/01/10',
-    remarks: 'This model is optimized for Li-ion batteries with high energy density. It uses advanced deep learning techniques to predict cycle life with high accuracy.',
-    base_model: 'OSES-Base-v1',
-    dataset: {
-      name: 'battery_training_data_2024.csv',
-      size: '45.3 MB',
-      samples: 15240,
-      ratio: '7:3'
-    },
-    training_results: {
-      accuracy: '96.8%',
-      loss: '0.032',
-      epochs: 150,
-      training_time: '2h 45m',
-      validation_score: '95.5%'
-    },
-    prediction_records: [
-      {
-        id: 'PR-888B',
-        file_name: 'demo.csv',
-        battery_count: 2806,
-        avg_cycle_life: 851,
-        created_at: '2024/03/15 18:30'
-      },
-      {
-        id: 'PR-887A',
-        file_name: 'battery_test_02.csv',
-        battery_count: 1520,
-        avg_cycle_life: 923,
-        created_at: '2024/03/10 14:22'
-      },
-      {
-        id: 'PR-883F',
-        file_name: 'mixed_batch.csv',
-        battery_count: 3567,
-        avg_cycle_life: 895,
-        created_at: '2024/02/25 13:20'
-      }
-    ]
+  // Get model ID from URL query params
+  const modelId = searchParams.get('id') || '';
+
+  // State management
+  const [model, setModel] = useState<ModelDetailResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+  const [dialog, setDialog] = useState<{
+    open: boolean;
+    type: 'deploy' | 'remove' | null;
+  }>({
+    open: false,
+    type: null,
   });
 
+  // Fetch model detail on mount
+  useEffect(() => {
+    const fetchModelDetail = async () => {
+      if (!modelId) {
+        setSnackbar({
+          open: true,
+          message: t('predictionTool.modelDetail.errors.noId', 'Model ID is required'),
+          severity: 'error',
+        });
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getModelDetail(modelId);
+        setModel(data);
+      } catch (error: any) {
+        setSnackbar({
+          open: true,
+          message: error.message || t('predictionTool.modelDetail.errors.fetchFailed', 'Failed to fetch model details'),
+          severity: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModelDetail();
+  }, [modelId, t]);
+
   const handleBack = () => {
-    navigate('/predict?tab=models');
+    navigate('/prediction-tool', { state: { activeTab: 'models' } });
   };
 
-  const handleViewRecord = (recordId: string) => {
-    // Assuming the ID in record is like "PR-888B", but the route expects a number or just ID
-    // Extracting number for demo purposes or passing as is
-    const id = recordId.replace('PR-', '').replace(/[A-Z]/g, ''); 
-    navigate(`/predict/detail?id=${id}`);
+  const handleViewRecord = (recordId?: string) => {
+    if (!recordId) return;
+    navigate(`/prediction-tool/detail?id=${recordId}`);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleOpenDialog = (type: 'deploy' | 'remove') => {
+    // Check if it's a mock model
+    if (model && isMockModel(model)) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.modelDetail.errors.mockModel', 'Cannot modify demo model'),
+        severity: 'error',
+      });
+      return;
+    }
+    setDialog({ open: true, type });
+  };
+
+  const handleCloseDialog = () => {
+    setDialog({ open: false, type: null });
+  };
+
+  const handleConfirmAction = async () => {
+    if (!model || !dialog.type) return;
+
+    setActionLoading(true);
+    try {
+      if (dialog.type === 'deploy') {
+        await deployModel(model.id);
+        setSnackbar({
+          open: true,
+          message: t('predictionTool.modelDetail.deploySuccess', 'Model deployed successfully'),
+          severity: 'success',
+        });
+        // Refresh model detail
+        const updatedModel = await getModelDetail(modelId);
+        setModel(updatedModel);
+      } else if (dialog.type === 'remove') {
+        await removeModel(model.id);
+        setSnackbar({
+          open: true,
+          message: t('predictionTool.modelDetail.removeSuccess', 'Model removed successfully'),
+          severity: 'success',
+        });
+        // Navigate back after a short delay
+        setTimeout(() => {
+          navigate('/prediction-tool', { state: { activeTab: 'models' } });
+        }, 1500);
+      }
+      handleCloseDialog();
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.message || t('predictionTool.modelDetail.errors.actionFailed', 'Action failed'),
+        severity: 'error',
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const getStatusLabel = (status: string) => {
@@ -110,29 +157,80 @@ const ModelDetailPage: React.FC = () => {
     }
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="model-detail-page-wrapper">
+        <div className="model-detail-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+          <CircularProgress />
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if no model
+  if (!model) {
+    return (
+      <div className="model-detail-page-wrapper">
+        <div className="model-detail-page">
+          <div className="page-header">
+            <button className="back-button" onClick={handleBack}>
+              <ArrowLeft size={16} />
+              {t('predictionTool.modelDetail.back')}
+            </button>
+          </div>
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <p>{t('predictionTool.modelDetail.errors.notFound', 'Model not found')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="model-detail-page-wrapper">
       <div className="model-detail-page">
         {/* Header */}
         <div className="page-header">
-        <div className="header-content">
-          <h1 className="title">{model.name}</h1>
-          <p className="subtitle">{t('predictionTool.modelDetail.modelId')} {model.id}</p>
+          <div className="header-content">
+            <h1 className="title">{model.model_name}</h1>
+            <p className="subtitle">{t('predictionTool.modelDetail.modelId')} {model.id}</p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {/* Action buttons - only show for non-mock models */}
+            {!isMockModel(model) && (
+              <>
+                {model.status === 'trained' && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleOpenDialog('deploy')}
+                    disabled={actionLoading}
+                  >
+                    {t('predictionTool.modelDetail.deploy', 'Deploy')}
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleOpenDialog('remove')}
+                  disabled={actionLoading}
+                >
+                  {t('predictionTool.modelDetail.remove', 'Remove')}
+                </Button>
+              </>
+            )}
+            <button className="back-button" onClick={handleBack}>
+              <ArrowLeft size={16} />
+              {t('predictionTool.modelDetail.back')}
+            </button>
+          </div>
         </div>
-        <button className="back-button" onClick={handleBack}>
-          <ArrowLeft size={16} />
-          {t('predictionTool.modelDetail.back')}
-        </button>
-      </div>
 
       {/* Model Information */}
       <div className="detail-section">
         <h2 className="section-title">{t('predictionTool.modelDetail.title')}</h2>
         <div className="info-card">
-          <div className="info-row">
-            <span className="label">{t('predictionTool.modelDetail.creator')}</span>
-            <span className="value">{model.creator}</span>
-          </div>
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.status')}</span>
             <span className="value">
@@ -147,7 +245,7 @@ const ModelDetailPage: React.FC = () => {
           </div>
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.remarks')}</span>
-            <span className="value">{model.remarks}</span>
+            <span className="value">{model.remark}</span>
           </div>
         </div>
       </div>
@@ -157,70 +255,54 @@ const ModelDetailPage: React.FC = () => {
         <h2 className="section-title">{t('predictionTool.modelDetail.baseModel')}</h2>
         <div className="info-card">
           <div className="info-row">
-            <span className="value">{model.base_model}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Training Dataset */}
-      <div className="detail-section">
-        <h2 className="section-title">{t('predictionTool.modelDetail.trainingDataset')}</h2>
-        <div className="info-card">
-          <div className="info-row">
-            <span className="label">{t('predictionTool.modelDetail.datasetName')}</span>
-            <span className="value file-link">
-              <FileText size={16} color="#00a63e" />
-              {model.dataset.name}
-            </span>
-          </div>
-          <div className="info-row">
-            <span className="label">{t('predictionTool.modelDetail.fileSize')}</span>
-            <span className="value">{model.dataset.size}</span>
-          </div>
-          <div className="info-row">
-            <span className="label">{t('predictionTool.modelDetail.totalSamples')}</span>
-            <span className="value">{model.dataset.samples.toLocaleString()}</span>
-          </div>
-          <div className="info-row">
-            <span className="label">{t('predictionTool.modelDetail.ratio')}</span>
-            <span className="value">{model.dataset.ratio}</span>
+            <span className="value">{model.base_model_name}</span>
           </div>
         </div>
       </div>
 
       {/* Training Results - Only show if status is trained or online */}
-      {(model.status === 'trained' || model.status === 'online') && model.training_results && (
+      {(model.status === 'trained' || model.status === 'online') && model.train_result && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingResults')}</h2>
           <div className="info-card">
              <div className="training-results-grid">
-               <div className="result-card">
-                 <span className="result-label">{t('predictionTool.modelDetail.accuracy')}</span>
-                 <span className="result-value">{model.training_results.accuracy}</span>
-               </div>
-               <div className="result-card">
-                 <span className="result-label">{t('predictionTool.modelDetail.loss')}</span>
-                 <span className="result-value">{model.training_results.loss}</span>
-               </div>
-               <div className="result-card">
-                 <span className="result-label">{t('predictionTool.modelDetail.epochs')}</span>
-                 <span className="result-value">{model.training_results.epochs}</span>
-               </div>
-               <div className="result-card">
-                 <span className="result-label">{t('predictionTool.modelDetail.trainingTime')}</span>
-                 <span className="result-value">{model.training_results.training_time}</span>
-               </div>
-               <div className="result-card full-width">
-                 <span className="result-label">{t('predictionTool.modelDetail.validationScore')}</span>
-                 <span className="result-value">{model.training_results.validation_score}</span>
-               </div>
+               {model.train_result.accuracy && (
+                 <div className="result-card">
+                   <span className="result-label">{t('predictionTool.modelDetail.accuracy')}</span>
+                   <span className="result-value">{model.train_result.accuracy}</span>
+                 </div>
+               )}
+               {model.train_result.loss && (
+                 <div className="result-card">
+                   <span className="result-label">{t('predictionTool.modelDetail.loss')}</span>
+                   <span className="result-value">{model.train_result.loss}</span>
+                 </div>
+               )}
+               {model.train_result.epochs && (
+                 <div className="result-card">
+                   <span className="result-label">{t('predictionTool.modelDetail.epochs')}</span>
+                   <span className="result-value">{model.train_result.epochs}</span>
+                 </div>
+               )}
+               {model.train_result.training_time && (
+                 <div className="result-card">
+                   <span className="result-label">{t('predictionTool.modelDetail.trainingTime')}</span>
+                   <span className="result-value">{model.train_result.training_time}</span>
+                 </div>
+               )}
+               {model.train_result.validation_score && (
+                 <div className="result-card full-width">
+                   <span className="result-label">{t('predictionTool.modelDetail.validationScore')}</span>
+                   <span className="result-value">{model.train_result.validation_score}</span>
+                 </div>
+               )}
              </div>
           </div>
         </div>
       )}
 
       {/* Prediction Records - Only show if status is online */}
-      {model.status === 'online' && model.prediction_records && (
+      {model.status === 'online' && model.prediction_result && model.prediction_result.length > 0 && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.predictionRecords')}</h2>
           <div className="records-table-container">
@@ -236,12 +318,12 @@ const ModelDetailPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {model.prediction_records.map(record => (
+                {model.prediction_result.map((record) => (
                   <tr key={record.id}>
                     <td>{record.id}</td>
                     <td>{record.file_name}</td>
                     <td>{record.battery_count}</td>
-                    <td>{record.avg_cycle_life} {t('predictionTool.results.cycleUnit')}</td>
+                    <td>{record.avg_cycle_life} {t('predictionTool.results.cycleUnit', 'cycles')}</td>
                     <td>{record.created_at}</td>
                     <td>
                       <button className="view-btn" onClick={() => handleViewRecord(record.id)}>
@@ -256,6 +338,52 @@ const ModelDetailPage: React.FC = () => {
         </div>
       )}
       </div>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={dialog.open} onClose={handleCloseDialog}>
+        <DialogTitle>
+          {dialog.type === 'deploy'
+            ? t('predictionTool.modelDetail.confirmDeploy', 'Confirm Deploy')
+            : t('predictionTool.modelDetail.confirmRemove', 'Confirm Remove')
+          }
+        </DialogTitle>
+        <DialogContent>
+          {dialog.type === 'deploy'
+            ? t('predictionTool.modelDetail.deployMessage', 'Are you sure you want to deploy this model? This will make it available for predictions.')
+            : t('predictionTool.modelDetail.removeMessage', 'Are you sure you want to remove this model? This action cannot be undone.')
+          }
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} disabled={actionLoading}>
+            {t('predictionTool.modelDetail.cancel', 'Cancel')}
+          </Button>
+          <Button
+            onClick={handleConfirmAction}
+            color={dialog.type === 'deploy' ? 'primary' : 'error'}
+            variant="contained"
+            disabled={actionLoading}
+          >
+            {actionLoading ? <CircularProgress size={20} /> : t('predictionTool.modelDetail.confirm', 'Confirm')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
