@@ -39,7 +39,10 @@ export async function sseRequest(url: string, options: SSERequestOptions = {}): 
     const { method = 'GET', data, params, headers = {} } = options;
 
     // 获取 baseURL（使用全局声明的 BASE_URL）
-    const baseURL = BASE_URL || 'https://prod-api.ses.ai';
+    let baseURL = BASE_URL || 'https://prod-api.ses.ai';
+    if (baseURL === '/') {
+        baseURL = '';
+    }
 
     // 获取 token
     const token = localStorage.getItem('token') || '';

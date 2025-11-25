@@ -1,6 +1,10 @@
 import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from './utils/authHelpers';
 
-export const getAPIUrl = () => BASE_URL || 'https://prod-api.ses.ai';
+export const getAPIUrl = () => {
+  const url = BASE_URL || 'https://prod-api.ses.ai';
+  // 如果 BASE_URL 是 "/"，返回空字符串以避免双斜杠问题
+  return url === '/' ? '' : url;
+};
 
 const API_URL = getAPIUrl();
 
