@@ -76,7 +76,7 @@ export default {
             recordId: "Record ID",
             fileName: "File Name",
             batteryCount: "Battery Count",
-            avgCycleLife: "Avg Cycle Life",
+            avgCycleLife: "Cycle Life",
             created: "Created",
             actions: "Actions"
         }
