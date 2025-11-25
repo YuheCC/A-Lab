@@ -1,8 +1,7 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
-import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
@@ -12,10 +11,7 @@ import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import FindFriendOptions from "./FindFriendOptions";
-import { buildQueryString } from "@/services/buildQueryString";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
-import { useQueryLimit } from '@/hooks/useQueryLimit';
 import InorganicFilter, { InorganicFilterRef } from './InorganicFilter';
 
 const API_URL = getAPIUrl();
@@ -85,53 +81,14 @@ const InorganicSearch = () => {
     const [searchError, setSearchError] = useState<string | null>(null);
     const [searchWarning, setSearchWarning] = useState<string | null>(null);
     const [searchedMolecules, setsearchedMolecules] = useState<InorganicMoleculeData[] | null>(null);
-    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<InorganicSimilarMolecule[]>([]);
-    const [similarMoleculeImages, setSimilarMoleculeImages] = useState<{[key: number]: string}>({});
-    const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [selectedMolType, setSelectedMolType] = useState('solvent');
-    const [additiveSubtype, setAdditiveSubtype] = useState('A');
-    const [structureWeight, setStructureWeight] = useState(0.75);
-    const [extraRequests, setExtraRequests] = useState('');
-    const defaultCompute = useMemo(() => 'Disabled', []);
-    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
-    const [showHypothetical, setShowHypothetical] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
-    const { limits: queryLimits } = useQueryLimit();
 
     // 界面模式切换状态
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
     const inorganicFilterRef = useRef<InorganicFilterRef>(null);
-    const [cathode, setCathode] = useState('');
-    const [anode, setAnode] = useState('');
-    const [salt, setSalt] = useState('');
-    const [solvent, setSolvent] = useState('');
-    const [metric, setMetric] = useState('');
-
-    useEffect(() => {
-        switch (selectedMolType) {
-            case 'diluent':
-                setStructureWeight(0.5);
-                break;
-            case 'additive':
-                setStructureWeight(1.0);
-                break;
-            case 'solvent':
-            case 'cosolvent':
-            default:
-                setStructureWeight(0.75);
-        }
-    }, [selectedMolType]);
-
-    useEffect(() => {
-        setComputeLevel(defaultCompute);
-    }, [defaultCompute]);
-
-    // Add state for find-friend error message
-    const [findFriendError, setFindFriendError] = useState<string | null>(null);
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<InorganicMoleculeData[]>([]);
@@ -145,11 +102,8 @@ const InorganicSearch = () => {
                 setsearchResults(null);
                 setsearchedMolecules(null);
                 setHighlightedMolecules([]);
-                setHighlightedSimilarMolecules([]);
-                setSimilarMoleculeImages({});
                 setSearchError(null);
                 setSearchWarning(null);
-                setFindFriendError(null);
                 setAmbiguousOptions(null);
             } else {
                 // 重置过滤状态
@@ -288,16 +242,13 @@ const InorganicSearch = () => {
         setsearchResults(null);
         setsearchedMolecules(null);
         setHighlightedMolecules([]);
-        setHighlightedSimilarMolecules([]);
-        setSimilarMoleculeImages({});
-        setFindFriendError(null);
         setAmbiguousOptions(null);
 
         try {
             // 使用无机分子搜索接口
             let searchEndpoint = `${API_URL}/api/search/search-new`;
 
-            // Fetch the searched inorganic molecule's properties 
+            // Fetch the searched inorganic molecule's properties
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling
@@ -312,63 +263,6 @@ const InorganicSearch = () => {
             if (ambiguity) {
                 setAmbiguousOptions(ambiguity);
                 return;
-            }
-
-            if (formattedMolecules && findClosestFriends) {
-                if (formattedMolecules.length > 1) {
-                    setSearchWarning(t('search.multipleMoleculesWarning'));
-                } else {
-                    const smilesArray = formattedMolecules
-                        .map((m) => (m.smiles ? m.smiles.trim() : ''))
-                        .filter((s) => !!s);
-                    const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
-
-                    const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cathode, anode, salt, solvent, metric].some(Boolean);
-
-                    let computeToSend = computeLevel;
-                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
-                        setSearchWarning(t('search.computeWarning'));
-                        computeToSend = 'Low';
-                        setComputeLevel('Low');
-                    }
-
-                    const baseQuery = buildQueryString(cathode, anode, salt, solvent, metric);
-                    const parts: string[] = [baseQuery];
-                    if (selectedMolType) {
-                        parts.push(`I am looking for ${selectedMolType} molecules.`);
-                    }
-                    if (extraRequests.trim()) {
-                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
-                    }
-                    const queryString = parts.join(' ');
-                    const includeQuery = optionsSpecified || !!extraRequests.trim() || !!selectedMolType;
-
-                    const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
-
-                    try {
-                        const { molecules, imageMap } = await findFriends<InorganicSimilarMolecule>({
-                            smiles: smilesArray,
-                            use35m: isHighTier,
-                            structureWeight,
-                            molType: molTypeToSend,
-                            computeLevel: computeToSend,
-                            showHypothetical,
-                            includeQuery,
-                            queryString,
-                            isInorganic: true,
-                        });
-
-                        if (molecules.length > 0) {
-                            setHighlightedSimilarMolecules(molecules);
-                        }
-
-                        setSimilarMoleculeImages(imageMap);
-                    } catch (friendError) {
-                        console.error('Error finding similar inorganic molecules:', friendError);
-                        setFindFriendError(t('search.findFriendError'));
-                    }
-                }
             }
         } catch (apiError) {
             console.error('Error searching inorganic molecules:', apiError);
@@ -407,7 +301,6 @@ const InorganicSearch = () => {
                             <UMAPClusterPlotDeck
                                 data={interfaceMode === 'filter' ? filteredPlotData : data}
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
-                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 isAuthenticated={isAuthenticated}
                                 molecularType="inorganic"
@@ -500,38 +393,6 @@ const InorganicSearch = () => {
                                 disabled={searchLoading}
                             />
 
-                    {/* Add "Find closest friends" checkbox and mol type selector */}
-                            <FindFriendOptions
-                                findClosestFriends={findClosestFriends}
-                                setFindClosestFriends={setFindClosestFriends}
-                                extraRequests={extraRequests}
-                                setExtraRequests={setExtraRequests}
-                                showAdvanced={showAdvanced}
-                                setShowAdvanced={setShowAdvanced}
-                                selectedMolType={selectedMolType}
-                                setSelectedMolType={setSelectedMolType}
-                                additiveSubtype={additiveSubtype}
-                                setAdditiveSubtype={setAdditiveSubtype}
-                                computeLevel={computeLevel}
-                                setComputeLevel={setComputeLevel}
-                                structureWeight={structureWeight}
-                                setStructureWeight={setStructureWeight}
-                                showHypothetical={showHypothetical}
-                                setShowHypothetical={setShowHypothetical}
-                                cathode={cathode}
-                                setCathode={setCathode}
-                                anode={anode}
-                                setAnode={setAnode}
-                                salt={salt}
-                                setSalt={setSalt}
-                                solvent={solvent}
-                                setSolvent={setSolvent}
-                                metric={metric}
-                                setMetric={setMetric}
-                                userPermissions={userPermissions}
-                                findFriendLimitInfo={queryLimits.findFriendLLM}
-                            />
-
                     <div className="search-results">
                         {searchLoading && (
                             <div className="loading-container">
@@ -613,100 +474,6 @@ const InorganicSearch = () => {
                                                             {moleculeFavoriteStatus[molecule.smiles].error}
                                                         </div>
                                                     )}
-
-                                                    {/* Display find-friend error below favorites button if it exists */}
-                                                    {findClosestFriends && findFriendError && (
-                                                        <div className="error-message" style={{
-                                                            marginTop: '8px',
-                                                            color: 'red',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {findFriendError}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </MolCard>
-                                        ))}
-                                    </div>
-                                )}
-                                {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
-                                    <div className="similar-molecules">
-                                        <h3>{t('search.similarMolecules')}</h3>
-                                        {highlightedSimilarMolecules.map((molecule, index) => (
-                                            <MolCard
-                                                style={{ marginBottom: '20px' }}
-                                                key={index}
-                                                name={t('search.similarMoleculeNumber', { number: index + 1 })}
-                                                showMoreDetails={false}
-                                                large={true}
-                                                cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4 },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol' },
-                                                    { label: 'Cluster', value: molecule.cluster, span: 2 },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV' },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV' },
-                                                    // 无机分子特有的属性
-                                                    { label: 'Sulfur Content', value: molecule.sulfur_content, span: 2, suffix: ' %' },
-                                                    { label: 'Oxygen Content', value: molecule.oxygen_content, span: 2, suffix: ' %' },
-                                                    { label: 'Nitrogen Content', value: molecule.nitrogen_content, span: 2, suffix: ' %' },
-                                                    { label: 'Halogen Content', value: molecule.halogen_content, span: 2, suffix: ' %' }
-                                                ]} 
-                                                foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4 },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1 },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1 },
-                                                ]}
-                                            >
-                                                <div className="molecule-actions">
-                                                    <CustomButton
-                                                        Icon={Star}
-                                                        style={{
-                                                            flexGrow: 1,
-                                                        }}
-                                                        onClick={() => {
-                                                            console.log('Add to Favorites payload (inorganic search):', molecule);
-                                                            
-                                                            handleAddToFavorites({
-                                                                smiles: molecule.SMILES,
-                                                                properties: {
-                                                                    molwt: molecule.molecular_weight,
-                                                                    homo_eV: molecule.HOMO_eV,
-                                                                    lumo_eV: molecule.LUMO_eV,
-                                                                    esp_min_eV: molecule.ESP_min_eV,
-                                                                    esp_max_eV: molecule.ESP_max_eV,
-                                                                    functional_groups: molecule.functional_groups,
-                                                                    cluster: molecule.cluster,
-                                                                    sulfur_content: molecule.sulfur_content,
-                                                                    oxygen_content: molecule.oxygen_content,
-                                                                    nitrogen_content: molecule.nitrogen_content,
-                                                                    halogen_content: molecule.halogen_content
-                                                                },
-                                                                x: molecule.UMAP_0,
-                                                                y: molecule.UMAP_1
-                                                            });
-                                                        }}
-                                                        loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        loadingText={t('chatbox.buttons.addToFavoritesLoading')}
-                                                        successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
-                                                        errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
-                                                    >
-                                                        {t('chatbox.buttons.addToFavorites')}
-                                                    </CustomButton>
-                                                    {
-                                                        userPermissions === 'admin' && (
-                                                            <MoleculeFeedbackBox
-                                                                molecule={molecule}
-                                                                lastSearch={lastSearch}
-                                                                queryType="normal_ask"
-                                                                onClose={() => { }}
-                                                            />
-                                                        )
-                                                    }
                                                 </div>
                                             </MolCard>
                                         ))}

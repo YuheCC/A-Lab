@@ -1,9 +1,7 @@
 import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
-import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
+import { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
-import { findFriends } from "@/services/findFriends";
-import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
 import UMAPClusterPlotDeck from "@/components/UMAPClusterPlotDeck";
@@ -13,11 +11,9 @@ import { ExternalLink, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NodePopup from "@/components/NodePopup";
 import { FavoriteContext } from "@/layouts";
-import FindFriendOptions from "./FindFriendOptions";
 import { createLlmGradeProp, ReasoningModal } from "@/components/LlmGrade";
 import AnionsFilter, { AnionsFilterRef } from './AnionsFilter';
 import '../index.css';
-import { useQueryLimit } from '@/hooks/useQueryLimit';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
@@ -124,21 +120,9 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [searchError, setSearchError] = useState<string | null>(null);
     const [searchWarning, setSearchWarning] = useState<string | null>(null);
     const [searchedMolecules, setsearchedMolecules] = useState<MoleculeData[] | null>(null);
-    const [highlightedSimilarMolecules, setHighlightedSimilarMolecules] = useState<SimilarMolecule[]>([]);
-    const [, setSimilarMoleculeImages] = useState<{[key: number]: string}>({}); // Add state for similar molecule images
-    const [findClosestFriends, setFindClosestFriends] = useState(false);
-    const [structureWeight, setStructureWeight] = useState(1);
-    const [selectedMolType, setSelectedMolType] = useState('solvent');
-    const [additiveSubtype, setAdditiveSubtype] = useState('A');
-    const [extraRequests, setExtraRequests] = useState('');
-    const defaultCompute = useMemo(() => 'Disabled', []);
-    const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
-    const [showHypothetical, setShowHypothetical] = useState(true);
-    const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const buildGradeProp = (grade?: number, reasoning?: string) =>
         createLlmGradeProp(grade, reasoning, (text) => setReasoningText(text));
-    const { limits: queryLimits } = useQueryLimit();
     const triggerAccessModal = useAccessModals();
 
     const canShowColumn = useCallback(
@@ -150,50 +134,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const [interfaceMode, setInterfaceMode] = useState<'search' | 'filter'>('search');
     const [filteredPlotData, setFilteredPlotData] = useState<any[]>([]);
     const anionsFilterRef = useRef<AnionsFilterRef>(null);
-    const [cathode, setCathode] = useState('');
-    const [cathodeCustom, setCathodeCustom] = useState('');
-    const [anode, setAnode] = useState('');
-    const [anodeCustom, setAnodeCustom] = useState('');
-    const [salt, setSalt] = useState('');
-    const [saltCustom, setSaltCustom] = useState('');
-    const [solvent, setSolvent] = useState('');
-    const [solventCustom, setSolventCustom] = useState('');
-    const [metric, setMetric] = useState('');
-    const [metricCustom, setMetricCustom] = useState('');
-
-    const cathodeOptions = ['LFP', 'NMC', 'NCA', 'LCO', 'LMO'];
-    const anodeOptions = ['Graphite', 'Graphite/Si', 'Silicon', 'LTO', 'Li metal'];
-    const saltOptions = ['LiPF6', 'LiBF4', 'LiTFSI', 'LiFSI', 'LiClO4'];
-    const solventOptions = ['EC', 'DMC', 'DEC', 'EMC', 'PC'];
-    const performanceOptions = ['Cycle life', 'Energy density', 'Power density', 'Safety', 'Cost'];
-
-    useEffect(() => {
-        setComputeLevel(defaultCompute);
-    }, [defaultCompute]);
-
-    useEffect(() => {
-        if (!isPublic) return;
-        setFindClosestFriends(false);
-        setSelectedMolType(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.moleculeType);
-        setAdditiveSubtype(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.additiveSubtype);
-        setComputeLevel(PUBLIC_SEARCH_LOCKED_VALUES.findFriends.computeLevel);
-        setShowHypothetical(true);
-        setShowAdvanced(false);
-        setExtraRequests('');
-        setCathode('');
-        setCathodeCustom('');
-        setAnode('');
-        setAnodeCustom('');
-        setSalt('');
-        setSaltCustom('');
-        setSolvent('');
-        setSolventCustom('');
-        setMetric('');
-        setMetricCustom('');
-    }, [isPublic]);
-
-    // Add state for find-friend error message
-    const [findFriendError, setFindFriendError] = useState<string | null>(null);
 
     // Add new state for highlighted molecule
     const [highlightedMolecules, setHighlightedMolecules] = useState<MoleculeData[]>([]);
@@ -207,11 +147,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 setsearchResults(null);
                 setsearchedMolecules(null);
                 setHighlightedMolecules([]);
-                setHighlightedSimilarMolecules([]);
-                setSimilarMoleculeImages({});
                 setSearchError(null);
                 setSearchWarning(null);
-                setFindFriendError(null);
                 setAmbiguousOptions(null);
             } else {
                 // 重置过滤状态
@@ -363,10 +300,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setsearchResults(null);
         setsearchedMolecules(null);
         setHighlightedMolecules([]);
-        setHighlightedSimilarMolecules([]);
-        setSimilarMoleculeImages({}); // Reset similar molecule images
-        setFindFriendError(null); // Reset find friend error
-        setAmbiguousOptions(null); // Reset ambiguous search info
+        setAmbiguousOptions(null);
 
         try {
             // Determine which endpoint to use based on user permissions
@@ -387,64 +321,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             if (ambiguity) {
                 setAmbiguousOptions(ambiguity);
                 return;
-            }
-
-            if (formattedMolecules && findClosestFriends) {
-                // Build an array of seed SMILES from all returned molecules
-                const smilesArray = formattedMolecules
-                    .map((m) => (m.smiles ? m.smiles.trim() : ''))
-                    .filter((s) => !!s);
-
-                if (smilesArray.length === 0) {
-                    setSearchWarning(t('search.moleculeNotFound.title'));
-                } else {
-                    const isHighTier = ["admin", "enterprise", "joint"].includes(userPermissions || '');
-
-                    const cVal = cathode === 'custom' ? cathodeCustom : cathode;
-                    const aVal = anode === 'custom' ? anodeCustom : anode;
-                    const sVal = salt === 'custom' ? saltCustom : salt;
-                    const svVal = solvent === 'custom' ? solventCustom : solvent;
-                    const mVal = metric === 'custom' ? metricCustom : metric;
-                    const computeEnabled = computeLevel !== 'Disabled';
-                    const optionsSpecified = [cVal, aVal, sVal, svVal, mVal].some(Boolean);
-
-                    let computeToSend = computeLevel;
-                    if (computeEnabled && computeLevel !== 'Low' && !optionsSpecified && !extraRequests.trim()) {
-                        setSearchWarning(t('search.computeWarning'));
-                        computeToSend = 'Low';
-                        setComputeLevel('Low');
-                    }
-
-                    const baseQuery = buildQueryString(cVal, aVal, sVal, svVal, mVal);
-                    const parts: string[] = [baseQuery];
-                    if (extraRequests.trim()) {
-                        parts.push(`I have the following requirements: ${extraRequests.trim()}`);
-                    }
-                    const queryString = parts.join(' ');
-                    const includeQuery = optionsSpecified || !!extraRequests.trim();
-
-                    try {
-                        const { molecules, imageMap } = await findFriends<SimilarMolecule>({
-                            smiles: smilesArray,
-                            use35m: isHighTier,
-                            structureWeight,
-                            computeLevel: computeToSend,
-                            showHypothetical,
-                            includeQuery,
-                            queryString,
-                            isAnion: true,
-                        });
-
-                        if (molecules.length > 0) {
-                            setHighlightedSimilarMolecules(molecules);
-                        }
-
-                        setSimilarMoleculeImages(imageMap);
-                    } catch (friendError) {
-                        console.error('Error finding similar molecules:', friendError);
-                        setFindFriendError(t('search.findFriendError'));
-                    }
-                }
             }
         } catch (apiError: any) {
             console.error('Error checking Snowflake database:', apiError);
@@ -494,7 +370,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 zoomOffset={-0.2}
                                 data={interfaceMode === 'filter' ? filteredPlotData : data}
                                 highlightedData={interfaceMode === 'search' ? highlightedMolecules : []}
-                                highlightedSimilarData={interfaceMode === 'search' ? highlightedSimilarMolecules : []}
                                 userPermissions={userPermissions}
                                 isAuthenticated={isAuthenticated}
                                 molecularType="anions"
@@ -589,42 +464,6 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 onLockedClick={triggerAccessModal}
                             />
 
-                            <FindFriendOptions
-                                findClosestFriends={findClosestFriends}
-                                setFindClosestFriends={setFindClosestFriends}
-                                extraRequests={extraRequests}
-                                setExtraRequests={setExtraRequests}
-                                showAdvanced={showAdvanced}
-                                setShowAdvanced={setShowAdvanced}
-                                selectedMolType={selectedMolType}
-                                setSelectedMolType={setSelectedMolType}
-                                additiveSubtype={additiveSubtype}
-                                setAdditiveSubtype={setAdditiveSubtype}
-                                computeLevel={computeLevel}
-                                setComputeLevel={setComputeLevel}
-                                structureWeight={structureWeight}
-                                setStructureWeight={setStructureWeight}
-                                showHypothetical={showHypothetical}
-                                setShowHypothetical={setShowHypothetical}
-                                cathode={cathode}
-                                setCathode={setCathode}
-                                anode={anode}
-                                setAnode={setAnode}
-                                salt={salt}
-                                setSalt={setSalt}
-                                solvent={solvent}
-                                setSolvent={setSolvent}
-                                metric={metric}
-                                setMetric={setMetric}
-                                userPermissions={userPermissions}
-                                enableMolTypeSelector={isPublic ? true : false}
-                                showStructureSlider={false}
-                                findFriendLimitInfo={queryLimits.findFriendLLM}
-                                readOnly={isPublic}
-                                allowFindFriendsToggleWhenReadOnly={isPublic}
-                                onLockedClick={triggerAccessModal}
-                            />
-
                     <div className="search-results">
                         {searchLoading && (
                             <div className="loading-container">
@@ -712,112 +551,9 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                                     {moleculeFavoriteStatus[molecule.smiles].error}
                                                                 </div>
                                                             )}
-
-                                                            {/* Display find-friend error below favorites button if it exists */}
-                                                            {findClosestFriends && findFriendError && (
-                                                                <div className="error-message" style={{
-                                                                    marginTop: '8px',
-                                                                    color: 'red',
-                                                                    fontSize: '14px',
-                                                                    fontWeight: 'bold'
-                                                                }}>
-                                                                    {findFriendError}
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     )
                                                 }
-                                            </MolCard>
-                                        ))}
-                                    </div>
-                                )}
-                                {findClosestFriends && highlightedSimilarMolecules && highlightedSimilarMolecules.length > 0 && (
-                                    <div className="similar-molecules">
-                                        <h3>{t('search.similarMolecules')}</h3>
-                                        {highlightedSimilarMolecules.map((molecule, index) => (
-                                            <MolCard
-                                                style={{ marginBottom: '20px' }}
-                                                key={index}
-                                                name={t('search.similarMoleculeNumber', { number: index + 1 })}
-                                                showMoreDetails={false}
-                                                large={true}
-                                                cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                propGroups={[
-                                                    { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
-                                                    buildGradeProp(molecule.grade, molecule.reasoning),
-                                                    { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
-                                                    { label: 'Molecular Volume', value: molecule.VDW_VOLUME_ANGSTROMS3, span: 2, suffix: ' Å³', show: canShowColumn('vdw_volume_angstroms3') },
-                                                    { label: 'F Dissociation Energy', value: molecule.FLUORIDE_BDE_EV, span: 2, suffix: ' eV', show: canShowColumn('fluoride_bde_ev') },
-                                                    { label: 'HOMO', value: molecule.HOMO_eV, span: 2, suffix: ' eV', show: canShowColumn('HOMO_eV') },
-                                                    { label: 'LUMO', value: molecule.LUMO_eV, span: 2, suffix: ' eV', show: canShowColumn('LUMO_eV') },
-                                                    { label: 'ESP Min', value: molecule.ESP_min_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_min_eV') },
-                                                    { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
-                                                    { label: 'Commercial Viability', value: renderAnionCommercialScore(molecule.COMMERCIAL_SCORE), span:4, wrap: true, show: canShowColumn('commercial_score')}
-                                                ]}
-                                                foldPropGroups={[
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
-                                                ]}
-                                            >
-                                                <div className="molecule-actions">
-                                                    <CustomButton
-                                                        Icon={Star}
-                                                        style={{
-                                                            flexGrow: 1,
-                                                        }}
-                                                        onClick={() => {
-                                                            console.log('Add to Favorites payload (search):', molecule);
-
-                                                            // Get the raw commercial score (numeric 0-3)
-                                                            const rawCommercialScore = molecule.COMMERCIAL_SCORE;
-
-                                                            // Convert commercial score from numeric to descriptive text
-                                                            const commercialScoreText = renderAnionCommercialScore(rawCommercialScore) ?? null;
-
-                                                            handleAddToFavorites({
-                                                                smiles: molecule.SMILES,
-                                                                properties: {
-                                                                    molwt: molecule.molecular_weight,
-                                                                    homo_eV: molecule.HOMO_eV,
-                                                                    lumo_eV: molecule.LUMO_eV,
-                                                                    esp_min_eV: molecule.ESP_min_eV,
-                                                                    esp_max_eV: molecule.ESP_max_eV,
-                                                                    predicted_mp: molecule.predicted_MP_celsius,
-                                                                    predicted_bp: molecule.predicted_BP_celsius,
-                                                                    predicted_fp_celsius: molecule.predicted_FP_celsius,
-                                                                    combustion_enthalpy_ev: molecule.COMBUSTION_ENTHALPY_EV,
-                                                                    commercial_score: commercialScoreText,
-                                                                    functional_groups: molecule.functional_groups,
-                                                                    commercial_link: molecule.COMMERCIAL_LINK || null
-                                                                },
-                                                                x: molecule.UMAP_0,
-                                                                y: molecule.UMAP_1
-                                                            });
-                                                        }}
-                                                        loading={moleculeFavoriteStatus[molecule.SMILES]?.loading}
-                                                        loadingText={t('chatbox.buttons.addToFavoritesLoading')}
-                                                        successMessage={moleculeFavoriteStatus[molecule.SMILES]?.success}
-                                                        errorMessage={moleculeFavoriteStatus[molecule.SMILES]?.error}
-                                                    >
-                                                        {t('chatbox.buttons.addToFavorites')}
-                                                    </CustomButton>
-                                                    {
-                                                        userPermissions === 'admin' && (
-                                                            <MoleculeFeedbackBox
-                                                                fullWidth={false}
-                                                                molecule={molecule}
-                                                                lastSearch={lastSearch}
-                                                                queryType="normal_ask"
-                                                                contextContent1={''}
-                                                                contextContent2={''}
-                                                                contextContent3={''}
-                                                                useMultiAgent={false}
-                                                                onClose={() => { }}
-                                                            />
-                                                        )
-                                                    }
-                                                </div>
                                             </MolCard>
                                         ))}
                                     </div>
