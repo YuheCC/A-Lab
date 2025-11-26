@@ -131,6 +131,7 @@ export default {
     chart: {
         title: "电池容量随循环次数变化",
         cycleCount: "循环数",
+        capacity: "容量",
         capacityProcess: "容量衰减过程（上传数据）",
         predictedCycleLife: "预测达到80% SOH的循环次数",
         xAxisName: "循环数",
