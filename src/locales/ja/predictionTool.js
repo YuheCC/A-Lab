@@ -76,7 +76,7 @@ export default {
             recordId: "記録ID",
             fileName: "ファイル名",
             batteryCount: "バッテリー数",
-            avgCycleLife: "平均サイクル寿命",
+            avgCycleLife: "サイクル寿命",
             created: "作成日時",
             actions: "操作"
         }
