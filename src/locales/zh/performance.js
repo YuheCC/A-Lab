@@ -192,20 +192,22 @@ export default {
   // History
   history: {
     title: "预测记录",
+    newDesign: "新增设计",
     newPrediction: "新预测",
+    train: "训练",
     searchPlaceholder: "按文件名搜索...",
+    loadingText: "加载中...",
+    error: "错误",
+    noResults: "暂无设计记录",
+    cannotDeleteDemo: "无法删除演示记录",
     status: {
       completed: "已完成"
     },
     actions: {
-      viewDetails: "查看",
+      viewDetails: "查看详情",
       delete: "删除",
       deleteConfirm: "确定要删除这条记录吗？",
       deleteFailed: "删除记录失败"
-    },
-    noResults: {
-      message: "暂无预测记录。",
-      clearFilters: "清除所有筛选条件"
     },
     loading: {
       message: "正在加载历史数据...",
@@ -214,7 +216,45 @@ export default {
       failedToLoad: "加载历史数据失败"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "搜索record名称或ID",
+    allModels: "所有模型",
+    clearFilters: "清除筛选",
+    showingRecords: "显示 {{count}} / {{total}} 条记录"
+  },
+
+  // Models
+  models: {
+    loadingText: "加载中...",
+    error: "错误",
+    noResults: "暂无模型",
+    showingRecords: "显示 {{count}} / {{total}} 条记录",
+    statusOnline: "上线",
+    statusTrained: "训练完成",
+    statusTraining: "训练中",
+    filters: {
+      searchPlaceholder: "搜索模型ID或名称...",
+      allStatus: "所有状态",
+      allBaseModels: "所有基础模型",
+      clearFilters: "清除筛选",
+      selectDate: "选择日期"
+    },
+    columns: {
+      modelId: "模型ID",
+      modelName: "模型名称",
+      baseModel: "基础模型",
+      status: "状态",
+      created: "创建时间",
+      createdBy: "创建者",
+      actions: "操作"
+    },
+    actions: {
+      viewDetails: "查看详情"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "电池系统"
 }

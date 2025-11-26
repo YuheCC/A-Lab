@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { Activity } from 'lucide-react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import { Activity, X } from 'lucide-react';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from '@/components/Introduction';
@@ -23,7 +31,7 @@ interface DesignPageProps {}
 
 const DesignPage: React.FC<DesignPageProps> = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +39,32 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
+
+  // Models filter state
+  const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
+  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('all');
+  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('all');
+
+  // Records filter state
+  const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
+  const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
+  const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
+
+  // Get dayjs locale based on current language
+  const getDayjsLocale = () => {
+    const lang = i18n.language || 'zh';
+    const localeMap: Record<string, string> = {
+      'zh': 'zh-cn',
+      'zh-CN': 'zh-cn',
+      'en': 'en',
+      'en-US': 'en',
+      'ja': 'ja',
+      'ja-JP': 'ja',
+      'ko': 'ko',
+      'ko-KR': 'ko',
+    };
+    return localeMap[lang] || 'zh-cn';
+  };
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     const tabParam = searchParams.get('tab');
@@ -144,6 +178,50 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     });
   };
 
+  const handleClearRecordsFilters = () => {
+    setRecordSearchKeyword('');
+    setRecordSelectedModel('all');
+    setRecordSelectedDate('');
+  };
+
+  const handleClearModelsFilters = () => {
+    setModelSearchKeyword('');
+    setSelectedModelStatus('all');
+    setSelectedBaseModel('all');
+  };
+
+  // Filter records data (currently no model field, so we'll just filter by keyword and date)
+  const filteredHistoryData = historyData.filter((record) => {
+    const keywordMatch = !recordSearchKeyword ||
+      record.smiles.toLowerCase().includes(recordSearchKeyword.toLowerCase()) ||
+      String(record.id).includes(recordSearchKeyword);
+    const dateMatch = !recordSelectedDate || record.date.startsWith(recordSelectedDate);
+    // Since records don't have a model field yet, we'll ignore model filter for now
+    return keywordMatch && dateMatch;
+  });
+
+  // For models tab (using mock data for now)
+  const mockModelsData = [
+    {
+      id: 'DM-2024-01',
+      name: 'Electrolyte Design Model v1.0',
+      status: 'online',
+      baseModel: 'OSES-Base-v1',
+      created: '2024/01/15'
+    }
+  ];
+
+  const filteredModelsData = mockModelsData.filter((model) => {
+    const keywordMatch = !modelSearchKeyword ||
+      model.name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
+      model.id.toLowerCase().includes(modelSearchKeyword.toLowerCase());
+    const statusMatch = selectedModelStatus === 'all' || model.status === selectedModelStatus;
+    const baseModelMatch = selectedBaseModel === 'all' || model.baseModel === selectedBaseModel;
+    return keywordMatch && statusMatch && baseModelMatch;
+  });
+
+  const uniqueBaseModels = Array.from(new Set(mockModelsData.map(model => model.baseModel).filter(Boolean)));
+
   return (
     <div className="design-tool-container">
       <div className="design-header">
@@ -209,6 +287,50 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                 </div>
               ) : (
                 <>
+                  <div className="records-filters">
+                    <input
+                      type="text"
+                      className="records-search-input"
+                      value={recordSearchKeyword}
+                      onChange={(e) => setRecordSearchKeyword(e.target.value)}
+                      placeholder={t('performance.records.searchPlaceholder', '搜索record名称或ID')}
+                    />
+                    <select
+                      className="records-model-filter"
+                      value={recordSelectedModel}
+                      onChange={(e) => setRecordSelectedModel(e.target.value)}
+                    >
+                      <option value="all">{t('performance.records.allModels', '所有模型')}</option>
+                    </select>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={getDayjsLocale()}>
+                      <DatePicker
+                        className="records-date-filter"
+                        value={recordSelectedDate ? dayjs(recordSelectedDate) : null}
+                        onChange={(date: Dayjs | null) => {
+                          setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
+                        }}
+                        slotProps={{
+                          textField: {
+                            placeholder: t('performance.models.filters.selectDate', '选择日期'),
+                            size: 'small',
+                            fullWidth: true,
+                          }
+                        }}
+                      />
+                    </LocalizationProvider>
+                    {(recordSearchKeyword || recordSelectedModel !== 'all' || recordSelectedDate) && (
+                      <button className="clear-filters-button" onClick={handleClearRecordsFilters}>
+                        <X size={16} />
+                        <span>{t('performance.records.clearFilters', 'Clear Filters')}</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="records-count-text">
+                    {t('performance.records.showingRecords', '显示 {{count}} / {{total}} 条记录', {
+                      count: filteredHistoryData.length,
+                      total: historyData.length
+                    })}
+                  </div>
                   <div className="records-table-wrapper">
                     <table className="records-table">
                       <thead>
@@ -222,14 +344,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {historyData.length === 0 ? (
+                        {filteredHistoryData.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="no-data">
                               {t('design.history.noResults', 'No design records found.')}
                             </td>
                           </tr>
                         ) : (
-                          historyData.map((record) => (
+                          filteredHistoryData.map((record) => (
                             <tr key={record.id}>
                               <td className="record-id">DS-{String(record.id).padStart(3, '0')}</td>
                               <td className="smiles-cell">{record.smiles}</td>
@@ -271,33 +393,89 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
           {activeTab === 'models' && (
             <div className="design-tab-panel">
-              {/* Temporary list to access the model detail page */}
+              <div className="models-filters">
+                <input
+                  type="text"
+                  className="models-search-input"
+                  value={modelSearchKeyword}
+                  onChange={(e) => setModelSearchKeyword(e.target.value)}
+                  placeholder={t('performance.models.filters.searchPlaceholder', '搜索模型ID或名称...')}
+                />
+                <select
+                  className="models-status-filter"
+                  value={selectedModelStatus}
+                  onChange={(e) => setSelectedModelStatus(e.target.value)}
+                >
+                  <option value="all">{t('performance.models.filters.allStatus', '所有状态')}</option>
+                  <option value="online">{t('performance.models.statusOnline', 'Online')}</option>
+                  <option value="trained">{t('performance.models.statusTrained', 'Trained')}</option>
+                  <option value="training">{t('performance.models.statusTraining', 'Training')}</option>
+                </select>
+                <select
+                  className="models-base-model-filter"
+                  value={selectedBaseModel}
+                  onChange={(e) => setSelectedBaseModel(e.target.value)}
+                >
+                  <option value="all">{t('performance.models.filters.allBaseModels', '所有基础模型')}</option>
+                  {uniqueBaseModels.map((baseModel) => (
+                    <option key={baseModel} value={baseModel}>{baseModel}</option>
+                  ))}
+                </select>
+                {(modelSearchKeyword || selectedModelStatus !== 'all' || selectedBaseModel !== 'all') && (
+                  <button className="clear-filters-button" onClick={handleClearModelsFilters}>
+                    <X size={16} />
+                    <span>{t('performance.models.filters.clearFilters', 'Clear Filters')}</span>
+                  </button>
+                )}
+              </div>
+              <div className="models-count-text">
+                {t('performance.models.showingRecords', '显示 {{count}} / {{total}} 条记录', {
+                  count: filteredModelsData.length,
+                  total: mockModelsData.length
+                })}
+              </div>
               <div className="records-table-wrapper">
                 <table className="records-table">
                   <thead>
                     <tr>
-                      <th>{t('design.models.columns.modelId', 'Model ID')}</th>
-                      <th>{t('design.models.columns.modelName', 'Model Name')}</th>
-                      <th>{t('design.models.columns.status', 'Status')}</th>
-                      <th>{t('design.models.columns.created', 'Created')}</th>
-                      <th>{t('design.models.columns.actions', 'Actions')}</th>
+                      <th>{t('performance.models.columns.modelId', 'Model ID')}</th>
+                      <th>{t('performance.models.columns.modelName', 'Model Name')}</th>
+                      <th>{t('performance.models.columns.baseModel', 'Base Model')}</th>
+                      <th>{t('performance.models.columns.status', 'Status')}</th>
+                      <th>{t('performance.models.columns.created', 'Created')}</th>
+                      <th>{t('performance.models.columns.actions', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td className="record-id">DM-2024-01</td>
-                      <td className="file-name">Electrolyte Design Model v1.0</td>
-                      <td><span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>{t('design.models.statusOnline', 'Online')}</span></td>
-                      <td className="created-date">2024/01/15</td>
-                      <td className="actions-cell">
-                        <button
-                          className="action-button view-button"
-                          onClick={() => navigate('/design/model-detail?id=DM-2024-01')}
-                        >
-                          {t('design.history.actions.viewDetails', 'View Details')}
-                        </button>
-                      </td>
-                    </tr>
+                    {filteredModelsData.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="no-data">
+                          {t('performance.models.noResults', 'No models found.')}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredModelsData.map((model) => (
+                        <tr key={model.id}>
+                          <td className="record-id">{model.id}</td>
+                          <td className="file-name">{model.name}</td>
+                          <td>{model.baseModel}</td>
+                          <td>
+                            <span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>
+                              {t('performance.models.statusOnline', 'Online')}
+                            </span>
+                          </td>
+                          <td className="created-date">{model.created}</td>
+                          <td className="actions-cell">
+                            <button
+                              className="action-button view-button"
+                              onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
+                            >
+                              {t('performance.models.actions.viewDetails', 'View Details')}
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

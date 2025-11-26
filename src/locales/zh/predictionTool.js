@@ -84,6 +84,15 @@ export default {
         }
     },
 
+    // Records
+    records: {
+        searchPlaceholder: "搜索record名称或ID",
+        modelFilter: "模型筛选",
+        allModels: "所有模型",
+        clearFilters: "Clear Filters",
+        showingRecords: "显示 {{count}} / {{total}} 条记录"
+    },
+
     // History
     history: {
         title: "预测记录",
@@ -211,6 +220,35 @@ export default {
         }
     },
     
+    // Models
+    models: {
+        loadingText: "加载中...",
+        error: "错误",
+        noResults: "暂无模型",
+        showingRecords: "显示 {{count}} / {{total}} 条记录",
+        statusOnline: "上线",
+        statusTrained: "训练完成",
+        statusTraining: "训练中",
+        filters: {
+            searchPlaceholder: "搜索模型ID或名称...",
+            allStatus: "所有状态",
+            allBaseModels: "所有基础模型",
+            clearFilters: "清除筛选"
+        },
+        columns: {
+            modelId: "模型ID",
+            modelName: "模型名称",
+            baseModel: "基础模型",
+            status: "状态",
+            created: "创建时间",
+            createdBy: "创建者",
+            actions: "操作"
+        },
+        actions: {
+            viewDetails: "查看详情"
+        }
+    },
+
     // Model Detail
     modelDetail: {
         title: "模型信息",

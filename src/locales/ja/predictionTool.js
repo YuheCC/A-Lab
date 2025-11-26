@@ -84,6 +84,15 @@ export default {
         }
     },
 
+    // Records
+    records: {
+        searchPlaceholder: "レコード名またはIDで検索",
+        modelFilter: "モデルフィルター",
+        allModels: "すべてのモデル",
+        clearFilters: "フィルターをクリア",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示"
+    },
+
     // History
     history: {
         title: "予測記録",
@@ -178,36 +187,98 @@ export default {
         point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
     },
 
+    // Train
+    train: {
+        title: "新しいモデルをトレーニング",
+        back: "戻る",
+        step1: {
+            title: "モデル情報",
+            name: "モデル名",
+            namePlaceholder: "モデル名を入力",
+            remarks: "備考（オプション）",
+            remarksPlaceholder: "追加のメモや備考を入力"
+        },
+        step2: {
+            title: "ベースモデル",
+            modelName: "OSES-Base-v1",
+            badge: "ベースモデル"
+        },
+        step3: {
+            title: "トレーニングデータセット",
+            ratio: "トレーニング-テスト分割比：",
+            ratioValue: "7 : 3",
+            ratioDesc: "データセットの70%がトレーニングに、30%がテストに使用されます",
+            upload: "データセットをアップロード",
+            dragDrop: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
+            formats: "対応フォーマット：CSV、XLSX（最大50MB）",
+            chooseFile: "ファイルを選択",
+            downloadSample: "サンプルをダウンロード"
+        },
+        startTraining: "トレーニング開始",
+        errors: {
+            fileSize: "ファイルサイズが50MBを超えています"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "モデルが見つかりません",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        filters: {
+            searchPlaceholder: "モデルIDまたは名前で検索...",
+            allStatus: "すべてのステータス",
+            allBaseModels: "すべてのベースモデル",
+            clearFilters: "フィルターをクリア"
+        },
+        columns: {
+            modelId: "モデルID",
+            modelName: "モデル名",
+            baseModel: "ベースモデル",
+            status: "ステータス",
+            created: "作成日時",
+            createdBy: "作成者",
+            actions: "操作"
+        },
+        actions: {
+            viewDetails: "詳細を表示"
+        }
+    },
+
     // Model Detail
     modelDetail: {
-        title: "Model Information",
-        modelId: "Model ID:",
-        back: "Back",
-        creator: "Creator:",
-        status: "Status:",
-        statusOnline: "Online",
-        statusTrained: "Trained",
-        statusTraining: "Training",
-        created: "Created:",
-        remarks: "Remarks:",
-        baseModel: "Base Model",
-        trainingDataset: "Training Dataset",
-        datasetName: "Dataset Name:",
-        fileSize: "File Size:",
-        totalSamples: "Total Samples:",
-        ratio: "Train-Test Ratio:",
-        trainingResults: "Training Results",
-        accuracy: "Accuracy",
-        loss: "Loss",
-        epochs: "Epochs",
-        trainingTime: "Training Time",
-        validationScore: "Validation Score",
-        predictionRecords: "Prediction Records",
+        title: "モデル情報",
+        modelId: "モデルID：",
+        back: "戻る",
+        creator: "作成者：",
+        status: "ステータス：",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        created: "作成日時：",
+        remarks: "備考：",
+        baseModel: "ベースモデル",
+        trainingDataset: "トレーニングデータセット",
+        datasetName: "データセット名：",
+        fileSize: "ファイルサイズ：",
+        totalSamples: "総サンプル数：",
+        ratio: "トレーニング-テスト比：",
+        trainingResults: "トレーニング結果",
+        accuracy: "精度",
+        loss: "損失",
+        epochs: "エポック数",
+        trainingTime: "トレーニング時間",
+        validationScore: "検証スコア",
+        predictionRecords: "予測記録",
         recordId: "ID",
-        fileName: "File Name",
-        batteryCount: "Battery Count",
-        avgCycleLife: "Avg Cycle Life",
-        actions: "Actions",
-        viewDetails: "View Details"
+        fileName: "ファイル名",
+        batteryCount: "バッテリー数",
+        avgCycleLife: "平均サイクル寿命",
+        actions: "操作",
+        viewDetails: "詳細を表示"
     }
 };

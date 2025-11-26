@@ -84,6 +84,15 @@ export default {
         }
     },
 
+    // Records
+    records: {
+        searchPlaceholder: "Search record name or ID",
+        modelFilter: "Model filter",
+        allModels: "All Models",
+        clearFilters: "Clear Filters",
+        showingRecords: "Showing {{count}} of {{total}} records"
+    },
+
     // History
     history: {
         title: "Prediction Records",
@@ -208,6 +217,35 @@ export default {
         startTraining: "Start Training",
         errors: {
             fileSize: "File size exceeds 50MB"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "Loading models...",
+        error: "Error",
+        noResults: "No models found.",
+        showingRecords: "Showing {{count}} of {{total}} records",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        filters: {
+            searchPlaceholder: "Search Model ID or Name...",
+            allStatus: "All Status",
+            allBaseModels: "All Base Models",
+            clearFilters: "Clear Filters"
+        },
+        columns: {
+            modelId: "Model ID",
+            modelName: "Model Name",
+            baseModel: "Base Model",
+            status: "Status",
+            created: "Created",
+            createdBy: "Created By",
+            actions: "Actions"
+        },
+        actions: {
+            viewDetails: "View Details"
         }
     },
 

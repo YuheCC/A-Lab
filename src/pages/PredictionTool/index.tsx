@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { Activity } from 'lucide-react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import { Activity, X } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList, isMockModel } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
@@ -27,7 +35,24 @@ interface PredictionToolProps {}
 const PredictionTool: React.FC<PredictionToolProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Get dayjs locale based on current language
+  const getDayjsLocale = () => {
+    const lang = i18n.language || 'zh';
+    const localeMap: Record<string, string> = {
+      'zh': 'zh-cn',
+      'zh-CN': 'zh-cn',
+      'en': 'en',
+      'en-US': 'en',
+      'ja': 'ja',
+      'ja-JP': 'ja',
+      'ko': 'ko',
+      'ko-KR': 'ko',
+    };
+    return localeMap[lang] || 'zh-cn';
+  };
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +68,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [modelsCurrentPage, setModelsCurrentPage] = useState(1);
   const [modelsPageSize] = useState(20);
   const [modelsTotal, setModelsTotal] = useState(0);
+
+  // Models filter state
+  const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
+  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('all');
+  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('all');
+
+  // Records filter state
+  const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
+  const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
+  const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     // Check if navigation state has activeTab (from train page)
@@ -184,6 +219,50 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     navigate(`/prediction-tool/model-detail?id=${modelId}`);
   };
 
+  const handleModelStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedModelStatus(e.target.value);
+    setModelsCurrentPage(1);
+  };
+
+  const handleClearModelsFilters = () => {
+    setModelSearchKeyword('');
+    setSelectedModelStatus('all');
+    setSelectedBaseModel('all');
+  };
+
+  // Get unique base models from data
+  const uniqueBaseModels = Array.from(new Set(modelsData.map(model => model.base_model).filter(Boolean)));
+
+  // Filter models data
+  const filteredModelsData = modelsData.filter((model) => {
+    const keywordMatch = !modelSearchKeyword ||
+      model.model_name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
+      String(model.id).includes(modelSearchKeyword);
+    const statusMatch = selectedModelStatus === 'all' || model.status === selectedModelStatus;
+    const baseModelMatch = selectedBaseModel === 'all' || model.base_model === selectedBaseModel;
+    return keywordMatch && statusMatch && baseModelMatch;
+  });
+
+  // Filter records data
+  const filteredHistoryData = historyData.filter((record) => {
+    const keywordMatch = !recordSearchKeyword ||
+      record.name.toLowerCase().includes(recordSearchKeyword.toLowerCase()) ||
+      record.id.includes(recordSearchKeyword);
+    const modelMatch = recordSelectedModel === 'all' || record.model === recordSelectedModel;
+    const dateMatch = !recordSelectedDate || record.date.startsWith(recordSelectedDate);
+    return keywordMatch && modelMatch && dateMatch;
+  });
+
+  // Get unique model names from history data
+  const uniqueModels = Array.from(new Set(historyData.map(record => record.model).filter(Boolean)));
+
+  // Clear records filters
+  const handleClearRecordsFilters = () => {
+    setRecordSearchKeyword('');
+    setRecordSelectedModel('all');
+    setRecordSelectedDate('');
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('zh-CN', {
@@ -270,6 +349,57 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                 </div>
               ) : (
                 <>
+                  <div className="records-filters">
+                    <input
+                      type="text"
+                      className="records-search-input"
+                      value={recordSearchKeyword}
+                      onChange={(e) => setRecordSearchKeyword(e.target.value)}
+                      placeholder={t('predictionTool.records.searchPlaceholder', '搜索record名称或ID')}
+                    />
+                    <select
+                      className="records-model-filter"
+                      value={recordSelectedModel}
+                      onChange={(e) => setRecordSelectedModel(e.target.value)}
+                      aria-label={t('predictionTool.records.modelFilter', 'Model filter')}
+                    >
+                      <option value="all">{t('predictionTool.records.allModels', 'All Models')}</option>
+                      {uniqueModels.map((model) => (
+                        <option key={model} value={model}>{model}</option>
+                      ))}
+                    </select>
+                    <LocalizationProvider
+                      dateAdapter={AdapterDayjs}
+                      adapterLocale={getDayjsLocale()}
+                    >
+                      <DatePicker
+                        className="records-date-filter"
+                        value={recordSelectedDate ? dayjs(recordSelectedDate) : null}
+                        onChange={(date: Dayjs | null) => {
+                          setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
+                        }}
+                        slotProps={{
+                          textField: {
+                            placeholder: t('predictionTool.models.filters.selectDate', 'Select date'),
+                            size: 'small',
+                            fullWidth: true,
+                          }
+                        }}
+                      />
+                    </LocalizationProvider>
+                    {(recordSearchKeyword || recordSelectedModel !== 'all' || recordSelectedDate) && (
+                      <button className="clear-filters-button" onClick={handleClearRecordsFilters}>
+                        <X size={16} />
+                        <span>{t('predictionTool.records.clearFilters', 'Clear Filters')}</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="records-count-text">
+                    {t('predictionTool.records.showingRecords', 'Showing {{count}} of {{total}} records', {
+                      count: filteredHistoryData.length,
+                      total: historyData.length
+                    })}
+                  </div>
                   <div className="records-table-wrapper">
                     <table className="records-table">
                       <thead>
@@ -284,14 +414,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {historyData.length === 0 ? (
+                        {filteredHistoryData.length === 0 ? (
                           <tr>
                             <td colSpan={7} className="no-data">
                               {t('predictionTool.history.noResults', 'No prediction records found.')}
                             </td>
                           </tr>
                         ) : (
-                          historyData.map((record) => (
+                          filteredHistoryData.map((record) => (
                             <tr key={record.id}>
                               <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
                               <td className="file-name">{record.name}</td>
@@ -344,6 +474,49 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                 </div>
               ) : (
                 <>
+                  <div className="models-filters">
+                    <input
+                      type="text"
+                      className="models-search-input"
+                      value={modelSearchKeyword}
+                      onChange={(e) => setModelSearchKeyword(e.target.value)}
+                      placeholder={t('predictionTool.models.filters.searchPlaceholder', 'Search Model ID or Name...')}
+                    />
+                    <select
+                      className="models-status-filter"
+                      value={selectedModelStatus}
+                      onChange={handleModelStatusChange}
+                      aria-label={t('predictionTool.models.filters.allStatus', 'All Status')}
+                    >
+                      <option value="all">{t('predictionTool.models.filters.allStatus', 'All Status')}</option>
+                      <option value="online">{t('predictionTool.models.statusOnline', 'Online')}</option>
+                      <option value="trained">{t('predictionTool.models.statusTrained', 'Trained')}</option>
+                      <option value="training">{t('predictionTool.models.statusTraining', 'Training')}</option>
+                    </select>
+                    <select
+                      className="models-base-model-filter"
+                      value={selectedBaseModel}
+                      onChange={(e) => setSelectedBaseModel(e.target.value)}
+                      aria-label={t('predictionTool.models.filters.allBaseModels', 'All Base Models')}
+                    >
+                      <option value="all">{t('predictionTool.models.filters.allBaseModels', 'All Base Models')}</option>
+                      {uniqueBaseModels.map((baseModel) => (
+                        <option key={baseModel} value={baseModel}>{baseModel}</option>
+                      ))}
+                    </select>
+                    {(modelSearchKeyword || selectedModelStatus !== 'all' || selectedBaseModel !== 'all') && (
+                      <button className="clear-filters-button" onClick={handleClearModelsFilters}>
+                        <X size={16} />
+                        <span>{t('predictionTool.models.filters.clearFilters', 'Clear Filters')}</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="models-count-text">
+                    {t('predictionTool.models.showingRecords', 'Showing {{count}} of {{total}} records', {
+                      count: filteredModelsData.length,
+                      total: modelsData.length
+                    })}
+                  </div>
                   <div className="records-table-wrapper">
                     <table className="records-table">
                       <thead>
@@ -358,14 +531,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {modelsData.length === 0 ? (
+                        {filteredModelsData.length === 0 ? (
                           <tr>
                             <td colSpan={7} className="no-data">
                               {t('predictionTool.models.noResults', 'No models found.')}
                             </td>
                           </tr>
                         ) : (
-                          modelsData.map((model) => {
+                          filteredModelsData.map((model) => {
                             const statusInfo = getStatusLabel(model.status);
                             return (
                               <tr key={model.id}>

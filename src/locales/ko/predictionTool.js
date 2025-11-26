@@ -84,6 +84,15 @@ export default {
         }
     },
 
+    // Records
+    records: {
+        searchPlaceholder: "레코드 이름 또는 ID 검색",
+        modelFilter: "모델 필터",
+        allModels: "모든 모델",
+        clearFilters: "필터 지우기",
+        showingRecords: "{{count}} / {{total}} 개의 레코드 표시"
+    },
+
     // History
     history: {
         title: "예측 기록",
@@ -178,36 +187,98 @@ export default {
         point4: '예측 오차는 4.7% 또는 2.2%로, 단순 선형 외삽법(800 사이클)보다 훨씬 우수합니다.'
     },
 
+    // Train
+    train: {
+        title: "새 모델 학습",
+        back: "뒤로",
+        step1: {
+            title: "모델 정보",
+            name: "모델 이름",
+            namePlaceholder: "모델 이름 입력",
+            remarks: "비고 (선택 사항)",
+            remarksPlaceholder: "추가 메모나 비고 입력"
+        },
+        step2: {
+            title: "기본 모델",
+            modelName: "OSES-Base-v1",
+            badge: "기본 모델"
+        },
+        step3: {
+            title: "학습 데이터셋",
+            ratio: "학습-테스트 분할 비율:",
+            ratioValue: "7 : 3",
+            ratioDesc: "데이터셋의 70%는 학습에, 30%는 테스트에 사용됩니다",
+            upload: "데이터셋 업로드",
+            dragDrop: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+            formats: "지원 형식: CSV, XLSX (최대 50MB)",
+            chooseFile: "파일 선택",
+            downloadSample: "샘플 다운로드"
+        },
+        startTraining: "학습 시작",
+        errors: {
+            fileSize: "파일 크기가 50MB를 초과합니다"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "로딩 중...",
+        error: "오류",
+        noResults: "모델을 찾을 수 없습니다",
+        showingRecords: "{{count}} / {{total}} 개의 레코드 표시",
+        statusOnline: "온라인",
+        statusTrained: "학습 완료",
+        statusTraining: "학습 중",
+        filters: {
+            searchPlaceholder: "모델 ID 또는 이름 검색...",
+            allStatus: "모든 상태",
+            allBaseModels: "모든 기본 모델",
+            clearFilters: "필터 지우기"
+        },
+        columns: {
+            modelId: "모델 ID",
+            modelName: "모델 이름",
+            baseModel: "기본 모델",
+            status: "상태",
+            created: "생성 시간",
+            createdBy: "생성자",
+            actions: "작업"
+        },
+        actions: {
+            viewDetails: "상세 보기"
+        }
+    },
+
     // Model Detail
     modelDetail: {
-        title: "Model Information",
-        modelId: "Model ID:",
-        back: "Back",
-        creator: "Creator:",
-        status: "Status:",
-        statusOnline: "Online",
-        statusTrained: "Trained",
-        statusTraining: "Training",
-        created: "Created:",
-        remarks: "Remarks:",
-        baseModel: "Base Model",
-        trainingDataset: "Training Dataset",
-        datasetName: "Dataset Name:",
-        fileSize: "File Size:",
-        totalSamples: "Total Samples:",
-        ratio: "Train-Test Ratio:",
-        trainingResults: "Training Results",
-        accuracy: "Accuracy",
-        loss: "Loss",
-        epochs: "Epochs",
-        trainingTime: "Training Time",
-        validationScore: "Validation Score",
-        predictionRecords: "Prediction Records",
+        title: "모델 정보",
+        modelId: "모델 ID:",
+        back: "뒤로",
+        creator: "생성자:",
+        status: "상태:",
+        statusOnline: "온라인",
+        statusTrained: "학습 완료",
+        statusTraining: "학습 중",
+        created: "생성 시간:",
+        remarks: "비고:",
+        baseModel: "기본 모델",
+        trainingDataset: "학습 데이터셋",
+        datasetName: "데이터셋 이름:",
+        fileSize: "파일 크기:",
+        totalSamples: "총 샘플 수:",
+        ratio: "학습-테스트 비율:",
+        trainingResults: "학습 결과",
+        accuracy: "정확도",
+        loss: "손실",
+        epochs: "에포크",
+        trainingTime: "학습 시간",
+        validationScore: "검증 점수",
+        predictionRecords: "예측 기록",
         recordId: "ID",
-        fileName: "File Name",
-        batteryCount: "Battery Count",
-        avgCycleLife: "Avg Cycle Life",
-        actions: "Actions",
-        viewDetails: "View Details"
+        fileName: "파일명",
+        batteryCount: "배터리 수",
+        avgCycleLife: "평균 사이클 수명",
+        actions: "작업",
+        viewDetails: "상세 보기"
     }
 };
