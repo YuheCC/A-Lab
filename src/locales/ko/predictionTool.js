@@ -76,7 +76,7 @@ export default {
             recordId: "기록 ID",
             fileName: "파일명",
             batteryCount: "배터리 수",
-            avgCycleLife: "평균 사이클 수명",
+            avgCycleLife: "사이클 수명",
             created: "생성 시간",
             actions: "작업"
         }
