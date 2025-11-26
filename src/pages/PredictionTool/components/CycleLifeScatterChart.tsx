@@ -116,10 +116,11 @@ const CycleLifeScatterChart: React.FC<CycleLifeScatterChartProps> = ({
 
           // 处理散点图数据的情况
           if (Array.isArray(params.data) && params.data.length >= 3) {
-            const [_, __, cycle] = params.data;
+            const [_, capacity, cycle] = params.data;
             return `
               <div>
                 <strong>${t('predictionTool.chart.cycleCount')}:</strong> ${Math.round(cycle)}<br/>
+                <strong>${t('predictionTool.chart.capacity')}:</strong> ${capacity?.toFixed(2) || '0'}<br/>
               </div>
             `;
           }

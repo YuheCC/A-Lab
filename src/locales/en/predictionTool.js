@@ -131,6 +131,7 @@ export default {
     chart: {
         title: "Battery Capacity vs Cycle Count",
         cycleCount: "Cycle Number",
+        capacity: "Capacity",
         capacityProcess: "Capacity degradation (uploaded data)",
         predictedCycleLife: "Predicted cycle number to reach 80% SOH",
         xAxisName: "Cycle Number",
