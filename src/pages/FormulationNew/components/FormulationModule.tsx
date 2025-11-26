@@ -24,10 +24,11 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Solvent Configuration State
   const [solvents, setSolvents] = useState([
-    { id: 1, smiles: 'CCO', fraction: '1.00' }
+    { id: 1, smiles: 'O=C1OCCO1', fraction: '0.30' },
+    { id: 2, smiles: 'COC(=O)OC', fraction: '0.70' }
   ]);
   const [solventFractionType, setSolventFractionType] = useState<'mole' | 'weight'>('mole');
-  const [nextSolventId, setNextSolventId] = useState(2);
+  const [nextSolventId, setNextSolventId] = useState(3);
 
   // Results state
   const [isCalculating, setIsCalculating] = useState(false);
@@ -327,9 +328,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     setAnionFractions({'PF6': '1.00'});
     setFractionType('mole');
     setSolvents([
-      { id: 1, smiles: 'CCO', fraction: '1.00' }
+      { id: 1, smiles: 'O=C1OCCO1', fraction: '0.30' },
+      { id: 2, smiles: 'COC(=O)OC', fraction: '0.70' }
     ]);
-    setNextSolventId(2);
+    setNextSolventId(3);
     setSolventFractionType('mole');
     setIsCalculating(false);
     setCurrentView('configuration');
