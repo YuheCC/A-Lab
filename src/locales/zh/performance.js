@@ -19,7 +19,20 @@ export default {
       cellDesign: "电池设计:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "预测模型选择",
+    placeholder: "请选择预测模型",
+    baseModel: "基础模型",
+    finetunedModels: "微调模型",
+    columns: {
+      modelName: "模型名称",
+      modelId: "模型ID",
+      baseModel: "基础模型"
+    }
+  },
+
   // Additive input
   additive: {
     label: "添加剂的SMILES",

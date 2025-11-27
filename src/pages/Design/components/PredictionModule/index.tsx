@@ -12,6 +12,8 @@ import './index.less';
 import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
+import ModelSelect from '@/components/ModelSelect';
+import { mockModels } from './mockModelData';
 import { PricingContext } from '@/layouts/index';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
@@ -42,6 +44,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const pricingContext = useContext(PricingContext);
   const userPermissions = useAuthStore(state => state.userPermissions);
   const [selectedSystem, setSelectedSystem] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
@@ -643,7 +646,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const resetPredictionState = useCallback(() => {
     // Clear form inputs
     setAdditive('');
-    
+    setSelectedModel('');
+
     // Reset display states
     setShowSpecs(true);
     setShowResults(false);
@@ -812,6 +816,30 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               </div>
             </div>
           )}
+
+          <div className="pm-form-group pm-model-selection">
+            <label>{t('performance.modelSelection.label', '预测模型选择')}</label>
+            <ModelSelect
+              mode="single"
+              value={selectedModel}
+              onChange={(value) => setSelectedModel(value as string)}
+              options={mockModels}
+              groupBy="category"
+              groupByLabel={{
+                'base': t('performance.modelSelection.baseModel', 'Base Model'),
+                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models')
+              }}
+              columns={[
+                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
+                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
+                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
+              ]}
+              searchable
+              pageSize={20}
+              placeholder={t('performance.modelSelection.placeholder', '请选择预测模型')}
+              className="pm-model-select"
+            />
+          </div>
 
           <div className="pm-form-group">
             <div className="pm-dual-input-row">

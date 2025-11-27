@@ -1076,3 +1076,50 @@
 .pm-close-analysis-btn:hover {
   color: #6b7280;
 }
+
+/* 模型选择样式 */
+.pm-model-selection {
+  margin-bottom: 24px;
+}
+
+.pm-model-selection label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.pm-model-select {
+  width: 100%;
+}
+
+/* 确保 ModelSelect 在这个模块中的样式一致 */
+.pm-prediction-module .model-select {
+  font-family: inherit;
+}
+
+.pm-prediction-module .model-select__trigger {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-height: 24px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+}
+
+.pm-prediction-module .model-select__trigger:hover {
+  border-color: #9ca3af;
+}
+
+.pm-prediction-module .model-select__trigger.open {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pm-prediction-module .model-select__dropdown {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

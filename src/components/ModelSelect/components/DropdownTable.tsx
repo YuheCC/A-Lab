@@ -114,7 +114,7 @@ const DropdownTable: React.FC<DropdownTableProps> = ({
       <div className="model-select-table__header">
         {mode === 'multiple' && <div className="table-col-checkbox" />}
         {columns.map((col) => (
-          <div key={col.key} className="table-col" style={{ width: col.width }}>
+          <div key={col.key} className="table-col">
             {col.title}
           </div>
         ))}

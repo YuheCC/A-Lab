@@ -19,7 +19,20 @@ export default {
       cellDesign: "셀 설계:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "예측 모델 선택",
+    placeholder: "예측 모델을 선택하세요",
+    baseModel: "기본 모델",
+    finetunedModels: "미세 조정 모델",
+    columns: {
+      modelName: "모델 이름",
+      modelId: "모델 ID",
+      baseModel: "기본 모델"
+    }
+  },
+
   // Additive input
   additive: {
     label: "첨가제의 SMILES",

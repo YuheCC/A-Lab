@@ -19,7 +19,20 @@ export default {
       cellDesign: "セル設計:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "予測モデル選択",
+    placeholder: "予測モデルを選択してください",
+    baseModel: "ベースモデル",
+    finetunedModels: "ファインチューニングモデル",
+    columns: {
+      modelName: "モデル名",
+      modelId: "モデルID",
+      baseModel: "ベースモデル"
+    }
+  },
+
   // Additive input
   additive: {
     label: "添加剤のSMILES",

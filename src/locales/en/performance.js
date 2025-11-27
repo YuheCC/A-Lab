@@ -14,12 +14,25 @@ export default {
     systemSpecs: {
       title: "Cell Specifications",
       cathode: "Cathode:",
-      anode: "Anode:",  
+      anode: "Anode:",
       benchmarkElectrolyte: "Benchmark Electrolyte:",
       cellDesign: "Cell Design:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "Prediction Model Selection",
+    placeholder: "Please select a prediction model",
+    baseModel: "Base Model",
+    finetunedModels: "Fine-tuned Models",
+    columns: {
+      modelName: "Model Name",
+      modelId: "Model ID",
+      baseModel: "Base Model"
+    }
+  },
+
   // Additive input
   additive: {
     label: "SMILES of Additive",

@@ -72,8 +72,18 @@
 
   // 搜索框
   &__search {
-    padding: @spacing-md;
-    border-bottom: 1px solid @color-border-light;
+    padding: @spacing-md @spacing-lg;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border-light;
+    }
 
     input {
       width: 100%;
@@ -82,6 +92,7 @@
       border-radius: @radius-md;
       font-size: @font-size-base;
       transition: border-color @transition-fast;
+      box-sizing: border-box;
 
       &:focus {
         outline: none;
@@ -109,6 +120,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow-x: hidden;
 
   &__header {
     display: grid;
@@ -116,19 +128,38 @@
     gap: @spacing-md;
     padding: @spacing-md @spacing-lg;
     background: @color-gray-50;
-    border-bottom: 1px solid @color-border;
     font-weight: @font-weight-semibold;
     font-size: @font-size-sm;
     color: @color-text-secondary;
+    position: relative;
+    min-width: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border;
+    }
 
     .table-col-checkbox {
       width: 40px;
+    }
+
+    > * {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
   &__body {
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
 
     // 自定义滚动条样式
     &::-webkit-scrollbar {
@@ -158,7 +189,18 @@
   padding: @spacing-md @spacing-lg;
   cursor: pointer;
   transition: background @transition-fast;
-  border-bottom: 1px solid @color-border-light;
+  position: relative;
+  min-width: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: @color-border-light;
+  }
 
   &:hover {
     background: @color-gray-50;
@@ -185,6 +227,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0;
   }
 
   .table-col-checkbox {
@@ -210,10 +253,19 @@
     font-weight: @font-weight-semibold;
     font-size: @font-size-sm;
     color: @color-text-primary;
-    border-bottom: 1px solid @color-border;
     position: sticky;
     top: 0;
     z-index: 1;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: @color-border;
+    }
   }
 
   &__body {

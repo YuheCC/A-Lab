@@ -37,7 +37,7 @@ const TableRow: React.FC<TableRowProps> = ({
         </div>
       )}
       {columns.map((col) => (
-        <div key={col.key} className="table-col" style={{ width: col.width }}>
+        <div key={col.key} className="table-col">
           {col.render
             ? col.render(option[col.key], option)
             : String(option[col.key] || '')}
