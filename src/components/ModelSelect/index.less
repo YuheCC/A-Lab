@@ -58,16 +58,30 @@
 
   // 下拉框
   &__dropdown {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
     background: #ffffff;
     border: 1px solid @color-border;
     border-radius: @radius-md;
     box-shadow: @shadow-lg;
     z-index: @z-index-dropdown;
     overflow: hidden;
+    max-height: 500px; // 设置最大高度，防止下拉框过高
+
+    // Portal 渲染的下拉框使用 fixed 定位
+    &--portal {
+      position: fixed;
+      // 位置通过 style 属性动态设置
+      animation: modelSelectFadeIn 0.15s ease-out;
+    }
+
+    // 显示在上方时的样式
+    &--top {
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    // 显示在下方时的样式
+    &--bottom {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
   }
 
   // 搜索框
@@ -157,7 +171,7 @@
   }
 
   &__body {
-    max-height: 400px;
+    max-height: min(400px, calc(100vh - 200px)); // 动态调整最大高度，确保不超出视口
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -313,5 +327,17 @@
     .table-col {
       font-size: @font-size-sm;
     }
+  }
+}
+
+// 下拉框淡入动画
+@keyframes modelSelectFadeIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
