@@ -34,7 +34,6 @@ const Introduction: React.FC = () => {
               <li>{t('predictionTool.tutorial.point3_sub1')}</li>
             </ul>
           </li>
-          <li>{t('predictionTool.tutorial.point4')}</li>
         </ul>
       </div>
     </div>
