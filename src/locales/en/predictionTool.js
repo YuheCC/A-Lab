@@ -171,8 +171,8 @@ export default {
         point1_sub1: 'NCM811/12%Si.-Graphite with carbonate electrolyte',
         point1_sub2: '1C/1C cycling with 0.33C/0.33C capacity check every 100 cycles',
         point2: 'For general predictions, the accuracy is approximately ±15%. After fine-tuning the model for a specific battery system, the prediction accuracy can improve to approximately ±5% for that system.',
-        point3: 'For a real cell with known cycle-life, the model predicted EOL at the 1321 cycle.',
-        point3_sub1: 'The ground truth is 1261 cycles (based on the capacity retention of each cycle) or 1351 cycles (based on the capacity retention of capacity check cycles).',
+        point3: 'For a real cell with known cycle-life (1261 cycles based on the capacity retention of each cycle, or 1351 cycles based on the capacity retention of capacity check cycles), the model predicted EOL at the 1321 cycle.',
+        point3_sub1: 'The prediction has a minor error of 4.7% or 2.2%, which is much better than simple linear extrapolation (800 cycles).',
         point4: 'The prediction has a minor error of 4.7% or 2.2%. Which is much better than simple linear extrapolation (800 cycles).'
     }
 };
