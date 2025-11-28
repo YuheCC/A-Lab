@@ -39,10 +39,31 @@
     }
   }
 
-  &__value {
+  &__input {
     flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
     color: @color-text-primary;
     font-size: @font-size-base;
+    padding: 0;
+    cursor: pointer;
+
+    &:read-only {
+      cursor: pointer;
+    }
+
+    &:not(:read-only) {
+      cursor: text;
+    }
+
+    &::placeholder {
+      color: @color-text-muted;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
 
   &__arrow {
@@ -50,6 +71,8 @@
     color: @color-text-secondary;
     font-size: @font-size-xs;
     transition: transform @transition-fast;
+    cursor: pointer;
+    user-select: none;
 
     .open & {
       transform: rotate(180deg);

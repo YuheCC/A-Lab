@@ -7,7 +7,6 @@ import { useSearch } from './hooks/useSearch';
 import { useRequest } from './hooks/useRequest';
 import { useKeyboard } from './hooks/useKeyboard';
 import { useGrouping } from './hooks/useGrouping';
-import SearchInput from './components/SearchInput';
 import DropdownTable from './components/DropdownTable';
 import './index.less';
 
@@ -45,6 +44,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
   const selectRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // 国际化占位符
   const actualPlaceholder = placeholder || t('common.modelSelect.placeholder');
@@ -182,16 +182,26 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
     });
   };
 
-  // 打开时更新位置
+  // 打开时更新位置并聚焦输入框
   useEffect(() => {
     if (isOpen) {
       updateDropdownPosition();
       // 在下一帧再次更新，此时下拉框已经渲染完成，可以获取实际高度
       requestAnimationFrame(() => {
         updateDropdownPosition();
+        // 如果开启了搜索功能，聚焦到输入框
+        if (searchable && inputRef.current) {
+          inputRef.current.focus();
+          inputRef.current.select();
+        }
       });
+    } else {
+      // 关闭时清空搜索值
+      if (searchable) {
+        setSearchValue('');
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, searchable]);
 
   // 监听滚动和窗口尺寸变化
   useEffect(() => {
@@ -234,9 +244,23 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
     }
   };
 
+  // 处理输入框点击
+  const handleInputClick = () => {
+    if (!disabled && !isOpen) {
+      setIsOpen(true);
+    }
+  };
+
+  // 处理输入框变化
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (searchable && isOpen) {
+      setSearchValue(e.target.value);
+    }
+  };
+
   // 获取显示值
   const getDisplayValue = () => {
-    if (!value) return actualPlaceholder;
+    if (!value) return '';
 
     const labelField = fieldNames.label || 'name';
     const allOptions = finalGroups
@@ -252,8 +276,28 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       const selectedCount = Array.isArray(value) ? value.length : 0;
       return selectedCount > 0
         ? t('common.modelSelect.selected', { count: selectedCount })
-        : actualPlaceholder;
+        : '';
     }
+  };
+
+  // 获取输入框的值
+  const getInputValue = () => {
+    // 如果下拉框打开且可搜索，显示搜索值
+    if (isOpen && searchable) {
+      return searchValue;
+    }
+    // 否则显示选中的值
+    return getDisplayValue();
+  };
+
+  // 获取占位符
+  const getInputPlaceholder = () => {
+    // 如果下拉框打开且可搜索，使用搜索占位符
+    if (isOpen && searchable) {
+      return actualSearchPlaceholder;
+    }
+    // 否则使用普通占位符
+    return actualPlaceholder;
   };
 
   const isLoading = loading || externalLoading;
@@ -287,14 +331,6 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
         className={`model-select__dropdown model-select__dropdown--portal model-select__dropdown--${placement}`}
         style={dropdownStyle}
       >
-        {searchable && (
-          <SearchInput
-            value={searchValue}
-            onChange={setSearchValue}
-            placeholder={actualSearchPlaceholder}
-          />
-        )}
-
         {isLoading ? (
           <div className="model-select__empty">
             {t('common.modelSelect.loading')}
@@ -332,14 +368,30 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       <div
         className={`model-select__trigger ${disabled ? 'disabled' : ''} ${isOpen ? 'open' : ''}`}
         ref={triggerRef}
-        onClick={handleToggle}
         role="combobox"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        tabIndex={disabled ? -1 : 0}
       >
-        <span className="model-select__value">{getDisplayValue()}</span>
-        <span className="model-select__arrow">▼</span>
+        <input
+          ref={inputRef}
+          type="text"
+          className="model-select__input"
+          value={getInputValue()}
+          onChange={handleInputChange}
+          onClick={handleInputClick}
+          placeholder={getInputPlaceholder()}
+          disabled={disabled}
+          readOnly={!searchable || !isOpen}
+          tabIndex={disabled ? -1 : 0}
+        />
+        <span
+          className="model-select__arrow"
+          onClick={handleToggle}
+          role="button"
+          aria-label="toggle dropdown"
+        >
+          ▼
+        </span>
       </div>
 
       {renderDropdown()}
