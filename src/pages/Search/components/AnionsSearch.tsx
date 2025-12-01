@@ -355,11 +355,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const scaleScoreToTen = (value: number | null): number | null => {
         if (value === null) return null;
         const clamped = Math.min(Math.max(value, 0), 1);
-        return parseFloat((1 + clamped * 9).toFixed(2));
+        return parseFloat((clamped * 10).toFixed(2));
     };
 
     const getScoreColor = (scaled: number): string => {
-        const normalized = Math.min(Math.max((scaled - 1) / 9, 0), 1);
+        const normalized = Math.min(Math.max(scaled / 10, 0), 1);
         const hue = normalized * 120;
         return `hsl(${Math.round(hue)}, 70%, 45%)`;
     };
