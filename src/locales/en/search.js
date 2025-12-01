@@ -45,7 +45,7 @@ export default {
     searchRangeTooltip: 'Drag the slider to the left to prioritize molecules with maximum property compatibility with your use case, regardless of their structure. Drag the slider to the right to prioritize molecules with maximum structural similarity to your input molecules.',
     advancedOptions: 'Advanced options',
     intelligentCompute: 'Intelligent find friends compute',
-    intelligentFindFriendsLabel: 'Intelligent find "friends"',
+    intelligentFindFriendsLabel: 'Intelligent Search',
     intelligentFindFriendsTooltip: 'Examine hundreds of molecules with LLMs to find even more relevant molecules to your application. Increase the compute power and fill out the battery system information (under Advanced options) for best results.',
     intelligentFindFriendsLimitLabel: 'Remaining monthly: {{remaining}} / {{limit}}',
     showHypothetical: 'Show hypothetical molecules',

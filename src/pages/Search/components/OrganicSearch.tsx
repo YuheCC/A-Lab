@@ -746,7 +746,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
             return;
         }
 
-        setSearchLoading(true);
+        setSearchLoading(!shouldRunFindFriendsOnly);
         setSearchWarning(null);
         setSearchError(null);
         setsearchResults(null);
@@ -964,7 +964,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                             <SearchInput
                                 ref={searchInputRef}
                                 onSearch={handleSearch}
-                                disabled={searchLoading}
+                                disabled={searchLoading || findFriendsLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.organicInput : ''}
                                 lockInput={isPublic}
                                 initialEditorOpen={false}
@@ -1035,7 +1035,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 readOnly={isPublic}
                                 onLockedClick={triggerAccessModal}
                                 onSubmitSearch={() => searchInputRef.current?.submit?.()}
-                                submitDisabled={searchLoading}
+                                submitDisabled={searchLoading || findFriendsLoading}
                             />
 
                     <div className="search-results">

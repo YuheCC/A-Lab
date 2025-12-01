@@ -810,7 +810,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             return;
         }
 
-        setSearchLoading(true);
+        setSearchLoading(!shouldRunFindFriendsOnly);
         setSearchWarning(null);
         setSearchError(null);
         setsearchResults(null);
@@ -1029,7 +1029,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                             <SearchInput
                                 ref={searchInputRef}
                                 onSearch={handleSearch}
-                                disabled={searchLoading}
+                                disabled={searchLoading || findFriendsLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.anionInput : ''}
                                 lockInput={isPublic}
                                 initialEditorOpen={false}
@@ -1102,7 +1102,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 additiveOptionsByCategory={ANION_ADDITIVE_OPTIONS_BY_CATEGORY}
                                 molTypeOptions={ANION_MOL_TYPE_OPTIONS}
                                 onSubmitSearch={() => searchInputRef.current?.submit?.()}
-                                submitDisabled={searchLoading}
+                                submitDisabled={searchLoading || findFriendsLoading}
                             />
 
                     <div className="search-results">
