@@ -45,7 +45,7 @@ export default {
     searchRangeTooltip: '슬라이더를 왼쪽으로 이동하면 구조와 관계없이 사용 사례에 가장 적합한 물성의 분자를 우선합니다. 오른쪽으로 이동하면 입력한 분자와 구조가 가장 유사한 분자를 우선합니다.',
     advancedOptions: '고급 옵션',
     intelligentCompute: '지능형 친구 찾기 연산',
-    intelligentFindFriendsLabel: '지능형 "친구" 찾기',
+    intelligentFindFriendsLabel: '지능형 검색',
     intelligentFindFriendsTooltip: 'LLM으로 수백 개의 분자를 살펴보고, 사용 사례에 더 적합한 분자를 찾아보세요. 최상의 결과를 위해 계산 성능을 높이고 (고급 옵션)에서 배터리 시스템 정보를 입력하세요.',
     intelligentFindFriendsLimitLabel: '이번 달 남은 횟수: {{remaining}} / {{limit}}',
     showHypothetical: '가상 분자 표시',
@@ -103,7 +103,7 @@ export default {
     // Search Results
     searchedMolecules: "검색된 분자",
     moleculeNumber: "분자 {{number}}",
-    similarMolecules: "유사한 분자",
+    similarMolecules: "추천 분자",
     similarMoleculeNumber: "유사한 분자 #{{number}}",
     selectMolType: "최상의 결과를 위해 분자 유형을 선택하세요",
     

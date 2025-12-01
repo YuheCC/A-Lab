@@ -45,7 +45,7 @@ export default {
     searchRangeTooltip: 'スライダーを左に動かすと、構造に関係なく用途に最も適した特性を持つ分子を優先します。右に動かすと、入力した分子と構造が最も似ている分子を優先します。',
     advancedOptions: '詳細オプション',
     intelligentCompute: 'インテリジェント友達検索計算',
-    intelligentFindFriendsLabel: 'インテリジェント「友達」検索',
+    intelligentFindFriendsLabel: 'インテリジェント検索',
     intelligentFindFriendsTooltip: 'LLM を使って数百種類の分子を調べ、用途にさらに適した分子を見つけます。最良の結果を得るには、計算レベルを上げて（高度なオプション内の）電池システム情報を入力してください。',
     intelligentFindFriendsLimitLabel: '今月の残り: {{remaining}} / {{limit}}',
     showHypothetical: '仮想分子を表示',
@@ -78,7 +78,7 @@ export default {
     // Search Results
     searchedMolecules: "検索された分子",
     moleculeNumber: "分子 {{number}}",
-    similarMolecules: "類似分子",
+    similarMolecules: "推奨分子",
     similarMoleculeNumber: "類似分子 #{{number}}",
     selectMolType: "最良の結果を得るために分子のタイプを選択してください",
     

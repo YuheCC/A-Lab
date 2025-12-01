@@ -355,11 +355,11 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const scaleScoreToTen = (value: number | null): number | null => {
         if (value === null) return null;
         const clamped = Math.min(Math.max(value, 0), 1);
-        return parseFloat((1 + clamped * 9).toFixed(2));
+        return parseFloat((clamped * 10).toFixed(2));
     };
 
     const getScoreColor = (scaled: number): string => {
-        const normalized = Math.min(Math.max((scaled - 1) / 9, 0), 1);
+        const normalized = Math.min(Math.max(scaled / 10, 0), 1);
         const hue = normalized * 120;
         return `hsl(${Math.round(hue)}, 70%, 45%)`;
     };
@@ -810,7 +810,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             return;
         }
 
-        setSearchLoading(true);
+        setSearchLoading(!shouldRunFindFriendsOnly);
         setSearchWarning(null);
         setSearchError(null);
         setsearchResults(null);
@@ -1029,7 +1029,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                             <SearchInput
                                 ref={searchInputRef}
                                 onSearch={handleSearch}
-                                disabled={searchLoading}
+                                disabled={searchLoading || findFriendsLoading}
                                 initialValue={isPublic ? PUBLIC_SEARCH_LOCKED_VALUES.anionInput : ''}
                                 lockInput={isPublic}
                                 initialEditorOpen={false}
@@ -1102,7 +1102,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 additiveOptionsByCategory={ANION_ADDITIVE_OPTIONS_BY_CATEGORY}
                                 molTypeOptions={ANION_MOL_TYPE_OPTIONS}
                                 onSubmitSearch={() => searchInputRef.current?.submit?.()}
-                                submitDisabled={searchLoading}
+                                submitDisabled={searchLoading || findFriendsLoading}
                             />
 
                     <div className="search-results">
