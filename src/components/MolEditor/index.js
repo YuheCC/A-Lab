@@ -1,18 +1,25 @@
 import { Kekule } from 'kekule';
 import 'kekule/theme/default';
 import './MolEditor.css';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AtomIcon, Download } from 'lucide-react';
 import InfoTooltip from '@/components/InfoTooltip';
 import { useTranslation } from 'react-i18next';
 import { loadRDKit } from '@/utils/rdkitLoader';
+import { authFetch, getAPIUrl } from '@/utils';
+
+const API_URL = getAPIUrl();
+const SEARCH_ENDPOINT = `${API_URL}/api/llm/search-new`;
 
 const MolEditor = ({ onMolChange, style, getSmilesForImport }) => {
     const [focused, setFocused] = useState(false);
     const [composer, setComposer] = useState(null);
+    const [importing, setImporting] = useState(false);
+    const [bannerMessage, setBannerMessage] = useState(null);
     const editorRef = useRef(null);
     const rdkitModuleRef = useRef(null);
     const rdkitLoadPromiseRef = useRef(null);
+    const bannerTimerRef = useRef(null);
     const { t } = useTranslation();
 
     const extractSmilesCandidates = (rawInput) => {
@@ -177,28 +184,120 @@ const MolEditor = ({ onMolChange, style, getSmilesForImport }) => {
         }
     };
 
+    const hideBanner = useCallback(() => {
+        if (bannerTimerRef.current) {
+            clearTimeout(bannerTimerRef.current);
+            bannerTimerRef.current = null;
+        }
+        setBannerMessage(null);
+    }, []);
+
+    const showBanner = useCallback((message) => {
+        if (!message) return;
+        hideBanner();
+        setBannerMessage(message);
+        bannerTimerRef.current = setTimeout(() => {
+            setBannerMessage(null);
+            bannerTimerRef.current = null;
+        }, 4000);
+    }, [hideBanner]);
+
+    useEffect(() => () => {
+        if (bannerTimerRef.current) {
+            clearTimeout(bannerTimerRef.current);
+        }
+    }, []);
+
+    const fetchSmilesFromSearch = useCallback(async (query) => {
+        const normalizedQuery = typeof query === 'string' ? query.trim() : '';
+        if (!normalizedQuery) {
+            return null;
+        }
+
+        try {
+            const response = await authFetch(`${SEARCH_ENDPOINT}?query=${encodeURIComponent(normalizedQuery)}&umap_type=organic`);
+            if (!response.ok) {
+                return null;
+            }
+
+            const data = await response.json();
+            const envelopes = Array.isArray(data) ? data : [data];
+
+            for (const env of envelopes) {
+                if (!env || env.message === 'Ambiguous molecule abbreviation') {
+                    continue;
+                }
+
+                if (env.found && Array.isArray(env.molecule_details)) {
+                    for (const detail of env.molecule_details) {
+                        const smiles = detail?.SMILES || detail?.smiles;
+                        if (smiles) {
+                            return smiles;
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('[MolEditor] Search fallback failed for query:', normalizedQuery, error);
+        }
+
+        return null;
+    }, []);
+
     const handleImportClick = async () => {
-        if (!composer || typeof getSmilesForImport !== 'function') {
+        if (!composer || typeof getSmilesForImport !== 'function' || importing) {
             return;
         }
 
-        const rawInput = getSmilesForImport();
-        const candidates = extractSmilesCandidates(rawInput);
-        console.log('[MolEditor] Import button clicked.', { rawInput, candidates, candidateCount: candidates.length });
+        setImporting(true);
+        hideBanner();
 
-        if (!candidates.length) {
-            console.warn('[MolEditor] No SMILES candidates available from input.');
-        }
+        try {
+            const rawInput = getSmilesForImport();
+            const candidates = extractSmilesCandidates(rawInput);
+            console.log('[MolEditor] Import button clicked.', { rawInput, candidates, candidateCount: candidates.length });
 
-        for (const candidate of candidates) {
-            // eslint-disable-next-line no-await-in-loop
-            const success = await tryLoadSmiles(candidate);
-            if (success) {
-                console.log('[MolEditor] Import completed using candidate:', candidate);
-                return;
+            if (!candidates.length) {
+                console.warn('[MolEditor] No SMILES candidates available from input.');
             }
+
+            for (const candidate of candidates) {
+                // eslint-disable-next-line no-await-in-loop
+                const success = await tryLoadSmiles(candidate);
+                if (success) {
+                    console.log('[MolEditor] Import completed using candidate:', candidate);
+                    hideBanner();
+                    return;
+                }
+            }
+
+            console.warn('[MolEditor] Unable to import any SMILES candidates from direct input. Attempting search fallback.');
+            const uniqueQueries = Array.from(new Set([
+                typeof rawInput === 'string' ? rawInput : '',
+                ...candidates,
+            ]));
+
+            for (const query of uniqueQueries) {
+                // eslint-disable-next-line no-await-in-loop
+                const fallbackSmiles = await fetchSmilesFromSearch(query);
+                if (!fallbackSmiles) {
+                    continue;
+                }
+
+                console.log('[MolEditor] Search fallback produced SMILES candidate:', fallbackSmiles);
+                // eslint-disable-next-line no-await-in-loop
+                const success = await tryLoadSmiles(fallbackSmiles);
+                if (success) {
+                    hideBanner();
+                    return;
+                }
+            }
+
+            console.warn('[MolEditor] Search fallback was unable to provide a renderable SMILES.');
+            showBanner(t('search.importSmilesErrorBanner', 'We couldn\'t render that molecule. Try a different SMILES or molecule name.'));
+        } finally {
+            setImporting(false);
         }
-        console.warn('[MolEditor] Unable to import any SMILES candidates from input.');
     };
 
     const importTooltip = t('search.importSmilesTooltip', 'Import SMILES to drawing tool.');
@@ -279,12 +378,18 @@ const MolEditor = ({ onMolChange, style, getSmilesForImport }) => {
                     type='button'
                     className='mol-editor-import-button'
                     onClick={handleImportClick}
+                    disabled={importing}
                     aria-label={importTooltip}
                 >
                     <Download size={18} />
                 </button>
             </InfoTooltip>
         </div>
+        {bannerMessage && (
+            <div className='mol-editor-banner' role='status'>
+                {bannerMessage}
+            </div>
+        )}
         <div ref={editorRef} className='mol-editor' id='kekule-editor'></div>
         <div className='tips'>If you need to modify the atoms at the corners use the <AtomIcon size={14} style={{
             marginLeft: 5,
