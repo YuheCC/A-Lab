@@ -100,7 +100,7 @@ export default {
     // Search Results
     searchedMolecules: "Searched Molecules",
     moleculeNumber: "Molecule {{number}}",
-    similarMolecules: "Similar Molecules",
+    similarMolecules: "Recommended Molecules",
     similarMoleculeNumber: "Similar Molecule #{{number}}",
     selectMolType: "Select what type of molecule it is for best results",
     

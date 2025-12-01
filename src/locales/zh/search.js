@@ -45,7 +45,7 @@ export default {
     searchRangeTooltip: '将滑块向左拖动，可优先考虑与您的使用场景在性能上最兼容的分子，即便它们的结构不同。将滑块向右拖动，可优先考虑与您输入分子结构最相似的分子。',
     advancedOptions: '高级选项',
     intelligentCompute: '智能找朋友计算',
-    intelligentFindFriendsLabel: '智能找"朋友"',
+    intelligentFindFriendsLabel: '智能搜索',
     intelligentFindFriendsTooltip: '使用大型语言模型检查数百种分子，为您的应用寻找更相关的候选。提高计算能力，并填写（高级选项中的）电池系统信息，以获得最佳效果。',
     intelligentFindFriendsLimitLabel: '本月剩余：{{remaining}} / {{limit}}',
     showHypothetical: '显示假想分子',
@@ -102,7 +102,7 @@ export default {
     // Search Results
     searchedMolecules: "搜索结果分子",
     moleculeNumber: "分子 {{number}}",
-    similarMolecules: "相似分子",
+    similarMolecules: "推荐分子",
     similarMoleculeNumber: "相似分子 #{{number}}",
     selectMolType: "选择最适合的分子类型以获得最佳结果",
     
