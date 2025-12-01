@@ -15,6 +15,22 @@
     padding: 8px 8px 0;
 }
 
+.mol-editor-banner {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(220, 38, 38, 0.95);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+    z-index: 2;
+}
+
 .mol-editor-import-button {
     display: inline-flex;
     align-items: center;
@@ -31,6 +47,15 @@
 
 .mol-editor-import-button:hover {
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mol-editor-import-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mol-editor-import-button:disabled:hover {
+    background-color: transparent;
 }
 
 .mol-editor-import-button:focus-visible {
