@@ -754,34 +754,45 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
     }));
   }, [batterySystemOptions?.length, comingSoonText]);
+
   return (
     <div className="pm-prediction-module">
       <div className="pm-module-section">
         <h2>{t('performance.batterySystemSelection.title')}</h2>
         
         <div className="pm-module-content-card">
-          <div className="pm-form-group">
-            <label>{t('performance.batterySystemSelection.label')}</label>
-            <CustomSelect
-              value={selectedSystem}
-              onChange={setSelectedSystem}
-              onOptionClick={(option, isSelected) => {
-                if(!showSpecs && selectedSystem) {
+          <div className="pm-form-group pm-model-selection">
+            <label>{t('performance.modelSelection.label', '预测模型选择')}</label>
+            <ModelSelect
+              mode="single"
+              value={selectedModel}
+              onChange={(value) => {
+                setSelectedModel(value as string);
+                // 选择模型后显示电池规格
+                if (value) {
                   setShowSpecs(true);
                 }
-                // 这里可以添加你需要的option点击处理逻辑
               }}
-              options={isBatterySystemLoading ?
-                [{ id: 'loading', name: t('performance.batterySystemSelection.loading'), disabled: true }] :
-                batterySystemDisplayOptions
-              }
-              className="pm-system-select"
-              disabled={isBatterySystemLoading}
-              placeholder={t('performance.batterySystemSelection.loading')}
+              options={mockModels}
+              groupBy="category"
+              groupByLabel={{
+                'base': t('performance.modelSelection.baseModel', 'Base Model'),
+                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models')
+              }}
+              columns={[
+                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
+                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
+                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
+              ]}
+              searchable
+              pageSize={20}
+              placeholder={t('performance.modelSelection.placeholder', '请选择预测模型')}
+              className="pm-model-select"
+              fieldNames={{ label: 'name', value: 'id' }}
             />
           </div>
 
-          {showSpecs && currentSpec && (
+          {selectedModel && showSpecs && currentSpec && (
             <div className="pm-system-specs">
               <div className="pm-specs-header">
                 <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
@@ -816,30 +827,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               </div>
             </div>
           )}
-
-          <div className="pm-form-group pm-model-selection">
-            <label>{t('performance.modelSelection.label', '预测模型选择')}</label>
-            <ModelSelect
-              mode="single"
-              value={selectedModel}
-              onChange={(value) => setSelectedModel(value as string)}
-              options={mockModels}
-              groupBy="category"
-              groupByLabel={{
-                'base': t('performance.modelSelection.baseModel', 'Base Model'),
-                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models')
-              }}
-              columns={[
-                { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
-                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
-                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
-              ]}
-              searchable
-              pageSize={20}
-              placeholder={t('performance.modelSelection.placeholder', '请选择预测模型')}
-              className="pm-model-select"
-            />
-          </div>
 
           <div className="pm-form-group">
             <div className="pm-dual-input-row">

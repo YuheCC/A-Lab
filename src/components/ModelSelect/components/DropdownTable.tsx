@@ -11,6 +11,10 @@ interface DropdownTableProps {
   mode: 'single' | 'multiple';
   highlightedIndex: number;
   pageSize?: number;
+  fieldNames?: {
+    label?: string;
+    value?: string;
+  };
 }
 
 const DropdownTable: React.FC<DropdownTableProps> = ({
@@ -22,7 +26,9 @@ const DropdownTable: React.FC<DropdownTableProps> = ({
   mode,
   highlightedIndex,
   pageSize = 20,
+  fieldNames = { label: 'name', value: 'id' },
 }) => {
+  const valueField = fieldNames.value || 'id';
   const [displayCount, setDisplayCount] = useState(pageSize);
 
   // 计算 grid-template-columns
@@ -51,13 +57,14 @@ const DropdownTable: React.FC<DropdownTableProps> = ({
                 const currentIndex = globalIndex++;
                 return (
                   <TableRow
-                    key={option.id}
+                    key={option[valueField]}
                     option={option}
                     columns={columns}
                     onSelect={onSelect}
-                    isSelected={isSelected(String(option.id))}
+                    isSelected={isSelected(String(option[valueField]))}
                     isHighlighted={currentIndex === highlightedIndex}
                     mode={mode}
+                    valueField={valueField}
                   />
                 );
               })}
@@ -82,13 +89,14 @@ const DropdownTable: React.FC<DropdownTableProps> = ({
         <>
           {visibleOptions.map((option, index) => (
             <TableRow
-              key={option.id}
+              key={option[valueField]}
               option={option}
               columns={columns}
               onSelect={onSelect}
-              isSelected={isSelected(String(option.id))}
+              isSelected={isSelected(String(option[valueField]))}
               isHighlighted={index === highlightedIndex}
               mode={mode}
+              valueField={valueField}
             />
           ))}
           {displayCount < options.length && (

@@ -224,10 +224,11 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
   // 点击外部关闭
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+      const isClickInsideSelect = selectRef.current?.contains(target);
+      const isClickInsideDropdown = dropdownRef.current?.contains(target);
+
+      if (!isClickInsideSelect && !isClickInsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -263,13 +264,14 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
     if (!value) return '';
 
     const labelField = fieldNames.label || 'name';
+    const valueField = fieldNames.value || 'id';
     const allOptions = finalGroups
       ? finalGroups.flatMap((g) => g.options)
       : data.options;
 
     if (mode === 'single') {
       const selectedOption = allOptions.find(
-        (opt) => String(opt.id) === String(value)
+        (opt) => String(opt[valueField]) === String(value)
       );
       return selectedOption ? selectedOption[labelField] : value;
     } else {
@@ -353,6 +355,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
             mode={mode}
             highlightedIndex={highlightedIndex}
             pageSize={pageSize}
+            fieldNames={fieldNames}
           />
         )}
       </div>,

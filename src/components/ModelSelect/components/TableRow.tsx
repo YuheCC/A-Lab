@@ -8,6 +8,7 @@ interface TableRowProps {
   isSelected: boolean;
   isHighlighted: boolean;
   mode: 'single' | 'multiple';
+  valueField?: string;
 }
 
 const TableRow: React.FC<TableRowProps> = ({
@@ -17,9 +18,10 @@ const TableRow: React.FC<TableRowProps> = ({
   isSelected,
   isHighlighted,
   mode,
+  valueField = 'id',
 }) => {
   const handleClick = () => {
-    onSelect(String(option.id));
+    onSelect(String(option[valueField]));
   };
 
   const rowClassName = `model-select-table-row${isSelected ? ' model-select-table-row--selected' : ''}${isHighlighted ? ' model-select-table-row--highlighted' : ''}`;
