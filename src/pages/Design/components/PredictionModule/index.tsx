@@ -13,7 +13,7 @@ import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
-import { mockModels } from './mockModelData';
+import { mockModels, type PerformanceMetricType } from './mockModelData';
 import { PricingContext } from '@/layouts/index';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 
@@ -48,7 +48,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [additive, setAdditive] = useState('');
   const [showSpecs, setShowSpecs] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [activeTab, setActiveTab] = useState<'25c' | '45c'>('25c');
   const [showLLMAnalysis, setShowLLMAnalysis] = useState(false);
 
   // 权限判断
@@ -102,6 +101,56 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   };
 
   const currentSpec = getCurrentSpec();
+
+  // 性能指标配置映射
+  const metricConfig: Record<PerformanceMetricType, {
+    label25Key: string;
+    label45Key: string;
+    dataKey: 'cycleLife' | 'ce' | 'ratePerformance';
+  }> = {
+    'cl': {
+      label25Key: 'performance.results.performance.cycleLife25',
+      label45Key: 'performance.results.performance.cycleLife45',
+      dataKey: 'cycleLife'
+    },
+    'ce': {
+      label25Key: 'performance.results.performance.ce25',
+      label45Key: 'performance.results.performance.ce45',
+      dataKey: 'ce'
+    },
+    'rate': {
+      label25Key: 'performance.results.performance.ratePerformance25',
+      label45Key: '',
+      dataKey: 'ratePerformance'
+    }
+  };
+
+  // 根据模型配置和温度限制，获取可显示的性能指标
+  const getAvailableMetrics = useCallback(
+    (temperature: '25c' | '45c'): PerformanceMetricType[] => {
+      if (!selectedModel) return [];
+
+      const model = mockModels.find(m => m.id === selectedModel);
+      if (!model || !model.supportedMetrics || model.supportedMetrics.length === 0) {
+        return [];
+      }
+
+      let availableMetrics = [...model.supportedMetrics];
+
+      // 45°C 温度限制：移除 rate（API 不支持）
+      if (temperature === '45c') {
+        availableMetrics = availableMetrics.filter(m => m !== 'rate');
+      }
+
+      return availableMetrics;
+    },
+    [selectedModel]
+  );
+
+  // 判断是否需要显示 45°C 区块
+  const shouldShow45C = useCallback((): boolean => {
+    return getAvailableMetrics('45c').length > 0;
+  }, [getAvailableMetrics]);
 
   // 计算等待时间的useEffect
   useEffect(() => {
@@ -1186,58 +1235,88 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             />
             
             <div className="pm-results-card">
-              <div className="pm-temperature-tabs" data-active={activeTab}>
-              <button 
-                className={`pm-temp-tab ${activeTab === '25c' ? 'active' : ''}`}
-                onClick={() => setActiveTab('25c')}
-              >
-                {t('performance.results.temperatureTabs.temp25')}
-              </button>
-              <button 
-                className={`pm-temp-tab ${activeTab === '45c' ? 'active' : ''} ${!isHighTier ? 'disabled' : ''}`}
-                onClick={() => isHighTier && setActiveTab('45c')}
-                disabled={!isHighTier}
-              >
-                {t('performance.results.temperatureTabs.temp45')}
-              </button>
-            </div>
+              {(() => {
+                // 计算总指标数
+                const metrics25c = getAvailableMetrics('25c');
+                const metrics45c = getAvailableMetrics('45c');
+                const totalMetrics = metrics25c.length + metrics45c.length;
 
-            <div className="pm-results-content">
-              {activeTab === '25c' && (
-                <div className="pm-performance-results">
-                  <div className="pm-result-item">
-                    <div className="pm-result-label">{t('performance.results.performance.cycleLife25')}</div>
-                    {renderResultBadge(resultsData['25c'].cycleLife, 'cycleLife')}
-                  </div>
+                // 根据总指标数决定容器布局类名
+                const containerClass = totalMetrics === 2 ? 'pm-results-container--horizontal' : 'pm-results-container';
 
-                  <div className={`pm-results-group ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                    <div className="pm-result-item">
-                      <div className="pm-result-label">{t('performance.results.performance.ce25')}</div>
-                      {renderResultBadge(resultsData['25c'].ce, 'ce')}
-                    </div>
+                return (
+                  <div className={containerClass}>
+                    {/* 25°C Performance 区块 */}
+                <div className="pm-temperature-section">
+                  <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp25')}</h3>
+                  {(() => {
+                    const metrics25c = getAvailableMetrics('25c');
+                    const layoutClass = metrics25c.length === 1 ? 'pm-performance-results--single' :
+                                       metrics25c.length === 2 ? 'pm-performance-results--double' :
+                                       'pm-performance-results--triple';
 
-                    <div className="pm-result-item">
-                      <div className="pm-result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                      {renderResultBadge(resultsData['25c'].ratePerformance, 'ratePerformance')}
-                    </div>
-                  </div>
+                    return (
+                      <div className={`pm-performance-results ${layoutClass}`}>
+                        {metrics25c.length > 0 && (() => {
+                          const firstMetric = metrics25c[0];
+                          const config = metricConfig[firstMetric];
+                          return (
+                            <div className="pm-result-item" key={firstMetric}>
+                              <div className="pm-result-label">{t(config.label25Key)}</div>
+                              {renderResultBadge(resultsData['25c'][config.dataKey], config.dataKey)}
+                            </div>
+                          );
+                        })()}
+
+                        {metrics25c.length > 1 && (
+                          <div className={`pm-results-group ${!isHighTier ? 'pm-with-overlay' : ''}`}
+                               data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
+                            {metrics25c.slice(1).map((metric) => {
+                              const config = metricConfig[metric];
+                              return (
+                                <div className="pm-result-item" key={metric}>
+                                  <div className="pm-result-label">{t(config.label25Key)}</div>
+                                  {renderResultBadge(resultsData['25c'][config.dataKey], config.dataKey)}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
-              )}
 
-              {activeTab === '45c' && (
-                <div className={`pm-performance-results ${!isHighTier ? 'pm-with-overlay' : ''}`} data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
-                  <div className="pm-result-item">
-                    <div className="pm-result-label">{t('performance.results.performance.cycleLife45')}</div>
-                    {renderResultBadge(resultsData['45c'].cycleLife, 'cycleLife')}
-                  </div>
+                {/* 45°C Performance 区块（条件渲染） */}
+                {shouldShow45C() && (
+                  <div className={`pm-temperature-section ${!isHighTier ? 'pm-with-overlay' : ''}`}
+                       data-overlay-text={t('performance.results.upgradeToViewMetrics')}>
+                    <h3 className="pm-temperature-title">{t('performance.results.temperatureTabs.temp45')}</h3>
+                    {(() => {
+                      const metrics45c = getAvailableMetrics('45c');
+                      const layoutClass = metrics45c.length === 1 ? 'pm-performance-results--single' :
+                                         metrics45c.length === 2 ? 'pm-performance-results--double' :
+                                         'pm-performance-results--triple';
 
-                  <div className="pm-result-item">
-                    <div className="pm-result-label">{t('performance.results.performance.ce45')}</div>
-                    {renderResultBadge(resultsData['45c'].ce, 'ce')}
+                      return (
+                        <div className={`pm-performance-results ${layoutClass}`}>
+                          {metrics45c.map((metric) => {
+                            const config = metricConfig[metric];
+                            return (
+                              <div className="pm-result-item" key={metric}>
+                                <div className="pm-result-label">{t(config.label45Key)}</div>
+                                {renderResultBadge(resultsData['45c'][config.dataKey], config.dataKey)}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+                  </div>
+                );
+              })()}
 
               <div className="pm-llm-button-section">
                 <button

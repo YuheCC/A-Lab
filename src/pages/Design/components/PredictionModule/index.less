@@ -308,95 +308,90 @@
   color: #374151;
 }
 
-.pm-temperature-tabs {
+/* 结果容器 - 默认垂直排列两个温度区块 */
+.pm-results-container {
   display: flex;
-  background: #f3f4f6;
-  border-radius: 6px;
-  padding: 3px;
-  margin-bottom: 24px;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.pm-temp-tab {
-  flex: none;
-  padding: 8px 16px;
-  background: none;
-  border: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #6b7280;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  white-space: nowrap;
-  position: relative;
-  z-index: 2;
-}
-
-.pm-temp-tab.active {
-  color: #ffffff;
-}
-
-.pm-temperature-tabs::before {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  bottom: 3px;
-  width: calc(50% - 3px);
-  background: #1f2937;
-  border-radius: 4px;
-  transition: transform 0.3s ease;
-  z-index: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.pm-temperature-tabs[data-active="45c"]::before {
-  transform: translateX(100%);
-}
-
-.pm-temp-tab:not(.active):hover {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-/* 禁用状态的tab */
-.pm-temp-tab.disabled {
-  color: #d1d5db;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pm-temp-tab.disabled:hover {
-  background: none;
-  color: #d1d5db;
-}
-
-.pm-performance-results {
+/* 结果容器 - 总共2个指标时横向并排显示 */
+.pm-results-container--horizontal {
   display: flex;
-  margin-bottom: 32px;
+  flex-direction: row;
+  gap: 24px;
+
+  .pm-temperature-section {
+    flex: 1;
+  }
+}
+
+/* 温度区块 */
+.pm-temperature-section {
   border-radius: 8px;
   background: #ffffff;
-  overflow: hidden;
+  padding: 20px;
+  position: relative;
 }
 
-@media (max-width: 768px) {
-  .pm-performance-results {
-    flex-direction: column;
+/* 温度标题 */
+.pm-temperature-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+/* 性能结果容器 - 水平排列指标 */
+.pm-performance-results {
+  display: flex;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  border: none;
+}
+
+/* 单指标布局 */
+.pm-performance-results--single {
+  justify-content: center;
+
+  .pm-result-item {
+    max-width: 400px;
+  }
+}
+
+/* 双指标布局 - 并排显示 */
+.pm-performance-results--double {
+  flex-direction: row;
+  gap: 24px;
+
+  .pm-result-item {
+    flex: 1;
+  }
+}
+
+/* 三指标布局 */
+.pm-performance-results--triple {
+  flex-direction: row;
+  gap: 0;
+
+  .pm-result-item {
+    flex: 1;
+  }
+
+  .pm-results-group {
+    display: flex;
+    flex: 2;
+    gap: 0;
   }
 }
 
 .pm-result-item {
   background: #ffffff;
   border: none;
-  border-right: 1px solid #f1f5f9;
   border-radius: 0;
   padding: 20px 16px;
   text-align: center;
-  flex: 1;
   min-width: 150px;
   position: relative;
 }
@@ -408,7 +403,6 @@
 /* Results group - 包裹多个result-item的容器 */
 .pm-results-group {
   display: flex;
-  flex: 2;
   position: relative;
 }
 
@@ -416,17 +410,44 @@
   border-right: none;
 }
 
-/* 毛玻璃浮层样式 - 应用于结果组或单个结果项 */
+/* 响应式适配 */
+@media (max-width: 768px) {
+  /* 小屏幕下横向容器改为垂直 */
+  .pm-results-container--horizontal {
+    flex-direction: column;
+  }
+
+  .pm-performance-results {
+    flex-direction: column;
+  }
+
+  .pm-result-item {
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .pm-result-item:last-child {
+    border-bottom: none;
+  }
+
+  .pm-results-group {
+    flex-direction: column;
+  }
+}
+
+/* 毛玻璃浮层样式 - 应用于结果组、单个结果项或温度区块 */
 .pm-result-item.pm-with-overlay,
 .pm-results-group.pm-with-overlay,
-.pm-performance-results.pm-with-overlay {
+.pm-performance-results.pm-with-overlay,
+.pm-temperature-section.pm-with-overlay {
   position: relative;
 }
 
 /* 上部分轻微遮罩 */
 .pm-result-item.pm-with-overlay::before,
 .pm-results-group.pm-with-overlay::before,
-.pm-performance-results.pm-with-overlay::before {
+.pm-performance-results.pm-with-overlay::before,
+.pm-temperature-section.pm-with-overlay::before {
   content: '';
   position: absolute;
   top: 0;
@@ -441,7 +462,8 @@
 /* 下部分强遮罩 + 文字 */
 .pm-result-item.pm-with-overlay::after,
 .pm-results-group.pm-with-overlay::after,
-.pm-performance-results.pm-with-overlay::after {
+.pm-performance-results.pm-with-overlay::after,
+.pm-temperature-section.pm-with-overlay::after {
   content: attr(data-overlay-text);
   position: absolute;
   top: 33.33%;
