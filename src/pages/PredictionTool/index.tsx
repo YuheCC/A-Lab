@@ -527,7 +527,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                           <th>{t('predictionTool.models.columns.status', 'Status')}</th>
                           <th>{t('predictionTool.models.columns.created', 'Created')}</th>
                           <th>{t('predictionTool.models.columns.createdBy', 'Created By')}</th>
-                          <th>{t('predictionTool.models.columns.actions', 'Actions')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -543,7 +542,9 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                             return (
                               <tr key={model.id}>
                                 <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>
-                                <td className="file-name">{model.model_name}</td>
+                                <td className="file-name">
+                                  <a className="model-name-link" onClick={() => navigate(`/prediction-tool/model-detail?id=${model.id}`)}>{model.model_name}</a>
+                                </td>
                                 <td>{model.base_model_name}</td>
                                 <td>
                                   <span
@@ -560,14 +561,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                 </td>
                                 <td className="created-date">{formatDate(model.created_at)}</td>
                                 <td>{model.created_by}</td>
-                                <td className="actions-cell">
-                                  <button
-                                    className="action-button view-button"
-                                    onClick={() => handleViewModelDetail(model.id)}
-                                  >
-                                    {t('predictionTool.models.actions.viewDetails', 'View Details')}
-                                  </button>
-                                </td>
                               </tr>
                             );
                           })

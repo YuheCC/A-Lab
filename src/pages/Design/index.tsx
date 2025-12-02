@@ -443,7 +443,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       <th>{t('performance.models.columns.baseModel', 'Base Model')}</th>
                       <th>{t('performance.models.columns.status', 'Status')}</th>
                       <th>{t('performance.models.columns.created', 'Created')}</th>
-                      <th>{t('performance.models.columns.actions', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -457,7 +456,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       filteredModelsData.map((model) => (
                         <tr key={model.id}>
                           <td className="record-id">{model.id}</td>
-                          <td className="file-name">{model.name}</td>
+                          <td className="file-name">
+                            <a className="model-name-link" onClick={() => navigate(`/design/model-detail?id=${model.id}`)}>{model.name}</a>
+                            </td>
                           <td>{model.baseModel}</td>
                           <td>
                             <span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>
@@ -465,14 +466,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             </span>
                           </td>
                           <td className="created-date">{model.created}</td>
-                          <td className="actions-cell">
-                            <button
-                              className="action-button view-button"
-                              onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
-                            >
-                              {t('performance.models.actions.viewDetails', 'View Details')}
-                            </button>
-                          </td>
                         </tr>
                       ))
                     )}
