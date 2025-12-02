@@ -77,12 +77,61 @@
   .detail-section {
     margin-bottom: 24px;
 
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
     .section-title {
       font-size: 16px;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 12px;
+      margin: 0;
       text-align: left;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .online-button,
+    .offline-button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      height: 36px;
+      border: none;
+    }
+
+    .online-button {
+      background: #000000;
+      color: #ffffff;
+
+      &:hover {
+        background-color: #333333;
+      }
+    }
+
+    .offline-button {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #d1d5dc;
+
+      &:hover {
+        background-color: #f8fafc;
+        border-color: #9ca3af;
+      }
     }
 
     .info-card {

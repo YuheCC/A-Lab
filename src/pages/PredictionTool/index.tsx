@@ -543,7 +543,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                               <tr key={model.id}>
                                 <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>
                                 <td className="file-name">
-                                  <a className="model-name-link" onClick={() => navigate(`/prediction-tool/model-detail?id=${model.id}`)}>{model.model_name}</a>
+                                  <a className="model-name-link" onClick={() => navigate(`/predict/model-detail?id=${model.id}`)}>{model.model_name}</a>
                                 </td>
                                 <td>{model.base_model_name}</td>
                                 <td>

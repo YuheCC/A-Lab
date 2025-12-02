@@ -185,16 +185,6 @@ const TrainPage: React.FC = () => {
             <h2>{t('predictionTool.train.step3.title', 'Training Dataset')}</h2>
           </div>
           <div className="step-content">
-            <div className="dataset-info">
-              <div className="split-ratio">
-                <span className="label">{t('predictionTool.train.step3.ratio', 'Train-Test Split Ratio:')}</span>
-                <span className="value">{t('predictionTool.train.step3.ratioValue', '7 : 3')}</span>
-              </div>
-              <p className="description">
-                {t('predictionTool.train.step3.ratioDesc', '70% of your dataset will be used for training, 30% for testing')}
-              </p>
-            </div>
-
             <div className="form-group">
               <label>
                 {t('predictionTool.train.step3.upload', 'Upload Dataset')}

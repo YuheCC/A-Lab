@@ -196,40 +196,32 @@ const ModelDetailPage: React.FC = () => {
             <h1 className="title">{model.model_name}</h1>
             <p className="subtitle">{t('predictionTool.modelDetail.modelId')} {model.id}</p>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {/* Action buttons - only show for non-mock models */}
-            {!isMockModel(model) && (
-              <>
-                {model.status === 'trained' && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleOpenDialog('deploy')}
-                    disabled={actionLoading}
-                  >
-                    {t('predictionTool.modelDetail.deploy', 'Deploy')}
-                  </Button>
-                )}
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleOpenDialog('remove')}
-                  disabled={actionLoading}
-                >
-                  {t('predictionTool.modelDetail.remove', 'Remove')}
-                </Button>
-              </>
-            )}
-            <button className="back-button" onClick={handleBack}>
-              <ArrowLeft size={16} />
-              {t('predictionTool.modelDetail.back')}
-            </button>
-          </div>
+          <button className="back-button" onClick={handleBack}>
+            <ArrowLeft size={16} />
+            {t('predictionTool.modelDetail.back')}
+          </button>
         </div>
 
       {/* Model Information */}
       <div className="detail-section">
-        <h2 className="section-title">{t('predictionTool.modelDetail.title')}</h2>
+        <div className="section-header">
+          <h2 className="section-title">{t('predictionTool.modelDetail.title')}</h2>
+          <div className="section-actions">
+            {!isMockModel(model) && (
+              <>
+                {model.status === 'online' ? (
+                  <button className="offline-button" onClick={() => handleOpenDialog('remove')}>
+                    {t('predictionTool.modelDetail.offlineModel', '下线模型')}
+                  </button>
+                ) : model.status === 'trained' ? (
+                  <button className="online-button" onClick={() => handleOpenDialog('deploy')}>
+                    {t('predictionTool.modelDetail.onlineModel', '上线模型')}
+                  </button>
+                ) : null}
+              </>
+            )}
+          </div>
+        </div>
         <div className="info-card">
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.status')}</span>

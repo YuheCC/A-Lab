@@ -44,7 +44,7 @@ const DesignModelDetailPage: React.FC = () => {
     id: 'DM-2024-01',
     name: 'Electrolyte Design Model v1.0',
     creator: 'Dr. Li Ming',
-    status: 'online',
+    status: 'trained',
     created_at: '2024/01/15',
     remarks: 'This model is optimized for electrolyte design prediction. It uses advanced machine learning techniques to predict battery performance based on molecular structure.',
     base_model: 'OSES-Design-v1',
@@ -95,6 +95,18 @@ const DesignModelDetailPage: React.FC = () => {
     navigate(`/design/record?id=${id}`);
   };
 
+  const handleOnlineModel = () => {
+    // TODO: 实现上线模型的API调用
+    console.log('上线模型:', model.id);
+    // 这里应该调用上线模型的API
+  };
+
+  const handleOfflineModel = () => {
+    // TODO: 实现下线模型的API调用
+    console.log('下线模型:', model.id);
+    // 这里应该调用下线模型的API
+  };
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
@@ -119,13 +131,26 @@ const DesignModelDetailPage: React.FC = () => {
         </div>
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft size={16} />
-          {t('design.modelDetail.back', 'Back')}
+          {t('design.modelDetail.back', '返回')}
         </button>
       </div>
 
       {/* Model Information */}
       <div className="detail-section">
-        <h2 className="section-title">{t('design.modelDetail.title', 'Model Information')}</h2>
+        <div className="section-header">
+          <h2 className="section-title">{t('design.modelDetail.title', 'Model Information')}</h2>
+          <div className="section-actions">
+            {model.status === 'online' ? (
+              <button className="offline-button" onClick={handleOfflineModel}>
+                {t('design.modelDetail.offlineModel', '下线模型')}
+              </button>
+            ) : model.status === 'trained' ? (
+              <button className="online-button" onClick={handleOnlineModel}>
+                {t('design.modelDetail.onlineModel', '上线模型')}
+              </button>
+            ) : null}
+          </div>
+        </div>
         <div className="info-card">
           <div className="info-row">
             <span className="label">{t('design.modelDetail.creator', 'Creator')}</span>
