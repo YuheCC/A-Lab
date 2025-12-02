@@ -1,0 +1,36 @@
+export default {
+    // Model Detail
+    modelDetail: {
+        title: "Model Information",
+        modelId: "Model ID:",
+        back: "Back",
+        onlineModel: "Deploy Model",
+        offlineModel: "Offline Model",
+        creator: "Creator:",
+        status: "Status:",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        created: "Created:",
+        remarks: "Remarks:",
+        baseModel: "Base Model",
+        trainingDataset: "Training Dataset",
+        datasetName: "Dataset Name:",
+        fileSize: "File Size:",
+        totalSamples: "Total Samples:",
+        ratio: "Train-Test Ratio:",
+        trainingResults: "Training Results",
+        accuracy: "Accuracy",
+        loss: "Loss",
+        epochs: "Epochs",
+        trainingTime: "Training Time",
+        validationScore: "Validation Score",
+        designRecords: "Design Records",
+        recordId: "Record ID",
+        smiles: "SMILES",
+        temp25Count: "25°C Positive",
+        temp45Count: "45°C Positive",
+        actions: "Actions",
+        viewDetails: "View Details"
+    }
+};

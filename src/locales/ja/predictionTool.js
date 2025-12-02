@@ -254,6 +254,8 @@ export default {
         title: "モデル情報",
         modelId: "モデルID：",
         back: "戻る",
+        onlineModel: "モデルをデプロイ",
+        offlineModel: "モデルをオフライン",
         creator: "作成者：",
         status: "ステータス：",
         statusOnline: "オンライン",

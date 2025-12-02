@@ -1,0 +1,36 @@
+export default {
+    // Model Detail
+    modelDetail: {
+        title: "モデル情報",
+        modelId: "モデルID：",
+        back: "戻る",
+        onlineModel: "モデルをデプロイ",
+        offlineModel: "モデルをオフライン",
+        creator: "作成者：",
+        status: "ステータス：",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        created: "作成日時：",
+        remarks: "備考：",
+        baseModel: "ベースモデル",
+        trainingDataset: "トレーニングデータセット",
+        datasetName: "データセット名：",
+        fileSize: "ファイルサイズ：",
+        totalSamples: "総サンプル数：",
+        ratio: "トレーニング-テスト比：",
+        trainingResults: "トレーニング結果",
+        accuracy: "精度",
+        loss: "損失",
+        epochs: "エポック数",
+        trainingTime: "トレーニング時間",
+        validationScore: "検証スコア",
+        designRecords: "デザイン記録",
+        recordId: "記録ID",
+        smiles: "SMILES",
+        temp25Count: "25°C陽性",
+        temp45Count: "45°C陽性",
+        actions: "操作",
+        viewDetails: "詳細を表示"
+    }
+};

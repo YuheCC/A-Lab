@@ -254,6 +254,8 @@ export default {
         title: "模型信息",
         modelId: "模型 ID：",
         back: "返回",
+        onlineModel: "上线模型",
+        offlineModel: "下线模型",
         creator: "创建者：",
         status: "状态：",
         statusOnline: "上线",

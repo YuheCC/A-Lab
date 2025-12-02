@@ -254,6 +254,8 @@ export default {
         title: "모델 정보",
         modelId: "모델 ID:",
         back: "뒤로",
+        onlineModel: "모델 배포",
+        offlineModel: "모델 오프라인",
         creator: "생성자:",
         status: "상태:",
         statusOnline: "온라인",

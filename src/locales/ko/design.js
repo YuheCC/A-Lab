@@ -1,0 +1,36 @@
+export default {
+    // Model Detail
+    modelDetail: {
+        title: "모델 정보",
+        modelId: "모델 ID:",
+        back: "뒤로",
+        onlineModel: "모델 배포",
+        offlineModel: "모델 오프라인",
+        creator: "생성자:",
+        status: "상태:",
+        statusOnline: "온라인",
+        statusTrained: "학습 완료",
+        statusTraining: "학습 중",
+        created: "생성 시간:",
+        remarks: "비고:",
+        baseModel: "기본 모델",
+        trainingDataset: "학습 데이터셋",
+        datasetName: "데이터셋 이름:",
+        fileSize: "파일 크기:",
+        totalSamples: "총 샘플 수:",
+        ratio: "학습-테스트 비율:",
+        trainingResults: "학습 결과",
+        accuracy: "정확도",
+        loss: "손실",
+        epochs: "에포크",
+        trainingTime: "학습 시간",
+        validationScore: "검증 점수",
+        designRecords: "설계 기록",
+        recordId: "기록 ID",
+        smiles: "SMILES",
+        temp25Count: "25°C 양성",
+        temp45Count: "45°C 양성",
+        actions: "작업",
+        viewDetails: "상세 보기"
+    }
+};

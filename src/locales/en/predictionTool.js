@@ -254,6 +254,8 @@ export default {
         title: "Model Information",
         modelId: "Model ID:",
         back: "Back",
+        onlineModel: "Deploy Model",
+        offlineModel: "Offline Model",
         creator: "Creator:",
         status: "Status:",
         statusOnline: "Online",

@@ -1,0 +1,36 @@
+export default {
+    // Model Detail
+    modelDetail: {
+        title: "模型信息",
+        modelId: "模型 ID：",
+        back: "返回",
+        onlineModel: "上线模型",
+        offlineModel: "下线模型",
+        creator: "创建者：",
+        status: "状态：",
+        statusOnline: "上线",
+        statusTrained: "训练完成",
+        statusTraining: "训练中",
+        created: "创建时间：",
+        remarks: "备注：",
+        baseModel: "基础模型",
+        trainingDataset: "训练数据集",
+        datasetName: "数据集名称：",
+        fileSize: "文件大小：",
+        totalSamples: "总样本数：",
+        ratio: "训练-测试比例：",
+        trainingResults: "训练结果",
+        accuracy: "准确率",
+        loss: "损失",
+        epochs: "轮数",
+        trainingTime: "训练时长",
+        validationScore: "验证分数",
+        designRecords: "设计记录",
+        recordId: "记录ID",
+        smiles: "SMILES",
+        temp25Count: "25°C正样本",
+        temp45Count: "45°C正样本",
+        actions: "操作",
+        viewDetails: "查看详情"
+    }
+};
