@@ -184,7 +184,7 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
  * @returns Promise<ModelListResponse> Model list with pagination
  */
 export const getModelList = async (params: ModelListParams): Promise<ModelListResponse> => {
-  const response = await request('/aiPlatform/model/list', {
+  const response = await request('/api/ai/model/list', {
     method: 'GET',
     params: {
       page: params.page,
@@ -202,7 +202,7 @@ export const getModelList = async (params: ModelListParams): Promise<ModelListRe
  * @returns Promise<ModelDetailResponse> Model detail information
  */
 export const getModelDetail = async (params: ModelDetailParams): Promise<ModelDetailResponse> => {
-  const response = await request('/aiPlatform/model/detail', {
+  const response = await request('/api/ai/model/detail', {
     method: 'GET',
     params: {
       model_id: params.model_id,
@@ -219,7 +219,7 @@ export const getModelDetail = async (params: ModelDetailParams): Promise<ModelDe
  * @returns Promise<DeployModelResponse> Deploy result
  */
 export const deployModel = async (params: DeployModelParams): Promise<DeployModelResponse> => {
-  const response = await request('/aiPlatform/model/deploy', {
+  const response = await request('/api/ai/model/deploy', {
     method: 'POST',
     params: {
       model_id: params.model_id,
@@ -236,7 +236,7 @@ export const deployModel = async (params: DeployModelParams): Promise<DeployMode
  * @returns Promise<RemoveModelResponse> Remove result
  */
 export const removeModel = async (params: RemoveModelParams): Promise<RemoveModelResponse> => {
-  const response = await request('/aiPlatform/model/remove', {
+  const response = await request('/api/ai/model/remove', {
     method: 'POST',
     params: {
       model_id: params.model_id,
@@ -257,7 +257,7 @@ export const modelPredict = async (params: ModelPredictParams): Promise<ModelPre
   formData.append('model_id', params.model_id);
   formData.append('namespace', params.namespace);
 
-  const response = await request('/aiPlatform/model/predict', {
+  const response = await request('/api/ai/model/predict', {
     method: 'POST',
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
