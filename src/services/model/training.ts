@@ -29,6 +29,7 @@ export interface ModelListParams {
   page?: number;
   page_size?: number;
   namespace: string;
+  base_model_id?: number;
 }
 
 /**
@@ -180,7 +181,7 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
 
 /**
  * Get model list
- * @param params Query parameters including page, page_size, and namespace
+ * @param params Query parameters including page, page_size, namespace, and base_model_id
  * @returns Promise<ModelListResponse> Model list with pagination
  */
 export const getModelList = async (params: ModelListParams): Promise<ModelListResponse> => {
@@ -190,6 +191,7 @@ export const getModelList = async (params: ModelListParams): Promise<ModelListRe
       page: params.page,
       page_size: params.page_size,
       namespace: params.namespace,
+      base_model_id: params.base_model_id,
     },
   });
 

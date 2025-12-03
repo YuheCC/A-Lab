@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
-import { trainModel } from '../model';
+import { trainModel, getBaseModelList } from '../model';
+import type { ModelListItem } from '@/services/model/training';
 import './index.less';
 
 const DesignTrainPage: React.FC = () => {
@@ -10,7 +11,9 @@ const DesignTrainPage: React.FC = () => {
   const { t } = useTranslation();
   const [modelName, setModelName] = useState('');
   const [remarks, setRemarks] = useState('');
-  const [baseModel, setBaseModel] = useState('OSES-Design-v1');
+  const [baseModel, setBaseModel] = useState('');
+  const [baseModelList, setBaseModelList] = useState<ModelListItem[]>([]);
+  const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -18,6 +21,27 @@ const DesignTrainPage: React.FC = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  // Load base model list on component mount
+  useEffect(() => {
+    const loadBaseModels = async () => {
+      setIsLoadingModels(true);
+      try {
+        const response = await getBaseModelList();
+        if (response?.data && response.data.length > 0) {
+          setBaseModelList(response.data);
+          // Set first model as default
+          setBaseModel(response.data[0].id.toString());
+        }
+      } catch (error) {
+        console.error('Failed to load base models:', error);
+      } finally {
+        setIsLoadingModels(false);
+      }
+    };
+
+    loadBaseModels();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -55,6 +79,11 @@ const DesignTrainPage: React.FC = () => {
       return;
     }
 
+    if (!baseModel) {
+      alert(t('design.train.errors.baseModelRequired', 'Please select a base model'));
+      return;
+    }
+
     if (!file) {
       alert(t('design.train.errors.fileRequired', 'Please upload training dataset'));
       return;
@@ -63,10 +92,16 @@ const DesignTrainPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Find the selected base model
+      const selectedModel = baseModelList.find(m => m.id.toString() === baseModel);
+      if (!selectedModel) {
+        throw new Error('Selected base model not found');
+      }
+
       const response = await trainModel({
         model_name: modelName.trim(),
         remark: remarks.trim(),
-        base_model_name: baseModel,
+        base_model_name: selectedModel.model_name,
         data_files: file,
       });
 
@@ -138,9 +173,19 @@ const DesignTrainPage: React.FC = () => {
               <select
                 value={baseModel}
                 onChange={(e) => setBaseModel(e.target.value)}
+                disabled={isLoadingModels || baseModelList.length === 0}
               >
-                <option value="OSES-Design-v1">{t('design.train.step2.modelName', 'OSES-Design-v1')}</option>
-                {/* Future models can be added here */}
+                {isLoadingModels ? (
+                  <option value="">{t('design.train.step2.loading', 'Loading models...')}</option>
+                ) : baseModelList.length === 0 ? (
+                  <option value="">{t('design.train.step2.noModels', 'No base models available')}</option>
+                ) : (
+                  baseModelList.map((model) => (
+                    <option key={model.id} value={model.id.toString()}>
+                      {model.model_name}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>
@@ -202,7 +247,7 @@ const DesignTrainPage: React.FC = () => {
           <button
             className="submit-button"
             onClick={handleStartTraining}
-            disabled={!modelName || !file || isSubmitting}
+            disabled={!modelName || !baseModel || !file || isSubmitting || isLoadingModels}
           >
             {isSubmitting ? t('design.train.submitting', 'Submitting...') : t('design.train.startTraining', 'Start Training')}
           </button>

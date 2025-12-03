@@ -249,6 +249,70 @@ export const getModelList = async (
 };
 
 /**
+ * Get base model list (base_model_id = -1)
+ * @param params Query parameters
+ * @returns Promise<ModelListResponse> Base model list with pagination
+ */
+export const getBaseModelList = async (
+  params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
+): Promise<ModelListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock model data');
+      return { total: mockModelList.length, data: mockModelList };
+    }
+
+    const response = await getModelListAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+      base_model_id: -1,
+    });
+
+    if (response?.data && response.data.length > 0) {
+      return response;
+    }
+
+    console.log('No base model data found, returning mock data');
+    return { total: mockModelList.length, data: mockModelList };
+  } catch (error) {
+    console.error('Get base model list failed:', error);
+    return { total: mockModelList.length, data: mockModelList };
+  }
+};
+
+/**
+ * Get mu model list (base_model_id = -2)
+ * @param params Query parameters
+ * @returns Promise<ModelListResponse> Mu model list with pagination
+ */
+export const getMuModelList = async (
+  params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
+): Promise<ModelListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock model data');
+      return { total: mockModelList.length, data: mockModelList };
+    }
+
+    const response = await getModelListAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+      base_model_id: -2,
+    });
+
+    if (response?.data && response.data.length > 0) {
+      return response;
+    }
+
+    console.log('No mu model data found, returning mock data');
+    return { total: mockModelList.length, data: mockModelList };
+  } catch (error) {
+    console.error('Get mu model list failed:', error);
+    return { total: mockModelList.length, data: mockModelList };
+  }
+};
+
+/**
  * Get model detail by ID with mock data fallback
  * @param modelId Model ID to fetch
  * @returns Promise<ModelDetailResponse> Model detail information
