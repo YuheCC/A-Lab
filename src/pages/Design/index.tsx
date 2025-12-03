@@ -10,7 +10,8 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X } from 'lucide-react';
-import { getHistoryList, deleteHistory } from './model';
+import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, isMockModel } from './model';
+import { type ModelListItem } from '@/services/model/training';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
@@ -39,6 +40,11 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
+
+  // Models data state
+  const [modelsData, setModelsData] = useState<ModelListItem[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
 
   // Models filter state
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
@@ -121,9 +127,27 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     }
   };
 
+  const fetchModelsData = async () => {
+    setModelsLoading(true);
+    setModelsError(null);
+
+    try {
+      const response = await getModelListFromModel({ page: 1, page_size: 100 });
+      setModelsData(response.data);
+    } catch (err) {
+      console.error('Failed to fetch models:', err);
+      setModelsError(err instanceof Error ? err.message : t('design.models.loadingError', 'Failed to load models'));
+      setModelsData([]);
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'records') {
       fetchHistoryData(currentPage);
+    } else if (activeTab === 'models') {
+      fetchModelsData();
     }
   }, [activeTab, currentPage]);
 
@@ -200,27 +224,17 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     return keywordMatch && dateMatch;
   });
 
-  // For models tab (using mock data for now)
-  const mockModelsData = [
-    {
-      id: 'DM-2024-01',
-      name: 'Electrolyte Design Model v1.0',
-      status: 'online',
-      baseModel: 'OSES-Base-v1',
-      created: '2024/01/15'
-    }
-  ];
-
-  const filteredModelsData = mockModelsData.filter((model) => {
+  // Filter models data
+  const filteredModelsData = modelsData.filter((model) => {
     const keywordMatch = !modelSearchKeyword ||
-      model.name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
-      model.id.toLowerCase().includes(modelSearchKeyword.toLowerCase());
+      model.model_name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
+      String(model.id).includes(modelSearchKeyword);
     const statusMatch = selectedModelStatus === 'all' || model.status === selectedModelStatus;
-    const baseModelMatch = selectedBaseModel === 'all' || model.baseModel === selectedBaseModel;
+    const baseModelMatch = selectedBaseModel === 'all' || model.base_model_name === selectedBaseModel;
     return keywordMatch && statusMatch && baseModelMatch;
   });
 
-  const uniqueBaseModels = Array.from(new Set(mockModelsData.map(model => model.baseModel).filter(Boolean)));
+  const uniqueBaseModels = Array.from(new Set(modelsData.map(model => model.base_model_name).filter(Boolean)));
 
   return (
     <div className="design-tool-container">
@@ -390,6 +404,16 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
           {activeTab === 'models' && (
             <div className="design-tab-panel">
+              {modelsLoading ? (
+                <div className="loading-state">
+                  <p>{t('design.models.loadingText', 'Loading...')}</p>
+                </div>
+              ) : modelsError ? (
+                <div className="error-state">
+                  <p>{t('design.models.error', 'Error')}: {modelsError}</p>
+                </div>
+              ) : (
+                <>
               <div className="models-filters">
                 <input
                   type="text"
@@ -428,7 +452,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
               <div className="models-count-text">
                 {t('performance.models.showingRecords', '显示 {{count}} / {{total}} 条记录', {
                   count: filteredModelsData.length,
-                  total: mockModelsData.length
+                  total: modelsData.length
                 })}
               </div>
               <div className="records-table-wrapper">
@@ -452,23 +476,47 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                     ) : (
                       filteredModelsData.map((model) => (
                         <tr key={model.id}>
-                          <td className="record-id">{model.id}</td>
+                          <td className="record-id">DM-{String(model.id).padStart(6, '0')}</td>
                           <td className="file-name">
-                            <a className="model-name-link" onClick={() => navigate(`/design/model-detail?id=${model.id}`)}>{model.name}</a>
-                            </td>
-                          <td>{model.baseModel}</td>
+                            <a
+                              className="model-name-link"
+                              onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
+                              style={{ cursor: 'pointer', color: '#00a63e', textDecoration: 'underline' }}
+                            >
+                              {model.model_name}
+                            </a>
+                          </td>
+                          <td>{model.base_model_name}</td>
                           <td>
-                            <span style={{backgroundColor: '#dcfce7', color: '#008236', padding: '2px 8px', borderRadius: '4px', fontSize: '14px'}}>
-                              {t('performance.models.statusOnline', 'Online')}
+                            <span style={{
+                              backgroundColor: model.status === 'online' ? '#dcfce7' : model.status === 'trained' ? '#e0e7ff' : '#fef3c7',
+                              color: model.status === 'online' ? '#008236' : model.status === 'trained' ? '#4338ca' : '#92400e',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '14px'
+                            }}>
+                              {model.status === 'online' ? t('performance.models.statusOnline', 'Online') :
+                               model.status === 'trained' ? t('performance.models.statusTrained', 'Trained') :
+                               t('performance.models.statusTraining', 'Training')}
                             </span>
                           </td>
-                          <td className="created-date">{model.created}</td>
+                          <td className="created-date">
+                            {new Date(model.created_at).toLocaleString('zh-CN', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
               </div>
+                </>
+              )}
             </div>
           )}
         </div>

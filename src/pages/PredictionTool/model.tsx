@@ -151,7 +151,7 @@ export { mockPredictionHistory, generateMockDetail } from './example';
 // ============= Model Training Functions =============
 
 // Namespace constant - used by all model training APIs
-const MODEL_NAMESPACE = 'predict';
+const MODEL_NAMESPACE = 'cell_performance';
 
 /**
  * Train a new model

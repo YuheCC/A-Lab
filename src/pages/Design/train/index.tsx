@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
+import { trainModel } from '../model';
 import './index.less';
 
 const DesignTrainPage: React.FC = () => {
@@ -11,6 +12,7 @@ const DesignTrainPage: React.FC = () => {
   const [remarks, setRemarks] = useState('');
   const [baseModel, setBaseModel] = useState('OSES-Design-v1');
   const [file, setFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleBack = () => {
@@ -46,9 +48,42 @@ const DesignTrainPage: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleStartTraining = () => {
-    // Placeholder for training logic
-    console.log('Start training with:', { modelName, remarks, baseModel, file });
+  const handleStartTraining = async () => {
+    // Validation
+    if (!modelName.trim()) {
+      alert(t('design.train.errors.modelNameRequired', 'Please enter model name'));
+      return;
+    }
+
+    if (!file) {
+      alert(t('design.train.errors.fileRequired', 'Please upload training dataset'));
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await trainModel({
+        model_name: modelName.trim(),
+        remark: remarks.trim(),
+        base_model_name: baseModel,
+        data_files: file,
+      });
+
+      console.log('Training started successfully:', response);
+
+      // Show success message
+      alert(t('design.train.success', 'Model training started successfully!'));
+
+      // Navigate to models tab
+      navigate('/design?tab=models');
+    } catch (error) {
+      console.error('Failed to start training:', error);
+      const errorMessage = error instanceof Error ? error.message : t('design.train.errors.unknown', 'Failed to start training');
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -167,9 +202,9 @@ const DesignTrainPage: React.FC = () => {
           <button
             className="submit-button"
             onClick={handleStartTraining}
-            disabled={!modelName || !file}
+            disabled={!modelName || !file || isSubmitting}
           >
-            {t('design.train.startTraining', 'Start Training')}
+            {isSubmitting ? t('design.train.submitting', 'Submitting...') : t('design.train.startTraining', 'Start Training')}
           </button>
         </div>
       </div>
