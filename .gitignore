@@ -18,3 +18,4 @@ config/config.ts
 .code-workspace.code-workspace
 CLAUDE.md
 .npm-cache
+.DS_Store

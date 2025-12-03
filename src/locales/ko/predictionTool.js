@@ -67,7 +67,8 @@ export default {
     // Tabs
     tabs: {
         introduction: "소개",
-        records: "기록"
+        records: "기록",
+        models: "모델"
     },
 
     // List
@@ -77,15 +78,26 @@ export default {
             fileName: "파일명",
             batteryCount: "배터리 수",
             avgCycleLife: "평균 사이클 수명",
+            model: "모델",
             created: "생성 시간",
             actions: "작업"
         }
+    },
+
+    // Records
+    records: {
+        searchPlaceholder: "레코드 이름 또는 ID 검색",
+        modelFilter: "모델 필터",
+        allModels: "모든 모델",
+        clearFilters: "필터 지우기",
+        showingRecords: "{{count}} / {{total}} 개의 레코드 표시"
     },
 
     // History
     history: {
         title: "예측 기록",
         newPrediction: "새 예측",
+        train: "학습",
         searchPlaceholder: "파일명으로 검색...",
         loadingText: "로딩 중...",
         error: "오류",
@@ -173,5 +185,102 @@ export default {
         point3: '사이클 수명이 알려진 실제 셀의 경우 모델은 1321 사이클에서 EOL을 예측했습니다.',
         point3_sub1: '실측값은 1261 사이클(각 사이클의 용량 유지율 기준) 또는 1351 사이클(용량 확인 사이클의 용량 유지율 기준)입니다.',
         point4: '예측 오차는 4.7% 또는 2.2%로, 단순 선형 외삽법(800 사이클)보다 훨씬 우수합니다.'
+    },
+
+    // Train
+    train: {
+        title: "새 모델 학습",
+        back: "뒤로",
+        step1: {
+            title: "모델 정보",
+            name: "모델 이름",
+            namePlaceholder: "모델 이름 입력",
+            remarks: "비고 (선택 사항)",
+            remarksPlaceholder: "추가 메모나 비고 입력"
+        },
+        step2: {
+            title: "기본 모델",
+            modelName: "OSES-Base-v1",
+            badge: "기본 모델"
+        },
+        step3: {
+            title: "학습 데이터셋",
+            ratio: "학습-테스트 분할 비율:",
+            ratioValue: "7 : 3",
+            ratioDesc: "데이터셋의 70%는 학습에, 30%는 테스트에 사용됩니다",
+            upload: "데이터셋 업로드",
+            dragDrop: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+            formats: "지원 형식: CSV, XLSX (최대 50MB)",
+            chooseFile: "파일 선택",
+            downloadSample: "샘플 다운로드"
+        },
+        startTraining: "학습 시작",
+        errors: {
+            fileSize: "파일 크기가 50MB를 초과합니다"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "로딩 중...",
+        error: "오류",
+        noResults: "모델을 찾을 수 없습니다",
+        showingRecords: "{{count}} / {{total}} 개의 레코드 표시",
+        statusOnline: "온라인",
+        statusTrained: "학습 완료",
+        statusTraining: "학습 중",
+        filters: {
+            searchPlaceholder: "모델 ID 또는 이름 검색...",
+            allStatus: "모든 상태",
+            allBaseModels: "모든 기본 모델",
+            clearFilters: "필터 지우기"
+        },
+        columns: {
+            modelId: "모델 ID",
+            modelName: "모델 이름",
+            baseModel: "기본 모델",
+            status: "상태",
+            created: "생성 시간",
+            createdBy: "생성자",
+            actions: "작업"
+        },
+        actions: {
+            viewDetails: "상세 보기"
+        }
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "모델 정보",
+        modelId: "모델 ID:",
+        back: "뒤로",
+        onlineModel: "모델 배포",
+        offlineModel: "모델 오프라인",
+        creator: "생성자:",
+        status: "상태:",
+        statusOnline: "온라인",
+        statusTrained: "학습 완료",
+        statusTraining: "학습 중",
+        created: "생성 시간:",
+        remarks: "비고:",
+        baseModel: "기본 모델",
+        trainingDataset: "학습 데이터셋",
+        datasetName: "데이터셋 이름:",
+        fileSize: "파일 크기:",
+        totalSamples: "총 샘플 수:",
+        ratio: "학습-테스트 비율:",
+        trainingResults: "학습 결과",
+        accuracy: "정확도",
+        loss: "손실",
+        epochs: "에포크",
+        trainingTime: "학습 시간",
+        validationScore: "검증 점수",
+        predictionRecords: "예측 기록",
+        recordId: "ID",
+        fileName: "파일명",
+        batteryCount: "배터리 수",
+        avgCycleLife: "평균 사이클 수명",
+        actions: "작업",
+        viewDetails: "상세 보기"
     }
 };

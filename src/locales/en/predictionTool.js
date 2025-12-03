@@ -67,7 +67,8 @@ export default {
     // Tabs
     tabs: {
         introduction: "Introduction",
-        records: "Records"
+        records: "Records",
+        models: "Models"
     },
 
     // List
@@ -77,15 +78,26 @@ export default {
             fileName: "File Name",
             batteryCount: "Battery Count",
             avgCycleLife: "Avg Cycle Life",
+            model: "Model",
             created: "Created",
             actions: "Actions"
         }
+    },
+
+    // Records
+    records: {
+        searchPlaceholder: "Search record name or ID",
+        modelFilter: "Model filter",
+        allModels: "All Models",
+        clearFilters: "Clear Filters",
+        showingRecords: "Showing {{count}} of {{total}} records"
     },
 
     // History
     history: {
         title: "Prediction Records",
         newPrediction: "New Prediction",
+        train: "Train",
         searchPlaceholder: "Search by file name...",
         loadingText: "Loading...",
         error: "Error",
@@ -173,5 +185,102 @@ export default {
         point3: 'For a real cell with known cycle-life, the model predicted EOL at the 1321 cycle.',
         point3_sub1: 'The ground truth is 1261 cycles (based on the capacity retention of each cycle) or 1351 cycles (based on the capacity retention of capacity check cycles).',
         point4: 'The prediction has a minor error of 4.7% or 2.2%. Which is much better than simple linear extrapolation (800 cycles).'
+    },
+
+    // Train
+    train: {
+        title: "Train New Model",
+        back: "Back",
+        step1: {
+            title: "Model Information",
+            name: "Model Name",
+            namePlaceholder: "Enter model name",
+            remarks: "Remarks (Optional)",
+            remarksPlaceholder: "Enter any additional notes or remarks"
+        },
+        step2: {
+            title: "Base Model",
+            modelName: "OSES-Base-v1",
+            badge: "Base Model"
+        },
+        step3: {
+            title: "Training Dataset",
+            ratio: "Train-Test Split Ratio:",
+            ratioValue: "7 : 3",
+            ratioDesc: "70% of your dataset will be used for training, 30% for testing",
+            upload: "Upload Dataset",
+            dragDrop: "Drag and drop your file here, or click to browse",
+            formats: "Supported formats: CSV, XLSX (Max 50MB)",
+            chooseFile: "Choose File",
+            downloadSample: "Download Sample"
+        },
+        startTraining: "Start Training",
+        errors: {
+            fileSize: "File size exceeds 50MB"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "Loading models...",
+        error: "Error",
+        noResults: "No models found.",
+        showingRecords: "Showing {{count}} of {{total}} records",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        filters: {
+            searchPlaceholder: "Search Model ID or Name...",
+            allStatus: "All Status",
+            allBaseModels: "All Base Models",
+            clearFilters: "Clear Filters"
+        },
+        columns: {
+            modelId: "Model ID",
+            modelName: "Model Name",
+            baseModel: "Base Model",
+            status: "Status",
+            created: "Created",
+            createdBy: "Created By",
+            actions: "Actions"
+        },
+        actions: {
+            viewDetails: "View Details"
+        }
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "Model Information",
+        modelId: "Model ID:",
+        back: "Back",
+        onlineModel: "Deploy Model",
+        offlineModel: "Offline Model",
+        creator: "Creator:",
+        status: "Status:",
+        statusOnline: "Online",
+        statusTrained: "Trained",
+        statusTraining: "Training",
+        created: "Created:",
+        remarks: "Remarks:",
+        baseModel: "Base Model",
+        trainingDataset: "Training Dataset",
+        datasetName: "Dataset Name:",
+        fileSize: "File Size:",
+        totalSamples: "Total Samples:",
+        ratio: "Train-Test Ratio:",
+        trainingResults: "Training Results",
+        accuracy: "Accuracy",
+        loss: "Loss",
+        epochs: "Epochs",
+        trainingTime: "Training Time",
+        validationScore: "Validation Score",
+        predictionRecords: "Prediction Records",
+        recordId: "ID",
+        fileName: "File Name",
+        batteryCount: "Battery Count",
+        avgCycleLife: "Avg Cycle Life",
+        actions: "Actions",
+        viewDetails: "View Details"
     }
 };

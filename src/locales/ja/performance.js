@@ -19,7 +19,20 @@ export default {
       cellDesign: "セル設計:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "予測モデル選択",
+    placeholder: "予測モデルを選択してください",
+    baseModel: "ベースモデル",
+    finetunedModels: "ファインチューニングモデル",
+    columns: {
+      modelName: "モデル名",
+      modelId: "モデルID",
+      baseModel: "ベースモデル"
+    }
+  },
+
   // Additive input
   additive: {
     label: "添加剤のSMILES",
@@ -192,8 +205,14 @@ export default {
   // History
   history: {
     title: "予測記録",
+    newDesign: "新しいデザイン",
     newPrediction: "新しい予測",
+    train: "トレーニング",
     searchPlaceholder: "ファイル名で検索...",
+    loadingText: "読み込み中...",
+    error: "エラー",
+    noResults: "デザイン記録がありません",
+    cannotDeleteDemo: "デモ記録は削除できません",
     status: {
       completed: "完了"
     },
@@ -203,10 +222,6 @@ export default {
       deleteConfirm: "この記録を削除してもよろしいですか？",
       deleteFailed: "記録の削除に失敗しました"
     },
-    noResults: {
-      message: "予測記録がありません。",
-      clearFilters: "すべてのフィルターをクリア"
-    },
     loading: {
       message: "履歴データを読み込み中...",
       error: "エラー",
@@ -214,7 +229,45 @@ export default {
       failedToLoad: "履歴データの読み込みに失敗しました"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "レコード名またはIDで検索",
+    allModels: "すべてのモデル",
+    clearFilters: "フィルターをクリア",
+    showingRecords: "{{count}}件 / {{total}}件を表示中"
+  },
+
+  // Models
+  models: {
+    loadingText: "読み込み中...",
+    error: "エラー",
+    noResults: "モデルが見つかりません",
+    showingRecords: "{{count}}件 / {{total}}件を表示中",
+    statusOnline: "オンライン",
+    statusTrained: "訓練済み",
+    statusTraining: "訓練中",
+    filters: {
+      searchPlaceholder: "モデルIDまたは名前で検索...",
+      allStatus: "すべてのステータス",
+      allBaseModels: "すべてのベースモデル",
+      clearFilters: "フィルターをクリア",
+      selectDate: "日付を選択"
+    },
+    columns: {
+      modelId: "モデルID",
+      modelName: "モデル名",
+      baseModel: "ベースモデル",
+      status: "ステータス",
+      created: "作成日",
+      createdBy: "作成者",
+      actions: "アクション"
+    },
+    actions: {
+      viewDetails: "詳細を表示"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "バッテリーシステム"
 }

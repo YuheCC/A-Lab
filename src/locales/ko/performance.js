@@ -19,7 +19,20 @@ export default {
       cellDesign: "셀 설계:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "예측 모델 선택",
+    placeholder: "예측 모델을 선택하세요",
+    baseModel: "기본 모델",
+    finetunedModels: "미세 조정 모델",
+    columns: {
+      modelName: "모델 이름",
+      modelId: "모델 ID",
+      baseModel: "기본 모델"
+    }
+  },
+
   // Additive input
   additive: {
     label: "첨가제의 SMILES",
@@ -192,8 +205,14 @@ export default {
   // History
   history: {
     title: "예측 기록",
+    newDesign: "새 디자인",
     newPrediction: "새 예측",
+    train: "훈련",
     searchPlaceholder: "파일명으로 검색...",
+    loadingText: "로딩 중...",
+    error: "오류",
+    noResults: "디자인 기록이 없습니다",
+    cannotDeleteDemo: "데모 기록을 삭제할 수 없습니다",
     status: {
       completed: "완료됨"
     },
@@ -203,10 +222,6 @@ export default {
       deleteConfirm: "이 기록을 삭제하시겠습니까?",
       deleteFailed: "기록 삭제에 실패했습니다"
     },
-    noResults: {
-      message: "예측 기록이 없습니다.",
-      clearFilters: "모든 필터 지우기"
-    },
     loading: {
       message: "히스토리 데이터 로딩 중...",
       error: "오류",
@@ -214,7 +229,45 @@ export default {
       failedToLoad: "히스토리 데이터 로드에 실패했습니다"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "레코드 이름 또는 ID로 검색",
+    allModels: "모든 모델",
+    clearFilters: "필터 지우기",
+    showingRecords: "{{count}}개 / {{total}}개 표시 중"
+  },
+
+  // Models
+  models: {
+    loadingText: "로딩 중...",
+    error: "오류",
+    noResults: "모델을 찾을 수 없습니다",
+    showingRecords: "{{count}}개 / {{total}}개 표시 중",
+    statusOnline: "온라인",
+    statusTrained: "훈련됨",
+    statusTraining: "훈련 중",
+    filters: {
+      searchPlaceholder: "모델 ID 또는 이름으로 검색...",
+      allStatus: "모든 상태",
+      allBaseModels: "모든 기본 모델",
+      clearFilters: "필터 지우기",
+      selectDate: "날짜 선택"
+    },
+    columns: {
+      modelId: "모델 ID",
+      modelName: "모델 이름",
+      baseModel: "기본 모델",
+      status: "상태",
+      created: "생성됨",
+      createdBy: "작성자",
+      actions: "작업"
+    },
+    actions: {
+      viewDetails: "세부 정보 보기"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "배터리 시스템"
 }

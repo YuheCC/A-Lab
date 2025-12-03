@@ -67,7 +67,8 @@ export default {
     // Tabs
     tabs: {
         introduction: "紹介",
-        records: "記録"
+        records: "記録",
+        models: "モデル"
     },
 
     // List
@@ -77,15 +78,26 @@ export default {
             fileName: "ファイル名",
             batteryCount: "バッテリー数",
             avgCycleLife: "平均サイクル寿命",
+            model: "モデル",
             created: "作成日時",
             actions: "操作"
         }
+    },
+
+    // Records
+    records: {
+        searchPlaceholder: "レコード名またはIDで検索",
+        modelFilter: "モデルフィルター",
+        allModels: "すべてのモデル",
+        clearFilters: "フィルターをクリア",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示"
     },
 
     // History
     history: {
         title: "予測記録",
         newPrediction: "新しい予測",
+        train: "トレーニング",
         searchPlaceholder: "ファイル名で検索...",
         loadingText: "読み込み中...",
         error: "エラー",
@@ -173,5 +185,102 @@ export default {
         point3: 'サイクル寿命が既知の実際のセルの場合、モデルは1321サイクル時にEOLを予測しました。',
         point3_sub1: '実測値は1261サイクル（各サイクルの容量保持率に基づく）または1351サイクル（容量チェックサイクルの容量保持率に基づく）です。',
         point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
+    },
+
+    // Train
+    train: {
+        title: "新しいモデルをトレーニング",
+        back: "戻る",
+        step1: {
+            title: "モデル情報",
+            name: "モデル名",
+            namePlaceholder: "モデル名を入力",
+            remarks: "備考（オプション）",
+            remarksPlaceholder: "追加のメモや備考を入力"
+        },
+        step2: {
+            title: "ベースモデル",
+            modelName: "OSES-Base-v1",
+            badge: "ベースモデル"
+        },
+        step3: {
+            title: "トレーニングデータセット",
+            ratio: "トレーニング-テスト分割比：",
+            ratioValue: "7 : 3",
+            ratioDesc: "データセットの70%がトレーニングに、30%がテストに使用されます",
+            upload: "データセットをアップロード",
+            dragDrop: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
+            formats: "対応フォーマット：CSV、XLSX（最大50MB）",
+            chooseFile: "ファイルを選択",
+            downloadSample: "サンプルをダウンロード"
+        },
+        startTraining: "トレーニング開始",
+        errors: {
+            fileSize: "ファイルサイズが50MBを超えています"
+        }
+    },
+
+    // Models
+    models: {
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "モデルが見つかりません",
+        showingRecords: "{{count}} / {{total}} 件のレコードを表示",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        filters: {
+            searchPlaceholder: "モデルIDまたは名前で検索...",
+            allStatus: "すべてのステータス",
+            allBaseModels: "すべてのベースモデル",
+            clearFilters: "フィルターをクリア"
+        },
+        columns: {
+            modelId: "モデルID",
+            modelName: "モデル名",
+            baseModel: "ベースモデル",
+            status: "ステータス",
+            created: "作成日時",
+            createdBy: "作成者",
+            actions: "操作"
+        },
+        actions: {
+            viewDetails: "詳細を表示"
+        }
+    },
+
+    // Model Detail
+    modelDetail: {
+        title: "モデル情報",
+        modelId: "モデルID：",
+        back: "戻る",
+        onlineModel: "モデルをデプロイ",
+        offlineModel: "モデルをオフライン",
+        creator: "作成者：",
+        status: "ステータス：",
+        statusOnline: "オンライン",
+        statusTrained: "トレーニング済み",
+        statusTraining: "トレーニング中",
+        created: "作成日時：",
+        remarks: "備考：",
+        baseModel: "ベースモデル",
+        trainingDataset: "トレーニングデータセット",
+        datasetName: "データセット名：",
+        fileSize: "ファイルサイズ：",
+        totalSamples: "総サンプル数：",
+        ratio: "トレーニング-テスト比：",
+        trainingResults: "トレーニング結果",
+        accuracy: "精度",
+        loss: "損失",
+        epochs: "エポック数",
+        trainingTime: "トレーニング時間",
+        validationScore: "検証スコア",
+        predictionRecords: "予測記録",
+        recordId: "ID",
+        fileName: "ファイル名",
+        batteryCount: "バッテリー数",
+        avgCycleLife: "平均サイクル寿命",
+        actions: "操作",
+        viewDetails: "詳細を表示"
     }
 };
