@@ -12,7 +12,7 @@ import 'dayjs/locale/ko';
 import { Activity, X } from 'lucide-react';
 import { getHistoryList, deleteHistory } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
-import Introduction from '@/components/Introduction';
+import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
 import './index.less';
 
@@ -268,10 +268,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         <div className="design-tab-content">
           {activeTab === 'introduction' && (
             <div className="design-tab-panel">
-              <Introduction
-                i18nKey="design.introduction.comingSoon"
-                defaultText="Introduction content coming soon..."
-              />
+              <DesignIntroduction />
             </div>
           )}
 
