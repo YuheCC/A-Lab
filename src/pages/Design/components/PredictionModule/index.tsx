@@ -653,7 +653,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
   };
 
-  // Unified processing function based on Python logic
+  // Unified processing function based on Python logic (老格式处理)
   const processPerformanceMetric = (propValue: string, labelValue: string) => {
     // Parse string values to numbers
     const prob = parseFloat(propValue || '0');
@@ -680,6 +680,68 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
   };
 
+  // 新格式数据类型定义
+  interface NewFormatMetric {
+    status: string;
+    performance_type: string; // 'CR_25', 'CL_25', 'CL_45', 'CE_25', 'CE_45'
+    task: string; // 'regression' 或 'classification'
+    smiles: string;
+    value?: number; // 回归任务的预测值
+    label?: number; // 分类任务的标签
+    prob?: number;  // 分类任务的概率
+  }
+
+  // performance_type 到显示指标的映射
+  const PERFORMANCE_TYPE_MAP: Record<string, { temp: '25c' | '45c'; metric: 'cycleLife' | 'ce' | 'ratePerformance' }> = {
+    'CR_25': { temp: '25c', metric: 'ratePerformance' },
+    'CL_25': { temp: '25c', metric: 'cycleLife' },
+    'CL_45': { temp: '45c', metric: 'cycleLife' },
+    'CE_25': { temp: '25c', metric: 'ce' },
+    'CE_45': { temp: '45c', metric: 'ce' },
+  };
+
+  // 处理新格式的单个指标数据
+  const processNewFormatMetric = (metricData: NewFormatMetric | undefined) => {
+    if (!metricData) {
+      return { status: 'UNKNOWN', confidence: 0, rawProb: 0, rawLabel: -1 };
+    }
+
+    // 根据任务类型处理
+    if (metricData.task === 'regression') {
+      // 回归任务：使用 value 作为置信度显示
+      const value = metricData.value ?? 0;
+      // 根据 value 的正负判断状态
+      const status = value >= 0 ? 'Positive' : 'Negative';
+      const displayValue = parseFloat((Math.abs(value) * 100).toFixed(2));
+      return {
+        status,
+        confidence: displayValue,
+        rawProb: value,
+        rawLabel: value >= 0 ? 0 : 1
+      };
+    } else {
+      // 分类任务：使用 label 和 prob
+      const label = metricData.label ?? 0;
+      const prob = metricData.prob ?? metricData.value ?? 0;
+      const status = label === 0 ? 'Positive' : label === 1 ? 'Negative' : 'UNKNOWN';
+      return {
+        status,
+        confidence: parseFloat(Math.abs(prob).toFixed(2)),
+        rawProb: prob,
+        rawLabel: label
+      };
+    }
+  };
+
+  // 检测是否为新格式数据
+  const isNewFormatData = (modelResult: any): boolean => {
+    // 新格式特征：包含 temperature_25 或 temperature_45，且有 performance_type 字段
+    return (
+      modelResult &&
+      (modelResult.temperature_25?.performance_type || modelResult.temperature_45?.performance_type)
+    );
+  };
+
   // Transform API response to results format
   const getResultsData = () => {
     console.log('predictionResults', predictionResults);
@@ -698,12 +760,62 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       };
     }
 
-    let quantification_result: any = {};
-    try{
-      const model_result = JSON.parse((predictionResults as any)?.model_result);
-      quantification_result = model_result?.quantification_result ?? {};
+    // 尝试解析 model_result
+    let parsedModelResult: any = null;
+    try {
+      if ((predictionResults as any)?.model_result) {
+        parsedModelResult = JSON.parse((predictionResults as any).model_result);
+        console.log('Parsed model_result:', parsedModelResult);
+      }
     } catch (error) {
-      console.error('Error parsing API data:', error);
+      console.error('Error parsing model_result:', error);
+    }
+
+    // 检测并处理新格式数据
+    if (isNewFormatData(parsedModelResult)) {
+      console.log('[Performance] Detected new format data, adapting...');
+      
+      // 初始化默认结果
+      const defaultMetric = { status: 'UNKNOWN', confidence: 0, rawProb: 0, rawLabel: -1 };
+      const result: any = {
+        '25c': {
+          cycleLife: { ...defaultMetric },
+          ce: { ...defaultMetric },
+          ratePerformance: { ...defaultMetric }
+        },
+        '45c': {
+          cycleLife: { ...defaultMetric },
+          ce: { ...defaultMetric }
+        }
+      };
+
+      // 处理 temperature_25 数据
+      if (parsedModelResult.temperature_25) {
+        const metric25 = parsedModelResult.temperature_25 as NewFormatMetric;
+        const mapping = PERFORMANCE_TYPE_MAP[metric25.performance_type];
+        if (mapping) {
+          result[mapping.temp][mapping.metric] = processNewFormatMetric(metric25);
+        }
+      }
+
+      // 处理 temperature_45 数据
+      if (parsedModelResult.temperature_45) {
+        const metric45 = parsedModelResult.temperature_45 as NewFormatMetric;
+        const mapping = PERFORMANCE_TYPE_MAP[metric45.performance_type];
+        if (mapping) {
+          result[mapping.temp][mapping.metric] = processNewFormatMetric(metric45);
+        }
+      }
+
+      console.log('[Performance] Adapted result:', result);
+      return result;
+    }
+
+    // 老格式处理逻辑
+    console.log('[Performance] Using old format data processing...');
+    let quantification_result: any = {};
+    if (parsedModelResult) {
+      quantification_result = parsedModelResult?.quantification_result ?? {};
     }
     
     // Process each metric using unified logic
@@ -756,7 +868,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     // Reset display states
     setShowSpecs(true);
     setShowResults(false);
-    setActiveTab('25c');
     setShowLLMAnalysis(false);
     
     // Clear molecule details
