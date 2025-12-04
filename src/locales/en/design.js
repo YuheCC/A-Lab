@@ -51,6 +51,19 @@ export default {
         modelDescription: 'The Design function is powered by a data-driven AI model trained on SES internal cell-testing datasets, all generated under consistent testing environments and benchmark conditions. This ensures high data quality and enables the AI model to achieve strong predictive accuracy.',
         predictionProcess: 'During prediction, the model compares the performance of a benchmark cell with that of a hypothetical cell that has the same design but incorporates a new electrolyte additive (as specified by the user). The reported percentage changes are derived from SES internal testing platforms and conditions.',
         example: 'For example, when the molecule O=C1OC(C2COS(=O)(=O)O2)C(C2COS(=O)(=O)O2)O1 is evaluated, the system displays molecular information if it exists in the MU database. The prediction results then appear, where arrows indicate the direction of the impact and percentages are based on SES internal testing platforms. In this case, the model predicts that the new electrolyte additive positively affects room-temperature cycle life and Coulombic efficiency, but may slightly reduce rate performance, likely due to the formation of a more stable SEI.',
+        // Figure 1
+        figure1Label: 'Figure 1.',
+        figure1Alt: 'Input SMILES of any molecules',
+        figure1Caption: 'Input SMILES of any molecules',
+        // Figure 2
+        figure2Label: 'Figure 2.',
+        figure2Alt: 'Molecular information if the input molecule is in MU database',
+        figure2Caption: 'Molecular information if the input molecule is in MU database',
+        // Figure 3
+        figure3Label: 'Figure 3.',
+        figure3Alt: 'Semi-quantitative prediction of molecular impacts on cell performance',
+        figure3Caption: 'Semi-quantitative prediction of molecular impacts on cell performance. Arrows indicate positive or negative influence, and percentages are derived from SES testing platforms under respective conditions.',
+        // Legacy keys
         figureAlt: 'Example of predicting a molecule on the cell performance by Design model',
         figureCaption: 'Figure. Example of predicting a molecule on the cell performance by Design model',
         accuracy: 'Based on internal validation, the current model achieves approximately 85% directional accuracy, meaning it can correctly judge the impact of about 8 out of 10 previously unseen molecules under defined conditions.',
