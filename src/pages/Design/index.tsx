@@ -45,6 +45,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [modelsData, setModelsData] = useState<ModelListItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelsCurrentPage, setModelsCurrentPage] = useState(1);
+  const [modelsPageSize] = useState(20);
+  const [modelsTotal, setModelsTotal] = useState(0);
 
   // Models filter state
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
@@ -127,17 +130,39 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     }
   };
 
-  const fetchModelsData = async () => {
+  const fetchModelsData = async (page: number = modelsCurrentPage) => {
     setModelsLoading(true);
     setModelsError(null);
 
     try {
-      const response = await getModelListFromModel({ page: 1, page_size: 100 });
+      const params: any = {
+        page,
+        page_size: modelsPageSize,
+      };
+
+      // Add search keyword if provided
+      if (modelSearchKeyword) {
+        params.keyword = modelSearchKeyword;
+      }
+
+      // Add status filter if not 'all'
+      if (selectedModelStatus !== 'all') {
+        params.status = selectedModelStatus;
+      }
+
+      // Add base model filter if not 'all'
+      if (selectedBaseModel !== 'all') {
+        params.base_model_name = selectedBaseModel;
+      }
+
+      const response = await getModelListFromModel(params);
       setModelsData(response.data);
+      setModelsTotal(response.total);
     } catch (err) {
       console.error('Failed to fetch models:', err);
       setModelsError(err instanceof Error ? err.message : t('design.models.loadingError', 'Failed to load models'));
       setModelsData([]);
+      setModelsTotal(0);
     } finally {
       setModelsLoading(false);
     }
@@ -146,10 +171,25 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   useEffect(() => {
     if (activeTab === 'records') {
       fetchHistoryData(currentPage);
-    } else if (activeTab === 'models') {
-      fetchModelsData();
     }
   }, [activeTab, currentPage]);
+
+  useEffect(() => {
+    if (activeTab === 'models') {
+      // Reset to page 1 when filters change
+      if (modelsCurrentPage === 1) {
+        fetchModelsData(1);
+      } else {
+        setModelsCurrentPage(1);
+      }
+    }
+  }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModel]);
+
+  useEffect(() => {
+    if (activeTab === 'models' && modelsCurrentPage > 1) {
+      fetchModelsData(modelsCurrentPage);
+    }
+  }, [modelsCurrentPage]);
 
   const handleNewDesign = () => {
     window.open('/design/create', '_blank');
@@ -185,6 +225,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleModelsPageChange = (page: number) => {
+    setModelsCurrentPage(page);
   };
 
   const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
@@ -224,16 +268,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     return keywordMatch && dateMatch;
   });
 
-  // Filter models data
-  const filteredModelsData = modelsData.filter((model) => {
-    const keywordMatch = !modelSearchKeyword ||
-      model.model_name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
-      String(model.id).includes(modelSearchKeyword);
-    const statusMatch = selectedModelStatus === 'all' || model.status === selectedModelStatus;
-    const baseModelMatch = selectedBaseModel === 'all' || model.base_model_name === selectedBaseModel;
-    return keywordMatch && statusMatch && baseModelMatch;
-  });
-
+  // Get unique base models for filter options (from current page data)
   const uniqueBaseModels = Array.from(new Set(modelsData.map(model => model.base_model_name).filter(Boolean)));
 
   return (
@@ -404,16 +439,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
           {activeTab === 'models' && (
             <div className="design-tab-panel">
-              {modelsLoading ? (
-                <div className="loading-state">
-                  <p>{t('design.models.loadingText', 'Loading...')}</p>
-                </div>
-              ) : modelsError ? (
-                <div className="error-state">
-                  <p>{t('design.models.error', 'Error')}: {modelsError}</p>
-                </div>
-              ) : (
-                <>
               <div className="models-filters">
                 <input
                   type="text"
@@ -451,10 +476,20 @@ const DesignPage: React.FC<DesignPageProps> = () => {
               </div>
               <div className="models-count-text">
                 {t('performance.models.showingRecords', '显示 {{count}} / {{total}} 条记录', {
-                  count: filteredModelsData.length,
-                  total: modelsData.length
+                  count: modelsData.length,
+                  total: modelsTotal
                 })}
               </div>
+              {modelsLoading ? (
+                <div className="loading-state">
+                  <p>{t('design.models.loadingText', 'Loading...')}</p>
+                </div>
+              ) : modelsError ? (
+                <div className="error-state">
+                  <p>{t('design.models.error', 'Error')}: {modelsError}</p>
+                </div>
+              ) : (
+                <>
               <div className="records-table-wrapper">
                 <table className="records-table">
                   <thead>
@@ -467,14 +502,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredModelsData.length === 0 ? (
+                    {modelsData.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="no-data">
                           {t('performance.models.noResults', 'No models found.')}
                         </td>
                       </tr>
                     ) : (
-                      filteredModelsData.map((model) => (
+                      modelsData.map((model) => (
                         <tr key={model.id}>
                           <td className="record-id">DM-{String(model.id).padStart(6, '0')}</td>
                           <td className="file-name">
@@ -515,6 +550,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   </tbody>
                 </table>
               </div>
+              <Pagination
+                current={modelsCurrentPage}
+                total={modelsTotal}
+                pageSize={modelsPageSize}
+                onChange={handleModelsPageChange}
+              />
                 </>
               )}
             </div>
