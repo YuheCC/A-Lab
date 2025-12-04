@@ -95,6 +95,7 @@ export async function deletePerformanceHistory(id: number) {
 export interface PerformancePredictionRequest {
     smiles: string;
     battery_system_id: number;
+    model_id?: string;
 }
 
 export interface PerformancePredictionResponse {
