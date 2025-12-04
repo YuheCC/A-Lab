@@ -16,7 +16,7 @@ import ModelSelect from '@/components/ModelSelect';
 import { mockModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
 import { PricingContext } from '@/layouts/index';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
-import { getBaseModelList, getMuModelList } from '../../model';
+import { getModelList } from '../../model';
 import type { ModelListItem } from '@/services/model/training';
 
 interface SystemSpec {
@@ -214,40 +214,38 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     const fetchModelOptions = async () => {
       setIsModelLoading(true);
       try {
-        // 并行获取 base model 和 mu model
-        const [baseModelsResponse, muModelsResponse] = await Promise.all([
-          getBaseModelList(),
-          getMuModelList()
-        ]);
+        // 获取完整的 100 条模型数据
+        const response = await getModelList({ page_size: 100 });
 
-        const convertToModelOption = (
-          item: ModelListItem,
-          category: 'base' | 'finetuned'
-        ): ModelOption => ({
-          id: item.id.toString(),
-          name: item.model_name,
-          baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
-          category,
-          // 默认所有模型支持所有指标，如果 API 后续提供这个信息可以替换
-          supportedMetrics: ['cl', 'ce', 'rate']
-        });
+        if (!response?.data || response.data.length === 0) {
+          console.log('No model data found, using mock data');
+          setIsModelLoading(false);
+          return;
+        }
 
-        const baseModels = (baseModelsResponse?.data || []).map(item =>
-          convertToModelOption(item, 'base')
-        );
+        // 根据 base_model_id 转换为 ModelOption 并设置分类
+        const convertToModelOption = (item: ModelListItem): ModelOption => {
+          let category: 'base' | 'finetuned' = 'finetuned';
 
-        const muModels = (muModelsResponse?.data || []).map(item =>
-          convertToModelOption(item, 'finetuned')
-        );
+          // 根据 base_model_id 判断分类
+          if (item.base_model_id === -1) {
+            category = 'base';
+          }
 
-        // 合并 base 和 mu models
-        const allModels = [...baseModels, ...muModels];
+          return {
+            id: item.id.toString(),
+            name: item.model_name,
+            baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
+            category,
+            // 默认所有模型支持所有指标，如果 API 后续提供这个信息可以替换
+            supportedMetrics: ['cl', 'ce', 'rate']
+          };
+        };
+
+        const allModels = response.data.map(convertToModelOption);
 
         if (allModels.length > 0) {
           setModelOptions(allModels);
-        } else {
-          // 如果没有获取到真实数据，保持使用 mock 数据
-          console.log('No model data found, using mock data');
         }
       } catch (error) {
         console.error('获取模型列表失败:', error);

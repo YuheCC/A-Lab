@@ -40,6 +40,7 @@ export interface ModelListItem {
   id: number;
   model_name: string;
   base_model_name: string;
+  base_model_id?: number;
   status: 'training' | 'trained' | 'online';
   created_at: string;
   created_by: string;
