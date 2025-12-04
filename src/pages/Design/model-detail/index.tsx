@@ -55,7 +55,7 @@ const DesignModelDetailPage: React.FC = () => {
     if (!model || !modelId) return;
 
     // Check if it's a mock model
-    if (isMockModel({ id: parseInt(modelId), isMock: true })) {
+    if (model && isMockModel(model)) {
       alert(t('design.modelDetail.errors.cannotDeployDemo', 'Cannot deploy demo model'));
       return;
     }
@@ -129,7 +129,7 @@ const DesignModelDetailPage: React.FC = () => {
     );
   }
 
-  const isMock = model.id && isMockModel({ id: parseInt(model.id), isMock: true });
+  const isMock = model && isMockModel(model);
 
   return (
     <div className="model-detail-page-wrapper">
