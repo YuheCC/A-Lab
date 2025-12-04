@@ -101,7 +101,7 @@ const DesignTrainPage: React.FC = () => {
       const response = await trainModel({
         model_name: modelName.trim(),
         remark: remarks.trim(),
-        base_model_name: selectedModel.model_name,
+        base_model_id: selectedModel.id,
         data_files: file,
       });
 

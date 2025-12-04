@@ -171,7 +171,7 @@ const DesignModelDetailPage: React.FC = () => {
           <div className="info-card">
             <div className="info-row">
               <span className="label">{t('design.modelDetail.creator', 'Creator')}</span>
-              <span className="value">{model.created_by || 'N/A'}</span>
+              <span className="value">{model.created_by_name || 'N/A'}</span>
             </div>
             <div className="info-row">
               <span className="label">{t('design.modelDetail.status', 'Status')}</span>
