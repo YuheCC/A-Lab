@@ -44,6 +44,7 @@ export interface ModelListItem {
   model_name: string;
   base_model_name: string;
   base_model_id?: number;
+  model_type?: number; // 1: ratePerformance, 2: ce, 3: cycleLife
   status: 'training' | 'trained' | 'online';
   created_at: string;
   created_by: string;

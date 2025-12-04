@@ -232,13 +232,32 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             category = 'base';
           }
 
+          // 根据 model_type 映射 supportedMetrics
+          // 1: ratePerformance, 2: ce, 3: cycleLife
+          let supportedMetrics: PerformanceMetricType[] = ['cl', 'ce', 'rate']; // 默认支持所有指标
+          if (item.model_type !== undefined) {
+            switch (item.model_type) {
+              case 1:
+                supportedMetrics = ['rate'];
+                break;
+              case 2:
+                supportedMetrics = ['ce'];
+                break;
+              case 3:
+                supportedMetrics = ['cl'];
+                break;
+              default:
+                // 保持默认值
+                supportedMetrics = ['cl', 'ce', 'rate'];
+            }
+          }
+
           return {
             id: item.id.toString(),
             name: item.model_name,
             baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
             category,
-            // 默认所有模型支持所有指标，如果 API 后续提供这个信息可以替换
-            supportedMetrics: ['cl', 'ce', 'rate']
+            supportedMetrics
           };
         };
 
