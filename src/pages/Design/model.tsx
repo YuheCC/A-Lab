@@ -190,7 +190,7 @@ import {
 import { mockModelList, mockModelDetail } from './modelExample';
 
 // Namespace constant - used by all Design model training APIs
-const MODEL_NAMESPACE = 'cell_life';
+const MODEL_NAMESPACE = 'cell_performance';
 
 /**
  * Train a new model for Design

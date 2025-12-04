@@ -8,7 +8,8 @@ import request from "@/services/request";
 export interface TrainModelParams {
   model_name: string;
   remark: string;
-  base_model_name: string;
+  base_model_name?: string;
+  base_model_id?: number;
   data_files: File;
   namespace: string;
 }
@@ -98,6 +99,12 @@ export interface ModelDetailResponse {
   remark: string;
   created_at: string;
   base_model_name: string;
+  base_model_id: number;
+  created_by: string;
+  created_by_name: string;
+  updated_at: string;
+  updated_by: string;
+  updated_by_name: string;
   train_result: TrainResult;
   prediction_result: PredictionRecord[];
 }
@@ -166,11 +173,16 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
   const formData = new FormData();
   formData.append('model_name', params.model_name);
   formData.append('remark', params.remark);
-  formData.append('base_model_name', params.base_model_name);
+  if (params.base_model_name) {
+    formData.append('base_model_name', params.base_model_name as string);
+  }
+  if (params.base_model_id) {
+    formData.append('base_model_id', params.base_model_id.toString());
+  }
   formData.append('data_files', params.data_files);
   formData.append('namespace', params.namespace);
 
-  const response = await request('/aiPlatform/model/train', {
+  const response = await request('/api/ai/model/train', {
     method: 'POST',
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
