@@ -2,7 +2,7 @@
 
 .design-introduction {
   padding: 32px 40px;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
 
   &__content {
@@ -20,23 +20,29 @@
     }
   }
 
-  &__figure {
+  &__gallery {
     margin: 32px 0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  &__figure {
+    margin: 0;
+    padding: 0 124px;
+  }
+
+  &__figure-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @color-text-primary;
+    margin-bottom: 12px;
   }
 
   &__image {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  &__caption {
-    margin-top: 12px;
-    font-size: 14px;
-    color: @color-text-muted;
-    font-style: italic;
+    margin-left: 24px;
   }
 }
 

@@ -16,7 +16,7 @@ export const mockModelList: MockModelItem[] = [
   {
     id: 999801,
     isMock: true,
-    model_name: 'Electrolyte Design Model v1.0',
+    model_name: 'NCM811-12%Si/graphite-Carbonate electrolyte',
     base_model_name: 'OSES-Design-v1',
     status: 'online',
     created_at: '2024-01-15T08:00:00Z',
