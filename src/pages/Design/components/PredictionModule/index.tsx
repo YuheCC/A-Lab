@@ -13,9 +13,11 @@ import './PerformanceTooltip.less';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import CustomSelect from '../CustomSelect';
 import ModelSelect from '@/components/ModelSelect';
-import { mockModels, type PerformanceMetricType } from './mockModelData';
+import { mockModels, type PerformanceMetricType, type ModelOption } from './mockModelData';
 import { PricingContext } from '@/layouts/index';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { getBaseModelList, getMuModelList } from '../../model';
+import type { ModelListItem } from '@/services/model/training';
 
 interface SystemSpec {
   cathode: string;
@@ -69,7 +71,11 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 新增状态：电池系统相关
   const [batterySystemOptions, setBatterySystemOptions] = useState<BatterySystem[]>([]);
   const [isBatterySystemLoading, setIsBatterySystemLoading] = useState(true);
-  
+
+  // 新增状态：模型相关
+  const [modelOptions, setModelOptions] = useState<ModelOption[]>(mockModels);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+
   // 新增状态：计算相关
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState<string | null>(null);
@@ -130,7 +136,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     (temperature: '25c' | '45c'): PerformanceMetricType[] => {
       if (!selectedModel) return [];
 
-      const model = mockModels.find(m => m.id === selectedModel);
+      const model = modelOptions.find(m => m.id === selectedModel);
       if (!model || !model.supportedMetrics || model.supportedMetrics.length === 0) {
         return [];
       }
@@ -144,7 +150,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
       return availableMetrics;
     },
-    [selectedModel]
+    [selectedModel, modelOptions]
   );
 
   // 判断是否需要显示 45°C 区块
@@ -201,6 +207,57 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
 
     fetchBatterySystemOptions();
+  }, []);
+
+  // 获取模型列表
+  useEffect(() => {
+    const fetchModelOptions = async () => {
+      setIsModelLoading(true);
+      try {
+        // 并行获取 base model 和 mu model
+        const [baseModelsResponse, muModelsResponse] = await Promise.all([
+          getBaseModelList(),
+          getMuModelList()
+        ]);
+
+        const convertToModelOption = (
+          item: ModelListItem,
+          category: 'base' | 'finetuned'
+        ): ModelOption => ({
+          id: item.id.toString(),
+          name: item.model_name,
+          baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
+          category,
+          // 默认所有模型支持所有指标，如果 API 后续提供这个信息可以替换
+          supportedMetrics: ['cl', 'ce', 'rate']
+        });
+
+        const baseModels = (baseModelsResponse?.data || []).map(item =>
+          convertToModelOption(item, 'base')
+        );
+
+        const muModels = (muModelsResponse?.data || []).map(item =>
+          convertToModelOption(item, 'finetuned')
+        );
+
+        // 合并 base 和 mu models
+        const allModels = [...baseModels, ...muModels];
+
+        if (allModels.length > 0) {
+          setModelOptions(allModels);
+        } else {
+          // 如果没有获取到真实数据，保持使用 mock 数据
+          console.log('No model data found, using mock data');
+        }
+      } catch (error) {
+        console.error('获取模型列表失败:', error);
+        // 出错时保持使用 mock 数据
+      } finally {
+        setIsModelLoading(false);
+      }
+    };
+
+    fetchModelOptions();
   }, []);
 
   // WebSocket初始化和消息处理
@@ -454,7 +511,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     try {
       const response = await predictPerformance({
         smiles: additive.trim(),
-        battery_system_id: parseInt(selectedBatterySystem.id)
+        battery_system_id: parseInt(selectedBatterySystem.id),
+        model_id: selectedModel || undefined
       });
 
       const status = response?.status ?? response?.data?.status;
@@ -822,7 +880,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                   setShowSpecs(true);
                 }
               }}
-              options={mockModels}
+              options={modelOptions}
+              loading={isModelLoading}
               groupBy="category"
               groupByLabel={{
                 'base': t('performance.modelSelection.baseModel', 'Base Model'),

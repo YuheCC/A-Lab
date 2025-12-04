@@ -1,4 +1,50 @@
 export default {
+    // Train page
+    train: {
+        title: '새 모델 학습',
+        back: '뒤로',
+        startTraining: '학습 시작',
+        submitting: '제출 중...',
+        success: '모델 학습이 성공적으로 시작되었습니다!',
+        errors: {
+            modelNameRequired: '모델 이름을 입력하세요',
+            baseModelRequired: '기본 모델을 선택하세요',
+            fileRequired: '학습 데이터셋을 업로드하세요',
+            fileSize: '파일 크기가 50MB를 초과합니다',
+            unknown: '학습 시작에 실패했습니다'
+        },
+        step1: {
+            title: '모델 정보',
+            name: '모델 이름',
+            namePlaceholder: '모델 이름 입력',
+            remarks: '비고 (선택사항)',
+            remarksPlaceholder: '추가 메모 또는 비고 입력'
+        },
+        step2: {
+            title: '셀 화학 사양',
+            cathode: '양극',
+            cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
+            anode: '음극',
+            anodePlaceholder: '12% SiC + Graphite',
+            benchmarkElectrolyte: '벤치마크 전해질',
+            benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
+            cellDesign: '셀 설계',
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+        },
+        step3: {
+            title: '기본 모델',
+            loading: '모델 로딩 중...',
+            noModels: '사용 가능한 기본 모델이 없습니다'
+        },
+        step4: {
+            title: '학습 데이터셋',
+            upload: '데이터셋 업로드',
+            dragDrop: '파일을 여기에 끌어다 놓거나 클릭하여 찾아보기',
+            formats: '지원 형식: CSV, XLSX (최대 50MB)',
+            chooseFile: '파일 선택',
+            downloadSample: '샘플 다운로드'
+        }
+    },
     // Introduction
     introduction: {
         overview: '"Design"은 새로운 전해질 분자가 셀 성능에 어떤 영향을 미칠 수 있는지에 대한 반정량적 참고 자료를 제공합니다.',

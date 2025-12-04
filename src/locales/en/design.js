@@ -1,4 +1,50 @@
 export default {
+    // Train page
+    train: {
+        title: 'Train New Model',
+        back: 'Back',
+        startTraining: 'Start Training',
+        submitting: 'Submitting...',
+        success: 'Model training started successfully!',
+        errors: {
+            modelNameRequired: 'Please enter model name',
+            baseModelRequired: 'Please select a base model',
+            fileRequired: 'Please upload training dataset',
+            fileSize: 'File size exceeds 50MB',
+            unknown: 'Failed to start training'
+        },
+        step1: {
+            title: 'Model Information',
+            name: 'Model Name',
+            namePlaceholder: 'Enter model name',
+            remarks: 'Remarks (Optional)',
+            remarksPlaceholder: 'Enter any additional notes or remarks'
+        },
+        step2: {
+            title: 'Cell Chemistry Specifications',
+            cathode: 'Cathode',
+            cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
+            anode: 'Anode',
+            anodePlaceholder: '12% SiC + Graphite',
+            benchmarkElectrolyte: 'Benchmark Electrolyte',
+            benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
+            cellDesign: 'Cell Design',
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+        },
+        step3: {
+            title: 'Base Model',
+            loading: 'Loading models...',
+            noModels: 'No base models available'
+        },
+        step4: {
+            title: 'Training Dataset',
+            upload: 'Upload Dataset',
+            dragDrop: 'Drag and drop your file here, or click to browse',
+            formats: 'Supported formats: CSV, XLSX (Max 50MB)',
+            chooseFile: 'Choose File',
+            downloadSample: 'Download Sample'
+        }
+    },
     // Introduction
     introduction: {
         overview: '"Design" provides a semi-quantitative reference for how new electrolyte molecules may influence cell performance.',

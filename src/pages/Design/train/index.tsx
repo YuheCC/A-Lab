@@ -18,6 +18,12 @@ const DesignTrainPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Cell Chemistry Specifications
+  const [cathode, setCathode] = useState('');
+  const [anode, setAnode] = useState('');
+  const [benchmarkElectrolyte, setBenchmarkElectrolyte] = useState('');
+  const [cellDesign, setCellDesign] = useState('');
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -162,11 +168,57 @@ const DesignTrainPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Step 2: Base Model */}
+        {/* Step 2: Cell Chemistry Specifications */}
         <div className="step-section">
           <div className="step-header">
             <div className="step-number">2</div>
-            <h2>{t('design.train.step2.title', 'Base Model')}</h2>
+            <h2>{t('design.train.step2.title', 'Cell Chemistry Specifications')}</h2>
+          </div>
+          <div className="step-content">
+            <div className="form-group">
+              <label>{t('design.train.step2.cathode', 'Cathode')}</label>
+              <input
+                type="text"
+                value={cathode}
+                onChange={(e) => setCathode(e.target.value)}
+                placeholder={t('design.train.step2.cathodePlaceholder', 'Polycrystal NCM811, 4 mAh/cm²')}
+              />
+            </div>
+            <div className="form-group">
+              <label>{t('design.train.step2.anode', 'Anode')}</label>
+              <input
+                type="text"
+                value={anode}
+                onChange={(e) => setAnode(e.target.value)}
+                placeholder={t('design.train.step2.anodePlaceholder', '12% SiC + Graphite')}
+              />
+            </div>
+            <div className="form-group">
+              <label>{t('design.train.step2.benchmarkElectrolyte', 'Benchmark Electrolyte')}</label>
+              <input
+                type="text"
+                value={benchmarkElectrolyte}
+                onChange={(e) => setBenchmarkElectrolyte(e.target.value)}
+                placeholder={t('design.train.step2.benchmarkElectrolytePlaceholder', 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP')}
+              />
+            </div>
+            <div className="form-group">
+              <label>{t('design.train.step2.cellDesign', 'Cell Design')}</label>
+              <input
+                type="text"
+                value={cellDesign}
+                onChange={(e) => setCellDesign(e.target.value)}
+                placeholder={t('design.train.step2.cellDesignPlaceholder', '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity')}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Step 3: Base Model */}
+        <div className="step-section">
+          <div className="step-header">
+            <div className="step-number">3</div>
+            <h2>{t('design.train.step3.title', 'Base Model')}</h2>
           </div>
           <div className="step-content no-border">
             <div className="base-model-select-wrapper">
@@ -176,9 +228,9 @@ const DesignTrainPage: React.FC = () => {
                 disabled={isLoadingModels || baseModelList.length === 0}
               >
                 {isLoadingModels ? (
-                  <option value="">{t('design.train.step2.loading', 'Loading models...')}</option>
+                  <option value="">{t('design.train.step3.loading', 'Loading models...')}</option>
                 ) : baseModelList.length === 0 ? (
-                  <option value="">{t('design.train.step2.noModels', 'No base models available')}</option>
+                  <option value="">{t('design.train.step3.noModels', 'No base models available')}</option>
                 ) : (
                   baseModelList.map((model) => (
                     <option key={model.id} value={model.id.toString()}>
@@ -191,16 +243,16 @@ const DesignTrainPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Step 3: Training Dataset */}
+        {/* Step 4: Training Dataset */}
         <div className="step-section">
           <div className="step-header">
-            <div className="step-number">3</div>
-            <h2>{t('design.train.step3.title', 'Training Dataset')}</h2>
+            <div className="step-number">4</div>
+            <h2>{t('design.train.step4.title', 'Training Dataset')}</h2>
           </div>
           <div className="step-content">
             <div className="form-group">
               <label>
-                {t('design.train.step3.upload', 'Upload Dataset')}
+                {t('design.train.step4.upload', 'Upload Dataset')}
                 <span className="required">*</span>
               </label>
               <div
@@ -224,20 +276,20 @@ const DesignTrainPage: React.FC = () => {
                 ) : (
                   <>
                     <div className="upload-text">
-                      {t('design.train.step3.dragDrop', 'Drag and drop your file here, or click to browse')}
+                      {t('design.train.step4.dragDrop', 'Drag and drop your file here, or click to browse')}
                     </div>
                     <div className="upload-hint">
-                      {t('design.train.step3.formats', 'Supported formats: CSV, XLSX (Max 50MB)')}
+                      {t('design.train.step4.formats', 'Supported formats: CSV, XLSX (Max 50MB)')}
                     </div>
                     <button className="upload-btn">
-                      {t('design.train.step3.chooseFile', 'Choose File')}
+                      {t('design.train.step4.chooseFile', 'Choose File')}
                     </button>
                   </>
                 )}
               </div>
               <button className="download-sample">
                 <Download size={14} />
-                {t('design.train.step3.downloadSample', 'Download Sample')}
+                {t('design.train.step4.downloadSample', 'Download Sample')}
               </button>
             </div>
           </div>

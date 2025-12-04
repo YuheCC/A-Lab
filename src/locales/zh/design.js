@@ -1,4 +1,50 @@
 export default {
+    // Train page
+    train: {
+        title: '训练新模型',
+        back: '返回',
+        startTraining: '开始训练',
+        submitting: '提交中...',
+        success: '模型训练已成功启动！',
+        errors: {
+            modelNameRequired: '请输入模型名称',
+            baseModelRequired: '请选择基础模型',
+            fileRequired: '请上传训练数据集',
+            fileSize: '文件大小超过 50MB',
+            unknown: '训练启动失败'
+        },
+        step1: {
+            title: '模型信息',
+            name: '模型名称',
+            namePlaceholder: '输入模型名称',
+            remarks: '备注（可选）',
+            remarksPlaceholder: '输入任何补充说明或备注'
+        },
+        step2: {
+            title: '电池化学规格',
+            cathode: '正极',
+            cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
+            anode: '负极',
+            anodePlaceholder: '12% SiC + Graphite',
+            benchmarkElectrolyte: '基准电解液',
+            benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
+            cellDesign: '电池设计',
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+        },
+        step3: {
+            title: '基础模型',
+            loading: '加载模型中...',
+            noModels: '暂无可用的基础模型'
+        },
+        step4: {
+            title: '训练数据集',
+            upload: '上传数据集',
+            dragDrop: '将文件拖放到此处，或点击浏览',
+            formats: '支持格式: CSV, XLSX (最大 50MB)',
+            chooseFile: '选择文件',
+            downloadSample: '下载样例'
+        }
+    },
     // Introduction
     introduction: {
         overview: '"Design" 功能提供了一个半定量参考，用于评估新电解质分子对电池性能的潜在影响。',

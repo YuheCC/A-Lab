@@ -1,4 +1,50 @@
 export default {
+    // Train page
+    train: {
+        title: '新規モデルトレーニング',
+        back: '戻る',
+        startTraining: 'トレーニング開始',
+        submitting: '送信中...',
+        success: 'モデルトレーニングが正常に開始されました！',
+        errors: {
+            modelNameRequired: 'モデル名を入力してください',
+            baseModelRequired: 'ベースモデルを選択してください',
+            fileRequired: 'トレーニングデータセットをアップロードしてください',
+            fileSize: 'ファイルサイズが 50MB を超えています',
+            unknown: 'トレーニングの開始に失敗しました'
+        },
+        step1: {
+            title: 'モデル情報',
+            name: 'モデル名',
+            namePlaceholder: 'モデル名を入力',
+            remarks: '備考（オプション）',
+            remarksPlaceholder: '追加のメモや備考を入力'
+        },
+        step2: {
+            title: 'セル化学仕様',
+            cathode: 'カソード',
+            cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
+            anode: 'アノード',
+            anodePlaceholder: '12% SiC + Graphite',
+            benchmarkElectrolyte: 'ベンチマーク電解液',
+            benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
+            cellDesign: 'セル設計',
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+        },
+        step3: {
+            title: 'ベースモデル',
+            loading: 'モデル読み込み中...',
+            noModels: '利用可能なベースモデルがありません'
+        },
+        step4: {
+            title: 'トレーニングデータセット',
+            upload: 'データセットをアップロード',
+            dragDrop: 'ここにファイルをドラッグアンドドロップ、またはクリックして参照',
+            formats: 'サポート形式: CSV, XLSX（最大 50MB）',
+            chooseFile: 'ファイルを選択',
+            downloadSample: 'サンプルをダウンロード'
+        }
+    },
     // Introduction
     introduction: {
         overview: '"Design" は、新しい電解質分子がセル性能にどのような影響を与える可能性があるかについての半定量的な参考情報を提供します。',
