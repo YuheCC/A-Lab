@@ -13,6 +13,7 @@ export interface PerformanceHistoryItem {
     id: number;
     battery_system_id: number;
     smiles: string;
+    model_id?: number;  // 当前记录使用的模型 ID
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
@@ -45,6 +46,7 @@ export interface PerformanceHistoryDetailResponse {
     id: number;
     battery_system_id: number;
     smiles: string;
+    model_id?: number;  // 当前记录使用的模型 ID
     temperature_25_CE_prob?: string | null;
     temperature_25_CE_prop?: string | null;
     temperature_25_CE_label?: string | null;
