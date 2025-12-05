@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { getHistoryDetail } from '../model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { getHistoryDetail, getModelList } from '../model';
 import { useAuthStore } from '@/models/useAuth';
-import PerformanceBadge, { PerformanceMetric } from '@/components/PerformanceBadge';
+import PerformanceBadge from '@/components/PerformanceBadge';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
+import type { ModelListItem } from '@/services/model/training';
+import { parseModelResult } from '@/utils/modelResultParser';
 import './index.less';
 
 interface ProcessedMetric {
@@ -24,6 +25,12 @@ const RecordPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [detailData, setDetailData] = useState<any>(null);
 
+  // 模型相关状态
+  const [modelOptions, setModelOptions] = useState<any[]>([]);
+  const [selectedModelId, setSelectedModelId] = useState<string | undefined>();
+  const [modelType, setModelType] = useState<number | undefined>();
+  const [isModelLoading, setIsModelLoading] = useState(false);
+
   const userPermissions = useAuthStore((state: any) => state.userPermissions);
   const id = searchParams.get('id');
 
@@ -31,15 +38,30 @@ const RecordPage: React.FC = () => {
     return ['admin', 'enterprise', 'enterprise1', 'enterprise2', 'enterprise3', 'joint'].includes(userPermissions || '');
   }, [userPermissions]);
 
-  useEffect(() => {
-    if (id) {
-      fetchDetailData();
-    } else {
-      setError(t('design.record.missingId', 'Missing record ID parameter'));
-      setLoading(false);
+  // 获取模型列表
+  const fetchModelList = async () => {
+    setIsModelLoading(true);
+    try {
+      const response = await getModelList({ page_size: 100 });
+      if (response?.data) {
+        // 转换为 ModelSelect 期望的格式
+        const options = response.data.map((item: ModelListItem) => ({
+          id: item.id.toString(),
+          name: item.model_name,
+          baseModel: item.base_model_id === -1 ? '-' : item.base_model_name || '-',
+          category: item.base_model_id === -1 ? 'base' : 'finetuned',
+          model_type: item.model_type,
+        }));
+        setModelOptions(options);
+      }
+    } catch (error) {
+      console.error('获取模型列表失败:', error);
+    } finally {
+      setIsModelLoading(false);
     }
-  }, [id]);
+  };
 
+  // 获取历史详情
   const fetchDetailData = async () => {
     if (!id) return;
 
@@ -48,7 +70,13 @@ const RecordPage: React.FC = () => {
 
     try {
       const response = await getHistoryDetail(parseInt(id));
-      setDetailData(response.data);
+      const data = response.data;
+      setDetailData(data);
+
+      // 如果返回了 model_id，设置选中状态
+      if (data.model_id) {
+        setSelectedModelId(data.model_id.toString());
+      }
     } catch (err: any) {
       console.error('Failed to fetch detail data:', err);
       setError(err.message || t('design.record.fetchError', 'Failed to fetch record details'));
@@ -56,6 +84,29 @@ const RecordPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // 监听 modelOptions 和 selectedModelId 变化，匹配 model_type
+  useEffect(() => {
+    if (selectedModelId && modelOptions.length > 0) {
+      const model = modelOptions.find(m => m.id === selectedModelId);
+      if (model) {
+        setModelType(model.model_type);
+      }
+    }
+  }, [selectedModelId, modelOptions]);
+
+  // 初始化数据获取
+  useEffect(() => {
+    if (id) {
+      Promise.all([
+        fetchDetailData(),
+        fetchModelList(),
+      ]);
+    } else {
+      setError(t('design.record.missingId', 'Missing record ID parameter'));
+      setLoading(false);
+    }
+  }, [id]);
 
   const handleBackToList = () => {
     navigate('/design?tab=records');
@@ -111,33 +162,60 @@ const RecordPage: React.FC = () => {
     };
   };
 
+  // 根据 model_type 获取支持的指标类型
+  const getSupportedMetrics = (): ('cl' | 'ce' | 'rate')[] => {
+    // 未定义时，默认显示所有指标
+    if (modelType === undefined) {
+      return ['cl', 'ce', 'rate'];
+    }
+
+    // 根据 model_type 映射
+    switch (modelType) {
+      case 1:
+        return ['rate'];  // 仅倍率性能
+      case 2:
+        return ['ce'];    // 仅库伦效率
+      case 3:
+        return ['cl'];    // 仅循环寿命
+      default:
+        return ['cl', 'ce', 'rate'];
+    }
+  };
+
+  // 判断指定指标是否应该显示
+  const shouldShowMetric = (metric: 'cl' | 'ce' | 'rate', temperature: '25' | '45'): boolean => {
+    const supportedMetrics = getSupportedMetrics();
+
+    // 检查指标是否在支持列表中
+    if (!supportedMetrics.includes(metric)) {
+      return false;
+    }
+
+    // 45°C 时过滤掉 rate（与 PredictionModule 保持一致）
+    if (temperature === '45' && metric === 'rate') {
+      return false;
+    }
+
+    return true;
+  };
+
+  // 判断是否显示 45°C 区域
+  const shouldShow45CSection = (): boolean => {
+    const supportedMetrics = getSupportedMetrics();
+    // 45°C 只显示 cl 和 ce，所以检查是否有这两个指标
+    return supportedMetrics.includes('cl') || supportedMetrics.includes('ce');
+  };
+
   const getProcessedResults = () => {
     if (!detailData) return null;
 
-    let apiData = detailData;
-    let quantification_result: any = {};
-
-    try {
-      if (apiData?.model_result) {
-        const model_result = JSON.parse(apiData.model_result);
-        apiData = {
-          ...apiData,
-          temperature_25_CE_label: model_result?.ce_cl_result?.temperature_25_CE_label?.toString(),
-          temperature_25_CE_prob: model_result?.ce_cl_result?.temperature_25_CE_prob?.toString(),
-          temperature_25_CL_label: model_result?.ce_cl_result?.temperature_25_CL_label?.toString(),
-          temperature_25_CL_prob: model_result?.ce_cl_result?.temperature_25_CL_prob?.toString(),
-          temperature_25_CR_label: model_result?.cr_result?.temperature_25_CR_label?.toString(),
-          temperature_25_CR_prob: model_result?.cr_result?.temperature_25_CR_prob?.toString(),
-          temperature_45_CE_label: model_result?.ce_cl_result?.temperature_45_CE_label?.toString(),
-          temperature_45_CE_prob: model_result?.ce_cl_result?.temperature_45_CE_prob?.toString(),
-          temperature_45_CL_label: model_result?.ce_cl_result?.temperature_45_CL_label?.toString(),
-          temperature_45_CL_prob: model_result?.ce_cl_result?.temperature_45_CL_prob?.toString()
-        };
-        quantification_result = model_result?.quantification_result ?? {};
-      }
-    } catch (error) {
-      console.error('Error parsing API data:', error);
-    }
+    // 使用统一的 model_result 解析函数
+    const parsed = parseModelResult(detailData);
+    const apiData = {
+      ...detailData,
+      ...parsed,
+    };
+    const quantification_result = parsed.quantification_result ?? {};
 
     return {
       temp25: {
@@ -217,18 +295,29 @@ const RecordPage: React.FC = () => {
         </div>
 
         <div className="record-detail-card">
-          <div className="result-section">
-            <h3>{t('performance.batterySystemSelection.title')}</h3>
-            <div className="system-info">
-              <div className="info-row">
-                <span className="label">{t('performance.additive.label')}:</span>
-                <span className="value additive-value">{detailData?.smiles}</span>
-              </div>
-              <div className="info-row">
-                <span className="label">{t('design.record.createdAt', 'Created')}:</span>
-                <span className="value">
-                  {detailData?.created_at ? new Date(normalizeServerDate(detailData.created_at)).toLocaleString('zh-CN') : '-'}
+          {/* Cell Chemistry Selection Section */}
+          <div className="result-section cell-chemistry-section">
+            <h3>{t('design.record.cellChemistry', 'Cell Chemistry Selection')}</h3>
+            <div className="chemistry-info-grid">
+              <div className="info-item">
+                <span className="label">{t('design.record.modelSelect', 'Model Select')}:</span>
+                <span className="value model-name">
+                  {isModelLoading ? (
+                    t('design.record.loading', 'Loading...')
+                  ) : selectedModelId && modelOptions.length > 0 ? (
+                    modelOptions.find(m => m.id === selectedModelId)?.name || t('design.record.noModel', 'No model information')
+                  ) : (
+                    t('design.record.noModel', 'No model information')
+                  )}
                 </span>
+              </div>
+              <div className="info-item">
+                <span className="label">{t('performance.additive.label', 'SMILES of Additive')}:</span>
+                <span className="value">{detailData?.smiles}</span>
+              </div>
+              <div className="info-item">
+                <span className="label">{t('design.record.weightPercentage', 'Weight Percentage')}:</span>
+                <span className="value">1.9 wt%</span>
               </div>
             </div>
           </div>
@@ -239,37 +328,51 @@ const RecordPage: React.FC = () => {
 
               {(isHighTier || isMock) ? (
                 <>
+                  {/* 25°C Section - 根据 supportedMetrics 条件渲染 */}
                   <div className="temperature-section">
                     <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
                     <div className="performance-results">
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                        <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
-                      </div>
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.ce25')}</div>
-                        <PerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
-                      </div>
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
-                        <PerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
-                      </div>
+                      {shouldShowMetric('cl', '25') && (
+                        <div className="result-item">
+                          <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                          <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
+                        </div>
+                      )}
+                      {shouldShowMetric('ce', '25') && (
+                        <div className="result-item">
+                          <div className="result-label">{t('performance.results.performance.ce25')}</div>
+                          <PerformanceBadge metric={processedResults.temp25.ce} metricType="ce" />
+                        </div>
+                      )}
+                      {shouldShowMetric('rate', '25') && (
+                        <div className="result-item">
+                          <div className="result-label">{t('performance.results.performance.ratePerformance25')}</div>
+                          <PerformanceBadge metric={processedResults.temp25.ratePerformance} metricType="ratePerformance" />
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="temperature-section">
-                    <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
-                    <div className="performance-results">
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
-                        <PerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
-                      </div>
-                      <div className="result-item">
-                        <div className="result-label">{t('performance.results.performance.ce45')}</div>
-                        <PerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
+                  {/* 45°C Section - 仅在有支持的指标时显示 */}
+                  {shouldShow45CSection() && (
+                    <div className="temperature-section">
+                      <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
+                      <div className="performance-results">
+                        {shouldShowMetric('cl', '45') && (
+                          <div className="result-item">
+                            <div className="result-label">{t('performance.results.performance.cycleLife45')}</div>
+                            <PerformanceBadge metric={processedResults.temp45.cycleLife} metricType="cycleLife" />
+                          </div>
+                        )}
+                        {shouldShowMetric('ce', '45') && (
+                          <div className="result-item">
+                            <div className="result-label">{t('performance.results.performance.ce45')}</div>
+                            <PerformanceBadge metric={processedResults.temp45.ce} metricType="ce" />
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </>
               ) : (
                 <div className="temperature-section">

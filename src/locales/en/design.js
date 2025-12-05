@@ -102,5 +102,18 @@ export default {
         temp45Count: "45°C Positive",
         actions: "Actions",
         viewDetails: "View Details"
+    },
+    // Record Detail
+    record: {
+        title: "Record Details",
+        missingId: "Missing record ID parameter",
+        fetchError: "Failed to fetch record details",
+        loading: "Loading...",
+        createdAt: "Created",
+        cellChemistry: "Cell Chemistry Selection",
+        cellChemistryLabel: "Cell Chemistry",
+        modelSelect: "Model Select",
+        noModel: "No model information",
+        weightPercentage: "Weight Percentage"
     }
 };

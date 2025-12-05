@@ -102,5 +102,18 @@ export default {
         temp45Count: "45°C正样本",
         actions: "操作",
         viewDetails: "查看详情"
+    },
+    // Record Detail
+    record: {
+        title: "记录详情",
+        missingId: "缺少记录 ID 参数",
+        fetchError: "获取记录详情失败",
+        loading: "加载中...",
+        createdAt: "创建时间",
+        cellChemistry: "电池化学选择",
+        cellChemistryLabel: "电池化学",
+        modelSelect: "模型选择",
+        noModel: "无模型信息",
+        weightPercentage: "重量百分比"
     }
 };
