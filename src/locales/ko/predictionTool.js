@@ -225,14 +225,26 @@ export default {
             ratioDesc: "데이터셋의 70%는 학습에, 30%는 테스트에 사용됩니다",
             upload: "데이터셋 업로드",
             dragDrop: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
-            formats: "지원 형식: CSV, XLSX (최대 50MB)",
+            formats: "지원 형식: CSV, XLSX",
+            dragDropMultiple: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+            formatsMultiple: "지원 형식: CSV, XLSX (최대 {{max}}개 파일)",
             chooseFile: "파일 선택",
-            downloadSample: "샘플 다운로드"
+            chooseFiles: "파일 선택",
+            downloadSample: "샘플 다운로드",
+            removeFile: "파일 삭제"
         },
         startTraining: "학습 시작",
         errors: {
-            fileSize: "파일 크기가 50MB를 초과합니다"
-        }
+            fileFormat: "지원하지 않는 파일 형식",
+            maxFiles: "최대 {{max}}개의 파일만 허용됩니다",
+            duplicateFiles: "일부 중복 파일을 건너뛰었습니다",
+            modelNameRequired: "모델 이름을 입력해주세요",
+            baseModelRequired: "기본 모델을 선택해주세요",
+            fileRequired: "학습 데이터셋을 업로드해주세요",
+            failed: "학습 시작 실패"
+        },
+        success: "모델 학습이 성공적으로 시작되었습니다",
+        submitting: "제출 중..."
     },
 
     // Models

@@ -82,17 +82,8 @@ const TrainPage: React.FC = () => {
   };
 
   const addFiles = (newFiles: File[]) => {
-    // Filter valid files (check size and format)
+    // Filter valid files (check format only, no size limit)
     const validFiles = newFiles.filter((file) => {
-      // Check file size (50MB)
-      if (file.size > 50 * 1024 * 1024) {
-        setSnackbar({
-          open: true,
-          message: t('predictionTool.train.errors.fileSize', 'File size exceeds 50MB') + `: ${file.name}`,
-          severity: 'error',
-        });
-        return false;
-      }
       // Check file format
       const ext = file.name.split('.').pop()?.toLowerCase();
       if (!['csv', 'xlsx'].includes(ext || '')) {
@@ -329,7 +320,7 @@ const TrainPage: React.FC = () => {
                   {t('predictionTool.train.step3.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
                 </div>
                 <div className="upload-hint">
-                  {t('predictionTool.train.step3.formatsMultiple', 'Supported formats: CSV, XLSX (Max 50MB per file, up to {{max}} files)', { max: MAX_FILES })}
+                  {t('predictionTool.train.step3.formatsMultiple', 'Supported formats: CSV, XLSX (up to {{max}} files)', { max: MAX_FILES })}
                 </div>
                 <button className="upload-btn" disabled={files.length >= MAX_FILES}>
                   {t('predictionTool.train.step3.chooseFiles', 'Choose Files')}
