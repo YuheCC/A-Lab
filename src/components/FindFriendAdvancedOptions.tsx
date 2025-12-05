@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import './FindFriendAdvancedOptions.css';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { Info } from 'lucide-react';
 
 interface AdvancedProps {
-  extraRequests: string;
-  setExtraRequests: (v: string) => void;
   selectedMolType: string;
   setSelectedMolType: (v: string) => void;
   additiveSubtype: string;
@@ -18,14 +16,18 @@ interface AdvancedProps {
   // New in your changes
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  prioritizePublished: boolean;
+  setPrioritizePublished: (v: boolean) => void;
+  numResults: number;
+  setNumResults: (v: number) => void;
 
   userPermissions?: string;
 
   // Battery fields (text inputs instead of dropdowns)
   cathode?: string; setCathode?: (v: string) => void;
   anode?: string; setAnode?: (v: string) => void;
-  salt?: string; setSalt?: (v: string) => void;
   solvent?: string; setSolvent?: (v: string) => void;
+  cellDesign?: string; setCellDesign?: (v: string) => void;
   metric?: string; setMetric?: (v: string) => void;
 
   showBatteryFields?: boolean;
@@ -37,8 +39,6 @@ interface AdvancedProps {
 }
 
 const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
-  extraRequests,
-  setExtraRequests,
   selectedMolType,
   setSelectedMolType,
   additiveSubtype,
@@ -49,13 +49,17 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
   showHypothetical,
   setShowHypothetical,
+  prioritizePublished,
+  setPrioritizePublished,
+  numResults,
+  setNumResults,
 
-  userPermissions: _userPermissions,
+  userPermissions,
 
   cathode = '', setCathode = () => {},
   anode = '', setAnode = () => {},
-  salt = '', setSalt = () => {},
   solvent = '', setSolvent = () => {},
+  cellDesign = '', setCellDesign = () => {},
   metric = '', setMetric = () => {},
 
   showBatteryFields = true,
@@ -87,6 +91,16 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
   const readOnlyFieldStyle: React.CSSProperties | undefined = isReadOnly
     ? { backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' }
     : undefined;
+  const numResultOptions = useMemo(() => {
+    const baseOptions = [5, 10, 20, 30];
+    const adminExtras = [50, 100, 250, 500];
+    const options = userPermissions === 'admin'
+      ? [...baseOptions, ...adminExtras]
+      : baseOptions;
+    return options.includes(numResults)
+      ? options
+      : [...options, numResults].sort((a, b) => a - b);
+  }, [numResults, userPermissions]);
 
   return (
     <div className="find-friend-advanced-options">
@@ -125,40 +139,76 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
       {/* Show hypothetical molecules (your new checkbox + tooltip) */}
       <div className="ff-advanced-section">
-        <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
-          <input
-            type="checkbox"
-            checked={showHypothetical}
-            onChange={(e) => {
-              if (handleGuardedInteraction(e)) return;
-              setShowHypothetical(e.target.checked);
-            }}
-            aria-disabled={isReadOnly}
-          />
-          <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
-          <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
-            <Info size={16} className="ff-info-icon" />
-          </InfoTooltip>
-        </label>
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                checked={showHypothetical}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setShowHypothetical(e.target.checked);
+                }}
+                aria-disabled={isReadOnly}
+              />
+              <span style={{ marginLeft: 4 }}>{t('search.showHypothetical')}</span>
+              <InfoTooltip title={t('search.showHypotheticalTooltip')} placement="top">
+                <Info size={16} className="ff-info-icon" />
+              </InfoTooltip>
+            </label>
 
-      {/* Extra requests (keep incoming formatting) */}
-      <div className="ff-advanced-section">
-        <label className="ff-advanced-label">{t('search.extraRequests')}</label>
-          <textarea
-            value={extraRequests}
-            onChange={(e) => {
-              if (handleGuardedInteraction(e)) return;
-              setExtraRequests(e.target.value);
-            }}
-            placeholder={t('search.extraRequestsPlaceholder')}
-            className="ff-advanced-textarea"
-            readOnly={isReadOnly}
-            onMouseDown={(event) => {
-              handleGuardedInteraction(event);
-            }}
-            style={readOnlyFieldStyle}
-          />
+            <label className="ff-advanced-label" style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                checked={prioritizePublished}
+                onChange={(e) => {
+                  if (handleGuardedInteraction(e)) return;
+                  setPrioritizePublished(e.target.checked);
+                }}
+                aria-disabled={isReadOnly}
+              />
+              <span style={{ marginLeft: 4 }}>{t('search.prioritizePublished', 'Prioritize Published Molecules')}</span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="ff-advanced-label">{t('search.resultsToDisplay', 'Results to display')}</span>
+            <select
+              value={numResults}
+              onChange={(e) => {
+                if (handleGuardedInteraction(e)) return;
+                setNumResults(Number(e.target.value));
+              }}
+              onMouseDown={(event) => {
+                if (handleGuardedInteraction(event)) return;
+              }}
+              style={{
+                padding: '4px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                backgroundColor: isReadOnly ? '#f1f5f9' : 'white',
+                color: isReadOnly ? '#94a3b8' : undefined,
+                cursor: isReadOnly ? 'not-allowed' : 'pointer',
+              }}
+              aria-label={t('search.resultsToDisplay', 'Results to display')}
+              aria-disabled={isReadOnly}
+            >
+              {numResultOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Optional recommendation text when battery fields are relevant */}
@@ -213,13 +263,13 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
           <div className="ff-advanced-section">
             <div className="ff-field-row">
-              <label className="ff-advanced-label">{t('search.salt')}:</label>
+              <label className="ff-advanced-label">{t('search.solvent')}:</label>
               <input
                 type="text"
-                value={salt}
+                value={solvent}
                 onChange={(e) => {
                   if (handleGuardedInteraction(e)) return;
-                  setSalt(e.target.value);
+                  setSolvent(e.target.value);
                 }}
                 className="ff-custom-input"
                 readOnly={isReadOnly}
@@ -233,13 +283,13 @@ const FindFriendAdvancedOptions: React.FC<AdvancedProps> = ({
 
           <div className="ff-advanced-section">
             <div className="ff-field-row">
-              <label className="ff-advanced-label">{t('search.solvent')}:</label>
+              <label className="ff-advanced-label">{t('search.cellDesign')}:</label>
               <input
                 type="text"
-                value={solvent}
+                value={cellDesign}
                 onChange={(e) => {
                   if (handleGuardedInteraction(e)) return;
-                  setSolvent(e.target.value);
+                  setCellDesign(e.target.value);
                 }}
                 className="ff-custom-input"
                 readOnly={isReadOnly}

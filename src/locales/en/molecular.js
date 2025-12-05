@@ -2,6 +2,7 @@ export default {
   nodePopup: {
     title: "Molecule Details",
     smiles: "SMILES",
+    casrn: "CAS #",
     umapCoordinates: "UMAP Coordinates",
     properties: "Properties",
     copyAllData: "Copy All Data",
@@ -36,10 +37,29 @@ export default {
     },
     additiveSubtypes: {
       title: "Additive subcategory",
-      seiPromoter: "SEI Promoter",
-      sideReactionSuppressor: "Side reaction suppressor",
-      dendriteSuppressor: "Dendrite suppressor",
-      interfacialStabilityImprover: "Interfacial stability improver"
+      categoryLabel: "Category",
+      mechanistic: "Mechanistic",
+      outcome: "Outcome",
+      mechanisticOptions: {
+        seiStabilizer: "SEI Stabilizer",
+        ceiStabilizer: "CEI Stabilizer",
+        hfNeutralizer: "HF Neutralizer",
+        tmDissolutionSuppressor: "TM Dissolution Suppressor",
+        desolvationOptimizer: "Desolvation Optimizer",
+        dendriteSuppressor: "Dendrite suppressor",
+        polysulfideSuppressor: "Polysulfide suppressor",
+        gasSuppressor: "Gas suppressor",
+        flameRetardant: "Flame retardant"
+      },
+      outcomeOptions: {
+        fastCharging: "Fast charging",
+        highVoltage: "High voltage",
+        hotboxThermal: "Inflammability",
+        htCycling: "High temp cycling",
+        htStorage: "High temp storage",
+        ltCycling: "Low temp cycling",
+        rtCycling: "Room temp cycling"
+      }
     },
     properties: {
       predictedFp: "Predicted Flash Point",
