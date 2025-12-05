@@ -13,6 +13,7 @@ interface FindFriendsOptions {
   showHypothetical?: boolean;
   prioritizePublished?: boolean;
   numResults?: number;
+  umapType?: string;
 }
 
 export interface FindFriendsResult<T = any> {
@@ -30,12 +31,13 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     computeLevel,
     includeQuery,
     queryString,
-  isInorganic = false,
-  showHypothetical = false,
-  isAnion = false,
-  prioritizePublished,
-  numResults,
-} = options;
+    isInorganic = false,
+    showHypothetical = false,
+    isAnion = false,
+    prioritizePublished,
+    numResults,
+    umapType,
+  } = options;
 
   const API_URL = getAPIUrl();
   const computeEnabled = computeLevel !== 'Disabled';
@@ -52,6 +54,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
     ...(isAnion ? {} : { apply_published_balance: prioritizePublished ?? true }),
     ...(typeof numResults === 'number' ? { num_results: numResults } : {}),
+    ...(umapType ? { umap_type: umapType } : {}),
     ...(hasQuery && {
       query: queryString,
       response: 'No additional context is available for this query.',

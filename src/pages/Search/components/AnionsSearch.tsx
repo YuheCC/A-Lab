@@ -794,6 +794,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 queryString,
                 isAnion: true,
                 numResults,
+                umapType: 'anions',
             });
 
             setHighlightedSimilarMolecules(molecules);
@@ -839,13 +840,20 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
             const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
-            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
             // Determine which endpoint to use based on user permissions
-            let searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const searchParams = new URLSearchParams({
+                query: trimmedInput,
+                umap_type: 'anions',
+                is_anion: 'true',
+            });
+            if (molTypeToSend) {
+                searchParams.set('mol_type', molTypeToSend);
+            }
 
             // Fetch the searched molecule's properties
             const moleculeResponse = await authFetch(
-                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=anions${molTypeParam}`
+                `${searchEndpoint}?${searchParams.toString()}`
             );
 
             // Ratelimit handling
