@@ -4,9 +4,9 @@ import { Tooltip } from '@mui/material';
 import { Info, ArrowUp, ArrowDown } from 'lucide-react';
 import { ArrowUpIcon, ArrowDownIcon } from '@/components/PerformanceBadge';
 import { moleculeService, type MoleculeDetails } from '@/services/chat/moleculeService';
-import { getBatterySystemList, predictPerformance, requestLLMAnalysis, type PerformancePredictionResponse, type LLMAnalysisRequest } from '@/services/prediction/performance';
-import { globalWebSocketManager } from '@/services/chat/wsService';
+import { getBatterySystemList, predictPerformance, requestLLMAnalysisStream, type PerformancePredictionResponse, type LLMAnalysisStreamRequest } from '@/services/prediction/performance';
 import { useAuthStore } from '@/models/useAuth';
+import streamSSE from '@/components/StreamSSE';
 import MolViewer2D from '@/components/NodePopup/MolViewer2D.js';
 import './index.less';
 import './PerformanceTooltip.less';
@@ -98,7 +98,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisContent, setAnalysisContent] = useState<string>('');
   const [analysisError, setAnalysisError] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string | undefined>();
   const [hasAnalysisResult, setHasAnalysisResult] = useState(false);
 
   // 等待时间展示相关状态
@@ -306,173 +305,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     fetchModelOptions();
   }, []);
 
-  // WebSocket初始化和消息处理
-  useEffect(() => {
-    console.log('PredictionModule: 初始化WebSocket连接');
-    globalWebSocketManager.initialize();
-
-    // 检查初始连接状态
-    const initialInfo = globalWebSocketManager.getConnectionInfo();
-    console.log('PredictionModule: 初始连接状态:', initialInfo);
-
-    // 从WebSocket连接信息中获取sessionId
-    const updateSessionId = () => {
-      const info = globalWebSocketManager.getConnectionInfo();
-      console.log('PredictionModule: 获取连接信息:', info);
-      const sid = info?.socketId as string;
-      if (sid) {
-        setSessionId(sid);
-        globalWebSocketManager.setSessionId(sid);
-        console.log('PredictionModule: 设置sessionId:', sid);
-      } else {
-        console.log('PredictionModule: 未获取到socketId');
-      }
-    };
-
-    // 监听WebSocket连接成功事件，获取sessionId
-    const unsubscribeConnect = globalWebSocketManager.onConnect(() => {
-      console.log('PredictionModule: WebSocket连接成功，获取sessionId');
-      updateSessionId();
-    });
-
-    // 检查是否已经连接，如果已连接则立即获取sessionId
-    const initialConnectionHealth = globalWebSocketManager.checkConnectionHealth();
-    console.log('PredictionModule: 初始连接健康状态:', initialConnectionHealth);
-    if (initialConnectionHealth) {
-      console.log('PredictionModule: WebSocket已连接，立即获取sessionId');
-      updateSessionId();
-    }
-
-    // 添加连接状态监控（类似chat页面）
-    const checkConnection = () => {
-      const connectionInfo = globalWebSocketManager.getConnectionInfo();
-      console.log('PredictionModule: WebSocket连接状态:', connectionInfo);
-      
-      if (!globalWebSocketManager.checkConnectionHealth()) {
-        console.warn('PredictionModule: WebSocket连接异常，尝试重连...');
-        globalWebSocketManager.reconnect();
-      }
-    };
-
-    // 立即检查一次连接状态
-    checkConnection();
-
-    // 每30秒检查一次连接状态
-    const healthCheckInterval = setInterval(checkConnection, 30000);
-
-    // 监听WebSocket消息
-    console.log('PredictionModule: 注册WebSocket消息监听器');
-    const unsubscribeMessage = globalWebSocketManager.onMessage((data) => {
-      console.log('PredictionModule收到WebSocket消息:', data);
-      
-      try {
-        // 处理不同格式的数据
-        let parsedData = data;
-        if (typeof data === 'string') {
-          parsedData = JSON.parse(data);
-        }
-        
-        // 处理数组格式: ["cell-performance-events", {...}]
-        if (Array.isArray(parsedData) && parsedData.length >= 2 && parsedData[0] === 'cell-performance-events') {
-          const eventData = parsedData[1];
-          console.log('收到LLM分析事件 (数组格式):', eventData);
-          
-          if (eventData?.data) {
-            setAnalysisContent(prev => prev + eventData.data);
-            // 确保在接收数据时分析状态为进行中
-            setIsAnalyzing(prevState => {
-              if (!prevState) {
-                console.log('设置分析状态为进行中 (数组格式)');
-              }
-              return true;
-            });
-          }
-          
-          // 检查是否完成
-          if (eventData?.finished === true || eventData?.complete === true || eventData?.done === true) {
-            setIsAnalyzing(false);
-            setHasAnalysisResult(true);
-            setAnalysisStartTime(null); // 清理开始时间
-            console.log('LLM分析完成 (数组格式)');
-          }
-          return;
-        }
-        
-        // 处理非数组格式: 对象包含 data 和 history_id 字段
-        if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-          // 检查是否为 cell-performance-events 相关的对象格式
-          if (parsedData.history_id !== undefined && parsedData.data !== undefined) {
-            console.log('收到LLM分析事件 (对象格式):', parsedData);
-            
-            // 使用函数式更新获取最新的 predictionResults
-            setPredictionResults(currentPredictionResults => {
-              console.log('当前 predictionResults:', currentPredictionResults);
-              
-              // 验证 history_id 是否匹配当前预测结果的 id
-              if (currentPredictionResults && currentPredictionResults.id !== undefined && parsedData.history_id === currentPredictionResults.id) {
-                // 如果有数据内容，追加到分析内容中
-                if (typeof parsedData.data === 'string' && parsedData.data.trim()) {
-                  setAnalysisContent(prev => prev + parsedData.data);
-                }
-                
-                // 只要收到对应 history_id 的消息就标记分析完成
-                setIsAnalyzing(false);
-                setHasAnalysisResult(true);
-                setAnalysisStartTime(null); // 清理开始时间
-                console.log('LLM分析完成 (对象格式)，history_id:', parsedData.history_id);
-              } else {
-                console.log('收到的消息 history_id 不匹配当前预测结果，忽略:', {
-                  'received_history_id': parsedData.history_id,
-                  'current_prediction_id': currentPredictionResults?.id,
-                  'has_predictionResults': !!currentPredictionResults,
-                  'prediction_id_defined': currentPredictionResults?.id !== undefined
-                });
-              }
-              
-              // 返回原有的 predictionResults，不修改
-              return currentPredictionResults;
-            });
-            return;
-          }
-          
-          // 处理其他对象格式消息
-          if (parsedData.event_name && parsedData.event_name !== 'cell-performance-events') {
-            console.log('收到其他类型事件:', parsedData.event_name, parsedData);
-            // 可以在这里添加对其他事件类型的处理
-            return;
-          }
-          
-          // 兜底处理：如果有 data 字段但格式不明确
-          if (parsedData.data !== undefined) {
-            console.log('收到未识别格式的消息，尝试处理 data 字段:', parsedData);
-            if (typeof parsedData.data === 'string' && parsedData.data.trim()) {
-              setAnalysisContent(prev => prev + parsedData.data);
-              // 确保分析状态正确
-              setIsAnalyzing(prevState => prevState || true);
-            }
-            // 如果没有明确的结束标识，保持分析状态
-            return;
-          }
-        }
-        
-        // 处理其他格式或纯字符串消息
-        console.log('收到其他格式消息:', parsedData);
-        if (typeof parsedData === 'string') {
-          setAnalysisContent(prev => prev + parsedData);
-        }
-        
-      } catch (error) {
-        console.error('处理WebSocket消息失败:', error);
-      }
-    });
-
-    return () => {
-      console.log('PredictionModule: 清理WebSocket监听');
-      unsubscribeMessage && unsubscribeMessage();
-      unsubscribeConnect && unsubscribeConnect();
-      clearInterval(healthCheckInterval);
-    };
-  }, []);
 
   // 处理 SMILES 输入框失焦事件 (简化版，只清理状态)
   const handleSmilesBlur = () => {
@@ -643,15 +475,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return;
     }
 
-    if (!sessionId) {
-      console.error('LLM分析失败: sessionId未设置');
-      alert(t('performance.ui.sessionNotInitialized'));
-      return;
-    }
-
-    console.log('LLM分析开始: sessionId =', sessionId);
-
-    const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
+    const selectedBatterySystem = batterySystemOptions?.find((s: BatterySystem) => s.name === selectedSystem);
     if (!selectedBatterySystem) {
       alert(t('performance.ui.invalidBatterySystem'));
       return;
@@ -665,19 +489,93 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
     try {
       const currentLang = getCurrentLanguage();
-      const analysisParams: LLMAnalysisRequest = {
+      const analysisParams: LLMAnalysisStreamRequest = {
         id: predictionResults.id,
         battery_system_id: parseInt(selectedBatterySystem.id),
-        session_id: sessionId,
         lang: currentLang
       };
 
-      console.log('发送LLM分析请求:', analysisParams);
+      console.log('发送LLM分析SSE请求:', analysisParams);
       console.log('predictionResults', predictionResults);
-      const response = await requestLLMAnalysis(analysisParams);
-      console.log('LLM分析API响应:', response);
-      
-      // API调用成功后，等待WebSocket消息
+
+      // 使用SSE流式接收数据
+      console.log('[LLM Analysis] 开始请求SSE流...');
+      const response = await requestLLMAnalysisStream(analysisParams);
+      console.log('[LLM Analysis] SSE响应已获取:', {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+      });
+
+      // 使用streamSSE解析SSE流
+      console.log('[LLM Analysis] 开始读取SSE流...');
+      let eventCount = 0;
+      for await (const event of streamSSE(response)) {
+        eventCount++;
+        console.log(`[LLM Analysis] 收到第 ${eventCount} 个SSE事件:`, event);
+
+        // 处理流式数据
+        if (event) {
+          // 1) 直接是字符串
+          if (typeof event === 'string') {
+            setAnalysisContent(prev => prev + event);
+          }
+
+          // 2) 对象：优先取 answer 字段
+          if (typeof event === 'object') {
+            const answer = (event as any)?.answer;
+            if (typeof answer === 'string' && answer) {
+              setAnalysisContent(prev => prev + answer);
+            } else if (typeof (event as any)?.data === 'string') {
+              // 3) data 为字符串：若看起来像 JSON，再尝试解析提取 answer
+              const raw = (event as any).data as string;
+              const trimmed = raw.trim();
+              if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                try {
+                  const parsed = JSON.parse(trimmed);
+                  const inner = (parsed as any)?.answer ?? (parsed as any)?.content ?? trimmed;
+                  if (typeof inner === 'string') {
+                    setAnalysisContent(prev => prev + inner);
+                  }
+                } catch {
+                  try {
+                    // 宽松再试（与 streamSSE 保持一致的兼容性）
+                    // 动态导入避免顶层依赖耦合
+                    // @ts-ignore
+                    const JSON5 = (await import('json5')).default;
+                    const parsedLoose = JSON5.parse(trimmed);
+                    const innerLoose = parsedLoose?.answer ?? parsedLoose?.content ?? trimmed;
+                    if (typeof innerLoose === 'string') {
+                      setAnalysisContent(prev => prev + innerLoose);
+                    }
+                  } catch {
+                    setAnalysisContent(prev => prev + raw);
+                  }
+                }
+              } else {
+                setAnalysisContent(prev => prev + raw);
+              }
+            }
+          }
+
+          // 检查是否完成
+          if (event.finished === true || event.complete === true || event.done === true) {
+            setIsAnalyzing(false);
+            setHasAnalysisResult(true);
+            setAnalysisStartTime(null);
+            console.log('[LLM Analysis] 分析完成（通过done标志）');
+            break;
+          }
+        }
+      }
+
+      // 流结束后，确保状态正确
+      console.log('[LLM Analysis] SSE流读取结束，共收到', eventCount, '个事件');
+      setIsAnalyzing(false);
+      setHasAnalysisResult(true);
+      setAnalysisStartTime(null);
+
     } catch (error) {
       console.error('LLM分析请求失败:', error);
       setAnalysisError(t('performance.ui.analysisFailed'));
