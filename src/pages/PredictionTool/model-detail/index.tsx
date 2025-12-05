@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import {
   Snackbar,
   Alert,
@@ -12,8 +12,8 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
-import { getModelDetail, deployModel, removeModel, isMockModel } from '../model';
-import type { ModelDetailResponse } from '@/services/model/training';
+import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
+import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse } from '@/services/model/training';
 import './index.less';
 
 const ModelDetailPage: React.FC = () => {
@@ -28,6 +28,10 @@ const ModelDetailPage: React.FC = () => {
   const [model, setModel] = useState<ModelDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [fileList, setFileList] = useState<ModelFileListResponse>([]);
+  const [metrics, setMetrics] = useState<ModelMetricsResponse | null>(null);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+  const [loadingMetrics, setLoadingMetrics] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -72,7 +76,35 @@ const ModelDetailPage: React.FC = () => {
       }
     };
 
+    const fetchModelFileList = async () => {
+      if (!modelId) return;
+      setLoadingFiles(true);
+      try {
+        const data = await getModelFileList(modelId);
+        setFileList(data);
+      } catch (error) {
+        console.error('Failed to fetch model file list:', error);
+      } finally {
+        setLoadingFiles(false);
+      }
+    };
+
+    const fetchModelMetrics = async () => {
+      if (!modelId) return;
+      setLoadingMetrics(true);
+      try {
+        const data = await getModelMetrics(modelId);
+        setMetrics(data);
+      } catch (error) {
+        console.error('Failed to fetch model metrics:', error);
+      } finally {
+        setLoadingMetrics(false);
+      }
+    };
+
     fetchModelDetail();
+    fetchModelFileList();
+    fetchModelMetrics();
   }, [modelId, t]);
 
   const handleBack = () => {
@@ -290,6 +322,89 @@ const ModelDetailPage: React.FC = () => {
                )}
              </div>
           </div>
+        </div>
+      )}
+
+      {/* Training Dataset */}
+      {(model.status === 'trained' || model.status === 'online') && (
+        <div className="detail-section">
+          <h2 className="section-title">{t('predictionTool.modelDetail.trainingFiles', 'Training Dataset')}</h2>
+          {loadingFiles ? (
+            <div className="info-card">
+              <p>{t('predictionTool.modelDetail.loadingText', 'Loading...')}</p>
+            </div>
+          ) : fileList && fileList.length > 0 ? (
+            <div className="info-card dataset-info">
+              {fileList.map((file, index) => (
+                <div key={index} className="dataset-row">
+                  <div className="dataset-item">
+                    <span className="dataset-label">{t('predictionTool.modelDetail.datasetName', 'Dataset Name:')}</span>
+                    <a href="#" className="dataset-link download-link">
+                      {file.name}
+                    </a>
+                  </div>
+                  <div className="dataset-item">
+                    <span className="dataset-label">{t('predictionTool.modelDetail.fileSize', 'File Size:')}</span>
+                    <span className="dataset-value">
+                      {(file.size / 1024 / 1024).toFixed(1)} MB
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="info-card">
+              <p>{t('predictionTool.modelDetail.noFiles', '暂无训练文件')}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Training Results */}
+      {(model.status === 'trained' || model.status === 'online') && (
+        <div className="detail-section">
+          <h2 className="section-title">{t('predictionTool.modelDetail.trainingMetrics', 'Training Results')}</h2>
+          {loadingMetrics ? (
+            <div className="info-card">
+              <p>{t('predictionTool.modelDetail.loadingText', 'Loading...')}</p>
+            </div>
+          ) : metrics ? (
+            <div className="info-card training-results">
+              {/* RMSE Section */}
+              <div className="metric-section">
+                <h3 className="metric-title">{t('predictionTool.modelDetail.rmse', 'RMSE')}</h3>
+                <div className="metric-comparison">
+                  <div className="metric-box base-model">
+                    <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
+                    <div className="model-value">{metrics.base.rmse.toFixed(3)}</div>
+                  </div>
+                  <div className="metric-box new-model">
+                    <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
+                    <div className="model-value">{metrics.train.rmse.toFixed(3)}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* R² Section */}
+              <div className="metric-section">
+                <h3 className="metric-title">R²</h3>
+                <div className="metric-comparison">
+                  <div className="metric-box base-model">
+                    <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
+                    <div className="model-value">{metrics.base.r2.toFixed(3)}</div>
+                  </div>
+                  <div className="metric-box new-model">
+                    <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
+                    <div className="model-value">{metrics.train.r2.toFixed(3)}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="info-card">
+              <p>{t('predictionTool.modelDetail.noMetrics', '暂无训练指标')}</p>
+            </div>
+          )}
         </div>
       )}
 

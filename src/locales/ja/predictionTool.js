@@ -296,6 +296,34 @@ export default {
         batteryCount: "バッテリー数",
         avgCycleLife: "平均サイクル寿命",
         actions: "操作",
-        viewDetails: "詳細を表示"
+        viewDetails: "詳細を表示",
+        trainingFiles: "トレーニングデータセット",
+        trainingMetrics: "トレーニング結果",
+        baseRMSE: "ベースモデル RMSE",
+        baseR2: "ベースモデル R²",
+        trainRMSE: "新モデル RMSE",
+        trainR2: "新モデル R²",
+        rmse: "RMSE",
+        r2: "R²",
+        baseModelLabel: "ベースモデル",
+        newModelLabel: "新モデル",
+        loadingText: "読み込み中...",
+        noFiles: "トレーニングファイルがありません",
+        noMetrics: "トレーニング指標がありません",
+        confirmDeploy: "デプロイの確認",
+        confirmRemove: "削除の確認",
+        deployMessage: "このモデルをデプロイしてもよろしいですか？これにより予測に使用できるようになります。",
+        removeMessage: "このモデルを削除してもよろしいですか？この操作は元に戻せません。",
+        cancel: "キャンセル",
+        confirm: "確認",
+        deploySuccess: "モデルが正常にデプロイされました",
+        removeSuccess: "モデルが正常に削除されました",
+        errors: {
+            noId: "モデルIDが必要です",
+            fetchFailed: "モデル詳細の取得に失敗しました",
+            actionFailed: "操作に失敗しました",
+            mockModel: "デモモデルは変更できません",
+            notFound: "モデルが見つかりません"
+        }
     }
 };
