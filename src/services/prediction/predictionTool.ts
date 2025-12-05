@@ -17,6 +17,7 @@ export interface PredictResponse {
 // 预测接口参数类型定义
 export interface PredictParams {
   file: File;
+  model_id?: string;
 }
 
 // 历史记录列表接口参数类型
@@ -75,6 +76,11 @@ export interface FileDownloadParams {
 export const predict = async (params: PredictParams): Promise<HistoryDetailResponse | null> => {
   const formData = new FormData();
   formData.append('file', params.file);
+
+  // 添加 model_id 参数
+  if (params.model_id) {
+    formData.append('model_id', params.model_id);
+  }
 
   // 1. 调用预测接口，获取任务ID
   const response = await request('/api/cellLife/model_predict', {

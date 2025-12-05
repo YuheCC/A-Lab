@@ -148,7 +148,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       }, 300);
 
       // 调用真实的预测接口（包含轮询）
-      const result = await predict({ file: uploadedFile });
+      const result = await predict({
+        file: uploadedFile,
+        model_id: selectedModel
+      });
       
       // 清除上传进度更新
       clearInterval(uploadInterval);
