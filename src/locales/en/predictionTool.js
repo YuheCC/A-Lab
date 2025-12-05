@@ -225,14 +225,26 @@ export default {
             ratioDesc: "70% of your dataset will be used for training, 30% for testing",
             upload: "Upload Dataset",
             dragDrop: "Drag and drop your file here, or click to browse",
-            formats: "Supported formats: CSV, XLSX (Max 50MB)",
+            formats: "Supported formats: CSV, XLSX",
+            dragDropMultiple: "Drag and drop your files here, or click to browse",
+            formatsMultiple: "Supported formats: CSV, XLSX (up to {{max}} files)",
             chooseFile: "Choose File",
-            downloadSample: "Download Sample"
+            chooseFiles: "Choose Files",
+            downloadSample: "Download Sample",
+            removeFile: "Remove file"
         },
         startTraining: "Start Training",
         errors: {
-            fileSize: "File size exceeds 50MB"
-        }
+            fileFormat: "Unsupported file format",
+            maxFiles: "Maximum {{max}} files allowed",
+            duplicateFiles: "Some duplicate files were skipped",
+            modelNameRequired: "Please enter model name",
+            baseModelRequired: "Please select a base model",
+            fileRequired: "Please upload training dataset",
+            failed: "Failed to start training"
+        },
+        success: "Model training started successfully",
+        submitting: "Submitting..."
     },
 
     // Models

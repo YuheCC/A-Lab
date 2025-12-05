@@ -225,14 +225,26 @@ export default {
             ratioDesc: "データセットの70%がトレーニングに、30%がテストに使用されます",
             upload: "データセットをアップロード",
             dragDrop: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
-            formats: "対応フォーマット：CSV、XLSX（最大50MB）",
+            formats: "対応フォーマット：CSV、XLSX",
+            dragDropMultiple: "ファイルをここにドラッグアンドドロップするか、クリックして参照",
+            formatsMultiple: "対応フォーマット：CSV、XLSX（最大{{max}}ファイル）",
             chooseFile: "ファイルを選択",
-            downloadSample: "サンプルをダウンロード"
+            chooseFiles: "ファイルを選択",
+            downloadSample: "サンプルをダウンロード",
+            removeFile: "ファイルを削除"
         },
         startTraining: "トレーニング開始",
         errors: {
-            fileSize: "ファイルサイズが50MBを超えています"
-        }
+            fileFormat: "サポートされていないファイル形式",
+            maxFiles: "最大{{max}}ファイルまで許可されています",
+            duplicateFiles: "一部の重複ファイルがスキップされました",
+            modelNameRequired: "モデル名を入力してください",
+            baseModelRequired: "ベースモデルを選択してください",
+            fileRequired: "トレーニングデータセットをアップロードしてください",
+            failed: "トレーニングの開始に失敗しました"
+        },
+        success: "モデルトレーニングが正常に開始されました",
+        submitting: "送信中..."
     },
 
     // Models

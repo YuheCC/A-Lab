@@ -225,14 +225,26 @@ export default {
             ratioDesc: "70% 的数据集将用于训练，30% 用于测试",
             upload: "上传数据集",
             dragDrop: "将文件拖放到此处，或点击浏览",
-            formats: "支持的格式：CSV、XLSX（最大 50MB）",
+            formats: "支持的格式：CSV、XLSX",
+            dragDropMultiple: "将文件拖放到此处，或点击浏览",
+            formatsMultiple: "支持的格式：CSV、XLSX（最多 {{max}} 个文件）",
             chooseFile: "选择文件",
-            downloadSample: "下载示例"
+            chooseFiles: "选择文件",
+            downloadSample: "下载示例",
+            removeFile: "移除文件"
         },
         startTraining: "开始训练",
         errors: {
-            fileSize: "文件大小超过 50MB"
-        }
+            fileFormat: "不支持的文件格式",
+            maxFiles: "最多允许 {{max}} 个文件",
+            duplicateFiles: "部分重复文件已跳过",
+            modelNameRequired: "请输入模型名称",
+            baseModelRequired: "请选择基础模型",
+            fileRequired: "请上传训练数据集",
+            failed: "启动训练失败"
+        },
+        success: "模型训练已成功启动",
+        submitting: "提交中..."
     },
     
     // Models
