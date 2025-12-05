@@ -13,13 +13,28 @@ export default {
         results: "結果表示"
     },
 
+    // Model Selection
+    modelSelection: {
+        label: "モデル選択",
+        placeholder: "モデルを選択してください",
+        baseModel: "ベースモデル",
+        finetunedModels: "ファインチューニングモデル",
+        columns: {
+            modelName: "モデル名",
+            modelId: "モデルID",
+            baseModel: "ベースモデル"
+        }
+    },
+
     // Upload Step
     upload: {
+        title: "データアップロード",
         selectFile: "ファイル選択",
         clickToUpload: "バッテリーデータファイルをクリックしてアップロード",
         subtitle: "現在はCSV形式ファイルのみサポートしており、今後より多くのファイル形式をサポート予定です",
         uploading: "ファイルをアップロード中...",
         waitText: "お待ちください",
+        removeFile: "ファイルを削除",
         dataFormatTip: "📋 データフォーマット要件",
         sampleData: "サンプルデータ",
         requiredFields: "必須フィールド：",

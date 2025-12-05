@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
-import { FileText, RefreshCw, Play } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, RefreshCw, Play, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
+import ModelSelect from '@/components/ModelSelect';
+import { getModelList } from '../model';
+import type { ModelListItem } from '@/services/model/training';
+
+// 模型选项接口
+interface ModelOption {
+  id: string;
+  name: string;
+  baseModel: string;
+  category: 'base' | 'finetuned';
+}
 
 interface StepContentProps {
   activeStep: number;
@@ -22,20 +33,61 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
   const [progress, setProgress] = useState(0);
   const [predictionResult, setPredictionResult] = useState<HistoryDetailResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // 模型选择相关状态
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+
+  // 获取模型列表
+  useEffect(() => {
+    const fetchModelOptions = async () => {
+      setIsModelLoading(true);
+      try {
+        const response = await getModelList({ page_size: 100 });
+
+        if (!response?.data || response.data.length === 0) {
+          console.log('No model data found');
+          setIsModelLoading(false);
+          return;
+        }
+
+        // 转换为 ModelOption 格式
+        const convertToModelOption = (item: ModelListItem): ModelOption => {
+          let category: 'base' | 'finetuned' = 'finetuned';
+
+          // 根据 base_model_id 判断分类
+          if (item.base_model_id === -1) {
+            category = 'base';
+          }
+
+          return {
+            id: item.id.toString(),
+            name: item.model_name,
+            baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
+            category,
+          };
+        };
+
+        const allModels = response.data.map(convertToModelOption);
+
+        if (allModels.length > 0) {
+          setModelOptions(allModels);
+        }
+      } catch (error) {
+        console.error('获取模型列表失败:', error);
+      } finally {
+        setIsModelLoading(false);
+      }
+    };
+
+    fetchModelOptions();
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setIsUploading(true);
-      // Simulate upload process
-      setTimeout(() => {
-        setUploadedFile(file);
-        setIsUploading(false);
-        // Auto advance to AI prediction step
-        if (onStepChange) {
-          onStepChange(1);
-        }
-      }, 1500);
+      setUploadedFile(file);
     }
   };
 
@@ -61,6 +113,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     setProgress(0);
     setPredictionResult(null);
     setError(null);
+    setSelectedModel('');
     
     // 回到第一步
     if (onStepChange) {
@@ -153,21 +206,71 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         
         return (
           <div className="upload-step-container">
-            <div className="upload-area">
-              <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
-              <p className="upload-subtitle">
-              {t('predictionTool.upload.subtitle')}
-              </p>
-              <label className="select-file-btn" htmlFor="file-upload">
-                {t('predictionTool.upload.selectFile')}
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  onChange={handleFileUpload}
-                  style={{ display: 'none' }}
-                />
-              </label>
+            {/* 模型选择区域 */}
+            <div className="step-content-model-selection">
+              <label className="step-content-model-label">{t('predictionTool.modelSelection.label', 'Select a Model')}</label>
+              <ModelSelect
+                mode="single"
+                value={selectedModel}
+                onChange={(value) => setSelectedModel(value as string)}
+                options={modelOptions}
+                loading={isModelLoading}
+                groupBy="category"
+                groupByLabel={{
+                  'base': t('predictionTool.modelSelection.baseModel', 'Base Model'),
+                  'finetuned': t('predictionTool.modelSelection.finetunedModels', 'Fine-tuned Models')
+                }}
+                columns={[
+                  { key: 'name', title: t('predictionTool.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
+                  { key: 'id', title: t('predictionTool.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
+                  { key: 'baseModel', title: t('predictionTool.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
+                ]}
+                searchable
+                pageSize={20}
+                placeholder={t('predictionTool.modelSelection.placeholder', 'Choose a model')}
+                className="step-content-model-select"
+                fieldNames={{ label: 'name', value: 'id' }}
+              />
+            </div>
+
+            {/* 文件上传区域 */}
+            <div className="step-content-upload-section">
+              <label className="step-content-upload-label">{t('predictionTool.upload.title', 'Upload Data')}</label>
+              {uploadedFile ? (
+                <div className="step-content-uploaded-file">
+                  <div className="step-content-file-info">
+                    <FileText className="step-content-file-icon" size={18} />
+                    <div className="step-content-file-details">
+                      <span className="step-content-file-name">{uploadedFile.name}</span>
+                      <span className="step-content-file-size">{formatFileSize(uploadedFile.size)}</span>
+                    </div>
+                  </div>
+                  <span 
+                    className="step-content-remove-file"
+                    onClick={() => setUploadedFile(null)}
+                  >
+                    {t('predictionTool.upload.removeFile', 'Remove file')}
+                  </span>
+                </div>
+              ) : (
+                <div className="upload-area">
+                  <Upload className="step-content-upload-icon" size={32} />
+                  <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
+                  <p className="upload-subtitle">
+                    {t('predictionTool.upload.subtitle')}
+                  </p>
+                  <label className="select-file-btn" htmlFor="file-upload">
+                    {t('predictionTool.upload.selectFile')}
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={handleFileUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                </div>
+              )}
             </div>
             
             {/* 数据格式要求提示 - 放置在upload区域外部下方靠左 */}
@@ -204,6 +307,17 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <span className="tip-value">{t('predictionTool.upload.dataRequirementValue')}</span>
                 </div>
               </div>
+            </div>
+
+            {/* 开始预测按钮 */}
+            <div className="step-content-actions">
+              <button
+                className="step-content-start-btn"
+                onClick={handleStartPrediction}
+                disabled={!selectedModel || !uploadedFile || isProcessing}
+              >
+                {t('predictionTool.prediction.startPrediction', 'Start Prediction')}
+              </button>
             </div>
           </div>
         );

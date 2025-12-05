@@ -13,13 +13,28 @@ export default {
         results: "결과 표시"
     },
 
+    // Model Selection
+    modelSelection: {
+        label: "모델 선택",
+        placeholder: "모델을 선택해주세요",
+        baseModel: "기본 모델",
+        finetunedModels: "파인튜닝 모델",
+        columns: {
+            modelName: "모델 이름",
+            modelId: "모델 ID",
+            baseModel: "기본 모델"
+        }
+    },
+
     // Upload Step
     upload: {
+        title: "데이터 업로드",
         selectFile: "파일 선택",
         clickToUpload: "배터리 데이터 파일을 클릭하여 업로드",
         subtitle: "현재 CSV 형식 파일만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
         uploading: "파일 업로드 중...",
         waitText: "잠시만 기다려 주세요",
+        removeFile: "파일 삭제",
         dataFormatTip: "📋 데이터 형식 요구사항",
         sampleData: "샘플 데이터",
         requiredFields: "필수 필드:",
