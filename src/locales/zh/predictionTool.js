@@ -13,13 +13,28 @@ export default {
         results: "结果展示"
     },
 
+    // Model Selection
+    modelSelection: {
+        label: "选择模型",
+        placeholder: "请选择模型",
+        baseModel: "基础模型",
+        finetunedModels: "微调模型",
+        columns: {
+            modelName: "模型名称",
+            modelId: "模型ID",
+            baseModel: "基础模型"
+        }
+    },
+
     // Upload Step
     upload: {
+        title: "上传数据",
         selectFile: "选择文件",
         clickToUpload: "点击上传电池数据文件",
         subtitle: "目前仅支持CSV格式文件，后续将支持更多文件类型",
         uploading: "正在上传文件...",
         waitText: "请稍候",
+        removeFile: "移除文件",
         dataFormatTip: "📋 数据格式要求",
         sampleData: "样例数据",
         requiredFields: "必需字段：",

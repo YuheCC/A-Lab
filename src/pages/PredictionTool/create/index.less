@@ -200,6 +200,117 @@
     margin: 0 auto;
   }
 
+  // 模型选择区域
+  .step-content-model-selection {
+    margin-bottom: 24px;
+
+    .step-content-model-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .step-content-model-select {
+      width: 100%;
+    }
+  }
+
+  // 文件上传区域
+  .step-content-upload-section {
+    margin-bottom: 24px;
+
+    .step-content-upload-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .step-content-upload-icon {
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    .step-content-uploaded-file {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+
+      .step-content-file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .step-content-file-icon {
+          color: #64748b;
+        }
+
+        .step-content-file-details {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .step-content-file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+          }
+
+          .step-content-file-size {
+            font-size: 12px;
+            color: #64748b;
+          }
+        }
+      }
+
+      .step-content-remove-file {
+        font-size: 13px;
+        color: #dc2626;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #b91c1c;
+        }
+      }
+    }
+  }
+
+  // 操作按钮区域
+  .step-content-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+
+    .step-content-start-btn {
+      background: #1e293b;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover:not(:disabled) {
+        background: #334155;
+      }
+
+      &:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+      }
+    }
+  }
+
   .data-format-tip {
     margin-top: 24px;
     background: #f8fafc;

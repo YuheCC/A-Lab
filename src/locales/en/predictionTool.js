@@ -13,13 +13,28 @@ export default {
         results: "Results Display"
     },
 
+    // Model Selection
+    modelSelection: {
+        label: "Select a Model",
+        placeholder: "Choose a model",
+        baseModel: "Base Model",
+        finetunedModels: "Fine-tuned Models",
+        columns: {
+            modelName: "Model Name",
+            modelId: "Model ID",
+            baseModel: "Base Model"
+        }
+    },
+
     // Upload Step
     upload: {
+        title: "Upload Data",
         selectFile: "Select File",
         clickToUpload: "Click to upload battery data file",
         subtitle: "Currently only supports CSV format files, more file types will be supported in the future",
         uploading: "Uploading file...",
         waitText: "Please wait",
+        removeFile: "Remove file",
         dataFormatTip: "📋 Data Format Requirements",
         sampleData: "Sample Data",
         requiredFields: "Required Fields:",
