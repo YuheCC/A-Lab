@@ -12,6 +12,7 @@ export interface TrainModelParams {
   base_model_id?: number;
   data_files: File | File[];
   namespace: string;
+  train_params?: string; // JSON stringified object containing cathode, anode, benchmarkElectrolyte, cellDesign
 }
 
 /**
@@ -50,6 +51,7 @@ export interface ModelListItem {
   created_by: string;
   updated_at: string;
   updated_by: string;
+  train_params?: string; // JSON stringified object containing cathode, anode, benchmarkElectrolyte, cellDesign
 }
 
 /**
@@ -193,6 +195,11 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
     formData.append('data_files', params.data_files);
   }
   formData.append('namespace', params.namespace);
+
+  // Add train_params if provided
+  if (params.train_params) {
+    formData.append('train_params', params.train_params);
+  }
 
   const response = await request('/api/ai/model/train', {
     method: 'POST',
