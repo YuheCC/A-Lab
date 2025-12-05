@@ -9,7 +9,7 @@ import { useLoginModalContext } from '@/components/LoginModal/context';
 import './index.less';
 
 // Maximum number of files allowed
-const MAX_FILES = 5;
+const MAX_FILES = 50;
 
 const TrainPage: React.FC = () => {
   const navigate = useNavigate();

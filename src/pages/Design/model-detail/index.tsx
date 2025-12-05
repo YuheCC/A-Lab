@@ -323,7 +323,7 @@ const DesignModelDetailPage: React.FC = () => {
               </div>
             ) : fileList && fileList.length > 0 ? (
               <div className="info-card dataset-info">
-                {fileList.map((file, index) => (
+                {fileList.map((file: { name: string; size: number }, index: number) => (
                   <div key={index} className="dataset-row">
                     <div className="dataset-item">
                       <span className="dataset-label">{t('design.modelDetail.datasetName', 'Dataset Name:')}</span>

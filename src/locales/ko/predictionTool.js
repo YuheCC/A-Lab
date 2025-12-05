@@ -296,6 +296,34 @@ export default {
         batteryCount: "배터리 수",
         avgCycleLife: "평균 사이클 수명",
         actions: "작업",
-        viewDetails: "상세 보기"
+        viewDetails: "상세 보기",
+        trainingFiles: "학습 데이터셋",
+        trainingMetrics: "학습 결과",
+        baseRMSE: "기본 모델 RMSE",
+        baseR2: "기본 모델 R²",
+        trainRMSE: "새 모델 RMSE",
+        trainR2: "새 모델 R²",
+        rmse: "RMSE",
+        r2: "R²",
+        baseModelLabel: "기본 모델",
+        newModelLabel: "새 모델",
+        loadingText: "로딩 중...",
+        noFiles: "학습 파일이 없습니다",
+        noMetrics: "학습 지표가 없습니다",
+        confirmDeploy: "배포 확인",
+        confirmRemove: "삭제 확인",
+        deployMessage: "이 모델을 배포하시겠습니까? 예측에 사용할 수 있게 됩니다.",
+        removeMessage: "이 모델을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+        cancel: "취소",
+        confirm: "확인",
+        deploySuccess: "모델이 성공적으로 배포되었습니다",
+        removeSuccess: "모델이 성공적으로 삭제되었습니다",
+        errors: {
+            noId: "모델 ID가 필요합니다",
+            fetchFailed: "모델 상세 정보를 가져오는 데 실패했습니다",
+            actionFailed: "작업 실패",
+            mockModel: "데모 모델은 수정할 수 없습니다",
+            notFound: "모델을 찾을 수 없습니다"
+        }
     }
 };
