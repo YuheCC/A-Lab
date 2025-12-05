@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
-import { getModelDetail, deployModel, isMockModel } from '../model';
+import { getModelDetail, deployModel, undeployModel, isMockModel } from '../model';
 import { type ModelDetailResponse } from '@/services/model/training';
 import './index.less';
 
@@ -16,6 +16,7 @@ const DesignModelDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [isUndeploying, setIsUndeploying] = useState(false);
 
   useEffect(() => {
     if (modelId) {
@@ -80,9 +81,33 @@ const DesignModelDetailPage: React.FC = () => {
     }
   };
 
-  const handleOfflineModel = () => {
-    // TODO: Implement offline API if available
-    alert(t('design.modelDetail.offlineNotImplemented', 'Offline functionality coming soon'));
+  const handleOfflineModel = async () => {
+    if (!model || !modelId) return;
+
+    // Check if it's a mock model
+    if (model && isMockModel(model)) {
+      alert(t('design.modelDetail.errors.cannotUndeployDemo', 'Cannot undeploy demo model'));
+      return;
+    }
+
+    if (!confirm(t('design.modelDetail.confirmUndeploy', 'Are you sure you want to undeploy this model?'))) {
+      return;
+    }
+
+    setIsUndeploying(true);
+
+    try {
+      await undeployModel(modelId);
+      alert(t('design.modelDetail.undeploySuccess', 'Model undeployed successfully!'));
+      // Refresh model detail
+      await fetchModelDetail(modelId);
+    } catch (err) {
+      console.error('Failed to undeploy model:', err);
+      const errorMessage = err instanceof Error ? err.message : t('design.modelDetail.errors.undeployFailed', 'Failed to undeploy model');
+      alert(errorMessage);
+    } finally {
+      setIsUndeploying(false);
+    }
   };
 
   const getStatusLabel = (status: string) => {
@@ -153,8 +178,12 @@ const DesignModelDetailPage: React.FC = () => {
             {!isMock && (
               <div className="section-actions">
                 {model.status === 'online' ? (
-                  <button className="offline-button" onClick={handleOfflineModel}>
-                    {t('design.modelDetail.offlineModel', '下线模型')}
+                  <button
+                    className="offline-button"
+                    onClick={handleOfflineModel}
+                    disabled={isUndeploying}
+                  >
+                    {isUndeploying ? t('design.modelDetail.undeploying', '下线中...') : t('design.modelDetail.offlineModel', '下线模型')}
                   </button>
                 ) : model.status === 'trained' ? (
                   <button

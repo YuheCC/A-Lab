@@ -132,6 +132,24 @@ export interface DeployModelResponse {
   [key: string]: any;
 }
 
+// ============= Undeploy Model Types =============
+
+/**
+ * Undeploy model request parameters
+ */
+export interface UndeployModelParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Undeploy model response
+ */
+export interface UndeployModelResponse {
+  success?: boolean;
+  [key: string]: any;
+}
+
 // ============= Remove Model Types =============
 
 /**
@@ -242,6 +260,23 @@ export const getModelDetail = async (params: ModelDetailParams): Promise<ModelDe
  */
 export const deployModel = async (params: DeployModelParams): Promise<DeployModelResponse> => {
   const response = await request('/api/ai/model/deploy', {
+    method: 'POST',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Undeploy model (make it offline)
+ * @param params Undeploy parameters including model_id and namespace
+ * @returns Promise<UndeployModelResponse> Undeploy result
+ */
+export const undeployModel = async (params: UndeployModelParams): Promise<UndeployModelResponse> => {
+  const response = await request('/api/ai/model/undeploy', {
     method: 'POST',
     params: {
       model_id: params.model_id,
