@@ -560,7 +560,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                   </span>
                                 </td>
                                 <td className="created-date">{formatDate(model.created_at)}</td>
-                                <td>{model.created_by}</td>
+                                <td>{model.created_by_name}</td>
                               </tr>
                             );
                           })
