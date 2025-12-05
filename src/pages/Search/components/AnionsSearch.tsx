@@ -1092,6 +1092,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                 setShowHypothetical={setShowHypothetical}
                                 prioritizePublished={prioritizePublished}
                                 setPrioritizePublished={setPrioritizePublished}
+                                showPrioritizePublished={false}
                                 numResults={numResults}
                                 setNumResults={setNumResults}
                                 cathode={cathode}

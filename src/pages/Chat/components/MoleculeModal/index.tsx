@@ -992,9 +992,11 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             use_35m: isHighTier,
             structure_weight: structureWeight,
             commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
-            apply_published_balance: prioritizePublished,
             num_results: numResults,
         };
+        if (!useAnionDatabase) {
+            payload.apply_published_balance = prioritizePublished;
+        }
         if (molType) {
             payload.mol_type = molType;
         }

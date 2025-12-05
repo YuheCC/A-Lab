@@ -33,7 +33,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
   isInorganic = false,
   showHypothetical = false,
   isAnion = false,
-  prioritizePublished = true,
+  prioritizePublished,
   numResults,
 } = options;
 
@@ -50,7 +50,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(isAnion && { is_anion: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
     commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
-    apply_published_balance: prioritizePublished,
+    ...(isAnion ? {} : { apply_published_balance: prioritizePublished ?? true }),
     ...(typeof numResults === 'number' ? { num_results: numResults } : {}),
     ...(hasQuery && {
       query: queryString,
