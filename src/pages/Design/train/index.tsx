@@ -36,7 +36,10 @@ const DesignTrainPage: React.FC = () => {
   // Cell Chemistry Specifications
   const [cathode, setCathode] = useState('');
   const [anode, setAnode] = useState('');
-  const [benchmarkElectrolyte, setBenchmarkElectrolyte] = useState('');
+  // Benchmark Electrolyte sub-fields
+  const [solvent, setSolvent] = useState('');
+  const [salt, setSalt] = useState('');
+  const [additive, setAdditive] = useState('');
   const [cellDesign, setCellDesign] = useState('');
 
   const handleBack = () => {
@@ -185,11 +188,24 @@ const DesignTrainPage: React.FC = () => {
         throw new Error('Selected base model not found');
       }
 
+      // Build train_params object
+      const trainParams = {
+        cathode: cathode.trim(),
+        anode: anode.trim(),
+        benchmarkElectrolyte: {
+          solvent: solvent.trim(),
+          salt: salt.trim(),
+          additive: additive.trim(),
+        },
+        cellDesign: cellDesign.trim(),
+      };
+
       const response = await trainModel({
         model_name: modelName.trim(),
         remark: remarks.trim(),
         base_model_id: selectedModel.id,
         data_files: files,
+        train_params: JSON.stringify(trainParams),
       });
 
       console.log('Training started successfully:', response);
@@ -290,12 +306,31 @@ const DesignTrainPage: React.FC = () => {
             </div>
             <div className="form-group">
               <label>{t('design.train.step2.benchmarkElectrolyte', 'Benchmark Electrolyte')}</label>
-              <input
-                type="text"
-                value={benchmarkElectrolyte}
-                onChange={(e) => setBenchmarkElectrolyte(e.target.value)}
-                placeholder={t('design.train.step2.benchmarkElectrolytePlaceholder', 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP')}
-              />
+              <div className="electrolyte-input-group">
+                <input
+                  type="text"
+                  value={solvent}
+                  onChange={(e) => setSolvent(e.target.value)}
+                  placeholder={t('design.train.step2.solventPlaceholder', 'EC/EMC/DEC')}
+                  className="electrolyte-field"
+                />
+                <span className="electrolyte-separator">+</span>
+                <input
+                  type="text"
+                  value={salt}
+                  onChange={(e) => setSalt(e.target.value)}
+                  placeholder={t('design.train.step2.saltPlaceholder', '1M LiPF6/LiFSI')}
+                  className="electrolyte-field"
+                />
+                <span className="electrolyte-separator">+</span>
+                <input
+                  type="text"
+                  value={additive}
+                  onChange={(e) => setAdditive(e.target.value)}
+                  placeholder={t('design.train.step2.additivePlaceholder', 'VC/LiDFP')}
+                  className="electrolyte-field"
+                />
+              </div>
             </div>
             <div className="form-group">
               <label>{t('design.train.step2.cellDesign', 'Cell Design')}</label>

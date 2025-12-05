@@ -27,6 +27,17 @@ interface SystemSpec {
   cellDesign: string;
 }
 
+interface TrainParams {
+  cathode?: string;
+  anode?: string;
+  benchmarkElectrolyte?: {
+    solvent?: string;
+    salt?: string;
+    additive?: string;
+  };
+  cellDesign?: string;
+}
+
 interface BatterySystem {
   id: string;
   name: string;
@@ -76,6 +87,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 新增状态：模型相关
   const [modelOptions, setModelOptions] = useState<ModelOption[]>(mockModels);
   const [isModelLoading, setIsModelLoading] = useState(false);
+  const [selectedModelData, setSelectedModelData] = useState<ModelListItem | null>(null);
 
   // 新增状态：计算相关
   const [isCalculating, setIsCalculating] = useState(false);
@@ -93,18 +105,30 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const [analysisStartTime, setAnalysisStartTime] = useState<Date | null>(null);
   const [analysisElapsed, setAnalysisElapsed] = useState<number>(0);
 
-  // 从选中的电池系统中获取规格信息
+  // 从选中模型的 train_params 中获取规格信息
   const getCurrentSpec = (): SystemSpec | null => {
-    if (!selectedSystem) return null;
-    const system = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!system) return null;
-    
-    return {
-      cathode: system.cathode,
-      anode: system.anode,
-      electrolyte: system.benchmark_electrolyte,
-      cellDesign: system.cell_design
-    };
+    // 只使用选中模型的 train_params
+    if (selectedModelData?.train_params) {
+      try {
+        const trainParams: TrainParams = JSON.parse(selectedModelData.train_params);
+        if (trainParams.cathode || trainParams.anode || trainParams.benchmarkElectrolyte || trainParams.cellDesign) {
+          const { solvent = '', salt = '', additive = '' } = trainParams.benchmarkElectrolyte || {};
+          const electrolyteStr = [solvent, salt, additive].filter(Boolean).join(' + ');
+
+          return {
+            cathode: trainParams.cathode || '',
+            anode: trainParams.anode || '',
+            electrolyte: electrolyteStr || '',
+            cellDesign: trainParams.cellDesign || ''
+          };
+        }
+      } catch (error) {
+        console.error('Failed to parse train_params:', error);
+      }
+    }
+
+    // 如果模型没有 train_params，返回 null
+    return null;
   };
 
   const currentSpec = getCurrentSpec();
@@ -223,6 +247,10 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           setIsModelLoading(false);
           return;
         }
+
+        // 保存完整的模型数据列表，用于后续查找
+        const modelDataMap = new Map(response.data.map(item => [item.id.toString(), item]));
+        (window as any).__modelDataMap = modelDataMap;
 
         // 根据 base_model_id 转换为 ModelOption 并设置分类
         const convertToModelOption = (item: ModelListItem): ModelOption => {
@@ -870,23 +898,24 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     // Clear form inputs
     setAdditive('');
     setSelectedModel('');
+    setSelectedModelData(null);
 
     // Reset display states
     setShowSpecs(true);
     setShowResults(false);
     setShowLLMAnalysis(false);
-    
+
     // Clear molecule details
     setMoleculeDetails(null);
     setIsMoleculeLoading(false);
     setLastQueriedSmiles(null);
     setIsInvalidSmiles(false);
-    
+
     // Clear calculation states
     setIsCalculating(false);
     setCalculationError(null);
     setPredictionResults(null);
-    
+
     // Clear LLM analysis states
     setIsAnalyzing(false);
     setAnalysisContent('');
@@ -894,7 +923,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     setHasAnalysisResult(false);
     setAnalysisStartTime(null);
     setAnalysisElapsed(0);
-    
+
     // Reset to first battery system if available
     if (batterySystemOptions?.length > 0) {
       setSelectedSystem(batterySystemOptions[0].name);
@@ -990,6 +1019,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               value={selectedModel}
               onChange={(value) => {
                 setSelectedModel(value as string);
+                // 从全局 map 中获取完整的模型数据
+                const modelDataMap = (window as any).__modelDataMap as Map<string, ModelListItem>;
+                if (modelDataMap && value) {
+                  const modelData = modelDataMap.get(value as string);
+                  setSelectedModelData(modelData || null);
+                }
                 // 选择模型后显示电池规格
                 if (value) {
                   setShowSpecs(true);
@@ -1015,38 +1050,46 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
             />
           </div>
 
-          {selectedModel && showSpecs && currentSpec && (
+          {selectedModel && showSpecs && currentSpec && (currentSpec.cathode || currentSpec.anode || currentSpec.electrolyte || currentSpec.cellDesign) && (
             <div className="pm-system-specs">
               <div className="pm-specs-header">
                 <span>{t('performance.batterySystemSelection.systemSpecs.title')}</span>
-                <button 
+                <button
                   className="pm-close-specs"
                   onClick={() => setShowSpecs(false)}
                 >
                   ×
                 </button>
               </div>
-              
+
               <div className="pm-specs-grid">
-                <div className="pm-spec-item">
-                  <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
-                  <span>{currentSpec.cathode}</span>
-                </div>
-                
-                <div className="pm-spec-item">
-                  <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
-                  <span>{currentSpec.anode}</span>
-                </div>
-                
-                <div className="pm-spec-item">
-                  <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
-                  <span>{currentSpec.electrolyte}</span>
-                </div>
-                
-                <div className="pm-spec-item">
-                  <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
-                  <span>{currentSpec.cellDesign}</span>
-                </div>
+                {currentSpec.cathode && (
+                  <div className="pm-spec-item">
+                    <label>{t('performance.batterySystemSelection.systemSpecs.cathode')}</label>
+                    <span>{currentSpec.cathode}</span>
+                  </div>
+                )}
+
+                {currentSpec.anode && (
+                  <div className="pm-spec-item">
+                    <label>{t('performance.batterySystemSelection.systemSpecs.anode')}</label>
+                    <span>{currentSpec.anode}</span>
+                  </div>
+                )}
+
+                {currentSpec.electrolyte && (
+                  <div className="pm-spec-item">
+                    <label>{t('performance.batterySystemSelection.systemSpecs.benchmarkElectrolyte')}</label>
+                    <span>{currentSpec.electrolyte}</span>
+                  </div>
+                )}
+
+                {currentSpec.cellDesign && (
+                  <div className="pm-spec-item">
+                    <label>{t('performance.batterySystemSelection.systemSpecs.cellDesign')}</label>
+                    <span>{currentSpec.cellDesign}</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
