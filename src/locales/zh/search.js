@@ -55,7 +55,7 @@ export default {
     publicationStatus: {
       label: '状态',
       published: 'Published',
-      novel: 'Novel Molecule',
+      novel: 'Unexplored',
     },
     computeDisabled: '禁用',
     computeLow: '低',

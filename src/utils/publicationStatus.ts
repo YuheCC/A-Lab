@@ -35,7 +35,7 @@ export const buildPublicationProp = (isPublished: boolean | undefined, t?: Trans
   if (isPublished === undefined) return null;
   const label = t ? t('search.publicationStatus.label', 'Status') : 'Status';
   const publishedText = t ? t('search.publicationStatus.published', 'Published') : 'Published';
-  const novelText = t ? t('search.publicationStatus.novel', 'Novel Molecule') : 'Novel Molecule';
+  const novelText = t ? t('search.publicationStatus.novel', 'Unexplored') : 'Unexplored';
   const valueColor = isPublished ? PUBLISHED_STATUS_COLOR : NOVEL_STATUS_COLOR;
   return {
     label,

@@ -55,7 +55,7 @@ export default {
     publicationStatus: {
       label: 'Status',
       published: 'Published',
-      novel: 'Novel Molecule',
+      novel: 'Unexplored',
     },
     computeDisabled: 'Disabled',
     computeLow: 'Low',

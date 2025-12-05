@@ -55,7 +55,7 @@ export default {
     publicationStatus: {
       label: '상태',
       published: 'Published',
-      novel: 'Novel Molecule',
+      novel: 'Unexplored',
     },
     computeDisabled: '비활성화',
     computeLow: '낮음',
