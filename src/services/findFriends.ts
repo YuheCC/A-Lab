@@ -11,6 +11,7 @@ interface FindFriendsOptions {
   isInorganic?: boolean;
   isAnion?: boolean;
   showHypothetical?: boolean;
+  prioritizePublished?: boolean;
   numResults?: number;
 }
 
@@ -29,11 +30,12 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     computeLevel,
     includeQuery,
     queryString,
-    isInorganic = false,
-    showHypothetical = false,
-    isAnion = false,
-    numResults,
-  } = options;
+  isInorganic = false,
+  showHypothetical = false,
+  isAnion = false,
+  prioritizePublished = true,
+  numResults,
+} = options;
 
   const API_URL = getAPIUrl();
   const computeEnabled = computeLevel !== 'Disabled';
@@ -48,6 +50,7 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     ...(isAnion && { is_anion: true }),
     ...(computeEnabled && { llm_compute_power: computeLevel.toLowerCase() }),
     commercial_scores: showHypothetical ? [0, 1, 2, 3] : [1, 2, 3],
+    apply_published_balance: prioritizePublished,
     ...(typeof numResults === 'number' ? { num_results: numResults } : {}),
     ...(hasQuery && {
       query: queryString,

@@ -9,6 +9,18 @@
   z-index: 1000;
 }
 
+.molcard-container.molcard-published {
+  background: linear-gradient(135deg, #f0f9ff, #ecfeff);
+  border-color: #93c5fd;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.12);
+}
+
+.molcard-container.molcard-novel {
+  background: linear-gradient(135deg, #fff7ed, #fffaf0);
+  border-color: #fdba74;
+  box-shadow: 0 2px 10px rgba(251, 146, 60, 0.12);
+}
+
 .molcard-vertical .molcard-visualization {
   display: flex;
   justify-content: center;

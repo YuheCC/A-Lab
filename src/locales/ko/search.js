@@ -51,6 +51,12 @@ export default {
     intelligentFindFriendsLimitLabel: '이번 달 남은 횟수: {{remaining}} / {{limit}}',
     showHypothetical: '가상 분자 표시',
     showHypotheticalTooltip: '공개 카탈로그에 없는 알고리즘 생성 후보를 포함합니다. 이용 가능성과 합성 가능성은 불확실합니다.',
+    prioritizePublished: '공개된 분자 우선',
+    publicationStatus: {
+      label: '상태',
+      published: 'Published',
+      novel: 'Novel Molecule',
+    },
     computeDisabled: '비활성화',
     computeLow: '낮음',
     computeMedium: '중간',

@@ -1,3 +1,5 @@
+import { extractIsPublished } from '@/utils/publicationStatus';
+
 export type MoleculeProperties = {
   smiles?: string;
   cation?: string;
@@ -19,6 +21,7 @@ export type MoleculeProperties = {
   functionalGroups?: string;
   commercialLink?: string;
   commercialScore?: number;
+  isPublished?: boolean;
 };
 
 export interface MoleculeDetails {
@@ -72,6 +75,7 @@ class MoleculeService {
   }
 
   private mapAPIResponseToMoleculeDetails(apiData: APIMoleculeDetail, name: string): MoleculeDetails {
+    const isPublished = extractIsPublished(apiData);
     return {
       name,
       properties: {
@@ -89,6 +93,7 @@ class MoleculeService {
         commercialLink: apiData.COMMERCIAL_LINK,
         commercialScore: apiData.COMMERCIAL_SCORE,
         commercialViability: this.getCommercialViabilityText(apiData.COMMERCIAL_SCORE),
+        isPublished,
         // Keep existing fields as fallback
         meltingPoint: '-',
         boilingPoint: '-',
@@ -118,14 +123,15 @@ class MoleculeService {
     const functionalGroups = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS;
     const umapX = raw?.umap_x ?? raw?.x;
     const umapY = raw?.umap_y ?? raw?.y;
+    const isPublished = extractIsPublished(raw);
 
-        return {
-          name: originalName,
-          properties: {
-            smiles,
-            cation,
-            casrn,
-            molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
+    return {
+      name: originalName,
+      properties: {
+        smiles,
+        cation,
+        casrn,
+        molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
         meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
         flashPoint: predictedFp != null ? `${predictedFp}` : '-',
@@ -140,7 +146,8 @@ class MoleculeService {
         umapY: umapY != null ? Number(umapY) : 0,
         functionalGroups: typeof functionalGroups === 'string' ? functionalGroups : JSON.stringify(functionalGroups || []),
         commercialViability: this.getCommercialViabilityText(commercialScore),
-        commercialScore: commercialScore != null ? Number(commercialScore) : undefined
+        commercialScore: commercialScore != null ? Number(commercialScore) : undefined,
+        isPublished,
       }
     };
   }

@@ -31,6 +31,18 @@
     transform: translateY(-1px); /* 减少悬停上移距离 */
 }
 
+.molecule-card.molecule-card-published {
+    background: linear-gradient(135deg, #f0f9ff, #ecfeff);
+    border-color: #93c5fd;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.12);
+}
+
+.molecule-card.molecule-card-novel {
+    background: linear-gradient(135deg, #fff7ed, #fffaf0);
+    border-color: #fdba74;
+    box-shadow: 0 2px 12px rgba(251, 146, 60, 0.12);
+}
+
 /* ==============================================
    2. 分子卡片头部
    ============================================== */

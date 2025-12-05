@@ -115,6 +115,7 @@ const MolCard = (props) => {
         children,
         cation,
         compact = false,
+        publicationStatus,
         ...domProps
     } = props;
 
@@ -144,7 +145,9 @@ const MolCard = (props) => {
         'molcard-container',
         large ? 'molcard-large' : '',
         vertical ? 'molcard-vertical' : '',
-        compact ? 'molcard-compact' : ''
+        compact ? 'molcard-compact' : '',
+        publicationStatus === true ? 'molcard-published' : '',
+        publicationStatus === false ? 'molcard-novel' : ''
     ].filter(Boolean).join(' ');
 
     return (

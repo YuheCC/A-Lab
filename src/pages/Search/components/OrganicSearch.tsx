@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { raiseResponseError } from '@/utils/errorHelpers';
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
@@ -47,6 +48,7 @@ interface MoleculeData {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
     properties: {
         molwt: number;
         homo_eV: number;
@@ -85,6 +87,7 @@ interface SimilarMolecule {
     image?: string;
     grade?: number;
     reasoning?: string;
+    is_published?: boolean;
 }
 
 type SearchResultItem =
@@ -143,6 +146,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
     const defaultCompute = useMemo(() => 'Disabled', []);
     const [computeLevel, setComputeLevel] = useState<string>(defaultCompute);
     const [showHypothetical, setShowHypothetical] = useState(false);
+    const [prioritizePublished, setPrioritizePublished] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [reasoningText, setReasoningText] = useState<string | null>(null);
     const { limits: queryLimits } = useQueryLimit();
@@ -593,6 +597,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                 image: mol.image,
                 grade: mol.grade,
                 reasoning: mol.reasoning,
+                is_published: extractIsPublished(mol),
                 properties: {
                     molwt: mol.molecular_weight,
                     homo_eV: mol.HOMO_eV,
@@ -721,6 +726,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                 molType: molTypeToSend,
                 computeLevel: computeToSend,
                 showHypothetical,
+                prioritizePublished,
                 includeQuery,
                 queryString,
                 numResults,
@@ -1018,6 +1024,8 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                 setStructureWeight={setStructureWeight}
                                 showHypothetical={showHypothetical}
                                 setShowHypothetical={setShowHypothetical}
+                                prioritizePublished={prioritizePublished}
+                                setPrioritizePublished={setPrioritizePublished}
                                 numResults={numResults}
                                 setNumResults={setNumResults}
                                 cathode={cathode}
@@ -1113,8 +1121,10 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                             gradeDetails
                                         );
                                         const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
+                                        const isPublished = extractIsPublished(molecule, molecule.rawData, molecule.properties);
+                                        const publicationProp = buildPublicationProp(isPublished, t);
 
-                                        const propGroups = [
+                                        const basePropGroups = [
                                             { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
                                             ...(overallScoreProp ? [overallScoreProp] : gradeProp ? [gradeProp] : []),
                                             { label: t('search.properties.molecularWeight'), value: molecule.properties.molwt, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
@@ -1139,6 +1149,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                             { label: 'ESP Max', value: molecule.properties?.esp_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
                                             { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.properties?.commercial_score as keyof typeof COMMERCIAL_SCORE_MAP], span: 4, wrap: true, show: canShowColumn('commercial_score')}
                                         ].filter(Boolean);
+                                        const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                         const foldPropGroups = [
                                             ...(casFoldProp ? [casFoldProp] : []),
@@ -1154,6 +1165,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 showMoreDetails={false}
                                                 large={true}
                                                 cation={molecule.cation ?? molecule.rawData?.cation ?? molecule.rawData?.CATION}
+                                                publicationStatus={isPublished}
                                                 propGroups={propGroups}
                                                 foldPropGroups={foldPropGroups}>
                                                 {
@@ -1268,8 +1280,10 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 structureScoreSummary,
                                                 gradeDetails
                                             );
+                                            const isPublished = extractIsPublished(molecule);
+                                            const publicationProp = buildPublicationProp(isPublished, t);
 
-                                            const propGroups = [
+                                            const basePropGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
                                                 ...(overallScoreProp ? [overallScoreProp] : []),
                                                 { label: t('search.properties.molecularWeight'), value: molecule.molecular_weight, span: 2, suffix: ' g/mol', show: canShowColumn('molecular_weight') },
@@ -1294,6 +1308,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                 { label: 'ESP Max', value: molecule.ESP_max_eV, span: 2, suffix: ' eV', show: canShowColumn('ESP_max_eV') },
                                                 { label: 'Commercial Viability', value: COMMERCIAL_SCORE_MAP[molecule.COMMERCIAL_SCORE as keyof typeof COMMERCIAL_SCORE_MAP], span:4, wrap: true, show: canShowColumn('commercial_score')}
                                             ].filter(Boolean);
+                                            const propGroups = insertPublicationProp(basePropGroups, publicationProp);
 
                                             return (
                                                 <MolCard
@@ -1302,15 +1317,16 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                                                     name={t('search.similarMoleculeNumber', { number: index + 1 })}
                                                     showMoreDetails={false}
                                                     large={true}
-                                                cation={molecule.cation ?? (molecule as any)?.CATION}
-                                                propGroups={propGroups}
-                                                foldPropGroups={[
-                                                    ...(casFoldProp ? [casFoldProp] : []),
-                                                    { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
-                                                    { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
-                                                    { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
-                                                ]}
-                                            >
+                                                    cation={molecule.cation ?? (molecule as any)?.CATION}
+                                                    publicationStatus={isPublished}
+                                                    propGroups={propGroups}
+                                                    foldPropGroups={[
+                                                        ...(casFoldProp ? [casFoldProp] : []),
+                                                        { label: 'UMAP_X', value: molecule.UMAP_0, span: 1, show: canShowColumn('umap_0') },
+                                                        { label: 'UMAP_Y', value: molecule.UMAP_1, span: 1, show: canShowColumn('umap_1') },
+                                                        { label: 'Functional Groups', value: JSON.parse(molecule?.functional_groups ?? "[]") || 'N/A', span: 4, show: canShowColumn('functional_groups') },
+                                                    ]}
+                                                >
                                                 <div className="molecule-actions">
                                                     <CustomButton
                                                         Icon={Star}
