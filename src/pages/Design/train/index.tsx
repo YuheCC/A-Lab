@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
+import { ArrowLeft, Download, UploadCloud, X } from 'lucide-react';
+import { Snackbar, Alert } from '@mui/material';
 import { trainModel, getBaseModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
 import './index.less';
+
+// Maximum number of files allowed
+const MAX_FILES = 5;
 
 const DesignTrainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,9 +18,20 @@ const DesignTrainPage: React.FC = () => {
   const [baseModel, setBaseModel] = useState('');
   const [baseModelList, setBaseModelList] = useState<ModelListItem[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   // Cell Chemistry Specifications
   const [cathode, setCathode] = useState('');
@@ -51,26 +66,18 @@ const DesignTrainPage: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      // Check file size (50MB)
-      if (selectedFile.size > 50 * 1024 * 1024) {
-        alert(t('design.train.errors.fileSize', 'File size exceeds 50MB'));
-        return;
-      }
-      setFile(selectedFile);
+      const selectedFiles = Array.from(e.target.files);
+      addFiles(selectedFiles);
+      // Reset input value to allow selecting the same file again
+      e.target.value = '';
     }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-       // Check file size (50MB)
-       if (droppedFile.size > 50 * 1024 * 1024) {
-        alert(t('design.train.errors.fileSize', 'File size exceeds 50MB'));
-        return;
-      }
-      setFile(droppedFile);
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      addFiles(droppedFiles);
     }
   };
 
@@ -78,20 +85,94 @@ const DesignTrainPage: React.FC = () => {
     e.preventDefault();
   };
 
+  const addFiles = (newFiles: File[]) => {
+    // Filter valid files (check size and format)
+    const validFiles = newFiles.filter((file) => {
+      // Check file size (50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        setSnackbar({
+          open: true,
+          message: t('design.train.errors.fileSize', 'File size exceeds 50MB') + `: ${file.name}`,
+          severity: 'error',
+        });
+        return false;
+      }
+      // Check file format
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!['csv', 'xlsx'].includes(ext || '')) {
+        setSnackbar({
+          open: true,
+          message: t('design.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
+          severity: 'error',
+        });
+        return false;
+      }
+      return true;
+    });
+
+    // Check if adding files would exceed the limit
+    const totalFiles = files.length + validFiles.length;
+    if (totalFiles > MAX_FILES) {
+      setSnackbar({
+        open: true,
+        message: t('design.train.errors.maxFiles', 'Maximum {{max}} files allowed', { max: MAX_FILES }),
+        severity: 'error',
+      });
+      // Only add files up to the limit
+      const allowedCount = MAX_FILES - files.length;
+      if (allowedCount > 0) {
+        setFiles([...files, ...validFiles.slice(0, allowedCount)]);
+      }
+      return;
+    }
+
+    // Avoid duplicate files (by name)
+    const existingNames = new Set(files.map((f) => f.name));
+    const uniqueFiles = validFiles.filter((f) => !existingNames.has(f.name));
+
+    if (uniqueFiles.length < validFiles.length) {
+      setSnackbar({
+        open: true,
+        message: t('design.train.errors.duplicateFiles', 'Some duplicate files were skipped'),
+        severity: 'error',
+      });
+    }
+
+    if (uniqueFiles.length > 0) {
+      setFiles([...files, ...uniqueFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
   const handleStartTraining = async () => {
     // Validation
     if (!modelName.trim()) {
-      alert(t('design.train.errors.modelNameRequired', 'Please enter model name'));
+      setSnackbar({
+        open: true,
+        message: t('design.train.errors.modelNameRequired', 'Please enter model name'),
+        severity: 'error',
+      });
       return;
     }
 
     if (!baseModel) {
-      alert(t('design.train.errors.baseModelRequired', 'Please select a base model'));
+      setSnackbar({
+        open: true,
+        message: t('design.train.errors.baseModelRequired', 'Please select a base model'),
+        severity: 'error',
+      });
       return;
     }
 
-    if (!file) {
-      alert(t('design.train.errors.fileRequired', 'Please upload training dataset'));
+    if (files.length === 0) {
+      setSnackbar({
+        open: true,
+        message: t('design.train.errors.fileRequired', 'Please upload training dataset'),
+        severity: 'error',
+      });
       return;
     }
 
@@ -108,23 +189,37 @@ const DesignTrainPage: React.FC = () => {
         model_name: modelName.trim(),
         remark: remarks.trim(),
         base_model_id: selectedModel.id,
-        data_files: file,
+        data_files: files,
       });
 
       console.log('Training started successfully:', response);
 
       // Show success message
-      alert(t('design.train.success', 'Model training started successfully!'));
+      setSnackbar({
+        open: true,
+        message: t('design.train.success', 'Model training started successfully!'),
+        severity: 'success',
+      });
 
-      // Navigate to models tab
-      navigate('/design?tab=models');
+      // Navigate to models tab after a short delay
+      setTimeout(() => {
+        navigate('/design?tab=models');
+      }, 1500);
     } catch (error) {
       console.error('Failed to start training:', error);
       const errorMessage = error instanceof Error ? error.message : t('design.train.errors.unknown', 'Failed to start training');
-      alert(errorMessage);
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: 'error',
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -254,12 +349,15 @@ const DesignTrainPage: React.FC = () => {
               <label>
                 {t('design.train.step4.upload', 'Upload Dataset')}
                 <span className="required">*</span>
+                <span className="prediction-train-file-count">
+                  ({files.length}/{MAX_FILES})
+                </span>
               </label>
               <div
-                className="upload-area"
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onClick={() => fileInputRef.current?.click()}
+                className={`upload-area ${files.length >= MAX_FILES ? 'prediction-train-upload-disabled' : ''}`}
+                onDrop={files.length >= MAX_FILES ? undefined : handleDrop}
+                onDragOver={files.length >= MAX_FILES ? undefined : handleDragOver}
+                onClick={files.length >= MAX_FILES ? undefined : () => fileInputRef.current?.click()}
               >
                 <input
                   type="file"
@@ -267,26 +365,45 @@ const DesignTrainPage: React.FC = () => {
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                   accept=".csv,.xlsx"
+                  multiple
                 />
                 <div className="upload-icon">
                    <UploadCloud size={28} />
                 </div>
-                {file ? (
-                  <div className="upload-text">{file.name}</div>
-                ) : (
-                  <>
-                    <div className="upload-text">
-                      {t('design.train.step4.dragDrop', 'Drag and drop your file here, or click to browse')}
-                    </div>
-                    <div className="upload-hint">
-                      {t('design.train.step4.formats', 'Supported formats: CSV, XLSX (Max 50MB)')}
-                    </div>
-                    <button className="upload-btn">
-                      {t('design.train.step4.chooseFile', 'Choose File')}
-                    </button>
-                  </>
-                )}
+                <div className="upload-text">
+                  {t('design.train.step4.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
+                </div>
+                <div className="upload-hint">
+                  {t('design.train.step4.formatsMultiple', 'Supported formats: CSV, XLSX (Max 50MB per file, up to {{max}} files)', { max: MAX_FILES })}
+                </div>
+                <button className="upload-btn" disabled={files.length >= MAX_FILES}>
+                  {t('design.train.step4.chooseFiles', 'Choose Files')}
+                </button>
               </div>
+
+              {/* File list */}
+              {files.length > 0 && (
+                <div className="prediction-train-file-list">
+                  {files.map((file, index) => (
+                    <div key={`${file.name}-${index}`} className="prediction-train-file-item">
+                      <span className="prediction-train-file-name" title={file.name}>
+                        {file.name}
+                      </span>
+                      <span className="prediction-train-file-size">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </span>
+                      <button
+                        className="prediction-train-file-remove"
+                        onClick={() => removeFile(index)}
+                        title={t('design.train.step4.removeFile', 'Remove file')}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <button className="download-sample">
                 <Download size={14} />
                 {t('design.train.step4.downloadSample', 'Download Sample')}
@@ -299,12 +416,29 @@ const DesignTrainPage: React.FC = () => {
           <button
             className="submit-button"
             onClick={handleStartTraining}
-            disabled={!modelName || !baseModel || !file || isSubmitting || isLoadingModels}
+            disabled={!modelName || !baseModel || files.length === 0 || isSubmitting || isLoadingModels}
           >
             {isSubmitting ? t('design.train.submitting', 'Submitting...') : t('design.train.startTraining', 'Start Training')}
           </button>
         </div>
       </div>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
