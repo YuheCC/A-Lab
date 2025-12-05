@@ -187,6 +187,56 @@ export interface ModelPredictResponse {
   [key: string]: any;
 }
 
+// ============= Model File List Types =============
+
+/**
+ * Model file list request parameters
+ */
+export interface ModelFileListParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Model file item
+ */
+export interface ModelFileItem {
+  name: string;
+  path: string;
+  size: number;
+}
+
+/**
+ * Model file list response (array of files)
+ */
+export type ModelFileListResponse = ModelFileItem[];
+
+// ============= Model Metrics Types =============
+
+/**
+ * Model metrics request parameters
+ */
+export interface ModelMetricsParams {
+  model_id: string;
+  namespace: string;
+}
+
+/**
+ * Metrics data for base or train
+ */
+export interface MetricsData {
+  rmse: number;
+  r2: number;
+}
+
+/**
+ * Model metrics response
+ */
+export interface ModelMetricsResponse {
+  base: MetricsData;
+  train: MetricsData;
+}
+
 // ============= API Functions =============
 
 /**
@@ -332,6 +382,40 @@ export const modelPredict = async (params: ModelPredictParams): Promise<ModelPre
     method: 'POST',
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model file list
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<ModelFileListResponse> File list
+ */
+export const getModelFileList = async (params: ModelFileListParams): Promise<ModelFileListResponse> => {
+  const response = await request('/api/ai/model/file_list', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model metrics
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<ModelMetricsResponse> Model metrics data
+ */
+export const getModelMetrics = async (params: ModelMetricsParams): Promise<ModelMetricsResponse> => {
+  const response = await request('/api/ai/model/metrics', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
   });
 
   return response.data;

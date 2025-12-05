@@ -183,10 +183,16 @@ import {
   deployModel as deployModelAPI,
   undeployModel as undeployModelAPI,
   removeModel as removeModelAPI,
+  getModelFileList as getModelFileListAPI,
+  getModelMetrics as getModelMetricsAPI,
   type TrainModelParams,
   type ModelListParams,
   type ModelListResponse,
   type ModelDetailResponse,
+  type ModelFileListParams,
+  type ModelFileListResponse,
+  type ModelMetricsParams,
+  type ModelMetricsResponse,
 } from '@/services/model/training';
 import { mockModelList, mockModelDetail } from './modelExample';
 
@@ -418,6 +424,56 @@ export const removeModel = async (modelId: string): Promise<any> => {
  */
 export const isMockModel = (model: any): boolean => {
   return model?.isMock === true;
+};
+
+/**
+ * Get model file list
+ * @param modelId Model ID to fetch files for
+ * @returns Promise<ModelFileListResponse> File list (array)
+ */
+export const getModelFileList = async (
+  modelId: string
+): Promise<ModelFileListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty file list');
+      return [];
+    }
+
+    const response = await getModelFileListAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Get model file list failed:', error);
+    return [];
+  }
+};
+
+/**
+ * Get model metrics
+ * @param modelId Model ID to fetch metrics for
+ * @returns Promise<ModelMetricsResponse | null> Model metrics data
+ */
+export const getModelMetrics = async (
+  modelId: string
+): Promise<ModelMetricsResponse | null> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty metrics');
+      return null;
+    }
+
+    const response = await getModelMetricsAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Get model metrics failed:', error);
+    return null;
+  }
 };
 
 // Export mock model data utilities for testing
