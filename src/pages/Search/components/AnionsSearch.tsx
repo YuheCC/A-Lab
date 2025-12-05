@@ -828,19 +828,10 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
         setFindFriendMessages([]);
         setFindFriendError(null); // Reset find friend error
         setAmbiguousOptions(null); // Reset ambiguous search info
-        setFindFriendsLoading(false);
 
         try {
-            if (shouldRunFindFriendsOnly) {
-                setsearchResults([]);
-                await runFindFriends([], true);
-                return;
-            }
-
-            const searchEndpoint = `${API_URL}/api/llm/search-new`;
-            const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
-            const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
-            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
+            // Determine which endpoint to use based on user permissions
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
 
             // Fetch the searched molecule's properties
             const moleculeResponse = await authFetch(

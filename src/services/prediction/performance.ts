@@ -1,8 +1,9 @@
 import request from "@/services/request";
+import sseRequest from "@/services/sseRequest";
 
 // 电池系统相关接口
 export async function getBatterySystemList(params?: any) {
-    return request("/api/batterySystem/list", {
+    return request("/api/cellPerformance/batterySystem/list", {
         method: "GET",
         params,
     });
@@ -144,6 +145,23 @@ export async function requestLLMAnalysis(params: LLMAnalysisRequest) {
         headers: {
             'Content-Type': 'application/json',
         },
+        data: params,
+    });
+}
+
+// LLM Analysis SSE Stream API
+export interface LLMAnalysisStreamRequest {
+    id: number;
+    battery_system_id: number;
+    lang: string;
+}
+
+/**
+ * 使用 SSE 流式接收 LLM 分析结果
+ */
+export async function requestLLMAnalysisStream(params: LLMAnalysisStreamRequest): Promise<Response> {
+    return sseRequest('/api/cellPerformance/llm_analysis', {
+        method: 'POST',
         data: params,
     });
 }

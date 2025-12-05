@@ -197,7 +197,7 @@ export const deleteHistory = async (params: DeleteHistoryParams): Promise<Delete
  * @returns Promise<Blob> 文件内容
  */
 export const downloadFile = async (params: FileDownloadParams): Promise<Blob> => {
-  const response = await request('/api/file/get', {
+  const response = await request('/api/user/files/get', {
     method: 'GET',
     params: {
       filename: params.filename,
@@ -217,5 +217,5 @@ export const getFileDownloadUrl = (filename: string): string => {
   const baseURL = process.env.NODE_ENV === 'development' 
     ? 'http://127.0.0.1:8008' 
     : 'https://prod-api.ses.ai';
-  return `${baseURL}/api/file/get?filename=${encodeURIComponent(filename)}`;
+  return `${baseURL}/api/user/files/get?filename=${encodeURIComponent(filename)}`;
 };

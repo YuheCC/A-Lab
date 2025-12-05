@@ -35,14 +35,14 @@ export async function getFeedbackList(params?: {
     type?: string;
     function?: string;
 }) {
-    return request('/feedback/list', {
+    return request('/api/user/feedback/list', {
         method: "GET",
         params,
     });
 }
 
 export async function getFeedbackById(id: string) {
-    return request(`/feedback/${id}`, {
+    return request(`/api/user/feedback/${id}`, {
         method: "GET",
     });
 }

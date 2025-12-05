@@ -666,11 +666,33 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
         return { formattedMolecules, ambiguity };
     };
 
-    const runFindFriends = async (seedSmiles: string[], allowEmptySeeds = false) => {
-        if (seedSmiles.length === 0 && !allowEmptySeeds) {
-            setSearchWarning(t('search.moleculeNotFound.title'));
-            return;
-        }
+    const handleSearch = async (searchInput: string) => {
+        if (!searchInput.trim()) return;
+
+        setSearchLoading(true);
+        setSearchWarning(null);
+        setSearchError(null);
+        setsearchResults(null);
+        setsearchedMolecules(null);
+        setHighlightedMolecules([]);
+        setHighlightedSimilarMolecules([]);
+        setSimilarMoleculeImages({}); // Reset similar molecule images
+        setFindFriendError(null); // Reset find friend error
+        setAmbiguousOptions(null); // Reset ambiguous search info
+
+        try {
+            // Determine which endpoint to use based on user permissions
+            let searchEndpoint = `${API_URL}/api/llm/search-new`;
+
+            // Fetch the searched molecule's properties 
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
+
+            // Ratelimit handling
+            if (moleculeResponse.status === 429) {
+                setSearchWarning(t('search.tooManyRequests'));
+                setSearchLoading(false);
+                return;
+            }
 
         setFindFriendsLoading(true);
         setFindFriendError(null);

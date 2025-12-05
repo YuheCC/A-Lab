@@ -667,8 +667,6 @@ const InorganicSearch = () => {
         try {
             // 使用无机分子搜索接口
             let searchEndpoint = `${API_URL}/api/llm/search-new`;
-            const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
-            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
 
             // Fetch the searched inorganic molecule's properties 
             const moleculeResponse = await authFetch(

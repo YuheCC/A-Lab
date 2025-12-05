@@ -117,7 +117,7 @@ export class ChatService {
 
   async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/send', {
+      const resp = await request('/api/llm/chat/send', {
         method: 'POST',
         data: { message, mode, chatId },
       });
@@ -139,7 +139,7 @@ export class ChatService {
 
   async regenerateResponse(messageId: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/regenerate', {
+      const resp = await request('/api/llm/chat/regenerate', {
         method: 'POST',
         data: { messageId },
       });
@@ -173,7 +173,7 @@ export class ChatService {
       chatId, 
       message, 
       mode = 'regular', 
-      path = '/ws/socket.io', 
+      path = '/api/llm/ws/socket.io', 
       protocols, 
       websocketOnly = false,
       onOpen, 
@@ -213,7 +213,7 @@ export class ChatService {
   //获取置顶聊天列表
   async getPinnedChatList(): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const resp = await request('/api/llm/chat/list', {
         params: {
           pinned: true,
           limit: 100,
@@ -242,7 +242,7 @@ export class ChatService {
   // 获取聊天列表
   async getChatList(start?: string, limit: number = 20): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const resp = await request('/api/llm/chat/list', {
         params: {
           pinned: false,
           start: start || null,
@@ -283,7 +283,7 @@ export class ChatService {
 
   async getChatById(chatId: number): Promise<{ title: string; messages: Message[] }> {
     try {
-      const resp = await request(`/api/chat/detail`, {
+      const resp = await request(`/api/llm/chat/detail`, {
         method: 'GET',
         params: {
           id: chatId,
@@ -308,7 +308,7 @@ export class ChatService {
   // only create a new chat with a chat_name
   async createChat(title: string): Promise<any> {
     try {
-      const resp = await request('/api/chat/new', {
+      const resp = await request('/api/llm/chat/new', {
         method: 'POST',
         data: { chat_name: title },
       });
@@ -323,7 +323,7 @@ export class ChatService {
   // send a new message to the chat, return a response id
   async createNewMessage(chatId: number, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/new', {
+      const resp = await request('/api/llm/chat/message/new', {
         method: 'POST',
         data: { 
             chat_id: chatId, 
@@ -343,7 +343,7 @@ export class ChatService {
   // update a message with a new content
   async updateMessage(chatId: number, messageId: string, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/update', {
+      const resp = await request('/api/llm/chat/message/update', {
         method: 'POST',
         data: { 
             id: messageId,
@@ -467,7 +467,7 @@ export class ChatService {
 
   async saveChat(chatId: number, title: string, messages: Message[]): Promise<boolean> {
     try {
-      const resp = await request('/chat/save', {
+      const resp = await request('/api/llm/chat/save', {
         method: 'POST',
         data: { chatId, title, messages },
       });
@@ -480,7 +480,7 @@ export class ChatService {
 
   async deleteChat(chatId: number): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/delete`, {
+      const resp = await request(`/api/llm/chat/delete`, {
         method: 'POST',
         data: { id: chatId },
       });
@@ -493,7 +493,7 @@ export class ChatService {
 
   async searchChats(query: string): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const resp = await request('/api/llm/chat/list', {
         method: 'GET',
         params: { 
           search_text: query, 
@@ -519,7 +519,7 @@ export class ChatService {
 
   async renameChat(chatId: number, newTitle: string): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const resp = await request(`/api/llm/chat/update`, {
         method: 'POST',
         data: { id: chatId, chat_name: newTitle },
       });
@@ -532,7 +532,7 @@ export class ChatService {
 
   async togglePinChat(chatId: number, isPinned: boolean): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const resp = await request(`/api/llm/chat/update`, {
         method: 'POST',
         data: { id: chatId, pinned: isPinned },
       });

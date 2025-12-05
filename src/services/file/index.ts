@@ -25,7 +25,7 @@ export async function uploadFile(
     formData.append('file', file);
 
     try {
-        const response = await request('/api/file/upload', {
+        const response = await request('/api/user/files/upload', {
             method: "POST",
             data: formData,
             onUploadProgress: (progressEvent: any) => {
