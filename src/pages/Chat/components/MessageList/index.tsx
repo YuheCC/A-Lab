@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageEdit from '../MessageEdit';
@@ -11,7 +11,6 @@ import {
   isUserMessage,
   isAssistantMessage,
   isSystemMessage,
-  normalizeServerDate
 } from '@/utils/messageUtils';
 import type { ToolStats } from '@/utils/messageUtils';
 
@@ -166,9 +165,22 @@ const MessageList: FC<MessageListProps> = ({
   const [showFeedbackBox, setShowFeedbackBox] = useState(false);
   const [feedbackData, setFeedbackData] = useState<any>(null);
   const userPermissions = useAuthStore(state => state.userPermissions);
+  const isAdmin = userPermissions === 'admin';
 
   // 取上下文消息源
   const resolvedMessages: Message[] = (ctxMessages && ctxMessages.length > 0 ? ctxMessages : messages) as Message[];
+
+  const parseMessageDate = useCallback((input: any): Date => {
+    if (!input) return new Date();
+    if (input instanceof Date) return new Date(input);
+    const trimmed = String(input).trim();
+    const hasTimezone = /[zZ]$|[+-]\d{2}:?\d{2}$/.test(trimmed);
+    const normalized = hasTimezone
+      ? trimmed
+      : (trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T'));
+    const parsed = new Date(normalized);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  }, []);
 
   // 滚动到底部的函数
   const scrollToBottom = () => {
@@ -193,22 +205,41 @@ const MessageList: FC<MessageListProps> = ({
     return { lastUserId: u, lastAssistantId: a };
   }, [resolvedMessages]);
 
+  const getMessageDate = useCallback((message: Message | undefined): Date | null => {
+    if (!message) return null;
+    const raw = (message as any)?.savedAt
+      ?? (message as any)?.updated_at
+      ?? (message as any)?.createdAt
+      ?? (message as any)?.created_at
+      ?? message.timestamp;
+    if (!raw) return null;
+    return parseMessageDate(raw as any);
+  }, [parseMessageDate]);
+
+  const lastUserMessageTime = useMemo(() => {
+    const lastUser = resolvedMessages.slice().reverse().find(m => isUserMessage(m));
+    return getMessageDate(lastUser as Message);
+  }, [resolvedMessages, getMessageDate]);
+
   // 思考中：仅针对最后一条助手消息且内容为空，并且需要显示计时
   // is_running为false时不显示计时（历史消息），is_running为true或undefined时显示计时（新消息）
   const thinkingTarget = useMemo(() => {
+    // Find the last assistant placeholder that is still running/empty
     for (let i = resolvedMessages.length - 1; i >= 0; i--) {
       const msg = resolvedMessages[i] as Message & { created_at?: string };
       if (isAssistantMessage(msg) && 
           (!msg.content || String(msg.content).trim() === '') &&
           msg.is_running !== false) { // is_running为false的历史消息不显示计时，新消息（undefined）或明确需要计时（true）的消息显示计时
-        const createdAt: Date = msg.timestamp
-          ? normalizeServerDate(msg.timestamp as any)
-          : (msg.created_at ? normalizeServerDate(msg.created_at) : new Date());
-        return { id: msg.id, createdAt };
+        // Timer should start from last user message if available; otherwise fall back to assistant timestamp
+        const fallback = msg.timestamp
+          ? parseMessageDate(msg.timestamp as any)
+          : (msg.created_at ? parseMessageDate(msg.created_at) : new Date());
+        const startAt = lastUserMessageTime || fallback;
+        return { id: msg.id, createdAt: startAt };
       }
     }
     return null;
-  }, [resolvedMessages]);
+  }, [resolvedMessages, parseMessageDate, lastUserMessageTime]);
 
   // 已等待时长（秒）
   const [thinkingElapsed, setThinkingElapsed] = useState<number>(0);
@@ -264,6 +295,32 @@ const MessageList: FC<MessageListProps> = ({
       // 传递完整的分子对象而不仅仅是名称
       (onMoleculeClick || ctxHandleMoleculeClick)?.(molecule);
     }
+  };
+
+  const getSavedAtLabel = useCallback((message: Message): string | null => {
+    if (!isAdmin || (!isUserMessage(message) && !isAssistantMessage(message))) {
+      return null;
+    }
+    const raw = (message as any)?.savedAt
+      ?? (message as any)?.updated_at
+      ?? (message as any)?.createdAt
+      ?? (message as any)?.created_at
+      ?? message.timestamp;
+    if (!raw) return null;
+    const date = parseMessageDate(raw as any);
+    const datePart = date.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const timePart = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZoneName: 'short' });
+    return `${datePart} ${timePart}`;
+  }, [isAdmin, parseMessageDate]);
+
+  const renderSavedTimestamp = (message: Message) => {
+    const label = getSavedAtLabel(message);
+    if (!label) return null;
+    return (
+      <div className="message-timestamp" title={label}>
+        {label}
+      </div>
+    );
   };
 
   // 处理复制消息
@@ -455,6 +512,7 @@ const MessageList: FC<MessageListProps> = ({
       return (
         <div key={message.id} className="message-wrapper user">
           <div className="message-container">
+            {renderSavedTimestamp(message)}
             <div className="message">
               {message.content}
             </div>
@@ -494,6 +552,7 @@ const MessageList: FC<MessageListProps> = ({
               })()}
             </div>
           )}
+          {renderSavedTimestamp(message)}
           {renderMessageActions(message)}
         </div>
       );

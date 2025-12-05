@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Message } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { globalWebSocketManager } from '@/services/chat/wsService';
-import { createUserMessage, createAssistantMessage } from '@/utils/messageUtils';
+import { createUserMessage, createAssistantMessage, normalizeServerDateToISOString } from '@/utils/messageUtils';
 import { useAuthStore } from '@/models/useAuth';
 
 export interface ChatState {
@@ -90,14 +90,29 @@ export const useChat = () => {
   }, []);
 
   const addBotMessage = useCallback((content: string | Message, showRegenerate: boolean = true, id?: string) => {
+    const nowIso = new Date().toISOString();
+    const rawCreatedAt = typeof content === 'object'
+      ? ((content as any)?.createdAt ?? (content as any)?.created_at ?? (content as any)?.savedAt)
+      : undefined;
+    const normalizedCreatedAt = rawCreatedAt ? normalizeServerDateToISOString(rawCreatedAt as any) : nowIso;
+    const computedTimestamp = typeof content === 'object' && (content as Message).timestamp
+      ? (content as Message).timestamp
+      : new Date(normalizedCreatedAt);
+
     const botMessage: Message = typeof content === 'string'
-      ? createAssistantMessage(content, id, showRegenerate)
+      ? { 
+          ...createAssistantMessage(content, id, showRegenerate),
+          createdAt: nowIso,
+          savedAt: nowIso,
+        }
       : ({
           ...content,
           id: (content as Message).id || (id || `assistant-${Date.now()}`),
           role: (content as Message).role || 'assistant',
           showRegenerate: (content as Message).showRegenerate ?? showRegenerate,
-          timestamp: (content as Message).timestamp || new Date()
+          timestamp: computedTimestamp,
+          createdAt: (content as any)?.createdAt ?? (content as any)?.created_at ?? (content as any)?.savedAt ?? normalizedCreatedAt,
+          savedAt: (content as any)?.savedAt ?? normalizedCreatedAt,
         } as Message);
     setState(prev => ({
       ...prev,

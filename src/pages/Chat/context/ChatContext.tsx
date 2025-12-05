@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Message, ToolStats } from '@/utils/messageUtils';
-import { createAssistantMessage, isAssistantMessage, createUserMessage } from '@/utils/messageUtils';
+import { createAssistantMessage, isAssistantMessage, createUserMessage, normalizeServerDateToISOString } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '../components/History';
 import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
@@ -459,6 +459,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (isDone) {
                 setIsLoading(false);
                 if (messageId !== undefined && messageId !== null) {
+                    const key = String(messageId);
+                    const possibleIds = [key, `assistant-${key}`];
+                    const finishedAtIso = new Date().toISOString();
+                    for (const possibleId of possibleIds) {
+                        const existingMessage = messages.find(msg => String(msg.id) === String(possibleId));
+                        if (existingMessage) {
+                            upsertMessage({
+                                ...existingMessage,
+                                savedAt: finishedAtIso,
+                                timestamp: new Date(finishedAtIso),
+                            });
+                            break;
+                        }
+                    }
                     delete botChunksRef.current[String(messageId)];
                 }
             }
@@ -558,7 +572,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 新聊天的消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         
         // 在历史记录的非置顶位置增加新创建的聊天
@@ -585,7 +612,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 当前会话中的新消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         
         // 在已有聊天发送消息后，将该聊天提升至非置顶位置第一条
@@ -613,7 +653,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if(answerData?.id){
             // 更新消息应该显示 regenerate
             const isNewSessionMessage = sessionStartTime ? new Date() > sessionStartTime : true;
-            addBotMessage(answerData?.content, isNewSessionMessage, `assistant-${answerData?.id}`);
+            const normalizedCreatedAt = (answerData?.created_at || answerData?.createdAt)
+                ? normalizeServerDateToISOString((answerData?.created_at || answerData?.createdAt) as any)
+                : undefined;
+            const normalizedUpdatedAt = (answerData?.updated_at || answerData?.updatedAt)
+                ? normalizeServerDateToISOString((answerData?.updated_at || answerData?.updatedAt) as any)
+                : normalizedCreatedAt;
+            addBotMessage({
+                id: `assistant-${answerData?.id}`,
+                role: 'assistant',
+                content: answerData?.content,
+                createdAt: normalizedCreatedAt,
+                savedAt: normalizedUpdatedAt,
+                timestamp: normalizedUpdatedAt ? new Date(normalizedUpdatedAt) : undefined,
+            } as Message, isNewSessionMessage, `assistant-${answerData?.id}`);
         }
         await triggerMessageByMode(
             sid,
