@@ -1,5 +1,5 @@
 # 多阶段构建 - 第一阶段：构建应用
-FROM public.ecr.aws/docker/library/node:18-alpine AS builder
+FROM m.daocloud.io/docker.io/library/node:18-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -11,7 +11,7 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # 安装依赖
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --registry=https://registry.npmmirror.com
 
 # 复制源代码
 COPY . .
@@ -27,7 +27,7 @@ RUN if [ "$BUILD_ENV" = "staging" ]; then \
     fi
 
 # 多阶段构建 - 第二阶段：运行时镜像
-FROM public.ecr.aws/docker/library/nginx:alpine
+FROM m.daocloud.io/docker.io/library/nginx:alpine
 
 # 复制自定义 nginx 配置
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
