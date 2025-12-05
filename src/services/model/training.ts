@@ -10,7 +10,7 @@ export interface TrainModelParams {
   remark: string;
   base_model_name?: string;
   base_model_id?: number;
-  data_files: File;
+  data_files: File | File[];
   namespace: string;
 }
 
@@ -202,7 +202,14 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
   if (params.base_model_id) {
     formData.append('base_model_id', params.base_model_id.toString());
   }
-  formData.append('data_files', params.data_files);
+  // Support single file or multiple files
+  if (Array.isArray(params.data_files)) {
+    params.data_files.forEach((file) => {
+      formData.append('data_files', file);
+    });
+  } else {
+    formData.append('data_files', params.data_files);
+  }
   formData.append('namespace', params.namespace);
 
   const response = await request('/api/ai/model/train', {

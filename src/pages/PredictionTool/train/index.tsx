@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Download, UploadCloud } from 'lucide-react';
+import { ArrowLeft, Download, UploadCloud, X } from 'lucide-react';
 import { Snackbar, Alert } from '@mui/material';
-import { trainModel } from '../model';
+import { trainModel, getBaseModelList } from '../model';
+import type { ModelListItem } from '@/services/model/training';
 import { useLoginModalContext } from '@/components/LoginModal/context';
 import './index.less';
+
+// Maximum number of files allowed
+const MAX_FILES = 5;
 
 const TrainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,8 +17,10 @@ const TrainPage: React.FC = () => {
   const { openLoginModal } = useLoginModalContext();
   const [modelName, setModelName] = useState('');
   const [remarks, setRemarks] = useState('');
-  const [baseModel, setBaseModel] = useState('OSES-Base-v1');
-  const [file, setFile] = useState<File | null>(null);
+  const [baseModel, setBaseModel] = useState('');
+  const [baseModelList, setBaseModelList] = useState<ModelListItem[]>([]);
+  const [isLoadingModels, setIsLoadingModels] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Loading and notification state
@@ -33,33 +39,108 @@ const TrainPage: React.FC = () => {
     navigate(-1);
   };
 
+  // Load base model list on component mount
+  useEffect(() => {
+    const loadBaseModels = async () => {
+      setIsLoadingModels(true);
+      try {
+        const response = await getBaseModelList();
+        if (response?.data && response.data.length > 0) {
+          setBaseModelList(response.data);
+          // Set first model as default
+          setBaseModel(response.data[0].id.toString());
+        }
+      } catch (error) {
+        console.error('Failed to load base models:', error);
+      } finally {
+        setIsLoadingModels(false);
+      }
+    };
+
+    loadBaseModels();
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      // Check file size (50MB)
-      if (selectedFile.size > 50 * 1024 * 1024) {
-        alert(t('predictionTool.train.errors.fileSize', 'File size exceeds 50MB'));
-        return;
-      }
-      setFile(selectedFile);
+      const selectedFiles = Array.from(e.target.files);
+      addFiles(selectedFiles);
+      // Reset input value to allow selecting the same file again
+      e.target.value = '';
     }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-       // Check file size (50MB)
-       if (droppedFile.size > 50 * 1024 * 1024) {
-        alert(t('predictionTool.train.errors.fileSize', 'File size exceeds 50MB'));
-        return;
-      }
-      setFile(droppedFile);
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      addFiles(droppedFiles);
     }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+  };
+
+  const addFiles = (newFiles: File[]) => {
+    // Filter valid files (check size and format)
+    const validFiles = newFiles.filter((file) => {
+      // Check file size (50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        setSnackbar({
+          open: true,
+          message: t('predictionTool.train.errors.fileSize', 'File size exceeds 50MB') + `: ${file.name}`,
+          severity: 'error',
+        });
+        return false;
+      }
+      // Check file format
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!['csv', 'xlsx'].includes(ext || '')) {
+        setSnackbar({
+          open: true,
+          message: t('predictionTool.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
+          severity: 'error',
+        });
+        return false;
+      }
+      return true;
+    });
+
+    // Check if adding files would exceed the limit
+    const totalFiles = files.length + validFiles.length;
+    if (totalFiles > MAX_FILES) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.errors.maxFiles', 'Maximum {{max}} files allowed', { max: MAX_FILES }),
+        severity: 'error',
+      });
+      // Only add files up to the limit
+      const allowedCount = MAX_FILES - files.length;
+      if (allowedCount > 0) {
+        setFiles([...files, ...validFiles.slice(0, allowedCount)]);
+      }
+      return;
+    }
+
+    // Avoid duplicate files (by name)
+    const existingNames = new Set(files.map((f) => f.name));
+    const uniqueFiles = validFiles.filter((f) => !existingNames.has(f.name));
+    
+    if (uniqueFiles.length < validFiles.length) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.errors.duplicateFiles', 'Some duplicate files were skipped'),
+        severity: 'error',
+      });
+    }
+
+    if (uniqueFiles.length > 0) {
+      setFiles([...files, ...uniqueFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
   };
 
   const handleStartTraining = async () => {
@@ -72,10 +153,28 @@ const TrainPage: React.FC = () => {
     }
 
     // Validate required fields
-    if (!modelName || !file) {
+    if (!modelName.trim()) {
       setSnackbar({
         open: true,
-        message: t('predictionTool.train.errors.missingFields', 'Please fill in all required fields'),
+        message: t('predictionTool.train.errors.modelNameRequired', 'Please enter model name'),
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (!baseModel) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.errors.baseModelRequired', 'Please select a base model'),
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (files.length === 0) {
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.train.errors.fileRequired', 'Please upload training dataset'),
         severity: 'error',
       });
       return;
@@ -83,12 +182,18 @@ const TrainPage: React.FC = () => {
 
     setLoading(true);
     try {
-      // Call the train model API
-      const response = await trainModel({
-        model_name: modelName,
-        remark: remarks,
-        base_model_name: baseModel,
-        data_files: file,
+      // Find the selected base model
+      const selectedModel = baseModelList.find(m => m.id.toString() === baseModel);
+      if (!selectedModel) {
+        throw new Error('Selected base model not found');
+      }
+
+      // Call the train model API with files array
+      await trainModel({
+        model_name: modelName.trim(),
+        remark: remarks.trim(),
+        base_model_id: selectedModel.id,
+        data_files: files,
       });
 
       // Show success notification
@@ -100,7 +205,7 @@ const TrainPage: React.FC = () => {
 
       // Navigate to main page (models tab) after a short delay
       setTimeout(() => {
-        navigate('/prediction-tool', { state: { activeTab: 'models' } });
+        navigate('/predict', { state: { activeTab: 'models' } });
       }, 1500);
     } catch (error: any) {
       // Show error notification
@@ -170,9 +275,19 @@ const TrainPage: React.FC = () => {
               <select
                 value={baseModel}
                 onChange={(e) => setBaseModel(e.target.value)}
+                disabled={isLoadingModels || baseModelList.length === 0}
               >
-                <option value="OSES-Base-v1">{t('predictionTool.train.step2.modelName', 'OSES-Base-v1')}</option>
-                {/* Future models can be added here */}
+                {isLoadingModels ? (
+                  <option value="">{t('predictionTool.train.step2.loading', 'Loading models...')}</option>
+                ) : baseModelList.length === 0 ? (
+                  <option value="">{t('predictionTool.train.step2.noModels', 'No base models available')}</option>
+                ) : (
+                  baseModelList.map((model) => (
+                    <option key={model.id} value={model.id.toString()}>
+                      {model.model_name}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>
@@ -189,12 +304,15 @@ const TrainPage: React.FC = () => {
               <label>
                 {t('predictionTool.train.step3.upload', 'Upload Dataset')}
                 <span className="required">*</span>
+                <span className="prediction-train-file-count">
+                  ({files.length}/{MAX_FILES})
+                </span>
               </label>
               <div
-                className="upload-area"
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onClick={() => fileInputRef.current?.click()}
+                className={`upload-area ${files.length >= MAX_FILES ? 'prediction-train-upload-disabled' : ''}`}
+                onDrop={files.length >= MAX_FILES ? undefined : handleDrop}
+                onDragOver={files.length >= MAX_FILES ? undefined : handleDragOver}
+                onClick={files.length >= MAX_FILES ? undefined : () => fileInputRef.current?.click()}
               >
                 <input
                   type="file"
@@ -202,26 +320,45 @@ const TrainPage: React.FC = () => {
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                   accept=".csv,.xlsx"
+                  multiple
                 />
                 <div className="upload-icon">
                    <UploadCloud size={28} />
                 </div>
-                {file ? (
-                  <div className="upload-text">{file.name}</div>
-                ) : (
-                  <>
-                    <div className="upload-text">
-                      {t('predictionTool.train.step3.dragDrop', 'Drag and drop your file here, or click to browse')}
-                    </div>
-                    <div className="upload-hint">
-                      {t('predictionTool.train.step3.formats', 'Supported formats: CSV, XLSX (Max 50MB)')}
-                    </div>
-                    <button className="upload-btn">
-                      {t('predictionTool.train.step3.chooseFile', 'Choose File')}
-                    </button>
-                  </>
-                )}
+                <div className="upload-text">
+                  {t('predictionTool.train.step3.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
+                </div>
+                <div className="upload-hint">
+                  {t('predictionTool.train.step3.formatsMultiple', 'Supported formats: CSV, XLSX (Max 50MB per file, up to {{max}} files)', { max: MAX_FILES })}
+                </div>
+                <button className="upload-btn" disabled={files.length >= MAX_FILES}>
+                  {t('predictionTool.train.step3.chooseFiles', 'Choose Files')}
+                </button>
               </div>
+              
+              {/* File list */}
+              {files.length > 0 && (
+                <div className="prediction-train-file-list">
+                  {files.map((file, index) => (
+                    <div key={`${file.name}-${index}`} className="prediction-train-file-item">
+                      <span className="prediction-train-file-name" title={file.name}>
+                        {file.name}
+                      </span>
+                      <span className="prediction-train-file-size">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </span>
+                      <button
+                        className="prediction-train-file-remove"
+                        onClick={() => removeFile(index)}
+                        title={t('predictionTool.train.step3.removeFile', 'Remove file')}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               <button className="download-sample">
                 <Download size={14} />
                 {t('predictionTool.train.step3.downloadSample', 'Download Sample')}
@@ -234,7 +371,7 @@ const TrainPage: React.FC = () => {
           <button
             className="submit-button"
             onClick={handleStartTraining}
-            disabled={!modelName || !file || loading}
+            disabled={!modelName || !baseModel || files.length === 0 || loading || isLoadingModels}
           >
             {loading
               ? t('predictionTool.train.submitting', 'Submitting...')

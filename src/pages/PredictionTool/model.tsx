@@ -178,6 +178,38 @@ export const trainModel = async (
 };
 
 /**
+ * Get base model list (base_model_id = -1)
+ * @param params Query parameters
+ * @returns Promise<ModelListResponse> Base model list with pagination
+ */
+export const getBaseModelList = async (
+  params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
+): Promise<ModelListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock model data');
+      return { total: mockModelList.length, data: mockModelList };
+    }
+
+    const response = await getModelListAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+      base_model_id: -1,
+    });
+
+    if (response?.data && response.data.length > 0) {
+      return response;
+    }
+
+    console.log('No base model data found, returning mock data');
+    return { total: mockModelList.length, data: mockModelList };
+  } catch (error) {
+    console.error('Get base model list failed:', error);
+    return { total: mockModelList.length, data: mockModelList };
+  }
+};
+
+/**
  * Get model list with mock data fallback
  * @param params Query parameters (without namespace, will be added automatically)
  * @returns Promise<ModelListResponse> Model list with pagination
