@@ -32,15 +32,25 @@
 }
 
 .molecule-card.molecule-card-published {
+    background: linear-gradient(135deg, #fff7ed, #fffaf0);
+    border-color: #fdba74;
+    box-shadow: 0 2px 12px rgba(251, 146, 60, 0.12);
+}
+
+.molecule-card.molecule-card-novel {
     background: linear-gradient(135deg, #f0f9ff, #ecfeff);
     border-color: #93c5fd;
     box-shadow: 0 2px 12px rgba(59, 130, 246, 0.12);
 }
 
-.molecule-card.molecule-card-novel {
-    background: linear-gradient(135deg, #fff7ed, #fffaf0);
-    border-color: #fdba74;
-    box-shadow: 0 2px 12px rgba(251, 146, 60, 0.12);
+.molecule-card.molecule-card-published .publication-status .molecule-card-property-value {
+    color: #ea580c;
+    font-weight: 700;
+}
+
+.molecule-card.molecule-card-novel .publication-status .molecule-card-property-value {
+    color: #2563eb;
+    font-weight: 700;
 }
 
 /* ==============================================

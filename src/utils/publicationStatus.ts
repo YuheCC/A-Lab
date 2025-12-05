@@ -3,6 +3,9 @@ type Translator = ((key: string, defaultValue?: string) => string) | undefined;
 const truthyStrings = new Set(['true', '1', 'yes', 'y', 'published']);
 const falsyStrings = new Set(['false', '0', 'no', 'n', 'novel']);
 
+export const PUBLISHED_STATUS_COLOR = '#ea580c';
+export const NOVEL_STATUS_COLOR = '#2563eb';
+
 export const extractIsPublished = (...sources: any[]): boolean | undefined => {
   for (const source of sources) {
     if (!source) continue;
@@ -33,11 +36,14 @@ export const buildPublicationProp = (isPublished: boolean | undefined, t?: Trans
   const label = t ? t('search.publicationStatus.label', 'Status') : 'Status';
   const publishedText = t ? t('search.publicationStatus.published', 'Published') : 'Published';
   const novelText = t ? t('search.publicationStatus.novel', 'Novel Molecule') : 'Novel Molecule';
+  const valueColor = isPublished ? PUBLISHED_STATUS_COLOR : NOVEL_STATUS_COLOR;
   return {
     label,
     value: isPublished ? publishedText : novelText,
     span: 2,
     wrap: true,
+    color: valueColor,
+    valueStyle: { fontWeight: 700 },
   };
 };
 

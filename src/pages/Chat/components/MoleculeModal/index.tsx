@@ -451,10 +451,17 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             : publicationStatus
                 ? 'molecule-card-published'
                 : 'molecule-card-novel';
+        const publicationValueStyle = publicationProp
+            ? {
+                fontWeight: 700,
+                ...(publicationProp.valueStyle || {}),
+                ...(publicationProp.color ? { color: publicationProp.color } : {}),
+            }
+            : undefined;
         const publicationElement = publicationProp ? (
             <div className="molecule-card-property-item publication-status">
                 <span className="molecule-card-property-label">{publicationProp.label}:</span>
-                <span className="molecule-card-property-value">{publicationProp.value}</span>
+                <span className="molecule-card-property-value" style={publicationValueStyle}>{publicationProp.value}</span>
             </div>
         ) : null;
         return (
