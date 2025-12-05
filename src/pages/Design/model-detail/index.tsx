@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
-import { getModelDetail, deployModel, isMockModel } from '../model';
-import { type ModelDetailResponse } from '@/services/model/training';
+import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
+import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse } from '@/services/model/training';
 import './index.less';
 
 const DesignModelDetailPage: React.FC = () => {
@@ -16,10 +16,17 @@ const DesignModelDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [isUndeploying, setIsUndeploying] = useState(false);
+  const [fileList, setFileList] = useState<ModelFileListResponse>([]);
+  const [metrics, setMetrics] = useState<ModelMetricsResponse | null>(null);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+  const [loadingMetrics, setLoadingMetrics] = useState(false);
 
   useEffect(() => {
     if (modelId) {
       fetchModelDetail(modelId);
+      fetchModelFileList(modelId);
+      fetchModelMetrics(modelId);
     } else {
       setError(t('design.modelDetail.errors.noModelId', 'No model ID provided'));
       setLoading(false);
@@ -38,6 +45,30 @@ const DesignModelDetailPage: React.FC = () => {
       setError(err instanceof Error ? err.message : t('design.modelDetail.errors.loadFailed', 'Failed to load model detail'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchModelFileList = async (id: string) => {
+    setLoadingFiles(true);
+    try {
+      const response = await getModelFileList(id);
+      setFileList(response);
+    } catch (err) {
+      console.error('Failed to fetch model file list:', err);
+    } finally {
+      setLoadingFiles(false);
+    }
+  };
+
+  const fetchModelMetrics = async (id: string) => {
+    setLoadingMetrics(true);
+    try {
+      const response = await getModelMetrics(id);
+      setMetrics(response);
+    } catch (err) {
+      console.error('Failed to fetch model metrics:', err);
+    } finally {
+      setLoadingMetrics(false);
     }
   };
 
@@ -279,6 +310,89 @@ const DesignModelDetailPage: React.FC = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* Training Dataset */}
+        {(model.status === 'trained' || model.status === 'online') && (
+          <div className="detail-section">
+            <h2 className="section-title">{t('design.modelDetail.trainingFiles', 'Training Dataset')}</h2>
+            {loadingFiles ? (
+              <div className="info-card">
+                <p>{t('design.modelDetail.loadingText', 'Loading...')}</p>
+              </div>
+            ) : fileList && fileList.length > 0 ? (
+              <div className="info-card dataset-info">
+                {fileList.map((file, index) => (
+                  <div key={index} className="dataset-row">
+                    <div className="dataset-item">
+                      <span className="dataset-label">{t('design.modelDetail.datasetName', 'Dataset Name:')}</span>
+                      <a href="#" className="dataset-link download-link">
+                        {file.name}
+                      </a>
+                    </div>
+                    <div className="dataset-item">
+                      <span className="dataset-label">{t('design.modelDetail.fileSize', 'File Size:')}</span>
+                      <span className="dataset-value">
+                        {(file.size / 1024 / 1024).toFixed(1)} MB
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="info-card">
+                <p>{t('design.modelDetail.noFiles', '暂无训练文件')}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Training Results */}
+        {(model.status === 'trained' || model.status === 'online') && (
+          <div className="detail-section">
+            <h2 className="section-title">{t('design.modelDetail.trainingMetrics', 'Training Results')}</h2>
+            {loadingMetrics ? (
+              <div className="info-card">
+                <p>{t('design.modelDetail.loadingText', 'Loading...')}</p>
+              </div>
+            ) : metrics ? (
+              <div className="info-card training-results">
+                {/* RMSE Section */}
+                <div className="metric-section">
+                  <h3 className="metric-title">{t('design.modelDetail.rmse', 'RMSE')}</h3>
+                  <div className="metric-comparison">
+                    <div className="metric-box base-model">
+                      <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                      <div className="model-value">{metrics.base.rmse.toFixed(3)}</div>
+                    </div>
+                    <div className="metric-box new-model">
+                      <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                      <div className="model-value">{metrics.train.rmse.toFixed(3)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* R² Section */}
+                <div className="metric-section">
+                  <h3 className="metric-title">R²</h3>
+                  <div className="metric-comparison">
+                    <div className="metric-box base-model">
+                      <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                      <div className="model-value">{metrics.base.r2.toFixed(3)}</div>
+                    </div>
+                    <div className="metric-box new-model">
+                      <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                      <div className="model-value">{metrics.train.r2.toFixed(3)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="info-card">
+                <p>{t('design.modelDetail.noMetrics', '暂无训练指标')}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
