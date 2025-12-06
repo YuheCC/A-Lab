@@ -9,7 +9,7 @@ import { loadRDKit } from '@/utils/rdkitLoader';
 import { authFetch, getAPIUrl } from '@/utils';
 
 const API_URL = getAPIUrl();
-const SEARCH_ENDPOINT = `${API_URL}/api/llm/search-new`;
+const SEARCH_ENDPOINT = `${API_URL}/api/search/search-new`;
 
 const MolEditor = ({ onMolChange, style, getSmilesForImport }) => {
     const [focused, setFocused] = useState(false);

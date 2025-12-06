@@ -841,7 +841,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
             const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
             // Determine which endpoint to use based on user permissions
-            const searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const searchEndpoint = `${API_URL}/api/search/search-new`;
             const searchParams = new URLSearchParams({
                 query: trimmedInput,
                 umap_type: 'anions',

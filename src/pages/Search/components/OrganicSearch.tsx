@@ -771,7 +771,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
                 await runFindFriends([], true);
             } else {
                 // Determine which endpoint to use based on user permissions
-                const searchEndpoint = `${API_URL}/api/llm/search-new`;
+                const searchEndpoint = `${API_URL}/api/search/search-new`;
                 const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
                 const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
 
