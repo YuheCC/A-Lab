@@ -443,6 +443,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   <option value="" disabled hidden>{t('performance.models.filters.selectStatus', 'Select Status')}</option>
                   <option value="online">{t('performance.models.statusOnline', 'Online')}</option>
                   <option value="trained">{t('performance.models.statusTrained', 'Trained')}</option>
+                  <option value="offline">{t('performance.models.statusOffline', 'Offline')}</option>
                   <option value="training">{t('performance.models.statusTraining', 'Training')}</option>
                 </select>
                 <select
@@ -515,14 +516,19 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                           <td>{model.base_model_name}</td>
                           <td>
                             <span style={{
-                              backgroundColor: model.status === 'online' ? '#dcfce7' : model.status === 'trained' ? '#e0e7ff' : '#fef3c7',
-                              color: model.status === 'online' ? '#008236' : model.status === 'trained' ? '#4338ca' : '#92400e',
+                              backgroundColor: model.status === 'online' ? '#dcfce7' :
+                                             model.status === 'trained' ? '#e0e7ff' :
+                                             model.status === 'offline' ? '#e0e7ff' : '#fef3c7',
+                              color: model.status === 'online' ? '#008236' :
+                                     model.status === 'trained' ? '#4338ca' :
+                                     model.status === 'offline' ? '#4338ca' : '#92400e',
                               padding: '2px 8px',
                               borderRadius: '4px',
                               fontSize: '14px'
                             }}>
                               {model.status === 'online' ? t('performance.models.statusOnline', 'Online') :
                                model.status === 'trained' ? t('performance.models.statusTrained', 'Trained') :
+                               model.status === 'offline' ? t('performance.models.statusOffline', 'Offline') :
                                t('performance.models.statusTraining', 'Training')}
                             </span>
                           </td>

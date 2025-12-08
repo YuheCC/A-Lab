@@ -182,6 +182,8 @@ const ModelDetailPage: React.FC = () => {
         return t('predictionTool.modelDetail.statusOnline');
       case 'trained':
         return t('predictionTool.modelDetail.statusTrained');
+      case 'offline':
+        return t('predictionTool.modelDetail.statusOffline');
       case 'training':
         return t('predictionTool.modelDetail.statusTraining');
       default:
@@ -282,7 +284,7 @@ const ModelDetailPage: React.FC = () => {
                   <button className="offline-button" onClick={() => handleOpenDialog('remove')}>
                     {t('predictionTool.modelDetail.offlineModel', '下线模型')}
                   </button>
-                ) : model.status === 'trained' ? (
+                ) : (model.status === 'trained' || model.status === 'offline') ? (
                   <button className="online-button" onClick={() => handleOpenDialog('deploy')}>
                     {t('predictionTool.modelDetail.onlineModel', '上线模型')}
                   </button>
@@ -321,8 +323,8 @@ const ModelDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Training Results - Only show if status is trained or online */}
-      {(model.status === 'trained' || model.status === 'online') && model.train_result && (
+      {/* Training Results - Only show if status is trained, offline or online */}
+      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && model.train_result && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingResults')}</h2>
           <div className="info-card">
@@ -363,7 +365,7 @@ const ModelDetailPage: React.FC = () => {
       )}
 
       {/* Training Dataset */}
-      {(model.status === 'trained' || model.status === 'online') && (
+      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingFiles', 'Training Dataset')}</h2>
           {loadingFiles ? (
@@ -398,7 +400,7 @@ const ModelDetailPage: React.FC = () => {
       )}
 
       {/* Training Results */}
-      {(model.status === 'trained' || model.status === 'online') && (
+      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingMetrics', 'Training Results')}</h2>
           {loadingMetrics ? (

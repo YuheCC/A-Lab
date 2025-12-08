@@ -183,6 +183,8 @@ const DesignModelDetailPage: React.FC = () => {
         return t('design.modelDetail.statusOnline', 'Online');
       case 'trained':
         return t('design.modelDetail.statusTrained', 'Trained');
+      case 'offline':
+        return t('design.modelDetail.statusOffline', 'Offline');
       case 'training':
         return t('design.modelDetail.statusTraining', 'Training');
       default:
@@ -252,7 +254,7 @@ const DesignModelDetailPage: React.FC = () => {
                   >
                     {isUndeploying ? t('design.modelDetail.undeploying', '下线中...') : t('design.modelDetail.offlineModel', '下线模型')}
                   </button>
-                ) : model.status === 'trained' ? (
+                ) : (model.status === 'trained' || model.status === 'offline') ? (
                   <button
                     className="online-button"
                     onClick={handleOnlineModel}
@@ -298,8 +300,8 @@ const DesignModelDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Training Results - Only show if status is trained or online */}
-        {(model.status === 'trained' || model.status === 'online') && model.train_result && (
+        {/* Training Results - Only show if status is trained, offline or online */}
+        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && model.train_result && (
           <div className="detail-section">
             <h2 className="section-title">{t('design.modelDetail.trainingResults', 'Training Results')}</h2>
             <div className="info-card">
@@ -379,7 +381,7 @@ const DesignModelDetailPage: React.FC = () => {
         )}
 
         {/* Training Dataset */}
-        {(model.status === 'trained' || model.status === 'online') && (
+        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
           <div className="detail-section">
             <h2 className="section-title">{t('design.modelDetail.trainingFiles', 'Training Dataset')}</h2>
             {loadingFiles ? (
@@ -414,7 +416,7 @@ const DesignModelDetailPage: React.FC = () => {
         )}
 
         {/* Training Results */}
-        {(model.status === 'trained' || model.status === 'online') && (
+        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
           <div className="detail-section">
             <h2 className="section-title">{t('design.modelDetail.trainingMetrics', 'Training Results')}</h2>
             {loadingMetrics ? (
