@@ -19,6 +19,7 @@ import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { getModelList } from '../../model';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
+import { getWeightPercentage } from '../../utils/weightPercentage';
 
 interface SystemSpec {
   cathode: string;
@@ -1146,7 +1147,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
                 </label>
                 <input
                   type="text"
-                  value="1.9"
+                  value={getWeightPercentage(selectedModelData?.base_model_id)}
                   disabled
                   className="pm-weight-percentage-input"
                 />
