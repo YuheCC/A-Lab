@@ -26,7 +26,7 @@ export default {
     placeholder: "请选择预测模型",
     baseModel: "基础模型",
     finetunedModels: "微调模型",
-    muModels: "Mu 模型",
+    muModels: "MU 模型",
     columns: {
       modelName: "模型名称",
       modelId: "模型ID",
@@ -247,6 +247,7 @@ export default {
     showingRecords: "显示 {{count}} / {{total}} 条记录",
     statusOnline: "上线",
     statusTrained: "训练完成",
+    statusOffline: "下线",
     statusTraining: "训练中",
     filters: {
       searchPlaceholder: "搜索模型ID或名称...",

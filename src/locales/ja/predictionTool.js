@@ -81,6 +81,7 @@ export default {
 
     // Tabs
     tabs: {
+        tool: "予測ツール",
         introduction: "紹介",
         records: "記録",
         models: "モデル"

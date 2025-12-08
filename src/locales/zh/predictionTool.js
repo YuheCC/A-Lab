@@ -81,6 +81,7 @@ export default {
 
     // Tabs
     tabs: {
+        tool: "预测工具",
         introduction: "简介",
         records: "记录",
         models: "模型"

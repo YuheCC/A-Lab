@@ -81,6 +81,7 @@ export default {
 
     // Tabs
     tabs: {
+        tool: "예측 도구",
         introduction: "소개",
         records: "기록",
         models: "모델"

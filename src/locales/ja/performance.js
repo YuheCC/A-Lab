@@ -26,7 +26,7 @@ export default {
     placeholder: "予測モデルを選択してください",
     baseModel: "ベースモデル",
     finetunedModels: "ファインチューニングモデル",
-    muModels: "Mu モデル",
+    muModels: "MU モデル",
     columns: {
       modelName: "モデル名",
       modelId: "モデルID",
@@ -247,6 +247,7 @@ export default {
     showingRecords: "{{count}}件 / {{total}}件を表示中",
     statusOnline: "オンライン",
     statusTrained: "訓練済み",
+    statusOffline: "オフライン",
     statusTraining: "訓練中",
     filters: {
       searchPlaceholder: "モデルIDまたは名前で検索...",
