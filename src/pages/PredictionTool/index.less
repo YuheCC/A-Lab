@@ -172,10 +172,24 @@
       border: 1px solid #d1d5dc;
       border-radius: 6px;
       font-size: 14px;
-      color: #374151;
+      color: #9da3af;
       background: #ffffff;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+
+      // When a value is selected, add this class to show normal text color
+      &.has-value {
+        color: #374151;
+      }
+
+      option {
+        color: #374151;
+      }
+
+      // Hide placeholder option in dropdown
+      option[value=""][disabled] {
+        display: none;
+      }
 
       &:hover {
         border-color: #9ca3af;
