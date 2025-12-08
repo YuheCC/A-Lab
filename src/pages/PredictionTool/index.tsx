@@ -639,7 +639,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         ) : (
                           modelsData.map((model) => {
                             const statusInfo = getStatusLabel(model.status);
-                            const isBaseModel = model.base_model_id === -1;
+                            const isBaseModel = model.base_model_id === -1 || model.base_model_id === -2;
                             return (
                               <tr key={model.id}>
                                 <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>

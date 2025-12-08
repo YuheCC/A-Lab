@@ -560,7 +560,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         <tr key={model.id}>
                           <td className="record-id">DM-{String(model.id).padStart(6, '0')}</td>
                           <td className="file-name">
-                            {model.base_model_id === -1 ? (
+                            {model.base_model_id === -1 || model.base_model_id === -2 ? (
                               <span className="model-name-text">{model.model_name}</span>
                             ) : (
                               <a

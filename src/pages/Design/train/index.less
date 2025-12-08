@@ -4,21 +4,35 @@
 // Electrolyte input group styles
 .electrolyte-input-group {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
   width: 100%;
 }
 
-.electrolyte-field {
+.electrolyte-field-wrapper {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.electrolyte-field-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.electrolyte-field {
+  width: 100%;
 }
 
 .electrolyte-separator {
   font-size: 14px;
   color: #666;
   font-weight: 500;
-  padding: 0 4px;
+  padding: 0 4px 8px 4px;
   flex-shrink: 0;
 }
 
