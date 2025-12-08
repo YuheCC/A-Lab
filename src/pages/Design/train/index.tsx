@@ -238,6 +238,15 @@ const DesignTrainPage: React.FC = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const handleDownloadSample = () => {
+    const link = document.createElement('a');
+    link.href = '/design/sample/Design sample.xlsx';
+    link.download = 'Design sample.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="train-page-container">
       <div className="train-header">
@@ -448,7 +457,7 @@ const DesignTrainPage: React.FC = () => {
                 </div>
               )}
 
-              <button className="download-sample">
+              <button className="download-sample" onClick={handleDownloadSample}>
                 <Download size={14} />
                 {t('design.train.step4.downloadSample', 'Download Sample')}
               </button>
