@@ -345,11 +345,52 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         onChange={(date: Dayjs | null) => {
                           setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
                         }}
+                        enableAccessibleFieldDOMStructure={false}
                         slotProps={{
                           textField: {
                             placeholder: t('performance.models.filters.selectDate', '选择日期'),
                             size: 'small',
                             fullWidth: true,
+                            sx: {
+                              minWidth: 140,
+                              maxWidth: 180,
+                              '& .MuiInputBase-root': {
+                                height: 32,
+                                minHeight: 32,
+                                fontSize: 13,
+                                borderRadius: '6px',
+                              },
+                              '& .MuiInputBase-input': {
+                                padding: '0 10px',
+                                height: 32,
+                                lineHeight: '32px',
+                                fontSize: 13,
+                                color: '#374151',
+                                boxSizing: 'border-box',
+                                '&::placeholder': {
+                                  color: '#9ca3af',
+                                  opacity: 1,
+                                },
+                              },
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#d1d5dc',
+                              },
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#9ca3af',
+                              },
+                              '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#56B26A',
+                                borderWidth: 1,
+                              },
+                              '& .MuiInputAdornment-root': {
+                                height: 32,
+                                maxHeight: 32,
+                                marginLeft: 0,
+                              },
+                              '& .MuiIconButton-root': {
+                                padding: '4px',
+                              },
+                            },
                           }
                         }}
                       />
@@ -436,22 +477,22 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   placeholder={t('performance.models.filters.searchPlaceholder', '搜索模型ID或名称...')}
                 />
                 <select
-                  className="models-status-filter"
+                  className={`models-status-filter ${selectedModelStatus ? 'has-value' : ''}`}
                   value={selectedModelStatus}
                   onChange={(e) => setSelectedModelStatus(e.target.value)}
                 >
-                  <option value="" disabled hidden>{t('performance.models.filters.selectStatus', 'Select Status')}</option>
+                  <option value="" disabled selected hidden>{t('performance.models.filters.selectStatus', 'Select Status')}</option>
                   <option value="online">{t('performance.models.statusOnline', 'Online')}</option>
                   <option value="trained">{t('performance.models.statusTrained', 'Trained')}</option>
                   <option value="offline">{t('performance.models.statusOffline', 'Offline')}</option>
                   <option value="training">{t('performance.models.statusTraining', 'Training')}</option>
                 </select>
                 <select
-                  className="models-base-model-filter"
+                  className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
                   value={selectedBaseModel}
                   onChange={(e) => setSelectedBaseModel(e.target.value)}
                 >
-                  <option value="" disabled hidden>{t('performance.models.filters.selectBaseModel', 'Select Base Model')}</option>
+                  <option value="" disabled selected hidden>{t('performance.models.filters.selectBaseModel', 'Select Base Model')}</option>
                   {baseModelOptions.map((baseModel) => (
                     <option key={baseModel} value={baseModel}>{baseModel}</option>
                   ))}

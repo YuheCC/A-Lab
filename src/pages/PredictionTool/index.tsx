@@ -380,11 +380,52 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         onChange={(date: Dayjs | null) => {
                           setRecordSelectedDate(date ? date.format('YYYY-MM-DD') : '');
                         }}
+                        enableAccessibleFieldDOMStructure={false}
                         slotProps={{
                           textField: {
                             placeholder: t('predictionTool.models.filters.selectDate', 'Select date'),
                             size: 'small',
                             fullWidth: true,
+                            sx: {
+                              minWidth: 140,
+                              maxWidth: 180,
+                              '& .MuiInputBase-root': {
+                                height: 32,
+                                minHeight: 32,
+                                fontSize: 13,
+                                borderRadius: '6px',
+                              },
+                              '& .MuiInputBase-input': {
+                                padding: '0 10px',
+                                height: 32,
+                                lineHeight: '32px',
+                                fontSize: 13,
+                                color: '#374151',
+                                boxSizing: 'border-box',
+                                '&::placeholder': {
+                                  color: '#9ca3af',
+                                  opacity: 1,
+                                },
+                              },
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#d1d5dc',
+                              },
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#9ca3af',
+                              },
+                              '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#56B26A',
+                                borderWidth: 1,
+                              },
+                              '& .MuiInputAdornment-root': {
+                                height: 32,
+                                maxHeight: 32,
+                                marginLeft: 0,
+                              },
+                              '& .MuiIconButton-root': {
+                                padding: '4px',
+                              },
+                            },
                           }
                         }}
                       />
