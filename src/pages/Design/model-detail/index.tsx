@@ -177,6 +177,43 @@ const DesignModelDetailPage: React.FC = () => {
     );
   };
 
+  const hasComparisonMetrics = (metricsData: ModelMetricsResponse | null): metricsData is { base: MetricsData; train: MetricsData } => {
+    return Boolean(metricsData?.base && metricsData?.train);
+  };
+
+  const formatMetricValue = (value?: number | string | MetricsData) => {
+    if (value === null || value === undefined) return '--';
+    const numericValue = Number(value as number);
+    if (Number.isFinite(numericValue)) {
+      return numericValue.toFixed(3);
+    }
+    return String(value);
+  };
+
+  const renderFlatMetrics = (metricsData: ModelMetricsResponse) => {
+    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
+    if (entries.length === 0) {
+      return (
+        <div className="info-card">
+          <p>{t('design.modelDetail.noMetrics', '暂无训练指标')}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="info-card training-results">
+        <div className="training-results-grid">
+          {entries.map(([key, value]) => (
+            <div className="result-card" key={key}>
+              <span className="result-label">{key.toUpperCase()}</span>
+              <span className="result-value">{formatMetricValue(value)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
