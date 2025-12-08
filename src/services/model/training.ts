@@ -45,10 +45,12 @@ export interface ModelListItem {
   model_name: string;
   base_model_name: string;
   base_model_id?: number;
+  base_model?: string;
   model_type?: number; // 1: ratePerformance, 2: ce, 3: cycleLife
   status: 'training' | 'trained' | 'online' | 'offline';
   created_at: string;
   created_by: string;
+  created_by_name?: string;
   updated_at: string;
   updated_by: string;
   train_params?: string; // JSON stringified object containing cathode, anode, benchmarkElectrolyte, cellDesign

@@ -71,8 +71,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   // Models filter state
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
-  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('all');
-  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('all');
+  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
+  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
 
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
@@ -226,8 +226,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
-    setSelectedModelStatus('all');
-    setSelectedBaseModel('all');
+    setSelectedModelStatus('');
+    setSelectedBaseModel('');
   };
 
   // Get unique base models from data
@@ -238,8 +238,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     const keywordMatch = !modelSearchKeyword ||
       model.model_name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
       String(model.id).includes(modelSearchKeyword);
-    const statusMatch = selectedModelStatus === 'all' || model.status === selectedModelStatus;
-    const baseModelMatch = selectedBaseModel === 'all' || model.base_model === selectedBaseModel;
+    const statusMatch = !selectedModelStatus || model.status === selectedModelStatus;
+    const baseModelMatch = !selectedBaseModel || model.base_model === selectedBaseModel;
     return keywordMatch && statusMatch && baseModelMatch;
   });
 
@@ -282,6 +282,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
         return { text: t('predictionTool.models.statusTrained', 'Trained'), color: '#dbeafe', textColor: '#1e40af' };
       case 'training':
         return { text: t('predictionTool.models.statusTraining', 'Training'), color: '#fef3c7', textColor: '#92400e' };
+      case 'offline':
+        return { text: t('predictionTool.models.statusOffline', 'Offline'), color: '#f3f4f6', textColor: '#6b7280' };
       default:
         return { text: status, color: '#f3f4f6', textColor: '#374151' };
     }
@@ -483,28 +485,29 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       placeholder={t('predictionTool.models.filters.searchPlaceholder', 'Search Model ID or Name...')}
                     />
                     <select
-                      className="models-status-filter"
+                      className={`models-status-filter ${selectedModelStatus ? 'has-value' : ''}`}
                       value={selectedModelStatus}
                       onChange={handleModelStatusChange}
-                      aria-label={t('predictionTool.models.filters.allStatus', 'All Status')}
+                      aria-label={t('predictionTool.models.filters.statusPlaceholder', 'Select Status')}
                     >
-                      <option value="all">{t('predictionTool.models.filters.allStatus', 'All Status')}</option>
+                      <option value="" disabled selected hidden>{t('predictionTool.models.filters.statusPlaceholder', 'Select Status')}</option>
                       <option value="online">{t('predictionTool.models.statusOnline', 'Online')}</option>
                       <option value="trained">{t('predictionTool.models.statusTrained', 'Trained')}</option>
                       <option value="training">{t('predictionTool.models.statusTraining', 'Training')}</option>
+                      <option value="offline">{t('predictionTool.models.statusOffline', 'Offline')}</option>
                     </select>
                     <select
-                      className="models-base-model-filter"
+                      className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
                       value={selectedBaseModel}
                       onChange={(e) => setSelectedBaseModel(e.target.value)}
-                      aria-label={t('predictionTool.models.filters.allBaseModels', 'All Base Models')}
+                      aria-label={t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}
                     >
-                      <option value="all">{t('predictionTool.models.filters.allBaseModels', 'All Base Models')}</option>
+                      <option value="" disabled selected hidden>{t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}</option>
                       {uniqueBaseModels.map((baseModel) => (
                         <option key={baseModel} value={baseModel}>{baseModel}</option>
                       ))}
                     </select>
-                    {(modelSearchKeyword || selectedModelStatus !== 'all' || selectedBaseModel !== 'all') && (
+                    {(modelSearchKeyword || selectedModelStatus || selectedBaseModel) && (
                       <button className="clear-filters-button" onClick={handleClearModelsFilters}>
                         <X size={16} />
                         <span>{t('predictionTool.models.filters.clearFilters', 'Clear Filters')}</span>
@@ -539,11 +542,16 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         ) : (
                           filteredModelsData.map((model) => {
                             const statusInfo = getStatusLabel(model.status);
+                            const isBaseModel = model.base_model_id === -1;
                             return (
                               <tr key={model.id}>
                                 <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>
                                 <td className="file-name">
-                                  <a className="model-name-link" onClick={() => navigate(`/predict/model-detail?id=${model.id}`)}>{model.model_name}</a>
+                                  {isBaseModel ? (
+                                    <span>{model.model_name}</span>
+                                  ) : (
+                                    <a className="model-name-link" onClick={() => navigate(`/predict/model-detail?id=${model.id}`)}>{model.model_name}</a>
+                                  )}
                                 </td>
                                 <td>{model.base_model_name}</td>
                                 <td>
