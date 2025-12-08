@@ -19,6 +19,7 @@ export default {
         placeholder: "모델을 선택해주세요",
         baseModel: "기본 모델",
         finetunedModels: "파인튜닝 모델",
+        muModels: "MU 모델",
         columns: {
             modelName: "모델 이름",
             modelId: "모델 ID",
