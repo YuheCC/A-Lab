@@ -7,6 +7,7 @@ import PerformanceBadge from '@/components/PerformanceBadge';
 import InlineMoleculeRenderer from '@/components/InlineMoleculeRenderer';
 import type { ModelListItem } from '@/services/model/training';
 import { parseModelResult } from '@/utils/modelResultParser';
+import { formatWeightPercentage } from '../utils/weightPercentage';
 import './index.less';
 
 interface ProcessedMetric {
@@ -29,6 +30,7 @@ const RecordPage: React.FC = () => {
   const [modelOptions, setModelOptions] = useState<any[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<string | undefined>();
   const [modelType, setModelType] = useState<number | undefined>();
+  const [baseModelId, setBaseModelId] = useState<number | undefined>();
   const [isModelLoading, setIsModelLoading] = useState(false);
 
   const userPermissions = useAuthStore((state: any) => state.userPermissions);
@@ -51,6 +53,7 @@ const RecordPage: React.FC = () => {
           baseModel: item.base_model_id === -1 ? '-' : item.base_model_name || '-',
           category: item.base_model_id === -1 ? 'base' : 'finetuned',
           model_type: item.model_type,
+          base_model_id: item.base_model_id,
         }));
         setModelOptions(options);
       }
@@ -85,12 +88,13 @@ const RecordPage: React.FC = () => {
     }
   };
 
-  // 监听 modelOptions 和 selectedModelId 变化，匹配 model_type
+  // 监听 modelOptions 和 selectedModelId 变化，匹配 model_type 和 base_model_id
   useEffect(() => {
     if (selectedModelId && modelOptions.length > 0) {
       const model = modelOptions.find(m => m.id === selectedModelId);
       if (model) {
         setModelType(model.model_type);
+        setBaseModelId(model.base_model_id);
       }
     }
   }, [selectedModelId, modelOptions]);
@@ -317,7 +321,7 @@ const RecordPage: React.FC = () => {
               </div>
               <div className="info-item">
                 <span className="label">{t('design.record.weightPercentage', 'Weight Percentage')}:</span>
-                <span className="value">1.9 wt%</span>
+                <span className="value">{formatWeightPercentage(baseModelId)}</span>
               </div>
             </div>
           </div>
