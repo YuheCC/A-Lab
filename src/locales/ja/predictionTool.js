@@ -19,6 +19,7 @@ export default {
         placeholder: "モデルを選択してください",
         baseModel: "ベースモデル",
         finetunedModels: "ファインチューニングモデル",
+        muModels: "MUモデル",
         columns: {
             modelName: "モデル名",
             modelId: "モデルID",

@@ -19,6 +19,7 @@ export default {
         placeholder: "Choose a model",
         baseModel: "Base Model",
         finetunedModels: "Fine-tuned Models",
+        muModels: "MU Models",
         columns: {
             modelName: "Model Name",
             modelId: "Model ID",

@@ -54,22 +54,26 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
 
         // 转换为 ModelOption 格式
         const convertToModelOption = (item: ModelListItem): ModelOption => {
-          let category: 'base' | 'finetuned' = 'finetuned';
+          let category: 'base' | 'finetuned' | 'mu' = 'finetuned';
 
           // 根据 base_model_id 判断分类
           if (item.base_model_id === -1) {
             category = 'base';
           }
 
+          if (item.base_model_id === -2) {
+            category = 'mu';
+          }
+
           return {
             id: item.id.toString(),
             name: item.model_name,
-            baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
+            baseModel: category === 'mu' ? 'Predict Base Model' : (item.base_model_name || '-'),
             category,
           };
         };
 
-        const allModels = response.data.map(convertToModelOption);
+        const allModels = response.data.filter(item => item.base_model_id !== -1).map(convertToModelOption);
 
         if (allModels.length > 0) {
           setModelOptions(allModels);
@@ -221,7 +225,8 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 groupBy="category"
                 groupByLabel={{
                   'base': t('predictionTool.modelSelection.baseModel', 'Base Model'),
-                  'finetuned': t('predictionTool.modelSelection.finetunedModels', 'Fine-tuned Models')
+                  'finetuned': t('predictionTool.modelSelection.finetunedModels', 'Fine-tuned Models'),
+                  'mu': t('predictionTool.modelSelection.muModels', 'MU Models')
                 }}
                 columns={[
                   { key: 'name', title: t('predictionTool.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
