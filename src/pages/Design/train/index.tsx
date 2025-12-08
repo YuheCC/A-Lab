@@ -307,29 +307,38 @@ const DesignTrainPage: React.FC = () => {
             <div className="form-group">
               <label>{t('design.train.step2.benchmarkElectrolyte', 'Benchmark Electrolyte')}</label>
               <div className="electrolyte-input-group">
-                <input
-                  type="text"
-                  value={solvent}
-                  onChange={(e) => setSolvent(e.target.value)}
-                  placeholder={t('design.train.step2.solventPlaceholder', 'EC/EMC/DEC')}
-                  className="electrolyte-field"
-                />
+                <div className="electrolyte-field-wrapper">
+                  <label className="electrolyte-field-label">Solvent</label>
+                  <input
+                    type="text"
+                    value={solvent}
+                    onChange={(e) => setSolvent(e.target.value)}
+                    placeholder={t('design.train.step2.solventPlaceholder', 'EC/EMC/DEC')}
+                    className="electrolyte-field"
+                  />
+                </div>
                 <span className="electrolyte-separator">+</span>
-                <input
-                  type="text"
-                  value={salt}
-                  onChange={(e) => setSalt(e.target.value)}
-                  placeholder={t('design.train.step2.saltPlaceholder', '1M LiPF6/LiFSI')}
-                  className="electrolyte-field"
-                />
+                <div className="electrolyte-field-wrapper">
+                  <label className="electrolyte-field-label">Salt</label>
+                  <input
+                    type="text"
+                    value={salt}
+                    onChange={(e) => setSalt(e.target.value)}
+                    placeholder={t('design.train.step2.saltPlaceholder', '1M LiPF6/LiFSI')}
+                    className="electrolyte-field"
+                  />
+                </div>
                 <span className="electrolyte-separator">+</span>
-                <input
-                  type="text"
-                  value={additive}
-                  onChange={(e) => setAdditive(e.target.value)}
-                  placeholder={t('design.train.step2.additivePlaceholder', 'VC/LiDFP')}
-                  className="electrolyte-field"
-                />
+                <div className="electrolyte-field-wrapper">
+                  <label className="electrolyte-field-label">Additive</label>
+                  <input
+                    type="text"
+                    value={additive}
+                    onChange={(e) => setAdditive(e.target.value)}
+                    placeholder={t('design.train.step2.additivePlaceholder', 'VC/LiDFP')}
+                    className="electrolyte-field"
+                  />
+                </div>
               </div>
             </div>
             <div className="form-group">
