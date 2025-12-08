@@ -9,7 +9,7 @@ import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
-import { Activity, X } from 'lucide-react';
+import { Activity, X, RefreshCw } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
@@ -610,6 +610,13 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         <span>{t('predictionTool.models.filters.clearFilters', 'Clear Filters')}</span>
                       </button>
                     )}
+                    <button 
+                      className="predictiontool-refresh-button" 
+                      onClick={() => fetchModelsData(modelsCurrentPage)}
+                      aria-label={t('predictionTool.models.filters.refresh', 'Refresh')}
+                    >
+                      <RefreshCw size={16} />
+                    </button>
                   </div>
                   <div className="models-count-text">
                     {t('predictionTool.models.showingRecords', 'Showing {{count}} of {{total}} records', {

@@ -9,7 +9,7 @@ import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
-import { Activity, X } from 'lucide-react';
+import { Activity, X, RefreshCw } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
@@ -520,6 +520,13 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                     <span>{t('performance.models.filters.clearFilters', 'Clear Filters')}</span>
                   </button>
                 )}
+                <button 
+                  className="design-refresh-button" 
+                  onClick={() => fetchModelsData(modelsCurrentPage)}
+                  aria-label={t('performance.models.filters.refresh', 'Refresh')}
+                >
+                  <RefreshCw size={16} />
+                </button>
               </div>
               <div className="models-count-text">
                 {t('performance.models.showingRecords', '显示 {{count}} / {{total}} 条记录', {
