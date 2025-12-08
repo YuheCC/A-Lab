@@ -110,6 +110,36 @@ import { mockModelList, mockModelDetail } from './modelExample';
 // Namespace constant - used by all Design model training APIs
 const MODEL_NAMESPACE = 'cell_performance';
 
+// Model type name mapping for base models (base_model_id = -1)
+const BASE_MODEL_TYPE_MAP: Record<number, string> = {
+  1: 'Rate Performance',
+  2: 'Coulombic Efficiency',
+  3: 'Cycle Life',
+};
+
+/**
+ * Transform model name for base models based on model_type
+ * @param model Model data
+ * @returns Transformed model with mapped name
+ */
+const transformBaseModelName = <T extends { base_model_id?: number; model_type?: number; name?: string }>(
+  model: T
+): T => {
+  if (model.base_model_id === -1 && model.model_type && BASE_MODEL_TYPE_MAP[model.model_type]) {
+    return {
+      ...model,
+      model_name: BASE_MODEL_TYPE_MAP[model.model_type]
+    };
+  }
+  if (model.base_model_id && model.base_model_id > 0 && model.model_type && BASE_MODEL_TYPE_MAP[model.model_type]) {
+    return {
+      ...model,
+      base_model_name: BASE_MODEL_TYPE_MAP[model.model_type]
+    };
+  }
+  return model;
+};
+
 /**
  * Train a new model for Design
  * @param params Training parameters (without namespace, will be added automatically)
@@ -151,7 +181,14 @@ export const getModelList = async (
     ...params,
     namespace: MODEL_NAMESPACE,
   });
-  return response;
+
+  // Transform base model names
+  const transformedData = response.data.map(transformBaseModelName);
+
+  return {
+    ...response,
+    data: transformedData,
+  };
 };
 
 /**
@@ -172,7 +209,14 @@ export const getBaseModelList = async (
     namespace: MODEL_NAMESPACE,
     base_model_id: -1,
   });
-  return response;
+
+  // Transform base model names
+  const transformedData = response.data.map(transformBaseModelName);
+
+  return {
+    ...response,
+    data: transformedData,
+  };
 };
 
 /**
@@ -193,7 +237,14 @@ export const getMuModelList = async (
     namespace: MODEL_NAMESPACE,
     base_model_id: -2,
   });
-  return response;
+
+  // Transform base model names (won't affect mu models but keep consistent)
+  const transformedData = response.data.map(transformBaseModelName);
+
+  return {
+    ...response,
+    data: transformedData,
+  };
 };
 
 /**
@@ -213,7 +264,9 @@ export const getModelDetail = async (
     model_id: modelId,
     namespace: MODEL_NAMESPACE,
   });
-  return response;
+
+  // Transform base model name
+  return transformBaseModelName(response);
 };
 
 /**
