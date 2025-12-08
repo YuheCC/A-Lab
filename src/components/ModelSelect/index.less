@@ -51,10 +51,12 @@
 
     &:read-only {
       cursor: pointer;
+      pointer-events: none; // 只读时不拦截点击,让父容器处理
     }
 
     &:not(:read-only) {
       cursor: text;
+      pointer-events: auto; // 可编辑时需要拦截点击以便定位光标
     }
 
     &::placeholder {
@@ -63,6 +65,7 @@
 
     &:disabled {
       cursor: not-allowed;
+      pointer-events: none;
     }
   }
 
@@ -71,8 +74,8 @@
     color: @color-text-secondary;
     font-size: @font-size-xs;
     transition: transform @transition-fast;
-    cursor: pointer;
     user-select: none;
+    pointer-events: none; // 不拦截点击事件,让父容器处理
 
     .open & {
       transform: rotate(180deg);

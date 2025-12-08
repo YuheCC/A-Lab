@@ -245,11 +245,34 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
     }
   };
 
-  // 处理输入框点击
-  const handleInputClick = () => {
-    if (!disabled && !isOpen) {
-      setIsOpen(true);
+  // 处理触发器点击 - 整个区域都可点击
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    // 阻止事件冒泡
+    e.stopPropagation();
+
+    if (!disabled) {
+      setIsOpen(!isOpen);
+
+      // 如果打开下拉框且开启了搜索功能,聚焦到输入框
+      if (!isOpen && searchable) {
+        // 延迟聚焦,确保下拉框已打开
+        setTimeout(() => {
+          inputRef.current?.focus();
+          inputRef.current?.select();
+        }, 0);
+      }
     }
+  };
+
+  // 处理输入框点击 - 防止触发两次
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // 如果已经打开且可搜索,不做任何操作(让用户可以移动光标)
+    if (isOpen && searchable) {
+      return;
+    }
+    // 否则触发切换
+    handleToggle();
   };
 
   // 处理输入框变化
@@ -371,6 +394,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       <div
         className={`model-select__trigger ${disabled ? 'disabled' : ''} ${isOpen ? 'open' : ''}`}
         ref={triggerRef}
+        onClick={handleTriggerClick}
         role="combobox"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -389,7 +413,6 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
         />
         <span
           className="model-select__arrow"
-          onClick={handleToggle}
           role="button"
           aria-label="toggle dropdown"
         >
