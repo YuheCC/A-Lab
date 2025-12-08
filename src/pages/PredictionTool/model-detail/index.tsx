@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
+import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
 
 const ModelDetailPage: React.FC = () => {
@@ -385,7 +386,7 @@ const ModelDetailPage: React.FC = () => {
                   <div className="dataset-item">
                     <span className="dataset-label">{t('predictionTool.modelDetail.fileSize', 'File Size:')}</span>
                     <span className="dataset-value">
-                      {(file.size / 1024 / 1024).toFixed(1)} MB
+                      {formatFileSize(file.size)}
                     </span>
                   </div>
                 </div>
