@@ -104,6 +104,7 @@ export interface PredictionRecord {
 export interface ModelDetailResponse {
   id: string;
   model_name: string;
+  model_type?: number; // 1: ratePerformance, 2: ce, 3: cycleLife
   status: string;
   remark: string;
   created_at: string;
@@ -225,11 +226,18 @@ export interface ModelMetricsParams {
 
 /**
  * Metrics data for base or train
+ * 支持两种格式：
+ * 1. 直接数值：{ rmse: 0.5, r2: 0.8 }
+ * 2. 嵌套对象（model_type=2）：{ Accuracy: {0: 0.238}, F1_Score: {0: 0.192} }
  */
 export interface MetricsData {
   rmse?: number;
   r2?: number;
-  [key: string]: number | undefined;
+  Accuracy?: number | { [key: string]: number };
+  F1_Score?: number | { [key: string]: number };
+  Precision?: number | { [key: string]: number };
+  Recall?: number | { [key: string]: number };
+  [key: string]: number | { [key: string]: number } | undefined;
 }
 
 /**
