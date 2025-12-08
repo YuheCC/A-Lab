@@ -109,12 +109,12 @@ const ModelDetailPage: React.FC = () => {
   }, [modelId, t]);
 
   const handleBack = () => {
-    navigate('/prediction-tool', { state: { activeTab: 'models' } });
+    navigate('/predict', { state: { activeTab: 'models' } });
   };
 
   const handleViewRecord = (recordId?: string) => {
     if (!recordId) return;
-    navigate(`/prediction-tool/detail?id=${recordId}`);
+    navigate(`/predict/detail?id=${recordId}`);
   };
 
   const handleCloseSnackbar = () => {
