@@ -112,9 +112,95 @@ const DesignModelDetailPage: React.FC = () => {
     }
   };
 
-  const handleOfflineModel = () => {
-    // TODO: Implement offline API if available
-    alert(t('design.modelDetail.offlineNotImplemented', 'Offline functionality coming soon'));
+  const handleOfflineModel = async () => {
+    if (!model || !modelId) return;
+
+    // Check if it's a mock model
+    if (model && isMockModel(model)) {
+      alert(t('design.modelDetail.errors.cannotUndeployDemo', 'Cannot undeploy demo model'));
+      return;
+    }
+
+    if (!confirm(t('design.modelDetail.confirmUndeploy', 'Are you sure you want to undeploy this model?'))) {
+      return;
+    }
+
+    setIsUndeploying(true);
+
+    try {
+      await undeployModel(modelId);
+      alert(t('design.modelDetail.undeploySuccess', 'Model undeployed successfully!'));
+      // Refresh model detail
+      await fetchModelDetail(modelId);
+    } catch (err) {
+      console.error('Failed to undeploy model:', err);
+      const errorMessage = err instanceof Error ? err.message : t('design.modelDetail.errors.undeployFailed', 'Failed to undeploy model');
+      alert(errorMessage);
+    } finally {
+      setIsUndeploying(false);
+    }
+  };
+
+  const hasComparisonMetrics = (metricsData: ModelMetricsResponse | null): metricsData is { base: MetricsData; train: MetricsData } => {
+    return Boolean(metricsData?.base && metricsData?.train);
+  };
+
+  /**
+   * 从嵌套对象中提取数值
+   * 例如：{0: 0.192307692307692} -> 0.192307692307692
+   */
+  const extractNestedValue = (value: any): number | undefined => {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      // 取第一个键的值
+      const firstKey = Object.keys(value)[0];
+      if (firstKey !== undefined) {
+        const extractedValue = value[firstKey];
+        return typeof extractedValue === 'number' ? extractedValue : undefined;
+      }
+    }
+    return undefined;
+  };
+
+  const formatMetricValue = (value?: number | string | MetricsData | { [key: string]: number }) => {
+    if (value === null || value === undefined) return '--';
+
+    // 处理嵌套对象格式（model_type = 2）
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      const extractedValue = extractNestedValue(value);
+      if (extractedValue !== undefined) {
+        return extractedValue.toFixed(3);
+      }
+    }
+
+    const numericValue = Number(value as number);
+    if (Number.isFinite(numericValue)) {
+      return numericValue.toFixed(3);
+    }
+    return String(value);
+  };
+
+  const renderFlatMetrics = (metricsData: ModelMetricsResponse) => {
+    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
+    if (entries.length === 0) {
+      return (
+        <div className="info-card">
+          <p>{t('design.modelDetail.noMetrics', '暂无训练指标')}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="info-card training-results">
+        <div className="training-results-grid">
+          {entries.map(([key, value]) => (
+            <div className="result-card" key={key}>
+              <span className="result-label">{key.toUpperCase()}</span>
+              <span className="result-value">{formatMetricValue(value)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const getStatusLabel = (status: string) => {
@@ -361,37 +447,58 @@ const DesignModelDetailPage: React.FC = () => {
               </div>
             ) : metrics ? (
               hasComparisonMetrics(metrics) ? (
-                <div className="info-card training-results">
-                  {/* RMSE Section */}
-                  <div className="metric-section">
-                    <h3 className="metric-title">{t('design.modelDetail.rmse', 'RMSE')}</h3>
-                    <div className="metric-comparison">
-                      <div className="metric-box base-model">
-                        <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
-                        <div className="model-value">{formatMetricValue(metrics.base?.rmse)}</div>
-                      </div>
-                      <div className="metric-box new-model">
-                        <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
-                        <div className="model-value">{formatMetricValue(metrics.train?.rmse)}</div>
+                model.model_type === 2 ? (
+                  // model_type = 2: 显示 F1_Score（CE 模型）
+                  <div className="info-card training-results">
+                    {/* F1 Score Section */}
+                    <div className="metric-section">
+                      <h3 className="metric-title">F1 Score</h3>
+                      <div className="metric-comparison">
+                        <div className="metric-box base-model">
+                          <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.base?.F1_Score)}</div>
+                        </div>
+                        <div className="metric-box new-model">
+                          <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.train?.F1_Score)}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                ) : (
+                  // 其他 model_type: 显示 RMSE 和 R²
+                  <div className="info-card training-results">
+                    {/* RMSE Section */}
+                    <div className="metric-section">
+                      <h3 className="metric-title">{t('design.modelDetail.rmse', 'RMSE')}</h3>
+                      <div className="metric-comparison">
+                        <div className="metric-box base-model">
+                          <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.base?.rmse)}</div>
+                        </div>
+                        <div className="metric-box new-model">
+                          <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.train?.rmse)}</div>
+                        </div>
+                      </div>
+                    </div>
 
-                  {/* R² Section */}
-                  <div className="metric-section">
-                    <h3 className="metric-title">R²</h3>
-                    <div className="metric-comparison">
-                      <div className="metric-box base-model">
-                        <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
-                        <div className="model-value">{formatMetricValue(metrics.base?.r2)}</div>
-                      </div>
-                      <div className="metric-box new-model">
-                        <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
-                        <div className="model-value">{formatMetricValue(metrics.train?.r2)}</div>
+                    {/* R² Section */}
+                    <div className="metric-section">
+                      <h3 className="metric-title">R²</h3>
+                      <div className="metric-comparison">
+                        <div className="metric-box base-model">
+                          <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.base?.r2)}</div>
+                        </div>
+                        <div className="metric-box new-model">
+                          <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.train?.r2)}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )
               ) : (
                 renderFlatMetrics(metrics)
               )
