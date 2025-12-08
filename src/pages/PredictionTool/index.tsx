@@ -534,7 +534,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                               <td>{record.batteryCount}</td>
                               <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
                               <td>{record.model}</td>
-                              <td className="created-date">{formatDate(record.date)}</td>
+                              <td className="created-date">{record.date ? formatDate(record.date) : '-'}</td>
                               <td className="actions-cell">
                                 <button
                                   className="action-button view-button"
@@ -678,7 +678,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                     {statusInfo.text}
                                   </span>
                                 </td>
-                                <td className="created-date">{formatDate(model.created_at)}</td>
+                                <td className="created-date">{model.created_at ? formatDate(model.created_at) : '-'}</td>
                                 <td>{model.created_by_name}</td>
                               </tr>
                             );
