@@ -21,60 +21,11 @@ export const isMockRecord = (record: PerformanceHistoryItem | MockPerformanceHis
   return (record as MockPerformanceHistoryItem).isMock === true;
 };
 
-// Get performance history list with mock data fallback
+// Get performance history list with mock data fallback for not logged in users
 export const getHistoryList = async (params?: any): Promise<{ data: PerformanceHistoryResponse }> => {
-  try {
-    // Check if user is logged in
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock data');
-      return {
-        data: {
-          total: mockPerformanceHistory.length,
-          data: mockPerformanceHistory
-        }
-      };
-    }
-
-    // Try to fetch real data
-    const response = await getPerformanceHistoryList(params);
-
-    // Check if response is valid and has data
-    if (response?.data?.data && Array.isArray(response.data.data)) {
-      // If data is empty, merge with mock data
-      if (response.data.data.length === 0) {
-        console.log('No history data found, adding mock data');
-        return {
-          data: {
-            total: mockPerformanceHistory.length,
-            data: mockPerformanceHistory
-          }
-        };
-      }
-
-      // If we have real data, optionally merge with some mock data for demo
-      // Uncomment the following lines if you want to always show some mock data
-      // const combinedData = [...response.data.data, ...mockPerformanceHistory.slice(0, 2)];
-      // return {
-      //   data: {
-      //     total: combinedData.length,
-      //     data: combinedData
-      //   }
-      // };
-
-      return response;
-    }
-
-    // If response is invalid, return mock data
-    console.log('Invalid response, returning mock data');
-    return {
-      data: {
-        total: mockPerformanceHistory.length,
-        data: mockPerformanceHistory
-      }
-    };
-  } catch (error) {
-    console.error('Error fetching history list:', error);
-    // On error, return mock data
+  // Check if user is logged in
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock data');
     return {
       data: {
         total: mockPerformanceHistory.length,
@@ -82,71 +33,32 @@ export const getHistoryList = async (params?: any): Promise<{ data: PerformanceH
       }
     };
   }
+
+  // Fetch real data
+  const response = await getPerformanceHistoryList(params);
+  return response;
 };
 
-// Get performance history detail with mock data fallback
+// Get performance history detail with mock data fallback for not logged in users
 export const getHistoryDetail = async (id: number): Promise<{ data: PerformanceHistoryItem | MockPerformanceHistoryItem }> => {
-  try {
-    // Check if this is a mock record by finding it in mock data
-    const mockRecord = mockPerformanceHistory.find(item => item.id === id);
-    if (mockRecord && mockRecord.isMock) {
-      console.log('Returning mock detail for ID:', id);
+  // Check if user is logged in
+  if (!isUserLoggedIn()) {
+    const foundMockRecord = mockPerformanceHistory.find(item => item.id === id);
+    if (foundMockRecord) {
       return {
-        data: generateMockDetail(mockRecord)
+        data: generateMockDetail(foundMockRecord)
       };
     }
-
-    // Check if user is logged in
-    if (!isUserLoggedIn()) {
-      const foundMockRecord = mockPerformanceHistory.find(item => item.id === id);
-      if (foundMockRecord) {
-        return {
-          data: generateMockDetail(foundMockRecord)
-        };
-      }
-      throw new Error('Record not found');
-    }
-
-    // Try to fetch real detail
-    const response = await getPerformanceHistoryDetail(id);
-
-    if (response?.data) {
-      return response;
-    }
-
-    // If no data, try to find in mock data
-    const fallbackMockRecord = mockPerformanceHistory.find(item => item.id === id);
-    if (fallbackMockRecord) {
-      return {
-        data: generateMockDetail(fallbackMockRecord)
-      };
-    }
-
     throw new Error('Record not found');
-  } catch (error) {
-    console.error('Error fetching history detail:', error);
-
-    // Try to find in mock data as fallback
-    const errorMockRecord = mockPerformanceHistory.find(item => item.id === id);
-    if (errorMockRecord) {
-      return {
-        data: generateMockDetail(errorMockRecord)
-      };
-    }
-
-    throw error;
   }
+
+  // Fetch real detail
+  const response = await getPerformanceHistoryDetail(id);
+  return response;
 };
 
-// Delete performance history (mock records cannot be deleted)
+// Delete performance history
 export const deleteHistory = async (id: number): Promise<any> => {
-  // Check if this is a mock record by finding it in mock data
-  const mockRecord = mockPerformanceHistory.find(item => item.id === id);
-  if (mockRecord && mockRecord.isMock) {
-    console.log('Cannot delete mock record with ID:', id);
-    throw new Error('Cannot delete demo record');
-  }
-
   // Check if user is logged in
   if (!isUserLoggedIn()) {
     throw new Error('Please login to delete records');
@@ -224,35 +136,23 @@ export const trainModel = async (
 };
 
 /**
- * Get model list with mock data fallback
+ * Get model list with mock data fallback for not logged in users
  * @param params Query parameters (without namespace, will be added automatically)
  * @returns Promise<ModelListResponse> Model list with pagination
  */
 export const getModelList = async (
   params?: Omit<ModelListParams, 'namespace'>
 ): Promise<ModelListResponse> => {
-  try {
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock model data');
-      return { total: mockModelList.length, data: mockModelList };
-    }
-
-    const response = await getModelListAPI({
-      ...params,
-      namespace: MODEL_NAMESPACE,
-    });
-
-    if (response?.data && response.data.length > 0) {
-      return response;
-    }
-
-    // Return mock data when no data
-    console.log('No model data found, returning mock data');
-    return { total: mockModelList.length, data: mockModelList };
-  } catch (error) {
-    console.error('Get model list failed:', error);
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock model data');
     return { total: mockModelList.length, data: mockModelList };
   }
+
+  const response = await getModelListAPI({
+    ...params,
+    namespace: MODEL_NAMESPACE,
+  });
+  return response;
 };
 
 /**
@@ -263,28 +163,17 @@ export const getModelList = async (
 export const getBaseModelList = async (
   params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
 ): Promise<ModelListResponse> => {
-  try {
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock model data');
-      return { total: mockModelList.length, data: mockModelList };
-    }
-
-    const response = await getModelListAPI({
-      ...params,
-      namespace: MODEL_NAMESPACE,
-      base_model_id: -1,
-    });
-
-    if (response?.data && response.data.length > 0) {
-      return response;
-    }
-
-    console.log('No base model data found, returning mock data');
-    return { total: mockModelList.length, data: mockModelList };
-  } catch (error) {
-    console.error('Get base model list failed:', error);
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock model data');
     return { total: mockModelList.length, data: mockModelList };
   }
+
+  const response = await getModelListAPI({
+    ...params,
+    namespace: MODEL_NAMESPACE,
+    base_model_id: -1,
+  });
+  return response;
 };
 
 /**
@@ -295,63 +184,37 @@ export const getBaseModelList = async (
 export const getMuModelList = async (
   params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
 ): Promise<ModelListResponse> => {
-  try {
-    if (!isUserLoggedIn()) {
-      console.log('User not logged in, returning mock model data');
-      return { total: mockModelList.length, data: mockModelList };
-    }
-
-    const response = await getModelListAPI({
-      ...params,
-      namespace: MODEL_NAMESPACE,
-      base_model_id: -2,
-    });
-
-    if (response?.data && response.data.length > 0) {
-      return response;
-    }
-
-    console.log('No mu model data found, returning mock data');
-    return { total: mockModelList.length, data: mockModelList };
-  } catch (error) {
-    console.error('Get mu model list failed:', error);
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock model data');
     return { total: mockModelList.length, data: mockModelList };
   }
+
+  const response = await getModelListAPI({
+    ...params,
+    namespace: MODEL_NAMESPACE,
+    base_model_id: -2,
+  });
+  return response;
 };
 
 /**
- * Get model detail by ID with mock data fallback
+ * Get model detail by ID with mock data fallback for not logged in users
  * @param modelId Model ID to fetch
  * @returns Promise<ModelDetailResponse> Model detail information
  */
 export const getModelDetail = async (
   modelId: string
 ): Promise<ModelDetailResponse> => {
-  try {
-    // Check if it's mock data
-    const mockModel = mockModelList.find(item => item.id.toString() === modelId);
-    if (mockModel?.isMock) {
-      console.log('Returning mock model detail for ID:', modelId);
-      return mockModelDetail;
-    }
-
-    if (!isUserLoggedIn()) {
-      if (mockModel) return mockModelDetail;
-      throw new Error('Model not found');
-    }
-
-    const response = await getModelDetailAPI({
-      model_id: modelId,
-      namespace: MODEL_NAMESPACE,
-    });
-    return response;
-  } catch (error) {
-    console.error('Get model detail failed:', error);
-    // Fallback to mock
-    const mockModel = mockModelList.find(item => item.id.toString() === modelId);
-    if (mockModel) return mockModelDetail;
-    throw error;
+  if (!isUserLoggedIn()) {
+    console.log('User not logged in, returning mock model detail');
+    return mockModelDetail;
   }
+
+  const response = await getModelDetailAPI({
+    model_id: modelId,
+    namespace: MODEL_NAMESPACE,
+  });
+  return response;
 };
 
 /**
@@ -360,12 +223,6 @@ export const getModelDetail = async (
  * @returns Promise<any> Deploy result
  */
 export const deployModel = async (modelId: string): Promise<any> => {
-  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
-  if (mockModel?.isMock) {
-    console.log('Cannot deploy mock model with ID:', modelId);
-    throw new Error('Cannot deploy demo model');
-  }
-
   if (!isUserLoggedIn()) {
     throw new Error('Please login first');
   }
@@ -404,12 +261,6 @@ export const undeployModel = async (modelId: string): Promise<any> => {
  * @returns Promise<any> Remove result
  */
 export const removeModel = async (modelId: string): Promise<any> => {
-  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
-  if (mockModel?.isMock) {
-    console.log('Cannot delete mock model with ID:', modelId);
-    throw new Error('Cannot delete demo model');
-  }
-
   if (!isUserLoggedIn()) {
     throw new Error('Please login first');
   }

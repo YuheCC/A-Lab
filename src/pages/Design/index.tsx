@@ -10,7 +10,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X } from 'lucide-react';
-import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, isMockModel } from './model';
+import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import DesignIntroduction from './components/DesignIntroduction';
@@ -24,7 +24,6 @@ interface HistoryRecord {
   batterySystemId: number;
   temp25Count: number;
   temp45Count: number;
-  isMock?: boolean;
   rawData?: any;
 }
 
@@ -51,8 +50,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   // Models filter state
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
-  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('all');
-  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('all');
+  const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
+  const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
+  const [baseModelOptions, setBaseModelOptions] = useState<string[]>([]);
 
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
@@ -99,7 +99,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       batterySystemId: apiData.battery_system_id,
       temp25Count: apiData.temperature_25_label_0_count || 0,
       temp45Count: apiData.temperature_45_label_0_count || 0,
-      isMock: apiData.isMock || false,
       rawData: apiData
     };
   };
@@ -138,13 +137,13 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         params.keyword = modelSearchKeyword;
       }
 
-      // Add status filter if not 'all'
-      if (selectedModelStatus !== 'all') {
+      // Add status filter if selected
+      if (selectedModelStatus) {
         params.status = selectedModelStatus;
       }
 
-      // Add base model filter if not 'all'
-      if (selectedBaseModel !== 'all') {
+      // Add base model filter if selected
+      if (selectedBaseModel) {
         params.base_model_name = selectedBaseModel;
       }
 
@@ -179,10 +178,27 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModel]);
 
   useEffect(() => {
-    if (activeTab === 'models' && modelsCurrentPage > 1) {
+    if (activeTab === 'models') {
       fetchModelsData(modelsCurrentPage);
     }
   }, [modelsCurrentPage]);
+
+  // Fetch base model options from API
+  useEffect(() => {
+    const fetchBaseModelOptions = async () => {
+      try {
+        const response = await getBaseModelList({ page: 1, page_size: 100 });
+        const baseModelNames = response.data
+          .map(model => model.model_name)
+          .filter(Boolean);
+        setBaseModelOptions(baseModelNames);
+      } catch (err) {
+        console.error('Failed to fetch base model options:', err);
+        setBaseModelOptions([]);
+      }
+    };
+    fetchBaseModelOptions();
+  }, []);
 
   const handleNewDesign = () => {
     window.open('/design/create', '_blank');
@@ -197,12 +213,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   };
 
   const handleDeleteRecord = async (id: string) => {
-    const record = historyData.find(h => h.id === id);
-    if (record && record.isMock) {
-      alert(t('design.history.cannotDeleteDemo', 'Cannot delete demo records'));
-      return;
-    }
-
     if (!confirm(t('design.history.deleteConfirm', 'Are you sure you want to delete this record?'))) {
       return;
     }
@@ -237,8 +247,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
-    setSelectedModelStatus('all');
-    setSelectedBaseModel('all');
+    setSelectedModelStatus('');
+    setSelectedBaseModel('');
   };
 
   // Filter records data (currently no model field, so we'll just filter by keyword and date)
@@ -250,9 +260,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     // Since records don't have a model field yet, we'll ignore model filter for now
     return keywordMatch && dateMatch;
   });
-
-  // Get unique base models for filter options (from current page data)
-  const uniqueBaseModels = Array.from(new Set(modelsData.map(model => model.base_model_name).filter(Boolean)));
 
   return (
     <div className="design-tool-container">
@@ -394,14 +401,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                                 >
                                   {t('design.history.actions.viewDetails', 'View Details')}
                                 </button>
-                                {!record.isMock && (
-                                  <button
-                                    className="action-button delete-button"
-                                    onClick={() => handleDeleteRecord(record.id)}
-                                  >
-                                    {t('design.history.actions.delete', 'Delete')}
-                                  </button>
-                                )}
+                                <button
+                                  className="action-button delete-button"
+                                  onClick={() => handleDeleteRecord(record.id)}
+                                >
+                                  {t('design.history.actions.delete', 'Delete')}
+                                </button>
                               </td>
                             </tr>
                           ))
@@ -435,7 +440,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   value={selectedModelStatus}
                   onChange={(e) => setSelectedModelStatus(e.target.value)}
                 >
-                  <option value="all">{t('performance.models.filters.allStatus', '所有状态')}</option>
+                  <option value="" disabled hidden>{t('performance.models.filters.selectStatus', 'Select Status')}</option>
                   <option value="online">{t('performance.models.statusOnline', 'Online')}</option>
                   <option value="trained">{t('performance.models.statusTrained', 'Trained')}</option>
                   <option value="training">{t('performance.models.statusTraining', 'Training')}</option>
@@ -445,12 +450,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   value={selectedBaseModel}
                   onChange={(e) => setSelectedBaseModel(e.target.value)}
                 >
-                  <option value="all">{t('performance.models.filters.allBaseModels', '所有基础模型')}</option>
-                  {uniqueBaseModels.map((baseModel) => (
+                  <option value="" disabled hidden>{t('performance.models.filters.selectBaseModel', 'Select Base Model')}</option>
+                  {baseModelOptions.map((baseModel) => (
                     <option key={baseModel} value={baseModel}>{baseModel}</option>
                   ))}
                 </select>
-                {(modelSearchKeyword || selectedModelStatus !== 'all' || selectedBaseModel !== 'all') && (
+                {(modelSearchKeyword || selectedModelStatus || selectedBaseModel) && (
                   <button className="clear-filters-button" onClick={handleClearModelsFilters}>
                     <X size={16} />
                     <span>{t('performance.models.filters.clearFilters', 'Clear Filters')}</span>
@@ -496,13 +501,16 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         <tr key={model.id}>
                           <td className="record-id">DM-{String(model.id).padStart(6, '0')}</td>
                           <td className="file-name">
-                            <a
-                              className="model-name-link"
-                              onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
-                              style={{ cursor: 'pointer', color: '#00a63e', textDecoration: 'underline' }}
-                            >
-                              {model.model_name}
-                            </a>
+                            {model.base_model_id === -1 ? (
+                              <span className="model-name-text">{model.model_name}</span>
+                            ) : (
+                              <a
+                                className="model-name-link"
+                                onClick={() => navigate(`/design/model-detail?id=${model.id}`)}
+                              >
+                                {model.model_name}
+                              </a>
+                            )}
                           </td>
                           <td>{model.base_model_name}</td>
                           <td>

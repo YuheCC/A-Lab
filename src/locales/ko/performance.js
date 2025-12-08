@@ -252,6 +252,8 @@ export default {
       searchPlaceholder: "모델 ID 또는 이름으로 검색...",
       allStatus: "모든 상태",
       allBaseModels: "모든 기본 모델",
+      selectStatus: "상태 선택",
+      selectBaseModel: "기본 모델 선택",
       clearFilters: "필터 지우기",
       selectDate: "날짜 선택"
     },

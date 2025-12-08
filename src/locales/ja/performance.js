@@ -252,6 +252,8 @@ export default {
       searchPlaceholder: "モデルIDまたは名前で検索...",
       allStatus: "すべてのステータス",
       allBaseModels: "すべてのベースモデル",
+      selectStatus: "ステータスを選択",
+      selectBaseModel: "ベースモデルを選択",
       clearFilters: "フィルターをクリア",
       selectDate: "日付を選択"
     },
