@@ -253,11 +253,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
         // 根据 base_model_id 转换为 ModelOption 并设置分类
         const convertToModelOption = (item: ModelListItem): ModelOption => {
-          let category: 'base' | 'finetuned' = 'finetuned';
+          let category: 'base' | 'finetuned' | 'mu' = 'finetuned';
 
           // 根据 base_model_id 判断分类
           if (item.base_model_id === -1) {
             category = 'base';
+          }else if (item.base_model_id === -2) {
+            category = 'mu';
           }
 
           // 根据 model_type 映射 supportedMetrics
@@ -283,13 +285,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
           return {
             id: item.id.toString(),
             name: item.model_name,
-            baseModel: category === 'base' ? '-' : (item.base_model_name || '-'),
+            baseModel: category === 'mu' ? 'Cycle Life + Coulombic Efficiency + Rate Performance' : (item.base_model_name || '-'),
             category,
             supportedMetrics
           };
         };
 
-        const allModels = response.data.map(convertToModelOption);
+        const allModels = response.data.filter(item => item.base_model_id !== -1).map(convertToModelOption);
 
         if (allModels.length > 0) {
           setModelOptions(allModels);
@@ -933,12 +935,13 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               groupBy="category"
               groupByLabel={{
                 'base': t('performance.modelSelection.baseModel', 'Base Model'),
-                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models')
+                'finetuned': t('performance.modelSelection.finetunedModels', 'Fine-tuned Models'),
+                'mu': t('performance.modelSelection.muModels', 'Mu Models')
               }}
               columns={[
                 { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
-                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
-                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
+                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '20%' },
+                { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '40%' }
               ]}
               searchable
               pageSize={20}

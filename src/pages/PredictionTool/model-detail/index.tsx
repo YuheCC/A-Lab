@@ -13,7 +13,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
-import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse } from '@/services/model/training';
+import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import './index.less';
 
 const ModelDetailPage: React.FC = () => {
@@ -187,6 +187,43 @@ const ModelDetailPage: React.FC = () => {
       default:
         return status;
     }
+  };
+
+  const hasComparisonMetrics = (metricsData: ModelMetricsResponse | null): metricsData is { base: MetricsData; train: MetricsData } => {
+    return Boolean(metricsData?.base && metricsData?.train);
+  };
+
+  const formatMetricValue = (value?: number | string | MetricsData) => {
+    if (value === null || value === undefined) return '--';
+    const numericValue = Number(value as number);
+    if (Number.isFinite(numericValue)) {
+      return numericValue.toFixed(3);
+    }
+    return String(value);
+  };
+
+  const renderFlatMetrics = (metricsData: ModelMetricsResponse) => {
+    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
+    if (entries.length === 0) {
+      return (
+        <div className="info-card">
+          <p>{t('predictionTool.modelDetail.noMetrics', '暂无训练指标')}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="info-card training-results">
+        <div className="training-results-grid">
+          {entries.map(([key, value]) => (
+            <div className="result-card" key={key}>
+              <span className="result-label">{key.toUpperCase()}</span>
+              <span className="result-value">{formatMetricValue(value)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   // Show loading state
@@ -369,37 +406,41 @@ const ModelDetailPage: React.FC = () => {
               <p>{t('predictionTool.modelDetail.loadingText', 'Loading...')}</p>
             </div>
           ) : metrics ? (
-            <div className="info-card training-results">
-              {/* RMSE Section */}
-              <div className="metric-section">
-                <h3 className="metric-title">{t('predictionTool.modelDetail.rmse', 'RMSE')}</h3>
-                <div className="metric-comparison">
-                  <div className="metric-box base-model">
-                    <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
-                    <div className="model-value">{metrics.base.rmse.toFixed(3)}</div>
-                  </div>
-                  <div className="metric-box new-model">
-                    <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
-                    <div className="model-value">{metrics.train.rmse.toFixed(3)}</div>
+            hasComparisonMetrics(metrics) ? (
+              <div className="info-card training-results">
+                {/* RMSE Section */}
+                <div className="metric-section">
+                  <h3 className="metric-title">{t('predictionTool.modelDetail.rmse', 'RMSE')}</h3>
+                  <div className="metric-comparison">
+                    <div className="metric-box base-model">
+                      <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
+                      <div className="model-value">{formatMetricValue(metrics.base?.rmse)}</div>
+                    </div>
+                    <div className="metric-box new-model">
+                      <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
+                      <div className="model-value">{formatMetricValue(metrics.train?.rmse)}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* R² Section */}
-              <div className="metric-section">
-                <h3 className="metric-title">R²</h3>
-                <div className="metric-comparison">
-                  <div className="metric-box base-model">
-                    <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
-                    <div className="model-value">{metrics.base.r2.toFixed(3)}</div>
-                  </div>
-                  <div className="metric-box new-model">
-                    <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
-                    <div className="model-value">{metrics.train.r2.toFixed(3)}</div>
+                {/* R² Section */}
+                <div className="metric-section">
+                  <h3 className="metric-title">R²</h3>
+                  <div className="metric-comparison">
+                    <div className="metric-box base-model">
+                      <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>
+                      <div className="model-value">{formatMetricValue(metrics.base?.r2)}</div>
+                    </div>
+                    <div className="metric-box new-model">
+                      <div className="model-label">{t('predictionTool.modelDetail.newModelLabel', 'New Model')}</div>
+                      <div className="model-value">{formatMetricValue(metrics.train?.r2)}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              renderFlatMetrics(metrics)
+            )
           ) : (
             <div className="info-card">
               <p>{t('predictionTool.modelDetail.noMetrics', '暂无训练指标')}</p>

@@ -26,6 +26,7 @@ export default {
     placeholder: "Please select a prediction model",
     baseModel: "Base Model",
     finetunedModels: "Fine-tuned Models",
+    muModels: "Mu Models",
     columns: {
       modelName: "Model Name",
       modelId: "Model ID",
