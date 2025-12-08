@@ -8,9 +8,6 @@ import type { ModelListItem } from '@/services/model/training';
 import { useLoginModalContext } from '@/components/LoginModal/context';
 import './index.less';
 
-// Maximum number of files allowed
-const MAX_FILES = 50;
-
 const TrainPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -84,9 +81,9 @@ const TrainPage: React.FC = () => {
   const addFiles = (newFiles: File[]) => {
     // Filter valid files (check format only, no size limit)
     const validFiles = newFiles.filter((file) => {
-      // Check file format
+      // Check file format - only support Excel formats
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (!['csv', 'xlsx'].includes(ext || '')) {
+      if (!['xlsx', 'xls'].includes(ext || '')) {
         setSnackbar({
           open: true,
           message: t('predictionTool.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
@@ -97,26 +94,10 @@ const TrainPage: React.FC = () => {
       return true;
     });
 
-    // Check if adding files would exceed the limit
-    const totalFiles = files.length + validFiles.length;
-    if (totalFiles > MAX_FILES) {
-      setSnackbar({
-        open: true,
-        message: t('predictionTool.train.errors.maxFiles', 'Maximum {{max}} files allowed', { max: MAX_FILES }),
-        severity: 'error',
-      });
-      // Only add files up to the limit
-      const allowedCount = MAX_FILES - files.length;
-      if (allowedCount > 0) {
-        setFiles([...files, ...validFiles.slice(0, allowedCount)]);
-      }
-      return;
-    }
-
     // Avoid duplicate files (by name)
     const existingNames = new Set(files.map((f) => f.name));
     const uniqueFiles = validFiles.filter((f) => !existingNames.has(f.name));
-    
+
     if (uniqueFiles.length < validFiles.length) {
       setSnackbar({
         open: true,
@@ -296,21 +277,21 @@ const TrainPage: React.FC = () => {
                 {t('predictionTool.train.step3.upload', 'Upload Dataset')}
                 <span className="required">*</span>
                 <span className="prediction-train-file-count">
-                  ({files.length}/{MAX_FILES})
+                  ({files.length})
                 </span>
               </label>
               <div
-                className={`upload-area ${files.length >= MAX_FILES ? 'prediction-train-upload-disabled' : ''}`}
-                onDrop={files.length >= MAX_FILES ? undefined : handleDrop}
-                onDragOver={files.length >= MAX_FILES ? undefined : handleDragOver}
-                onClick={files.length >= MAX_FILES ? undefined : () => fileInputRef.current?.click()}
+                className="upload-area"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => fileInputRef.current?.click()}
               >
                 <input
                   type="file"
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
-                  accept=".csv,.xlsx"
+                  accept=".xlsx,.xls"
                   multiple
                 />
                 <div className="upload-icon">
@@ -320,9 +301,9 @@ const TrainPage: React.FC = () => {
                   {t('predictionTool.train.step3.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
                 </div>
                 <div className="upload-hint">
-                  {t('predictionTool.train.step3.formatsMultiple', 'Supported formats: CSV, XLSX (up to {{max}} files)', { max: MAX_FILES })}
+                  {t('predictionTool.train.step3.formats', 'Supported formats: XLSX')}
                 </div>
-                <button className="upload-btn" disabled={files.length >= MAX_FILES}>
+                <button className="upload-btn">
                   {t('predictionTool.train.step3.chooseFiles', 'Choose Files')}
                 </button>
               </div>
