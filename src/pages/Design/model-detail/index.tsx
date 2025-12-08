@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { getModelDetail, deployModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
+import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
 
 const DesignModelDetailPage: React.FC = () => {
@@ -336,7 +337,7 @@ const DesignModelDetailPage: React.FC = () => {
                     <div className="dataset-item">
                       <span className="dataset-label">{t('design.modelDetail.fileSize', 'File Size:')}</span>
                       <span className="dataset-value">
-                        {(file.size / 1024 / 1024).toFixed(1)} MB
+                        {formatFileSize(file.size)}
                       </span>
                     </div>
                   </div>
