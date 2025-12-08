@@ -12,7 +12,7 @@ import 'dayjs/locale/ko';
 import { Activity, X } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, isMockModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
 import './index.less';
@@ -95,14 +95,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     return {
       id: apiData.id.toString(),
       smiles: apiData.smiles || '',
-      date: new Date(normalizeServerDate(apiData.created_at)).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
+      date: formatUTCDateTime(apiData.created_at, { showSeconds: true }),
       batterySystemId: apiData.battery_system_id,
       temp25Count: apiData.temperature_25_label_0_count || 0,
       temp45Count: apiData.temperature_45_label_0_count || 0,
@@ -235,16 +228,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setActiveTab(tab);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const handleClearRecordsFilters = () => {
     setRecordSearchKeyword('');
@@ -403,7 +386,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                               <td className="smiles-cell">{record.smiles}</td>
                               <td>{record.temp25Count}</td>
                               <td>{record.temp45Count}</td>
-                              <td className="created-date">{formatDate(record.date)}</td>
+                              <td className="created-date">{record.date || '-'}</td>
                               <td className="actions-cell">
                                 <button
                                   className="action-button view-button"
@@ -536,13 +519,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             </span>
                           </td>
                           <td className="created-date">
-                            {new Date(model.created_at).toLocaleString('zh-CN', {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                            {formatUTCDateTime(model.created_at) || '-'}
                           </td>
                         </tr>
                       ))
