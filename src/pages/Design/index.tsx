@@ -83,11 +83,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
 
+  // 初始化时,如果URL没有tab参数,则设置默认值
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models')) {
+    if (!tabParam) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('tab');
+      newSearchParams.set('tab', activeTab);
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
@@ -240,6 +241,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
     setActiveTab(tab);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', tab);
+    setSearchParams(newSearchParams, { replace: true });
   };
 
 

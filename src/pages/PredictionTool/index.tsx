@@ -92,11 +92,18 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   const [activeTab, setActiveTab] = useState<'introduction' | 'records' | 'models'>(getInitialTab());
 
+  // 初始化时,如果URL没有tab参数且没有从state传递,则设置默认值
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && (tabParam === 'records' || tabParam === 'introduction' || tabParam === 'models')) {
+    const stateTab = (location.state as any)?.activeTab;
+    if (!tabParam && !stateTab) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('tab');
+      newSearchParams.set('tab', activeTab);
+      setSearchParams(newSearchParams, { replace: true });
+    } else if (stateTab && !tabParam) {
+      // 如果是从state传递的tab,同步到URL
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('tab', activeTab);
       setSearchParams(newSearchParams, { replace: true });
     }
   }, []);
@@ -270,10 +277,10 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   const handleTabChange = (tab: 'introduction' | 'records' | 'models') => {
     setActiveTab(tab);
-  };
-
-  const handleViewModelDetail = (modelId: number | string) => {
-    navigate(`/prediction-tool/model-detail?id=${modelId}`);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', tab);
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   const handleModelStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
