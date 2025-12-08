@@ -8,7 +8,7 @@ export interface ModelOption {
   id: string;
   name: string;
   baseModel: string;
-  category: 'base' | 'finetuned';
+  category: 'base' | 'finetuned' | 'mu';
   supportedMetrics: PerformanceMetricType[]; // 支持的性能指标配置
 }
 

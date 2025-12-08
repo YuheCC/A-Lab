@@ -207,16 +207,19 @@ export interface ModelMetricsParams {
  * Metrics data for base or train
  */
 export interface MetricsData {
-  rmse: number;
-  r2: number;
+  rmse?: number;
+  r2?: number;
+  [key: string]: number | undefined;
 }
 
 /**
  * Model metrics response
+ * 兼容新老格式：可能返回 { base, train } 对象，也可能直接返回 { MAE, MAPE, RMSE }
  */
 export interface ModelMetricsResponse {
-  base: MetricsData;
-  train: MetricsData;
+  base?: MetricsData;
+  train?: MetricsData;
+  [key: string]: number | MetricsData | undefined;
 }
 
 // ============= API Functions =============

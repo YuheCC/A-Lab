@@ -26,6 +26,7 @@ export default {
     placeholder: "予測モデルを選択してください",
     baseModel: "ベースモデル",
     finetunedModels: "ファインチューニングモデル",
+    muModels: "Mu モデル",
     columns: {
       modelName: "モデル名",
       modelId: "モデルID",

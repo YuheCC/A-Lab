@@ -26,6 +26,7 @@ export default {
     placeholder: "请选择预测模型",
     baseModel: "基础模型",
     finetunedModels: "微调模型",
+    muModels: "Mu 模型",
     columns: {
       modelName: "模型名称",
       modelId: "模型ID",
