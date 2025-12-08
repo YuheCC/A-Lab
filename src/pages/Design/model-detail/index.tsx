@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, FileText } from 'lucide-react';
-import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
+import { getModelDetail, deployModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
 import './index.less';
 
@@ -114,43 +114,6 @@ const DesignModelDetailPage: React.FC = () => {
   const handleOfflineModel = () => {
     // TODO: Implement offline API if available
     alert(t('design.modelDetail.offlineNotImplemented', 'Offline functionality coming soon'));
-  };
-
-  const hasComparisonMetrics = (metricsData: ModelMetricsResponse | null): metricsData is { base: MetricsData; train: MetricsData } => {
-    return Boolean(metricsData?.base && metricsData?.train);
-  };
-
-  const formatMetricValue = (value?: number | string | MetricsData) => {
-    if (value === null || value === undefined) return '--';
-    const numericValue = Number(value as number);
-    if (Number.isFinite(numericValue)) {
-      return numericValue.toFixed(3);
-    }
-    return String(value);
-  };
-
-  const renderFlatMetrics = (metricsData: ModelMetricsResponse) => {
-    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
-    if (entries.length === 0) {
-      return (
-        <div className="info-card">
-          <p>{t('design.modelDetail.noMetrics', '暂无训练指标')}</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="info-card training-results">
-        <div className="training-results-grid">
-          {entries.map(([key, value]) => (
-            <div className="result-card" key={key}>
-              <span className="result-label">{key.toUpperCase()}</span>
-              <span className="result-value">{formatMetricValue(value)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
   };
 
   const getStatusLabel = (status: string) => {

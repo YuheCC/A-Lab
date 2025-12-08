@@ -252,6 +252,8 @@ export default {
       searchPlaceholder: "搜索模型ID或名称...",
       allStatus: "所有状态",
       allBaseModels: "所有基础模型",
+      selectStatus: "选择状态",
+      selectBaseModel: "选择基础模型",
       clearFilters: "清除筛选",
       selectDate: "选择日期"
     },

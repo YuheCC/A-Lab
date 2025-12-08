@@ -252,6 +252,8 @@ export default {
       searchPlaceholder: "Search Model ID or Name...",
       allStatus: "All Status",
       allBaseModels: "All Base Models",
+      selectStatus: "Select Status",
+      selectBaseModel: "Select Base Model",
       clearFilters: "Clear Filters",
       selectDate: "Select date"
     },
