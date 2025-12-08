@@ -44,7 +44,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     const fetchModelOptions = async () => {
       setIsModelLoading(true);
       try {
-        const response = await getModelList({ page_size: 100 });
+        const response = await getModelList({ page_size: 100, status: 'online' });
 
         if (!response?.data || response.data.length === 0) {
           console.log('No model data found');

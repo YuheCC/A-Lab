@@ -238,8 +238,8 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     const fetchModelOptions = async () => {
       setIsModelLoading(true);
       try {
-        // 获取完整的 100 条模型数据
-        const response = await getModelList({ page_size: 100 });
+        // 获取完整的 100 条模型数据,只获取在线状态的模型
+        const response = await getModelList({ page_size: 100, status: 'online' });
 
         if (!response?.data || response.data.length === 0) {
           console.log('No model data found, using mock data');
