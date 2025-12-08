@@ -941,7 +941,12 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
               }}
               columns={[
                 { key: 'name', title: t('performance.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
-                { key: 'id', title: t('performance.modelSelection.columns.modelId', 'Model ID'), width: '20%' },
+                {
+                  key: 'id',
+                  title: t('performance.modelSelection.columns.modelId', 'Model ID'),
+                  width: '20%',
+                  render: (value: any) => `DM-${String(value).padStart(6, '0')}`
+                },
                 { key: 'baseModel', title: t('performance.modelSelection.columns.baseModel', 'Base Model'), width: '40%' }
               ]}
               searchable
