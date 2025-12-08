@@ -10,7 +10,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X } from 'lucide-react';
-import { getHistoryList, deleteHistory, getModelList, isMockModel } from './model';
+import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
 import Pagination from '@/components/Pagination';
@@ -73,6 +73,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
   const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
+  const [selectedBaseModelId, setSelectedBaseModelId] = useState<number | undefined>(undefined);
+  const [baseModelOptions, setBaseModelOptions] = useState<Array<{ id: number; name: string }>>([]);
 
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
@@ -149,7 +151,27 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setModelsError(null);
 
     try {
-      const response = await getModelList({ page, page_size: modelsPageSize });
+      const params: any = {
+        page,
+        page_size: modelsPageSize,
+      };
+
+      // Add search keyword if provided
+      if (modelSearchKeyword) {
+        params.keyword = modelSearchKeyword;
+      }
+
+      // Add status filter if selected
+      if (selectedModelStatus) {
+        params.status = selectedModelStatus;
+      }
+
+      // Add base_model_id filter if selected
+      if (selectedBaseModelId !== undefined) {
+        params.base_model_id = selectedBaseModelId;
+      }
+
+      const response = await getModelList(params);
       setModelsData(response.data);
       setModelsTotal(response.total);
     } catch (err) {
@@ -162,13 +184,48 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     }
   };
 
+  // Fetch base model options from API
+  useEffect(() => {
+    const fetchBaseModelOptions = async () => {
+      try {
+        const response = await getBaseModelList({ page: 1, page_size: 100 });
+        const options = response.data
+          .map(model => ({
+            id: model.id,
+            name: model.model_name
+          }))
+          .filter(option => option.name);
+        setBaseModelOptions(options);
+      } catch (err) {
+        console.error('Failed to fetch base model options:', err);
+        setBaseModelOptions([]);
+      }
+    };
+    fetchBaseModelOptions();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'models') {
+      // Reset to page 1 when filters change
+      if (modelsCurrentPage === 1) {
+        fetchModelsData(1);
+      } else {
+        setModelsCurrentPage(1);
+      }
+    }
+  }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModelId]);
+
+  useEffect(() => {
+    if (activeTab === 'models') {
+      fetchModelsData(modelsCurrentPage);
+    }
+  }, [modelsCurrentPage]);
+
   useEffect(() => {
     if (activeTab === 'records') {
       fetchHistoryData(currentPage);
-    } else if (activeTab === 'models') {
-      fetchModelsData(modelsCurrentPage);
     }
-  }, [activeTab, currentPage, modelsCurrentPage]);
+  }, [activeTab, currentPage]);
 
   const handleNewPrediction = () => {
     window.open('/predict/create', '_blank');
@@ -221,27 +278,26 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
 
   const handleModelStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedModelStatus(e.target.value);
-    setModelsCurrentPage(1);
+  };
+
+  const handleBaseModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    setSelectedBaseModel(selectedValue);
+
+    if (selectedValue) {
+      const selectedOption = baseModelOptions.find(option => option.name === selectedValue);
+      setSelectedBaseModelId(selectedOption?.id);
+    } else {
+      setSelectedBaseModelId(undefined);
+    }
   };
 
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
     setSelectedModelStatus('');
     setSelectedBaseModel('');
+    setSelectedBaseModelId(undefined);
   };
-
-  // Get unique base models from data
-  const uniqueBaseModels = Array.from(new Set(modelsData.map(model => model.base_model).filter(Boolean)));
-
-  // Filter models data
-  const filteredModelsData = modelsData.filter((model) => {
-    const keywordMatch = !modelSearchKeyword ||
-      model.model_name.toLowerCase().includes(modelSearchKeyword.toLowerCase()) ||
-      String(model.id).includes(modelSearchKeyword);
-    const statusMatch = !selectedModelStatus || model.status === selectedModelStatus;
-    const baseModelMatch = !selectedBaseModel || model.base_model === selectedBaseModel;
-    return keywordMatch && statusMatch && baseModelMatch;
-  });
 
   // Filter records data
   const filteredHistoryData = historyData.filter((record) => {
@@ -540,12 +596,12 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                     <select
                       className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
                       value={selectedBaseModel}
-                      onChange={(e) => setSelectedBaseModel(e.target.value)}
+                      onChange={handleBaseModelChange}
                       aria-label={t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}
                     >
                       <option value="" disabled selected hidden>{t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}</option>
-                      {uniqueBaseModels.map((baseModel) => (
-                        <option key={baseModel} value={baseModel}>{baseModel}</option>
+                      {baseModelOptions.map((option) => (
+                        <option key={option.id} value={option.name}>{option.name}</option>
                       ))}
                     </select>
                     {(modelSearchKeyword || selectedModelStatus || selectedBaseModel) && (
@@ -557,8 +613,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                   </div>
                   <div className="models-count-text">
                     {t('predictionTool.models.showingRecords', 'Showing {{count}} of {{total}} records', {
-                      count: filteredModelsData.length,
-                      total: modelsData.length
+                      count: modelsData.length,
+                      total: modelsTotal
                     })}
                   </div>
                   <div className="records-table-wrapper">
@@ -574,14 +630,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredModelsData.length === 0 ? (
+                        {modelsData.length === 0 ? (
                           <tr>
                             <td colSpan={7} className="no-data">
                               {t('predictionTool.models.noResults', 'No models found.')}
                             </td>
                           </tr>
                         ) : (
-                          filteredModelsData.map((model) => {
+                          modelsData.map((model) => {
                             const statusInfo = getStatusLabel(model.status);
                             const isBaseModel = model.base_model_id === -1;
                             return (
