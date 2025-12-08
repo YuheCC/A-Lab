@@ -52,7 +52,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [modelSearchKeyword, setModelSearchKeyword] = useState<string>('');
   const [selectedModelStatus, setSelectedModelStatus] = useState<string>('');
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>('');
-  const [baseModelOptions, setBaseModelOptions] = useState<string[]>([]);
+  const [selectedBaseModelId, setSelectedBaseModelId] = useState<number | undefined>(undefined);
+  const [baseModelOptions, setBaseModelOptions] = useState<Array<{ id: number; name: string }>>([]);
 
   // Records filter state
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
@@ -142,9 +143,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         params.status = selectedModelStatus;
       }
 
-      // Add base model filter if selected
-      if (selectedBaseModel) {
-        params.base_model_name = selectedBaseModel;
+      // Add base_model_id filter if selected
+      if (selectedBaseModelId !== undefined) {
+        params.base_model_id = selectedBaseModelId;
       }
 
       const response = await getModelListFromModel(params);
@@ -175,7 +176,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
         setModelsCurrentPage(1);
       }
     }
-  }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModel]);
+  }, [activeTab, modelSearchKeyword, selectedModelStatus, selectedBaseModelId]);
 
   useEffect(() => {
     if (activeTab === 'models') {
@@ -188,10 +189,13 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     const fetchBaseModelOptions = async () => {
       try {
         const response = await getBaseModelList({ page: 1, page_size: 100 });
-        const baseModelNames = response.data
-          .map(model => model.model_name)
-          .filter(Boolean);
-        setBaseModelOptions(baseModelNames);
+        const options = response.data
+          .map(model => ({
+            id: model.id,
+            name: model.model_name
+          }))
+          .filter(option => option.name);
+        setBaseModelOptions(options);
       } catch (err) {
         console.error('Failed to fetch base model options:', err);
         setBaseModelOptions([]);
@@ -245,10 +249,23 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setRecordSelectedDate('');
   };
 
+  const handleBaseModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    setSelectedBaseModel(selectedValue);
+
+    if (selectedValue) {
+      const selectedOption = baseModelOptions.find(option => option.name === selectedValue);
+      setSelectedBaseModelId(selectedOption?.id);
+    } else {
+      setSelectedBaseModelId(undefined);
+    }
+  };
+
   const handleClearModelsFilters = () => {
     setModelSearchKeyword('');
     setSelectedModelStatus('');
     setSelectedBaseModel('');
+    setSelectedBaseModelId(undefined);
   };
 
   // Filter records data (currently no model field, so we'll just filter by keyword and date)
@@ -490,11 +507,11 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                 <select
                   className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
                   value={selectedBaseModel}
-                  onChange={(e) => setSelectedBaseModel(e.target.value)}
+                  onChange={handleBaseModelChange}
                 >
                   <option value="" disabled selected hidden>{t('performance.models.filters.selectBaseModel', 'Select Base Model')}</option>
-                  {baseModelOptions.map((baseModel) => (
-                    <option key={baseModel} value={baseModel}>{baseModel}</option>
+                  {baseModelOptions.map((option) => (
+                    <option key={option.id} value={option.name}>{option.name}</option>
                   ))}
                 </select>
                 {(modelSearchKeyword || selectedModelStatus || selectedBaseModel) && (
