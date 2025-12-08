@@ -225,7 +225,12 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 }}
                 columns={[
                   { key: 'name', title: t('predictionTool.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
-                  { key: 'id', title: t('predictionTool.modelSelection.columns.modelId', 'Model ID'), width: '30%' },
+                  {
+                    key: 'id',
+                    title: t('predictionTool.modelSelection.columns.modelId', 'Model ID'),
+                    width: '30%',
+                    render: (value: any) => `PM-${String(value).padStart(6, '0')}`
+                  },
                   { key: 'baseModel', title: t('predictionTool.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
                 ]}
                 searchable

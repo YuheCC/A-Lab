@@ -656,7 +656,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                             const isBaseModel = model.base_model_id === -1 || model.base_model_id === -2;
                             return (
                               <tr key={model.id}>
-                                <td className="record-id">M-{String(model.id).padStart(6, '0')}</td>
+                                <td className="record-id">PM-{String(model.id).padStart(6, '0')}</td>
                                 <td className="file-name">
                                   {isBaseModel ? (
                                     <span>{model.model_name}</span>
