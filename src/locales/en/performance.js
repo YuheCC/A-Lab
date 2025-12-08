@@ -26,7 +26,7 @@ export default {
     placeholder: "Please select a prediction model",
     baseModel: "Base Model",
     finetunedModels: "Fine-tuned Models",
-    muModels: "Mu Models",
+    muModels: "MU Models",
     columns: {
       modelName: "Model Name",
       modelId: "Model ID",
@@ -247,6 +247,7 @@ export default {
     showingRecords: "Showing {{count}} of {{total}} records",
     statusOnline: "Online",
     statusTrained: "Trained",
+    statusOffline: "Offline",
     statusTraining: "Training",
     filters: {
       searchPlaceholder: "Search Model ID or Name...",

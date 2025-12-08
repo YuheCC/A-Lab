@@ -81,6 +81,7 @@ export default {
 
     // Tabs
     tabs: {
+        tool: "Prediction Tool",
         introduction: "Introduction",
         records: "Records",
         models: "Models"

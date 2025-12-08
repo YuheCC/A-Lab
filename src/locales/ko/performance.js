@@ -26,7 +26,7 @@ export default {
     placeholder: "예측 모델을 선택하세요",
     baseModel: "기본 모델",
     finetunedModels: "미세 조정 모델",
-    muModels: "Mu 모델",
+    muModels: "MU 모델",
     columns: {
       modelName: "모델 이름",
       modelId: "모델 ID",
@@ -247,6 +247,7 @@ export default {
     showingRecords: "{{count}}개 / {{total}}개 표시 중",
     statusOnline: "온라인",
     statusTrained: "훈련됨",
+    statusOffline: "오프라인",
     statusTraining: "훈련 중",
     filters: {
       searchPlaceholder: "모델 ID 또는 이름으로 검색...",
