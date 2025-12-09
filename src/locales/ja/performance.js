@@ -249,6 +249,7 @@ export default {
     statusTrained: "訓練済み",
     statusOffline: "オフライン",
     statusTraining: "訓練中",
+    statusFail: "失敗",
     filters: {
       searchPlaceholder: "モデルIDまたは名前で検索...",
       allStatus: "すべてのステータス",

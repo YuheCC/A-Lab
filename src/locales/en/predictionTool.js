@@ -258,6 +258,7 @@ export default {
         statusOnline: "Online",
         statusTrained: "Trained",
         statusTraining: "Training",
+        statusFail: "Failed",
         filters: {
             searchPlaceholder: "Search Model ID or Name...",
             allStatus: "All Status",
@@ -290,6 +291,7 @@ export default {
         statusOnline: "Online",
         statusTrained: "Trained",
         statusTraining: "Training",
+        statusFail: "Failed",
         created: "Created:",
         remarks: "Remarks:",
         baseModel: "Base Model",

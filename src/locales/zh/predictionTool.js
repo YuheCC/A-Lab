@@ -258,6 +258,7 @@ export default {
         statusOnline: "上线",
         statusTrained: "训练完成",
         statusTraining: "训练中",
+        statusFail: "失败",
         filters: {
             searchPlaceholder: "搜索模型ID或名称...",
             allStatus: "所有状态",
@@ -290,6 +291,7 @@ export default {
         statusOnline: "上线",
         statusTrained: "训练完成",
         statusTraining: "训练中",
+        statusFail: "失败",
         created: "创建时间：",
         remarks: "备注：",
         baseModel: "基础模型",

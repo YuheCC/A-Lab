@@ -508,6 +508,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   <option value="trained">{t('performance.models.statusTrained', 'Trained')}</option>
                   <option value="offline">{t('performance.models.statusOffline', 'Offline')}</option>
                   <option value="training">{t('performance.models.statusTraining', 'Training')}</option>
+                  <option value="fail">{t('performance.models.statusFail', 'Failed')}</option>
                 </select>
                 <select
                   className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
@@ -588,10 +589,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             <span style={{
                               backgroundColor: model.status === 'online' ? '#dcfce7' :
                                              model.status === 'trained' ? '#e0e7ff' :
-                                             model.status === 'offline' ? '#e0e7ff' : '#fef3c7',
+                                             model.status === 'offline' ? '#e0e7ff' :
+                                             model.status === 'fail' ? '#fee2e2' : '#fef3c7',
                               color: model.status === 'online' ? '#008236' :
                                      model.status === 'trained' ? '#4338ca' :
-                                     model.status === 'offline' ? '#4338ca' : '#92400e',
+                                     model.status === 'offline' ? '#4338ca' :
+                                     model.status === 'fail' ? '#991b1b' : '#92400e',
                               padding: '2px 8px',
                               borderRadius: '4px',
                               fontSize: '14px'
@@ -599,6 +602,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                               {model.status === 'online' ? t('performance.models.statusOnline', 'Online') :
                                model.status === 'trained' ? t('performance.models.statusTrained', 'Trained') :
                                model.status === 'offline' ? t('performance.models.statusOffline', 'Offline') :
+                               model.status === 'fail' ? t('performance.models.statusFail', 'Failed') :
                                t('performance.models.statusTraining', 'Training')}
                             </span>
                           </td>

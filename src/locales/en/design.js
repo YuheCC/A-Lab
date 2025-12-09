@@ -83,6 +83,7 @@ export default {
         statusOnline: "Online",
         statusTrained: "Trained",
         statusTraining: "Training",
+        statusFail: "Failed",
         created: "Created:",
         remarks: "Remarks:",
         baseModel: "Base Model",

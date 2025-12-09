@@ -347,6 +347,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
         return { text: t('predictionTool.models.statusTraining', 'Training'), color: '#fef3c7', textColor: '#92400e' };
       case 'offline':
         return { text: t('predictionTool.models.statusOffline', 'Offline'), color: '#f3f4f6', textColor: '#6b7280' };
+      case 'fail':
+        return { text: t('predictionTool.models.statusFail', 'Failed'), color: '#fee2e2', textColor: '#991b1b' };
       default:
         return { text: status, color: '#f3f4f6', textColor: '#374151' };
     }
@@ -599,6 +601,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       <option value="trained">{t('predictionTool.models.statusTrained', 'Trained')}</option>
                       <option value="training">{t('predictionTool.models.statusTraining', 'Training')}</option>
                       <option value="offline">{t('predictionTool.models.statusOffline', 'Offline')}</option>
+                      <option value="fail">{t('predictionTool.models.statusFail', 'Failed')}</option>
                     </select>
                     <select
                       className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}

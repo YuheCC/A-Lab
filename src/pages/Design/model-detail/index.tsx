@@ -274,6 +274,8 @@ const DesignModelDetailPage: React.FC = () => {
         return t('design.modelDetail.statusOffline', 'Offline');
       case 'training':
         return t('design.modelDetail.statusTraining', 'Training');
+      case 'fail':
+        return t('design.modelDetail.statusFail', 'Failed');
       default:
         return status;
     }
@@ -464,7 +466,7 @@ const DesignModelDetailPage: React.FC = () => {
         )}
 
         {/* Training Dataset */}
-        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
+        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online' || model.status === 'fail') && (
           <div className="detail-section">
             <h2 className="section-title">{t('design.modelDetail.trainingFiles', 'Training Dataset')}</h2>
             {loadingFiles ? (
@@ -499,7 +501,7 @@ const DesignModelDetailPage: React.FC = () => {
         )}
 
         {/* Training Results */}
-        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
+        {(model.status === 'trained' || model.status === 'offline' || model.status === 'online' || model.status === 'fail') && (
           <div className="detail-section">
             <h2 className="section-title">{t('design.modelDetail.trainingMetrics', 'Training Results')}</h2>
             {loadingMetrics ? (

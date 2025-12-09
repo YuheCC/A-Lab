@@ -249,6 +249,7 @@ export default {
     statusTrained: "훈련됨",
     statusOffline: "오프라인",
     statusTraining: "훈련 중",
+    statusFail: "실패",
     filters: {
       searchPlaceholder: "모델 ID 또는 이름으로 검색...",
       allStatus: "모든 상태",

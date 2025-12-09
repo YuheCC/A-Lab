@@ -258,6 +258,7 @@ export default {
         statusOnline: "オンライン",
         statusTrained: "トレーニング済み",
         statusTraining: "トレーニング中",
+        statusFail: "失敗",
         filters: {
             searchPlaceholder: "モデルIDまたは名前で検索...",
             allStatus: "すべてのステータス",
@@ -290,6 +291,7 @@ export default {
         statusOnline: "オンライン",
         statusTrained: "トレーニング済み",
         statusTraining: "トレーニング中",
+        statusFail: "失敗",
         created: "作成日時：",
         remarks: "備考：",
         baseModel: "ベースモデル",
