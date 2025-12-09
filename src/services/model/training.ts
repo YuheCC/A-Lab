@@ -208,9 +208,11 @@ export interface ModelMetricsParams {
 
 /**
  * Metrics data for base or train
- * 支持两种格式：
+ * 支持三种格式：
  * 1. 直接数值：{ rmse: 0.5, r2: 0.8 }
  * 2. 嵌套对象（model_type=2）：{ Accuracy: {0: 0.238}, F1_Score: {0: 0.192} }
+ * 3. 数组格式：{ MAE: [27.83, 39.47], MAPE: [0.108, 0.128], RMSE: [28.37, 51.19] }
+ *    数组中索引 0 代表训练前，索引 1 代表训练后
  */
 export interface MetricsData {
   rmse?: number;
@@ -219,7 +221,10 @@ export interface MetricsData {
   F1_Score?: number | { [key: string]: number };
   Precision?: number | { [key: string]: number };
   Recall?: number | { [key: string]: number };
-  [key: string]: number | { [key: string]: number } | undefined;
+  MAE?: number | number[];
+  MAPE?: number | number[];
+  RMSE?: number | number[];
+  [key: string]: number | number[] | { [key: string]: number } | undefined;
 }
 
 /**

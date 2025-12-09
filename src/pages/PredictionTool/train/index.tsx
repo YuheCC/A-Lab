@@ -83,7 +83,7 @@ const TrainPage: React.FC = () => {
     const validFiles = newFiles.filter((file) => {
       // Check file format - only support Excel formats
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (!['xlsx', 'xls'].includes(ext || '')) {
+      if (!['xlsx', 'xls', 'csv'].includes(ext || '')) {
         setSnackbar({
           open: true,
           message: t('predictionTool.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
@@ -291,7 +291,7 @@ const TrainPage: React.FC = () => {
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
-                  accept=".xlsx,.xls"
+                  accept=".xlsx,.xls,.csv"
                   multiple
                 />
                 <div className="upload-icon">
@@ -301,7 +301,7 @@ const TrainPage: React.FC = () => {
                   {t('predictionTool.train.step3.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
                 </div>
                 <div className="upload-hint">
-                  {t('predictionTool.train.step3.formats', 'Supported formats: XLSX')}
+                  {t('predictionTool.train.step3.formats', 'Supported formats: CSV, XLSX')}
                 </div>
                 <button className="upload-btn">
                   {t('predictionTool.train.step3.chooseFiles', 'Choose Files')}

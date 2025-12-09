@@ -196,6 +196,16 @@ const ModelDetailPage: React.FC = () => {
     return Boolean(metricsData?.base && metricsData?.train);
   };
 
+  /**
+   * 检测 metrics 是否为数组格式
+   * 数组格式：{ MAE: [27.83, 39.47], MAPE: [0.108, 0.128], RMSE: [28.37, 51.19] }
+   */
+  const hasArrayMetrics = (metricsData: ModelMetricsResponse | null): boolean => {
+    if (!metricsData) return false;
+    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
+    return entries.length > 0 && entries.some(([, value]) => Array.isArray(value));
+  };
+
   const formatMetricValue = (value?: number | string | MetricsData) => {
     if (value === null || value === undefined) return '--';
     const numericValue = Number(value as number);
@@ -225,6 +235,41 @@ const ModelDetailPage: React.FC = () => {
             </div>
           ))}
         </div>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染数组格式的训练结果
+   * 数组格式：{ MAE: [27.83, 39.47], MAPE: [0.108, 0.128], RMSE: [28.37, 51.19] }
+   * 索引 0 = 训练前，索引 1 = 训练后
+   */
+  const renderArrayMetrics = (metricsData: ModelMetricsResponse) => {
+    const entries = Object.entries(metricsData).filter(([key]) => key !== 'base' && key !== 'train');
+
+    return (
+      <div className="info-card training-results">
+        {entries.map(([key, value]) => {
+          if (!Array.isArray(value) || value.length !== 2) {
+            return null;
+          }
+
+          return (
+            <div className="metric-section" key={key}>
+              <h3 className="metric-title">{key.toUpperCase()}</h3>
+              <div className="metric-comparison">
+                <div className="metric-box base-model">
+                  <div className="model-label">{t('predictionTool.modelDetail.beforeTraining', '训练前')}</div>
+                  <div className="model-value">{value[0].toFixed(3)}</div>
+                </div>
+                <div className="metric-box new-model">
+                  <div className="model-label">{t('predictionTool.modelDetail.afterTraining', '训练后')}</div>
+                  <div className="model-value">{value[1].toFixed(3)}</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -409,7 +454,10 @@ const ModelDetailPage: React.FC = () => {
               <p>{t('predictionTool.modelDetail.loadingText', 'Loading...')}</p>
             </div>
           ) : metrics ? (
-            hasComparisonMetrics(metrics) ? (
+            // 优先检测数组格式
+            hasArrayMetrics(metrics) ? (
+              renderArrayMetrics(metrics)
+            ) : hasComparisonMetrics(metrics) ? (
               <div className="info-card training-results">
                 {/* RMSE Section */}
                 <div className="metric-section">
