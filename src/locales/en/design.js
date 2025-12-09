@@ -8,7 +8,7 @@ export default {
             totalPositive: 'Total Positive',
             temp25: '25°C Positive',
             temp45: '45°C Positive',
-            created: 'Created',
+            created: 'Created Time',
             actions: 'Actions'
         }
     },
