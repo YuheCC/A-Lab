@@ -249,6 +249,7 @@ export default {
     statusTrained: "训练完成",
     statusOffline: "下线",
     statusTraining: "训练中",
+    statusFail: "失败",
     filters: {
       searchPlaceholder: "搜索模型ID或名称...",
       allStatus: "所有状态",

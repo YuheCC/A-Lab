@@ -258,6 +258,7 @@ export default {
         statusOnline: "온라인",
         statusTrained: "학습 완료",
         statusTraining: "학습 중",
+        statusFail: "실패",
         filters: {
             searchPlaceholder: "모델 ID 또는 이름 검색...",
             allStatus: "모든 상태",
@@ -290,6 +291,7 @@ export default {
         statusOnline: "온라인",
         statusTrained: "학습 완료",
         statusTraining: "학습 중",
+        statusFail: "실패",
         created: "생성 시간:",
         remarks: "비고:",
         baseModel: "기본 모델",

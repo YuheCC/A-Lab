@@ -210,6 +210,8 @@ const ModelDetailPage: React.FC = () => {
         return t('predictionTool.modelDetail.statusOffline');
       case 'training':
         return t('predictionTool.modelDetail.statusTraining');
+      case 'fail':
+        return t('predictionTool.modelDetail.statusFail');
       default:
         return status;
     }
@@ -434,7 +436,7 @@ const ModelDetailPage: React.FC = () => {
       )}
 
       {/* Training Dataset */}
-      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
+      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online' || model.status === 'fail') && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingFiles', 'Training Dataset')}</h2>
           {loadingFiles ? (
@@ -469,7 +471,7 @@ const ModelDetailPage: React.FC = () => {
       )}
 
       {/* Training Results */}
-      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online') && (
+      {(model.status === 'trained' || model.status === 'offline' || model.status === 'online' || model.status === 'fail') && (
         <div className="detail-section">
           <h2 className="section-title">{t('predictionTool.modelDetail.trainingMetrics', 'Training Results')}</h2>
           {loadingMetrics ? (

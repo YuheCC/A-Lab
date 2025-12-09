@@ -83,6 +83,7 @@ export default {
         statusOnline: "온라인",
         statusTrained: "학습 완료",
         statusTraining: "학습 중",
+        statusFail: "실패",
         created: "생성 시간:",
         remarks: "비고:",
         baseModel: "기본 모델",

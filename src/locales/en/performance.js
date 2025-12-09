@@ -249,6 +249,7 @@ export default {
     statusTrained: "Trained",
     statusOffline: "Offline",
     statusTraining: "Training",
+    statusFail: "Failed",
     filters: {
       searchPlaceholder: "Search Model ID or Name...",
       allStatus: "All Status",
