@@ -139,7 +139,7 @@ export default {
             title: '학습 데이터셋',
             upload: '데이터셋 업로드',
             dragDrop: '파일을 여기에 끌어다 놓거나 클릭하여 찾아보기',
-            formats: '지원 형식: CSV, XLSX (최대 50MB)',
+            formats: '지원 형식: XLSX 格式',
             dragDropMultiple: '파일을 여기에 끌어다 놓거나 클릭하여 찾아보기',
             formatsMultiple: '지원 형식: XLSX만 가능',
             chooseFile: '파일 선택',
