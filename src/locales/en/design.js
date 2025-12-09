@@ -48,7 +48,7 @@ export default {
     // Introduction
     introduction: {
         overview: '"Design" provides a semi-quantitative reference for how new electrolyte molecules may influence cell performance.',
-        modelDescription: 'The Design function is powered by a data-driven AI model trained on SES internal cell-testing datasets, all generated under consistent testing environments and benchmark conditions. This ensures high data quality and enables the AI model to achieve strong predictive accuracy.',
+        modelDescription: 'The foundation of the Design function is a data-driven AI model trained on SES\'s internal cell-testing datasets, all generated under consistent testing environments and benchmark conditions. This ensures high-quality data and enables strong predictive accuracy. To further enhance performance for specific systems or testing conditions, customers can fine-tune or retrain the model using their own data.',
         predictionProcess: 'During prediction, the model compares the performance of a benchmark cell with that of a hypothetical cell that has the same design but incorporates a new electrolyte additive (as specified by the user). The reported percentage changes are derived from SES internal testing platforms and conditions.',
         example: 'For example, when the molecule O=C1OC(C2COS(=O)(=O)O2)C(C2COS(=O)(=O)O2)O1 is evaluated, the system displays molecular information if it exists in the MU database. The prediction results then appear, where arrows indicate the direction of the impact and percentages are based on SES internal testing platforms. In this case, the model predicts that the new electrolyte additive positively affects room-temperature cycle life and Coulombic efficiency, but may slightly reduce rate performance, likely due to the formation of a more stable SEI.',
         // Figure 1
@@ -67,7 +67,9 @@ export default {
         figureAlt: 'Example of predicting a molecule on the cell performance by Design model',
         figureCaption: 'Figure. Example of predicting a molecule on the cell performance by Design model',
         accuracy: 'Based on internal validation, the current model achieves approximately 85% directional accuracy, meaning it can correctly judge the impact of about 8 out of 10 previously unseen molecules under defined conditions.',
-        supportedSystems: 'The current Design module supports the NCM811 – 12% Si/graphite – carbonate electrolyte system, with predictions available for room-temperature cycling, 45 °C cycling, and room-temperature rate performance. Additional cell systems and testing conditions will be incorporated in future updates.'
+        supportedSystems: 'The current Design module supports the NCM811 – 12% Si/graphite – carbonate electrolyte system, with predictions available for room-temperature cycling, 45 °C cycling, and room-temperature rate performance. Additional cell systems and testing conditions will be incorporated in future updates.',
+        customization: 'Because cell chemistry, cell design, and application conditions vary widely, we enable customers to fine-tune or retrain the model using their own data to achieve the highest predictive accuracy for their specific systems. This capability is included with the MU Box, which is deployed on-premise to ensure 100% data privacy and zero data leakage.',
+        automation: 'Data augmentation, model training, and model evaluation are fully automated. Customers only need to collect and upload datasets containing different additive molecules. Detailed instructions are available under the "Train" function.'
     },
     // Model Detail
     modelDetail: {
