@@ -139,7 +139,7 @@ export default {
             title: 'トレーニングデータセット',
             upload: 'データセットをアップロード',
             dragDrop: 'ここにファイルをドラッグアンドドロップ、またはクリックして参照',
-            formats: 'サポート形式: CSV, XLSX（最大 50MB）',
+            formats: 'サポート形式: XLSX 格式',
             dragDropMultiple: 'ここにファイルをドラッグアンドドロップ、またはクリックして参照',
             formatsMultiple: 'サポート形式：XLSX のみ',
             chooseFile: 'ファイルを選択',

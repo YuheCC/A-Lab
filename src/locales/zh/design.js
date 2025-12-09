@@ -139,7 +139,7 @@ export default {
             title: '训练数据集',
             upload: '上传数据集',
             dragDrop: '将文件拖放到此处，或点击浏览',
-            formats: '支持格式: CSV, XLSX (最大 50MB)',
+            formats: '支持格式: XLSX 格式',
             dragDropMultiple: '将文件拖放到此处，或点击浏览',
             formatsMultiple: '仅支持 XLSX 格式',
             chooseFile: '选择文件',

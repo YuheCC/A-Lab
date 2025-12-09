@@ -139,7 +139,7 @@ export default {
             title: 'Training Dataset',
             upload: 'Upload Dataset',
             dragDrop: 'Drag and drop your file here, or click to browse',
-            formats: 'Supported formats: CSV, XLSX (Max 50MB)',
+            formats: 'Supported format: XLSX only',
             dragDropMultiple: 'Drag and drop your files here, or click to browse',
             formatsMultiple: 'Supported format: XLSX only',
             chooseFile: 'Choose File',
