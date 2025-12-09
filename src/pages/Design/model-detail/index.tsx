@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Download } from 'lucide-react';
+import { Tooltip } from '@mui/material';
+import { ArrowLeft, Download, Info } from 'lucide-react';
 import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
@@ -291,6 +292,119 @@ const DesignModelDetailPage: React.FC = () => {
     });
   };
 
+  // RMSE Tooltip 内容
+  const renderRMSETooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        RMSE measures the average magnitude of prediction errors. It is calculated as the square root of the mean of the squared differences between predicted and actual values. RMSE here is based on the difference between the model-predicted change relative to the benchmark electrolyte and the true experimentally measured change.
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>RMSE =</span>
+          <div style={{ display: 'inline-flex', alignItems: 'flex-start', position: 'relative', paddingLeft: '8px' }}>
+            <span style={{ fontSize: '28px', lineHeight: '1', marginRight: '2px' }}>√</span>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              paddingTop: '4px',
+              borderTop: '1.5px solid #1f2937',
+              paddingLeft: '4px',
+              paddingRight: '4px'
+            }}>
+              <span style={{ fontSize: '16px' }}>(</span>
+              <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px' }}>
+                <span style={{ fontSize: '14px', padding: '0 6px' }}>1</span>
+                <div style={{ width: '100%', height: '1px', backgroundColor: '#1f2937', margin: '2px 0' }}></div>
+                <span style={{ fontSize: '14px', padding: '0 6px' }}>n</span>
+              </div>
+              <span style={{ fontSize: '15px' }}>× Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup></span>
+              <span style={{ fontSize: '16px' }}>)</span>
+            </div>
+          </div>
+        </div>
+        <div style={{
+          fontSize: '12px',
+          lineHeight: '2',
+          color: '#374151',
+          paddingTop: '12px',
+          borderTop: '1px solid rgba(0,0,0,0.08)'
+        }}>
+          <div><strong>y<sub>i</sub></strong> — True Value (Actual Value)</div>
+          <div><strong>ŷ</strong> — Predicted Value</div>
+          <div><strong>n</strong> – number of samples</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // R² Tooltip 内容
+  const renderR2Tooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        R² indicates how well the model explains the variance of the target variable. It compares the model's predictions to a simple baseline that always predicts the mean of the data. R² here is based on the difference between the model-predicted change relative to the benchmark electrolyte and the true experimentally measured change.
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>R² = 1 -</span>
+          <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 4px' }}>
+            <span style={{ fontSize: '15px', padding: '4px 8px' }}>Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup></span>
+            <div style={{ width: '100%', height: '1.5px', backgroundColor: '#1f2937', margin: '3px 0' }}></div>
+            <span style={{ fontSize: '15px', padding: '4px 8px' }}>Σ(y<sub>i</sub> - ȳ)<sup>2</sup></span>
+          </div>
+        </div>
+        <div style={{
+          fontSize: '12px',
+          lineHeight: '2',
+          color: '#374151',
+          paddingTop: '12px',
+          borderTop: '1px solid rgba(0,0,0,0.08)'
+        }}>
+          <div><strong>y<sub>i</sub></strong> — True Value (Actual Value)</div>
+          <div><strong>ŷ</strong> — Predicted Value</div>
+          <div><strong>ȳ</strong> — Mean of True Value</div>
+          <div><strong>n</strong> – number of samples</div>
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="model-detail-page-wrapper">
@@ -536,7 +650,33 @@ const DesignModelDetailPage: React.FC = () => {
                   <div className="info-card training-results">
                     {/* RMSE Section */}
                     <div className="metric-section">
-                      <h3 className="metric-title">{t('design.modelDetail.rmse', 'RMSE')}</h3>
+                      <h3 className="metric-title">
+                        {t('design.modelDetail.rmse', 'RMSE')}
+                        <Tooltip
+                          title={renderRMSETooltip()}
+                          placement="top"
+                          arrow
+                          PopperProps={{
+                            sx: {
+                              '& .MuiTooltip-tooltip': {
+                                backgroundColor: 'white',
+                                color: 'black',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                borderRadius: '8px',
+                                padding: '16px',
+                                fontSize: '14px',
+                                maxWidth: 500,
+                                border: 'none'
+                              },
+                              '& .MuiTooltip-arrow': {
+                                color: 'white',
+                              }
+                            }
+                          }}
+                        >
+                          <Info size={16} className="metric-info-icon" />
+                        </Tooltip>
+                      </h3>
                       <div className="metric-comparison">
                         <div className="metric-box base-model">
                           <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
@@ -551,7 +691,33 @@ const DesignModelDetailPage: React.FC = () => {
 
                     {/* R² Section */}
                     <div className="metric-section">
-                      <h3 className="metric-title">R²</h3>
+                      <h3 className="metric-title">
+                        R²
+                        <Tooltip
+                          title={renderR2Tooltip()}
+                          placement="top"
+                          arrow
+                          PopperProps={{
+                            sx: {
+                              '& .MuiTooltip-tooltip': {
+                                backgroundColor: 'white',
+                                color: 'black',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                borderRadius: '8px',
+                                padding: '16px',
+                                fontSize: '14px',
+                                maxWidth: 500,
+                                border: 'none'
+                              },
+                              '& .MuiTooltip-arrow': {
+                                color: 'white',
+                              }
+                            }
+                          }}
+                        >
+                          <Info size={16} className="metric-info-icon" />
+                        </Tooltip>
+                      </h3>
                       <div className="metric-comparison">
                         <div className="metric-box base-model">
                           <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
