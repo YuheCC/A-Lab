@@ -264,7 +264,7 @@ const DesignTrainPage: React.FC = () => {
         <div className="step-section">
           <div className="step-header">
             <div className="step-number">2</div>
-            <h2>{t('design.train.step2.title', 'Cell Chemistry Specifications')}</h2>
+            <h2>{t('design.train.step2.title', 'Cell Specifications')}</h2>
           </div>
           <div className="step-content">
             <div className="form-group">

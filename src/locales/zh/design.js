@@ -35,7 +35,7 @@ export default {
             remarksPlaceholder: '输入任何补充说明或备注'
         },
         step2: {
-            title: '电池化学规格',
+            title: '电池规格',
             cathode: '正极',
             cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
             anode: '负极',
@@ -165,7 +165,7 @@ export default {
         fetchError: "获取记录详情失败",
         loading: "加载中...",
         createdAt: "创建时间",
-        cellChemistry: "电池化学选择",
+        cellChemistry: "设计设置",
         cellChemistryLabel: "电池化学",
         modelSelect: "模型选择",
         noModel: "无模型信息",

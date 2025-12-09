@@ -35,7 +35,7 @@ export default {
             remarksPlaceholder: '추가 메모 또는 비고 입력'
         },
         step2: {
-            title: '셀 화학 사양',
+            title: '셀 사양',
             cathode: '양극',
             cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
             anode: '음극',
@@ -165,7 +165,7 @@ export default {
         fetchError: "기록 상세 정보 가져오기 실패",
         loading: "로딩 중...",
         createdAt: "생성 시간",
-        cellChemistry: "셀 화학 선택",
+        cellChemistry: "설계 설정",
         cellChemistryLabel: "셀 화학",
         modelSelect: "모델 선택",
         noModel: "모델 정보 없음",

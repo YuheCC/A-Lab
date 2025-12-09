@@ -35,7 +35,7 @@ export default {
             remarksPlaceholder: 'Enter any additional notes or remarks'
         },
         step2: {
-            title: 'Cell Chemistry Specifications',
+            title: 'Cell Specifications',
             cathode: 'Cathode',
             cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
             anode: 'Anode',
@@ -165,7 +165,7 @@ export default {
         fetchError: "Failed to fetch record details",
         loading: "Loading...",
         createdAt: "Created",
-        cellChemistry: "Cell Chemistry Selection",
+        cellChemistry: "Design Setup",
         cellChemistryLabel: "Cell Chemistry",
         modelSelect: "Model Select",
         noModel: "No model information",
