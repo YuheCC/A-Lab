@@ -3,6 +3,40 @@
 
 // 如有 PredictionTool 特定的样式覆盖，可在此添加
 
+// 下载训练日志按钮样式
+.download-log-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 36px;
+  margin-top: 16px;
+
+  &:hover:not(:disabled) {
+    background-color: #333333;
+  }
+
+  &:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 // 训练数据集信息样式
 .dataset-info {
   .dataset-row {

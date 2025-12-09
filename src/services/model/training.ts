@@ -237,6 +237,16 @@ export interface ModelMetricsResponse {
   [key: string]: number | MetricsData | undefined;
 }
 
+// ============= Model Train Log Types =============
+
+/**
+ * Model train log request parameters
+ */
+export interface ModelTrainLogParams {
+  model_id: string;
+  namespace: string;
+}
+
 // ============= API Functions =============
 
 /**
@@ -399,6 +409,24 @@ export const getModelMetrics = async (params: ModelMetricsParams): Promise<Model
       model_id: params.model_id,
       namespace: params.namespace,
     },
+  });
+
+  return response.data;
+};
+
+/**
+ * Get model train log
+ * @param params Query parameters including model_id and namespace
+ * @returns Promise<Blob> Train log file blob
+ */
+export const getModelTrainLog = async (params: ModelTrainLogParams): Promise<Blob> => {
+  const response = await request('/api/ai/model/train_log', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+    responseType: 'blob',
   });
 
   return response.data;

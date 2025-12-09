@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download } from 'lucide-react';
 import {
   Snackbar,
   Alert,
@@ -12,7 +12,7 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
-import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
+import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
@@ -33,6 +33,7 @@ const ModelDetailPage: React.FC = () => {
   const [metrics, setMetrics] = useState<ModelMetricsResponse | null>(null);
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
+  const [downloadingLog, setDownloadingLog] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -174,6 +175,28 @@ const ModelDetailPage: React.FC = () => {
       });
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleDownloadTrainLog = async () => {
+    if (!modelId || !model) return;
+
+    setDownloadingLog(true);
+    try {
+      await downloadModelTrainLog(modelId, model.model_name);
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.modelDetail.downloadLogSuccess', '训练日志下载成功'),
+        severity: 'success',
+      });
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.message || t('predictionTool.modelDetail.errors.downloadLogFailed', '下载训练日志失败'),
+        severity: 'error',
+      });
+    } finally {
+      setDownloadingLog(false);
     }
   };
 
@@ -497,6 +520,18 @@ const ModelDetailPage: React.FC = () => {
               <p>{t('predictionTool.modelDetail.noMetrics', '暂无训练指标')}</p>
             </div>
           )}
+          {/* Download Train Log Button */}
+          <button
+            className="download-log-button"
+            onClick={handleDownloadTrainLog}
+            disabled={downloadingLog || isMockModel(model)}
+          >
+            <Download size={16} />
+            {downloadingLog
+              ? t('predictionTool.modelDetail.downloadingLog', '下载中...')
+              : t('predictionTool.modelDetail.downloadTrainLog', '下载训练日志')
+            }
+          </button>
         </div>
       )}
 
