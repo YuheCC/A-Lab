@@ -4,11 +4,11 @@ export default {
   subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
   beta: "BETA",
   disclaimerTitle: "Disclaimer",
-  disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using internal testing data and a defined benchmark electrolyte (Solvent: EC/EMC/DEC at 2:3:2; Salt: 1M LiPF6/LiFSI; Additive: VC/LiDFP). Results may differ when applied to alternative cell designs or benchmark electrolytes. Future updates will extend functionality to enable customizable benchmark electrolytes, multi-additive evaluations, and greater design flexibility.",
+  disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using user defined benchmark electrolyte. Results may differ when applied to different cell designs or benchmark electrolytes.",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Cell Chemistry Selection",
+    title: "Design Setup",
     label: "Cell Chemistry",
     loading: "Loading...",
     systemSpecs: {
@@ -22,7 +22,7 @@ export default {
 
   // Model Selection
   modelSelection: {
-    label: "Prediction Model Selection",
+    label: "Model Selection",
     placeholder: "Please select a prediction model",
     baseModel: "Base Model",
     finetunedModels: "Fine-tuned Models",

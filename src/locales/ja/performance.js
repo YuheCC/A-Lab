@@ -4,11 +4,11 @@ export default {
   subtitle: "SES社内実験データで訓練されたAIモデルを使用して、添加剤がセル性能指標（サイクル寿命、コロンビック効率、レート性能）に与える影響を予測します",
   beta: "ベータ",
   disclaimerTitle: "免責事項",
-  disclaimer: "<strong>注意：</strong>この機能は、内部テストデータおよび定義されたベンチマーク電解液（溶媒：EC/EMC/DEC 比率 2:3:2；塩：1M LiPF6/LiFSI；添加剤：VC/LiDFP）を使用し、添加剤ありとなしのセル性能を比較することにより、新しい添加剤の影響を評価します。異なるセル設計またはベンチマーク電解液に適用する場合、結果は異なる可能性があります。今後のアップデートでは、カスタマイズ可能なベンチマーク電解液、複数添加剤評価、およびより広範な設計柔軟性を可能にする機能を拡張する予定です。",
+  disclaimer: "<strong>注意：</strong>この機能は、ユーザー定義のベンチマーク電解液を使用し、添加剤ありとなしのセル性能を比較することにより、新しい添加剤の影響を評価します。異なるセル設計またはベンチマーク電解液に適用する場合、結果は異なる可能性があります。",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "セル化学選択",
+    title: "設計設定",
     label: "セル化学",
     loading: "読み込み中...",
     systemSpecs: {
@@ -22,7 +22,7 @@ export default {
 
   // Model Selection
   modelSelection: {
-    label: "予測モデル選択",
+    label: "モデル選択",
     placeholder: "予測モデルを選択してください",
     baseModel: "ベースモデル",
     finetunedModels: "ファインチューニングモデル",

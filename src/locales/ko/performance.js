@@ -4,11 +4,11 @@ export default {
   subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
   beta: "베타",
   disclaimerTitle: "면책 조항",
-  disclaimer: "<strong>참고:</strong> 이 기능은 내부 테스트 데이터 및 정의된 벤치마크 전해액(용매: EC/EMC/DEC 비율 2:3:2; 염: 1M LiPF6/LiFSI; 첨가제: VC/LiDFP)을 사용하여 첨가제가 있는 셀과 없는 셀의 성능을 비교함으로써 새로운 첨가제의 영향을 평가합니다. 다른 셀 설계 또는 벤치마크 전해액에 적용할 경우 결과가 달라질 수 있습니다. 향후 업데이트에서는 사용자 정의 가능한 벤치마크 전해액, 다중 첨가제 평가 및 더 큰 설계 유연성을 지원하도록 기능을 확장할 예정입니다.",
+  disclaimer: "<strong>참고:</strong> 이 기능은 사용자 정의 벤치마크 전해액을 사용하여 첨가제가 있는 셀과 없는 셀의 성능을 비교함으로써 새로운 첨가제의 영향을 평가합니다. 다른 셀 설계 또는 벤치마크 전해액에 적용할 경우 결과가 달라질 수 있습니다.",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "셀 화학 선택",
+    title: "설계 설정",
     label: "셀 화학",
     loading: "로딩 중...",
     systemSpecs: {
@@ -22,7 +22,7 @@ export default {
 
   // Model Selection
   modelSelection: {
-    label: "예측 모델 선택",
+    label: "모델 선택",
     placeholder: "예측 모델을 선택하세요",
     baseModel: "기본 모델",
     finetunedModels: "미세 조정 모델",

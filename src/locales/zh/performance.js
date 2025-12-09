@@ -4,11 +4,11 @@ export default {
   subtitle: "使用基于SES内部实验数据训练的AI模型预测添加剂对电池性能指标（循环寿命、库伦效率、倍率性能）的影响",
   beta: "测试版",
   disclaimerTitle: "免责声明",
-  disclaimer: "<strong>注意：</strong>此功能通过使用内部测试数据和定义的基准电解液（溶剂：EC/EMC/DEC 比例 2:3:2；盐：1M LiPF6/LiFSI；添加剂：VC/LiDFP），比较添加和不添加添加剂的电池性能来评估新添加剂的影响。应用于不同的电池设计或基准电解液时，结果可能有所不同。未来更新将扩展功能以支持可定制的基准电解液、多添加剂评估和更大的设计灵活性。",
+  disclaimer: "<strong>注意：</strong>此功能通过使用用户定义的基准电解液，比较添加和不添加添加剂的电池性能来评估新添加剂的影响。应用于不同的电池设计或基准电解液时，结果可能有所不同。",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "电池化学选择",
+    title: "设计设置",
     label: "电池化学",
     loading: "加载中...",
     systemSpecs: {
@@ -22,7 +22,7 @@ export default {
 
   // Model Selection
   modelSelection: {
-    label: "预测模型选择",
+    label: "模型选择",
     placeholder: "请选择预测模型",
     baseModel: "基础模型",
     finetunedModels: "微调模型",

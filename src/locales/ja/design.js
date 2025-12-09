@@ -10,7 +10,7 @@ export default {
             temp45: '45°C Positive',
             created: '作成日時',
             actions: 'アクション'
-        }
+        }   
     },
     // Train page
     train: {
@@ -35,7 +35,7 @@ export default {
             remarksPlaceholder: '追加のメモや備考を入力'
         },
         step2: {
-            title: 'セル化学仕様',
+            title: 'セル仕様',
             cathode: 'カソード',
             cathodePlaceholder: 'Polycrystal NCM811, 4 mAh/cm²',
             anode: 'アノード',
@@ -165,7 +165,7 @@ export default {
         fetchError: "記録詳細の取得に失敗しました",
         loading: "読み込み中...",
         createdAt: "作成日時",
-        cellChemistry: "セル化学選択",
+        cellChemistry: "設計設定",
         cellChemistryLabel: "セル化学",
         modelSelect: "モデル選択",
         noModel: "モデル情報なし",
