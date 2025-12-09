@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams, useLocation } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -53,6 +53,48 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     return localeMap[lang] || 'zh-cn';
   };
 
+  // Parse and validate record ID format (e.g., "PR-001" -> "1", "76" -> "76")
+  const parseRecordId = (input: string): string | null => {
+    if (!input || input.trim() === '') {
+      return '';
+    }
+
+    const trimmedInput = input.trim();
+
+    // Check if it matches PR-XXX format
+    const prMatch = trimmedInput.match(/^PR-(\d+)$/i);
+    if (prMatch) {
+      return prMatch[1];
+    }
+
+    // Check if it's a pure number
+    const numberMatch = trimmedInput.match(/^\d+$/);
+    if (numberMatch) {
+      return trimmedInput;
+    }
+
+    // Invalid format
+    return null;
+  };
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      const parsedId = parseRecordId(recordSearchKeyword);
+      setDebouncedRecordId(parsedId || '');
+    }, 500); // 500ms delay
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [recordSearchKeyword]);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +122,13 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
   const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
   const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
+  const [debouncedRecordId, setDebouncedRecordId] = useState<string>('');
+
+  // Model options for records filter (top 100 models)
+  const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
+
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
     // Check if navigation state has activeTab (from train page)
@@ -139,7 +188,28 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setError(null);
 
     try {
-      const response = await getHistoryList({ page, page_size: pageSize });
+      const params: any = {
+        page,
+        page_size: pageSize,
+      };
+
+      // Add search keyword filter (by record ID) - use debounced and validated ID
+      if (debouncedRecordId) {
+        params.id = debouncedRecordId;
+      }
+
+      // Add model filter
+      if (recordSelectedModel && recordSelectedModel !== 'all') {
+        params.model_id = parseInt(recordSelectedModel);
+      }
+
+      // Add date filter (split to 0:00:00 - 23:59:59 of selected day)
+      if (recordSelectedDate) {
+        const selectedDay = dayjs(recordSelectedDate);
+        params.created_at = `${selectedDay.format('YYYY-MM-DD')}T00:00:00,${selectedDay.format('YYYY-MM-DD')}T23:59:59`;
+      }
+
+      const response = await getHistoryList(params);
       const transformedData = response.data.map(transformApiDataToFileRecord);
       setHistoryData(transformedData);
       setTotal(response.total);
@@ -228,11 +298,36 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     }
   }, [modelsCurrentPage]);
 
+  // Fetch model options for records filter (top 100 models)
   useEffect(() => {
-    if (activeTab === 'records') {
+    const fetchRecordModelOptions = async () => {
+      try {
+        const response = await getModelList({ page: 1, page_size: 100 });
+        setRecordModelOptions(response.data);
+      } catch (err) {
+        console.error('Failed to fetch record model options:', err);
+        setRecordModelOptions([]);
+      }
+    };
+    fetchRecordModelOptions();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'records' && recordModelOptions.length > 0) {
+      // Reset to page 1 when filters change
+      if (currentPage === 1) {
+        fetchHistoryData(1);
+      } else {
+        setCurrentPage(1);
+      }
+    }
+  }, [activeTab, recordModelOptions, debouncedRecordId, recordSelectedModel, recordSelectedDate]);
+
+  useEffect(() => {
+    if (activeTab === 'records' && recordModelOptions.length > 0) {
       fetchHistoryData(currentPage);
     }
-  }, [activeTab, currentPage]);
+  }, [currentPage]);
 
   const handleNewPrediction = () => {
     window.open('/predict/create', '_blank');
@@ -306,22 +401,10 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setSelectedBaseModelId(undefined);
   };
 
-  // Filter records data
-  const filteredHistoryData = historyData.filter((record) => {
-    const keywordMatch = !recordSearchKeyword ||
-      record.name.toLowerCase().includes(recordSearchKeyword.toLowerCase()) ||
-      record.id.includes(recordSearchKeyword);
-    const modelMatch = recordSelectedModel === 'all' || record.model === recordSelectedModel;
-    const dateMatch = !recordSelectedDate || record.date.startsWith(recordSelectedDate);
-    return keywordMatch && modelMatch && dateMatch;
-  });
-
-  // Get unique model names from history data
-  const uniqueModels = Array.from(new Set(historyData.map(record => record.model).filter(Boolean)));
-
   // Clear records filters
   const handleClearRecordsFilters = () => {
     setRecordSearchKeyword('');
+    setDebouncedRecordId('');
     setRecordSelectedModel('all');
     setRecordSelectedDate('');
   };
@@ -422,7 +505,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       className="records-search-input"
                       value={recordSearchKeyword}
                       onChange={(e) => setRecordSearchKeyword(e.target.value)}
-                      placeholder={t('predictionTool.records.searchPlaceholder', '搜索record名称或ID')}
+                      placeholder={t('predictionTool.records.searchPlaceholder', 'Search record ID')}
                     />
                     <select
                       className="records-model-filter"
@@ -431,8 +514,10 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       aria-label={t('predictionTool.records.modelFilter', 'Model filter')}
                     >
                       <option value="all">{t('predictionTool.records.allModels', 'All Models')}</option>
-                      {uniqueModels.map((model) => (
-                        <option key={model} value={model}>{model}</option>
+                      {recordModelOptions.map((model) => (
+                        <option key={model.id} value={model.id.toString()}>
+                          {model.model_name}
+                        </option>
                       ))}
                     </select>
                     <LocalizationProvider
@@ -501,11 +586,18 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         <span>{t('predictionTool.records.clearFilters', 'Clear Filters')}</span>
                       </button>
                     )}
+                    <button
+                      className="predictiontool-refresh-button"
+                      onClick={() => fetchHistoryData(currentPage)}
+                      aria-label={t('predictionTool.models.filters.refresh', 'Refresh')}
+                    >
+                      <RefreshCw size={16} />
+                    </button>
                   </div>
                   <div className="records-count-text">
                     {t('predictionTool.records.showingRecords', 'Showing {{count}} of {{total}} records', {
-                      count: filteredHistoryData.length,
-                      total: historyData.length
+                      count: historyData.length,
+                      total: total
                     })}
                   </div>
                   <div className="records-table-wrapper">
@@ -522,14 +614,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredHistoryData.length === 0 ? (
+                        {historyData.length === 0 ? (
                           <tr>
                             <td colSpan={7} className="no-data">
                               {t('predictionTool.history.noResults', 'No prediction records found.')}
                             </td>
                           </tr>
                         ) : (
-                          filteredHistoryData.map((record) => (
+                          historyData.map((record) => (
                             <tr key={record.id}>
                               <td className="record-id">PR-{String(record.id).padStart(3, '0')}</td>
                               <td className="file-name">{record.name}</td>
@@ -542,16 +634,8 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                   className="action-button view-button"
                                   onClick={() => handleViewDetails(record.id)}
                                 >
-                                  {t('predictionTool.history.actions.viewDetails', 'View Details')}
+                                  {t('predictionTool.history.actions.viewResults', 'View Results')}
                                 </button>
-                                {!record.isMock && (
-                                  <button
-                                    className="action-button delete-button"
-                                    onClick={() => handleDeleteRecord(record.id)}
-                                  >
-                                    {t('predictionTool.history.actions.delete', 'Delete')}
-                                  </button>
-                                )}
                               </td>
                             </tr>
                           ))
@@ -603,17 +687,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                       <option value="offline">{t('predictionTool.models.statusOffline', 'Offline')}</option>
                       <option value="fail">{t('predictionTool.models.statusFail', 'Failed')}</option>
                     </select>
-                    <select
-                      className={`models-base-model-filter ${selectedBaseModel ? 'has-value' : ''}`}
-                      value={selectedBaseModel}
-                      onChange={handleBaseModelChange}
-                      aria-label={t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}
-                    >
-                      <option value="" disabled selected hidden>{t('predictionTool.models.filters.baseModelPlaceholder', 'Select Base Model')}</option>
-                      {baseModelOptions.map((option) => (
-                        <option key={option.id} value={option.name}>{option.name}</option>
-                      ))}
-                    </select>
+                    
                     {(modelSearchKeyword || selectedModelStatus || selectedBaseModel) && (
                       <button className="clear-filters-button" onClick={handleClearModelsFilters}>
                         <X size={16} />
@@ -640,7 +714,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                         <tr>
                           <th>{t('predictionTool.models.columns.modelId', 'Model ID')}</th>
                           <th>{t('predictionTool.models.columns.modelName', 'Model Name')}</th>
-                          <th>{t('predictionTool.models.columns.baseModel', 'Base Model')}</th>
                           <th>{t('predictionTool.models.columns.status', 'Status')}</th>
                           <th>{t('predictionTool.models.columns.created', 'Created')}</th>
                           <th>{t('predictionTool.models.columns.createdBy', 'Created By')}</th>
@@ -667,7 +740,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                     <a className="model-name-link" onClick={() => navigate(`/predict/model-detail?id=${model.id}`)}>{model.model_name}</a>
                                   )}
                                 </td>
-                                <td>{model.base_model_name}</td>
                                 <td>
                                   <span
                                     style={{

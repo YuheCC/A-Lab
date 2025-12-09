@@ -6,6 +6,11 @@ export default {
     disclaimerTitle: "免責事項",
     disclaimer: "<strong>注意：</strong>この機能は、ユーザーが提供する初期段階のサイクリングデータのみを使用してセルサイクル寿命を予測します。セル化学や設計などの追加情報は必要ありません。このモデルは現在、標準的なサイクリング条件（実際の使用プロファイルではない）下で活性イオンが限られたバッテリーシステムに適用可能です。ユーザーは自身のテストを通じて予測を検証することをお勧めします。",
 
+    // Create page
+    create: {
+        title: "新規予測"
+    },
+
     // Steps
     steps: {
         upload: "データアップロード",
@@ -103,7 +108,7 @@ export default {
 
     // Records
     records: {
-        searchPlaceholder: "レコード名またはIDで検索",
+        searchPlaceholder: "レコードIDで検索",
         modelFilter: "モデルフィルター",
         allModels: "すべてのモデル",
         clearFilters: "フィルターをクリア",
@@ -129,7 +134,7 @@ export default {
             error: "履歴記録の取得に失敗しました"
         },
         actions: {
-            viewDetails: "詳細を表示",
+            viewResults: "結果を見る",
             delete: "削除"
         }
     },

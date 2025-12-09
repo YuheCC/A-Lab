@@ -51,16 +51,10 @@ const CreatePage: React.FC = () => {
     <div className="create-page-container">
       <div className="create-content">
         <div className="create-actions">
-          <h1 className="prediction-title">{t('predictionTool.title')}</h1>
+          <h1 className="prediction-title">{t('predictionTool.create.title', 'New Prediction')}</h1>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('predictionTool.actions.backToList', 'Back to List')}
           </button>
-        </div>
-
-        <div className="prediction-subtitle-wrapper">
-          <p className="prediction-subtitle">
-            {t('predictionTool.subtitle')}
-          </p>
         </div>
 
         <div className="operation-area">

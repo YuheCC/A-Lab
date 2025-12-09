@@ -6,6 +6,11 @@ export default {
     disclaimerTitle: "免责声明",
     disclaimer: "<strong>注意：</strong>此功能仅使用用户提供的早期阶段循环数据来预测电池循环寿命。不需要电池化学或设计等额外信息。该模型目前适用于在标准循环条件下（非实际使用场景）具有有限活性离子的电池系统。鼓励用户通过自己的测试来验证预测结果。",
 
+    // Create page
+    create: {
+        title: "新增预测"
+    },
+
     // Steps
     steps: {
         upload: "数据上传",
@@ -103,7 +108,7 @@ export default {
 
     // Records
     records: {
-        searchPlaceholder: "搜索record名称或ID",
+        searchPlaceholder: "搜索record ID",
         modelFilter: "模型筛选",
         allModels: "所有模型",
         clearFilters: "Clear Filters",
@@ -129,7 +134,7 @@ export default {
             error: "获取历史记录失败"
         },
         actions: {
-            viewDetails: "查看详情",
+            viewResults: "查看结果",
             delete: "删除"
         }
     },

@@ -6,6 +6,11 @@ export default {
     disclaimerTitle: "면책 조항",
     disclaimer: "<strong>참고:</strong> 이 기능은 사용자가 제공한 초기 단계 사이클링 데이터만을 사용하여 셀 사이클 수명을 예측합니다. 셀 화학 또는 설계와 같은 추가 정보는 필요하지 않습니다. 이 모델은 현재 표준 사이클링 조건(실제 사용 프로파일이 아님) 하에서 활성 이온이 제한된 배터리 시스템에 적용됩니다. 사용자는 자체 테스트를 통해 예측을 검증하는 것이 좋습니다.",
 
+    // Create page
+    create: {
+        title: "새 예측"
+    },
+
     // Steps
     steps: {
         upload: "데이터 업로드",
@@ -103,7 +108,7 @@ export default {
 
     // Records
     records: {
-        searchPlaceholder: "레코드 이름 또는 ID 검색",
+        searchPlaceholder: "레코드 ID로 검색",
         modelFilter: "모델 필터",
         allModels: "모든 모델",
         clearFilters: "필터 지우기",
@@ -129,7 +134,7 @@ export default {
             error: "히스토리 기록을 가져오지 못했습니다"
         },
         actions: {
-            viewDetails: "상세 보기",
+            viewResults: "결과 보기",
             delete: "삭제"
         }
     },
