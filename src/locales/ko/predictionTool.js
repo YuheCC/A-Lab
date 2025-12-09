@@ -217,7 +217,7 @@ export default {
             title: "모델 정보",
             name: "모델 이름",
             namePlaceholder: "모델 이름 입력",
-            remarks: "비고 (선택 사항)",
+            remarks: "비고",
             remarksPlaceholder: "추가 메모나 비고 입력"
         },
         step2: {
@@ -338,12 +338,15 @@ export default {
         downloadTrainLog: "학습 로그 다운로드",
         downloadLogSuccess: "학습 로그 다운로드 성공",
         confirmDeploy: "배포 확인",
+        confirmUndeploy: "오프라인 확인",
         confirmRemove: "삭제 확인",
         deployMessage: "이 모델을 배포하시겠습니까? 예측에 사용할 수 있게 됩니다.",
+        undeployMessage: "이 모델을 오프라인 상태로 전환하시겠습니까?",
         removeMessage: "이 모델을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
         cancel: "취소",
         confirm: "확인",
         deploySuccess: "모델이 성공적으로 배포되었습니다",
+        undeploySuccess: "모델이 성공적으로 오프라인 상태로 전환되었습니다",
         removeSuccess: "모델이 성공적으로 삭제되었습니다",
         errors: {
             noId: "모델 ID가 필요합니다",

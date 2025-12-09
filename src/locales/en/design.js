@@ -116,7 +116,7 @@ export default {
             title: 'Model Information',
             name: 'Model Name',
             namePlaceholder: 'Enter model name',
-            remarks: 'Remarks (Optional)',
+            remarks: 'Remarks',
             remarksPlaceholder: 'Enter any additional notes or remarks'
         },
         step2: {
