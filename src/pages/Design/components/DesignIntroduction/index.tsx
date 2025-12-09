@@ -68,6 +68,14 @@ const DesignIntroduction: React.FC = () => {
         <p className="design-introduction__paragraph">
           {t('design.introduction.supportedSystems')}
         </p>
+
+        <p className="design-introduction__paragraph">
+          {t('design.introduction.customization')}
+        </p>
+
+        <p className="design-introduction__paragraph">
+          {t('design.introduction.automation')}
+        </p>
       </div>
     </div>
   );
