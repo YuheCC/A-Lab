@@ -217,7 +217,7 @@ export default {
             title: "模型信息",
             name: "模型名称",
             namePlaceholder: "输入模型名称",
-            remarks: "备注（可选）",
+            remarks: "备注",
             remarksPlaceholder: "输入任何其他注释或备注"
         },
         step2: {
@@ -338,12 +338,15 @@ export default {
         downloadTrainLog: "下载训练日志",
         downloadLogSuccess: "训练日志下载成功",
         confirmDeploy: "确定要部署此模型吗？",
+        confirmUndeploy: "确定要下线此模型吗？",
         confirmRemove: "确定要移除此模型吗？",
         deployMessage: "确定要部署此模型吗？这将使其可用于预测。",
+        undeployMessage: "确定要下线此模型吗？这将使其变为离线状态。",
         removeMessage: "确定要移除此模型吗？此操作无法撤销。",
         cancel: "取消",
         confirm: "确认",
         deploySuccess: "模型部署成功",
+        undeploySuccess: "模型下线成功",
         removeSuccess: "模型移除成功",
         errors: {
             noId: "需要模型 ID",

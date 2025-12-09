@@ -217,7 +217,7 @@ export default {
             title: "モデル情報",
             name: "モデル名",
             namePlaceholder: "モデル名を入力",
-            remarks: "備考（オプション）",
+            remarks: "備考",
             remarksPlaceholder: "追加のメモや備考を入力"
         },
         step2: {
@@ -338,12 +338,15 @@ export default {
         downloadTrainLog: "トレーニングログをダウンロード",
         downloadLogSuccess: "トレーニングログのダウンロードに成功しました",
         confirmDeploy: "デプロイの確認",
+        confirmUndeploy: "オフライン化の確認",
         confirmRemove: "削除の確認",
         deployMessage: "このモデルをデプロイしてもよろしいですか？これにより予測に使用できるようになります。",
+        undeployMessage: "このモデルをオフラインにしてもよろしいですか？これによりオフライン状態になります。",
         removeMessage: "このモデルを削除してもよろしいですか？この操作は元に戻せません。",
         cancel: "キャンセル",
         confirm: "確認",
         deploySuccess: "モデルが正常にデプロイされました",
+        undeploySuccess: "モデルが正常にオフライン化されました",
         removeSuccess: "モデルが正常に削除されました",
         errors: {
             noId: "モデルIDが必要です",

@@ -217,7 +217,7 @@ export default {
             title: "Model Information",
             name: "Model Name",
             namePlaceholder: "Enter model name",
-            remarks: "Remarks (Optional)",
+            remarks: "Remarks",
             remarksPlaceholder: "Enter any additional notes or remarks"
         },
         step2: {
@@ -338,12 +338,15 @@ export default {
         downloadTrainLog: "Download Train Log",
         downloadLogSuccess: "Train log downloaded successfully",
         confirmDeploy: "Confirm Deploy",
+        confirmUndeploy: "Confirm Undeploy",
         confirmRemove: "Confirm Remove",
         deployMessage: "Are you sure you want to deploy this model? This will make it available for predictions.",
+        undeployMessage: "Are you sure you want to undeploy this model? This will make it offline.",
         removeMessage: "Are you sure you want to remove this model? This action cannot be undone.",
         cancel: "Cancel",
         confirm: "Confirm",
         deploySuccess: "Model deployed successfully",
+        undeploySuccess: "Model undeployed successfully",
         removeSuccess: "Model removed successfully",
         errors: {
             noId: "Model ID is required",

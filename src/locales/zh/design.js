@@ -116,7 +116,7 @@ export default {
             title: '模型信息',
             name: '模型名称',
             namePlaceholder: '输入模型名称',
-            remarks: '备注（可选）',
+            remarks: '备注',
             remarksPlaceholder: '输入任何补充说明或备注'
         },
         step2: {

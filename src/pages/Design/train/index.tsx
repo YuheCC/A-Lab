@@ -5,6 +5,7 @@ import { ArrowLeft, Download, UploadCloud, X, BookOpen } from 'lucide-react';
 import { Snackbar, Alert, Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
 import { trainModel, getBaseModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
+import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
 
 const DesignTrainPage: React.FC = () => {
@@ -745,7 +746,7 @@ const DesignTrainPage: React.FC = () => {
                         {file.name}
                       </span>
                       <span className="prediction-train-file-size">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                        {formatFileSize(file.size)}
                       </span>
                       <button
                         className="prediction-train-file-remove"

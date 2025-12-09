@@ -17,6 +17,7 @@ import {
   getModelList as getModelListAPI,
   getModelDetail as getModelDetailAPI,
   deployModel as deployModelAPI,
+  undeployModel as undeployModelAPI,
   removeModel as removeModelAPI,
   getModelFileList as getModelFileListAPI,
   getModelMetrics as getModelMetricsAPI,
@@ -301,6 +302,28 @@ export const deployModel = async (modelId: string): Promise<any> => {
   }
 
   return deployModelAPI({
+    model_id: modelId,
+    namespace: MODEL_NAMESPACE,
+  });
+};
+
+/**
+ * Undeploy model (make it offline)
+ * @param modelId Model ID to undeploy
+ * @returns Promise<any> Undeploy result
+ */
+export const undeployModel = async (modelId: string): Promise<any> => {
+  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+  if (mockModel?.isMock) {
+    console.log('Cannot undeploy mock model with ID:', modelId);
+    throw new Error('Cannot undeploy demo model');
+  }
+
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  return undeployModelAPI({
     model_id: modelId,
     namespace: MODEL_NAMESPACE,
   });

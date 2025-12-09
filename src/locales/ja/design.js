@@ -116,7 +116,7 @@ export default {
             title: 'モデル情報',
             name: 'モデル名',
             namePlaceholder: 'モデル名を入力',
-            remarks: '備考（オプション）',
+            remarks: '備考',
             remarksPlaceholder: '追加のメモや備考を入力'
         },
         step2: {

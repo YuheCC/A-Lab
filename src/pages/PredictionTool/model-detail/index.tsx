@@ -12,7 +12,7 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
-import { getModelDetail, deployModel, removeModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
+import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
@@ -45,7 +45,7 @@ const ModelDetailPage: React.FC = () => {
   });
   const [dialog, setDialog] = useState<{
     open: boolean;
-    type: 'deploy' | 'remove' | null;
+    type: 'deploy' | 'undeploy' | null;
   }>({
     open: false,
     type: null,
@@ -122,7 +122,7 @@ const ModelDetailPage: React.FC = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleOpenDialog = (type: 'deploy' | 'remove') => {
+  const handleOpenDialog = (type: 'deploy' | 'undeploy') => {
     // Check if it's a mock model
     if (model && isMockModel(model)) {
       setSnackbar({
@@ -154,17 +154,16 @@ const ModelDetailPage: React.FC = () => {
         // Refresh model detail
         const updatedModel = await getModelDetail(modelId);
         setModel(updatedModel);
-      } else if (dialog.type === 'remove') {
-        await removeModel(model.id);
+      } else if (dialog.type === 'undeploy') {
+        await undeployModel(model.id);
         setSnackbar({
           open: true,
-          message: t('predictionTool.modelDetail.removeSuccess', 'Model removed successfully'),
+          message: t('predictionTool.modelDetail.undeploySuccess', 'Model undeployed successfully'),
           severity: 'success',
         });
-        // Navigate back after a short delay
-        setTimeout(() => {
-          navigate('/prediction-tool', { state: { activeTab: 'models' } });
-        }, 1500);
+        // Refresh model detail
+        const updatedModel = await getModelDetail(modelId);
+        setModel(updatedModel);
       }
       handleCloseDialog();
     } catch (error: any) {
@@ -352,7 +351,7 @@ const ModelDetailPage: React.FC = () => {
             {!isMockModel(model) && (
               <>
                 {model.status === 'online' ? (
-                  <button className="offline-button" onClick={() => handleOpenDialog('remove')}>
+                  <button className="offline-button" onClick={() => handleOpenDialog('undeploy')}>
                     {t('predictionTool.modelDetail.offlineModel', '下线模型')}
                   </button>
                 ) : (model.status === 'trained' || model.status === 'offline') ? (
@@ -597,13 +596,13 @@ const ModelDetailPage: React.FC = () => {
         <DialogTitle>
           {dialog.type === 'deploy'
             ? t('predictionTool.modelDetail.confirmDeploy', 'Confirm Deploy')
-            : t('predictionTool.modelDetail.confirmRemove', 'Confirm Remove')
+            : t('predictionTool.modelDetail.confirmUndeploy', 'Confirm Undeploy')
           }
         </DialogTitle>
         <DialogContent>
           {dialog.type === 'deploy'
             ? t('predictionTool.modelDetail.deployMessage', 'Are you sure you want to deploy this model? This will make it available for predictions.')
-            : t('predictionTool.modelDetail.removeMessage', 'Are you sure you want to remove this model? This action cannot be undone.')
+            : t('predictionTool.modelDetail.undeployMessage', 'Are you sure you want to undeploy this model? This will make it offline.')
           }
         </DialogContent>
         <DialogActions>
@@ -612,7 +611,7 @@ const ModelDetailPage: React.FC = () => {
           </Button>
           <Button
             onClick={handleConfirmAction}
-            color={dialog.type === 'deploy' ? 'primary' : 'error'}
+            color={dialog.type === 'deploy' ? 'primary' : 'warning'}
             variant="contained"
             disabled={actionLoading}
           >

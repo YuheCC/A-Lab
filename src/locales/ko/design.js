@@ -116,7 +116,7 @@ export default {
             title: '모델 정보',
             name: '모델 이름',
             namePlaceholder: '모델 이름 입력',
-            remarks: '비고 (선택사항)',
+            remarks: '비고',
             remarksPlaceholder: '추가 메모 또는 비고 입력'
         },
         step2: {
