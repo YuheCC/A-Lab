@@ -298,43 +298,45 @@ const RecordPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="record-detail-card">
+        <div className="design-detail-section">
           {/* Cell Chemistry Selection Section */}
-          <div className="result-section cell-chemistry-section">
-            <h3>{t('design.record.cellChemistry', 'Cell Chemistry Selection')}</h3>
-            <div className="chemistry-info-grid">
-              <div className="info-item">
-                <span className="label">{t('design.record.modelSelect', 'Model Select')}:</span>
-                <span className="value model-name">
-                  {isModelLoading ? (
-                    t('design.record.loading', 'Loading...')
-                  ) : selectedModelId && modelOptions.length > 0 ? (
-                    modelOptions.find(m => m.id === selectedModelId)?.name || t('design.record.noModel', 'No model information')
-                  ) : (
-                    t('design.record.noModel', 'No model information')
-                  )}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t('performance.additive.label', 'SMILES of Additive')}:</span>
-                <span className="value">{detailData?.smiles}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t('design.record.weightPercentage', 'Weight Percentage')}:</span>
-                <span className="value">{formatWeightPercentage(baseModelId)}</span>
+          <div className="design-cell-chemistry-section">
+            <h4 className="design-section-title">{t('design.record.cellChemistry', 'Cell Chemistry Selection')}</h4>
+            <div className="design-chemistry-card">
+              <div className="chemistry-info-grid">
+                <div className="info-item">
+                  <span className="label">{t('design.record.modelSelect', 'Model Select')}:</span>
+                  <span className="value model-name">
+                    {isModelLoading ? (
+                      t('design.record.loading', 'Loading...')
+                    ) : selectedModelId && modelOptions.length > 0 ? (
+                      modelOptions.find(m => m.id === selectedModelId)?.name || t('design.record.noModel', 'No model information')
+                    ) : (
+                      t('design.record.noModel', 'No model information')
+                    )}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="label">{t('performance.additive.label', 'SMILES of Additive')}:</span>
+                  <span className="value">{detailData?.smiles}</span>
+                </div>
+                <div className="info-item">
+                  <span className="label">{t('design.record.weightPercentage', 'Weight Percentage')}:</span>
+                  <span className="value">{formatWeightPercentage(baseModelId)}</span>
+                </div>
               </div>
             </div>
           </div>
 
           {processedResults && (
-            <div className="result-section">
-              <h3>{t('performance.results.title')}</h3>
+            <div className="design-results-section">
+              <h4 className="design-section-title">{t('performance.results.title')}</h4>
 
               {(isHighTier || isMock) ? (
-                <>
+                <div className="design-results-card">
                   {/* 25°C Section - 根据 supportedMetrics 条件渲染 */}
                   <div className="temperature-section">
-                    <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
+                    <h5>{t('performance.results.temperatureTabs.temp25')}</h5>
                     <div className="performance-results">
                       {shouldShowMetric('cl', '25') && (
                         <div className="result-item">
@@ -360,7 +362,7 @@ const RecordPage: React.FC = () => {
                   {/* 45°C Section - 仅在有支持的指标时显示 */}
                   {shouldShow45CSection() && (
                     <div className="temperature-section">
-                      <h4>{t('performance.results.temperatureTabs.temp45')}</h4>
+                      <h5>{t('performance.results.temperatureTabs.temp45')}</h5>
                       <div className="performance-results">
                         {shouldShowMetric('cl', '45') && (
                           <div className="result-item">
@@ -377,17 +379,19 @@ const RecordPage: React.FC = () => {
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               ) : (
-                <div className="temperature-section">
-                  <h4>{t('performance.results.temperatureTabs.temp25')}</h4>
-                  <div className="limited-preview">
-                    <div className="result-item">
-                      <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
-                      <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
-                    </div>
-                    <div className="upgrade-prompt">
-                      {t('performance.results.upgradeToViewMetrics')}
+                <div className="design-results-card">
+                  <div className="temperature-section">
+                    <h5>{t('performance.results.temperatureTabs.temp25')}</h5>
+                    <div className="limited-preview">
+                      <div className="result-item">
+                        <div className="result-label">{t('performance.results.performance.cycleLife25')}</div>
+                        <PerformanceBadge metric={processedResults.temp25.cycleLife} metricType="cycleLife" />
+                      </div>
+                      <div className="upgrade-prompt">
+                        {t('performance.results.upgradeToViewMetrics')}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -396,10 +400,12 @@ const RecordPage: React.FC = () => {
           )}
 
           {detailData?.llm_analysis_result && (
-            <div className="result-section">
-              <h3>{t('performance.llmAnalysis.title')}</h3>
-              <div className="analysis-content">
-                <InlineMoleculeRenderer content={detailData.llm_analysis_result} onMoleculeClick={() => {}} />
+            <div className="design-analysis-section">
+              <h4 className="design-section-title">{t('performance.llmAnalysis.title')}</h4>
+              <div className="design-analysis-card">
+                <div className="analysis-content">
+                  <InlineMoleculeRenderer content={detailData.llm_analysis_result} onMoleculeClick={() => {}} />
+                </div>
               </div>
             </div>
           )}

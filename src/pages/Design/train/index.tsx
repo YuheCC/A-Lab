@@ -98,36 +98,23 @@ const DesignTrainPage: React.FC = () => {
   };
 
   const addFiles = (newFiles: File[]) => {
-    // Filter valid files (check format only)
-    const validFiles = newFiles.filter((file) => {
-      // Check file format - only support xlsx
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      if (ext !== 'xlsx') {
-        setSnackbar({
-          open: true,
-          message: t('design.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
-          severity: 'error',
-        });
-        return false;
-      }
-      return true;
-    });
+    // Only take the first file
+    const file = newFiles[0];
+    if (!file) return;
 
-    // Avoid duplicate files (by name)
-    const existingNames = new Set(files.map((f) => f.name));
-    const uniqueFiles = validFiles.filter((f) => !existingNames.has(f.name));
-
-    if (uniqueFiles.length < validFiles.length) {
+    // Check file format - only support xlsx
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'xlsx') {
       setSnackbar({
         open: true,
-        message: t('design.train.errors.duplicateFiles', 'Some duplicate files were skipped'),
+        message: t('design.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
         severity: 'error',
       });
+      return;
     }
 
-    if (uniqueFiles.length > 0) {
-      setFiles([...files, ...uniqueFiles]);
-    }
+    // Replace existing file with the new one
+    setFiles([file]);
   };
 
   const removeFile = (index: number) => {
@@ -721,19 +708,18 @@ const DesignTrainPage: React.FC = () => {
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                   accept=".xlsx"
-                  multiple
                 />
                 <div className="upload-icon">
                    <UploadCloud size={28} />
                 </div>
                 <div className="upload-text">
-                  {t('design.train.step4.dragDropMultiple', 'Drag and drop your files here, or click to browse')}
+                  {t('design.train.step4.dragDrop', 'Drag and drop your file here, or click to browse')}
                 </div>
                 <div className="upload-hint">
-                  {t('design.train.step4.formatsMultiple', 'Supported format: XLSX only')}
+                  {t('design.train.step4.formats', 'Supported format: XLSX only')}
                 </div>
                 <button className="upload-btn">
-                  {t('design.train.step4.chooseFiles', 'Choose Files')}
+                  {t('design.train.step4.chooseFile', 'Choose File')}
                 </button>
               </div>
 
