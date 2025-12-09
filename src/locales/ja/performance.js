@@ -218,7 +218,7 @@ export default {
       completed: "完了"
     },
     actions: {
-      viewDetails: "見る",
+      viewResults: "結果を見る",
       delete: "削除",
       deleteConfirm: "この記録を削除してもよろしいですか？",
       deleteFailed: "記録の削除に失敗しました"
@@ -233,7 +233,7 @@ export default {
 
   // Records
   records: {
-    searchPlaceholder: "レコード名またはIDで検索",
+    searchPlaceholder: "レコードIDで検索",
     allModels: "すべてのモデル",
     clearFilters: "フィルターをクリア",
     showingRecords: "{{count}}件 / {{total}}件を表示中"

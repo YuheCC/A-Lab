@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -62,9 +62,13 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [recordSearchKeyword, setRecordSearchKeyword] = useState<string>('');
   const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
   const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
+  const [debouncedRecordId, setDebouncedRecordId] = useState<string>('');
 
   // Model options for records filter (top 100 models)
   const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
+
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get dayjs locale based on current language
   const getDayjsLocale = () => {
@@ -81,6 +85,48 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     };
     return localeMap[lang] || 'zh-cn';
   };
+
+  // Parse and validate record ID format (e.g., "DS-001" -> "1", "76" -> "76")
+  const parseRecordId = (input: string): string | null => {
+    if (!input || input.trim() === '') {
+      return '';
+    }
+
+    const trimmedInput = input.trim();
+
+    // Check if it matches DS-XXX format
+    const dsMatch = trimmedInput.match(/^DS-(\d+)$/i);
+    if (dsMatch) {
+      return dsMatch[1];
+    }
+
+    // Check if it's a pure number
+    const numberMatch = trimmedInput.match(/^\d+$/);
+    if (numberMatch) {
+      return trimmedInput;
+    }
+
+    // Invalid format
+    return null;
+  };
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      const parsedId = parseRecordId(recordSearchKeyword);
+      setDebouncedRecordId(parsedId || '');
+    }, 500); // 500ms delay
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [recordSearchKeyword]);
 
   // Calculate total positive count based on base_model_type
   const getTotalPositiveCount = (baseModelType?: number): number => {
@@ -141,7 +187,28 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setError(null);
 
     try {
-      const response = await getHistoryList({ page, page_size: pageSize });
+      const params: any = {
+        page,
+        page_size: pageSize,
+      };
+
+      // Add search keyword filter (by record ID) - use debounced and validated ID
+      if (debouncedRecordId) {
+        params.id = debouncedRecordId;
+      }
+
+      // Add model filter
+      if (recordSelectedModel && recordSelectedModel !== 'all') {
+        params.model_id = parseInt(recordSelectedModel);
+      }
+
+      // Add date filter (split to 0:00:00 - 23:59:59 of selected day)
+      if (recordSelectedDate) {
+        const selectedDay = dayjs(recordSelectedDate);
+        params.created_at = `${selectedDay.format('YYYY-MM-DD')}T00:00:00,${selectedDay.format('YYYY-MM-DD')}T23:59:59`;
+      }
+
+      const response = await getHistoryList(params);
       const transformedData = response.data.data.map((item: any) =>
         transformApiDataToRecord(item, recordModelOptions)
       );
@@ -197,9 +264,20 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   useEffect(() => {
     if (activeTab === 'records' && recordModelOptions.length > 0) {
+      // Reset to page 1 when filters change
+      if (currentPage === 1) {
+        fetchHistoryData(1);
+      } else {
+        setCurrentPage(1);
+      }
+    }
+  }, [activeTab, recordModelOptions, debouncedRecordId, recordSelectedModel, recordSelectedDate]);
+
+  useEffect(() => {
+    if (activeTab === 'records' && recordModelOptions.length > 0) {
       fetchHistoryData(currentPage);
     }
-  }, [activeTab, currentPage, recordModelOptions]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (activeTab === 'models') {
@@ -297,6 +375,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
   const handleClearRecordsFilters = () => {
     setRecordSearchKeyword('');
+    setDebouncedRecordId('');
     setRecordSelectedModel('all');
     setRecordSelectedDate('');
   };
@@ -320,16 +399,6 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setSelectedBaseModelId(undefined);
   };
 
-  // Filter records data
-  const filteredHistoryData = historyData.filter((record) => {
-    const keywordMatch = !recordSearchKeyword ||
-      record.smiles.toLowerCase().includes(recordSearchKeyword.toLowerCase()) ||
-      String(record.id).includes(recordSearchKeyword);
-    const dateMatch = !recordSelectedDate || record.date.startsWith(recordSelectedDate);
-    const modelMatch = recordSelectedModel === 'all' ||
-      (record.modelId && record.modelId.toString() === recordSelectedModel);
-    return keywordMatch && dateMatch && modelMatch;
-  });
 
   return (
     <div className="design-tool-container">
@@ -399,7 +468,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       className="records-search-input"
                       value={recordSearchKeyword}
                       onChange={(e) => setRecordSearchKeyword(e.target.value)}
-                      placeholder={t('performance.records.searchPlaceholder', '搜索record名称或ID')}
+                      placeholder={t('performance.records.searchPlaceholder', 'Search record ID')}
                     />
                     <select
                       className="records-model-filter"
@@ -479,8 +548,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                   </div>
                   <div className="records-count-text">
                     {t('performance.records.showingRecords', '显示 {{count}} / {{total}} 条记录', {
-                      count: filteredHistoryData.length,
-                      total: historyData.length
+                      count: historyData.length,
+                      total: total
                     })}
                   </div>
                   <div className="records-table-wrapper">
@@ -496,14 +565,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredHistoryData.length === 0 ? (
+                        {historyData.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="no-data">
                               {t('design.history.noResults', 'No design records found.')}
                             </td>
                           </tr>
                         ) : (
-                          filteredHistoryData.map((record) => {
+                          historyData.map((record) => {
                             const totalPositive = getTotalPositiveCount(record.baseModelType);
                             const actualPositive = record.temp25Count + record.temp45Count;
                             return (
@@ -518,13 +587,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                                   className="action-button view-button"
                                   onClick={() => handleViewDetails(record.id)}
                                 >
-                                  {t('design.history.actions.viewDetails', 'View Details')}
-                                </button>
-                                <button
-                                  className="action-button delete-button"
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                >
-                                  {t('design.history.actions.delete', 'Delete')}
+                                  {t('design.history.actions.viewResults', 'View Results')}
                                 </button>
                               </td>
                             </tr>

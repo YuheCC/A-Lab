@@ -218,7 +218,7 @@ export default {
       completed: "완료됨"
     },
     actions: {
-      viewDetails: "보기",
+      viewResults: "결과 보기",
       delete: "삭제",
       deleteConfirm: "이 기록을 삭제하시겠습니까?",
       deleteFailed: "기록 삭제에 실패했습니다"
@@ -233,7 +233,7 @@ export default {
 
   // Records
   records: {
-    searchPlaceholder: "레코드 이름 또는 ID로 검색",
+    searchPlaceholder: "레코드 ID로 검색",
     allModels: "모든 모델",
     clearFilters: "필터 지우기",
     showingRecords: "{{count}}개 / {{total}}개 표시 중"
