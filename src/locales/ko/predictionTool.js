@@ -290,6 +290,7 @@ export default {
         status: "상태:",
         statusOnline: "온라인",
         statusTrained: "학습 완료",
+        statusOffline: "오프라인",
         statusTraining: "학습 중",
         statusFail: "실패",
         created: "생성 시간:",
@@ -326,6 +327,11 @@ export default {
         loadingText: "로딩 중...",
         noFiles: "학습 파일이 없습니다",
         noMetrics: "학습 지표가 없습니다",
+        beforeTraining: "학습 전",
+        afterTraining: "학습 후",
+        downloadingLog: "다운로드 중...",
+        downloadTrainLog: "학습 로그 다운로드",
+        downloadLogSuccess: "학습 로그 다운로드 성공",
         confirmDeploy: "배포 확인",
         confirmRemove: "삭제 확인",
         deployMessage: "이 모델을 배포하시겠습니까? 예측에 사용할 수 있게 됩니다.",
@@ -339,7 +345,8 @@ export default {
             fetchFailed: "모델 상세 정보를 가져오는 데 실패했습니다",
             actionFailed: "작업 실패",
             mockModel: "데모 모델은 수정할 수 없습니다",
-            notFound: "모델을 찾을 수 없습니다"
+            notFound: "모델을 찾을 수 없습니다",
+            downloadLogFailed: "학습 로그 다운로드 실패"
         }
     }
 };

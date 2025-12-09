@@ -290,6 +290,7 @@ export default {
         status: "ステータス：",
         statusOnline: "オンライン",
         statusTrained: "トレーニング済み",
+        statusOffline: "オフライン",
         statusTraining: "トレーニング中",
         statusFail: "失敗",
         created: "作成日時：",
@@ -326,6 +327,11 @@ export default {
         loadingText: "読み込み中...",
         noFiles: "トレーニングファイルがありません",
         noMetrics: "トレーニング指標がありません",
+        beforeTraining: "トレーニング前",
+        afterTraining: "トレーニング後",
+        downloadingLog: "ダウンロード中...",
+        downloadTrainLog: "トレーニングログをダウンロード",
+        downloadLogSuccess: "トレーニングログのダウンロードに成功しました",
         confirmDeploy: "デプロイの確認",
         confirmRemove: "削除の確認",
         deployMessage: "このモデルをデプロイしてもよろしいですか？これにより予測に使用できるようになります。",
@@ -339,7 +345,8 @@ export default {
             fetchFailed: "モデル詳細の取得に失敗しました",
             actionFailed: "操作に失敗しました",
             mockModel: "デモモデルは変更できません",
-            notFound: "モデルが見つかりません"
+            notFound: "モデルが見つかりません",
+            downloadLogFailed: "トレーニングログのダウンロードに失敗しました"
         }
     }
 };
