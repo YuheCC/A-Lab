@@ -137,6 +137,8 @@ const ANION_PROPERTY_DEFINITIONS = [
 const ANION_SEARCH_PLACEHOLDER = 'LiPF6, sodium tetrafluoroborate, O=S(=O)(F)[N-]S(=O)(=O)F';
 const REMOVED_FILTER_WARNING_PREFIX = 'Removed property filters due to empty results';
 const MASKED_FILTER_WARNING_MESSAGE = 'Disabled some property filters due to empty results.';
+// Hide score-related UI for anion molecules
+const ANION_SCORE_DISPLAY_ENABLED = false;
 
 const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
     const { t, i18n } = useTranslation();
@@ -1154,31 +1156,31 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                                 }
                                                 : null;
                                             const scoreSource = molecule.rawData ?? molecule;
-                                            const propertyScoreSummary = buildScoreSummary(
+                                            const propertyScoreSummary = ANION_SCORE_DISPLAY_ENABLED ? buildScoreSummary(
                                                 t('search.properties.propertySuitability', 'Property Suitability'),
                                                 scoreSource,
                                                 'property_suitability',
                                                 'property_subscores',
-                                            );
-                                            const structureScoreSummary = buildScoreSummary(
+                                            ) : null;
+                                            const structureScoreSummary = ANION_SCORE_DISPLAY_ENABLED ? buildScoreSummary(
                                                 t('search.properties.structureSimilarity', 'Structure Similarity'),
                                                 scoreSource,
                                                 'structure_similarity',
                                                 'structure_subscores',
-                                            );
-                                            const gradeDetails = createLlmGradeProp(
+                                            ) : null;
+                                            const gradeDetails = ANION_SCORE_DISPLAY_ENABLED ? createLlmGradeProp(
                                                 molecule.grade,
                                                 molecule.reasoning,
                                                 (text) => setReasoningText(text)
-                                            );
-                                            const overallScoreProp = buildOverallScoreProp(
+                                            ) : null;
+                                            const overallScoreProp = ANION_SCORE_DISPLAY_ENABLED ? buildOverallScoreProp(
                                                 scoreSource,
                                                 t('search.properties.overallScore', 'Overall Score'),
                                                 propertyScoreSummary,
                                                 structureScoreSummary,
                                                 gradeDetails
-                                            );
-                                            const gradeProp = !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
+                                            ) : null;
+                                            const gradeProp = ANION_SCORE_DISPLAY_ENABLED && !overallScoreProp && gradeDetails?.show ? gradeDetails : null;
 
                                             const propGroups = [
                                                 { label: t('search.properties.smiles'), value: molecule.smiles, span: 4, show: canShowColumn('smiles') },
@@ -1278,18 +1280,18 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                     </div>
                                 ))}
                                 {highlightedSimilarMolecules.map((molecule, index) => {
-                                    const propertyScoreSummary = buildScoreSummary(
+                                    const propertyScoreSummary = ANION_SCORE_DISPLAY_ENABLED ? buildScoreSummary(
                                         t('search.properties.propertySuitability', 'Property Suitability'),
                                         molecule,
                                         'property_suitability',
                                         'property_subscores',
-                                    );
-                                    const structureScoreSummary = buildScoreSummary(
+                                    ) : null;
+                                    const structureScoreSummary = ANION_SCORE_DISPLAY_ENABLED ? buildScoreSummary(
                                         t('search.properties.structureSimilarity', 'Structure Similarity'),
                                         molecule,
                                         'structure_similarity',
                                         'structure_subscores',
-                                    );
+                                    ) : null;
 
                                     const casCandidate = molecule.CASRN ?? (molecule as any)?.casrn ?? (molecule as any)?.cas ?? (molecule as any)?.CAS;
                                     const includeCas = Boolean(ENABLE_CASRN_DISPLAY && canShowColumn('casrn') && casCandidate);
@@ -1302,19 +1304,19 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                                         }
                                         : null;
 
-                                    const gradeDetails = createLlmGradeProp(
+                                    const gradeDetails = ANION_SCORE_DISPLAY_ENABLED ? createLlmGradeProp(
                                         molecule.grade,
                                         molecule.reasoning,
                                         (text) => setReasoningText(text)
-                                    );
+                                    ) : null;
 
-                                    const overallScoreProp = buildOverallScoreProp(
+                                    const overallScoreProp = ANION_SCORE_DISPLAY_ENABLED ? buildOverallScoreProp(
                                         molecule,
                                         t('search.properties.overallScore', 'Overall Score'),
                                         propertyScoreSummary,
                                         structureScoreSummary,
                                         gradeDetails
-                                    );
+                                    ) : null;
 
                                     const propGroups = [
                                         { label: t('search.properties.smiles'), value: molecule.SMILES, span: 4, show: canShowColumn('smiles') },
