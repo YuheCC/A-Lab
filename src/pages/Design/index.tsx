@@ -545,6 +545,13 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         <span>{t('performance.records.clearFilters', 'Clear Filters')}</span>
                       </button>
                     )}
+                    <button
+                      className="design-refresh-button"
+                      onClick={() => fetchHistoryData(currentPage)}
+                      aria-label={t('performance.models.filters.refresh', 'Refresh')}
+                    >
+                      <RefreshCw size={16} />
+                    </button>
                   </div>
                   <div className="records-count-text">
                     {t('performance.records.showingRecords', '显示 {{count}} / {{total}} 条记录', {
@@ -678,7 +685,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       <th>{t('performance.models.columns.modelName', 'Model Name')}</th>
                       <th>{t('performance.models.columns.baseModel', 'Base Model')}</th>
                       <th>{t('performance.models.columns.status', 'Status')}</th>
-                      <th>{t('performance.models.columns.created', 'Created')}</th>
+                      <th>{t('performance.models.columns.created', 'Created Time')}</th>
                     </tr>
                   </thead>
                   <tbody>
