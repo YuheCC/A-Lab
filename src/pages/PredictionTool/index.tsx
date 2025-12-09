@@ -609,7 +609,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                           <th>{t('predictionTool.list.columns.batteryCount', 'Battery Count')}</th>
                           <th>{t('predictionTool.list.columns.avgCycleLife', 'Avg Cycle Life')}</th>
                           <th>{t('predictionTool.list.columns.model', 'Model')}</th>
-                          <th>{t('predictionTool.list.columns.created', 'Created')}</th>
+                          <th>{t('predictionTool.list.columns.created', 'Created Time')}</th>
                           <th>{t('predictionTool.list.columns.actions', 'Actions')}</th>
                         </tr>
                       </thead>
@@ -715,7 +715,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                           <th>{t('predictionTool.models.columns.modelId', 'Model ID')}</th>
                           <th>{t('predictionTool.models.columns.modelName', 'Model Name')}</th>
                           <th>{t('predictionTool.models.columns.status', 'Status')}</th>
-                          <th>{t('predictionTool.models.columns.created', 'Created')}</th>
+                          <th>{t('predictionTool.models.columns.created', 'Created Time')}</th>
                           <th>{t('predictionTool.models.columns.createdBy', 'Created By')}</th>
                         </tr>
                       </thead>

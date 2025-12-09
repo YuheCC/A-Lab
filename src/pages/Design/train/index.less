@@ -105,3 +105,50 @@
     color: #f44336;
   }
 }
+
+// Instruction table styles
+.instruction-table-container {
+  overflow-x: auto;
+  margin: 16px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+
+  .instruction-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    white-space: nowrap;
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    th {
+      font-weight: 600;
+      color: #333;
+    }
+
+    // Header background colors based on image
+    .header-cell-info {
+      background-color: #d9ead3;
+    }
+    
+    .header-solvent {
+      background-color: #c9daf8;
+    }
+    
+    .header-salt {
+      background-color: #e6e6e6; 
+    }
+    
+    .header-additive {
+      background-color: #f4cccc;
+    }
+    
+    .header-performance {
+      background-color: #ead1dc;
+    }
+  }
+}

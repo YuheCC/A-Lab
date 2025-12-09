@@ -31,6 +31,87 @@ export default {
             duplicateFiles: '部分重复文件已跳过',
             unknown: '训练启动失败'
         },
+        instruction: {
+            title: "MU-in-Box 设计功能说明",
+            functionality: {
+                title: "1. 功能说明",
+                desc: "MU-in-Box 包含两个主要功能：",
+                train: {
+                    title: "1.1 模型训练与评估",
+                    input: "输入：“Customer table template for model tuning.xlsx”",
+                    output: "输出：训练后的模型及评估指标结果",
+                    metrics1: "其中CR, CL任务评估指标为 RMSE (Root Mean Square Error) and R² (Coefficient of Determination)",
+                    metrics2: "CE任务的评估指标为 F1 score and AUC (area under curve)"
+                },
+                predict: {
+                    title: "1.2 性能预测",
+                    input: "输入：新添加剂的 SMILES",
+                    output: "输出：新添加剂相对于基准电解液的性能变化预测结果",
+                    note: "用户可通过填写数据来自定义训练模型并进行预测。"
+                }
+            },
+            structure: {
+                title: "2. 表格结构",
+                p1: "第 1 部分：电芯信息（正极 / 负极 / 电解液编码）",
+                p2: "第 2 部分：溶剂",
+                p3: "第 3 部分：锂盐",
+                p4: "第 4 部分：添加剂",
+                p5: "第 5 部分：电芯性能"
+            },
+            filling: {
+                title: "3. 表格填写说明",
+                template: {
+                    title: "3.1 数据模板要求 —— “Customer table template for model tuning.xlsx”",
+                    row1: "请不要更改模板的前两行。",
+                    row2: "请不要增删任何列。"
+                },
+                requirements: {
+                    title: "3.2 数据填写要求",
+                    item1: "表格第3行为基准电解液，其对应所有的任务数值为1，其他电解液数值为基准电解液的相对比值",
+                    item2: "确保每个电解液中至少一个任务的数值非空",
+                    item3: "确保每个电解液配方得总和加起来为100%"
+                }
+            },
+            notes: {
+                title: "4. 各部分填写注意事项",
+                p1: {
+                    title: "第 1 部分：电芯信息",
+                    item1: "请确保所有条目的正极与负极类型保持一致。",
+                    item2: "只有电解液编码可以变化。"
+                },
+                p2: {
+                    title: "第 2 部分：溶剂",
+                    item1: "请填写每个溶剂的 SMILES 与 wt%，最多至 Solvent 5。",
+                    item2: "请确保所有 SMILES 合法有效。",
+                    item3: "基准电解液必须包含至少 3 个溶剂。"
+                },
+                p3: {
+                    title: "第 3 部分：锂盐",
+                    item1: "请填写各锂盐的 SMILES 与 wt%，最多至 Salt 3。",
+                    item2: "请确保 SMILES 合法有效。"
+                },
+                p4: {
+                    title: "第 4 部分：添加剂",
+                    item1: "请填写每个添加剂的 SMILES 与 wt%，最多至 Additive 6。",
+                    item2: "基准电解液的添加剂数量不得超过 3 个。"
+                },
+                p5: {
+                    title: "第 5 部分：电芯性能数据",
+                    item1: "循环寿命（25°C）：在 25°C、1C-1C 循环条件下，电池容量衰减至 80% 所对应的循环次数",
+                    item2: "平均库仑效率（25°C）：在 25°C、1C-1C 循环条件下，电池容量衰减至 80% 时，各循环库仑效率的平均值。",
+                    item3: "5C 放电能量保持率（25°C）：在 25°C 条件下，以 5C 倍率放电时的能量保持率。",
+                    item4: "循环寿命（45°C）：在 45°C、1C-1C 循环条件下，电池容量衰减至 80% 所对应的循环次数。",
+                    item5: "平均库仑效率（45°C）：在 45°C、1C-1C 循环条件下，电池容量衰减至 80% 时，各循环库仑效率的平均值。",
+                    note1: "您可使用任意一种性能数据进行模型训练。",
+                    note2: "若同一配方对应多颗电芯（如 100,120,130），请在同一单元格内以半角逗号分隔填写：100,120,130",
+                    note3: "请确保单元格格式设置正确。"
+                }
+            },
+            tips: {
+                title: "5. 其他提示",
+                item1: "5.1重量检查列可用于验证配方是否加总为 100 wt%。"
+            }
+        },
         step1: {
             title: '模型信息',
             name: '模型名称',
