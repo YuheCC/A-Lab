@@ -218,7 +218,7 @@ export default {
       completed: "已完成"
     },
     actions: {
-      viewDetails: "查看详情",
+      viewResults: "查看结果",
       delete: "删除",
       deleteConfirm: "确定要删除这条记录吗？",
       deleteFailed: "删除记录失败"
@@ -233,7 +233,7 @@ export default {
 
   // Records
   records: {
-    searchPlaceholder: "搜索record名称或ID",
+    searchPlaceholder: "搜索record ID",
     allModels: "所有模型",
     clearFilters: "清除筛选",
     showingRecords: "显示 {{count}} / {{total}} 条记录"

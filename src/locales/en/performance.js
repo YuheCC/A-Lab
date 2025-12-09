@@ -218,7 +218,7 @@ export default {
       completed: "Completed"
     },
     actions: {
-      viewDetails: "View Details",
+      viewResults: "View Results",
       delete: "Delete",
       deleteConfirm: "Are you sure you want to delete this record?",
       deleteFailed: "Failed to delete record"
@@ -233,7 +233,7 @@ export default {
 
   // Records
   records: {
-    searchPlaceholder: "Search record name or ID",
+    searchPlaceholder: "Search record ID",
     allModels: "All Models",
     clearFilters: "Clear Filters",
     showingRecords: "Showing {{count}} of {{total}} records"
