@@ -10,7 +10,8 @@ export default {
             modelNameRequired: '모델 이름을 입력하세요',
             baseModelRequired: '기본 모델을 선택하세요',
             fileRequired: '학습 데이터셋을 업로드하세요',
-            fileSize: '파일 크기가 50MB를 초과합니다',
+            fileFormat: '지원되지 않는 파일 형식',
+            duplicateFiles: '일부 중복 파일이 건너뛰어졌습니다',
             unknown: '학습 시작에 실패했습니다'
         },
         step1: {
@@ -41,7 +42,11 @@ export default {
             upload: '데이터셋 업로드',
             dragDrop: '파일을 여기에 끌어다 놓거나 클릭하여 찾아보기',
             formats: '지원 형식: CSV, XLSX (최대 50MB)',
+            dragDropMultiple: '파일을 여기에 끌어다 놓거나 클릭하여 찾아보기',
+            formatsMultiple: '지원 형식: XLSX만 가능',
             chooseFile: '파일 선택',
+            chooseFiles: '파일 선택',
+            removeFile: '파일 제거',
             downloadSample: '샘플 다운로드'
         }
     },

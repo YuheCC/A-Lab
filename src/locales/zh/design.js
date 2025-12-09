@@ -10,7 +10,8 @@ export default {
             modelNameRequired: '请输入模型名称',
             baseModelRequired: '请选择基础模型',
             fileRequired: '请上传训练数据集',
-            fileSize: '文件大小超过 50MB',
+            fileFormat: '不支持的文件格式',
+            duplicateFiles: '部分重复文件已跳过',
             unknown: '训练启动失败'
         },
         step1: {
@@ -41,7 +42,11 @@ export default {
             upload: '上传数据集',
             dragDrop: '将文件拖放到此处，或点击浏览',
             formats: '支持格式: CSV, XLSX (最大 50MB)',
+            dragDropMultiple: '将文件拖放到此处，或点击浏览',
+            formatsMultiple: '仅支持 XLSX 格式',
             chooseFile: '选择文件',
+            chooseFiles: '选择文件',
+            removeFile: '移除文件',
             downloadSample: '下载样例'
         }
     },

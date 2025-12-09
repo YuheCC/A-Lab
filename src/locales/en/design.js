@@ -10,7 +10,8 @@ export default {
             modelNameRequired: 'Please enter model name',
             baseModelRequired: 'Please select a base model',
             fileRequired: 'Please upload training dataset',
-            fileSize: 'File size exceeds 50MB',
+            fileFormat: 'Unsupported file format',
+            duplicateFiles: 'Some duplicate files were skipped',
             unknown: 'Failed to start training'
         },
         step1: {
@@ -41,7 +42,11 @@ export default {
             upload: 'Upload Dataset',
             dragDrop: 'Drag and drop your file here, or click to browse',
             formats: 'Supported formats: CSV, XLSX (Max 50MB)',
+            dragDropMultiple: 'Drag and drop your files here, or click to browse',
+            formatsMultiple: 'Supported format: XLSX only',
             chooseFile: 'Choose File',
+            chooseFiles: 'Choose Files',
+            removeFile: 'Remove file',
             downloadSample: 'Download Sample'
         }
     },

@@ -10,7 +10,8 @@ export default {
             modelNameRequired: 'モデル名を入力してください',
             baseModelRequired: 'ベースモデルを選択してください',
             fileRequired: 'トレーニングデータセットをアップロードしてください',
-            fileSize: 'ファイルサイズが 50MB を超えています',
+            fileFormat: 'サポートされていないファイル形式',
+            duplicateFiles: '一部の重複ファイルがスキップされました',
             unknown: 'トレーニングの開始に失敗しました'
         },
         step1: {
@@ -41,7 +42,11 @@ export default {
             upload: 'データセットをアップロード',
             dragDrop: 'ここにファイルをドラッグアンドドロップ、またはクリックして参照',
             formats: 'サポート形式: CSV, XLSX（最大 50MB）',
+            dragDropMultiple: 'ここにファイルをドラッグアンドドロップ、またはクリックして参照',
+            formatsMultiple: 'サポート形式：XLSX のみ',
             chooseFile: 'ファイルを選択',
+            chooseFiles: 'ファイルを選択',
+            removeFile: 'ファイルを削除',
             downloadSample: 'サンプルをダウンロード'
         }
     },
