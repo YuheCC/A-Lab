@@ -20,6 +20,7 @@ import {
   removeModel as removeModelAPI,
   getModelFileList as getModelFileListAPI,
   getModelMetrics as getModelMetricsAPI,
+  getModelTrainLog as getModelTrainLogAPI,
   type TrainModelParams,
   type ModelListParams,
   type ModelListResponse,
@@ -28,6 +29,7 @@ import {
   type ModelFileListResponse,
   type ModelMetricsParams,
   type ModelMetricsResponse,
+  type ModelTrainLogParams,
 } from '@/services/model/training';
 import { mockModelList, mockModelDetail } from './modelExample';
 
@@ -379,6 +381,38 @@ export const getModelMetrics = async (
   } catch (error) {
     console.error('Get model metrics failed:', error);
     return null;
+  }
+};
+
+/**
+ * Download model train log
+ * @param modelId Model ID to download train log for
+ * @param modelName Model name for filename
+ * @returns Promise<void>
+ */
+export const downloadModelTrainLog = async (modelId: string, modelName: string): Promise<void> => {
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  try {
+    const blob = await getModelTrainLogAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${modelName}_train_log.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download train log failed:', error);
+    throw error;
   }
 };
 

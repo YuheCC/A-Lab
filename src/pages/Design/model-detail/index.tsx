@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
-import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics } from '../model';
+import { ArrowLeft, Download } from 'lucide-react';
+import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
@@ -22,6 +22,7 @@ const DesignModelDetailPage: React.FC = () => {
   const [metrics, setMetrics] = useState<ModelMetricsResponse | null>(null);
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
+  const [downloadingLog, setDownloadingLog] = useState(false);
 
   useEffect(() => {
     if (modelId) {
@@ -138,6 +139,21 @@ const DesignModelDetailPage: React.FC = () => {
       alert(errorMessage);
     } finally {
       setIsUndeploying(false);
+    }
+  };
+
+  const handleDownloadTrainLog = async () => {
+    if (!modelId || !model) return;
+
+    setDownloadingLog(true);
+    try {
+      await downloadModelTrainLog(modelId, model.model_name);
+    } catch (err) {
+      console.error('Failed to download train log:', err);
+      const errorMessage = err instanceof Error ? err.message : t('design.modelDetail.errors.downloadLogFailed', 'Failed to download train log');
+      alert(errorMessage);
+    } finally {
+      setDownloadingLog(false);
     }
   };
 
@@ -559,6 +575,18 @@ const DesignModelDetailPage: React.FC = () => {
                 <p>{t('design.modelDetail.noMetrics', '暂无训练指标')}</p>
               </div>
             )}
+            {/* Download Train Log Button */}
+            <button
+              className="download-log-button"
+              onClick={handleDownloadTrainLog}
+              disabled={downloadingLog || isMock}
+            >
+              <Download size={16} />
+              {downloadingLog
+                ? t('design.modelDetail.downloadingLog', '下载中...')
+                : t('design.modelDetail.downloadTrainLog', '下载训练日志')
+              }
+            </button>
           </div>
         )}
       </div>
