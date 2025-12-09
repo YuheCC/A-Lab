@@ -1,4 +1,17 @@
 export default {
+    // List/Table columns
+    list: {
+        columns: {
+            recordId: 'Record ID',
+            smiles: 'SMILES',
+            modelName: '模型名称',
+            totalPositive: 'Total Positive',
+            temp25: '25°C Positive',
+            temp45: '45°C Positive',
+            created: '创建时间',
+            actions: '操作'
+        }
+    },
     // Train page
     train: {
         title: '训练新模型',

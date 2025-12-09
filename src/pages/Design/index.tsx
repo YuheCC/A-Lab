@@ -24,6 +24,9 @@ interface HistoryRecord {
   batterySystemId: number;
   temp25Count: number;
   temp45Count: number;
+  modelId?: number;
+  modelName?: string;
+  baseModelType?: number;
   rawData?: any;
 }
 
@@ -60,6 +63,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   const [recordSelectedModel, setRecordSelectedModel] = useState<string>('all');
   const [recordSelectedDate, setRecordSelectedDate] = useState<string>('');
 
+  // Model options for records filter (top 100 models)
+  const [recordModelOptions, setRecordModelOptions] = useState<ModelListItem[]>([]);
+
   // Get dayjs locale based on current language
   const getDayjsLocale = () => {
     const lang = i18n.language || 'zh';
@@ -74,6 +80,23 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       'ko-KR': 'ko',
     };
     return localeMap[lang] || 'zh-cn';
+  };
+
+  // Calculate total positive count based on base_model_type
+  const getTotalPositiveCount = (baseModelType?: number): number => {
+    if (baseModelType === undefined || baseModelType === null) return 0;
+    switch (baseModelType) {
+      case -2:
+        return 5;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      case 3:
+        return 2;
+      default:
+        return 0;
+    }
   };
 
   const getInitialTab = (): 'introduction' | 'records' | 'models' => {
@@ -93,7 +116,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     }
   }, []);
 
-  const transformApiDataToRecord = (apiData: any): HistoryRecord => {
+  const transformApiDataToRecord = (apiData: any, modelOptions: ModelListItem[]): HistoryRecord => {
+    // Find model info by model_id
+    const modelInfo = apiData.model_id
+      ? modelOptions.find(m => m.id === apiData.model_id)
+      : undefined;
+
     return {
       id: apiData.id.toString(),
       smiles: apiData.smiles || '',
@@ -101,6 +129,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       batterySystemId: apiData.battery_system_id,
       temp25Count: apiData.temperature_25_label_0_count || 0,
       temp45Count: apiData.temperature_45_label_0_count || 0,
+      modelId: apiData.model_id,
+      modelName: modelInfo?.model_name || '-',
+      baseModelType: modelInfo?.base_model_id,
       rawData: apiData
     };
   };
@@ -111,7 +142,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
 
     try {
       const response = await getHistoryList({ page, page_size: pageSize });
-      const transformedData = response.data.data.map(transformApiDataToRecord);
+      const transformedData = response.data.data.map((item: any) =>
+        transformApiDataToRecord(item, recordModelOptions)
+      );
       setHistoryData(transformedData);
       setTotal(response.data.total);
     } catch (err) {
@@ -163,10 +196,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   };
 
   useEffect(() => {
-    if (activeTab === 'records') {
+    if (activeTab === 'records' && recordModelOptions.length > 0) {
       fetchHistoryData(currentPage);
     }
-  }, [activeTab, currentPage]);
+  }, [activeTab, currentPage, recordModelOptions]);
 
   useEffect(() => {
     if (activeTab === 'models') {
@@ -203,6 +236,20 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       }
     };
     fetchBaseModelOptions();
+  }, []);
+
+  // Fetch model options for records filter (top 100 models)
+  useEffect(() => {
+    const fetchRecordModelOptions = async () => {
+      try {
+        const response = await getModelListFromModel({ page: 1, page_size: 100 });
+        setRecordModelOptions(response.data);
+      } catch (err) {
+        console.error('Failed to fetch record model options:', err);
+        setRecordModelOptions([]);
+      }
+    };
+    fetchRecordModelOptions();
   }, []);
 
   const handleNewDesign = () => {
@@ -273,14 +320,15 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     setSelectedBaseModelId(undefined);
   };
 
-  // Filter records data (currently no model field, so we'll just filter by keyword and date)
+  // Filter records data
   const filteredHistoryData = historyData.filter((record) => {
     const keywordMatch = !recordSearchKeyword ||
       record.smiles.toLowerCase().includes(recordSearchKeyword.toLowerCase()) ||
       String(record.id).includes(recordSearchKeyword);
     const dateMatch = !recordSelectedDate || record.date.startsWith(recordSelectedDate);
-    // Since records don't have a model field yet, we'll ignore model filter for now
-    return keywordMatch && dateMatch;
+    const modelMatch = recordSelectedModel === 'all' ||
+      (record.modelId && record.modelId.toString() === recordSelectedModel);
+    return keywordMatch && dateMatch && modelMatch;
   });
 
   return (
@@ -359,6 +407,11 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       onChange={(e) => setRecordSelectedModel(e.target.value)}
                     >
                       <option value="all">{t('performance.records.allModels', '所有模型')}</option>
+                      {recordModelOptions.map((model) => (
+                        <option key={model.id} value={model.id.toString()}>
+                          {model.model_name}
+                        </option>
+                      ))}
                     </select>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={getDayjsLocale()}>
                       <DatePicker
@@ -436,8 +489,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                         <tr>
                           <th>{t('design.list.columns.recordId', 'Record ID')}</th>
                           <th>{t('design.list.columns.smiles', 'SMILES')}</th>
-                          <th>{t('design.list.columns.temp25', '25°C Positive')}</th>
-                          <th>{t('design.list.columns.temp45', '45°C Positive')}</th>
+                          <th>{t('design.list.columns.modelName', 'Model Name')}</th>
+                          <th>{t('design.list.columns.totalPositive', 'Total Positive')}</th>
                           <th>{t('design.list.columns.created', 'Created')}</th>
                           <th>{t('design.list.columns.actions', 'Actions')}</th>
                         </tr>
@@ -450,12 +503,15 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                             </td>
                           </tr>
                         ) : (
-                          filteredHistoryData.map((record) => (
+                          filteredHistoryData.map((record) => {
+                            const totalPositive = getTotalPositiveCount(record.baseModelType);
+                            const actualPositive = record.temp25Count + record.temp45Count;
+                            return (
                             <tr key={record.id}>
                               <td className="record-id">DS-{String(record.id).padStart(3, '0')}</td>
                               <td className="smiles-cell">{record.smiles}</td>
-                              <td>{record.temp25Count}</td>
-                              <td>{record.temp45Count}</td>
+                              <td>{record.modelName || '-'}</td>
+                              <td>{totalPositive > 0 ? `${actualPositive}/${totalPositive}` : '-'}</td>
                               <td className="created-date">{record.date || '-'}</td>
                               <td className="actions-cell">
                                 <button
@@ -472,7 +528,8 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                                 </button>
                               </td>
                             </tr>
-                          ))
+                            );
+                          })
                         )}
                       </tbody>
                     </table>

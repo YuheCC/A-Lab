@@ -1,4 +1,17 @@
 export default {
+    // List/Table columns
+    list: {
+        columns: {
+            recordId: 'Record ID',
+            smiles: 'SMILES',
+            modelName: '모델 이름',
+            totalPositive: 'Total Positive',
+            temp25: '25°C Positive',
+            temp45: '45°C Positive',
+            created: '생성일',
+            actions: '작업'
+        }
+    },
     // Train page
     train: {
         title: '새 모델 학습',
