@@ -5,15 +5,16 @@
 }
 
 .design-record-content {
-  max-width: 1200px;
-  margin: 0 auto;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .design-record-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .design-action-title {
@@ -53,66 +54,37 @@
   color: #ef4444;
 }
 
-.record-detail-card {
+.design-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.design-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.design-cell-chemistry-section,
+.design-results-section,
+.design-analysis-section {
+  margin-bottom: 0;
+}
+
+.design-chemistry-card,
+.design-results-card,
+.design-analysis-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 24px;
 }
 
-.result-section {
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #f3f4f6;
-
-  &:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 16px 0;
-  }
-}
-
-.system-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.info-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-
-  .label {
-    font-size: 14px;
-    color: #6b7280;
-    flex-shrink: 0;
-    min-width: 80px;
-  }
-
-  .value {
-    font-size: 14px;
-    color: #1e293b;
-    word-break: break-all;
-
-    &.additive-value {
-      font-family: 'Courier New', monospace;
-      background: #f9fafb;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 13px;
-    }
-  }
-}
-
-.cell-chemistry-section {
+.design-chemistry-card {
   .chemistry-info-grid {
     display: flex;
     flex-direction: column;
@@ -154,22 +126,58 @@
   }
 }
 
-.temperature-section {
-  border-radius: 8px;
-  background: #ffffff;
-  padding: 20px;
-  position: relative;
-  margin-bottom: 20px;
+.system-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-  &:last-child {
-    margin-bottom: 0;
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  .label {
+    font-size: 14px;
+    color: #6b7280;
+    flex-shrink: 0;
+    min-width: 80px;
   }
 
-  h4 {
-    font-size: 16px;
-    font-weight: 600;
+  .value {
+    font-size: 14px;
     color: #1e293b;
-    margin: 0 0 16px 0;
+    word-break: break-all;
+
+    &.additive-value {
+      font-family: 'Courier New', monospace;
+      background: #f9fafb;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  }
+}
+
+
+.design-results-card {
+  .temperature-section {
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    position: relative;
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h5 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+    }
   }
 }
 
