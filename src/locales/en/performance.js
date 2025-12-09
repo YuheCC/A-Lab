@@ -1,7 +1,7 @@
 export default {
   // Page header
   title: "Impact of additive on cell performances",
-  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
+  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with base AI models trained on SES internal experimental data, or models finetuned by user data",
   beta: "BETA",
   disclaimerTitle: "Disclaimer",
   disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using user defined benchmark electrolyte. Results may differ when applied to different cell designs or benchmark electrolytes.",
