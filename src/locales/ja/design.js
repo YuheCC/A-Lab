@@ -82,6 +82,7 @@ export default {
         status: "ステータス：",
         statusOnline: "オンライン",
         statusTrained: "トレーニング済み",
+        statusOffline: "オフライン",
         statusTraining: "トレーニング中",
         statusFail: "失敗",
         created: "作成日時：",
@@ -116,8 +117,13 @@ export default {
         actions: "操作",
         viewDetails: "詳細を表示",
         loadingText: "読み込み中...",
+        error: "エラー",
         noFiles: "トレーニングファイルがありません",
         noMetrics: "トレーニング指標がありません",
+        beforeTraining: "トレーニング前",
+        afterTraining: "トレーニング後",
+        downloadingLog: "ダウンロード中...",
+        downloadTrainLog: "トレーニングログをダウンロード",
         confirmDeploy: "このモデルをデプロイしてもよろしいですか？",
         confirmUndeploy: "このモデルをアンデプロイしてもよろしいですか？",
         deploySuccess: "モデルが正常にデプロイされました！",
@@ -128,7 +134,8 @@ export default {
             deployFailed: "モデルのデプロイに失敗しました",
             undeployFailed: "モデルのアンデプロイに失敗しました",
             cannotDeployDemo: "デモモデルはデプロイできません",
-            cannotUndeployDemo: "デモモデルはアンデプロイできません"
+            cannotUndeployDemo: "デモモデルはアンデプロイできません",
+            downloadLogFailed: "トレーニングログのダウンロードに失敗しました"
         }
     },
     // Record Detail

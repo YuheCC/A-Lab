@@ -82,6 +82,7 @@ export default {
         status: "Status:",
         statusOnline: "Online",
         statusTrained: "Trained",
+        statusOffline: "Offline",
         statusTraining: "Training",
         statusFail: "Failed",
         created: "Created:",
@@ -116,8 +117,13 @@ export default {
         actions: "Actions",
         viewDetails: "View Details",
         loadingText: "Loading...",
+        error: "Error",
         noFiles: "No training files",
         noMetrics: "No training metrics",
+        beforeTraining: "Before Training",
+        afterTraining: "After Training",
+        downloadingLog: "Downloading...",
+        downloadTrainLog: "Download Train Log",
         confirmDeploy: "Are you sure you want to deploy this model?",
         confirmUndeploy: "Are you sure you want to undeploy this model?",
         deploySuccess: "Model deployed successfully!",
@@ -128,7 +134,8 @@ export default {
             deployFailed: "Failed to deploy model",
             undeployFailed: "Failed to undeploy model",
             cannotDeployDemo: "Cannot deploy demo model",
-            cannotUndeployDemo: "Cannot undeploy demo model"
+            cannotUndeployDemo: "Cannot undeploy demo model",
+            downloadLogFailed: "Failed to download train log"
         }
     },
     // Record Detail

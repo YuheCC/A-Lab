@@ -290,6 +290,7 @@ export default {
         status: "状态：",
         statusOnline: "上线",
         statusTrained: "训练完成",
+        statusOffline: "离线",
         statusTraining: "训练中",
         statusFail: "失败",
         created: "创建时间：",
@@ -326,6 +327,11 @@ export default {
         loadingText: "加载中...",
         noFiles: "暂无训练文件",
         noMetrics: "暂无训练指标",
+        beforeTraining: "训练前",
+        afterTraining: "训练后",
+        downloadingLog: "下载中...",
+        downloadTrainLog: "下载训练日志",
+        downloadLogSuccess: "训练日志下载成功",
         confirmDeploy: "确定要部署此模型吗？",
         confirmRemove: "确定要移除此模型吗？",
         deployMessage: "确定要部署此模型吗？这将使其可用于预测。",
@@ -339,7 +345,8 @@ export default {
             fetchFailed: "获取模型详情失败",
             actionFailed: "操作失败",
             mockModel: "无法修改演示模型",
-            notFound: "模型未找到"
+            notFound: "模型未找到",
+            downloadLogFailed: "下载训练日志失败"
         }
     }
 };

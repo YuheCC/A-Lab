@@ -82,6 +82,7 @@ export default {
         status: "状态：",
         statusOnline: "上线",
         statusTrained: "训练完成",
+        statusOffline: "离线",
         statusTraining: "训练中",
         statusFail: "失败",
         created: "创建时间：",
@@ -116,8 +117,13 @@ export default {
         actions: "操作",
         viewDetails: "查看详情",
         loadingText: "加载中...",
+        error: "错误",
         noFiles: "暂无训练文件",
         noMetrics: "暂无训练指标",
+        beforeTraining: "训练前",
+        afterTraining: "训练后",
+        downloadingLog: "下载中...",
+        downloadTrainLog: "下载训练日志",
         confirmDeploy: "确定要部署此模型吗？",
         confirmUndeploy: "确定要下线此模型吗？",
         deploySuccess: "模型部署成功！",
@@ -128,7 +134,8 @@ export default {
             deployFailed: "部署模型失败",
             undeployFailed: "下线模型失败",
             cannotDeployDemo: "无法部署演示模型",
-            cannotUndeployDemo: "无法下线演示模型"
+            cannotUndeployDemo: "无法下线演示模型",
+            downloadLogFailed: "下载训练日志失败"
         }
     },
     // Record Detail

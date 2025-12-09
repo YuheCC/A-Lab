@@ -290,6 +290,7 @@ export default {
         status: "Status:",
         statusOnline: "Online",
         statusTrained: "Trained",
+        statusOffline: "Offline",
         statusTraining: "Training",
         statusFail: "Failed",
         created: "Created:",
@@ -326,6 +327,11 @@ export default {
         loadingText: "Loading...",
         noFiles: "No training files",
         noMetrics: "No training metrics",
+        beforeTraining: "Before Training",
+        afterTraining: "After Training",
+        downloadingLog: "Downloading...",
+        downloadTrainLog: "Download Train Log",
+        downloadLogSuccess: "Train log downloaded successfully",
         confirmDeploy: "Confirm Deploy",
         confirmRemove: "Confirm Remove",
         deployMessage: "Are you sure you want to deploy this model? This will make it available for predictions.",
@@ -339,7 +345,8 @@ export default {
             fetchFailed: "Failed to fetch model details",
             actionFailed: "Action failed",
             mockModel: "Cannot modify demo model",
-            notFound: "Model not found"
+            notFound: "Model not found",
+            downloadLogFailed: "Failed to download train log"
         }
     }
 };

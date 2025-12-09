@@ -82,6 +82,7 @@ export default {
         status: "상태:",
         statusOnline: "온라인",
         statusTrained: "학습 완료",
+        statusOffline: "오프라인",
         statusTraining: "학습 중",
         statusFail: "실패",
         created: "생성 시간:",
@@ -116,8 +117,13 @@ export default {
         actions: "작업",
         viewDetails: "상세 보기",
         loadingText: "로딩 중...",
+        error: "오류",
         noFiles: "학습 파일이 없습니다",
         noMetrics: "학습 지표가 없습니다",
+        beforeTraining: "학습 전",
+        afterTraining: "학습 후",
+        downloadingLog: "다운로드 중...",
+        downloadTrainLog: "학습 로그 다운로드",
         confirmDeploy: "이 모델을 배포하시겠습니까?",
         confirmUndeploy: "이 모델 배포를 취소하시겠습니까?",
         deploySuccess: "모델이 성공적으로 배포되었습니다!",
@@ -128,7 +134,8 @@ export default {
             deployFailed: "모델 배포 실패",
             undeployFailed: "모델 배포 취소 실패",
             cannotDeployDemo: "데모 모델은 배포할 수 없습니다",
-            cannotUndeployDemo: "데모 모델은 배포 취소할 수 없습니다"
+            cannotUndeployDemo: "데모 모델은 배포 취소할 수 없습니다",
+            downloadLogFailed: "학습 로그 다운로드 실패"
         }
     },
     // Record Detail
