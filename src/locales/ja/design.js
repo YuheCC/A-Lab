@@ -12,6 +12,10 @@ export default {
             actions: 'アクション'
         }   
     },
+    // Create page
+    create: {
+        title: '新規デザイン'
+    },
     // Train page
     train: {
         title: '新規モデルトレーニング',

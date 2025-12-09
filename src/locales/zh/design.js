@@ -12,6 +12,10 @@ export default {
             actions: '操作'
         }
     },
+    // Create page
+    create: {
+        title: '新建设计'
+    },
     // Train page
     train: {
         title: '训练新模型',

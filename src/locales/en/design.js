@@ -12,6 +12,10 @@ export default {
             actions: 'Actions'
         }
     },
+    // Create page
+    create: {
+        title: 'New Design'
+    },
     // Train page
     train: {
         title: 'Train New Model',

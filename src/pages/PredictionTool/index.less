@@ -331,6 +331,56 @@
       min-width: 140px;
       max-width: 180px;
     }
+
+    .clear-filters-button {
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+
+      &:hover {
+        color: #374151;
+      }
+
+      &:active {
+        color: #1f2937;
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
+
+    .predictiontool-refresh-button {
+      padding: 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      margin-left: auto;
+
+      &:hover {
+        color: #374151;
+      }
+
+      &:active {
+        color: #1f2937;
+        svg {
+          animation: spin 0.5s ease-in-out;
+        }
+      }
+    }
   }
 
   .clear-filters-button {

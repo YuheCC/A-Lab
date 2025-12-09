@@ -16,16 +16,10 @@ const CreatePage: React.FC = () => {
     <div className="design-create-container">
       <div className="design-create-content">
         <div className="design-create-actions">
-          <h1 className="design-title">{t('performance.title')}</h1>
+          <h1 className="design-title">{t('design.create.title', 'New Design')}</h1>
           <button className="back-to-list-button" onClick={handleBackToList}>
             {t('design.actions.backToList', 'Back to List')}
           </button>
-        </div>
-
-        <div className="design-subtitle-wrapper">
-          <p className="design-subtitle">
-            {t('performance.subtitle')}
-          </p>
         </div>
 
         <div className="design-operation-area">

@@ -12,6 +12,10 @@ export default {
             actions: '작업'
         }
     },
+    // Create page
+    create: {
+        title: '새 설계'
+    },
     // Train page
     train: {
         title: '새 모델 학습',

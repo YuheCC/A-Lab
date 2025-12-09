@@ -40,29 +40,28 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
 
     // Check if response is valid and has data
     if (response && response.data && Array.isArray(response.data)) {
-      // If data is empty, return mock data
-      if (response.data.length === 0) {
-        console.log('No history data found, adding mock data');
-        return {
-          total: mockPredictionHistory.length,
-          data: mockPredictionHistory
-        };
-      }
       return response;
     }
 
-    // If response is invalid, return mock data
-    console.log('Invalid response, returning mock data');
+    // If response is invalid, return empty data
+    console.log('Invalid response, returning empty data');
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   } catch (error) {
     console.error('Error fetching history list:', error);
-    // On error, return mock data
+    // On error, return mock data only if not logged in
+    if (!isUserLoggedIn()) {
+      return {
+        total: mockPredictionHistory.length,
+        data: mockPredictionHistory
+      };
+    }
+    // If logged in, return empty data
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   }
 };

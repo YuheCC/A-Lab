@@ -6,6 +6,11 @@ export default {
     disclaimerTitle: "Disclaimer",
     disclaimer: "<strong>Note:</strong> This function predicts cell cycle life using only early-stage cycling data provided by the user. No additional information, such as cell chemistry or design, is required. The model is currently applicable to battery systems with limited active ions under standard cycling conditions (not real-world usage profiles). Users are encouraged to validate the predictions through their own testing.",
 
+    // Create page
+    create: {
+        title: "New Prediction"
+    },
+
     // Steps
     steps: {
         upload: "Data Upload",
@@ -103,7 +108,7 @@ export default {
 
     // Records
     records: {
-        searchPlaceholder: "Search record name or ID",
+        searchPlaceholder: "Search record ID",
         modelFilter: "Model filter",
         allModels: "All Models",
         clearFilters: "Clear Filters",
@@ -129,7 +134,7 @@ export default {
             error: "Failed to load history records"
         },
         actions: {
-            viewDetails: "View Details",
+            viewResults: "View Results",
             delete: "Delete"
         }
     },
