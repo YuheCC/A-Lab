@@ -31,6 +31,87 @@ export default {
             duplicateFiles: 'Some duplicate files were skipped',
             unknown: 'Failed to start training'
         },
+        instruction: {
+            title: "MU-in-Box Design Function Instructions",
+            functionality: {
+                title: "1. Functionality",
+                desc: "The MU-in-Box design function provides two major capabilities:",
+                train: {
+                    title: "1.1 Training and Evaluation",
+                    input: "Input: “Customer table template for model tuning.xlsx”",
+                    output: "Output: A trained model and evaluation metrics",
+                    metrics1: "CR, CL task evaluation metrics: RMSE (Root Mean Square Error) and R² (Coefficient of Determination)",
+                    metrics2: "CE task evaluation metrics: F1 score and AUC (area under curve)"
+                },
+                predict: {
+                    title: "1.2 Prediction",
+                    input: "Input: SMILES of the new additive",
+                    output: "Output: Predicted performance change relative to the benchmark",
+                    note: "Users may enter their own data to train models and perform predictions."
+                }
+            },
+            structure: {
+                title: "2. Table Structure",
+                p1: "Part 1: Cell Information (Cathode / Anode / Electrolyte Code)",
+                p2: "Part 2: Solvents",
+                p3: "Part 3: Salts",
+                p4: "Part 4: Additives",
+                p5: "Part 5: Cell Performance"
+            },
+            filling: {
+                title: "3. Table Filling Instructions",
+                template: {
+                    title: "3.1 Data Template — “Customer table template for model tuning.xlsx”",
+                    row1: "Do not modify the first two rows of the template.",
+                    row2: "Do not add or remove any columns."
+                },
+                requirements: {
+                    title: "3.2 Data Filling Requirements",
+                    item1: "The 3rd row is the benchmark electrolyte; all its task values are 1. Other electrolytes are relative ratios to the benchmark.",
+                    item2: "Ensure at least one task value is non-empty for each electrolyte.",
+                    item3: "Ensure the total formulation for each electrolyte sums to 100%."
+                }
+            },
+            notes: {
+                title: "4. Notes for Each Table Section",
+                p1: {
+                    title: "Part 1: Cell Information",
+                    item1: "Ensure cathode and anode types are consistent.",
+                    item2: "Only the electrolyte code should vary."
+                },
+                p2: {
+                    title: "Part 2: Solvents",
+                    item1: "Provide SMILES and wt% for each solvent, up to Solvent 5.",
+                    item2: "Ensure all SMILES are valid.",
+                    item3: "Benchmark electrolyte must contain at least 3 solvents."
+                },
+                p3: {
+                    title: "Part 3: Salts",
+                    item1: "Provide SMILES and wt% for each salt, up to Salt 3.",
+                    item2: "Ensure all SMILES are valid."
+                },
+                p4: {
+                    title: "Part 4: Additives",
+                    item1: "Provide SMILES and wt% for each additive, up to Additive 6.",
+                    item2: "Benchmark electrolyte must not contain more than 3 additives."
+                },
+                p5: {
+                    title: "Part 5: Cell Performance",
+                    item1: "Cycle number (25°C): The number of cycles for the cell capacity to decrease to 80% under 25°C and 1C–1C cycling conditions.",
+                    item2: "Average CE (25°C): The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 25°C and 1C–1C cycling conditions.",
+                    item3: "Energy retention at 5C discharge (25°C): The energy retention of the cell when discharged at a 5C rate under 25°C conditions.",
+                    item4: "Cycle number (45°C): The number of cycles for the cell capacity to decrease to 80% under 45°C and 1C–1C cycling conditions.",
+                    item5: "Average CE (45°C): The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 45°C and 1C–1C cycling conditions.",
+                    note1: "You may train the model using any one performance type.",
+                    note2: "If multiple cells were tested (e.g., 100,120,130), enter them into one cell separated by ASCII commas: 100,120,130",
+                    note3: "Ensure the content in the excel is correct format."
+                }
+            },
+            tips: {
+                title: "5. Additional Tips",
+                item1: "5.1 A weight-check column verifies the formulation totals 100 wt%."
+            }
+        },
         step1: {
             title: 'Model Information',
             name: 'Model Name',

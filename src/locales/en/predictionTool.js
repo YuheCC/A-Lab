@@ -101,7 +101,7 @@ export default {
             batteryCount: "Battery Count",
             avgCycleLife: "Avg Cycle Life",
             model: "Model",
-            created: "Created",
+            created: "Created Time",
             actions: "Actions"
         }
     },
@@ -275,7 +275,7 @@ export default {
             modelName: "Model Name",
             baseModel: "Base Model",
             status: "Status",
-            created: "Created",
+            created: "Created Time",
             createdBy: "Created By",
             actions: "Actions"
         },

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Download, UploadCloud, X } from 'lucide-react';
-import { Snackbar, Alert } from '@mui/material';
+import { ArrowLeft, Download, UploadCloud, X, BookOpen } from 'lucide-react';
+import { Snackbar, Alert, Dialog, DialogTitle, DialogContent, IconButton, Box, Typography } from '@mui/material';
 import { trainModel, getBaseModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
 import './index.less';
@@ -18,6 +18,17 @@ const DesignTrainPage: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Dialog state
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   // Snackbar state
   const [snackbar, setSnackbar] = useState<{
@@ -368,6 +379,325 @@ const DesignTrainPage: React.FC = () => {
           <div className="step-header">
             <div className="step-number">4</div>
             <h2>{t('design.train.step4.title', 'Training Dataset')}</h2>
+            <IconButton onClick={handleOpenDialog} size="small" sx={{ ml: 'auto', color: '#666' }}>
+              <BookOpen size={18} />
+            </IconButton>
+            <Dialog
+              open={openDialog}
+              onClose={handleCloseDialog}
+              maxWidth="lg"
+              fullWidth
+            >
+              <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+                  {t('design.train.instruction.title')}
+                </Typography>
+                <IconButton
+                  aria-label="close"
+                  onClick={handleCloseDialog}
+                  sx={{
+                    color: (theme) => theme.palette.grey[500],
+                  }}
+                >
+                  <X size={20} />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent dividers>
+                {/* 1. Functionality */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('design.train.instruction.functionality.title')}
+                  </Typography>
+                  <Typography variant="body2" paragraph>
+                    {t('design.train.instruction.functionality.desc')}
+                  </Typography>
+                  
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">
+                      {t('design.train.instruction.functionality.train.title')}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('design.train.instruction.functionality.train.input')}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('design.train.instruction.functionality.train.output')}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 0.5, color: 'text.secondary', fontSize: '0.8rem' }}>
+                      {t('design.train.instruction.functionality.train.metrics1')}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary', fontSize: '0.8rem' }}>
+                      {t('design.train.instruction.functionality.train.metrics2')}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ pl: 2 }}>
+                    <Typography variant="subtitle2">
+                      {t('design.train.instruction.functionality.predict.title')}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('design.train.instruction.functionality.predict.input')}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('design.train.instruction.functionality.predict.output')}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      {t('design.train.instruction.functionality.predict.note')}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* 2. Structure */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('design.train.instruction.structure.title')}
+                  </Typography>
+
+                  <div className="instruction-table-container">
+                    <table className="instruction-table">
+                      <thead>
+                        <tr>
+                          {/* Cell Info - Merged rows */}
+                          <th rowSpan={2} className="header-cell-info">Cathode</th>
+                          <th rowSpan={2} className="header-cell-info">Anode</th>
+                          <th rowSpan={2} className="header-cell-info">Electrolyte code</th>
+
+                          <th colSpan={10} className="header-solvent">Solvent</th>
+                          <th colSpan={6} className="header-salt">Salt</th>
+                          <th colSpan={12} className="header-additive">Additive</th>
+                          <th colSpan={5} className="header-performance">Cell performance</th>
+                        </tr>
+                        <tr>
+                          {/* Solvent 1-5 */}
+                          <th className="header-solvent">Solvent 1</th>
+                          <th className="header-solvent">Solvent 1 content (wt%)</th>
+                          <th className="header-solvent">Solvent 2</th>
+                          <th className="header-solvent">Solvent 2 content (wt%)</th>
+                          <th className="header-solvent">Solvent 3</th>
+                          <th className="header-solvent">Solvent 3 content (wt%)</th>
+                          <th className="header-solvent">Solvent 4</th>
+                          <th className="header-solvent">Solvent 4 content (wt%)</th>
+                          <th className="header-solvent">Solvent 5</th>
+                          <th className="header-solvent">Solvent 5 content (wt%)</th>
+
+                          {/* Salt 1-3 */}
+                          <th className="header-salt">Salt 1</th>
+                          <th className="header-salt">Salt 1 content (wt%)</th>
+                          <th className="header-salt">Salt 2</th>
+                          <th className="header-salt">Salt 2 content (wt%)</th>
+                          <th className="header-salt">Salt 3</th>
+                          <th className="header-salt">Salt 3 content (wt%)</th>
+
+                          {/* Additive 1-6 */}
+                          <th className="header-additive">Additive 1</th>
+                          <th className="header-additive">Additive 1 content (wt%)</th>
+                          <th className="header-additive">Additive 2</th>
+                          <th className="header-additive">Additive 2 content (wt%)</th>
+                          <th className="header-additive">Additive 3</th>
+                          <th className="header-additive">Additive 3 content (wt%)</th>
+                          <th className="header-additive">Additive 4</th>
+                          <th className="header-additive">Additive 4 content (wt%)</th>
+                          <th className="header-additive">Additive 5</th>
+                          <th className="header-additive">Additive 5 content (wt%)</th>
+                          <th className="header-additive">Additive 6</th>
+                          <th className="header-additive">Additive 6 content (wt%)</th>
+
+                          {/* Performance */}
+                          <th className="header-performance">Cycle number (25C)</th>
+                          <th className="header-performance">Average CE (25C)</th>
+                          <th className="header-performance">retention at 5C discharge</th>
+                          <th className="header-performance">Cycle number (45C)</th>
+                          <th className="header-performance">Average CE (45C)</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+
+                  <ul style={{ paddingLeft: '20px', margin: '8px 0' }}>
+                    <li><Typography variant="body2">{t('design.train.instruction.structure.p1')}</Typography></li>
+                    <li><Typography variant="body2">{t('design.train.instruction.structure.p2')}</Typography></li>
+                    <li><Typography variant="body2">{t('design.train.instruction.structure.p3')}</Typography></li>
+                    <li><Typography variant="body2">{t('design.train.instruction.structure.p4')}</Typography></li>
+                    <li><Typography variant="body2">{t('design.train.instruction.structure.p5')}</Typography></li>
+                  </ul>
+                </Box>
+
+                {/* 3. Filling */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('design.train.instruction.filling.title')}
+                  </Typography>
+                  
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">
+                      {t('design.train.instruction.filling.template.title')}
+                    </Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.filling.template.row1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.filling.template.row2')}</Typography>
+                  </Box>
+
+                  <Box sx={{ pl: 2 }}>
+                    <Typography variant="subtitle2">
+                      {t('design.train.instruction.filling.requirements.title')}
+                    </Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.filling.requirements.item1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.filling.requirements.item2')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.filling.requirements.item3')}</Typography>
+                  </Box>
+                </Box>
+
+                {/* 4. Notes */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('design.train.instruction.notes.title')}
+                  </Typography>
+                  
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">{t('design.train.instruction.notes.p1.title')}</Typography>
+                    
+                    <div className="instruction-table-container">
+                      <table className="instruction-table">
+                        <thead>
+                          <tr>
+                            <th className="header-cell-info">Cathode</th>
+                            <th className="header-cell-info">Anode</th>
+                            <th className="header-cell-info">Electrolyte code</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p1.item1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p1.item2')}</Typography>
+                  </Box>
+
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">{t('design.train.instruction.notes.p2.title')}</Typography>
+                    
+                    <div className="instruction-table-container">
+                      <table className="instruction-table">
+                        <thead>
+                          <tr>
+                            <th colSpan={10} className="header-solvent">Solvent</th>
+                          </tr>
+                          <tr>
+                            <th className="header-solvent">Solvent 1</th>
+                            <th className="header-solvent">Solvent 1 content (wt%)</th>
+                            <th className="header-solvent">Solvent 2</th>
+                            <th className="header-solvent">Solvent 2 content (wt%)</th>
+                            <th className="header-solvent">Solvent 3</th>
+                            <th className="header-solvent">Solvent 3 content (wt%)</th>
+                            <th className="header-solvent">Solvent 4</th>
+                            <th className="header-solvent">Solvent 4 content (wt%)</th>
+                            <th className="header-solvent">Solvent 5</th>
+                            <th className="header-solvent">Solvent 5 content (wt%)</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p2.item1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p2.item2')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p2.item3')}</Typography>
+                  </Box>
+
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">{t('design.train.instruction.notes.p3.title')}</Typography>
+                    
+                    <div className="instruction-table-container">
+                      <table className="instruction-table">
+                        <thead>
+                          <tr>
+                            <th colSpan={6} className="header-salt">Salt</th>
+                          </tr>
+                          <tr>
+                            <th className="header-salt">Salt 1</th>
+                            <th className="header-salt">Salt 1 content (wt%)</th>
+                            <th className="header-salt">Salt 2</th>
+                            <th className="header-salt">Salt 2 content (wt%)</th>
+                            <th className="header-salt">Salt 3</th>
+                            <th className="header-salt">Salt 3 content (wt%)</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p3.item1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p3.item2')}</Typography>
+                  </Box>
+                  
+                  <Box sx={{ pl: 2, mb: 1 }}>
+                    <Typography variant="subtitle2">{t('design.train.instruction.notes.p4.title')}</Typography>
+                    
+                    <div className="instruction-table-container">
+                      <table className="instruction-table">
+                        <thead>
+                          <tr>
+                            <th colSpan={12} className="header-additive">Additive</th>
+                          </tr>
+                          <tr>
+                            <th className="header-additive">Additive 1</th>
+                            <th className="header-additive">Additive 1 content (wt%)</th>
+                            <th className="header-additive">Additive 2</th>
+                            <th className="header-additive">Additive 2 content (wt%)</th>
+                            <th className="header-additive">Additive 3</th>
+                            <th className="header-additive">Additive 3 content (wt%)</th>
+                            <th className="header-additive">Additive 4</th>
+                            <th className="header-additive">Additive 4 content (wt%)</th>
+                            <th className="header-additive">Additive 5</th>
+                            <th className="header-additive">Additive 5 content (wt%)</th>
+                            <th className="header-additive">Additive 6</th>
+                            <th className="header-additive">Additive 6 content (wt%)</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p4.item1')}</Typography>
+                    <Typography variant="body2">• {t('design.train.instruction.notes.p4.item2')}</Typography>
+                  </Box>
+
+                  <Box sx={{ pl: 2 }}>
+                    <Typography variant="subtitle2">{t('design.train.instruction.notes.p5.title')}</Typography>
+                    
+                    <div className="instruction-table-container">
+                      <table className="instruction-table">
+                        <thead>
+                          <tr>
+                            <th colSpan={5} className="header-performance">Cell performance</th>
+                          </tr>
+                          <tr>
+                            <th className="header-performance">Cycle number (25C)</th>
+                            <th className="header-performance">Average CE (25C)</th>
+                            <th className="header-performance">retention at 5C discharge</th>
+                            <th className="header-performance">Cycle number (45C)</th>
+                            <th className="header-performance">Average CE (45C)</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>• {t('design.train.instruction.notes.p5.item1')}</Typography>
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>• {t('design.train.instruction.notes.p5.item2')}</Typography>
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>• {t('design.train.instruction.notes.p5.item3')}</Typography>
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>• {t('design.train.instruction.notes.p5.item4')}</Typography>
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>• {t('design.train.instruction.notes.p5.item5')}</Typography>
+                    <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>{t('design.train.instruction.notes.p5.note1')}</Typography>
+                    <Typography variant="body2" sx={{ fontStyle: 'italic' }}>{t('design.train.instruction.notes.p5.note2')}</Typography>
+                    <Typography variant="body2" sx={{ fontStyle: 'italic' }}>{t('design.train.instruction.notes.p5.note3')}</Typography>
+                  </Box>
+                </Box>
+
+                {/* 5. Tips */}
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('design.train.instruction.tips.title')}
+                  </Typography>
+                  <Typography variant="body2" sx={{ pl: 2 }}>
+                    {t('design.train.instruction.tips.item1')}
+                  </Typography>
+                </Box>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="step-content">
             <div className="form-group">
