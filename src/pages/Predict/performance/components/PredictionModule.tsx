@@ -743,12 +743,20 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     };
   }, [t]);
   const batterySystemDisplayOptions = useMemo(() => {
-    return batterySystemOptions?.map(system => ({
-      id: system.id,
-      name: system.name,
-      disabled: Number(system.id) !== 1,
-      disabledText: Number(system.id) !== 1 ? (comingSoonText[Number(system.id) as keyof typeof comingSoonText] || undefined) : undefined
-    }));
+    // Configuration for available system IDs
+    const AVAILABLE_SYSTEM_IDS = [1, 2];
+    
+    return batterySystemOptions?.map(system => {
+      const systemId = Number(system.id);
+      const isAvailable = AVAILABLE_SYSTEM_IDS.includes(systemId);
+      
+      return {
+        id: system.id,
+        name: system.name,
+        disabled: !isAvailable,
+        disabledText: !isAvailable ? (comingSoonText[systemId as keyof typeof comingSoonText] || undefined) : undefined
+      };
+    });
   }, [batterySystemOptions?.length, comingSoonText]);
   return (
     <div className="pm-prediction-module">

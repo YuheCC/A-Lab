@@ -17,10 +17,10 @@ export default {
     upload: {
         selectFile: "파일 선택",
         clickToUpload: "배터리 데이터 파일을 클릭하여 업로드",
-        subtitle: "현재 CSV 형식 파일만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
+        subtitle: "현재 CSV와 Neware 기본 파일 형식(NDA/NDAX)만 지원되며, 향후 더 많은 파일 형식을 지원할 예정입니다",
         uploading: "파일 업로드 중...",
         waitText: "잠시만 기다려 주세요",
-        dataFormatTip: "📋 데이터 형식 요구사항",
+        dataFormatTip: "📋 CSV 데이터 형식 요구사항",
         sampleData: "샘플 데이터",
         requiredFields: "필수 필드:",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",
@@ -76,7 +76,7 @@ export default {
             recordId: "기록 ID",
             fileName: "파일명",
             batteryCount: "배터리 수",
-            avgCycleLife: "평균 사이클 수명",
+            avgCycleLife: "사이클 수명",
             created: "생성 시간",
             actions: "작업"
         }
@@ -131,6 +131,7 @@ export default {
     chart: {
         title: "배터리 용량 대 사이클 수",
         cycleCount: "사이클 수",
+        capacity: "용량",
         capacityProcess: "용량 열화 (업로드된 데이터)",
         predictedCycleLife: "80% SOH에 도달하는 예측 사이클 수",
         xAxisName: "사이클 수",
@@ -169,9 +170,9 @@ export default {
         point1: '"예측"은 처음 100 사이클의 시계열 데이터로 사이클 수명을 예측할 수 있습니다.',
         point1_sub1: 'NCM811/12%Si.-흑연과 탄산염 전해질',
         point1_sub2: '1C/1C 사이클링, 100 사이클마다 0.33C/0.33C 용량 확인',
-        point2: '리튬 이온 배터리의 경우 예측 정확도는 ±5%에 도달할 수 있습니다.',
-        point3: '사이클 수명이 알려진 실제 셀의 경우 모델은 1321 사이클에서 EOL을 예측했습니다.',
-        point3_sub1: '실측값은 1261 사이클(각 사이클의 용량 유지율 기준) 또는 1351 사이클(용량 확인 사이클의 용량 유지율 기준)입니다.',
+        point2: '일반적인 예측의 경우 정확도는 약 ±15%입니다. 특정 배터리 시스템에 맞춰 모델을 미세 조정하면, 해당 시스템에 대한 예측 정확도가 약 ±5%까지 향상될 수 있습니다.',
+        point3: '已知사이클 수명을 가진 실제 셀(각 사이클의 용량 유지율 기준 1261 사이클, 또는 용량 확인 사이클의 용량 유지율 기준 1351 사이클)의 경우, 모델은 1321 사이클에서 EOL을 예측했습니다.',
+        point3_sub1: '예측 오차는 4.7% 또는 2.2%에 불과하며, 단순 선형 외삽법(800 사이클)보다 훨씬 우수합니다.',
         point4: '예측 오차는 4.7% 또는 2.2%로, 단순 선형 외삽법(800 사이클)보다 훨씬 우수합니다.'
     }
 };

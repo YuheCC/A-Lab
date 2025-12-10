@@ -17,10 +17,10 @@ export default {
     upload: {
         selectFile: "ファイル選択",
         clickToUpload: "バッテリーデータファイルをクリックしてアップロード",
-        subtitle: "現在はCSV形式ファイルのみサポートしており、今後より多くのファイル形式をサポート予定です",
+        subtitle: "現在はCSVとNewareのデフォルトファイル形式（NDA/NDAX）のみサポートしており、今後より多くのファイル形式をサポート予定です",
         uploading: "ファイルをアップロード中...",
         waitText: "お待ちください",
-        dataFormatTip: "📋 データフォーマット要件",
+        dataFormatTip: "📋 CSVデータフォーマット要件",
         sampleData: "サンプルデータ",
         requiredFields: "必須フィールド：",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",
@@ -76,7 +76,7 @@ export default {
             recordId: "記録ID",
             fileName: "ファイル名",
             batteryCount: "バッテリー数",
-            avgCycleLife: "平均サイクル寿命",
+            avgCycleLife: "サイクル寿命",
             created: "作成日時",
             actions: "操作"
         }
@@ -131,6 +131,7 @@ export default {
     chart: {
         title: "バッテリー容量対サイクル数",
         cycleCount: "サイクル数",
+        capacity: "容量",
         capacityProcess: "容量劣化（アップロードデータ）",
         predictedCycleLife: "80% SOHに達するまでの予測サイクル数",
         xAxisName: "サイクル数",
@@ -169,9 +170,9 @@ export default {
         point1: '"予測"は、最初の100サイクルの時系列データでサイクル寿命を予測できます。',
         point1_sub1: 'NCM811/12%Si.-グラファイトと炭酸塩電解液',
         point1_sub2: '1C/1Cサイクリング、100サイクルごとに0.33C/0.33C容量チェック',
-        point2: 'リチウムイオン電池の場合、予測精度は±5%を達成できます。',
-        point3: 'サイクル寿命が既知の実際のセルの場合、モデルは1321サイクル時にEOLを予測しました。',
-        point3_sub1: '実測値は1261サイクル（各サイクルの容量保持率に基づく）または1351サイクル（容量チェックサイクルの容量保持率に基づく）です。',
+        point2: '一般的な予測の場合、精度は約±15%です。特定のバッテリーシステム向けにモデルを微調整すると、そのシステムの予測精度は約±5%まで向上します。',
+        point3: '既知のサイクル寿命を持つ実際のセル（各サイクルの容量保持率に基づくと1261サイクル、または容量チェックサイクルの容量保持率に基づくと1351サイクル）の場合、モデルは1321サイクルでEOLを予測しました。',
+        point3_sub1: '予測誤差はわずか4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。',
         point4: '予測誤差は4.7%または2.2%であり、単純な線形外挿法（800サイクル）よりもはるかに優れています。'
     }
 };
