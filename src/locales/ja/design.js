@@ -233,6 +233,14 @@ export default {
         confirmUndeploy: "このモデルをアンデプロイしてもよろしいですか？",
         deploySuccess: "モデルが正常にデプロイされました！",
         undeploySuccess: "モデルが正常にアンデプロイされました！",
+        f1ScoreTooltip: {
+            description: "適合率と再現率の調和平均です。両者のバランスを取ります。",
+            precision: "適合率",
+            recall: "再現率"
+        },
+        aucTooltip: {
+            description: "ROC曲線の下の面積を指します。モデルがクラスを区別する能力を測定します。AUCが高いほど、分類性能が優れていることを示します。"
+        },
         errors: {
             noModelId: "モデルIDが提供されていません",
             loadFailed: "モデル詳細の読み込みに失敗しました",

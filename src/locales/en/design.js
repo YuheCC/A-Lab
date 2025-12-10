@@ -233,6 +233,14 @@ export default {
         confirmUndeploy: "Are you sure you want to undeploy this model?",
         deploySuccess: "Model deployed successfully!",
         undeploySuccess: "Model undeployed successfully!",
+        f1ScoreTooltip: {
+            description: "The harmonic mean of precision and recall. It balances the trade-off between them.",
+            precision: "Precision",
+            recall: "Recall"
+        },
+        aucTooltip: {
+            description: "Specifically refers to the Area Under the ROC Curve. It measures the model's ability to distinguish between classes. A higher AUC indicates better classification performance."
+        },
         errors: {
             noModelId: "No model ID provided",
             loadFailed: "Failed to load model detail",

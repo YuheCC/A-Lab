@@ -233,6 +233,14 @@ export default {
         confirmUndeploy: "이 모델 배포를 취소하시겠습니까?",
         deploySuccess: "모델이 성공적으로 배포되었습니다!",
         undeploySuccess: "모델 배포가 성공적으로 취소되었습니다!",
+        f1ScoreTooltip: {
+            description: "정밀도와 재현율의 조화 평균입니다. 둘 사이의 균형을 맞춥니다.",
+            precision: "정밀도",
+            recall: "재현율"
+        },
+        aucTooltip: {
+            description: "ROC 곡선 아래 면적을 나타냅니다. 모델이 클래스를 구분하는 능력을 측정합니다. AUC가 높을수록 분류 성능이 우수함을 나타냅니다."
+        },
         errors: {
             noModelId: "모델 ID가 제공되지 않았습니다",
             loadFailed: "모델 상세 정보 로드 실패",
