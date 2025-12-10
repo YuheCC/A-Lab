@@ -11,7 +11,7 @@ import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
 import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel, removeModel } from './model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import Introduction from './components/Introduction';
 import Pagination from '@/components/Pagination';
 import type { ModelListItem } from '@/services/model/training';
@@ -165,14 +165,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     return {
       id: apiData.id.toString(),
       name: apiData.file_name,
-      date: new Date(normalizeServerDate(apiData.created_at)).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }),
+      date: formatUTCDateTime(apiData.created_at, { showSeconds: true }),
       batteryCount: apiData.barcode_count,
       avgCirculation: avgCycleLife > 0 ? `${avgCycleLife.toFixed(0)}` : t('predictionTool.results.unknown'),
       avgCycleLife1: avgCycleLife1,
@@ -429,17 +422,6 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     setRecordSelectedDate('');
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
@@ -648,7 +630,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                               <td>{record.batteryCount}</td>
                               <td>{record.avgCirculation} {t('predictionTool.results.cycleUnit')}</td>
                               <td>{record.model}</td>
-                              <td className="created-date">{record.date ? formatDate(record.date) : '-'}</td>
+                              <td className="created-date">{record.date || '-'}</td>
                               <td className="actions-cell">
                                 <button
                                   className="action-button view-button"
@@ -780,7 +762,7 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                     {statusInfo.text}
                                   </span>
                                 </td>
-                                <td className="created-date">{model.created_at ? formatDate(model.created_at) : '-'}</td>
+                                <td className="created-date">{formatUTCDateTime(model.created_at)}</td>
                                 <td>{model.created_by_name}</td>
                                 <td className="actions-cell">
                                   <button

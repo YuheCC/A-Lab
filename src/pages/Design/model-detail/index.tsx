@@ -6,6 +6,7 @@ import { ArrowLeft, Download, Info } from 'lucide-react';
 import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import './index.less';
 
 const DesignModelDetailPage: React.FC = () => {
@@ -299,15 +300,6 @@ const DesignModelDetailPage: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   // RMSE Tooltip 内容
   const renderRMSETooltip = () => (
@@ -544,7 +536,7 @@ const DesignModelDetailPage: React.FC = () => {
             </div>
             <div className="info-row">
               <span className="label">{t('design.modelDetail.created', 'Created')}</span>
-              <span className="value">{formatDate(model.created_at)}</span>
+              <span className="value">{formatUTCDateTime(model.created_at)}</span>
             </div>
             <div className="info-row">
               <span className="label">{t('design.modelDetail.remarks', 'Remarks')}</span>
@@ -629,7 +621,7 @@ const DesignModelDetailPage: React.FC = () => {
                       </td>
                       <td>{record.temp25_count || 0}</td>
                       <td>{record.temp45_count || 0}</td>
-                      <td>{formatDate(record.created_at)}</td>
+                      <td>{formatUTCDateTime(record.created_at, { showSeconds: true })}</td>
                       <td>
                         <button className="view-btn" onClick={() => handleViewRecord(record.id)}>
                           {t('design.modelDetail.viewDetails', 'View Details')}
