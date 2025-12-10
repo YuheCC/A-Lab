@@ -191,7 +191,7 @@ export default {
         status: "状态：",
         statusOnline: "上线",
         statusTrained: "训练完成",
-        statusOffline: "离线",
+        statusOffline: "下线",
         statusTraining: "训练中",
         statusFail: "失败",
         created: "创建时间：",
