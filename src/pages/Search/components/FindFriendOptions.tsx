@@ -219,7 +219,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
           flex: '0 0 100%',
           width: '100%',
           minWidth: 0,
-          opacity: readOnly ? 0.6 : 1,
           marginBottom: 0,
         }}
       >
