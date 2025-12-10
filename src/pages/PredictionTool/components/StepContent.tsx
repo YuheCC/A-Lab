@@ -8,6 +8,7 @@ import CycleLifeScatterChart from './CycleLifeScatterChart';
 import ModelSelect from '@/components/ModelSelect';
 import { getModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
+import { formatFileSize } from '@/utils/fileUtils';
 
 // 模型选项接口
 interface ModelOption {
@@ -93,10 +94,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     if (file) {
       setUploadedFile(file);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
   const handleDownloadSampleData = () => {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@umijs/max';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@mui/material';
+import { Tooltip, Backdrop, CircularProgress } from '@mui/material';
 import { ArrowLeft, Download, Info } from 'lucide-react';
-import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
+import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import { type ModelDetailResponse, type ModelFileListResponse, type ModelMetricsResponse, type MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
@@ -24,6 +24,7 @@ const DesignModelDetailPage: React.FC = () => {
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const [downloadingLog, setDownloadingLog] = useState(false);
+  const [downloadingFile, setDownloadingFile] = useState(false);
 
   useEffect(() => {
     if (modelId) {
@@ -155,6 +156,22 @@ const DesignModelDetailPage: React.FC = () => {
       alert(errorMessage);
     } finally {
       setDownloadingLog(false);
+    }
+  };
+
+  const handleDownloadFile = async (filePath: string, fileName: string) => {
+    if (!modelId) return;
+
+    setDownloadingFile(true);
+    try {
+      await downloadModelFile(modelId, filePath, fileName);
+      // 下载成功提示可以通过 Snackbar 显示，但这里保持简洁，只在失败时提示
+    } catch (err) {
+      console.error('Failed to download file:', err);
+      const errorMessage = err instanceof Error ? err.message : t('design.modelDetail.errors.downloadFileFailed', 'Failed to download file');
+      alert(errorMessage);
+    } finally {
+      setDownloadingFile(false);
     }
   };
 
@@ -640,11 +657,18 @@ const DesignModelDetailPage: React.FC = () => {
               </div>
             ) : fileList && fileList.length > 0 ? (
               <div className="info-card dataset-info">
-                {fileList.map((file: { name: string; size: number }, index: number) => (
+                {fileList.map((file: { name: string; size: number; path: string }, index: number) => (
                   <div key={index} className="dataset-row">
                     <div className="dataset-item">
                       <span className="dataset-label">{t('design.modelDetail.datasetName', 'Dataset Name:')}</span>
-                      <a href="#" className="dataset-link download-link">
+                      <a
+                        href="#"
+                        className="dataset-link download-link"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDownloadFile(file.path, file.name);
+                        }}
+                      >
                         {file.name}
                       </a>
                     </div>
@@ -872,6 +896,19 @@ const DesignModelDetailPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* File Download Loading Backdrop */}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={downloadingFile}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <CircularProgress color="inherit" />
+          <div style={{ marginTop: '16px', fontSize: '16px' }}>
+            {t('design.modelDetail.downloadingFile', '文件下载中...')}
+          </div>
+        </div>
+      </Backdrop>
     </div>
   );
 };

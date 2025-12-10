@@ -267,6 +267,17 @@ export interface ModelTrainLogParams {
   namespace: string;
 }
 
+// ============= Model File Download Types =============
+
+/**
+ * Model file download request parameters
+ */
+export interface ModelFileDownloadParams {
+  model_id: string;
+  file_path: string;
+  namespace: string;
+}
+
 // ============= API Functions =============
 
 /**
@@ -462,6 +473,25 @@ export const getModelTrainLog = async (params: ModelTrainLogParams): Promise<Blo
     method: 'GET',
     params: {
       model_id: params.model_id,
+      namespace: params.namespace,
+    },
+    responseType: 'blob',
+  });
+
+  return response.data;
+};
+
+/**
+ * Download model training file
+ * @param params Query parameters including model_id, file_path and namespace
+ * @returns Promise<Blob> File blob for download
+ */
+export const downloadModelFile = async (params: ModelFileDownloadParams): Promise<Blob> => {
+  const response = await request('/api/ai/model/file_download', {
+    method: 'GET',
+    params: {
+      model_id: params.model_id,
+      file_path: params.file_path,
       namespace: params.namespace,
     },
     responseType: 'blob',
