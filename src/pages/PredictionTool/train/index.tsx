@@ -82,9 +82,9 @@ const TrainPage: React.FC = () => {
   const addFiles = (newFiles: File[]) => {
     // Filter valid files (check format only, no size limit)
     const validFiles = newFiles.filter((file) => {
-      // Check file format - only support Excel formats
+      // Check file format - support CSV, NDA, NDAX formats
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (!['xlsx', 'xls', 'csv'].includes(ext || '')) {
+      if (!['csv', 'nda', 'ndax'].includes(ext || '')) {
         setSnackbar({
           open: true,
           message: t('predictionTool.train.errors.fileFormat', 'Unsupported file format') + `: ${file.name}`,
@@ -292,7 +292,7 @@ const TrainPage: React.FC = () => {
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
-                  accept=".xlsx,.xls,.csv"
+                  accept=".csv,.nda,.ndax"
                   multiple
                 />
                 <div className="upload-icon">
