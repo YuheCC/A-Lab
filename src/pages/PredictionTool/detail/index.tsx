@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { getHistoryDetail } from '../model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
 import './index.less';
 
@@ -79,17 +79,6 @@ const DetailPage: React.FC = () => {
     } finally {
       setDownloading(false);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
   };
 
   if (loading) {
@@ -176,7 +165,7 @@ const DetailPage: React.FC = () => {
                     </div>
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
-                      <div className="stats-value">{formatDate(detailData.created_at)}</div>
+                      <div className="stats-value">{formatUTCDateTime(detailData.created_at, { showSeconds: true })}</div>
                     </div>
                   </div>
                 </div>

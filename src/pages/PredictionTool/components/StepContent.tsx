@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, RefreshCw, Play, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
 import ModelSelect from '@/components/ModelSelect';
@@ -428,18 +428,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         const avgCycleLife1 = predictionResult.avg_cycle_life_1 || 0;
         const avgCycleLife2 = predictionResult.avg_cycle_life_2 || 0;
 
-        // 格式化创建时间
-        const formatDate = (dateString: string) => {
-          return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          });
-        };
-
         return (
           <div className="results-display">
             <div className="results-stats-card">
@@ -458,7 +446,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 </div> */}
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
-                  <div className="stats-value">{formatDate(predictionResult.created_at)}</div>
+                  <div className="stats-value">{formatUTCDateTime(predictionResult.created_at, { showSeconds: true })}</div>
                 </div>
               </div>
             </div>
