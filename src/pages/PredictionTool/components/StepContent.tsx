@@ -133,10 +133,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       return;
     }
 
+    // 先跳转到 Step 1 显示预测进度
+    if (onStepChange) {
+      onStepChange(1);
+    }
+
     setIsProcessing(true);
     setProgress(0);
     setError(null);
-    
+
     try {
       let currentProgress = 0;
       
@@ -548,14 +553,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               )}
             </div>
 
-            {/* 散点图展示 */}
+            {/* 散点图展示 - 暂时隐藏 */}
             {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && (
               <div className="scatter-chart-card" style={{
                 marginTop: '24px',
                 padding: '20px',
                 backgroundColor: '#fff',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0'
+                border: '1px solid #e2e8f0',
+                display: 'none' // 暂时隐藏图表
               }}>
                 <CycleLifeScatterChart
                   brcodeData={predictionResult.brcode_data}

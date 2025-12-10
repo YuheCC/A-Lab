@@ -227,8 +227,9 @@ const DetailPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 散点图展示 - 暂时隐藏 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
-                  <div className="chart-section">
+                  <div className="chart-section" style={{ display: 'none' }}>
                     <div className="chart-container">
                       <CycleLifeScatterChart
                         brcodeData={detailData.brcode_data}
