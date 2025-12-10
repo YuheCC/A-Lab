@@ -62,7 +62,7 @@ export default {
     cellDesign: 'セル設計',
     performanceMetric: '望ましい性能指標',
     extraRequests: 'カスタム分子制約（最良の結果のため、インテリジェント友達探しを有効化してください）：',
-    extraRequestsPlaceholder: 'エーテル官能基を持つ分子のみを表示する。',
+    extraRequestsPlaceholder: '',
     custom: 'カスタム',
     upgradeEnterprise: 'エンタープライズアカウントにアップグレード',
     upgradeAccount: 'アカウントをアップグレード',
