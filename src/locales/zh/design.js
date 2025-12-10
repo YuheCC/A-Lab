@@ -233,6 +233,14 @@ export default {
         confirmUndeploy: "确定要下线此模型吗？",
         deploySuccess: "模型部署成功！",
         undeploySuccess: "模型下线成功！",
+        f1ScoreTooltip: {
+            description: "精确率和召回率的调和平均数，用于平衡二者之间的权衡。",
+            precision: "精确率",
+            recall: "召回率"
+        },
+        aucTooltip: {
+            description: "特指 ROC 曲线下的面积。它衡量模型区分不同类别的能力。AUC 值越高，表示分类性能越好。"
+        },
         errors: {
             noModelId: "缺少模型 ID",
             loadFailed: "加载模型详情失败",

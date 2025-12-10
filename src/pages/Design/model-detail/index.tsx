@@ -405,6 +405,53 @@ const DesignModelDetailPage: React.FC = () => {
     </div>
   );
 
+  // F1 Score Tooltip 内容
+  const renderF1ScoreTooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        {t('design.modelDetail.f1ScoreTooltip.description')}
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>F1 = 2 ×</span>
+          <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 4px' }}>
+            <span style={{ fontSize: '15px', padding: '4px 8px' }}>{t('design.modelDetail.f1ScoreTooltip.precision')} × {t('design.modelDetail.f1ScoreTooltip.recall')}</span>
+            <div style={{ width: '100%', height: '1.5px', backgroundColor: '#1f2937', margin: '3px 0' }}></div>
+            <span style={{ fontSize: '15px', padding: '4px 8px' }}>{t('design.modelDetail.f1ScoreTooltip.precision')} + {t('design.modelDetail.f1ScoreTooltip.recall')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // AUC Tooltip 内容
+  const renderAUCTooltip = () => (
+    <div style={{
+      fontSize: '13px',
+      lineHeight: '1.6'
+    }}>
+      {t('design.modelDetail.aucTooltip.description')}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="model-detail-page-wrapper">
@@ -632,11 +679,37 @@ const DesignModelDetailPage: React.FC = () => {
                 renderArrayMetrics(metrics)
               ) : hasComparisonMetrics(metrics) ? (
                 model.model_type === 2 ? (
-                  // model_type = 2: 显示 F1_Score（CE 模型）
+                  // model_type = 2: 显示 F1_Score 和 AUC（CE 模型）
                   <div className="info-card training-results">
                     {/* F1 Score Section */}
                     <div className="metric-section">
-                      <h3 className="metric-title">F1 Score</h3>
+                      <h3 className="metric-title">
+                        F1 Score
+                        <Tooltip
+                          title={renderF1ScoreTooltip()}
+                          placement="top"
+                          arrow
+                          PopperProps={{
+                            sx: {
+                              '& .MuiTooltip-tooltip': {
+                                backgroundColor: 'white',
+                                color: 'black',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                borderRadius: '8px',
+                                padding: '16px',
+                                fontSize: '14px',
+                                maxWidth: 500,
+                                border: 'none'
+                              },
+                              '& .MuiTooltip-arrow': {
+                                color: 'white',
+                              }
+                            }
+                          }}
+                        >
+                          <Info size={16} className="metric-info-icon" />
+                        </Tooltip>
+                      </h3>
                       <div className="metric-comparison">
                         <div className="metric-box base-model">
                           <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
@@ -645,6 +718,47 @@ const DesignModelDetailPage: React.FC = () => {
                         <div className="metric-box new-model">
                           <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
                           <div className="model-value">{formatMetricValue(metrics.train?.F1_Score)}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AUC Section */}
+                    <div className="metric-section">
+                      <h3 className="metric-title">
+                        AUC
+                        <Tooltip
+                          title={renderAUCTooltip()}
+                          placement="top"
+                          arrow
+                          PopperProps={{
+                            sx: {
+                              '& .MuiTooltip-tooltip': {
+                                backgroundColor: 'white',
+                                color: 'black',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                borderRadius: '8px',
+                                padding: '16px',
+                                fontSize: '14px',
+                                maxWidth: 500,
+                                border: 'none'
+                              },
+                              '& .MuiTooltip-arrow': {
+                                color: 'white',
+                              }
+                            }
+                          }}
+                        >
+                          <Info size={16} className="metric-info-icon" />
+                        </Tooltip>
+                      </h3>
+                      <div className="metric-comparison">
+                        <div className="metric-box base-model">
+                          <div className="model-label">{t('design.modelDetail.baseModelLabel', 'Base Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.base?.AUC)}</div>
+                        </div>
+                        <div className="metric-box new-model">
+                          <div className="model-label">{t('design.modelDetail.newModelLabel', 'New Model')}</div>
+                          <div className="model-value">{formatMetricValue(metrics.train?.AUC)}</div>
                         </div>
                       </div>
                     </div>

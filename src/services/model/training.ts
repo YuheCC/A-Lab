@@ -237,6 +237,7 @@ export interface MetricsData {
   r2?: number;
   Accuracy?: number | { [key: string]: number };
   F1_Score?: number | { [key: string]: number };
+  AUC?: number | { [key: string]: number };
   Precision?: number | { [key: string]: number };
   Recall?: number | { [key: string]: number };
   MAE?: number | number[];
