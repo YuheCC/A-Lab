@@ -67,8 +67,8 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
       if (response.data.length === 0) {
         console.log('No history data found, adding mock data');
         return {
-          total: mockPredictionHistory.length,
-          data: mockPredictionHistory
+          total: 0,
+          data: []
         };
       }
       return response;
@@ -77,15 +77,15 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
     // If response is invalid, return mock data
     console.log('Invalid response, returning mock data');
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   } catch (error) {
     console.error('Error fetching history list:', error);
     // On error, return mock data
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   }
 };
@@ -243,10 +243,10 @@ export const getModelList = async (
 
     // Return mock data when no data
     console.log('No model data found, returning mock data');
-    return { total: mockModelList.length, data: mockModelList };
+    return { total: 0, data: [] };
   } catch (error) {
     console.error('Get model list failed:', error);
-    return { total: mockModelList.length, data: mockModelList };
+    return { total: 0, data: [] };
   }
 };
 
@@ -345,7 +345,7 @@ export const removeModel = async (modelId: string): Promise<any> => {
     throw new Error('Please login first');
   }
 
-  return removeModelAPI({ model_id: modelId });
+  return removeModelAPI({ model_id: modelId, namespace: MODEL_NAMESPACE });
 };
 
 /**

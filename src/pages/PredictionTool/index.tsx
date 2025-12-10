@@ -10,7 +10,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
-import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel } from './model';
+import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockModel, removeModel } from './model';
 import { normalizeServerDate } from '@/utils/messageUtils';
 import Introduction from './components/Introduction';
 import Pagination from '@/components/Pagination';
@@ -362,6 +362,26 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     }
   };
 
+  const handleDeleteModel = async (id: string) => {
+    const model = modelsData.find(m => m.id.toString() === id);
+    if (model && isMockModel(model)) {
+      alert(t('predictionTool.models.cannotDeleteDemo', 'Cannot delete demo models'));
+      return;
+    }
+
+    if (!confirm(t('predictionTool.models.deleteConfirm', 'Are you sure you want to delete this model?'))) {
+      return;
+    }
+
+    try {
+      await removeModel(id);
+      await fetchModelsData(modelsCurrentPage);
+    } catch (err) {
+      console.error('Failed to delete model:', err);
+      setModelsError(err instanceof Error ? err.message : t('predictionTool.models.deleteFailed', 'Failed to delete model'));
+    }
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -636,6 +656,12 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                 >
                                   {t('predictionTool.history.actions.viewResults', 'View Results')}
                                 </button>
+                                <button
+                                  className="action-button delete-button"
+                                  onClick={() => handleDeleteRecord(record.id)}
+                                >
+                                  {t('predictionTool.history.actions.delete', 'Delete')}
+                                </button>
                               </td>
                             </tr>
                           ))
@@ -717,12 +743,13 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                           <th>{t('predictionTool.models.columns.status', 'Status')}</th>
                           <th>{t('predictionTool.models.columns.created', 'Created Time')}</th>
                           <th>{t('predictionTool.models.columns.createdBy', 'Created By')}</th>
+                          <th>{t('predictionTool.models.columns.actions', 'Actions')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {modelsData.length === 0 ? (
                           <tr>
-                            <td colSpan={7} className="no-data">
+                            <td colSpan={6} className="no-data">
                               {t('predictionTool.models.noResults', 'No models found.')}
                             </td>
                           </tr>
@@ -755,6 +782,14 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
                                 </td>
                                 <td className="created-date">{model.created_at ? formatDate(model.created_at) : '-'}</td>
                                 <td>{model.created_by_name}</td>
+                                <td className="actions-cell">
+                                  <button
+                                    className="action-button delete-button"
+                                    onClick={() => handleDeleteModel(model.id.toString())}
+                                  >
+                                    {t('predictionTool.models.actions.delete', 'Delete')}
+                                  </button>
+                                </td>
                               </tr>
                             );
                           })

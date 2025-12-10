@@ -162,6 +162,7 @@ export interface UndeployModelResponse {
  */
 export interface RemoveModelParams {
   model_id: string;
+  namespace: string;
 }
 
 /**
@@ -390,6 +391,7 @@ export const removeModel = async (params: RemoveModelParams): Promise<RemoveMode
     method: 'POST',
     params: {
       model_id: params.model_id,
+      namespace: params.namespace,
     },
   });
 

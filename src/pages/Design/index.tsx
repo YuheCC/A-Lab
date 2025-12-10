@@ -10,7 +10,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/ja';
 import 'dayjs/locale/ko';
 import { Activity, X, RefreshCw } from 'lucide-react';
-import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList } from './model';
+import { getHistoryList, deleteHistory, getModelList as getModelListFromModel, getBaseModelList, removeModel } from './model';
 import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import DesignIntroduction from './components/DesignIntroduction';
@@ -358,6 +358,20 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     }
   };
 
+  const handleDeleteModel = async (id: string) => {
+    if (!confirm(t('design.models.deleteConfirm', 'Are you sure you want to delete this model?'))) {
+      return;
+    }
+
+    try {
+      await removeModel(id);
+      await fetchModelsData(modelsCurrentPage);
+    } catch (err) {
+      console.error('Failed to delete model:', err);
+      setModelsError(err instanceof Error ? err.message : t('design.models.deleteFailed', 'Failed to delete model'));
+    }
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -598,6 +612,12 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                                 >
                                   {t('design.history.actions.viewResults', 'View Results')}
                                 </button>
+                                <button
+                                  className="action-button delete-button"
+                                  onClick={() => handleDeleteRecord(record.id)}
+                                >
+                                  {t('design.history.actions.delete', 'Delete')}
+                                </button>
                               </td>
                             </tr>
                             );
@@ -688,6 +708,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                       <th>{t('performance.models.columns.baseModel', 'Base Model')}</th>
                       <th>{t('performance.models.columns.status', 'Status')}</th>
                       <th>{t('performance.models.columns.created', 'Created Time')}</th>
+                      <th>{t('performance.models.columns.actions', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -737,6 +758,14 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                           </td>
                           <td className="created-date">
                             {formatUTCDateTime(model.created_at) || '-'}
+                          </td>
+                          <td className="actions-cell">
+                            <button
+                              className="action-button delete-button"
+                              onClick={() => handleDeleteModel(model.id.toString())}
+                            >
+                              {t('design.models.actions.delete', 'Delete')}
+                            </button>
                           </td>
                         </tr>
                       ))

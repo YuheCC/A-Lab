@@ -320,7 +320,7 @@ export const removeModel = async (modelId: string): Promise<any> => {
     throw new Error('Please login first');
   }
 
-  return removeModelAPI({ model_id: modelId });
+  return removeModelAPI({ model_id: modelId, namespace: MODEL_NAMESPACE });
 };
 
 /**
