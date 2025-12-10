@@ -223,7 +223,9 @@ export default {
         step2: {
             title: "基础模型",
             modelName: "OSES-Base-v1",
-            badge: "基础模型"
+            badge: "基础模型",
+            loading: "加载中...",
+            noModels: "暂无基础模型"
         },
         step3: {
             title: "训练数据集",
@@ -263,11 +265,21 @@ export default {
         statusOnline: "上线",
         statusTrained: "训练完成",
         statusTraining: "训练中",
+        statusOffline: "下线",
         statusFail: "失败",
+        cannotDeleteDemo: "无法删除演示模型",
+        deleteConfirm: "确定要删除此模型吗？",
+        deleteFailed: "删除模型失败",
+        loading: {
+            error: "加载模型列表失败"
+        },
         filters: {
             searchPlaceholder: "搜索模型ID或名称...",
+            statusPlaceholder: "选择状态",
             allStatus: "所有状态",
             allBaseModels: "所有基础模型",
+            selectDate: "选择日期",
+            refresh: "刷新",
             clearFilters: "清除筛选"
         },
         columns: {
@@ -280,7 +292,8 @@ export default {
             actions: "操作"
         },
         actions: {
-            viewDetails: "查看详情"
+            viewDetails: "查看详情",
+            delete: "删除"
         }
     },
 

@@ -257,7 +257,8 @@ export default {
       selectStatus: "ステータスを選択",
       selectBaseModel: "ベースモデルを選択",
       clearFilters: "フィルターをクリア",
-      selectDate: "日付を選択"
+      selectDate: "日付を選択",
+      refresh: "更新"
     },
     columns: {
       modelId: "モデルID",

@@ -128,7 +128,11 @@ export default {
             benchmarkElectrolyte: '벤치마크 전해질',
             benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
             cellDesign: '셀 설계',
-            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity',
+            // Note: 전문 용어는 영어 원문 유지
+            solventPlaceholder: 'EC/EMC/DEC',
+            saltPlaceholder: '1M LiPF6/LiFSI',
+            additivePlaceholder: 'VC/LiDFP'
         },
         step3: {
             title: '기본 모델',
@@ -249,6 +253,44 @@ export default {
             cannotDeployDemo: "데모 모델은 배포할 수 없습니다",
             cannotUndeployDemo: "데모 모델은 배포 취소할 수 없습니다",
             downloadLogFailed: "학습 로그 다운로드 실패"
+        }
+    },
+    // History
+    history: {
+        newDesign: "새 디자인",
+        train: "훈련",
+        loadingText: "로딩 중...",
+        error: "오류",
+        noResults: "디자인 기록을 찾을 수 없습니다",
+        deleteConfirm: "이 기록을 삭제하시겠습니까?",
+        deleteFailed: "기록 삭제 실패",
+        loading: {
+            error: "히스토리 로드 실패"
+        },
+        actions: {
+            viewResults: "결과 보기",
+            delete: "삭제"
+        }
+    },
+    // Actions
+    actions: {
+        backToList: "목록으로 돌아가기"
+    },
+    // Tabs
+    tabs: {
+        introduction: "소개",
+        records: "기록",
+        models: "모델"
+    },
+    // Models
+    models: {
+        loadingText: "로딩 중...",
+        loadingError: "모델 로드 실패",
+        error: "오류",
+        deleteConfirm: "이 모델을 삭제하시겠습니까?",
+        deleteFailed: "모델 삭제 실패",
+        actions: {
+            delete: "삭제"
         }
     },
     // Record Detail

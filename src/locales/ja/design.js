@@ -128,7 +128,11 @@ export default {
             benchmarkElectrolyte: 'ベンチマーク電解液',
             benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
             cellDesign: 'セル設計',
-            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity',
+            // Note: 専門用語は英語のまま維持
+            solventPlaceholder: 'EC/EMC/DEC',
+            saltPlaceholder: '1M LiPF6/LiFSI',
+            additivePlaceholder: 'VC/LiDFP'
         },
         step3: {
             title: 'ベースモデル',
@@ -249,6 +253,44 @@ export default {
             cannotDeployDemo: "デモモデルはデプロイできません",
             cannotUndeployDemo: "デモモデルはアンデプロイできません",
             downloadLogFailed: "トレーニングログのダウンロードに失敗しました"
+        }
+    },
+    // History
+    history: {
+        newDesign: "新しいデザイン",
+        train: "トレーニング",
+        loadingText: "読み込み中...",
+        error: "エラー",
+        noResults: "デザイン記録が見つかりません",
+        deleteConfirm: "このレコードを削除してもよろしいですか？",
+        deleteFailed: "レコードの削除に失敗しました",
+        loading: {
+            error: "履歴の読み込みに失敗しました"
+        },
+        actions: {
+            viewResults: "結果を表示",
+            delete: "削除"
+        }
+    },
+    // Actions
+    actions: {
+        backToList: "リストに戻る"
+    },
+    // Tabs
+    tabs: {
+        introduction: "紹介",
+        records: "記録",
+        models: "モデル"
+    },
+    // Models
+    models: {
+        loadingText: "読み込み中...",
+        loadingError: "モデルの読み込みに失敗しました",
+        error: "エラー",
+        deleteConfirm: "このモデルを削除してもよろしいですか？",
+        deleteFailed: "モデルの削除に失敗しました",
+        actions: {
+            delete: "削除"
         }
     },
     // Record Detail

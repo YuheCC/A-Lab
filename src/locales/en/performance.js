@@ -257,7 +257,8 @@ export default {
       selectStatus: "Select Status",
       selectBaseModel: "Select Base Model",
       clearFilters: "Clear Filters",
-      selectDate: "Select date"
+      selectDate: "Select date",
+      refresh: "Refresh"
     },
     columns: {
       modelId: "Model ID",
