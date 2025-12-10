@@ -27,6 +27,7 @@ interface HistoryRecord {
   modelId?: number;
   modelName?: string;
   baseModelType?: number;
+  modelType?: number;
   rawData?: any;
 }
 
@@ -129,10 +130,10 @@ const DesignPage: React.FC<DesignPageProps> = () => {
   }, [recordSearchKeyword]);
 
   // Calculate total positive count based on base_model_type
-  const getTotalPositiveCount = (baseModelType?: number): number => {
-    if (baseModelType === undefined || baseModelType === null) return 0;
-    switch (baseModelType) {
-      case -2:
+  const getTotalPositiveCount = (modelType?: number): number => {
+    if (modelType === undefined || modelType === null) return 0;
+    switch (modelType) {
+      case 100:
         return 5;
       case 1:
         return 1;
@@ -177,6 +178,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
       temp45Count: apiData.temperature_45_label_0_count || 0,
       modelId: apiData.model_id,
       modelName: modelInfo?.model_name || '-',
+      modelType: modelInfo?.model_type || 0,
       baseModelType: modelInfo?.base_model_id,
       rawData: apiData
     };
@@ -580,7 +582,7 @@ const DesignPage: React.FC<DesignPageProps> = () => {
                           </tr>
                         ) : (
                           historyData.map((record) => {
-                            const totalPositive = getTotalPositiveCount(record.baseModelType);
+                            const totalPositive = getTotalPositiveCount(record.modelType);
                             const actualPositive = record.temp25Count + record.temp45Count;
                             return (
                             <tr key={record.id}>
