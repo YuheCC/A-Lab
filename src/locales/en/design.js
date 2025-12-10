@@ -128,7 +128,11 @@ export default {
             benchmarkElectrolyte: 'Benchmark Electrolyte',
             benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
             cellDesign: 'Cell Design',
-            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity',
+            // Note: Keep professional terms in original English
+            solventPlaceholder: 'EC/EMC/DEC',
+            saltPlaceholder: '1M LiPF6/LiFSI',
+            additivePlaceholder: 'VC/LiDFP'
         },
         step3: {
             title: 'Base Model',
@@ -249,6 +253,44 @@ export default {
             cannotDeployDemo: "Cannot deploy demo model",
             cannotUndeployDemo: "Cannot undeploy demo model",
             downloadLogFailed: "Failed to download train log"
+        }
+    },
+    // History
+    history: {
+        newDesign: "New Design",
+        train: "Train",
+        loadingText: "Loading...",
+        error: "Error",
+        noResults: "No design records found",
+        deleteConfirm: "Are you sure you want to delete this record?",
+        deleteFailed: "Failed to delete record",
+        loading: {
+            error: "Failed to load history"
+        },
+        actions: {
+            viewResults: "View Results",
+            delete: "Delete"
+        }
+    },
+    // Actions
+    actions: {
+        backToList: "Back to List"
+    },
+    // Tabs
+    tabs: {
+        introduction: "Introduction",
+        records: "Records",
+        models: "Models"
+    },
+    // Models
+    models: {
+        loadingText: "Loading...",
+        loadingError: "Failed to load models",
+        error: "Error",
+        deleteConfirm: "Are you sure you want to delete this model?",
+        deleteFailed: "Failed to delete model",
+        actions: {
+            delete: "Delete"
         }
     },
     // Record Detail

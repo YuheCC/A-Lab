@@ -223,7 +223,9 @@ export default {
         step2: {
             title: "Base Model",
             modelName: "OSES-Base-v1",
-            badge: "Base Model"
+            badge: "Base Model",
+            loading: "Loading models...",
+            noModels: "No base models available"
         },
         step3: {
             title: "Training Dataset",
@@ -263,11 +265,21 @@ export default {
         statusOnline: "Online",
         statusTrained: "Trained",
         statusTraining: "Training",
+        statusOffline: "Offline",
         statusFail: "Failed",
+        cannotDeleteDemo: "Cannot delete demo models",
+        deleteConfirm: "Are you sure you want to delete this model?",
+        deleteFailed: "Failed to delete model",
+        loading: {
+            error: "Failed to load models"
+        },
         filters: {
             searchPlaceholder: "Search Model ID or Name...",
+            statusPlaceholder: "Select Status",
             allStatus: "All Status",
             allBaseModels: "All Base Models",
+            selectDate: "Select date",
+            refresh: "Refresh",
             clearFilters: "Clear Filters"
         },
         columns: {
@@ -280,7 +292,8 @@ export default {
             actions: "Actions"
         },
         actions: {
-            viewDetails: "View Details"
+            viewDetails: "View Details",
+            delete: "Delete"
         }
     },
 

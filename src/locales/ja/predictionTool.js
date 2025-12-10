@@ -223,7 +223,9 @@ export default {
         step2: {
             title: "ベースモデル",
             modelName: "OSES-Base-v1",
-            badge: "ベースモデル"
+            badge: "ベースモデル",
+            loading: "読み込み中...",
+            noModels: "利用可能なベースモデルがありません"
         },
         step3: {
             title: "トレーニングデータセット",
@@ -263,11 +265,21 @@ export default {
         statusOnline: "オンライン",
         statusTrained: "トレーニング済み",
         statusTraining: "トレーニング中",
+        statusOffline: "オフライン",
         statusFail: "失敗",
+        cannotDeleteDemo: "デモモデルは削除できません",
+        deleteConfirm: "このモデルを削除してもよろしいですか？",
+        deleteFailed: "モデルの削除に失敗しました",
+        loading: {
+            error: "モデルリストの読み込みに失敗しました"
+        },
         filters: {
             searchPlaceholder: "モデルIDまたは名前で検索...",
+            statusPlaceholder: "ステータスを選択",
             allStatus: "すべてのステータス",
             allBaseModels: "すべてのベースモデル",
+            selectDate: "日付を選択",
+            refresh: "更新",
             clearFilters: "フィルターをクリア"
         },
         columns: {
@@ -280,7 +292,8 @@ export default {
             actions: "操作"
         },
         actions: {
-            viewDetails: "詳細を表示"
+            viewDetails: "詳細を表示",
+            delete: "削除"
         }
     },
 

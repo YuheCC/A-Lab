@@ -128,7 +128,11 @@ export default {
             benchmarkElectrolyte: '基准电解液',
             benchmarkElectrolytePlaceholder: 'Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/LiDFP',
             cellDesign: '电池设计',
-            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity'
+            cellDesignPlaceholder: '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity',
+            // Note: solventPlaceholder, saltPlaceholder, additivePlaceholder 保持专业术语原文，不进行翻译
+            solventPlaceholder: 'EC/EMC/DEC',
+            saltPlaceholder: '1M LiPF6/LiFSI',
+            additivePlaceholder: 'VC/LiDFP'
         },
         step3: {
             title: '基础模型',
@@ -249,6 +253,44 @@ export default {
             cannotDeployDemo: "无法部署演示模型",
             cannotUndeployDemo: "无法下线演示模型",
             downloadLogFailed: "下载训练日志失败"
+        }
+    },
+    // History
+    history: {
+        newDesign: "新增设计",
+        train: "训练",
+        loadingText: "加载中...",
+        error: "错误",
+        noResults: "暂无设计记录",
+        deleteConfirm: "确定要删除这条记录吗？",
+        deleteFailed: "删除记录失败",
+        loading: {
+            error: "加载历史数据失败"
+        },
+        actions: {
+            viewResults: "查看结果",
+            delete: "删除"
+        }
+    },
+    // Actions
+    actions: {
+        backToList: "返回列表"
+    },
+    // Tabs
+    tabs: {
+        introduction: "简介",
+        records: "记录",
+        models: "模型"
+    },
+    // Models
+    models: {
+        loadingText: "加载中...",
+        loadingError: "加载模型失败",
+        error: "错误",
+        deleteConfirm: "确定要删除此模型吗?",
+        deleteFailed: "删除模型失败",
+        actions: {
+            delete: "删除"
         }
     },
     // Record Detail

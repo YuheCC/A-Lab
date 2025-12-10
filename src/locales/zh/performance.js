@@ -257,7 +257,8 @@ export default {
       selectStatus: "选择状态",
       selectBaseModel: "选择基础模型",
       clearFilters: "清除筛选",
-      selectDate: "选择日期"
+      selectDate: "选择日期",
+      refresh: "刷新"
     },
     columns: {
       modelId: "模型ID",

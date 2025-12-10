@@ -257,7 +257,8 @@ export default {
       selectStatus: "상태 선택",
       selectBaseModel: "기본 모델 선택",
       clearFilters: "필터 지우기",
-      selectDate: "날짜 선택"
+      selectDate: "날짜 선택",
+      refresh: "새로 고침"
     },
     columns: {
       modelId: "모델 ID",

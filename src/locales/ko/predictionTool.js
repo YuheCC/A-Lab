@@ -223,7 +223,9 @@ export default {
         step2: {
             title: "기본 모델",
             modelName: "OSES-Base-v1",
-            badge: "기본 모델"
+            badge: "기본 모델",
+            loading: "로딩 중...",
+            noModels: "사용 가능한 기본 모델이 없습니다"
         },
         step3: {
             title: "학습 데이터셋",
@@ -263,11 +265,21 @@ export default {
         statusOnline: "온라인",
         statusTrained: "학습 완료",
         statusTraining: "학습 중",
+        statusOffline: "오프라인",
         statusFail: "실패",
+        cannotDeleteDemo: "데모 모델을 삭제할 수 없습니다",
+        deleteConfirm: "이 모델을 삭제하시겠습니까?",
+        deleteFailed: "모델 삭제 실패",
+        loading: {
+            error: "모델 목록을 불러오지 못했습니다"
+        },
         filters: {
             searchPlaceholder: "모델 ID 또는 이름 검색...",
+            statusPlaceholder: "상태 선택",
             allStatus: "모든 상태",
             allBaseModels: "모든 기본 모델",
+            selectDate: "날짜 선택",
+            refresh: "새로 고침",
             clearFilters: "필터 지우기"
         },
         columns: {
@@ -280,7 +292,8 @@ export default {
             actions: "작업"
         },
         actions: {
-            viewDetails: "상세 보기"
+            viewDetails: "상세 보기",
+            delete: "삭제"
         }
     },
 
