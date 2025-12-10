@@ -66,10 +66,10 @@ export default {
                     row2: "Do not add or remove any columns."
                 },
                 requirements: {
-                    title: "3.2 Data Filling Requirements",
-                    item1: "The 3rd row is the benchmark electrolyte; all its task values are 1. Other electrolytes are relative ratios to the benchmark.",
-                    item2: "Ensure at least one task value is non-empty for each electrolyte.",
-                    item3: "Ensure the total formulation for each electrolyte sums to 100%."
+                    title: "3.2 Data Requirements",
+                    item1: "The third row of the table template is the benchmark electrolyte. The corresponding performance is marked as 1. Other electrolytes are based on the benchmark, and the performance is compared relatively.",
+                    item2: "Please make sure at least one of the cell performances is filled",
+                    item3: "Please make sure the total wt% of all components is 100%."
                 }
             },
             notes: {
@@ -97,11 +97,11 @@ export default {
                 },
                 p5: {
                     title: "Part 5: Cell Performance",
-                    item1: "Cycle number (25°C): The number of cycles for the cell capacity to decrease to 80% under 25°C and 1C–1C cycling conditions.",
-                    item2: "Average CE (25°C): The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 25°C and 1C–1C cycling conditions.",
-                    item3: "Energy retention at 5C discharge (25°C): The energy retention of the cell when discharged at a 5C rate under 25°C conditions.",
-                    item4: "Cycle number (45°C): The number of cycles for the cell capacity to decrease to 80% under 45°C and 1C–1C cycling conditions.",
-                    item5: "Average CE (45°C): The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 45°C and 1C–1C cycling conditions.",
+                    item1: "Cycle number (25°C)：The number of cycles for the cell capacity to decrease to 80% under 25°C and any cycling conditions.",
+                    item2: "Average CE (25°C)：The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 25°C and any cycling conditions.",
+                    item3: "Energy retention at high-rate discharge (25°C) ：The energy retention of the cell when discharged at the highest rate compared to the lowest rate under 25°C conditions.",
+                    item4: "Cycle number (45°C) ：The number of cycles for the cell capacity to decrease to 80% under 45°C and any cycling conditions.",
+                    item5: "Average CE (45°C) ：The average coulombic efficiency of all cycles up to the point where the cell capacity decreases to 80% under 45°C and any cycling conditions.",
                     note1: "You may train the model using any one performance type.",
                     note2: "If multiple cells were tested (e.g., 100,120,130), enter them into one cell separated by ASCII commas: 100,120,130",
                     note3: "Ensure the content in the excel is correct format."
