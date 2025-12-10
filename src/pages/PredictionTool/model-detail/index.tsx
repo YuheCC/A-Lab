@@ -11,8 +11,9 @@ import {
   DialogActions,
   Button,
   CircularProgress,
+  Backdrop,
 } from '@mui/material';
-import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog } from '../model';
+import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
 import './index.less';
@@ -34,6 +35,7 @@ const ModelDetailPage: React.FC = () => {
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const [downloadingLog, setDownloadingLog] = useState(false);
+  const [downloadingFile, setDownloadingFile] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -196,6 +198,28 @@ const ModelDetailPage: React.FC = () => {
       });
     } finally {
       setDownloadingLog(false);
+    }
+  };
+
+  const handleDownloadFile = async (filePath: string, fileName: string) => {
+    if (!modelId) return;
+
+    setDownloadingFile(true);
+    try {
+      await downloadModelFile(modelId, filePath, fileName);
+      setSnackbar({
+        open: true,
+        message: t('predictionTool.modelDetail.downloadFileSuccess', '文件下载成功'),
+        severity: 'success',
+      });
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.message || t('predictionTool.modelDetail.errors.downloadFileFailed', '文件下载失败'),
+        severity: 'error',
+      });
+    } finally {
+      setDownloadingFile(false);
     }
   };
 
@@ -448,7 +472,14 @@ const ModelDetailPage: React.FC = () => {
                 <div key={index} className="dataset-row">
                   <div className="dataset-item">
                     <span className="dataset-label">{t('predictionTool.modelDetail.datasetName', 'Dataset Name:')}</span>
-                    <a href="#" className="dataset-link download-link">
+                    <a
+                      href="#"
+                      className="dataset-link download-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleDownloadFile(file.path, file.name);
+                      }}
+                    >
                       {file.name}
                     </a>
                   </div>
@@ -619,6 +650,19 @@ const ModelDetailPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* File Download Loading Backdrop */}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={downloadingFile}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <CircularProgress color="inherit" />
+          <div style={{ marginTop: '16px', fontSize: '16px' }}>
+            {t('predictionTool.modelDetail.downloadingFile', '文件下载中...')}
+          </div>
+        </div>
+      </Backdrop>
     </div>
   );
 };

@@ -97,6 +97,7 @@ import {
   getModelFileList as getModelFileListAPI,
   getModelMetrics as getModelMetricsAPI,
   getModelTrainLog as getModelTrainLogAPI,
+  downloadModelFile as downloadModelFileAPI,
   type TrainModelParams,
   type ModelListParams,
   type ModelListResponse,
@@ -106,6 +107,7 @@ import {
   type ModelMetricsParams,
   type ModelMetricsResponse,
   type ModelTrainLogParams,
+  type ModelFileDownloadParams,
 } from '@/services/model/training';
 import { mockModelList, mockModelDetail } from './modelExample';
 
@@ -387,6 +389,40 @@ export const downloadModelTrainLog = async (modelId: string, modelName: string):
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error('Download train log failed:', error);
+    throw error;
+  }
+};
+
+/**
+ * Download model training file
+ * @param modelId Model ID
+ * @param filePath File path to download
+ * @param fileName File name for download
+ * @returns Promise<void>
+ */
+export const downloadModelFile = async (modelId: string, filePath: string, fileName: string): Promise<void> => {
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  try {
+    const blob = await downloadModelFileAPI({
+      model_id: modelId,
+      file_path: filePath,
+      namespace: MODEL_NAMESPACE,
+    });
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download model file failed:', error);
     throw error;
   }
 };
