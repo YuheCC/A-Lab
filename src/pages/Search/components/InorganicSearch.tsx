@@ -2,6 +2,7 @@ import MoleculeFeedbackBox from '@/components/MoleculeFeedbackBox';
 import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
@@ -294,10 +295,8 @@ const InorganicSearch = () => {
         setAmbiguousOptions(null);
 
         try {
-            // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/llm/search-new`;
-
             // Fetch the searched inorganic molecule's properties 
+            const searchEndpoint = buildAutoFetchURL('sseSearch');
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling

@@ -8,6 +8,8 @@ import { useAccessModals } from '@/hooks/useAccessModals';
 import request from '@/services/request';
 import { urlConfig } from '@/services/config/urlConfig';
 import { getSearchEndpoint } from '@/services/search/endpoints';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
+import { authFetch } from '@/utils';
 
 // 定义搜索结果的数据类型
 interface SearchResult {
@@ -352,7 +354,8 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
         setError('');
         
         try {
-            const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
+            const sseUrl = buildAutoFetchURL('sseSearch');
+            const response = await authFetch(`${sseUrl}?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${page}&page_size=${pageSize}`);
             
             if (!response.ok) {
                 throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));

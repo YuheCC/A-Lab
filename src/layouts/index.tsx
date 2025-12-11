@@ -6,6 +6,7 @@ import { useEffect, useState, createContext } from "react";
 import { useTranslation } from "react-i18next";
 import { COMMERCIAL_SCORE_MAP } from "@/utils";
 import { authFetch, getAPIUrl } from "@/utils";
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { useAuthStore } from "@/models/useAuth";
 import { MessageProvider, useMessage } from "@/components/MessageProvider";
 import PricingOverlay from "@/components/PricingOverlay";
@@ -126,7 +127,8 @@ const FullNavLayoutInner = () => {
             umap_y: molecule.y || null
           };
     
-          const response = await authFetch(`${API_URL}/favorites`, {
+          const favoritesUrl = buildAutoFetchURL('favorites');
+          const response = await authFetch(favoritesUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

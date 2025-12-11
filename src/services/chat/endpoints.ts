@@ -24,18 +24,32 @@ export const CHAT_ENDPOINTS = {
   // Default configuration (used for all environments unless overridden)
   default: {
     send: '/chat/send',
-    list: '/chat/list',
-    create: '/chat/new',
-    detail: '/chat/{id}',
-    delete: '/chat/{id}',
-    llm: '/api/llm/ask',
+    regenerate: '/chat/regenerate',
+    list: '/api/chat/list',
+    detail: '/api/chat/detail',
+    create: '/api/chat/new',
+    messageNew: '/api/chat/message/new',
+    messageUpdate: '/api/chat/message/update',
+    llmAsk: '/api/llm/ask',
     multiAgent: '/api/llm/multi-agent',
+    multiAgentClarify: '/api/llm/multi-agent/clarify',
+    save: '/chat/save',
+    delete: '/api/chat/delete',
+    update: '/api/chat/update',
   },
-  // Override only the endpoints that differ in staging
-  // staging: {
-  //   send: '/messaging/send-message',
-  //   // Other endpoints will use default configuration
-  // },
+  // box 环境使用旧的 /api/llm/chat 路径
+  box: {
+    send: '/api/llm/chat/send',
+    regenerate: '/api/llm/chat/regenerate',
+    list: '/api/llm/chat/list',
+    detail: '/api/llm/chat/detail',
+    create: '/api/llm/chat/new',
+    messageNew: '/api/llm/chat/message/new',
+    messageUpdate: '/api/llm/chat/message/update',
+    save: '/api/llm/chat/save',
+    delete: '/api/llm/chat/delete',
+    update: '/api/llm/chat/update',
+  },
 };
 
 // SSE (Server-Sent Events) endpoints
@@ -48,6 +62,10 @@ export const CHAT_SSE_ENDPOINTS = {
 export const CHAT_WS_ENDPOINTS = {
   default: {
     path: '/ws/socket.io',
+    namespace: '/chat',
+  },
+  box: {
+    path: '/api/llm/ws/socket.io',
     namespace: '/chat',
   },
   // staging: {

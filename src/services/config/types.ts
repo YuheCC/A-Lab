@@ -1,7 +1,7 @@
 /**
  * Environment types for the application
  */
-export type Environment = 'production' | 'staging' | 'development';
+export type Environment = 'production' | 'staging' | 'development' | 'box' | 'us';
 
 /**
  * Endpoint configuration structure with environment-specific overrides
@@ -15,4 +15,6 @@ export interface EndpointConfig<T extends Record<string, string>> {
   production?: Partial<T>;
   staging?: Partial<T>;
   development?: Partial<T>;
+  box?: Partial<T>;
+  us?: Partial<T>;
 }

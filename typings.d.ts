@@ -13,7 +13,7 @@ declare module '*.svg' {
 
 // Global variable declarations from UmiJS define
 declare const BASE_URL: string;
-declare const ENVIRONMENT: 'production' | 'staging' | 'development';
+declare const ENVIRONMENT: 'production' | 'staging' | 'development' | 'box' | 'us';
 declare const WS_BASE_URL: string;
 declare const explorer_url: string;
 declare const team_url: string;

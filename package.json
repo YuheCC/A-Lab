@@ -8,7 +8,9 @@
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev",
-    "start:prod": "umi dev"
+    "start:prod": "umi dev",
+    "start:box": "cross-env UMI_ENV=box umi dev",
+    "start:us": "cross-env UMI_ENV=us umi dev"
   },
   "dependencies": {
     "@deck.gl/core": "^9.1.12",

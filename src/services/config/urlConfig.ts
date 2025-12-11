@@ -1,4 +1,10 @@
+/* global BASE_URL, ENVIRONMENT, WS_BASE_URL */
+
 import type { Environment } from './types';
+
+declare const BASE_URL: string;
+declare const ENVIRONMENT: Environment;
+declare const WS_BASE_URL: string;
 
 /**
  * Lightweight URL Configuration Center
@@ -44,6 +50,12 @@ class UrlConfigCenter {
 
     // Priority 2: Detect from BASE_URL
     const baseURL = typeof BASE_URL !== 'undefined' ? BASE_URL : '';
+    if (baseURL.includes('llm-staging.ses.ai')) {
+      return 'us';
+    }
+    if (baseURL === '/') {
+      return 'box';
+    }
     if (baseURL.includes('api-sh.ses.ai')) {
       return 'staging';
     }

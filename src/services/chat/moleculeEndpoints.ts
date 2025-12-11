@@ -11,6 +11,10 @@ export const MOLECULE_ENDPOINTS = {
     moleculeDetails: '/api/molecule_details',
     similarMolecules: '/molecule/similar',
   },
+  box: {
+    moleculeDetails: '/api/search/molecule_details',
+    similarMolecules: '/api/llm/molecule/similar',
+  },
   // Environment-specific overrides (if needed)
   // staging: {
   //   moleculeDetails: '/api/v2/molecule_details',

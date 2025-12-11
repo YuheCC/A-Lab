@@ -1,7 +1,6 @@
 import { create } from "zustand";
-import { authFetch, getAPIUrl } from "@/utils";
-
-const API_URL = getAPIUrl();
+import { authFetch } from "@/utils";
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 
 const MAX_NODES = 210000;
 
@@ -198,7 +197,8 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
         try {
             isFetching = true;
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query?umap_type=organic`);
+            const snowflakeUrl = buildAutoFetchURL('snowflakeQuery');
+            const response = await authFetch(`${snowflakeUrl}?umap_type=organic`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });
@@ -239,7 +239,8 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
         
         try {
             set({ loading: true });
-            const response = await authFetch(`/map-init.js`);
+            const mapInitUrl = buildAutoFetchURL('mapInit');
+            const response = await authFetch(mapInitUrl);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });
@@ -296,7 +297,8 @@ export const useInorganicPlotDataStore = create<InorganicPlotDataStore>((set) =>
         try {
             set({ loading: true });
             // 暂时使用有机分子的接口，直到无机分子接口实现
-            const response = await authFetch(`${API_URL}/snowflake-query?is_inorganic=true&umap_type=inorganic`);
+            const snowflakeUrl = buildAutoFetchURL('snowflakeQuery');
+            const response = await authFetch(`${snowflakeUrl}?is_inorganic=true&umap_type=inorganic`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch inorganic data: ${response.statusText}` });
@@ -352,7 +354,8 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
         try {
             anionsIsFetching = true;
             set({ loading: true });
-            const response = await authFetch(`${API_URL}/snowflake-query?is_anions=true&umap_type=anions`);
+            const snowflakeUrl = buildAutoFetchURL('snowflakeQuery');
+            const response = await authFetch(`${snowflakeUrl}?is_anions=true&umap_type=anions`);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch anions data: ${response.statusText}` });
@@ -393,7 +396,8 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
         try {
             set({ loading: true });
-            const response = await authFetch(`/map-init-anions.js`);
+            const mapInitAnionsUrl = buildAutoFetchURL('mapInitAnions');
+            const response = await authFetch(mapInitAnionsUrl);
 
             if (!response.ok) {
                 set({ loading: false, error: `Failed to fetch data: ${response.statusText}` });

@@ -2,7 +2,8 @@ import type { Message } from '@/pages/Chat/components/MessageList';
 import type { ToolStats } from '@/utils/messageUtils';
 import type { ChatHistoryItem } from '@/pages/Chat/components/History';
 import request from '@/services/request';
-import { getAPIUrl } from '@/utils';
+import { urlConfig } from '@/services/config/urlConfig';
+import { CHAT_ENDPOINTS, getChatEndpoint, getChatWSConfig } from './endpoints';
 
 export interface ChatResponse {
   content: string;
@@ -22,10 +23,12 @@ import { createChatWebSocketStream, createChatWebSocketStreamWebSocketOnly } fro
 
 export class ChatService {
   private static instance: ChatService;
-  private baseUrl: string;
+  private constructor() {}
 
-  private constructor() {
-    this.baseUrl = getAPIUrl() || '/api';
+  private buildEndpoint(endpoint: keyof typeof CHAT_ENDPOINTS.default) {
+    const env = urlConfig.getEnvironment();
+    const path = getChatEndpoint(env, endpoint);
+    return urlConfig.buildFullURL(path);
   }
 
   public static getInstance(): ChatService {
@@ -117,7 +120,9 @@ export class ChatService {
 
   async sendMessage(message: string, mode: 'regular' | 'deep-space' | 'lightning' | 'ask' | 'clarify' = 'regular', chatId?: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/send', {
+      const url = this.buildEndpoint('send');
+
+      const resp = await request(url, {
         method: 'POST',
         data: { message, mode, chatId },
       });
@@ -139,7 +144,9 @@ export class ChatService {
 
   async regenerateResponse(messageId: string): Promise<ChatResponse> {
     try {
-      const resp = await request('/chat/regenerate', {
+      const url = this.buildEndpoint('regenerate');
+
+      const resp = await request(url, {
         method: 'POST',
         data: { messageId },
       });
@@ -173,7 +180,7 @@ export class ChatService {
       chatId, 
       message, 
       mode = 'regular', 
-      path = '/ws/socket.io', 
+      path, 
       protocols, 
       websocketOnly = false,
       onOpen, 
@@ -181,6 +188,10 @@ export class ChatService {
       onError, 
       onClose 
     } = options || {};
+    const env = urlConfig.getEnvironment();
+    const wsConfig = getChatWSConfig(env);
+    const resolvedPath = path || wsConfig.path;
+    const baseUrl = urlConfig.getWSBaseURL();
     
     console.log('chatId', chatId);
     console.log('使用WebSocket-only模式:', websocketOnly);
@@ -188,8 +199,8 @@ export class ChatService {
     const createStreamFn = websocketOnly ? createChatWebSocketStreamWebSocketOnly : createChatWebSocketStream;
     
     return createStreamFn({
-      baseUrl: this.baseUrl,
-      path,
+      baseUrl,
+      path: resolvedPath,
       chatId,
       message,
       mode,
@@ -213,7 +224,8 @@ export class ChatService {
   //获取置顶聊天列表
   async getPinnedChatList(): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         params: {
           pinned: true,
           limit: 100,
@@ -242,7 +254,8 @@ export class ChatService {
   // 获取聊天列表
   async getChatList(start?: string, limit: number = 20): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         params: {
           pinned: false,
           start: start || null,
@@ -283,7 +296,8 @@ export class ChatService {
 
   async getChatById(chatId: number): Promise<{ title: string; messages: Message[] }> {
     try {
-      const resp = await request(`/api/chat/detail`, {
+      const url = this.buildEndpoint('detail');
+      const resp = await request(url, {
         method: 'GET',
         params: {
           id: chatId,
@@ -308,7 +322,8 @@ export class ChatService {
   // only create a new chat with a chat_name
   async createChat(title: string): Promise<any> {
     try {
-      const resp = await request('/api/chat/new', {
+      const url = this.buildEndpoint('create');
+      const resp = await request(url, {
         method: 'POST',
         data: { chat_name: title },
       });
@@ -323,7 +338,8 @@ export class ChatService {
   // send a new message to the chat, return a response id
   async createNewMessage(chatId: number, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/new', {
+      const url = this.buildEndpoint('messageNew');
+      const resp = await request(url, {
         method: 'POST',
         data: { 
             chat_id: chatId, 
@@ -343,7 +359,8 @@ export class ChatService {
   // update a message with a new content
   async updateMessage(chatId: number, messageId: string, message: string, model: string = 'o3'): Promise<any> {
     try {
-      const resp = await request('/api/chat/message/update', {
+      const url = this.buildEndpoint('messageUpdate');
+      const resp = await request(url, {
         method: 'POST',
         data: { 
             id: messageId,
@@ -366,7 +383,8 @@ export class ChatService {
       // 处理管理员开关参数
       const ragEnabled = extraOptions?.disableLiteratureSearch === false ? true : (extraOptions?.ragEnabled ?? false);
       
-      const resp = await request('/api/llm/ask', {
+      const url = this.buildEndpoint('llmAsk');
+      const resp = await request(url, {
         method: 'POST',
         data: { 
           chat_id: chatId, 
@@ -416,7 +434,8 @@ export class ChatService {
         payload.dump_state = true;
       }
       
-      const resp = await request('/api/llm/multi-agent', {
+      const url = this.buildEndpoint('multiAgent');
+      const resp = await request(url, {
         method: 'POST',
         data: payload,
       });
@@ -453,7 +472,8 @@ export class ChatService {
         payload.dump_state = true;
       }
       
-      const resp = await request('/api/llm/multi-agent/clarify', {
+      const url = this.buildEndpoint('multiAgentClarify');
+      const resp = await request(url, {
         method: 'POST',
         data: payload,
       });
@@ -467,7 +487,8 @@ export class ChatService {
 
   async saveChat(chatId: number, title: string, messages: Message[]): Promise<boolean> {
     try {
-      const resp = await request('/chat/save', {
+      const url = this.buildEndpoint('save');
+      const resp = await request(url, {
         method: 'POST',
         data: { chatId, title, messages },
       });
@@ -480,7 +501,8 @@ export class ChatService {
 
   async deleteChat(chatId: number): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/delete`, {
+      const url = this.buildEndpoint('delete');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId },
       });
@@ -493,7 +515,8 @@ export class ChatService {
 
   async searchChats(query: string): Promise<ChatHistoryItem[]> {
     try {
-      const resp = await request('/api/chat/list', {
+      const url = this.buildEndpoint('list');
+      const resp = await request(url, {
         method: 'GET',
         params: { 
           search_text: query, 
@@ -519,7 +542,8 @@ export class ChatService {
 
   async renameChat(chatId: number, newTitle: string): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const url = this.buildEndpoint('update');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId, chat_name: newTitle },
       });
@@ -532,7 +556,8 @@ export class ChatService {
 
   async togglePinChat(chatId: number, isPinned: boolean): Promise<boolean> {
     try {
-      const resp = await request(`/api/chat/update`, {
+      const url = this.buildEndpoint('update');
+      const resp = await request(url, {
         method: 'POST',
         data: { id: chatId, pinned: isPinned },
       });
