@@ -1,13 +1,16 @@
+import { DEFAULT_ADDITIVE_CATEGORY, DEFAULT_ADDITIVE_SUBTYPE } from './additiveCategories';
+
 export const PUBLIC_SEARCH_LOCKED_VALUES = {
   organicInput: "EC, DTD, DMC",
-  anionInput: "LiBF4, LiFSI",
+  anionInput: "LiPF6, sodium tetrafluoroborate, O=S(=O)(F)[N-]S(=O)(=O)F",
   sse: {
     activeTab: "formula" as const,
     formulaInput: "Li6PS5Cl",
   },
   findFriends: {
     moleculeType: "additive",
-    additiveSubtype: "A",
+    additiveCategory: DEFAULT_ADDITIVE_CATEGORY,
+    additiveSubtype: DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY],
     computeLevel: "Disabled",
   },
 } as const;

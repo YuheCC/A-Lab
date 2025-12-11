@@ -40,6 +40,7 @@ interface PlotDataNode<P extends BasePlotDataProperties = BasePlotDataProperties
     y: number;
     smiles: string;
     cation?: string;
+    casrn?: string;
     hasFullData: boolean;
     properties: P;
     rawData: any;
@@ -95,6 +96,7 @@ const createOrganicNode = (row: any, index: number): OrganicPlotDataNode => {
         y: Number(row.UMAP_1),
         smiles: row.SMILES ?? '',
         cation: row?.cation ?? row?.CATION ?? undefined,
+        casrn: row?.CASRN ?? row?.casrn ?? undefined,
         hasFullData,
         properties: {
             molwt: row.MOLECULAR_WEIGHT,
@@ -125,6 +127,7 @@ const createInorganicNode = (row: any, index: number): InorganicPlotDataNode => 
         y: Number(row.UMAP_1),
         smiles: row.SMILES ?? '',
         cation: row?.cation ?? row?.CATION ?? undefined,
+        casrn: row?.CASRN ?? row?.casrn ?? undefined,
         hasFullData,
         properties: {
             molwt: row.MOLECULAR_WEIGHT,
@@ -155,6 +158,7 @@ const createAnionsNode = (row: any, index: number): AnionsPlotDataNode => {
         y: Number(row.UMAP_1),
         smiles: row.SMILES ?? '',
         cation: row?.cation ?? row?.CATION ?? undefined,
+        casrn: row?.CASRN ?? row?.casrn ?? undefined,
         hasFullData,
         properties: {
             molwt: row.MOLECULAR_WEIGHT,

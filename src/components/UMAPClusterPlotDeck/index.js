@@ -8,6 +8,7 @@ import MolCard from '@/components/MolCard';
 import { useTranslation } from 'react-i18next';
 import { AUTO_HOVER_MOLECULE_THRESHOLD } from '@/constants/map';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
+import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { WebMercatorViewport } from '@deck.gl/core';
 
 // Define a color mapping for clusters (23 distinct colors) as RGB arrays
@@ -355,12 +356,13 @@ const UMAPClusterPlotDeck = ({
 
     const buildHoverPropGroups = useCallback((dataNode) => {
         if (!dataNode) {
-            return [];
+            return { propGroups: [], foldPropGroups: [] };
         }
 
         const properties = dataNode.properties || {};
+        const raw = dataNode.rawData ?? {};
 
-        return [
+        const propGroups = [
             { label: t('molecular.nodePopup.smiles'), value: dataNode.smiles, span: 2, show: isColumnVisibleForUser('smiles', userPermissions) },
             { label: t('molecular.umapPlot.properties.cluster'), value: properties.CLUSTER, show: isColumnVisibleForUser('cluster', userPermissions) },
             { label: t('molecular.umapPlot.properties.molWeight'), value: properties.molwt, suffix: t('molecular.umapPlot.units.gPerMol'), show: isColumnVisibleForUser('molecular_weight', userPermissions) },
@@ -410,6 +412,84 @@ const UMAPClusterPlotDeck = ({
                 show: molecularType === "anions" && isColumnVisibleForUser('fluoride_bde_ev', userPermissions)
             }
         ];
+
+        const foldPropGroups = [];
+
+        if (ENABLE_CASRN_DISPLAY) {
+            const casValue = dataNode.casrn ?? raw.CASRN ?? raw.casrn ?? raw.cas ?? raw.CAS;
+            if (casValue) {
+                foldPropGroups.push({
+                    label: t('molecular.nodePopup.casrn', 'CAS #'),
+                    value: String(casValue),
+                    span: 2,
+                    show: isColumnVisibleForUser('casrn', userPermissions),
+                });
+            }
+        }
+
+        const formatCoordinate = (value) => {
+            if (value === null || value === undefined) {
+                return undefined;
+            }
+            const numeric = Number(value);
+            if (Number.isFinite(numeric)) {
+                return numeric.toFixed(4);
+            }
+            return String(value);
+        };
+
+        const umapX = formatCoordinate(
+            dataNode.x ?? dataNode.UMAP_0 ?? properties.umap_x ?? raw.UMAP_0 ?? raw.x
+        );
+        const umapY = formatCoordinate(
+            dataNode.y ?? dataNode.UMAP_1 ?? properties.umap_y ?? raw.UMAP_1 ?? raw.y
+        );
+
+        if (umapX !== undefined) {
+            foldPropGroups.push({
+                label: 'UMAP_X',
+                value: umapX,
+                span: 1,
+                show: isColumnVisibleForUser('umap_0', userPermissions),
+            });
+        }
+        if (umapY !== undefined) {
+            foldPropGroups.push({
+                label: 'UMAP_Y',
+                value: umapY,
+                span: 1,
+                show: isColumnVisibleForUser('umap_1', userPermissions),
+            });
+        }
+
+        const functionalGroupsSource =
+            properties.functional_groups ??
+            dataNode.functional_groups ??
+            raw.functional_groups ??
+            raw.FUNCTIONAL_GROUPS;
+
+        let functionalGroupsValue = [];
+        if (typeof functionalGroupsSource === 'string') {
+            try {
+                const parsed = JSON.parse(functionalGroupsSource);
+                functionalGroupsValue = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (_error) {
+                functionalGroupsValue = functionalGroupsSource.split(',').map(item => item.trim()).filter(Boolean);
+            }
+        } else if (Array.isArray(functionalGroupsSource)) {
+            functionalGroupsValue = functionalGroupsSource;
+        } else if (functionalGroupsSource !== null && functionalGroupsSource !== undefined) {
+            functionalGroupsValue = [String(functionalGroupsSource)];
+        }
+
+        foldPropGroups.push({
+            label: 'Functional Groups',
+            value: functionalGroupsValue,
+            span: 4,
+            show: isColumnVisibleForUser('functional_groups', userPermissions),
+        });
+
+        return { propGroups, foldPropGroups };
     }, [molecularType, t, userPermissions]);
 
     // Calculate bounds from data to fit the view
@@ -441,6 +521,13 @@ const UMAPClusterPlotDeck = ({
     }, [enableAutoHover, data.length, fullDataNodes.length]);
 
     const autoHoverNodes = useMemo(() => (shouldAutoShowHover ? fullDataNodes : []), [fullDataNodes, shouldAutoShowHover]);
+
+    const hoverCardProps = useMemo(() => {
+        if (!hoveredObject || !hoveredObject.object) {
+            return null;
+        }
+        return buildHoverPropGroups(hoveredObject.object);
+    }, [hoveredObject, buildHoverPropGroups]);
 
     useEffect(() => {
         if (!shouldAutoShowHover || autoHoverNodes.length === 0) {
@@ -814,7 +901,7 @@ const UMAPClusterPlotDeck = ({
             getCursor={() => 'crosshair'}
             layers={layers}
         />
-        {hoveredObject && hoveredObject.object ? (
+        {hoverCardProps ? (
             <MolCard
                 ref={hoverRef}
                 style={position}
@@ -824,7 +911,8 @@ const UMAPClusterPlotDeck = ({
                     setHoveredObject(null);
                     onHover(null);
                 }}
-                propGroups={buildHoverPropGroups(hoveredObject.object)}
+                propGroups={hoverCardProps.propGroups}
+                foldPropGroups={hoverCardProps.foldPropGroups}
             />
         ) : null}
         {autoHoverLayouts.map(layout => {
@@ -915,13 +1003,19 @@ const UMAPClusterPlotDeck = ({
                             >
                                 {layoutIndex + 1}
                             </div>
-                            <MolCard
-                                showMoreDetails={false}
-                                style={{ width: '100%', pointerEvents: 'auto' }}
-                                cation={resolveCation(node)}
-                                compact={isBasicTierUser}
-                                propGroups={buildHoverPropGroups(node)}
-                            />
+                            {(() => {
+                                const { propGroups, foldPropGroups } = buildHoverPropGroups(node);
+                                return (
+                                    <MolCard
+                                        showMoreDetails={false}
+                                        style={{ width: '100%', pointerEvents: 'auto' }}
+                                        cation={resolveCation(node)}
+                                        compact={isBasicTierUser}
+                                        propGroups={propGroups}
+                                        foldPropGroups={foldPropGroups}
+                                    />
+                                );
+                            })()}
                         </div>
                     </div>
                 </Fragment>

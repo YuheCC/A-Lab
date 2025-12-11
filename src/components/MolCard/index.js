@@ -14,6 +14,14 @@ export const PropItem = ({ prop }) => {
     const codeRef = useRef(null);
     const [showTooltip, setShowTooltip] = useState(false);
 
+    const {
+        valueNode,
+        disableAutoTooltip,
+        tooltipContent,
+    } = prop || {};
+
+    const hasCustomValue = valueNode !== null && valueNode !== undefined;
+
     // Create and format the value string based on prop value and suffix
     let valueString;
     if (prop?.value) {
@@ -37,25 +45,58 @@ export const PropItem = ({ prop }) => {
 
     // Enable tooltip if the value string is too long and gets truncated
     useEffect(() => {
+        if (disableAutoTooltip) {
+            setShowTooltip(false);
+            return;
+        }
+
         const el = codeRef.current;
         if (!el) return;
         setShowTooltip(el.scrollWidth > el.clientWidth && !prop.wrap);
-    }, [valueString])
+    }, [valueString, disableAutoTooltip, prop?.wrap])
+
+    const baseCodeStyle = prop.wrap
+        ? { whiteSpace: 'normal', wordBreak: 'break-word', textOverflow: 'initial' }
+        : { whiteSpace: 'nowrap' };
+    const codeStyle = {
+        ...baseCodeStyle,
+        ...(prop?.valueStyle || {}),
+        ...(prop?.color ? { color: prop.color } : {}),
+    };
+
+    const tooltipNode = tooltipContent ?? (
+        <div className='molcard-property-group'>
+            <label>{prop.label}</label>
+            <div className='molcard-property-value'>{valueString}</div>
+        </div>
+    );
+
+    const disableTooltip = disableAutoTooltip || !showTooltip;
+
+    const renderedValue = hasCustomValue
+        ? valueNode
+        : (prop?.hasOwnProperty('value') ? valueString : null);
 
     return prop?.show !== false ? (
             <div style={{ gridColumn: prop.fullWidth ? '1 / -1' : `span ${prop.span || 1}` }}>
                 <div className='molcard-property-group'>
                     <label>{prop.label}</label>
-                    <Tooltip title={
-                        <div className='molcard-property-group'>
-                            <label>{prop.label}</label>
-                            <div className='molcard-property-value'>{valueString}</div>
-                        </div>
-                    } placement="bottom-start" arrow disableHoverListener={!showTooltip} disableFocusListener={!showTooltip} disableTouchListener={!showTooltip}
-                      enterDelay={500} enterNextDelay={500}>
-                        <code ref={codeRef} style={(prop.wrap ? { whiteSpace: 'normal', wordBreak: 'break-word', textOverflow: 'initial'} : { whiteSpace: 'nowrap' })}>{prop.hasOwnProperty('value') && valueString}{prop?.action && (
-                            prop?.action
-                        )}</code>
+                    <Tooltip
+                        title={tooltipNode}
+                        placement="bottom-start"
+                        arrow
+                        disableHoverListener={disableTooltip}
+                        disableFocusListener={disableTooltip}
+                        disableTouchListener={disableTooltip}
+                        enterDelay={500}
+                        enterNextDelay={500}
+                    >
+                        <code ref={codeRef} style={codeStyle}>
+                            {renderedValue}
+                            {prop?.action && (
+                                prop?.action
+                            )}
+                        </code>
                     </Tooltip>
                 </div>
             </div>

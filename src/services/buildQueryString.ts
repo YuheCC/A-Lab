@@ -1,12 +1,25 @@
-export const buildQueryString = (c: string, a: string, s: string, sv: string, m: string) => {
-    const introParts: string[] = [];
-    if (s) introParts.push(s);
-    if (sv) introParts.push(`in ${sv}`);
-    const intro = introParts.length ? `I have ${introParts.join(' ')} in a battery` : 'I have a battery';
-    let rest = '';
-    if (c && a) rest = ` with ${c} cathode and ${a} anode`;
-    else if (c) rest = ` with ${c} cathode`;
-    else if (a) rest = ` with ${a} anode`;
-    const question = m ? ` How can I improve ${m}?` : ' How can I improve it?';
-    return `${intro}${rest}.${question}`;
-  };
+export const buildQueryString = (
+  cathodeInput: string,
+  anodeInput: string,
+  solventInput: string,
+  cellDesignInput: string,
+  metricInput: string,
+) => {
+  const cathode = cathodeInput.trim();
+  const anode = anodeInput.trim();
+  const solvent = solventInput.trim();
+  const cellDesign = cellDesignInput.trim();
+  const metric = metricInput.trim();
+
+  const intro = solvent ? `I have ${solvent} in a battery` : 'I have a battery';
+
+  let rest = '';
+  if (cathode && anode) rest = ` with ${cathode} cathode and ${anode} anode`;
+  else if (cathode) rest = ` with ${cathode} cathode`;
+  else if (anode) rest = ` with ${anode} anode`;
+
+  const cellDesignPart = cellDesign ? ` using a ${cellDesign} cell design` : '';
+  const question = metric ? ` How can I improve ${metric}?` : ' How can I improve it?';
+
+  return `${intro}${rest}${cellDesignPart}.${question}`;
+};
