@@ -11,8 +11,15 @@ export default defineConfig({
     '@': path.resolve(__dirname, '../src'),
   },
   define: {
-    'ShowFindFriendsAdvancedOptions': true,
+    // Environment configuration
+    'ENVIRONMENT': 'production',
     'BASE_URL': "https://prod-api.ses.ai",
+    'WS_BASE_URL': "https://prod-api.ses.ai",
+
+    // Feature flags
+    'ShowFindFriendsAdvancedOptions': true,
+
+    // External service URLs
     'explorer_url': "https://buy.stripe.com/6oE165fCb3Tf0qA5kl",
     'team_url': "https://buy.stripe.com/dR67utfCb3TffludQS",
   },
