@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
 import './third.css';
-import { authFetch, getAPIUrl } from '@/utils';
 import { useAuthStore } from '@/models/useAuth';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
-
-const BASE_URL = getAPIUrl();
+import request from '@/services/request';
+import { urlConfig } from '@/services/config/urlConfig';
+import { getSearchEndpoint } from '@/services/search/endpoints';
 
 // 定义搜索结果的数据类型
 interface SearchResult {
@@ -62,15 +62,29 @@ const ThirdSearch: React.FC<{ isPublicUser?: boolean }> = ({ isPublicUser = fals
             setError('');
             setSearchResults([]);
             setCurrentPage(1); // 重置到第一页
-            
+
             try {
-                const response = await authFetch(`${BASE_URL}/api/sse/search?query=${encodeURIComponent(molecularFormula.replace(/,/g, '-'))}&match_mode=${matchModelEnums[activeTab]}&page=${currentPage}&page_size=${pageSize}`);
-                
-                if (!response.ok) {
+                // Get environment-specific endpoint
+                const env = urlConfig.getEnvironment();
+                const endpoint = getSearchEndpoint(env, 'thirdSearch');
+                const baseUrl = urlConfig.buildFullURL(endpoint);
+
+                const params = new URLSearchParams({
+                    query: molecularFormula.replace(/,/g, '-'),
+                    match_mode: matchModelEnums[activeTab],
+                    page: currentPage.toString(),
+                    page_size: pageSize.toString(),
+                });
+
+                const response = await request(`${baseUrl}?${params.toString()}`, {
+                    method: 'GET',
+                });
+
+                if ((response as any).ok === false || response.status >= 400) {
                     throw new Error(t('thirdSearch.searchRequestFailed', { status: response.status }));
                 }
-                
-                const data = await response.json();
+
+                const data = response.data;
                 
                 // 新的分页响应格式：data包含data和total_count
                 if (data && data.data && Array.isArray(data.data)) {
