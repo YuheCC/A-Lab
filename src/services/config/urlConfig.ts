@@ -81,38 +81,110 @@ class UrlConfigCenter {
 
   /**
    * Get base URL for HTTP/SSE requests
+   *
+   * @returns Base URL string
+   *          - Returns empty string if BASE_URL is '/' or ''
+   *          - Returns absolute URL if BASE_URL is 'http://...'
+   *          - Converts relative path to absolute URL using window.location.origin
    */
   public getBaseURL(): string {
-    return this.baseURL;
+    return this.normalizeBaseURL(this.baseURL);
   }
 
   /**
    * Get base URL for WebSocket connections
+   *
+   * @returns Base URL string (normalized)
    */
   public getWSBaseURL(): string {
-    return this.wsBaseURL;
+    return this.normalizeBaseURL(this.wsBaseURL);
+  }
+
+  /**
+   * Normalize base URL to handle various edge cases
+   *
+   * @param url - Raw base URL from config
+   * @returns Normalized URL
+   *
+   * Handles:
+   * - '/' -> '' (empty, for fetch to work correctly)
+   * - '' -> '' (empty)
+   * - '/api' -> 'http://localhost:3000/api' (relative path -> absolute)
+   * - 'http://...' -> 'http://...' (absolute URL, unchanged)
+   */
+  private normalizeBaseURL(url: string): string {
+    // Handle empty or root path
+    if (!url || url === '/') {
+      return '';
+    }
+
+    // If already an absolute URL (http:// or https://), return as-is
+    if (/^https?:\/\//i.test(url)) {
+      return url;
+    }
+
+    // If relative path (starts with /), convert to absolute URL
+    if (url.startsWith('/')) {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      return origin + url;
+    }
+
+    // Otherwise return as-is
+    return url;
   }
 
   /**
    * Build full URL by combining base URL and path
    *
+   * Ensures no double slashes in the result (except in protocol like 'http://')
+   *
    * @param path - API path (e.g., '/chat/send' or '/api/chat/list')
    * @param useWSBase - Use WebSocket base URL instead of HTTP base URL
-   * @returns Full URL
+   * @returns Full URL without double slashes
    *
    * @example
+   * // With BASE_URL = 'https://prod-api.ses.ai'
    * buildFullURL('/chat/send') // => 'https://prod-api.ses.ai/chat/send'
+   *
+   * // With BASE_URL = '/'
+   * buildFullURL('/chat/send') // => '/chat/send'
+   *
+   * // With BASE_URL = '/api'
+   * buildFullURL('/chat/send') // => 'http://localhost:3000/api/chat/send'
+   *
+   * // Edge cases handled:
+   * buildFullURL('//chat/send') // => '/chat/send' (removes leading double slash)
+   * buildFullURL('chat/send') // => '/chat/send' (adds leading slash)
    */
   public buildFullURL(path: string, useWSBase: boolean = false): string {
-    const base = useWSBase ? this.wsBaseURL : this.baseURL;
+    const base = useWSBase ? this.getWSBaseURL() : this.getBaseURL();
 
-    // Remove trailing slash from base URL
-    const cleanBase = base.replace(/\/+$/, '');
+    // Clean path: remove leading slashes and normalize
+    let cleanPath = path.trim();
+    // Remove all leading slashes
+    while (cleanPath.startsWith('/')) {
+      cleanPath = cleanPath.substring(1);
+    }
 
-    // Ensure path starts with /
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    // If base is empty, return path with single leading slash
+    if (!base) {
+      return cleanPath ? `/${cleanPath}` : '/';
+    }
 
-    return `${cleanBase}${cleanPath}`;
+    // Clean base: remove trailing slashes (but preserve protocol slashes like 'http://')
+    let cleanBase = base.trim();
+    // Remove trailing slashes
+    while (cleanBase.endsWith('/') && !cleanBase.endsWith('://')) {
+      cleanBase = cleanBase.substring(0, cleanBase.length - 1);
+    }
+
+    // If path is empty, return base as-is
+    if (!cleanPath) {
+      return cleanBase;
+    }
+
+    // Combine with single slash
+    return `${cleanBase}/${cleanPath}`;
   }
 }
 
