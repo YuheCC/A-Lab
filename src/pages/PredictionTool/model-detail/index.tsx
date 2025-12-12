@@ -548,8 +548,8 @@ const ModelDetailPage: React.FC = () => {
 
           // MAPE 需要转换为百分比
           const isMAPE = key.toUpperCase() === 'MAPE';
-          const beforeValue = isMAPE ? `${(value[0] * 100).toFixed(3)}%` : value[0].toFixed(3);
-          const afterValue = isMAPE ? `${(value[1] * 100).toFixed(3)}%` : value[1].toFixed(3);
+          const beforeValue = isMAPE ? `${(value[0] * 100).toFixed(2)}%` : value[0].toFixed(2);
+          const afterValue = isMAPE ? `${(value[1] * 100).toFixed(2)}%` : value[1].toFixed(2);
 
           const tooltipRenderer = getMetricTooltip(key);
 
