@@ -233,6 +233,7 @@ export default {
             ratioValue: "7 : 3",
             ratioDesc: "데이터셋의 70%는 학습에, 30%는 테스트에 사용됩니다",
             upload: "데이터셋 업로드",
+            uploadNote: "최소 30개의 셀 데이터를 업로드하고 각 셀은 최소 SOH=80%까지 사이클하십시오",
             dragDrop: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
             formats: "지원 형식: CSV, NDA, NDAX",
             dragDropMultiple: "파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
