@@ -1,20 +1,43 @@
+
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import FindFriendAdvancedOptions from '@/components/FindFriendAdvancedOptions';
 import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import type { QueryLimitInfo } from '@/types/queryLimit';
 import { formatQueryLimitLabel } from '@/utils/queryLimit';
+import type { AdditiveCategoryType, AdditiveOptionsByCategory } from '@/constants/additiveCategories';
+import {
+  ADDITIVE_CATEGORY_LABEL_KEYS,
+  ADDITIVE_OPTIONS_BY_CATEGORY,
+  DEFAULT_ADDITIVE_CATEGORY,
+  DEFAULT_ADDITIVE_SUBTYPE,
+  getDefaultSubtypeForCategory,
+  isValidAdditiveSubtype,
+} from '@/constants/additiveCategories';
+
+export interface MolTypeOption {
+  value: string;
+  /** Translation key under `search.moleculeTypes`. */
+  labelKey: string;
+}
+
+export const DEFAULT_MOL_TYPE_OPTIONS: MolTypeOption[] = [
+  { value: 'solvent', labelKey: 'solvent' },
+  { value: 'cosolvent', labelKey: 'cosolvent' },
+  { value: 'diluent', labelKey: 'diluent' },
+  { value: 'additive', labelKey: 'additive' },
+];
 
 interface FindFriendOptionsProps {
-  findClosestFriends: boolean;
-  setFindClosestFriends: (v: boolean) => void;
   extraRequests: string;
   setExtraRequests: (v: string) => void;
   showAdvanced: boolean;
   setShowAdvanced: (v: boolean) => void;
   selectedMolType: string;
   setSelectedMolType: (v: string) => void;
+  additiveCategory: AdditiveCategoryType;
+  setAdditiveCategory: (v: AdditiveCategoryType) => void;
   additiveSubtype: string;
   setAdditiveSubtype: (v: string) => void;
   computeLevel: string;
@@ -23,14 +46,19 @@ interface FindFriendOptionsProps {
   setStructureWeight: (v: number) => void;
   showHypothetical: boolean;
   setShowHypothetical: (v: boolean) => void;
+  prioritizePublished: boolean;
+  setPrioritizePublished: (v: boolean) => void;
+  showPrioritizePublished?: boolean;
+  numResults: number;
+  setNumResults: (v: number) => void;
   cathode: string;
   setCathode: (v: string) => void;
   anode: string;
   setAnode: (v: string) => void;
-  salt: string;
-  setSalt: (v: string) => void;
   solvent: string;
   setSolvent: (v: string) => void;
+  cellDesign: string;
+  setCellDesign: (v: string) => void;
   metric: string;
   setMetric: (v: string) => void;
   userPermissions?: string;
@@ -40,19 +68,22 @@ interface FindFriendOptionsProps {
   findFriendLimitInfo?: QueryLimitInfo;
   showBatteryFields?: boolean;
   readOnly?: boolean;
-  allowFindFriendsToggleWhenReadOnly?: boolean;
   onLockedClick?: () => void;
+  additiveOptionsByCategory?: AdditiveOptionsByCategory;
+  molTypeOptions?: MolTypeOption[];
+  onSubmitSearch?: () => void;
+  submitDisabled?: boolean;
 }
 
 const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
-  findClosestFriends,
-  setFindClosestFriends,
   extraRequests,
   setExtraRequests,
   showAdvanced,
   setShowAdvanced,
   selectedMolType,
   setSelectedMolType,
+  additiveCategory,
+  setAdditiveCategory,
   additiveSubtype,
   setAdditiveSubtype,
   computeLevel,
@@ -61,14 +92,19 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   setStructureWeight,
   showHypothetical,
   setShowHypothetical,
+  prioritizePublished,
+  setPrioritizePublished,
+  showPrioritizePublished = true,
+  numResults,
+  setNumResults,
   cathode,
   setCathode,
   anode,
   setAnode,
-  salt,
-  setSalt,
   solvent,
   setSolvent,
+  cellDesign,
+  setCellDesign,
   metric,
   setMetric,
   userPermissions,
@@ -78,12 +114,14 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
   findFriendLimitInfo,
   showBatteryFields = true,
   readOnly = false,
-  allowFindFriendsToggleWhenReadOnly = false,
   onLockedClick,
+  additiveOptionsByCategory,
+  molTypeOptions,
+  onSubmitSearch,
+  submitDisabled,
 }) => {
   const { t } = useTranslation();
-  const canToggleFindFriends = !readOnly || allowFindFriendsToggleWhenReadOnly;
-  const checkboxDisabled = readOnly && !allowFindFriendsToggleWhenReadOnly;
+
   const handleGuardedInteraction = (event?: React.SyntheticEvent | Event) => {
     if (!readOnly) return false;
     if (event && 'preventDefault' in event) {
@@ -95,10 +133,12 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
     }
     return true;
   };
+
   const toggleAdvanced = () => {
     if (handleGuardedInteraction()) return;
     setShowAdvanced(!showAdvanced);
   };
+
   const handleAdvancedToggleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (handleGuardedInteraction(event)) return;
     if (event.key === 'Enter' || event.key === ' ') {
@@ -113,182 +153,270 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
     'search.intelligentFindFriendsLimitLabel',
   );
 
+  const additiveOptionsMap = useMemo(
+    () => additiveOptionsByCategory ?? ADDITIVE_OPTIONS_BY_CATEGORY,
+    [additiveOptionsByCategory],
+  );
+
+  const additiveOptionList = useMemo(
+    () => additiveOptionsMap[additiveCategory],
+    [additiveCategory, additiveOptionsMap],
+  );
+
+  const molTypeOptionList = useMemo(
+    () => molTypeOptions ?? DEFAULT_MOL_TYPE_OPTIONS,
+    [molTypeOptions],
+  );
+
+  useEffect(() => {
+    if (selectedMolType !== 'additive') {
+      return;
+    }
+    if (!isValidAdditiveSubtype(additiveCategory, additiveSubtype, additiveOptionsMap)) {
+      setAdditiveSubtype(getDefaultSubtypeForCategory(additiveCategory));
+    }
+  }, [additiveCategory, additiveSubtype, additiveOptionsMap, selectedMolType, setAdditiveSubtype]);
+
+  useEffect(() => {
+    if (molTypeOptionList.some((option) => option.value === selectedMolType)) {
+      return;
+    }
+    const fallbackType = molTypeOptionList[0]?.value;
+    if (!fallbackType) {
+      return;
+    }
+    setSelectedMolType(fallbackType);
+    if (fallbackType === 'additive') {
+      setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+      setAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
+    }
+  }, [molTypeOptionList, selectedMolType, setSelectedMolType, setAdditiveCategory, setAdditiveSubtype]);
+
+  const readOnlyFieldStyle: React.CSSProperties | undefined = readOnly
+    ? { backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' }
+    : undefined;
+
+  const labelRowStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    flexWrap: 'wrap',
+    fontSize: '14px',
+    fontWeight: 500,
+    color: '#0f172a',
+    margin: 0,
+  };
+
+  const selectBaseStyle = (disabled: boolean): React.CSSProperties => ({
+    backgroundColor: disabled ? '#f1f5f9' : 'white',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '4px 12px',
+    color: disabled ? '#94a3b8' : undefined,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+  });
+
   return (
     <>
-      <div className="search-options">
-        <div
-          className="search-option"
-          style={{
-            flex: '0 0 100%',
-            width: '100%',
-            minWidth: 0,
-            opacity: readOnly && !allowFindFriendsToggleWhenReadOnly ? 0.6 : 1,
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+    <div>
+      <div
+        className="search-option"
+        style={{
+          flex: '0 0 100%',
+          width: '100%',
+          minWidth: 0,
+          opacity: readOnly ? 0.6 : 1,
+          marginBottom: 0,
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+          <textarea
+            value={extraRequests}
+            onChange={(e) => {
+              if (handleGuardedInteraction(e)) return;
+              setExtraRequests(e.target.value);
+            }}
+            placeholder={t('search.extraRequestsPlaceholder')}
+            className="ff-advanced-textarea"
+            readOnly={readOnly}
+            onMouseDown={(event) => {
+              handleGuardedInteraction(event);
+            }}
+            style={{
+              ...readOnlyFieldStyle,
+              minHeight: '40px',
+              padding: '12px',
+              margin: 0,
+              width: '100%',
+              resize: 'vertical',
+            }}
+            aria-label={t('search.extraRequestsPlaceholder')}
+          />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
             <div
               style={{
                 display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'flex-start',
+                alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '12px',
+                flexWrap: 'wrap',
+                gap: '8px',
                 width: '100%',
-                flex: '1 1 auto',
               }}
             >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: '1 1 auto', minWidth: 0 }}>
-                  <div style={{ paddingTop: '2px' }}>
-                    <input
-                      id="find-friends-checkbox"
-                      type="checkbox"
-                      checked={findClosestFriends}
-                      onChange={(e) => setFindClosestFriends(e.target.checked)}
-                      disabled={checkboxDisabled}
+              <div style={labelRowStyle}>
+                <span>{t('search.findFriendsLabel')}</span>
+                <InfoTooltip
+                  title={(
+                    <InfoTooltipContent
+                      title={t('search.useCaseTooltipTitle')}
+                      description={t('search.useCaseTooltipDescription')}
                     />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 auto', minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <label
-                        htmlFor="find-friends-checkbox"
-                      style={{ display: 'flex', alignItems: 'center', cursor: canToggleFindFriends ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap' }}
-                    >
-                      <span>{t('search.findFriendsLabel')}</span>
-                      <InfoTooltip
-                        title={(
-                          <InfoTooltipContent
-                            title={t('search.findFriendsLabel')}
-                            description={t('search.findFriendsDescription')}
-                          />
-                        )}
-                        placement="top"
-                      >
-                        <Info size={16} className="ff-info-icon" style={{ marginLeft: '4px' }} />
-                      </InfoTooltip>
-                    </label>
-                    {enableMolTypeSelector && (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        flexWrap: 'wrap',
-                        opacity: readOnly ? 0.6 : 1,
+                  )}
+                  placement="top"
+                >
+                  <Info size={16} className="ff-info-icon" />
+                </InfoTooltip>
+              </div>
+
+              {enableMolTypeSelector && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    flexWrap: 'wrap',
+                    opacity: readOnly ? 0.6 : 1,
+                  }}
+                >
+                  <select
+                    value={selectedMolType}
+                    onChange={(e) => {
+                      if (handleGuardedInteraction(e)) return;
+                      const newType = e.target.value;
+                      setSelectedMolType(newType);
+                      if (selectedMolType !== 'additive' && newType === 'additive') {
+                        setAdditiveCategory(DEFAULT_ADDITIVE_CATEGORY);
+                        setAdditiveSubtype(DEFAULT_ADDITIVE_SUBTYPE[DEFAULT_ADDITIVE_CATEGORY]);
+                      }
+                    }}
+                      style={selectBaseStyle(readOnly)}
+                      onMouseDown={(event) => {
+                        if (handleGuardedInteraction(event)) return;
                       }}
+                      aria-disabled={readOnly}
                     >
-                      <select
-                        value={selectedMolType}
-                        onChange={(e) => {
+                      {molTypeOptionList.map(({ value, labelKey }) => (
+                        <option key={value} value={value}>
+                          {t(`search.moleculeTypes.${labelKey}`, labelKey)}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedMolType === 'additive' && (
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <select
+                          value={additiveCategory}
+                          onChange={(e) => {
                             if (handleGuardedInteraction(e)) return;
-                            setSelectedMolType(e.target.value);
-                          }}
-                          style={{
-                            backgroundColor: readOnly ? '#f1f5f9' : 'white',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            padding: '4px',
-                            color: readOnly ? '#94a3b8' : undefined,
-                            cursor: readOnly ? 'not-allowed' : 'pointer',
-                          }}
-                          onMouseDown={(event) => {
-                            if (handleGuardedInteraction(event)) return;
-                          }}
-                          aria-disabled={readOnly}
-                        >
-                          <option value="solvent">{t('search.moleculeTypes.solvent')}</option>
-                          <option value="cosolvent">{t('search.moleculeTypes.cosolvent')}</option>
-                          <option value="diluent">{t('search.moleculeTypes.diluent')}</option>
-                          <option value="additive">{t('search.moleculeTypes.additive')}</option>
-                        </select>
-                        {selectedMolType === 'additive' && (
-                          <select
-                            value={additiveSubtype}
-                            onChange={(e) => {
-                              if (handleGuardedInteraction(e)) return;
-                              setAdditiveSubtype(e.target.value);
-                            }}
-                            style={{
-                              backgroundColor: readOnly ? '#f1f5f9' : 'white',
-                              border: '1px solid #ccc',
-                              borderRadius: '4px',
-                              padding: '4px',
-                              color: readOnly ? '#94a3b8' : undefined,
-                              cursor: readOnly ? 'not-allowed' : 'pointer',
-                            }}
-                            aria-label={t('search.moleculeTypes.additiveSubtype')}
-                            onMouseDown={(event) => {
-                              if (handleGuardedInteraction(event)) return;
-                            }}
-                            aria-disabled={readOnly}
-                          >
-                            <option value="A">{t('search.moleculeTypes.additiveOptions.seiPromoter')}</option>
-                            <option value="C">{t('search.moleculeTypes.additiveOptions.sideReactionSuppressor')}</option>
-                            <option value="F">{t('search.moleculeTypes.additiveOptions.dendriteSuppressor')}</option>
-                            <option value="H">{t('search.moleculeTypes.additiveOptions.interfacialStabilityImprover')}</option>
-                          </select>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  { false && findClosestFriends && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', opacity: readOnly ? 0.6 : 1 }}>
-                      <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
-                      <InfoTooltip
-                        title={(
-                          <InfoTooltipContent
-                            title={t('search.intelligentFindFriendsLabel')}
-                            description={t('search.intelligentFindFriendsTooltip')}
-                            remainingLabel={intelligentLimitLabel}
-                          />
-                        )}
-                        placement="top"
-                      >
-                        <Info size={16} className="ff-info-icon" />
-                      </InfoTooltip>
-                      <select
-                        value={computeLevel}
-                        onChange={(e) => {
-                          if (handleGuardedInteraction(e)) return;
-                          setComputeLevel(e.target.value);
+                            const newCategory = e.target.value as AdditiveCategoryType;
+                          setAdditiveCategory(newCategory);
+                          setAdditiveSubtype(getDefaultSubtypeForCategory(newCategory));
                         }}
-                        style={{
-                          backgroundColor: readOnly ? '#f1f5f9' : 'white',
-                          border: '1px solid #ccc',
-                          borderRadius: '4px',
-                          padding: '4px',
-                          color: readOnly ? '#94a3b8' : undefined,
-                          cursor: readOnly ? 'not-allowed' : 'pointer',
-                        }}
+                        style={selectBaseStyle(readOnly)}
                         onMouseDown={(event) => {
                           if (handleGuardedInteraction(event)) return;
                         }}
                         aria-disabled={readOnly}
                       >
-                        <option value="Disabled">{t('search.computeDisabled')}</option>
-                        <option value="Low">{t('search.computeLow')}</option>
-                        <option
-                          value="Medium"
-                          disabled={userPermissions === 'research'}
-                          title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
-                        >
-                          {t('search.computeMedium')}
-                          {userPermissions === 'research' ? ' 🔒' : ''}
-                        </option>
-                        <option
-                          value="High"
-                          disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
-                          title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
-                        >
-                          {t('search.computeHigh')}
-                          {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
-                        </option>
-                        {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                        {Object.entries(ADDITIVE_CATEGORY_LABEL_KEYS).map(([key, labelKey]) => (
+                          <option key={key} value={key}>
+                            {t(`search.moleculeTypes.additiveCategories.${labelKey}`)}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={additiveSubtype}
+                        onChange={(e) => {
+                          if (handleGuardedInteraction(e)) return;
+                          setAdditiveSubtype(e.target.value);
+                        }}
+                        style={selectBaseStyle(readOnly)}
+                        onMouseDown={(event) => {
+                          if (handleGuardedInteraction(event)) return;
+                        }}
+                        aria-label={t('search.moleculeTypes.additiveSubtype')}
+                        aria-disabled={readOnly}
+                      >
+                        {additiveOptionList.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {t(`search.moleculeTypes.additiveCategories.${option.labelKey}`)}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   )}
                 </div>
+              )}
+            </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  opacity: readOnly ? 0.6 : 1,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>{t('search.intelligentFindFriendsLabel')}</span>
+                <InfoTooltip
+                  title={(
+                    <InfoTooltipContent
+                      title={t('search.intelligentFindFriendsLabel')}
+                      description={t('search.intelligentFindFriendsTooltip')}
+                      remainingLabel={intelligentLimitLabel}
+                    />
+                  )}
+                  placement="top"
+                >
+                  <Info size={16} className="ff-info-icon" />
+                </InfoTooltip>
+                <select
+                  value={computeLevel}
+                  onChange={(e) => {
+                    if (handleGuardedInteraction(e)) return;
+                    setComputeLevel(e.target.value);
+                  }}
+                  style={selectBaseStyle(readOnly)}
+                  onMouseDown={(event) => {
+                    if (handleGuardedInteraction(event)) return;
+                  }}
+                  aria-disabled={readOnly}
+                >
+                  <option value="Disabled">{t('search.computeDisabled')}</option>
+                  <option value="Low">{t('search.computeLow')}</option>
+                  <option
+                    value="Medium"
+                    disabled={userPermissions === 'research'}
+                    title={userPermissions === 'research' ? t('search.upgradeAccount') : ''}
+                  >
+                    {t('search.computeMedium')}
+                    {userPermissions === 'research' ? ' 🔒' : ''}
+                  </option>
+                  <option
+                    value="High"
+                    disabled={['research', 'explorer', 'team'].includes(userPermissions || '')}
+                    title={['research', 'explorer', 'team'].includes(userPermissions || '') ? t('search.upgradeEnterprise') : ''}
+                  >
+                    {t('search.computeHigh')}
+                    {['research', 'explorer', 'team'].includes(userPermissions || '') ? ' 🔒' : ''}
+                  </option>
+                  {userPermissions === 'admin' && <option value="Extreme">{t('search.computeExtreme')}</option>}
+                </select>
               </div>
-              {/* <div
+              <div
                 role="button"
                 tabIndex={0}
                 aria-expanded={showAdvanced}
@@ -307,7 +435,6 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                   fontSize: '13px',
                   transition: 'background-color 0.2s',
                   backgroundColor: showAdvanced ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
-                  marginLeft: 'auto',
                   opacity: readOnly ? 0.5 : 1,
                 }}
               >
@@ -317,12 +444,11 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 ) : (
                   <ChevronDown size={14} style={{ marginLeft: '6px' }} />
                 )}
-              </div> */}
-            </div>
+                </div>
+              </div>
+
             {showAdvanced && (
               <FindFriendAdvancedOptions
-                extraRequests={extraRequests}
-                setExtraRequests={setExtraRequests}
                 selectedMolType={selectedMolType}
                 setSelectedMolType={setSelectedMolType}
                 additiveSubtype={additiveSubtype}
@@ -332,15 +458,20 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 setStructureWeight={setStructureWeight}
                 showHypothetical={showHypothetical}
                 setShowHypothetical={setShowHypothetical}
+                prioritizePublished={prioritizePublished}
+                setPrioritizePublished={setPrioritizePublished}
+                showPrioritizePublished={showPrioritizePublished}
+                numResults={numResults}
+                setNumResults={setNumResults}
                 userPermissions={userPermissions}
                 cathode={cathode}
                 setCathode={setCathode}
                 anode={anode}
                 setAnode={setAnode}
-                salt={salt}
-                setSalt={setSalt}
                 solvent={solvent}
                 setSolvent={setSolvent}
+                cellDesign={cellDesign}
+                setCellDesign={setCellDesign}
                 metric={metric}
                 setMetric={setMetric}
                 showBatteryFields={showBatteryFields}
@@ -350,6 +481,19 @@ const FindFriendOptions: React.FC<FindFriendOptionsProps> = ({
                 onLockedClick={onLockedClick}
               />
             )}
+
+              {typeof onSubmitSearch === 'function' && (
+                <div className="search-submit-container">
+                  <button
+                    className="search-button"
+                    onClick={onSubmitSearch}
+                    disabled={submitDisabled}
+                  >
+                    {t('search.searchButton')}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

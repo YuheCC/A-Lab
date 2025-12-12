@@ -31,6 +31,28 @@
     transform: translateY(-1px); /* 减少悬停上移距离 */
 }
 
+.molecule-card.molecule-card-published {
+    background: linear-gradient(135deg, #fff7ed, #fffaf0);
+    border-color: #fdba74;
+    box-shadow: 0 2px 12px rgba(251, 146, 60, 0.12);
+}
+
+.molecule-card.molecule-card-novel {
+    background: linear-gradient(135deg, #f0f9ff, #ecfeff);
+    border-color: #93c5fd;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.12);
+}
+
+.molecule-card.molecule-card-published .publication-status .molecule-card-property-value {
+    color: #ea580c;
+    font-weight: 700;
+}
+
+.molecule-card.molecule-card-novel .publication-status .molecule-card-property-value {
+    color: #2563eb;
+    font-weight: 700;
+}
+
 /* ==============================================
    2. 分子卡片头部
    ============================================== */
@@ -237,6 +259,10 @@
     border-radius: 6px; /* 添加圆角 */
     padding: 6px; /* 减少内边距从8px到6px */
     border: 1px solid #e2e8f0; /* 添加边框 */
+}
+
+.collapsible-properties {
+    margin-bottom: 12px;
 }
 
 /* 商业可用性与其他属性在同一区域 */

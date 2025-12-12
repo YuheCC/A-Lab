@@ -100,6 +100,14 @@ export class ChatService {
     if (extraData && typeof extraData === 'object' && 'extra_data' in extraData) {
       extraData = extraData.extra_data;
     }
+
+    const savedAtSource = serverMessage.role === 'assistant'
+      ? (serverMessage.updated_at ?? serverMessage.created_at ?? serverMessage.createdAt ?? serverMessage.savedAt ?? serverMessage.timestamp)
+      : (serverMessage.created_at ?? serverMessage.createdAt ?? serverMessage.savedAt ?? serverMessage.timestamp);
+    const normalizedSavedAt = savedAtSource ? this.normalizeServerDate(savedAtSource).toISOString() : undefined;
+    const normalizedTimestamp = serverMessage.timestamp
+      ? this.normalizeServerDate(serverMessage.timestamp)
+      : (normalizedSavedAt ? new Date(normalizedSavedAt) : undefined);
     
     return {
       ...serverMessage,
@@ -107,7 +115,9 @@ export class ChatService {
       extraData: extraData,
       toolStats: this.parseToolStats(serverMessage.tool_stats ?? serverMessage.toolStats),
       // 确保时间戳格式正确
-      timestamp: serverMessage.timestamp ? this.normalizeServerDate(serverMessage.timestamp) : undefined,
+      timestamp: normalizedTimestamp,
+      createdAt: normalizedSavedAt,
+      savedAt: normalizedSavedAt,
       // 移除后端的extra_data字段，避免重复
       extra_data: undefined,
       tool_stats: undefined

@@ -1,6 +1,9 @@
+import { extractIsPublished } from '@/utils/publicationStatus';
+
 export type MoleculeProperties = {
   smiles?: string;
   cation?: string;
+  casrn?: string;
   molecularWeight?: string | number;
   meltingPoint?: string;
   boilingPoint?: string;
@@ -18,6 +21,7 @@ export type MoleculeProperties = {
   functionalGroups?: string;
   commercialLink?: string;
   commercialScore?: number;
+  isPublished?: boolean;
 };
 
 export interface MoleculeDetails {
@@ -28,6 +32,7 @@ export interface MoleculeDetails {
 export interface APIMoleculeDetail {
   SMILES: string;
   cation?: string;
+  CASRN?: string;
   UMAP_0: number;
   UMAP_1: number;
   HOMO_eV: number;
@@ -70,11 +75,13 @@ class MoleculeService {
   }
 
   private mapAPIResponseToMoleculeDetails(apiData: APIMoleculeDetail, name: string): MoleculeDetails {
+    const isPublished = extractIsPublished(apiData);
     return {
       name,
       properties: {
         smiles: apiData.SMILES,
         cation: apiData.cation,
+        casrn: apiData.CASRN,
         molecularWeight: apiData.molecular_weight,
         homo: apiData.HOMO_eV,
         lumo: apiData.LUMO_eV,
@@ -86,6 +93,7 @@ class MoleculeService {
         commercialLink: apiData.COMMERCIAL_LINK,
         commercialScore: apiData.COMMERCIAL_SCORE,
         commercialViability: this.getCommercialViabilityText(apiData.COMMERCIAL_SCORE),
+        isPublished,
         // Keep existing fields as fallback
         meltingPoint: '-',
         boilingPoint: '-',
@@ -99,6 +107,7 @@ class MoleculeService {
   private mapMoleculeDetailsToMoleculeDetails(raw: any, originalName: string): MoleculeDetails {
     const smiles = raw?.SMILES || raw?.smiles || '';
     const cation = raw?.cation ?? raw?.CATION;
+    const casrn = raw?.CASRN ?? raw?.casrn ?? raw?.cas;
     const molecularWeight = raw?.molecular_weight != null ? raw.molecular_weight : raw?.molecularWeight;
     const predictedMp = raw?.predicted_MP_celsius ?? raw?.predicted_mp_celsius ?? raw?.predicted_MP ?? raw?.predictedMp;
     const predictedBp = raw?.predicted_BP_celsius ?? raw?.predicted_bp_celsius ?? raw?.predicted_BP ?? raw?.predictedBp;
@@ -114,13 +123,15 @@ class MoleculeService {
     const functionalGroups = raw?.functional_groups ?? raw?.FUNCTIONAL_GROUPS;
     const umapX = raw?.umap_x ?? raw?.x;
     const umapY = raw?.umap_y ?? raw?.y;
+    const isPublished = extractIsPublished(raw);
 
-        return {
-          name: originalName,
-          properties: {
-            smiles,
-            cation,
-            molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
+    return {
+      name: originalName,
+      properties: {
+        smiles,
+        cation,
+        casrn,
+        molecularWeight: molecularWeight != null ? Number(molecularWeight) : undefined,
         meltingPoint: predictedMp != null ? `${predictedMp}` : '-',
         boilingPoint: predictedBp != null ? `${predictedBp}` : '-',
         flashPoint: predictedFp != null ? `${predictedFp}` : '-',
@@ -135,7 +146,8 @@ class MoleculeService {
         umapY: umapY != null ? Number(umapY) : 0,
         functionalGroups: typeof functionalGroups === 'string' ? functionalGroups : JSON.stringify(functionalGroups || []),
         commercialViability: this.getCommercialViabilityText(commercialScore),
-        commercialScore: commercialScore != null ? Number(commercialScore) : undefined
+        commercialScore: commercialScore != null ? Number(commercialScore) : undefined,
+        isPublished,
       }
     };
   }

@@ -17,6 +17,9 @@ export interface Message {
   msg_type?: string; // 消息类型标识，用于业务场景区分
   content: string;
   timestamp?: Date;
+  createdAt?: string;
+  created_at?: string;
+  savedAt?: string;
   showRegenerate?: boolean;
   is_running?: boolean; // 是否需要显示计时，用于区分历史记录和新消息
   molText?: string;
@@ -97,11 +100,15 @@ export const isSystemMessage = (message: Message): boolean => {
  * @returns Message
  */
 export const createUserMessage = (content: string, id?: string, msg_type?: string): Message => {
+  const now = new Date();
+  const iso = now.toISOString();
   return {
     id: id || `user-${Date.now()}`,
     role: 'user',
     content: cleanMessageContent(content),
-    timestamp: new Date(),
+    timestamp: now,
+    createdAt: iso,
+    savedAt: iso,
     ...(msg_type && { msg_type })
   };
 };
@@ -120,11 +127,15 @@ export const createAssistantMessage = (
   showRegenerate: boolean = true,
   msg_type?: string
 ): Message => {
+  const now = new Date();
+  const iso = now.toISOString();
   return {
     id: id || `assistant-${Date.now()}`,
     role: 'assistant',
     content: cleanMessageContent(content),
-    timestamp: new Date(),
+    timestamp: now,
+    createdAt: iso,
+    savedAt: iso,
     showRegenerate,
     ...(msg_type && { msg_type })
   };
@@ -138,11 +149,15 @@ export const createAssistantMessage = (
  * @returns Message
  */
 export const createSystemMessage = (content: string, id?: string, msg_type?: string): Message => {
+  const now = new Date();
+  const iso = now.toISOString();
   return {
     id: id || `system-${Date.now()}`,
     role: 'system',
     content: cleanMessageContent(content),
-    timestamp: new Date(),
+    timestamp: now,
+    createdAt: iso,
+    savedAt: iso,
     ...(msg_type && { msg_type })
   };
 };
