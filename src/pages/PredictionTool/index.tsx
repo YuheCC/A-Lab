@@ -14,6 +14,7 @@ import { getHistoryList, deleteHistory, getModelList, getBaseModelList, isMockMo
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import Introduction from './components/Introduction';
 import Pagination from '@/components/Pagination';
+import CollapsibleText from '@/components/CollapsibleText';
 import type { ModelListItem } from '@/services/model/training';
 import './index.less';
 
@@ -443,9 +444,9 @@ const PredictionTool: React.FC<PredictionToolProps> = () => {
     <div className="prediction-tool-container">
       <div className="prediction-header">
         <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-        <p className="prediction-subtitle">
+        <CollapsibleText className="prediction-subtitle-wrapper">
           {t('predictionTool.subtitle')}
-        </p>
+        </CollapsibleText>
       </div>
 
       <div className="prediction-action-section">
