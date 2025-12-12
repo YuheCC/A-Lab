@@ -213,13 +213,13 @@ const DesignModelDetailPage: React.FC = () => {
     if (typeof value === 'object' && !Array.isArray(value)) {
       const extractedValue = extractNestedValue(value);
       if (extractedValue !== undefined) {
-        return extractedValue.toFixed(3);
+        return extractedValue.toFixed(2);
       }
     }
 
     const numericValue = Number(value as number);
     if (Number.isFinite(numericValue)) {
-      return numericValue.toFixed(3);
+      return numericValue.toFixed(2);
     }
     return String(value);
   };
@@ -269,11 +269,11 @@ const DesignModelDetailPage: React.FC = () => {
               <div className="metric-comparison">
                 <div className="metric-box base-model">
                   <div className="model-label">{t('design.modelDetail.beforeTraining', '训练前')}</div>
-                  <div className="model-value">{value[0].toFixed(3)}</div>
+                  <div className="model-value">{value[0].toFixed(2)}</div>
                 </div>
                 <div className="metric-box new-model">
                   <div className="model-label">{t('design.modelDetail.afterTraining', '训练后')}</div>
-                  <div className="model-value">{value[1].toFixed(3)}</div>
+                  <div className="model-value">{value[1].toFixed(2)}</div>
                 </div>
               </div>
             </div>
