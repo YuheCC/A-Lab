@@ -7,6 +7,7 @@ import type { EndpointConfig } from './types';
  */
 export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
   default: {
+    search: '/search',
     sseSearch: '/api/sse/search',
     snowflakeQuery: '/snowflake-query',
     mapInit: '/map-init.js',
@@ -22,8 +23,23 @@ export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     findFriendWithImage: '/api/llm/find-friend-with-image',
     feedback: '/api/feedback',
     moleculeDetails: '/api/molecule_details',
+    // Auth
+    login: '/login',
+    register: '/register',
+    resetPassword: '/reset-password',
+    resetPasswordToken: '/reset-password-token',
+    redeemCode: '/redeem-code',
+    verifyToken: '/verify-token',
+    verifyRegisterCode: '/verify-register-code',
+    redeemNew: '/redeem-new',
+    bindEduEmail: '/bind-edu-email',
+    verifyEduCode: '/verify-edu-code',
+    forgotPassword: '/forgot-password',
+    verifyForgotPasswordCode: '/verify-forgot-password-code',
+    contactSales: '/contact-sales',
   },
   box: {
+    search: '/api/search/search-new',
     sseSearch: '/api/search/sse/search',
     snowflakeQuery: '/api/search/snowflake-query',
     favorites: '/api/user/favorites',
@@ -31,5 +47,19 @@ export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     favoritesDelete: '/api/user/favorites-delete',
     moleculeImage: '/api/search/molecule_image',
     queryLimit: '/api/user/query_limit',
+    // Auth
+    login: '/api/user/login',
+    register: '/api/user/register',
+    resetPassword: '/api/user/reset-password',
+    resetPasswordToken: '/api/user/reset-password-token',
+    redeemCode: '/api/user/redeem-code',
+    verifyToken: '/api/user/verify-token',
+    verifyRegisterCode: '/api/user/verify-register-code',
+    redeemNew: '/api/user/redeem-new',
+    bindEduEmail: '/api/user/bind-edu-email',
+    verifyEduCode: '/api/user/verify-edu-code',
+    forgotPassword: '/api/user/forgot-password',
+    verifyForgotPasswordCode: '/api/user/verify-forgot-password-code',
+    contactSales: '/api/user/contact-sales',
   },
 };

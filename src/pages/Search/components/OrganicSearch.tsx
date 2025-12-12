@@ -333,7 +333,7 @@ const OrganicSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => 
 
         try {
             // Fetch the searched molecule's properties 
-            const searchEndpoint = buildAutoFetchURL('sseSearch');
+            const searchEndpoint = buildAutoFetchURL('search');
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=organic`);
 
             // Ratelimit handling

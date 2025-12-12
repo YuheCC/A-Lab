@@ -296,7 +296,7 @@ const InorganicSearch = () => {
 
         try {
             // Fetch the searched inorganic molecule's properties 
-            const searchEndpoint = buildAutoFetchURL('sseSearch');
+            const searchEndpoint = buildAutoFetchURL('search');
             const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling

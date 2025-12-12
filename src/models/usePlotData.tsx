@@ -239,7 +239,7 @@ export const usePlotDataStore = create<PlotDataStore>((set) => ({
         
         try {
             set({ loading: true });
-            const mapInitUrl = buildAutoFetchURL('mapInit');
+            const mapInitUrl = "/map-init.js";
             const response = await authFetch(mapInitUrl);
 
             if (!response.ok) {
@@ -396,7 +396,7 @@ export const useAnionsPlotDataStore = create<AnionsPlotDataStore>((set) => ({
 
         try {
             set({ loading: true });
-            const mapInitAnionsUrl = buildAutoFetchURL('mapInitAnions');
+            const mapInitAnionsUrl = "/map-init-anions.js";
             const response = await authFetch(mapInitAnionsUrl);
 
             if (!response.ok) {

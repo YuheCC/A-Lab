@@ -1,4 +1,6 @@
 import request from "@/services/request";
+import { urlConfig } from "@/services/config/urlConfig";
+import { getPredictionEndpoint } from "./endpoints";
 
 // 预测接口返回数据类型定义
 export interface PredictResponse {
@@ -77,7 +79,10 @@ export const predict = async (params: PredictParams): Promise<HistoryDetailRespo
   formData.append('file', params.file);
 
   // 1. 调用预测接口，获取任务ID
-  const response = await request('/api/cellLife/model_predict', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'modelPredict');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'POST',
     data: formData,
     headers: {
@@ -147,7 +152,10 @@ const pollPredictionResult = async (taskId: number): Promise<HistoryDetailRespon
 export const getHistoryList = async (params: HistoryListParams = {}): Promise<HistoryListResponse> => {
   const { page = 1, page_size = 2 } = params;
   
-  const response = await request('/api/cellLife/history/list', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyList');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       page,
@@ -164,7 +172,10 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
  * @returns Promise<HistoryDetailResponse> 历史记录详情
  */
 export const getHistoryDetail = async (id: number): Promise<HistoryDetailResponse> => {
-  const response = await request('/api/cellLife/history/detail', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyDetail');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       id,
@@ -180,7 +191,10 @@ export const getHistoryDetail = async (id: number): Promise<HistoryDetailRespons
  * @returns Promise<DeleteHistoryResponse> 删除结果
  */
 export const deleteHistory = async (params: DeleteHistoryParams): Promise<DeleteHistoryResponse> => {
-  const response = await request('/api/cellLife/history/delete', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'historyDelete');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'POST',
     data: params,
     headers: {
@@ -197,7 +211,10 @@ export const deleteHistory = async (params: DeleteHistoryParams): Promise<Delete
  * @returns Promise<Blob> 文件内容
  */
 export const downloadFile = async (params: FileDownloadParams): Promise<Blob> => {
-  const response = await request('/api/file/get', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getPredictionEndpoint(env, 'fileGet');
+  const url = urlConfig.buildFullURL(endpoint);
+  const response = await request(url, {
     method: 'GET',
     params: {
       filename: params.filename,

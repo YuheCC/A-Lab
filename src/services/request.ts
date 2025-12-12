@@ -78,6 +78,7 @@ interface RequestOptions {
     params?: any;
     headers?: Record<string, string>;
     onUploadProgress?: (progressEvent: any) => void; // 支持上传进度
+    responseType?: any;
 }
 
 const request = async (url: string, options: RequestOptions = {}) => {
