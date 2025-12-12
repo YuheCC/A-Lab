@@ -12,7 +12,9 @@ import {
   Button,
   CircularProgress,
   Backdrop,
+  Tooltip,
 } from '@mui/material';
+import { Info } from 'lucide-react';
 import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
@@ -254,13 +256,255 @@ const ModelDetailPage: React.FC = () => {
     return entries.length > 0 && entries.some(([, value]) => Array.isArray(value));
   };
 
-  const formatMetricValue = (value?: number | string | MetricsData) => {
+  const formatMetricValue = (value?: number | string | MetricsData, metricName?: string) => {
     if (value === null || value === undefined) return '--';
     const numericValue = Number(value as number);
     if (Number.isFinite(numericValue)) {
-      return numericValue.toFixed(3);
+      // MAPE 需要转换为百分比
+      if (metricName?.toUpperCase() === 'MAPE') {
+        return `${(numericValue * 100).toFixed(2)}%`;
+      }
+      return numericValue.toFixed(2);
     }
     return String(value);
+  };
+
+  // RMSE Tooltip 内容
+  const renderRMSETooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        {t('predictionTool.modelDetail.metricsInfo.rmse.name')}
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>RMSE =</span>
+          <div style={{ display: 'inline-flex', alignItems: 'flex-start', position: 'relative', paddingLeft: '8px' }}>
+            <span style={{ fontSize: '28px', lineHeight: '1', marginRight: '2px' }}>√</span>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              paddingTop: '4px',
+              borderTop: '1.5px solid #1f2937',
+              paddingLeft: '4px',
+              paddingRight: '4px'
+            }}>
+              <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px' }}>
+                <span style={{ fontSize: '14px', padding: '0 6px' }}>1</span>
+                <div style={{ width: '100%', height: '1px', backgroundColor: '#1f2937', margin: '2px 0' }}></div>
+                <span style={{ fontSize: '14px', padding: '0 6px' }}>N</span>
+              </div>
+              <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 4px' }}>
+                <span style={{ fontSize: '10px', lineHeight: '1', marginBottom: '2px' }}>N</span>
+                <span style={{ fontSize: '20px', lineHeight: '1' }}>Σ</span>
+                <span style={{ fontSize: '10px', lineHeight: '1', marginTop: '2px' }}>i=1</span>
+              </div>
+              <span style={{ fontSize: '15px' }}>(ŷ<sub>i</sub> - y<sub>i</sub>)<sup>2</sup></span>
+            </div>
+          </div>
+        </div>
+        <div style={{
+          fontSize: '12px',
+          lineHeight: '2',
+          color: '#374151',
+          paddingTop: '12px',
+          borderTop: '1px solid rgba(0,0,0,0.08)'
+        }}>
+          <div><strong>ŷ<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.predictedValue', '预测循环数')}</div>
+          <div><strong>y<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.actualValue', '真实循环数')}</div>
+          <div><strong>N</strong> — {t('predictionTool.modelDetail.metricsInfo.sampleSize', '测试集样本量')}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // MAE Tooltip 内容
+  const renderMAETooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        {t('predictionTool.modelDetail.metricsInfo.mae.name')}
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>MAE =</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px' }}>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>1</span>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#1f2937', margin: '2px 0' }}></div>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>N</span>
+            </div>
+            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 4px' }}>
+              <span style={{ fontSize: '10px', lineHeight: '1', marginBottom: '2px' }}>N</span>
+              <span style={{ fontSize: '20px', lineHeight: '1' }}>Σ</span>
+              <span style={{ fontSize: '10px', lineHeight: '1', marginTop: '2px' }}>i=1</span>
+            </div>
+            <span style={{ fontSize: '15px' }}>|ŷ<sub>i</sub> - y<sub>i</sub>|</span>
+          </div>
+        </div>
+        <div style={{
+          fontSize: '12px',
+          lineHeight: '2',
+          color: '#374151',
+          paddingTop: '12px',
+          borderTop: '1px solid rgba(0,0,0,0.08)'
+        }}>
+          <div><strong>ŷ<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.predictedValue', '预测循环数')}</div>
+          <div><strong>y<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.actualValue', '真实循环数')}</div>
+          <div><strong>N</strong> — {t('predictionTool.modelDetail.metricsInfo.sampleSize', '测试集样本量')}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // MAPE Tooltip 内容
+  const renderMAPETooltip = () => (
+    <div>
+      <div style={{
+        marginBottom: '12px',
+        fontSize: '13px',
+        lineHeight: '1.6'
+      }}>
+        {t('predictionTool.modelDetail.metricsInfo.mape.name')}
+      </div>
+      <div style={{
+        marginTop: '16px',
+        padding: '16px'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '500',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          color: '#1f2937',
+          fontFamily: 'Georgia, serif',
+          letterSpacing: '0.5px'
+        }}>
+          <span>MAPE =</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px' }}>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>100%</span>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#1f2937', margin: '2px 0' }}></div>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>N</span>
+            </div>
+            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 4px' }}>
+              <span style={{ fontSize: '10px', lineHeight: '1', marginBottom: '2px' }}>N</span>
+              <span style={{ fontSize: '20px', lineHeight: '1' }}>Σ</span>
+              <span style={{ fontSize: '10px', lineHeight: '1', marginTop: '2px' }}>i=1</span>
+            </div>
+            <span style={{ fontSize: '20px', lineHeight: '1' }}>|</span>
+            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px' }}>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>ŷ<sub>i</sub> - y<sub>i</sub></span>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#1f2937', margin: '2px 0' }}></div>
+              <span style={{ fontSize: '14px', padding: '0 6px' }}>y<sub>i</sub></span>
+            </div>
+            <span style={{ fontSize: '20px', lineHeight: '1' }}>|</span>
+          </div>
+        </div>
+        <div style={{
+          fontSize: '12px',
+          lineHeight: '2',
+          color: '#374151',
+          paddingTop: '12px',
+          borderTop: '1px solid rgba(0,0,0,0.08)'
+        }}>
+          <div><strong>ŷ<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.predictedValue', '预测循环数')}</div>
+          <div><strong>y<sub>i</sub></strong> — {t('predictionTool.modelDetail.metricsInfo.actualValue', '真实循环数')}</div>
+          <div><strong>N</strong> — {t('predictionTool.modelDetail.metricsInfo.sampleSize', '测试集样本量')}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  /**
+   * 获取指标的 Tooltip 渲染函数
+   */
+  const getMetricTooltip = (metricKey: string) => {
+    const key = metricKey.toLowerCase();
+    const tooltipMap: Record<string, () => JSX.Element> = {
+      rmse: renderRMSETooltip,
+      mae: renderMAETooltip,
+      mape: renderMAPETooltip,
+    };
+    return tooltipMap[key];
+  };
+
+  /**
+   * 渲染带说明的指标标题
+   */
+  const renderMetricTitle = (metricKey: string) => {
+    const tooltipRenderer = getMetricTooltip(metricKey);
+    if (!tooltipRenderer) {
+      return <span className="result-label">{metricKey.toUpperCase()}</span>;
+    }
+
+    return (
+      <Tooltip
+        title={tooltipRenderer()}
+        placement="top"
+        arrow
+        PopperProps={{
+          sx: {
+            '& .MuiTooltip-tooltip': {
+              backgroundColor: 'white',
+              color: 'black',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              borderRadius: '8px',
+              padding: '16px',
+              fontSize: '14px',
+              maxWidth: 500,
+              border: 'none'
+            },
+            '& .MuiTooltip-arrow': {
+              color: 'white',
+            }
+          }
+        }}
+      >
+        <span className="result-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
+          {metricKey.toUpperCase()}
+          <Info size={14} style={{ opacity: 0.7 }} />
+        </span>
+      </Tooltip>
+    );
   };
 
   const renderFlatMetrics = (metricsData: ModelMetricsResponse) => {
@@ -278,8 +522,8 @@ const ModelDetailPage: React.FC = () => {
         <div className="training-results-grid">
           {entries.map(([key, value]) => (
             <div className="result-card" key={key}>
-              <span className="result-label">{key.toUpperCase()}</span>
-              <span className="result-value">{formatMetricValue(value)}</span>
+              {renderMetricTitle(key)}
+              <span className="result-value">{formatMetricValue(value, key)}</span>
             </div>
           ))}
         </div>
@@ -302,17 +546,54 @@ const ModelDetailPage: React.FC = () => {
             return null;
           }
 
+          // MAPE 需要转换为百分比
+          const isMAPE = key.toUpperCase() === 'MAPE';
+          const beforeValue = isMAPE ? `${(value[0] * 100).toFixed(3)}%` : value[0].toFixed(3);
+          const afterValue = isMAPE ? `${(value[1] * 100).toFixed(3)}%` : value[1].toFixed(3);
+
+          const tooltipRenderer = getMetricTooltip(key);
+
           return (
             <div className="metric-section" key={key}>
-              <h3 className="metric-title">{key.toUpperCase()}</h3>
+              <h3 className="metric-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {key.toUpperCase()}
+                {tooltipRenderer && (
+                  <Tooltip
+                    title={tooltipRenderer()}
+                    placement="top"
+                    arrow
+                    PopperProps={{
+                      sx: {
+                        '& .MuiTooltip-tooltip': {
+                          backgroundColor: 'white',
+                          color: 'black',
+                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                          borderRadius: '8px',
+                          padding: '16px',
+                          fontSize: '14px',
+                          maxWidth: 500,
+                          border: 'none'
+                        },
+                        '& .MuiTooltip-arrow': {
+                          color: 'white',
+                        }
+                      }
+                    }}
+                  >
+                    <span style={{ cursor: 'help', display: 'inline-flex', alignItems: 'center' }}>
+                      <Info size={16} style={{ opacity: 0.7 }} />
+                    </span>
+                  </Tooltip>
+                )}
+              </h3>
               <div className="metric-comparison">
                 <div className="metric-box base-model">
                   <div className="model-label">{t('predictionTool.modelDetail.beforeTraining', '训练前')}</div>
-                  <div className="model-value">{value[0].toFixed(3)}</div>
+                  <div className="model-value">{beforeValue}</div>
                 </div>
                 <div className="metric-box new-model">
                   <div className="model-label">{t('predictionTool.modelDetail.afterTraining', '训练后')}</div>
-                  <div className="model-value">{value[1].toFixed(3)}</div>
+                  <div className="model-value">{afterValue}</div>
                 </div>
               </div>
             </div>
@@ -516,7 +797,35 @@ const ModelDetailPage: React.FC = () => {
               <div className="info-card training-results">
                 {/* RMSE Section */}
                 <div className="metric-section">
-                  <h3 className="metric-title">{t('predictionTool.modelDetail.rmse', 'RMSE')}</h3>
+                  <h3 className="metric-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {t('predictionTool.modelDetail.rmse', 'RMSE')}
+                    <Tooltip
+                      title={renderRMSETooltip()}
+                      placement="top"
+                      arrow
+                      PopperProps={{
+                        sx: {
+                          '& .MuiTooltip-tooltip': {
+                            backgroundColor: 'white',
+                            color: 'black',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            borderRadius: '8px',
+                            padding: '16px',
+                            fontSize: '14px',
+                            maxWidth: 500,
+                            border: 'none'
+                          },
+                          '& .MuiTooltip-arrow': {
+                            color: 'white',
+                          }
+                        }
+                      }}
+                    >
+                      <span style={{ cursor: 'help', display: 'inline-flex', alignItems: 'center' }}>
+                        <Info size={16} style={{ opacity: 0.7 }} />
+                      </span>
+                    </Tooltip>
+                  </h3>
                   <div className="metric-comparison">
                     <div className="metric-box base-model">
                       <div className="model-label">{t('predictionTool.modelDetail.baseModelLabel', 'Base Model')}</div>

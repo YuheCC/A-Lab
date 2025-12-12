@@ -350,6 +350,8 @@ export default {
         downloadingLog: "Downloading...",
         downloadTrainLog: "Download Train Log",
         downloadLogSuccess: "Train log downloaded successfully",
+        downloadingFile: "Downloading file...",
+        downloadFileSuccess: "File downloaded successfully",
         confirmDeploy: "Confirm Deploy",
         confirmUndeploy: "Confirm Undeploy",
         confirmRemove: "Confirm Remove",
@@ -368,6 +370,23 @@ export default {
             mockModel: "Cannot modify demo model",
             notFound: "Model not found",
             downloadLogFailed: "Failed to download train log"
+        },
+        metricsInfo: {
+            rmse: {
+                name: "Root Mean Square Error",
+                description: "ŷᵢ represents predicted cycles, yᵢ represents actual cycles, N represents test set sample size"
+            },
+            mae: {
+                name: "Mean Absolute Error",
+                description: "ŷᵢ represents predicted cycles, yᵢ represents actual cycles, N represents test set sample size"
+            },
+            mape: {
+                name: "Mean Absolute Percentage Error",
+                description: "ŷᵢ represents predicted cycles, yᵢ represents actual cycles, N represents test set sample size"
+            },
+            predictedValue: "Predicted Cycles",
+            actualValue: "Actual Cycles",
+            sampleSize: "Test Set Sample Size"
         }
     }
 };

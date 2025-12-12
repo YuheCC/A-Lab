@@ -350,6 +350,8 @@ export default {
         downloadingLog: "다운로드 중...",
         downloadTrainLog: "학습 로그 다운로드",
         downloadLogSuccess: "학습 로그 다운로드 성공",
+        downloadingFile: "파일 다운로드 중...",
+        downloadFileSuccess: "파일 다운로드 성공",
         confirmDeploy: "배포 확인",
         confirmUndeploy: "오프라인 확인",
         confirmRemove: "삭제 확인",
@@ -368,6 +370,23 @@ export default {
             mockModel: "데모 모델은 수정할 수 없습니다",
             notFound: "모델을 찾을 수 없습니다",
             downloadLogFailed: "학습 로그 다운로드 실패"
+        },
+        metricsInfo: {
+            rmse: {
+                name: "평균 제곱근 오차",
+                description: "ŷᵢ는 예측 사이클 수, yᵢ는 실제 사이클 수, N은 테스트 세트 샘플 크기를 나타냅니다"
+            },
+            mae: {
+                name: "평균 절대 오차",
+                description: "ŷᵢ는 예측 사이클 수, yᵢ는 실제 사이클 수, N은 테스트 세트 샘플 크기를 나타냅니다"
+            },
+            mape: {
+                name: "평균 절대 백분율 오차",
+                description: "ŷᵢ는 예측 사이클 수, yᵢ는 실제 사이클 수, N은 테스트 세트 샘플 크기를 나타냅니다"
+            },
+            predictedValue: "예측 사이클 수",
+            actualValue: "실제 사이클 수",
+            sampleSize: "테스트 세트 샘플 크기"
         }
     }
 };
