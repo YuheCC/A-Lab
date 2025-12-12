@@ -41,7 +41,7 @@ export default {
         uploading: "正在上传文件...",
         waitText: "请稍候",
         removeFile: "移除文件",
-        dataFormatTip: "📋 数据格式要求",
+        dataFormatTip: "📋 CSV数据格式要求",
         sampleData: "样例数据",
         requiredFields: "必需字段：",
         requiredFieldsValue: "barcode, cycle_id, current (A), voltage (V), time (s)",
@@ -99,7 +99,7 @@ export default {
             recordId: "记录ID",
             fileName: "文件名",
             batteryCount: "电芯数量",
-            avgCycleLife: "平均循环寿命",
+            avgCycleLife: "循环寿命",
             model: "模型",
             created: "创建时间",
             actions: "操作"
@@ -165,6 +165,7 @@ export default {
     chart: {
         title: "电池容量随循环次数变化",
         cycleCount: "循环数",
+        capacity: "容量",
         capacityProcess: "容量衰减过程（上传数据）",
         predictedCycleLife: "预测达到80% SOH的循环次数",
         xAxisName: "循环数",
@@ -203,9 +204,9 @@ export default {
         point1: '"预测"可以使用前100个循环的时序数据预测循环寿命。',
         point1_sub1: 'NCM811/12%Si.-石墨搭配碳酸盐电解液',
         point1_sub2: '1C/1C循环，每100个循环进行0.33C/0.33C容量检查',
-        point2: '对于锂离子电池，预测精度可达到±5%。',
-        point3: '对于已知循环寿命的真实电芯，模型预测EOL在1321次循环时。',
-        point3_sub1: '实际值为1261次循环（基于每个循环的容量保持率）或1351次循环（基于容量检查循环的容量保持率）。',
+        point2: '对于一般预测，准确度约为 ±15%。针对特定电池体系微调模型后，该体系的预测准确度可提升至 ±5% 左右。',
+        point3: '对于已知循环寿命的真实电芯（基于每个循环的容量保持率为1261次循环，或基于容量检查循环的容量保持率为1351次循环），模型预测EOL在第1321次循环。',
+        point3_sub1: '预测误差仅为4.7%或2.2%，远优于简单线性外推法（800次循环）。',
         point4: '预测误差仅为4.7%或2.2%，远优于简单线性外推法（800次循环）。'
     },
 

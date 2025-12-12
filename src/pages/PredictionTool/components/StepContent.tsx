@@ -504,7 +504,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   </table>
                 ) : (
                   <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic', marginLeft: '20px' }}>
-                    {t('predictionTool.results.noDetailedData')}
+                    {predictionResult.fail_reason_1 ?? predictionResult.fail_reason_2 ?? t('predictionTool.results.noDetailedData')}
                   </p>
                 )}
               </div>

@@ -51,6 +51,10 @@ export default  [
         component: "PredictionTool/train"
     },
     {
+        path: "/manufacture",
+        component: "Manufacturing"
+    },
+    {
         path: '/design',
         component: "Design"
     },

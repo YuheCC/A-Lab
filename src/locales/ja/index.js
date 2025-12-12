@@ -15,6 +15,7 @@ import role from './role';
 import performance from './performance';
 import predictionTool from './predictionTool';
 import formulation from './formulation';
+import manufacturing from './manufacturing';
 import common from './common';
 import design from './design';
 // merged into formulation: results, analysisDetail
@@ -37,6 +38,7 @@ export default {
     performance,
     predictionTool,
     formulation,
+    manufacturing,
     common,
     design,
 

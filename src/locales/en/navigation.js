@@ -10,6 +10,7 @@ export default {
     predict: "Predict",
     design: "Design",
     formulation: "Formulate",
+    manufacturing: "Manufacture",
     about: "About",
     predictPerformance: "Cell Performance Prediction",
     predictionTool: "Battery Life Prediction",

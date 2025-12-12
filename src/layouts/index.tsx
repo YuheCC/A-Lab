@@ -201,6 +201,10 @@ const FullNavLayoutInner = () => {
         if (pathname.startsWith('/formulate') || pathname.startsWith('/design')) {
             return 'main-container formulation-container';
         }
+
+        if (pathname.startsWith('/manufacturing')) {
+            return 'main-container manufacturing-container';
+        }
         return 'main-container';
     }
     return (
