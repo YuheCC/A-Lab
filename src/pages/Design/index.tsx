@@ -15,6 +15,7 @@ import { type ModelListItem } from '@/services/model/training';
 import { formatUTCDateTime } from '@/utils/dateUtils';
 import DesignIntroduction from './components/DesignIntroduction';
 import Pagination from '@/components/Pagination';
+import CollapsibleText from '@/components/CollapsibleText';
 import './index.less';
 
 interface HistoryRecord {
@@ -420,9 +421,9 @@ const DesignPage: React.FC<DesignPageProps> = () => {
     <div className="design-tool-container">
       <div className="design-header">
         <h1 className="design-title">{t('performance.title')}</h1>
-        <p className="design-subtitle">
+        <CollapsibleText className="design-subtitle-wrapper">
           {t('performance.subtitle')}
-        </p>
+        </CollapsibleText>
       </div>
 
       <div className="design-action-section">
