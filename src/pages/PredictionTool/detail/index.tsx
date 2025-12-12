@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { downloadFile, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
 import { getHistoryDetail } from '../model';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import CycleLifeScatterChart from '../components/CycleLifeScatterChart';
 import './index.less';
 
@@ -81,17 +81,6 @@ const DetailPage: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
   if (loading) {
     return (
       <div className="detail-page-container">
@@ -140,13 +129,6 @@ const DetailPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="prediction-header">
-          <h1 className="prediction-title">{t('predictionTool.title')}</h1>
-          <p className="prediction-subtitle">
-            {t('predictionTool.subtitle')}
-          </p>
-        </div>
-
         <div className="detail-section">
           {detailData && (
             <>
@@ -183,7 +165,7 @@ const DetailPage: React.FC = () => {
                     </div>
                     <div className="stats-card">
                       <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
-                      <div className="stats-value">{formatDate(detailData.created_at)}</div>
+                      <div className="stats-value">{formatUTCDateTime(detailData.created_at, { showSeconds: true })}</div>
                     </div>
                   </div>
                 </div>
@@ -234,8 +216,9 @@ const DetailPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 散点图展示 - 暂时隐藏 */}
                 {detailData.brcode_data && detailData.brcode_data.length > 0 && (
-                  <div className="chart-section">
+                  <div className="chart-section" style={{ display: 'none' }}>
                     <div className="chart-container">
                       <CycleLifeScatterChart
                         brcodeData={detailData.brcode_data}

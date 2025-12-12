@@ -1,0 +1,272 @@
+.design-record-container {
+  background: #ffffff;
+  min-height: calc(100vh - 66px);
+  padding: 24px;
+}
+
+.design-record-content {
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.design-record-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.design-action-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.back-to-list-button {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #56B26A;
+    color: #56B26A;
+  }
+}
+
+.loading-state,
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.error-state {
+  color: #ef4444;
+}
+
+.design-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.design-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.design-cell-chemistry-section,
+.design-results-section,
+.design-analysis-section {
+  margin-bottom: 0;
+}
+
+.design-chemistry-card,
+.design-results-card,
+.design-analysis-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.design-chemistry-card {
+  .chemistry-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+
+      .label {
+        font-size: 14px;
+        color: #6b7280;
+        flex-shrink: 0;
+        font-weight: 500;
+      }
+
+      .value {
+        font-size: 14px;
+        color: #1e293b;
+        text-align: right;
+        flex: 1;
+
+        &.additive-value {
+          font-family: 'Courier New', monospace;
+          background: #f9fafb;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 13px;
+        }
+
+        &.model-name {
+          font-weight: 500;
+          color: #262626;
+        }
+      }
+    }
+  }
+}
+
+.system-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  .label {
+    font-size: 14px;
+    color: #6b7280;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .value {
+    font-size: 14px;
+    color: #1e293b;
+    word-break: break-all;
+
+    &.additive-value {
+      font-family: 'Courier New', monospace;
+      background: #f9fafb;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  }
+}
+
+
+.design-results-card {
+  .temperature-section {
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    position: relative;
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h5 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+    }
+  }
+}
+
+.performance-results {
+  display: flex;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .performance-results {
+    flex-direction: column;
+  }
+}
+
+.result-item {
+  background: #ffffff;
+  border: none;
+  padding: 20px 16px;
+  text-align: center;
+  flex: 1;
+  min-width: 150px;
+  position: relative;
+}
+
+.result-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+// Badge styles are now in @/components/PerformanceBadge/index.less
+
+.limited-preview {
+  .result-item {
+    margin-bottom: 12px;
+  }
+}
+
+.upgrade-prompt {
+  text-align: center;
+  padding: 16px;
+  background: #fef3c7;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 14px;
+}
+
+.analysis-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+
+  p {
+    margin: 0 0 12px 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .design-record-container {
+    padding: 16px;
+  }
+
+  .design-record-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      min-width: auto;
+    }
+  }
+
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

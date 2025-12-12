@@ -77,11 +77,12 @@ interface RequestOptions {
     params?: any;
     headers?: Record<string, string>;
     onUploadProgress?: (progressEvent: any) => void; // 支持上传进度
+    responseType?: 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'; // 支持响应类型
 }
 
 const request = async (url: string, options: RequestOptions = {}) => {
-    const { method = 'GET', data, params, headers, onUploadProgress, ...restOptions } = options;
-    
+    const { method = 'GET', data, params, headers, onUploadProgress, responseType, ...restOptions } = options;
+
     const config: AxiosRequestConfig = {
         url,
         method,
@@ -89,9 +90,10 @@ const request = async (url: string, options: RequestOptions = {}) => {
         params,
         headers,
         onUploadProgress, // 传递给 axios
+        responseType, // 传递响应类型
         ...restOptions,
     };
-    
+
     return axiosInstance(config);
 };
 

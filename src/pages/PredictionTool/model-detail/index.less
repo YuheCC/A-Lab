@@ -1,0 +1,156 @@
+// 导入公共模型详情页面样式
+@import "@/styles/model-detail-page.less";
+
+// 如有 PredictionTool 特定的样式覆盖，可在此添加
+
+// 下载训练日志按钮样式
+.download-log-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 36px;
+  margin-top: 16px;
+
+  &:hover:not(:disabled) {
+    background-color: #333333;
+  }
+
+  &:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// 训练数据集信息样式
+.dataset-info {
+  .dataset-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &:not(:last-child) {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e9ecef;
+    }
+  }
+
+  .dataset-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .dataset-label {
+      font-size: 14px;
+      color: #6c757d;
+      min-width: 120px;
+    }
+
+    .dataset-link {
+      color: #10b981;
+      text-decoration: none;
+      font-size: 14px;
+      position: relative;
+      padding-left: 20px;
+
+      &::before {
+        content: '↓';
+        position: absolute;
+        left: 0;
+        color: #10b981;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .dataset-value {
+      font-size: 14px;
+      color: #212529;
+    }
+  }
+}
+
+// 训练结果样式
+.training-results {
+  .metric-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 16px;
+    }
+
+    .metric-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+
+      .metric-box {
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+
+        &.base-model {
+          background: #f9fafb;
+
+          .model-label {
+            color: #6b7280;
+          }
+
+          .model-value {
+            color: #111827;
+          }
+        }
+
+        &.new-model {
+          background: #f0fdf4;
+          border-color: #86efac;
+
+          .model-label {
+            color: #6b7280;
+          }
+
+          .model-value {
+            color: #15803d;
+          }
+        }
+
+        .model-label {
+          font-size: 12px;
+          font-weight: 500;
+          margin-bottom: 8px;
+        }
+
+        .model-value {
+          font-size: 28px;
+          font-weight: 700;
+          line-height: 1;
+        }
+      }
+    }
+  }
+}

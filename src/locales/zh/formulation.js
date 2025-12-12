@@ -117,6 +117,20 @@ export default {
     newConfiguration: '新建配置'
   },
 
+  simulationParameters: {
+    title: '分子模拟参数'
+  },
+
+  temperature: {
+    label: '温度 (K)',
+    validation: {
+      empty: '温度不能为空',
+      invalid: '请输入有效的温度值',
+      tooLow: '温度不能低于 238.15 K',
+      tooHigh: '温度不能高于 378.15 K'
+    }
+  },
+
   saltConfiguration: {
     title: '盐配置'
   },

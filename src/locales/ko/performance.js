@@ -1,14 +1,14 @@
 export default {
   // Page header
   title: "첨가제가 셀 성능에 미치는 영향",
-  subtitle: "SES 내부 실험 데이터로 훈련된 AI 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
+  subtitle: "SES 내부 실험 데이터로 훈련된 기본 AI 모델 또는 사용자 데이터로 미세 조정된 모델을 사용하여 첨가제가 셀 성능 지표(사이클 수명, 쿨롱 효율, 속도 성능)에 미치는 영향을 예측합니다",
   beta: "베타",
   disclaimerTitle: "면책 조항",
-  disclaimer: "<strong>참고:</strong> 이 기능은 내부 테스트 데이터 및 정의된 벤치마크 전해액(용매: EC/EMC/DEC 비율 2:3:2; 염: 1M LiPF6/LiFSI; 첨가제: VC/LiDFP)을 사용하여 첨가제가 있는 셀과 없는 셀의 성능을 비교함으로써 새로운 첨가제의 영향을 평가합니다. 다른 셀 설계 또는 벤치마크 전해액에 적용할 경우 결과가 달라질 수 있습니다. 향후 업데이트에서는 사용자 정의 가능한 벤치마크 전해액, 다중 첨가제 평가 및 더 큰 설계 유연성을 지원하도록 기능을 확장할 예정입니다.",
+  disclaimer: "<strong>참고:</strong> 이 기능은 사용자 정의 벤치마크 전해액을 사용하여 첨가제가 있는 셀과 없는 셀의 성능을 비교함으로써 새로운 첨가제의 영향을 평가합니다. 다른 셀 설계 또는 벤치마크 전해액에 적용할 경우 결과가 달라질 수 있습니다.",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "셀 화학 선택",
+    title: "설계 설정",
     label: "셀 화학",
     loading: "로딩 중...",
     systemSpecs: {
@@ -19,7 +19,21 @@ export default {
       cellDesign: "셀 설계:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "모델 선택",
+    placeholder: "예측 모델을 선택하세요",
+    baseModel: "기본 모델",
+    finetunedModels: "미세 조정 모델",
+    muModels: "MU 모델",
+    columns: {
+      modelName: "모델 이름",
+      modelId: "모델 ID",
+      baseModel: "기본 모델"
+    }
+  },
+
   // Additive input
   additive: {
     label: "첨가제의 SMILES",
@@ -192,20 +206,22 @@ export default {
   // History
   history: {
     title: "예측 기록",
+    newDesign: "새 디자인",
     newPrediction: "새 예측",
+    train: "훈련",
     searchPlaceholder: "파일명으로 검색...",
+    loadingText: "로딩 중...",
+    error: "오류",
+    noResults: "디자인 기록이 없습니다",
+    cannotDeleteDemo: "데모 기록을 삭제할 수 없습니다",
     status: {
       completed: "완료됨"
     },
     actions: {
-      viewDetails: "보기",
+      viewResults: "결과 보기",
       delete: "삭제",
       deleteConfirm: "이 기록을 삭제하시겠습니까?",
       deleteFailed: "기록 삭제에 실패했습니다"
-    },
-    noResults: {
-      message: "예측 기록이 없습니다.",
-      clearFilters: "모든 필터 지우기"
     },
     loading: {
       message: "히스토리 데이터 로딩 중...",
@@ -214,7 +230,50 @@ export default {
       failedToLoad: "히스토리 데이터 로드에 실패했습니다"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "레코드 ID로 검색",
+    allModels: "모든 모델",
+    clearFilters: "필터 지우기",
+    showingRecords: "{{count}}개 / {{total}}개 표시 중"
+  },
+
+  // Models
+  models: {
+    loadingText: "로딩 중...",
+    error: "오류",
+    noResults: "모델을 찾을 수 없습니다",
+    showingRecords: "{{count}}개 / {{total}}개 표시 중",
+    statusOnline: "온라인",
+    statusTrained: "훈련됨",
+    statusOffline: "오프라인",
+    statusTraining: "훈련 중",
+    statusFail: "실패",
+    filters: {
+      searchPlaceholder: "모델 ID 또는 이름으로 검색...",
+      allStatus: "모든 상태",
+      allBaseModels: "모든 기본 모델",
+      selectStatus: "상태 선택",
+      selectBaseModel: "기본 모델 선택",
+      clearFilters: "필터 지우기",
+      selectDate: "날짜 선택",
+      refresh: "새로 고침"
+    },
+    columns: {
+      modelId: "모델 ID",
+      modelName: "모델 이름",
+      baseModel: "기본 모델",
+      status: "상태",
+      created: "생성됨",
+      createdBy: "작성자",
+      actions: "작업"
+    },
+    actions: {
+      viewDetails: "세부 정보 보기"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "배터리 시스템"
 }

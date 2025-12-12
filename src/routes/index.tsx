@@ -43,8 +43,32 @@ export default  [
         component: "PredictionTool/detail"
     },
     {
+        path: "/predict/model-detail",
+        component: "PredictionTool/model-detail"
+    },
+    {
+        path: "/predict/train",
+        component: "PredictionTool/train"
+    },
+    {
         path: '/design',
-        component: "Predict/performance"
+        component: "Design"
+    },
+    {
+        path: '/design/create',
+        component: "Design/create"
+    },
+    {
+        path: '/design/record',
+        component: "Design/record"
+    },
+    {
+        path: '/design/model-detail',
+        component: "Design/model-detail"
+    },
+    {
+        path: '/design/train',
+        component: "Design/train"
     },
     {
         path: "/formulate",

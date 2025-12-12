@@ -1,4 +1,4 @@
-// Model layer for predictionTool history data management
+// Model layer for predictionTool history data management and model training
 import {
   getHistoryList as getHistoryListAPI,
   getHistoryDetail as getHistoryDetailAPI,
@@ -10,6 +10,31 @@ import {
   type DeleteHistoryResponse
 } from '@/services/prediction/predictionTool';
 import { mockPredictionHistory, generateMockDetail, type MockPredictResponse, type MockHistoryDetailResponse } from './example';
+
+// Model training imports
+import {
+  trainModel as trainModelAPI,
+  getModelList as getModelListAPI,
+  getModelDetail as getModelDetailAPI,
+  deployModel as deployModelAPI,
+  undeployModel as undeployModelAPI,
+  removeModel as removeModelAPI,
+  getModelFileList as getModelFileListAPI,
+  getModelMetrics as getModelMetricsAPI,
+  getModelTrainLog as getModelTrainLogAPI,
+  downloadModelFile as downloadModelFileAPI,
+  type TrainModelParams,
+  type ModelListParams,
+  type ModelListResponse,
+  type ModelDetailResponse,
+  type ModelFileListParams,
+  type ModelFileListResponse,
+  type ModelMetricsParams,
+  type ModelMetricsResponse,
+  type ModelTrainLogParams,
+  type ModelFileDownloadParams,
+} from '@/services/model/training';
+import { mockModelList, mockModelDetail } from './modelExample';
 
 // Check if user is logged in
 const isUserLoggedIn = (): boolean => {
@@ -44,8 +69,8 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
       if (response.data.length === 0) {
         console.log('No history data found, adding mock data');
         return {
-          total: mockPredictionHistory.length,
-          data: mockPredictionHistory
+          total: 0,
+          data: []
         };
       }
       return response;
@@ -54,15 +79,15 @@ export const getHistoryList = async (params: HistoryListParams = {}): Promise<Hi
     // If response is invalid, return mock data
     console.log('Invalid response, returning mock data');
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   } catch (error) {
     console.error('Error fetching history list:', error);
     // On error, return mock data
     return {
-      total: mockPredictionHistory.length,
-      data: mockPredictionHistory
+      total: 0,
+      data: []
     };
   }
 };
@@ -133,3 +158,322 @@ export const deleteHistory = async (params: DeleteHistoryParams): Promise<Delete
 
 // Export mock data utilities for testing
 export { mockPredictionHistory, generateMockDetail } from './example';
+
+// ============= Model Training Functions =============
+
+// Namespace constant - used by all model training APIs
+const MODEL_NAMESPACE = 'cell_life';
+
+/**
+ * Train a new model
+ * @param params Training parameters (without namespace, will be added automatically)
+ * @returns Promise<TrainModelResponse> Training response with model ID
+ */
+export const trainModel = async (
+  params: Omit<TrainModelParams, 'namespace'>
+): Promise<{ id: string }> => {
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  try {
+    const response = await trainModelAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Train model failed:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get base model list (base_model_id = -1)
+ * @param params Query parameters
+ * @returns Promise<ModelListResponse> Base model list with pagination
+ */
+export const getBaseModelList = async (
+  params?: Omit<ModelListParams, 'namespace' | 'base_model_id'>
+): Promise<ModelListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock model data');
+      return { total: mockModelList.length, data: mockModelList };
+    }
+
+    const response = await getModelListAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+      base_model_id: -1,
+    });
+
+    if (response?.data && response.data.length > 0) {
+      return response;
+    }
+
+    console.log('No base model data found, returning mock data');
+    return { total: mockModelList.length, data: mockModelList };
+  } catch (error) {
+    console.error('Get base model list failed:', error);
+    return { total: mockModelList.length, data: mockModelList };
+  }
+};
+
+/**
+ * Get model list with mock data fallback
+ * @param params Query parameters (without namespace, will be added automatically)
+ * @returns Promise<ModelListResponse> Model list with pagination
+ */
+export const getModelList = async (
+  params?: Omit<ModelListParams, 'namespace'>
+): Promise<ModelListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning mock model data');
+      return { total: mockModelList.length, data: mockModelList };
+    }
+
+    const response = await getModelListAPI({
+      ...params,
+      namespace: MODEL_NAMESPACE,
+    });
+
+    if (response?.data && response.data.length > 0) {
+      return response;
+    }
+
+    // Return mock data when no data
+    console.log('No model data found, returning mock data');
+    return { total: 0, data: [] };
+  } catch (error) {
+    console.error('Get model list failed:', error);
+    return { total: 0, data: [] };
+  }
+};
+
+/**
+ * Get model detail by ID with mock data fallback
+ * @param modelId Model ID to fetch
+ * @returns Promise<ModelDetailResponse> Model detail information
+ */
+export const getModelDetail = async (
+  modelId: string
+): Promise<ModelDetailResponse> => {
+  try {
+    // Check if it's mock data
+    const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+    if (mockModel?.isMock) {
+      console.log('Returning mock model detail for ID:', modelId);
+      return mockModelDetail;
+    }
+
+    if (!isUserLoggedIn()) {
+      if (mockModel) return mockModelDetail;
+      throw new Error('Model not found');
+    }
+
+    const response = await getModelDetailAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Get model detail failed:', error);
+    // Fallback to mock
+    const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+    if (mockModel) return mockModelDetail;
+    throw error;
+  }
+};
+
+/**
+ * Deploy model (make it online)
+ * @param modelId Model ID to deploy
+ * @returns Promise<any> Deploy result
+ */
+export const deployModel = async (modelId: string): Promise<any> => {
+  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+  if (mockModel?.isMock) {
+    console.log('Cannot deploy mock model with ID:', modelId);
+    throw new Error('Cannot deploy demo model');
+  }
+
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  return deployModelAPI({
+    model_id: modelId,
+    namespace: MODEL_NAMESPACE,
+  });
+};
+
+/**
+ * Undeploy model (make it offline)
+ * @param modelId Model ID to undeploy
+ * @returns Promise<any> Undeploy result
+ */
+export const undeployModel = async (modelId: string): Promise<any> => {
+  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+  if (mockModel?.isMock) {
+    console.log('Cannot undeploy mock model with ID:', modelId);
+    throw new Error('Cannot undeploy demo model');
+  }
+
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  return undeployModelAPI({
+    model_id: modelId,
+    namespace: MODEL_NAMESPACE,
+  });
+};
+
+/**
+ * Remove/delete a model
+ * @param modelId Model ID to remove
+ * @returns Promise<any> Remove result
+ */
+export const removeModel = async (modelId: string): Promise<any> => {
+  const mockModel = mockModelList.find(item => item.id.toString() === modelId);
+  if (mockModel?.isMock) {
+    console.log('Cannot delete mock model with ID:', modelId);
+    throw new Error('Cannot delete demo model');
+  }
+
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  return removeModelAPI({ model_id: modelId, namespace: MODEL_NAMESPACE });
+};
+
+/**
+ * Check if a model is a mock/demo model
+ * @param model Model object to check
+ * @returns boolean True if model is mock data
+ */
+export const isMockModel = (model: any): boolean => {
+  return model?.isMock === true;
+};
+
+/**
+ * Get model file list
+ * @param modelId Model ID to fetch files for
+ * @returns Promise<ModelFileListResponse> File list (array)
+ */
+export const getModelFileList = async (
+  modelId: string
+): Promise<ModelFileListResponse> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty file list');
+      return [];
+    }
+
+    const response = await getModelFileListAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Get model file list failed:', error);
+    return [];
+  }
+};
+
+/**
+ * Get model metrics
+ * @param modelId Model ID to fetch metrics for
+ * @returns Promise<ModelMetricsResponse | null> Model metrics data
+ */
+export const getModelMetrics = async (
+  modelId: string
+): Promise<ModelMetricsResponse | null> => {
+  try {
+    if (!isUserLoggedIn()) {
+      console.log('User not logged in, returning empty metrics');
+      return null;
+    }
+
+    const response = await getModelMetricsAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+    return response;
+  } catch (error) {
+    console.error('Get model metrics failed:', error);
+    return null;
+  }
+};
+
+/**
+ * Download model train log
+ * @param modelId Model ID to download train log for
+ * @param modelName Model name for filename
+ * @returns Promise<void>
+ */
+export const downloadModelTrainLog = async (modelId: string, modelName: string): Promise<void> => {
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  try {
+    const blob = await getModelTrainLogAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${modelName}_train_log.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download train log failed:', error);
+    throw error;
+  }
+};
+
+/**
+ * Download model training file
+ * @param modelId Model ID
+ * @param filePath File path to download
+ * @param fileName File name for download
+ * @returns Promise<void>
+ */
+export const downloadModelFile = async (modelId: string, filePath: string, fileName: string): Promise<void> => {
+  if (!isUserLoggedIn()) {
+    throw new Error('Please login first');
+  }
+
+  try {
+    const blob = await downloadModelFileAPI({
+      model_id: modelId,
+      file_path: filePath,
+      namespace: MODEL_NAMESPACE,
+    });
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download model file failed:', error);
+    throw error;
+  }
+};
+
+// Export mock model data utilities for testing
+export { mockModelList, mockModelDetail } from './modelExample';

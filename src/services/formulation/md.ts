@@ -6,11 +6,12 @@ export interface MDRunParams {
   solvent_fractions: number[];
   anion_name_list: string[];
   anion_fractions: number[];
-  anion_fractions_type: "mole";
+  anion_fractions_type: "weight" | "mole";
   cation_name: string;
   num_cations: number;
   cation_molality: number;
   simulation_box_size: number;
+  temperature?: number;
 }
 
 export interface MDRunResponse {

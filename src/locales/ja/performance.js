@@ -1,14 +1,14 @@
 export default {
   // Page header
   title: "添加剤の電池性能への影響",
-  subtitle: "SES社内実験データで訓練されたAIモデルを使用して、添加剤がセル性能指標（サイクル寿命、コロンビック効率、レート性能）に与える影響を予測します",
+  subtitle: "SES社内実験データで訓練されたベースAIモデル、またはユーザーデータでファインチューニングされたモデルを使用して、添加剤がセル性能指標（サイクル寿命、コロンビック効率、レート性能）に与える影響を予測します",
   beta: "ベータ",
   disclaimerTitle: "免責事項",
-  disclaimer: "<strong>注意：</strong>この機能は、内部テストデータおよび定義されたベンチマーク電解液（溶媒：EC/EMC/DEC 比率 2:3:2；塩：1M LiPF6/LiFSI；添加剤：VC/LiDFP）を使用し、添加剤ありとなしのセル性能を比較することにより、新しい添加剤の影響を評価します。異なるセル設計またはベンチマーク電解液に適用する場合、結果は異なる可能性があります。今後のアップデートでは、カスタマイズ可能なベンチマーク電解液、複数添加剤評価、およびより広範な設計柔軟性を可能にする機能を拡張する予定です。",
+  disclaimer: "<strong>注意：</strong>この機能は、ユーザー定義のベンチマーク電解液を使用し、添加剤ありとなしのセル性能を比較することにより、新しい添加剤の影響を評価します。異なるセル設計またはベンチマーク電解液に適用する場合、結果は異なる可能性があります。",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "セル化学選択",
+    title: "設計設定",
     label: "セル化学",
     loading: "読み込み中...",
     systemSpecs: {
@@ -19,7 +19,21 @@ export default {
       cellDesign: "セル設計:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "モデル選択",
+    placeholder: "予測モデルを選択してください",
+    baseModel: "ベースモデル",
+    finetunedModels: "ファインチューニングモデル",
+    muModels: "MU モデル",
+    columns: {
+      modelName: "モデル名",
+      modelId: "モデルID",
+      baseModel: "ベースモデル"
+    }
+  },
+
   // Additive input
   additive: {
     label: "添加剤のSMILES",
@@ -192,20 +206,22 @@ export default {
   // History
   history: {
     title: "予測記録",
+    newDesign: "新しいデザイン",
     newPrediction: "新しい予測",
+    train: "トレーニング",
     searchPlaceholder: "ファイル名で検索...",
+    loadingText: "読み込み中...",
+    error: "エラー",
+    noResults: "デザイン記録がありません",
+    cannotDeleteDemo: "デモ記録は削除できません",
     status: {
       completed: "完了"
     },
     actions: {
-      viewDetails: "見る",
+      viewResults: "結果を見る",
       delete: "削除",
       deleteConfirm: "この記録を削除してもよろしいですか？",
       deleteFailed: "記録の削除に失敗しました"
-    },
-    noResults: {
-      message: "予測記録がありません。",
-      clearFilters: "すべてのフィルターをクリア"
     },
     loading: {
       message: "履歴データを読み込み中...",
@@ -214,7 +230,50 @@ export default {
       failedToLoad: "履歴データの読み込みに失敗しました"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "レコードIDで検索",
+    allModels: "すべてのモデル",
+    clearFilters: "フィルターをクリア",
+    showingRecords: "{{count}}件 / {{total}}件を表示中"
+  },
+
+  // Models
+  models: {
+    loadingText: "読み込み中...",
+    error: "エラー",
+    noResults: "モデルが見つかりません",
+    showingRecords: "{{count}}件 / {{total}}件を表示中",
+    statusOnline: "オンライン",
+    statusTrained: "訓練済み",
+    statusOffline: "オフライン",
+    statusTraining: "訓練中",
+    statusFail: "失敗",
+    filters: {
+      searchPlaceholder: "モデルIDまたは名前で検索...",
+      allStatus: "すべてのステータス",
+      allBaseModels: "すべてのベースモデル",
+      selectStatus: "ステータスを選択",
+      selectBaseModel: "ベースモデルを選択",
+      clearFilters: "フィルターをクリア",
+      selectDate: "日付を選択",
+      refresh: "更新"
+    },
+    columns: {
+      modelId: "モデルID",
+      modelName: "モデル名",
+      baseModel: "ベースモデル",
+      status: "ステータス",
+      created: "作成日",
+      createdBy: "作成者",
+      actions: "アクション"
+    },
+    actions: {
+      viewDetails: "詳細を表示"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "バッテリーシステム"
 }

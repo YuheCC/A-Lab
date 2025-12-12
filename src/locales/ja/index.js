@@ -16,6 +16,7 @@ import performance from './performance';
 import predictionTool from './predictionTool';
 import formulation from './formulation';
 import common from './common';
+import design from './design';
 // merged into formulation: results, analysisDetail
 
 export default {
@@ -37,5 +38,6 @@ export default {
     predictionTool,
     formulation,
     common,
+    design,
 
 }; 

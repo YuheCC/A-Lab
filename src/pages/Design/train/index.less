@@ -1,0 +1,154 @@
+// 导入公共训练页面样式
+@import "@/styles/train-page.less";
+
+// Electrolyte input group styles
+.electrolyte-input-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.electrolyte-field-wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.train-page-container .form-group .electrolyte-field-label {
+  font-size: 14px;
+  font-weight: normal;
+  color: #333;
+  margin: 0;
+}
+
+.electrolyte-field {
+  width: 100%;
+}
+
+.electrolyte-separator {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  padding: 0 4px 8px 4px;
+  flex-shrink: 0;
+}
+
+// 多文件上传样式
+.prediction-train-file-count {
+  font-size: 12px;
+  color: #666;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.prediction-train-upload-disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+
+  &:hover {
+    border-color: #e0e0e0 !important;
+    background: #fafafa !important;
+  }
+}
+
+.prediction-train-file-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prediction-train-file-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.prediction-train-file-name {
+  flex: 1;
+  font-size: 13px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 12px;
+}
+
+.prediction-train-file-size {
+  font-size: 12px;
+  color: #888;
+  margin-right: 12px;
+  white-space: nowrap;
+}
+
+.prediction-train-file-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e0e0e0;
+    color: #f44336;
+  }
+}
+
+// Instruction table styles
+.instruction-table-container {
+  overflow-x: auto;
+  margin: 16px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+
+  .instruction-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    white-space: nowrap;
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    th {
+      font-weight: 600;
+      color: #333;
+    }
+
+    // Header background colors based on image
+    .header-cell-info {
+      background-color: #d9ead3;
+    }
+    
+    .header-solvent {
+      background-color: #c9daf8;
+    }
+    
+    .header-salt {
+      background-color: #e6e6e6; 
+    }
+    
+    .header-additive {
+      background-color: #f4cccc;
+    }
+    
+    .header-performance {
+      background-color: #ead1dc;
+    }
+  }
+}

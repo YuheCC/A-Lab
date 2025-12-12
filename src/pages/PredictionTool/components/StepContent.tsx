@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { FileText, RefreshCw, Play } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, RefreshCw, Play, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { predict, type HistoryDetailResponse } from '@/services/prediction/predictionTool';
-import { normalizeServerDate } from '@/utils/messageUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import { useAuthStore } from '@/models/useAuth';
 import CycleLifeScatterChart from './CycleLifeScatterChart';
+import ModelSelect from '@/components/ModelSelect';
+import { getModelList } from '../model';
+import type { ModelListItem } from '@/services/model/training';
+import { formatFileSize } from '@/utils/fileUtils';
+
+// 模型选项接口
+interface ModelOption {
+  id: string;
+  name: string;
+  baseModel: string;
+  category: 'base' | 'finetuned';
+}
 
 interface StepContentProps {
   activeStep: number;
@@ -22,25 +34,66 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
   const [progress, setProgress] = useState(0);
   const [predictionResult, setPredictionResult] = useState<HistoryDetailResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // 模型选择相关状态
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+
+  // 获取模型列表
+  useEffect(() => {
+    const fetchModelOptions = async () => {
+      setIsModelLoading(true);
+      try {
+        const response = await getModelList({ page_size: 100, status: 'online' });
+
+        if (!response?.data || response.data.length === 0) {
+          console.log('No model data found');
+          setIsModelLoading(false);
+          return;
+        }
+
+        // 转换为 ModelOption 格式
+        const convertToModelOption = (item: ModelListItem): ModelOption => {
+          let category: 'base' | 'finetuned' | 'mu' = 'finetuned';
+
+          // 根据 base_model_id 判断分类
+          if (item.base_model_id === -1) {
+            category = 'base';
+          }
+
+          if (item.base_model_id === -2) {
+            category = 'mu';
+          }
+
+          return {
+            id: item.id.toString(),
+            name: item.model_name,
+            baseModel: category === 'mu' ? 'Predict Base Model' : (item.base_model_name || '-'),
+            category,
+          };
+        };
+
+        const allModels = response.data.filter(item => item.base_model_id !== -1).map(convertToModelOption);
+
+        if (allModels.length > 0) {
+          setModelOptions(allModels);
+        }
+      } catch (error) {
+        console.error('获取模型列表失败:', error);
+      } finally {
+        setIsModelLoading(false);
+      }
+    };
+
+    fetchModelOptions();
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setIsUploading(true);
-      // Simulate upload process
-      setTimeout(() => {
-        setUploadedFile(file);
-        setIsUploading(false);
-        // Auto advance to AI prediction step
-        if (onStepChange) {
-          onStepChange(1);
-        }
-      }, 1500);
+      setUploadedFile(file);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
   const handleDownloadSampleData = () => {
@@ -61,6 +114,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
     setProgress(0);
     setPredictionResult(null);
     setError(null);
+    setSelectedModel('');
     
     // 回到第一步
     if (onStepChange) {
@@ -79,10 +133,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       return;
     }
 
+    // 先跳转到 Step 1 显示预测进度
+    if (onStepChange) {
+      onStepChange(1);
+    }
+
     setIsProcessing(true);
     setProgress(0);
     setError(null);
-    
+
     try {
       let currentProgress = 0;
       
@@ -95,7 +154,10 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
       }, 300);
 
       // 调用真实的预测接口（包含轮询）
-      const result = await predict({ file: uploadedFile });
+      const result = await predict({
+        file: uploadedFile,
+        model_id: selectedModel
+      });
       
       // 清除上传进度更新
       clearInterval(uploadInterval);
@@ -153,21 +215,77 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         
         return (
           <div className="upload-step-container">
-            <div className="upload-area">
-              <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
-              <p className="upload-subtitle">
-              {t('predictionTool.upload.subtitle')}
-              </p>
-              <label className="select-file-btn" htmlFor="file-upload">
-                {t('predictionTool.upload.selectFile')}
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  onChange={handleFileUpload}
-                  style={{ display: 'none' }}
-                />
-              </label>
+            {/* 模型选择区域 */}
+            <div className="step-content-model-selection">
+              <label className="step-content-model-label">{t('predictionTool.modelSelection.label', 'Select a Model')}</label>
+              <ModelSelect
+                mode="single"
+                value={selectedModel}
+                onChange={(value) => setSelectedModel(value as string)}
+                options={modelOptions}
+                loading={isModelLoading}
+                groupBy="category"
+                groupByLabel={{
+                  'base': t('predictionTool.modelSelection.baseModel', 'Base Model'),
+                  'finetuned': t('predictionTool.modelSelection.finetunedModels', 'Fine-tuned Models'),
+                  'mu': t('predictionTool.modelSelection.muModels', 'MU Models')
+                }}
+                columns={[
+                  { key: 'name', title: t('predictionTool.modelSelection.columns.modelName', 'Model Name'), width: '40%' },
+                  {
+                    key: 'id',
+                    title: t('predictionTool.modelSelection.columns.modelId', 'Model ID'),
+                    width: '30%',
+                    render: (value: any) => `PM-${String(value).padStart(6, '0')}`
+                  },
+                  { key: 'baseModel', title: t('predictionTool.modelSelection.columns.baseModel', 'Base Model'), width: '30%' }
+                ]}
+                searchable
+                pageSize={20}
+                placeholder={t('predictionTool.modelSelection.placeholder', 'Choose a model')}
+                className="step-content-model-select"
+                fieldNames={{ label: 'name', value: 'id' }}
+              />
+            </div>
+
+            {/* 文件上传区域 */}
+            <div className="step-content-upload-section">
+              <label className="step-content-upload-label">{t('predictionTool.upload.title', 'Upload Data')}</label>
+              {uploadedFile ? (
+                <div className="step-content-uploaded-file">
+                  <div className="step-content-file-info">
+                    <FileText className="step-content-file-icon" size={18} />
+                    <div className="step-content-file-details">
+                      <span className="step-content-file-name">{uploadedFile.name}</span>
+                      <span className="step-content-file-size">{formatFileSize(uploadedFile.size)}</span>
+                    </div>
+                  </div>
+                  <span 
+                    className="step-content-remove-file"
+                    onClick={() => setUploadedFile(null)}
+                  >
+                    {t('predictionTool.upload.removeFile', 'Remove file')}
+                  </span>
+                </div>
+              ) : (
+                <div className="upload-area">
+                  <Upload className="step-content-upload-icon" size={32} />
+                  <h4 className="upload-title">{t('predictionTool.upload.clickToUpload')}</h4>
+                  <p className="upload-subtitle">
+                    {t('predictionTool.upload.subtitle')}
+                  </p>
+                  <label className="select-file-btn" htmlFor="file-upload">
+                    {t('predictionTool.upload.selectFile')}
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept=".csv,.nda,.ndax"
+                      onChange={handleFileUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                </div>
+              )}
             </div>
             
             {/* 数据格式要求提示 - 放置在upload区域外部下方靠左 */}
@@ -204,6 +322,17 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                   <span className="tip-value">{t('predictionTool.upload.dataRequirementValue')}</span>
                 </div>
               </div>
+            </div>
+
+            {/* 开始预测按钮 */}
+            <div className="step-content-actions">
+              <button
+                className="step-content-start-btn"
+                onClick={handleStartPrediction}
+                disabled={!selectedModel || !uploadedFile || isProcessing}
+              >
+                {t('predictionTool.prediction.startPrediction', 'Start Prediction')}
+              </button>
             </div>
           </div>
         );
@@ -299,18 +428,6 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
         const avgCycleLife1 = predictionResult.avg_cycle_life_1 || 0;
         const avgCycleLife2 = predictionResult.avg_cycle_life_2 || 0;
 
-        // 格式化创建时间
-        const formatDate = (dateString: string) => {
-          return new Date(normalizeServerDate(dateString)).toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          });
-        };
-
         return (
           <div className="results-display">
             <div className="results-stats-card">
@@ -329,7 +446,7 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
                 </div> */}
                 <div className="stats-card">
                   <div className="stats-label">{t('predictionTool.results.predictionTime')}</div>
-                  <div className="stats-value">{formatDate(predictionResult.created_at)}</div>
+                  <div className="stats-value">{formatUTCDateTime(predictionResult.created_at, { showSeconds: true })}</div>
                 </div>
               </div>
             </div>
@@ -424,14 +541,15 @@ const StepContent: React.FC<StepContentProps> = ({ activeStep, onStepChange, onP
               )}
             </div>
 
-            {/* 散点图展示 */}
+            {/* 散点图展示 - 暂时隐藏 */}
             {predictionResult.brcode_data && predictionResult.brcode_data.length > 0 && (
               <div className="scatter-chart-card" style={{
                 marginTop: '24px',
                 padding: '20px',
                 backgroundColor: '#fff',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0'
+                border: '1px solid #e2e8f0',
+                display: 'none' // 暂时隐藏图表
               }}>
                 <CycleLifeScatterChart
                   brcodeData={predictionResult.brcode_data}

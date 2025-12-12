@@ -117,6 +117,20 @@ export default {
     newConfiguration: '新規構成'
   },
 
+  simulationParameters: {
+    title: '分子シミュレーションパラメータ'
+  },
+
+  temperature: {
+    label: '温度 (K)',
+    validation: {
+      empty: '温度を入力してください',
+      invalid: '有効な温度値を入力してください',
+      tooLow: '温度は238.15 K以上にしてください',
+      tooHigh: '温度は378.15 K以下にしてください'
+    }
+  },
+
   saltConfiguration: {
     title: '塩の構成'
   },

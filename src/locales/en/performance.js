@@ -1,25 +1,39 @@
 export default {
   // Page header
   title: "Impact of additive on cell performances",
-  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with an AI model trained on SES internal experimental data",
+  subtitle: "Predict impact of additive on cell performance metrics (cycle life, coulombic efficiency, rate performance) with base AI models trained on SES internal experimental data, or models finetuned by user data",
   beta: "BETA",
   disclaimerTitle: "Disclaimer",
-  disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using internal testing data and a defined benchmark electrolyte (Solvent: EC/EMC/DEC at 2:3:2; Salt: 1M LiPF6/LiFSI; Additive: VC/LiDFP). Results may differ when applied to alternative cell designs or benchmark electrolytes. Future updates will extend functionality to enable customizable benchmark electrolytes, multi-additive evaluations, and greater design flexibility.",
+  disclaimer: "<strong>Note:</strong> This function evaluates the impact of new additives by comparing the performance of cells with and without the additive, using user defined benchmark electrolyte. Results may differ when applied to different cell designs or benchmark electrolytes.",
   
   // Battery System Selection
   batterySystemSelection: {
-    title: "Cell Chemistry Selection",
+    title: "Design Setup",
     label: "Cell Chemistry",
     loading: "Loading...",
     systemSpecs: {
       title: "Cell Specifications",
       cathode: "Cathode:",
-      anode: "Anode:",  
+      anode: "Anode:",
       benchmarkElectrolyte: "Benchmark Electrolyte:",
       cellDesign: "Cell Design:"
     }
   },
-  
+
+  // Model Selection
+  modelSelection: {
+    label: "Model Selection",
+    placeholder: "Please select a prediction model",
+    baseModel: "Base Model",
+    finetunedModels: "Fine-tuned Models",
+    muModels: "MU Models",
+    columns: {
+      modelName: "Model Name",
+      modelId: "Model ID",
+      baseModel: "Base Model"
+    }
+  },
+
   // Additive input
   additive: {
     label: "SMILES of Additive",
@@ -192,20 +206,22 @@ export default {
   // History
   history: {
     title: "Prediction Records",
+    newDesign: "New Design",
     newPrediction: "New Prediction",
+    train: "Train",
     searchPlaceholder: "Search by file name...",
+    loadingText: "Loading...",
+    error: "Error",
+    noResults: "No design records found",
+    cannotDeleteDemo: "Cannot delete demo records",
     status: {
       completed: "Completed"
     },
     actions: {
-      viewDetails: "View",
+      viewResults: "View Results",
       delete: "Delete",
       deleteConfirm: "Are you sure you want to delete this record?",
       deleteFailed: "Failed to delete record"
-    },
-    noResults: {
-      message: "No prediction records found.",
-      clearFilters: "Clear all filters"
     },
     loading: {
       message: "Loading history data...",
@@ -214,7 +230,50 @@ export default {
       failedToLoad: "Failed to load history data"
     }
   },
-  
+
+  // Records
+  records: {
+    searchPlaceholder: "Search record ID",
+    allModels: "All Models",
+    clearFilters: "Clear Filters",
+    showingRecords: "Showing {{count}} of {{total}} records"
+  },
+
+  // Models
+  models: {
+    loadingText: "Loading...",
+    error: "Error",
+    noResults: "No models found",
+    showingRecords: "Showing {{count}} of {{total}} records",
+    statusOnline: "Online",
+    statusTrained: "Trained",
+    statusOffline: "Offline",
+    statusTraining: "Training",
+    statusFail: "Failed",
+    filters: {
+      searchPlaceholder: "Search Model ID or Name...",
+      allStatus: "All Status",
+      allBaseModels: "All Base Models",
+      selectStatus: "Select Status",
+      selectBaseModel: "Select Base Model",
+      clearFilters: "Clear Filters",
+      selectDate: "Select date",
+      refresh: "Refresh"
+    },
+    columns: {
+      modelId: "Model ID",
+      modelName: "Model Name",
+      baseModel: "Base Model",
+      status: "Status",
+      created: "Created Time",
+      createdBy: "Created By",
+      actions: "Actions"
+    },
+    actions: {
+      viewDetails: "View Details"
+    }
+  },
+
   // Battery system fallback
   batterySystemFallback: "Battery System"
 }
