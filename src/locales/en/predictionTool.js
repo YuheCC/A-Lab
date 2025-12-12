@@ -1,7 +1,7 @@
 export default {
     // Header
     title: "Upload early cycle data for life prediction",
-    subtitle: "Predict cycle life (number of cycles when discharge capacity retention reaches 80%) with an AI model trained on internal experimental data. Only the first 100 cycles (effective cycle so the real number may be higher) are needed. The prediction is accurate for battery systems  with limited active ion inventories, such as Li-ion, Na-ion, or anode free batteries.",
+    subtitle: "Predict is an AI model trained on SES or customer experimental datasets to estimate cycle life, defined as the number of cycles at which discharge-capacity retention reaches 80%. The model requires only the first 100 effective cycles as input, where effective cycles exclude those with sudden capacity changes or abnormal behavior, meaning the actual cycle count may be higher. The model provides accurate predictions for battery systems with limited active-ion inventories, such as Li-ion, Na-ion, and anode-free batteries. It cannot capture degradation due to mechanical or cell-design issues—such as internal shorts, tab cracking, gassing, lithium plating, or insufficient electrolyte—unless corresponding data are provided to retrain or calibrate the model.",
     betaTag: "BETA",
     disclaimerTitle: "Disclaimer",
     disclaimer: "<strong>Note:</strong> This function predicts cell cycle life using only early-stage cycling data provided by the user. No additional information, such as cell chemistry or design, is required. The model is currently applicable to battery systems with limited active ions under standard cycling conditions (not real-world usage profiles). Users are encouraged to validate the predictions through their own testing.",
