@@ -332,10 +332,10 @@ const TrainPage: React.FC = () => {
                 </div>
               )}
               
-              <button className="download-sample">
+              {/* <button className="download-sample">
                 <Download size={14} />
                 {t('predictionTool.train.step3.downloadSample', 'Download Sample')}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
