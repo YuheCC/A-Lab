@@ -121,9 +121,6 @@ if [[ "$BUILD_ENV" != "production" && "$BUILD_ENV" != "staging" ]]; then
     exit 1
 fi
 
-# 生成时间戳 tag (格式: YYYYMMDD-HHMMSS)
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-
 # 构建完整的镜像名称和tag
 if [ -n "$REGISTRY" ]; then
     FULL_IMAGE_NAME="${REGISTRY}/${IMAGE_NAME}"
@@ -131,8 +128,14 @@ else
     FULL_IMAGE_NAME="${IMAGE_NAME}"
 fi
 
-# 主tag: 时间戳-平台-环境
-MAIN_TAG="${TIMESTAMP}-${PLATFORM_TAG}-${BUILD_ENV}"
+# 如果指定了额外tag，使用额外tag作为主tag；否则使用时间戳
+if [ -n "$EXTRA_TAG" ]; then
+    MAIN_TAG="${EXTRA_TAG}"
+else
+    # 生成时间戳 tag (格式: YYYYMMDD-HHMMSS)
+    TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+    MAIN_TAG="${TIMESTAMP}-${PLATFORM_TAG}-${BUILD_ENV}"
+fi
 IMAGE_WITH_TAG="${FULL_IMAGE_NAME}:${MAIN_TAG}"
 
 # 打印构建信息
@@ -143,9 +146,10 @@ print_info "镜像名称: ${IMAGE_NAME}"
 print_info "完整镜像: ${IMAGE_WITH_TAG}"
 print_info "平台: ${PLATFORM_ARG}"
 print_info "构建环境: ${BUILD_ENV}"
-print_info "时间戳: ${TIMESTAMP}"
 if [ -n "$EXTRA_TAG" ]; then
-    print_info "额外Tag: ${EXTRA_TAG}"
+    print_info "镜像Tag: ${EXTRA_TAG}"
+else
+    print_info "时间戳: ${TIMESTAMP}"
 fi
 if [ "$PUSH" = true ]; then
     print_info "推送到仓库: 是"
@@ -180,15 +184,8 @@ print_info "开始构建 Docker 镜像..."
 BUILD_CMD="docker build \
     --platform ${PLATFORM_ARG} \
     --build-arg BUILD_ENV=${BUILD_ENV} \
-    -t ${IMAGE_WITH_TAG}"
-
-# 添加额外的 tag
-if [ -n "$EXTRA_TAG" ]; then
-    BUILD_CMD="${BUILD_CMD} -t ${FULL_IMAGE_NAME}:${EXTRA_TAG}"
-fi
-
-# 添加 Dockerfile 路径
-BUILD_CMD="${BUILD_CMD} ."
+    -t ${IMAGE_WITH_TAG} \
+    ."
 
 print_info "执行命令: ${BUILD_CMD}"
 echo ""
@@ -214,22 +211,16 @@ if [ "$PUSH" = true ]; then
         print_warn "未指定仓库地址，跳过推送"
     else
         print_info "开始推送镜像到仓库..."
-        
-        # 推送主tag
+
+        # 推送镜像
         print_info "推送 ${IMAGE_WITH_TAG}"
         docker push ${IMAGE_WITH_TAG}
-        
+
         if [ $? -ne 0 ]; then
             print_error "推送镜像失败"
             exit 1
         fi
-        
-        # 推送额外tag
-        if [ -n "$EXTRA_TAG" ]; then
-            print_info "推送 ${FULL_IMAGE_NAME}:${EXTRA_TAG}"
-            docker push ${FULL_IMAGE_NAME}:${EXTRA_TAG}
-        fi
-        
+
         print_info "✓ 镜像推送成功!"
     fi
 fi
@@ -239,11 +230,7 @@ echo ""
 print_info "================================"
 print_info "构建完成!"
 print_info "================================"
-print_info "镜像标签:"
-print_info "  - ${IMAGE_WITH_TAG}"
-if [ -n "$EXTRA_TAG" ]; then
-    print_info "  - ${FULL_IMAGE_NAME}:${EXTRA_TAG}"
-fi
+print_info "镜像标签: ${IMAGE_WITH_TAG}"
 print_info "================================"
 echo ""
 
