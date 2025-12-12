@@ -301,7 +301,7 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
           .map(s => parseFloat(s.fraction)),
         anion_name_list: selectedAnions.map(anion => cleanIonName(anion)),
         anion_fractions: selectedAnions.map(anion => parseFloat(anionFractions[anion] || '0')),
-        anion_fractions_type: "mole",
+        anion_fractions_type: fractionType,
         cation_name: cleanIonName(selectedCation),
         num_cations: 40, // 默认值，可以根据需要调整
         cation_molality: parseFloat(totalSaltConcentration),
