@@ -131,6 +131,18 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.formulation-container .concentration-input.error,
+.formulation-container .fraction-input.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.formulation-container .concentration-input.error:focus,
+.formulation-container .fraction-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 .formulation-container .radio-group {
   display: flex;
   gap: 24px;

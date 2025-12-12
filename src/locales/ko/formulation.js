@@ -117,6 +117,20 @@ export default {
     newConfiguration: '새 구성'
   },
 
+  simulationParameters: {
+    title: '분자 시뮬레이션 매개변수'
+  },
+
+  temperature: {
+    label: '온도 (K)',
+    validation: {
+      empty: '온도를 입력해 주세요',
+      invalid: '유효한 온도 값을 입력해 주세요',
+      tooLow: '온도는 238.15 K 이상이어야 합니다',
+      tooHigh: '온도는 378.15 K 이하여야 합니다'
+    }
+  },
+
   saltConfiguration: {
     title: '염 구성'
   },

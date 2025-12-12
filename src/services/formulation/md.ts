@@ -11,6 +11,7 @@ export interface MDRunParams {
   num_cations: number;
   cation_molality: number;
   simulation_box_size: number;
+  temperature?: number;
 }
 
 export interface MDRunResponse {

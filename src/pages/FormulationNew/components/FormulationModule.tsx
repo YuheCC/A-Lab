@@ -15,6 +15,10 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pricingContext = useContext(PricingContext);
+
+  // Molecular Simulation Parameters State
+  const [temperature, setTemperature] = useState('298.15');
+
   // Salt Configuration State
   const [selectedCation, setSelectedCation] = useState('Li');
   const [selectedAnions, setSelectedAnions] = useState<string[]>(['PF6']);
@@ -37,6 +41,35 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
   // SMILES validation state
   const [smilesErrors, setSmilesErrors] = useState<{[key: number]: string}>({});
   const [showValidation, setShowValidation] = useState(false);
+
+  // Temperature validation state
+  const [temperatureError, setTemperatureError] = useState<string | null>(null);
+
+  // Temperature validation logic
+  const validateTemperature = (temp: string): string | null => {
+    if (temp.trim() === '') {
+      return t('formulation.temperature.validation.empty', 'Temperature cannot be empty');
+    }
+
+    const tempValue = parseFloat(temp);
+    if (isNaN(tempValue)) {
+      return t('formulation.temperature.validation.invalid', 'Please enter a valid temperature value');
+    }
+
+    if (tempValue < 238.15) {
+      return t('formulation.temperature.validation.tooLow', 'Temperature cannot be lower than 238.15 K');
+    }
+
+    if (tempValue > 378.15) {
+      return t('formulation.temperature.validation.tooHigh', 'Temperature cannot be higher than 378.15 K');
+    }
+
+    return null;
+  };
+
+  const isValidTemperature = () => {
+    return validateTemperature(temperature) === null;
+  };
 
   // Validation logic
   const isValidConfiguration = () => {
@@ -242,10 +275,14 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
     // Show validation errors
     setShowValidation(true);
 
+    // Validate temperature
+    const tempError = validateTemperature(temperature);
+    setTemperatureError(tempError);
+
     // Validate SMILES
     const smilesValid = validateAllSMILES();
 
-    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid) {
+    if (!isValidConfiguration() || !isValidSolventConfiguration() || !smilesValid || tempError !== null) {
       return;
     }
 
@@ -268,7 +305,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
         cation_name: cleanIonName(selectedCation),
         num_cations: 40, // 默认值，可以根据需要调整
         cation_molality: parseFloat(totalSaltConcentration),
-        simulation_box_size: 500.0 // 默认值，可以根据需要调整
+        simulation_box_size: 500.0, // 默认值，可以根据需要调整
+        temperature: parseFloat(temperature)
       };
 
       const response = await runMDSimulation(params);
@@ -321,6 +359,8 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   // Reset function
   const resetFormulationState = useCallback(() => {
+    setTemperature('298.15');
+    setTemperatureError(null);
     setSelectedCation('Li');
     setSelectedAnions(['PF6']);
     setTotalSaltConcentration('1.00');
@@ -356,6 +396,37 @@ const FormulationModule: React.FC<FormulationModuleProps> = ({ onResetRef }) => 
 
   return (
     <div className="formulation-module">
+      {/* Molecular Simulation Parameters */}
+      <div className="module-section">
+        <h2>{t('formulation.simulationParameters.title', 'Molecular Simulation Parameters')}</h2>
+
+        <div className="module-content-card">
+          <div className="form-group">
+            <label>{t('formulation.temperature.label', 'Temperature (K)')}</label>
+            <input
+              type="number"
+              step="0.01"
+              min="238.15"
+              max="378.15"
+              value={temperature}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setTemperature(newValue);
+                // Validate on change
+                const error = validateTemperature(newValue);
+                setTemperatureError(error);
+              }}
+              className={`concentration-input ${temperatureError && showValidation ? 'error' : ''}`}
+            />
+            {temperatureError && showValidation && (
+              <div className="smiles-error-message">
+                {temperatureError}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="module-section">
         <h2>{t('formulation.saltConfiguration.title', 'Salt Configuration')}</h2>
 

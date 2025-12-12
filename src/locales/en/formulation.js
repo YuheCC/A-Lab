@@ -117,6 +117,20 @@ export default {
     newConfiguration: 'New Configuration'
   },
 
+  simulationParameters: {
+    title: 'Molecular Simulation Parameters'
+  },
+
+  temperature: {
+    label: 'Temperature (K)',
+    validation: {
+      empty: 'Temperature cannot be empty',
+      invalid: 'Please enter a valid temperature value',
+      tooLow: 'Temperature cannot be lower than 238.15 K',
+      tooHigh: 'Temperature cannot be higher than 378.15 K'
+    }
+  },
+
   saltConfiguration: {
     title: 'Salts Configuration'
   },
