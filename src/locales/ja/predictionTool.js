@@ -350,6 +350,8 @@ export default {
         downloadingLog: "ダウンロード中...",
         downloadTrainLog: "トレーニングログをダウンロード",
         downloadLogSuccess: "トレーニングログのダウンロードに成功しました",
+        downloadingFile: "ファイルをダウンロード中...",
+        downloadFileSuccess: "ファイルのダウンロードに成功しました",
         confirmDeploy: "デプロイの確認",
         confirmUndeploy: "オフライン化の確認",
         confirmRemove: "削除の確認",
@@ -368,6 +370,23 @@ export default {
             mockModel: "デモモデルは変更できません",
             notFound: "モデルが見つかりません",
             downloadLogFailed: "トレーニングログのダウンロードに失敗しました"
+        },
+        metricsInfo: {
+            rmse: {
+                name: "二乗平均平方根誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            mae: {
+                name: "平均絶対誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            mape: {
+                name: "平均絶対パーセント誤差",
+                description: "ŷᵢは予測サイクル数、yᵢは実際のサイクル数、Nはテストセットのサンプルサイズを表します"
+            },
+            predictedValue: "予測サイクル数",
+            actualValue: "実際のサイクル数",
+            sampleSize: "テストセットのサンプルサイズ"
         }
     }
 };

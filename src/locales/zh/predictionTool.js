@@ -350,6 +350,8 @@ export default {
         downloadingLog: "下载中...",
         downloadTrainLog: "下载训练日志",
         downloadLogSuccess: "训练日志下载成功",
+        downloadingFile: "文件下载中...",
+        downloadFileSuccess: "文件下载成功",
         confirmDeploy: "确定要部署此模型吗？",
         confirmUndeploy: "确定要下线此模型吗？",
         confirmRemove: "确定要移除此模型吗？",
@@ -368,6 +370,23 @@ export default {
             mockModel: "无法修改演示模型",
             notFound: "模型未找到",
             downloadLogFailed: "下载训练日志失败"
+        },
+        metricsInfo: {
+            rmse: {
+                name: "均方根误差",
+                description: "ŷᵢ 表示预测循环数，yᵢ 表示真实循环数，N 代表测试集样本量"
+            },
+            mae: {
+                name: "平均绝对误差",
+                description: "ŷᵢ 表示预测循环数，yᵢ 表示真实循环数，N 代表测试集样本量"
+            },
+            mape: {
+                name: "平均绝对百分比误差",
+                description: "ŷᵢ 表示预测循环数，yᵢ 表示真实循环数，N 代表测试集样本量"
+            },
+            predictedValue: "预测循环数",
+            actualValue: "真实循环数",
+            sampleSize: "测试集样本量"
         }
     }
 };
