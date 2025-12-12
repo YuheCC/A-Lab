@@ -233,6 +233,7 @@ export default {
             ratioValue: "7 : 3",
             ratioDesc: "70% 的数据集将用于训练，30% 用于测试",
             upload: "上传数据集",
+            uploadNote: "至少上传30颗电芯的数据且每颗电芯至少循环至SOH=80%",
             dragDrop: "将文件拖放到此处，或点击浏览",
             formats: "支持的格式：CSV, NDA, NDAX",
             dragDropMultiple: "将文件拖放到此处，或点击浏览",

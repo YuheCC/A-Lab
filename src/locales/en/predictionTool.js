@@ -233,6 +233,7 @@ export default {
             ratioValue: "7 : 3",
             ratioDesc: "70% of your dataset will be used for training, 30% for testing",
             upload: "Upload Dataset",
+            uploadNote: "Upload data for at least 30 cells with each cell cycled to at least SOH=80%",
             dragDrop: "Drag and drop your file here, or click to browse",
             formats: "Supported formats: CSV, NDA, NDAX",
             dragDropMultiple: "Drag and drop your files here, or click to browse",
