@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spin, message } from 'antd';
+import { Spin, message, Select } from 'antd';
 import TreeView, { TreeNode } from '../TreeView';
 import './index.less';
 
@@ -27,8 +27,7 @@ const generateTreeData = (): TreeNode[] => {
     { start: 100, end: 199 },
     { start: 200, end: 299 },
     { start: 300, end: 399 },
-    { start: 400, end: 499 },
-    { start: 500, end: 565 },
+    { start: 400, end: 442 }
   ];
 
   ranges.forEach(range => {
@@ -73,6 +72,10 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
   const [imageError, setImageError] = useState<boolean>(false);
   const [predictData, setPredictData] = useState<PredictResultData[]>([]);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [features, setFeatures] = useState<string[]>([]);
+  const [selectedFeatureIndex, setSelectedFeatureIndex] = useState<number>(0);
+  const [featureImageLoading, setFeatureImageLoading] = useState<boolean>(false);
+  const [featureImageError, setFeatureImageError] = useState<boolean>(false);
 
   // 生成 Tree 数据
   const treeData = useMemo(() => generateTreeData(), []);
@@ -119,6 +122,26 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
     };
 
     loadPredictData();
+  }, []);
+
+  // 加载特征列表数据
+  useEffect(() => {
+    const loadFeatures = async () => {
+      try {
+        const response = await fetch('/manufacturing/consistency/feature/features.csv');
+        if (!response.ok) {
+          throw new Error('Failed to load features data');
+        }
+        const csvText = await response.text();
+        const lines = csvText.trim().split('\n').filter(line => line.trim());
+        setFeatures(lines);
+      } catch (error) {
+        console.error('Error loading features:', error);
+        message.error(t('manufacturing.messages.loadDataFailed'));
+      }
+    };
+
+    loadFeatures();
   }, []);
 
   /**
@@ -186,14 +209,8 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
 
         {/* 右侧：内容区域 */}
         <div className="right-section" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
-          {/* 图表区域 - 动态布局 */}
-          <div className="charts-container" style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '16px',
-            flex: 1,
-            minHeight: 0
-          }}>
+          {/* 第一行：SHAP特征重要性图表 + 特征详细分析 */}
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
             {/* SHAP特征重要性图表 */}
             <div className="chart-wrapper" style={{
               flex: '1 1 45%',
@@ -218,7 +235,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
               </div>
             </div>
 
-            {/* 特征影响力分析图 */}
+            {/* 特征详细分析 */}
             <div className="chart-wrapper" style={{
               flex: '1 1 45%',
               minWidth: '400px',
@@ -230,12 +247,26 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
               padding: '16px',
               backgroundColor: '#fff'
             }}>
-              <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
-                {t('manufacturing.charts.featureImportance.title')}
-                <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
-              </h3>
+              <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <h3 className="chart-title" style={{ fontSize: '16px', fontWeight: 500, margin: 0 }}>
+                  特征详细分析
+                </h3>
+                <Select
+                  style={{ width: '100%' }}
+                  value={selectedFeatureIndex}
+                  onChange={(value) => {
+                    setSelectedFeatureIndex(value);
+                    setFeatureImageError(false);
+                  }}
+                  placeholder="请选择特征"
+                  options={features.map((feature, index) => ({
+                    label: feature,
+                    value: index
+                  }))}
+                />
+              </div>
               <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
-                {imageLoading && (
+                {featureImageLoading && (
                   <div style={{
                     position: 'absolute',
                     display: 'flex',
@@ -249,26 +280,28 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                     <Spin size="large" tip={t('manufacturing.messages.loading')} />
                   </div>
                 )}
-                <img
-                  src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
-                  alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
-                  style={{
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    objectFit: 'contain',
-                    display: imageError ? 'none' : 'block'
-                  }}
-                  onLoad={() => setImageLoading(false)}
-                  onLoadStart={() => setImageLoading(true)}
-                  onError={() => {
-                    setImageLoading(false);
-                    setImageError(true);
-                    message.error(t('manufacturing.messages.imageLoadFailed', { index: selectedSampleIndex }));
-                  }}
-                />
-                {imageError && (
+                {features.length > 0 && (
+                  <img
+                    src={`/manufacturing/consistency/feature/${selectedFeatureIndex}.png`}
+                    alt={`Feature Analysis - ${features[selectedFeatureIndex]}`}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain',
+                      display: featureImageError ? 'none' : 'block'
+                    }}
+                    onLoad={() => setFeatureImageLoading(false)}
+                    onLoadStart={() => setFeatureImageLoading(true)}
+                    onError={() => {
+                      setFeatureImageLoading(false);
+                      setFeatureImageError(true);
+                      message.error(`加载特征 ${features[selectedFeatureIndex]} 图片失败`);
+                    }}
+                  />
+                )}
+                {featureImageError && (
                   <div style={{ color: '#999', fontSize: '14px' }}>
-                    {t('manufacturing.messages.imageLoadError')}
+                    图片加载失败
                   </div>
                 )}
               </div>
@@ -319,6 +352,61 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                 {t('manufacturing.messages.noData')}
               </div>
             )}
+          </div>
+
+          {/* 特征影响力分析图 */}
+          <div className="chart-wrapper" style={{
+            minHeight: '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            border: '1px solid #e8e8e8',
+            borderRadius: '8px',
+            padding: '16px',
+            backgroundColor: '#fff',
+            flexShrink: 0
+          }}>
+            <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+              {t('manufacturing.charts.featureImportance.title')}
+              <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
+            </h3>
+            <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+              {imageLoading && (
+                <div style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  zIndex: 1
+                }}>
+                  <Spin size="large" tip={t('manufacturing.messages.loading')} />
+                </div>
+              )}
+              <img
+                src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
+                alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  display: imageError ? 'none' : 'block'
+                }}
+                onLoad={() => setImageLoading(false)}
+                onLoadStart={() => setImageLoading(true)}
+                onError={() => {
+                  setImageLoading(false);
+                  setImageError(true);
+                  message.error(t('manufacturing.messages.imageLoadFailed', { index: selectedSampleIndex }));
+                }}
+              />
+              {imageError && (
+                <div style={{ color: '#999', fontSize: '14px' }}>
+                  {t('manufacturing.messages.imageLoadError')}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
