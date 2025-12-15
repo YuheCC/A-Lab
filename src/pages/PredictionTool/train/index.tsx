@@ -277,6 +277,9 @@ const TrainPage: React.FC = () => {
               <label>
                 {t('predictionTool.train.step3.upload', 'Upload Dataset')}
                 <span className="required">*</span>
+                <span className="prediction-train-file-count">
+                  ({files.length})
+                </span>
               </label>
               <div className="upload-note">
                 {t('predictionTool.train.step3.uploadNote', 'Upload data for at least 30 cells with each cell cycled to at least SOH=80%')}

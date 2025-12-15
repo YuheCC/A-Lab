@@ -692,9 +692,9 @@ const DesignTrainPage: React.FC = () => {
               <label>
                 {t('design.train.step4.upload', 'Upload Dataset')}
                 <span className="required">*</span>
-                <span className="prediction-train-file-count">
+                {/* <span className="prediction-train-file-count">
                   ({files.length})
-                </span>
+                </span> */}
               </label>
               <div
                 className="upload-area"
