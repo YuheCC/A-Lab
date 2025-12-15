@@ -18,6 +18,7 @@ import { Info } from 'lucide-react';
 import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
+import { formatUTCDateTime } from '@/utils/dateUtils';
 import './index.less';
 
 const ModelDetailPage: React.FC = () => {
@@ -679,7 +680,7 @@ const ModelDetailPage: React.FC = () => {
           </div>
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.created')}</span>
-            <span className="value">{model.created_at}</span>
+            <span className="value">{formatUTCDateTime(model.created_at)}</span>
           </div>
           <div className="info-row">
             <span className="label">{t('predictionTool.modelDetail.remarks')}</span>
