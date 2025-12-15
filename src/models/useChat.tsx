@@ -1,12 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { produce } from 'immer';
-import { authFetch, getAPIUrl } from '@/utils';
+import { authFetch } from '@/utils';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { updateChatMetadata } from '@/services/chat';
 import i18n from '@/locales/i18n';
 import type { ToolStats } from '@/utils/messageUtils';
-
-const API_URL = getAPIUrl();
 
 // 规范化后端时间字符串到 ISO 字符串（UTC）
 const normalizeServerDateToISOString = (input: string): string => {
@@ -241,7 +240,8 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
         }));
         
         try {
-            const historyResp = await authFetch(`${API_URL}/chat-history`);
+            const chatHistoryUrl = buildAutoFetchURL('chatHistory');
+            const historyResp = await authFetch(chatHistoryUrl);
             const historyJson = await historyResp.json().catch(() => []);
             const historyList = Array.isArray(historyJson) ? historyJson : [];
             if (!Array.isArray(historyJson)) {
@@ -250,7 +250,8 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
             console.log("📥 CHAT HISTORY LOADED FROM SERVER:", historyList.length, "sessions");
 
             const fullChats = await Promise.all(historyList.map(async (chat: any) => {
-                const details = await authFetch(`${API_URL}/chat-history/${chat.id}`).then(res => res.json());
+                const chatHistoryDetailUrl = buildAutoFetchURL('chatHistoryDetail');
+                const details = await authFetch(`${chatHistoryDetailUrl}/${chat.id}`).then(res => res.json());
                 return { ...chat, ...details };
             }));
 
@@ -436,7 +437,8 @@ export const useChatStore = create<ChatState>()(persist((set, get) => ({
 
         // Delete chat session history from server
         if (chatId !== '-1' && !get().chatMap[chatId as string]) {
-            await authFetch(`${API_URL}/chat-history/delete/${chatId}`, {
+            const chatHistoryDeleteUrl = buildAutoFetchURL('chatHistoryDelete');
+            await authFetch(`${chatHistoryDeleteUrl}/${chatId}`, {
                 method: 'DELETE',
             }).then(res => {
                 if (!res.ok) {

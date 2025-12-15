@@ -4,6 +4,7 @@ import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "r
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
 import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { raiseResponseError } from '@/utils/errorHelpers';
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
@@ -842,8 +843,8 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
 
             const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
-            // Determine which endpoint to use based on user permissions
-            const searchEndpoint = `${API_URL}/api/search/search-new`;
+            // Fetch the searched molecule's properties
+            const searchEndpoint = buildAutoFetchURL('search');
             const searchParams = new URLSearchParams({
                 query: trimmedInput,
                 umap_type: 'anions',

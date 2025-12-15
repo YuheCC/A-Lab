@@ -7,16 +7,15 @@ export default defineConfig({
   },
   define: {
     // Environment configuration
-    'ENVIRONMENT': 'staging',
-    'BASE_URL': "https://api-sh.ses.ai",
-    'WS_BASE_URL': "https://api-sh.ses.ai",
+    'ENVIRONMENT': 'box',
+    'BASE_URL': 'http://10.10.106.51',
+    'WS_BASE_URL': 'http://10.10.106.51',
 
     // Feature flags
     'ShowFindFriendsAdvancedOptions': true,
 
-    // External service URLs
+    // External service URLs (align with staging defaults)
     'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
     'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
   },
 });
-

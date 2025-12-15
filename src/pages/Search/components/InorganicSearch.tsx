@@ -4,6 +4,7 @@ import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "r
 import { authFetch, COMMERCIAL_SCORE_MAP,  getAPIUrl } from "@/utils";
 import { extractIsPublished, buildPublicationProp, insertPublicationProp } from '@/utils/publicationStatus';
 import { raiseResponseError } from '@/utils/errorHelpers';
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { useInorganicPlotDataStore } from "@/models/usePlotData";
 import { useAuthStore } from "@/models/useAuth";
@@ -665,13 +666,9 @@ const InorganicSearch = () => {
         setAmbiguousOptions(null);
 
         try {
-            // 使用无机分子搜索接口
-            let searchEndpoint = `${API_URL}/api/search/search-new`;
-
             // Fetch the searched inorganic molecule's properties 
-            const moleculeResponse = await authFetch(
-                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=inorganic${molTypeParam}`
-            );
+            const searchEndpoint = buildAutoFetchURL('search');
+            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {

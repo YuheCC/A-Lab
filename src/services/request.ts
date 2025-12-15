@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from '@/utils/authHelpers';
+import { urlConfig } from './config/urlConfig';
 
-// 直接使用定义的 BASE_URL，如果未定义则使用默认值
-const baseURL = BASE_URL || 'https://prod-api.ses.ai';
+// 统一从 urlConfig 获取基础地址（支持 '/' 或相对地址）
+const baseURL = urlConfig.getBaseURL();
 
 // 创建axios实例
 const axiosInstance: AxiosInstance = axios.create({

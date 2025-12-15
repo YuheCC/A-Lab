@@ -1,10 +1,12 @@
 import { triggerLoginModal, shouldShowLoginModal, triggerPricingModal } from './utils/authHelpers';
+import { urlConfig } from './services/config/urlConfig';
 
-export const getAPIUrl = () => {
-  const url = BASE_URL || 'https://prod-api.ses.ai';
-  // 如果 BASE_URL 是 "/"，返回空字符串以避免双斜杠问题
-  return url === '/' ? '' : url;
-};
+/**
+ * Get API base URL
+ * @deprecated Use urlConfig.getBaseURL() instead for better type safety and consistency
+ * @returns {string} Base URL for API requests
+ */
+export const getAPIUrl = () => urlConfig.getBaseURL();
 
 const API_URL = getAPIUrl();
 
@@ -45,9 +47,13 @@ export const formatSmilesWithCation = (smiles, cation) => {
  * Fetch wrapper that automatically attaches JWT to all requests
  * going to our backend. Also handles 401 responses by redirecting
  * to the login page.
+ *
+ * @deprecated Prefer using `import request from '@/services/request'` for better type safety.
+ *             This function is kept for backward compatibility during gradual migration.
+ *
  * @param {*} input
- * @param {*} init 
- * @returns 
+ * @param {*} init
+ * @returns
  */
 export const authFetch = (input, init = {}) => {
   // -------------------------------------------------------------------

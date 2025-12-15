@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client';
-
+import { urlConfig } from '../config/urlConfig';
+import { getChatWSConfig } from './endpoints';
 
 export type ChatMode = 'regular' | 'deep-space' | 'clarify' | 'lightning' | 'ask' ;
 
@@ -57,14 +58,18 @@ export function createChatWebSocketStream(options: ChatStreamOptions): ChatStrea
 }
 
 function createChatWebSocketStreamInternal(options: ChatStreamOptions, transports: string[]): ChatStreamHandle {
+  // Get environment-specific WebSocket configuration
+  const env = urlConfig.getEnvironment();
+  const wsConfig = getChatWSConfig(env);
+
   const {
-    baseUrl = (window as any).BASE_URL || '/api',
-    path = '/api/llm/ws/socket.io',  // Socket.IO 默认路径
+    baseUrl = urlConfig.getWSBaseURL(),
+    path = wsConfig.path,
     chatId,
     message,
     mode,
     query = {},
-    protocols, // Socket.IO 不使用 protocols，但保留兼容性
+    protocols, // Socket.IO doesn't use protocols, but keep for compatibility
     withTokenInQuery = false,
     heartbeat: hb = {},
     autoReconnect = true,
@@ -277,8 +282,11 @@ class GlobalWebSocketManager {
       return;
     }
 
-    const baseUrl = BASE_URL || 'https://prod-api.ses.ai';
-    const path = '/api/llm/ws/socket.io';
+    // Get environment-specific WebSocket configuration
+    const env = urlConfig.getEnvironment();
+    const wsConfig = getChatWSConfig(env);
+    const baseUrl = urlConfig.getWSBaseURL();
+    const path = wsConfig.path;
     const socketUrl = buildSocketUrl(baseUrl);
     const token = localStorage.getItem('token') || '';
 

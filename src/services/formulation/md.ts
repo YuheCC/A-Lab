@@ -1,4 +1,6 @@
 import request from '@/services/request';
+import { urlConfig } from '@/services/config/urlConfig';
+import { getFormulationMDEndpoint } from './endpoints';
 
 export interface MDRunParams {
   solvent_smiles_list: string[];
@@ -68,7 +70,10 @@ export interface MDHistoryDetailResponse {
 }
 
 export async function runMDSimulation(params: MDRunParams) {
-  return request('/api/formulate/run', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFormulationMDEndpoint(env, 'run');
+  const url = urlConfig.buildFullURL(endpoint);
+  return request(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,20 +84,29 @@ export async function runMDSimulation(params: MDRunParams) {
 
 // MD历史记录相关接口
 export async function getMDHistoryList(params?: any) {
-  return request('/api/formulate/history/list', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFormulationMDEndpoint(env, 'historyList');
+  const url = urlConfig.buildFullURL(endpoint);
+  return request(url, {
     method: 'GET',
     params,
   });
 }
 
 export async function getMDHistoryDetail(id: number) {
-  return request(`/api/formulate/history/detail?id=${id}`, {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFormulationMDEndpoint(env, 'historyDetail');
+  const url = urlConfig.buildFullURL(endpoint);
+  return request(`${url}?id=${id}`, {
     method: 'GET',
   });
 }
 
 export async function deleteMDHistory(id: number) {
-  return request('/api/formulate/history/delete', {
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFormulationMDEndpoint(env, 'historyDelete');
+  const url = urlConfig.buildFullURL(endpoint);
+  return request(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

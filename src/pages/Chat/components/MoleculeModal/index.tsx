@@ -6,6 +6,7 @@ import InfoTooltip, { InfoTooltipContent } from '@/components/InfoTooltip';
 import { type MoleculeProperties, type SimilarMolecule } from '@/services/chat/moleculeService';
 import { authFetch, getAPIUrl, COMMERCIAL_SCORE_MAP } from '@/utils.js';
 import { extractIsPublished, buildPublicationProp } from '@/utils/publicationStatus';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { isColumnVisibleForUser } from '@/constants/columnAccess';
 import { ENABLE_CASRN_DISPLAY } from '@/constants/featureFlags';
 import { useAuthStore } from '@/models/useAuth';
@@ -1007,7 +1008,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             params.set('umap_type', 'anions');
         }
 
-        const queryUrl = `${API_URL}/api/molecule_details?${params.toString()}`;
+        const baseUrl = buildAutoFetchURL('moleculeDetails');
+        const queryUrl = `${baseUrl}?${params.toString()}`;
         const resp = await authFetch(queryUrl, { method: 'GET' });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data?.detail || 'Failed to fetch molecule details');
@@ -1100,7 +1102,8 @@ const MoleculeModal: React.FC<MoleculeModalProps> = ({
             payload.selected_molecule_str = selectedMoleculeStr;
         }
 
-        const resp = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
+        const findFriendUrl = buildAutoFetchURL('findFriendWithImage');
+        const resp = await authFetch(findFriendUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

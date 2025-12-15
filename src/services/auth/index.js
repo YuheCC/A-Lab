@@ -1,4 +1,5 @@
 import request from "@/services/request";
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 
 export async function login(data) {
     const formData = new FormData();
@@ -6,7 +7,8 @@ export async function login(data) {
         formData.append(key, data[key]);
     });
 
-    return request("/api/user/login", {
+    const url = buildAutoFetchURL('login');
+    return request(url, {
         method: "POST",
         data: formData,
     });
@@ -18,7 +20,8 @@ export async function register(data) {
         formData.append(key, data[key]);
     });
     console.log(formData)
-    return request('/api/user/register', {
+    const url = buildAutoFetchURL('register');
+    return request(url, {
         method: "POST",
         data: formData,
     });
@@ -30,7 +33,8 @@ export async function resetPassword(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/reset-password', {
+    const url = buildAutoFetchURL('resetPassword');
+    return request(url, {
         method: "POST",
         data: formData,
     });
@@ -42,7 +46,8 @@ export async function resetPasswordByToken(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/reset-password-token', {
+    const url = buildAutoFetchURL('resetPasswordToken');
+    return request(url, {
         method: "POST",
         data: formData,
     });
@@ -54,20 +59,23 @@ export async function redeemCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/redeem-code', {
+    const url = buildAutoFetchURL('redeemCode');
+    return request(url, {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verify() {    
-    return request('/api/user/verify-token', {
+    const url = buildAutoFetchURL('verifyToken');
+    return request(url, {
         method: "GET",
     });
 }
 
 export async function verifyCode(params) {
-    return request('/api/user/verify-register-code', {
+    const url = buildAutoFetchURL('verifyRegisterCode');
+    return request(url, {
         method: "GET",
         params,
     });
@@ -79,7 +87,8 @@ export async function verifyRedeemCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/redeem-new', {
+    const url = buildAutoFetchURL('redeemNew');
+    return request(url, {
         method: "POST",
         data: formData,
     });
@@ -91,14 +100,16 @@ export async function sendEducationCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/bind-edu-email', {
+    const url = buildAutoFetchURL('bindEduEmail');
+    return request(url, {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verifyEducationCode(params) {
-    return request('/api/user/verify-edu-code', {
+    const url = buildAutoFetchURL('verifyEduCode');
+    return request(url, {
         method: "GET",
         params,
     });
@@ -110,14 +121,16 @@ export async function sendForgotPasswordCode(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/forgot-password', {
+    const url = buildAutoFetchURL('forgotPassword');
+    return request(url, {
         method: "POST",
         data: formData,
     });
 }
 
 export async function verifyForgotPasswordCode(params) {
-    return request('/api/user/verify-forgot-password-code', {
+    const url = buildAutoFetchURL('verifyForgotPasswordCode');
+    return request(url, {
         method: "GET",
         params,
     });
@@ -129,7 +142,8 @@ export async function contactSales(data) {
         formData.append(key, data[key]);
     });
 
-    return request('/api/user/contact-sales', {
+    const url = buildAutoFetchURL('contactSales');
+    return request(url, {
         method: "POST",
         data: formData,
     });
