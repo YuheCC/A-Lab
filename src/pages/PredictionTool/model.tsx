@@ -303,10 +303,15 @@ export const deployModel = async (modelId: string): Promise<any> => {
     throw new Error('Please login first');
   }
 
-  return deployModelAPI({
-    model_id: modelId,
-    namespace: MODEL_NAMESPACE,
-  });
+  try {
+    return await deployModelAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+  } catch (error) {
+    console.error('Deploy model failed:', error);
+    throw error;
+  }
 };
 
 /**
@@ -325,10 +330,15 @@ export const undeployModel = async (modelId: string): Promise<any> => {
     throw new Error('Please login first');
   }
 
-  return undeployModelAPI({
-    model_id: modelId,
-    namespace: MODEL_NAMESPACE,
-  });
+  try {
+    return await undeployModelAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE,
+    });
+  } catch (error) {
+    console.error('Undeploy model failed:', error);
+    throw error;
+  }
 };
 
 /**
@@ -347,7 +357,15 @@ export const removeModel = async (modelId: string): Promise<any> => {
     throw new Error('Please login first');
   }
 
-  return removeModelAPI({ model_id: modelId, namespace: MODEL_NAMESPACE });
+  try {
+    return await removeModelAPI({
+      model_id: modelId,
+      namespace: MODEL_NAMESPACE
+    });
+  } catch (error) {
+    console.error('Remove model failed:', error);
+    throw error;
+  }
 };
 
 /**
