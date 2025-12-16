@@ -470,10 +470,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
 
     const selectedBatterySystem = batterySystemOptions?.find((s: BatterySystem) => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
-      alert(t('performance.ui.invalidBatterySystem'));
-      return;
-    }
 
     setIsAnalyzing(true);
     setAnalysisError(null);
