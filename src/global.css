@@ -3547,4 +3547,6 @@ body.no-select {
 .manufacturing-container.main-container {
   margin: 0;
   padding: 0;
+  min-height: calc(100vh - 116px);
+  height: auto;
 }
