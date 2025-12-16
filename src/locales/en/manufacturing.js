@@ -42,10 +42,10 @@ export default {
         showMore: 'More... ({{count}} items remaining)',
       },
       charts: {
-        leftOhRange: 'Left OH Range Distribution',
-        leftOhStd: 'Left OH Standard Deviation Distribution',
-        rightOhRange: 'Right OH Range Distribution',
-        rightOhStd: 'Right OH Standard Deviation Distribution',
+        leftOhRange: 'Left OH Range\nDistribution',
+        leftOhStd: 'Left OH Standard\nDeviation Distribution',
+        rightOhRange: 'Right OH Range\nDistribution',
+        rightOhStd: 'Right OH Standard\nDeviation Distribution',
       },
     },
     kvalue: {
@@ -115,9 +115,9 @@ export default {
         },
       },
       charts: {
-        chart1: 'Batch Wetting State 1 Distribution',
-        chart2: 'Batch Wetting State 2 Distribution',
-        chart3: 'Batch Wetting State 3 Distribution',
+        chart1: 'Batch Wetting State 1\nDistribution',
+        chart2: 'Batch Wetting State 2\nDistribution',
+        chart3: 'Batch Wetting State 3\nDistribution',
       },
     },
   },

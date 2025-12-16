@@ -82,19 +82,25 @@ export const getFirstChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart1'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
@@ -198,19 +204,25 @@ export const getSecondChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart2'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {
@@ -314,19 +326,25 @@ export const getThirdChartConfig = (
     title: {
       text: t('manufacturing.modules.ultrasound.charts.chart3'),
       left: 'center',
+      top: 8,
       textStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: 'normal',
+        lineHeight: 16,
       },
     },
     tooltip: {
       trigger: 'axis',
-      formatter: '{b}: {c}',
+      formatter: (params: any) => {
+        const xValue = params[0]?.axisValue;
+        const numValue = parseFloat(xValue);
+        return isNaN(numValue) ? xValue : numValue.toFixed(3);
+      },
     },
     grid: {
       left: '10%',
       right: '10%',
-      top: '25%',
+      top: 50,
       bottom: '15%',
     },
     xAxis: {

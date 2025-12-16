@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spin, message, Select } from 'antd';
+import { Spin, message, Select, Tabs } from 'antd';
 import TreeView, { TreeNode } from '../TreeView';
 import './index.less';
 
@@ -186,235 +186,240 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
 
   return (
     <div className="consistency-result">
-      {/* 主要内容区域：左侧树形视图 + 右侧图表 */}
-      <div className="result-content">
-        {/* 左侧：树形视图 */}
-        <div className="tree-section">
-          <h3 className="section-title">{t('manufacturing.result.treeView.title')}</h3>
-          <div className="tree-container">
-            <TreeView
-              data={treeData}
-              selectedId={selectedNode?.id || 'sample-0'}
-              onSelect={handleNodeSelect}
-              defaultExpandedKeys={['0-99', '0-9']}
-            />
-          </div>
-        </div>
-
-        {/* 右侧：内容区域 */}
-        <div className="right-section" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
-          {/* 第一行：SHAP特征重要性图表 + 特征详细分析 */}
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-            {/* SHAP特征重要性图表 */}
-            <div className="chart-wrapper" style={{
-              flex: '1 1 45%',
-              minWidth: '400px',
-              minHeight: '300px',
-              display: 'flex',
-              flexDirection: 'column',
-              border: '1px solid #e8e8e8',
-              borderRadius: '8px',
-              padding: '16px',
-              backgroundColor: '#fff'
-            }}>
-              <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
-                {t('manufacturing.charts.shap.title')}
-              </h3>
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
-                <img
-                  src="/manufacturing/consistency/images/summary.png"
-                  alt="SHAP Feature Importance Summary"
-                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                />
-              </div>
-            </div>
-
-            {/* 特征详细分析 */}
-            <div className="chart-wrapper" style={{
-              flex: '1 1 45%',
-              minWidth: '400px',
-              minHeight: '300px',
-              display: 'flex',
-              flexDirection: 'column',
-              border: '1px solid #e8e8e8',
-              borderRadius: '8px',
-              padding: '16px',
-              backgroundColor: '#fff'
-            }}>
-              <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <h3 className="chart-title" style={{ fontSize: '16px', fontWeight: 500, margin: 0 }}>
-                  特征详细分析
-                </h3>
-                <Select
-                  style={{ width: '100%' }}
-                  value={selectedFeatureIndex}
-                  onChange={(value) => {
-                    setSelectedFeatureIndex(value);
-                    setFeatureImageError(false);
-                  }}
-                  placeholder="请选择特征"
-                  options={features.map((feature, index) => ({
-                    label: feature,
-                    value: index
-                  }))}
-                />
-              </div>
-              <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
-                {featureImageLoading && (
-                  <div style={{
-                    position: 'absolute',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    zIndex: 1
-                  }}>
-                    <Spin size="large" tip={t('manufacturing.messages.loading')} />
-                  </div>
-                )}
-                {features.length > 0 && (
-                  <img
-                    src={`/manufacturing/consistency/feature/${selectedFeatureIndex}.png`}
-                    alt={`Feature Analysis - ${features[selectedFeatureIndex]}`}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      objectFit: 'contain',
-                      display: featureImageError ? 'none' : 'block'
-                    }}
-                    onLoad={() => setFeatureImageLoading(false)}
-                    onLoadStart={() => setFeatureImageLoading(true)}
-                    onError={() => {
-                      setFeatureImageLoading(false);
-                      setFeatureImageError(true);
-                      message.error(`加载特征 ${features[selectedFeatureIndex]} 图片失败`);
-                    }}
-                  />
-                )}
-                {featureImageError && (
-                  <div style={{ color: '#999', fontSize: '14px' }}>
-                    图片加载失败
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 预测结果 */}
-          <div className="predict-result-info" style={{
-            padding: '16px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '8px',
-            flexShrink: 0
-          }}>
-            <h3 className="section-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
-              {t('manufacturing.predictResult.title', { index: selectedSampleIndex })}
-            </h3>
-            {tableLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px' }}>
-                <Spin />
-              </div>
-            ) : currentSampleData ? (
-              <div style={{ display: 'flex', gap: '32px', fontSize: '14px' }}>
-                <div>
-                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.barcode')}: </span>
-                  <span style={{ fontWeight: 500 }}>{currentSampleData.barcode}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.predict')}: </span>
-                  <span style={{
-                    fontWeight: 500,
-                    color: currentSampleData.predict === '异常' ? '#ff4d4f' : '#52c41a'
-                  }}>
-                    {translateStatus(currentSampleData.predict)}
-                  </span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>{t('manufacturing.predictResult.actual')}: </span>
-                  <span style={{
-                    fontWeight: 500,
-                    color: currentSampleData.actual === '异常' ? '#ff4d4f' : '#52c41a'
-                  }}>
-                    {translateStatus(currentSampleData.actual)}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
-                {t('manufacturing.messages.noData')}
-              </div>
-            )}
-          </div>
-
-          {/* 特征影响力分析图 */}
-          <div className="chart-wrapper" style={{
-            minHeight: '300px',
-            display: 'flex',
-            flexDirection: 'column',
-            border: '1px solid #e8e8e8',
-            borderRadius: '8px',
-            padding: '16px',
-            backgroundColor: '#fff',
-            flexShrink: 0
-          }}>
-            <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
-              {t('manufacturing.charts.featureImportance.title')}
-              <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
-            </h3>
-            <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
-              {imageLoading && (
-                <div style={{
-                  position: 'absolute',
+      {/* Tabs 导航 */}
+      <Tabs
+        defaultActiveKey="feature-analysis"
+        style={{ marginBottom: '16px' }}
+        items={[
+          {
+            key: 'feature-analysis',
+            label: '特征分析',
+            children: (
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                {/* SHAP特征重要性图表 */}
+                <div className="chart-wrapper" style={{
+                  flex: '1 1 45%',
+                  minWidth: '400px',
+                  minHeight: '500px',
                   display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  zIndex: 1
+                  flexDirection: 'column',
+                  border: '1px solid #e8e8e8',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  backgroundColor: '#fff'
                 }}>
-                  <Spin size="large" tip={t('manufacturing.messages.loading')} />
+                  <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+                    {t('manufacturing.charts.shap.title')}
+                  </h3>
+                  <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+                    <img
+                      src="/manufacturing/consistency/images/summary.png"
+                      alt="SHAP Feature Importance Summary"
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
                 </div>
-              )}
-              <img
-                src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
-                alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                  objectFit: 'contain',
-                  display: imageError ? 'none' : 'block'
-                }}
-                onLoad={() => setImageLoading(false)}
-                onLoadStart={() => setImageLoading(true)}
-                onError={() => {
-                  setImageLoading(false);
-                  setImageError(true);
-                  message.error(t('manufacturing.messages.imageLoadFailed', { index: selectedSampleIndex }));
-                }}
-              />
-              {imageError && (
-                <div style={{ color: '#999', fontSize: '14px' }}>
-                  {t('manufacturing.messages.imageLoadError')}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* 分析总结 */}
-      {/* <div className="analysis-summary">
-        <h4 className="summary-title">{t('manufacturing.result.summary.title')}</h4>
-        <ul className="summary-list">
-          <li>✓ {t('manufacturing.result.summary.point1')}</li>
-          <li>✓ {t('manufacturing.result.summary.point2')}</li>
-          <li>⚠ {t('manufacturing.result.summary.point3')}</li>
-          <li>✓ {t('manufacturing.result.summary.point4')}</li>
-        </ul>
-      </div> */}
+                {/* 特征详细分析 */}
+                <div className="chart-wrapper" style={{
+                  flex: '1 1 45%',
+                  minWidth: '400px',
+                  minHeight: '500px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: '1px solid #e8e8e8',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  backgroundColor: '#fff'
+                }}>
+                  <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <h3 className="chart-title" style={{ fontSize: '16px', fontWeight: 500, margin: 0 }}>
+                      特征详细分析
+                    </h3>
+                    <Select
+                      style={{ width: '100%' }}
+                      value={selectedFeatureIndex}
+                      onChange={(value) => {
+                        setSelectedFeatureIndex(value);
+                        setFeatureImageError(false);
+                      }}
+                      placeholder="请选择特征"
+                      options={features.map((feature, index) => ({
+                        label: feature,
+                        value: index
+                      }))}
+                    />
+                  </div>
+                  <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+                    {featureImageLoading && (
+                      <div style={{
+                        position: 'absolute',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 1
+                      }}>
+                        <Spin size="large" tip={t('manufacturing.messages.loading')} />
+                      </div>
+                    )}
+                    {features.length > 0 && (
+                      <img
+                        src={`/manufacturing/consistency/feature/${selectedFeatureIndex}.png`}
+                        alt={`Feature Analysis - ${features[selectedFeatureIndex]}`}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          display: featureImageError ? 'none' : 'block'
+                        }}
+                        onLoad={() => setFeatureImageLoading(false)}
+                        onLoadStart={() => setFeatureImageLoading(true)}
+                        onError={() => {
+                          setFeatureImageLoading(false);
+                          setFeatureImageError(true);
+                          message.error(`加载特征 ${features[selectedFeatureIndex]} 图片失败`);
+                        }}
+                      />
+                    )}
+                    {featureImageError && (
+                      <div style={{ color: '#999', fontSize: '14px' }}>
+                        图片加载失败
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'sample-data',
+            label: '样本数据',
+            children: (
+              <div className="result-content">
+                {/* 左侧：树形视图 */}
+                <div className="tree-section">
+                  <h3 className="section-title">{t('manufacturing.result.treeView.title')}</h3>
+                  <div className="tree-container">
+                    <TreeView
+                      data={treeData}
+                      selectedId={selectedNode?.id || 'sample-0'}
+                      onSelect={handleNodeSelect}
+                      defaultExpandedKeys={['0-99', '0-9']}
+                    />
+                  </div>
+                </div>
+
+                {/* 右侧：内容区域 */}
+                <div className="right-section" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
+                  {/* 预测结果 */}
+                  <div className="predict-result-info" style={{
+                    padding: '16px',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '8px',
+                    flexShrink: 0
+                  }}>
+                    <h3 className="section-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+                      {t('manufacturing.predictResult.title', { index: selectedSampleIndex })}
+                    </h3>
+                    {tableLoading ? (
+                      <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <Spin />
+                      </div>
+                    ) : currentSampleData ? (
+                      <div style={{ display: 'flex', gap: '32px', fontSize: '14px' }}>
+                        <div>
+                          <span style={{ color: '#666' }}>{t('manufacturing.predictResult.barcode')}: </span>
+                          <span style={{ fontWeight: 500 }}>{currentSampleData.barcode}</span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#666' }}>{t('manufacturing.predictResult.predict')}: </span>
+                          <span style={{
+                            fontWeight: 500,
+                            color: currentSampleData.predict === '异常' ? '#ff4d4f' : '#52c41a'
+                          }}>
+                            {translateStatus(currentSampleData.predict)}
+                          </span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#666' }}>{t('manufacturing.predictResult.actual')}: </span>
+                          <span style={{
+                            fontWeight: 500,
+                            color: currentSampleData.actual === '异常' ? '#ff4d4f' : '#52c41a'
+                          }}>
+                            {translateStatus(currentSampleData.actual)}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
+                        {t('manufacturing.messages.noData')}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 特征影响力分析图 */}
+                  <div className="chart-wrapper" style={{
+                    minHeight: '400px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid #e8e8e8',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    backgroundColor: '#fff',
+                    flexShrink: 0
+                  }}>
+                    <h3 className="chart-title" style={{ marginBottom: '12px', fontSize: '16px', fontWeight: 500 }}>
+                      {t('manufacturing.charts.featureImportance.title')}
+                      <span style={{ color: '#1890ff', marginLeft: '8px' }}>- Sample {selectedSampleIndex}</span>
+                    </h3>
+                    <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 0 }}>
+                      {imageLoading && (
+                        <div style={{
+                          position: 'absolute',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          zIndex: 1
+                        }}>
+                          <Spin size="large" tip={t('manufacturing.messages.loading')} />
+                        </div>
+                      )}
+                      <img
+                        src={`/manufacturing/consistency/images/${selectedSampleIndex}.png`}
+                        alt={`Feature Impact Analysis - Sample ${selectedSampleIndex}`}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          display: imageError ? 'none' : 'block'
+                        }}
+                        onLoad={() => setImageLoading(false)}
+                        onLoadStart={() => setImageLoading(true)}
+                        onError={() => {
+                          setImageLoading(false);
+                          setImageError(true);
+                          message.error(t('manufacturing.messages.imageLoadFailed', { index: selectedSampleIndex }));
+                        }}
+                      />
+                      {imageError && (
+                        <div style={{ color: '#999', fontSize: '14px' }}>
+                          {t('manufacturing.messages.imageLoadError')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* 操作按钮 */}
       <div className="result-actions">
