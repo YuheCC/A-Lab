@@ -423,23 +423,6 @@ export const undeployModel = async (params: UndeployModelParams): Promise<Undepl
 };
 
 /**
- * Undeploy model (make it offline)
- * @param params Undeploy parameters including model_id and namespace
- * @returns Promise<UndeployModelResponse> Undeploy result
- */
-export const undeployModel = async (params: UndeployModelParams): Promise<UndeployModelResponse> => {
-  const response = await request('/api/ai/model/undeploy', {
-    method: 'POST',
-    params: {
-      model_id: params.model_id,
-      namespace: params.namespace,
-    },
-  });
-
-  return response.data;
-};
-
-/**
  * Remove/delete a model
  * @param params Remove parameters with model_id
  * @returns Promise<RemoveModelResponse> Remove result
