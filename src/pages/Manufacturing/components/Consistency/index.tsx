@@ -186,12 +186,6 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
 
   return (
     <div className="consistency-result">
-      {/* 完成提示 */}
-      <div className="result-header">
-        <div className="success-icon">✓</div>
-        <h3 className="result-title">{t('manufacturing.result.complete')}</h3>
-      </div>
-
       {/* 主要内容区域：左侧树形视图 + 右侧图表 */}
       <div className="result-content">
         {/* 左侧：树形视图 */}
