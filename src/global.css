@@ -3543,4 +3543,6 @@ body.no-select {
 .chat-container.main-container, .predict-container.main-container, .formulation-container.main-container, .formulation-create-container.main-container {
   margin: 0;
   padding: 0;
+  min-height: calc(100vh - 116px);
+  height: auto;
 }
