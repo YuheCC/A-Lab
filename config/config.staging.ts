@@ -7,7 +7,7 @@ export default defineConfig({
   },
   define: {
     'ShowFindFriendsAdvancedOptions': true,
-    'BASE_URL': "http://10.10.106.51",
+    'BASE_URL': "/",
     'explorer_url': "https://buy.stripe.com/test_9B66oGgL2dPh0C12Mzebu01",
     'team_url': "https://buy.stripe.com/test_9B600iamEeTl1G572Pebu02",
   },
