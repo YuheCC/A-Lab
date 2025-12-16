@@ -1,5 +1,20 @@
 import request from "@/services/request";
 
+// ============= Response Type =============
+
+/**
+ * Extended response type that includes ok field for error handling
+ * When ok === false, it means the request failed and data contains error info
+ */
+interface RequestResponse<T = any> {
+  ok?: false;
+  data: T;
+  status?: number;
+  statusText?: string;
+  headers?: any;
+  [key: string]: any;
+}
+
 // ============= Train Model Types =============
 
 /**
@@ -314,7 +329,12 @@ export const trainModel = async (params: TrainModelParams): Promise<TrainModelRe
     method: 'POST',
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
-  });
+  }) as RequestResponse<TrainModelResponse>;
+
+  if (response.ok === false) {
+    const errorData: any = response.data;
+    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Train model failed');
+  }
 
   return response.data;
 };
@@ -370,7 +390,34 @@ export const deployModel = async (params: DeployModelParams): Promise<DeployMode
       model_id: params.model_id,
       namespace: params.namespace,
     },
-  });
+  }) as RequestResponse<DeployModelResponse>;
+
+  if (response.ok === false) {
+    const errorData: any = response.data;
+    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Deploy model failed');
+  }
+
+  return response.data;
+};
+
+/**
+ * Undeploy model (make it offline)
+ * @param params Undeploy parameters including model_id and namespace
+ * @returns Promise<UndeployModelResponse> Undeploy result
+ */
+export const undeployModel = async (params: UndeployModelParams): Promise<UndeployModelResponse> => {
+  const response = await request('/api/ai/model/undeploy', {
+    method: 'POST',
+    params: {
+      model_id: params.model_id,
+      namespace: params.namespace,
+    },
+  }) as RequestResponse<UndeployModelResponse>;
+
+  if (response.ok === false) {
+    const errorData: any = response.data;
+    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Undeploy model failed');
+  }
 
   return response.data;
 };
@@ -404,7 +451,12 @@ export const removeModel = async (params: RemoveModelParams): Promise<RemoveMode
       model_id: params.model_id,
       namespace: params.namespace,
     },
-  });
+  }) as RequestResponse<RemoveModelResponse>;
+
+  if (response.ok === false) {
+    const errorData: any = response.data;
+    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Remove model failed');
+  }
 
   return response.data;
 };
@@ -424,7 +476,12 @@ export const modelPredict = async (params: ModelPredictParams): Promise<ModelPre
     method: 'POST',
     data: formData,
     // Don't set Content-Type, request.ts will handle it automatically
-  });
+  }) as RequestResponse<ModelPredictResponse[]>;
+
+  if (response.ok === false) {
+    const errorData: any = response.data;
+    throw new Error(errorData?.message || errorData?.detail || JSON.stringify(response.data) || 'Model prediction failed');
+  }
 
   return response.data;
 };
