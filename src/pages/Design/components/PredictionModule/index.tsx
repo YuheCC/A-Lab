@@ -481,7 +481,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const currentLang = getCurrentLanguage();
       const analysisParams: LLMAnalysisStreamRequest = {
         id: predictionResults.id,
-        battery_system_id: parseInt(selectedBatterySystem.id),
+        battery_system_id: selectedBatterySystem ? parseInt(selectedBatterySystem.id) : 0,
         lang: currentLang
       };
 
