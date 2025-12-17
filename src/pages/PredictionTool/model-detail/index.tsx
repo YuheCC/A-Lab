@@ -13,8 +13,10 @@ import {
   CircularProgress,
   Backdrop,
   Tooltip,
+  IconButton,
 } from '@mui/material';
-import { Info } from 'lucide-react';
+import Pagination from '@/components/Pagination';
+import { Info, X as CloseIcon } from 'lucide-react'; // Assuming lucide-react X is used for close
 import { getModelDetail, deployModel, undeployModel, isMockModel, getModelFileList, getModelMetrics, downloadModelTrainLog, downloadModelFile } from '../model';
 import type { ModelDetailResponse, ModelFileListResponse, ModelMetricsResponse, MetricsData } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
@@ -55,6 +57,11 @@ const ModelDetailPage: React.FC = () => {
     open: false,
     type: null,
   });
+  
+  // Files dialog state
+  const [filesDialogOpen, setFilesDialogOpen] = useState(false);
+  const [filesPage, setFilesPage] = useState(1);
+  const FILES_PAGE_SIZE = 10;
 
   // Fetch model detail on mount
   useEffect(() => {
@@ -224,6 +231,16 @@ const ModelDetailPage: React.FC = () => {
     } finally {
       setDownloadingFile(false);
     }
+  };
+
+  // Files pagination logic
+  const totalFiles = fileList?.length || 0;
+  const totalSize = fileList?.reduce((acc, curr) => acc + curr.size, 0) || 0;
+  const currentFiles = fileList?.slice((filesPage - 1) * FILES_PAGE_SIZE, filesPage * FILES_PAGE_SIZE) || [];
+  const totalFilesPages = Math.ceil(totalFiles / FILES_PAGE_SIZE);
+
+  const handleFilesPageChange = (value: number) => {
+    setFilesPage(value);
   };
 
   const getStatusLabel = (status: string) => {
@@ -749,30 +766,26 @@ const ModelDetailPage: React.FC = () => {
               <p>{t('predictionTool.modelDetail.loadingText', 'Loading...')}</p>
             </div>
           ) : fileList && fileList.length > 0 ? (
-            <div className="info-card dataset-info">
-              {fileList.map((file, index) => (
-                <div key={index} className="dataset-row">
-                  <div className="dataset-item">
-                    <span className="dataset-label">{t('predictionTool.modelDetail.datasetName', 'Dataset Name:')}</span>
-                    <a
-                      href="#"
-                      className="dataset-link download-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDownloadFile(file.path, file.name);
-                      }}
-                    >
-                      {file.name}
-                    </a>
+            <div className="info-card">
+              <div className="dataset-summary">
+                <div className="summary-info">
+                  <div className="summary-item">
+                    <span className="label">{t('predictionTool.modelDetail.totalFiles', 'Total Files')}</span>
+                    <span className="value">{totalFiles}</span>
                   </div>
-                  <div className="dataset-item">
-                    <span className="dataset-label">{t('predictionTool.modelDetail.fileSize', 'File Size:')}</span>
-                    <span className="dataset-value">
-                      {formatFileSize(file.size)}
-                    </span>
+                  <div className="summary-item">
+                    <span className="label">{t('predictionTool.modelDetail.totalSize', 'Total Size')}</span>
+                    <span className="value">{formatFileSize(totalSize)}</span>
                   </div>
                 </div>
-              ))}
+                <Button 
+                  variant="outlined" 
+                  className="view-detail-btn"
+                  onClick={() => setFilesDialogOpen(true)}
+                >
+                  {t('predictionTool.modelDetail.viewDetails', 'View Details')}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="info-card">
@@ -961,6 +974,61 @@ const ModelDetailPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Files List Dialog */}
+            <Dialog
+              open={filesDialogOpen}
+              onClose={() => setFilesDialogOpen(false)}
+              maxWidth="md"
+              fullWidth
+            >
+              <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                {t('predictionTool.modelDetail.trainingFiles', 'Training Dataset')}
+                <IconButton
+                  aria-label="close"
+                  onClick={() => setFilesDialogOpen(false)}
+                  sx={{
+                    color: (theme) => theme.palette.grey[500],
+                  }}
+                >
+                  <CloseIcon size={20} />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent dividers>
+                <div className="dataset-info">
+                  {currentFiles.map((file, index) => (
+                    <div key={index} className="dataset-row">
+                      <div className="dataset-item">
+                        <span className="dataset-label">{t('predictionTool.modelDetail.datasetName', 'Dataset Name:')}</span>
+                        <a
+                          href="#"
+                          className="dataset-link download-link"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDownloadFile(file.path, file.name);
+                          }}
+                        >
+                          {file.name}
+                        </a>
+                      </div>
+                      <div className="dataset-item">
+                        <span className="dataset-label">{t('predictionTool.modelDetail.fileSize', 'File Size:')}</span>
+                        <span className="dataset-value">
+                          {formatFileSize(file.size)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {totalFiles > FILES_PAGE_SIZE && (
+                  <Pagination
+                    current={filesPage}
+                    total={totalFiles}
+                    pageSize={FILES_PAGE_SIZE}
+                    onChange={handleFilesPageChange}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
       {/* File Download Loading Backdrop */}
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
