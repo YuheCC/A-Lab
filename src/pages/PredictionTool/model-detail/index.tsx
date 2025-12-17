@@ -980,6 +980,12 @@ const ModelDetailPage: React.FC = () => {
               onClose={() => setFilesDialogOpen(false)}
               maxWidth="md"
               fullWidth
+              PaperProps={{
+                sx: {
+                  maxHeight: '80vh',
+                  borderRadius: '15px'
+                }
+              }}
             >
               <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 {t('predictionTool.modelDetail.trainingFiles', 'Training Dataset')}
