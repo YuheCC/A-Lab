@@ -91,7 +91,14 @@ export const getDefectTrendConfig = (
       type: 'category',
       data: defectTrendData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === defectTrendData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -212,7 +219,14 @@ export const getConfidenceConfig = (
       type: 'category',
       data: confidenceData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === confidenceData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -333,7 +347,14 @@ export const getAreaDistributionConfig = (
       type: 'category',
       data: areaDistributionData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === areaDistributionData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -454,7 +475,14 @@ export const getTimeSeriesConfig = (
       type: 'category',
       data: timeSeriesData.xAxis,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === timeSeriesData.xAxis.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
