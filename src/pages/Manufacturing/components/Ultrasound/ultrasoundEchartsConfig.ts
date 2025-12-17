@@ -107,7 +107,14 @@ export const getFirstChartConfig = (
       type: 'category',
       data: state1Data.x,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state1Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -229,7 +236,14 @@ export const getSecondChartConfig = (
       type: 'category',
       data: state2Data.x,
       axisLabel: {
-        show: false,
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state2Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
       },
     },
     yAxis: {
@@ -351,8 +365,15 @@ export const getThirdChartConfig = (
       type: 'category',
       data: state3Data.x,
       axisLabel: {
-        show: false,
-      }
+        show: true,
+        interval: (index: number) => {
+          return index === 0 || index === state3Data.x.length - 1;
+        },
+        formatter: (value: string) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num.toFixed(1);
+        },
+      },
     },
     yAxis: {
       type: 'value',
