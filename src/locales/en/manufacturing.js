@@ -62,7 +62,7 @@ export default {
       imageTitle2: 'Feature Extraction',
       result: {
         tree: {
-          title: 'K-Value List',
+          title: 'Barcode List',
         },
         loading: 'Loading data...',
         scatterChart: {

@@ -179,15 +179,15 @@ const KValue: React.FC<KValueProps> = ({ onBackToIntro }) => {
                 <thead>
                   <tr>
                     <th>{t('manufacturing.modules.kvalue.result.table.barcode')}</th>
-                    <th>{t('manufacturing.modules.kvalue.result.table.predict')}</th>
-                    <th>{t('manufacturing.modules.kvalue.result.table.actual')}</th>
+                    <th>{t('manufacturing.modules.kvalue.result.table.predict')}（mV/h）</th>
+                    <th>{t('manufacturing.modules.kvalue.result.table.actual')}（mV/h）</th>
                     <th>{t('manufacturing.modules.kvalue.result.table.error')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>{selectedBarcode}</td>
-                    <td>{selectedBarcodeData.predict.toFixed(8)}</td>
+                    <td>{selectedBarcodeData.predict.toFixed(4)}</td>
                     <td>{selectedBarcodeData.actual.toFixed(4)}</td>
                     <td>{selectedBarcodeData.error.toFixed(2)}%</td>
                   </tr>

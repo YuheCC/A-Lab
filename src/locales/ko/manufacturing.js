@@ -58,7 +58,7 @@ export default {
       target: '분용 후 K값',
       result: {
         tree: {
-          title: 'K값 목록',
+          title: 'Barcode 목록',
         },
         loading: '데이터를 로드하는 중...',
         scatterChart: {

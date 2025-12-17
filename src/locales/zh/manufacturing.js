@@ -62,7 +62,7 @@ export default {
       imageTitle2: '特征提取',
       result: {
         tree: {
-          title: 'K值列表',
+          title: 'Barcode列表',
         },
         loading: '正在加载数据...',
         scatterChart: {

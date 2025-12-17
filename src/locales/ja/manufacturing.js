@@ -58,7 +58,7 @@ export default {
       target: '分容後K値',
       result: {
         tree: {
-          title: 'K値リスト',
+          title: 'Barcodeリスト',
         },
         loading: 'データを読み込み中...',
         scatterChart: {
