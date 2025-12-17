@@ -22,7 +22,7 @@ export default {
       target: 'Overhang, 정렬',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '감지 이미지',
@@ -100,7 +100,7 @@ export default {
       loading: '데이터를 로드하는 중...',
       result: {
         tree: {
-          title: '감지 목록',
+          title: 'Barcode 목록',
         },
         imageViewer: {
           title: '초음파 이미지',

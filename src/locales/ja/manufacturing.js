@@ -22,7 +22,7 @@ export default {
       target: 'Overhang、アライメント',
       result: {
         tree: {
-          title: '検出リスト',
+          title: 'Barcodeリスト',
         },
         imageViewer: {
           title: '検出画像',
@@ -100,7 +100,7 @@ export default {
       loading: 'データを読み込み中...',
       result: {
         tree: {
-          title: '検出リスト',
+          title: 'Barcodeリスト',
         },
         imageViewer: {
           title: '超音波画像',

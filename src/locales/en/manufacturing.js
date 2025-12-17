@@ -24,7 +24,7 @@ export default {
       imageTitle: 'SES Lithium Battery CT AI Tool',
       result: {
         tree: {
-          title: 'Detection List',
+          title: 'Barcode List',
         },
         imageViewer: {
           title: 'Detection Images',
@@ -105,7 +105,7 @@ export default {
       loading: 'Loading data...',
       result: {
         tree: {
-          title: 'Detection List',
+          title: 'Barcode List',
         },
         imageViewer: {
           title: 'Ultrasound Images',

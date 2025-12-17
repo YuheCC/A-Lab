@@ -24,7 +24,7 @@ export default {
       imageTitle: 'SES锂电池CT AI工具',
       result: {
         tree: {
-          title: '检测列表',
+          title: 'Barcode列表',
         },
         imageViewer: {
           title: '检测图像',
@@ -105,7 +105,7 @@ export default {
       loading: '正在加载数据...',
       result: {
         tree: {
-          title: '检测列表',
+          title: 'Barcode列表',
         },
         imageViewer: {
           title: '超声图像',
