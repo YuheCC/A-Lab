@@ -193,7 +193,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
         items={[
           {
             key: 'feature-analysis',
-            label: '特征分析',
+            label: t('manufacturing.tabs.batchSummary'),
             children: (
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                 {/* SHAP特征重要性图表 */}
@@ -218,6 +218,10 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                       style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                     />
                   </div>
+                  <div style={{ marginTop: '16px', lineHeight: '1.6', color: '#555', fontSize: '13px' }}>
+                    <p style={{ marginBottom: '8px' }}>{t('manufacturing.charts.shap.summaryDescription1')}</p>
+                    <p>{t('manufacturing.charts.shap.summaryDescription2')}</p>
+                  </div>
                 </div>
 
                 {/* 特征详细分析 */}
@@ -234,7 +238,7 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                 }}>
                   <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <h3 className="chart-title" style={{ fontSize: '16px', fontWeight: 500, margin: 0 }}>
-                      特征详细分析
+                      {t('manufacturing.charts.featureDetailAnalysis.title')}
                     </h3>
                     <Select
                       style={{ width: '100%' }}
@@ -290,13 +294,17 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                       </div>
                     )}
                   </div>
+                  <div style={{ marginTop: '16px', lineHeight: '1.6', color: '#555', fontSize: '13px' }}>
+                    <p style={{ marginBottom: '8px' }}>{t('manufacturing.charts.featureDetailAnalysis.featureAnalysisDescription1')}</p>
+                    <p>{t('manufacturing.charts.featureDetailAnalysis.featureAnalysisDescription2')}</p>
+                  </div>
                 </div>
               </div>
             ),
           },
           {
             key: 'sample-data',
-            label: '样本数据',
+            label: t('manufacturing.tabs.cellAnalysis'),
             children: (
               <div className="result-content">
                 {/* 左侧：树形视图 */}
@@ -412,6 +420,9 @@ const Consistency: React.FC<ConsistencyProps> = ({ onBackToIntro }) => {
                           {t('manufacturing.messages.imageLoadError')}
                         </div>
                       )}
+                    </div>
+                    <div style={{ marginTop: '16px', lineHeight: '1.6', color: '#555', fontSize: '13px' }}>
+                      <p>{t('manufacturing.charts.featureImportance.description')}</p>
                     </div>
                   </div>
                 </div>

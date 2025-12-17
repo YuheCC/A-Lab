@@ -179,9 +179,11 @@ export default {
   },
   charts: {
     shap: {
-      title: '特征重要性摘要',
+      title: '特征相关性全局',
       xAxisName: '平均|SHAP值|',
       seriesName: '特征重要性',
+      summaryDescription1: '批次汇总图是解读模型决策的“全局地图”。横轴是每个特征对预测结果的影响力，条形越长影响力越大；纵轴按重要性自上而下排列所有特征，帮您一眼锁定核心变量。',
+      summaryDescription2: '图中点的颜色表示特征值大小（红高蓝低），分布则揭示该特征如何影响预测。通过这张图，您能快速理解模型依赖什么做判断，从而信任结果、优化策略或定位关键影响因素。例如图中（Wetting）Total Time是生产过程中的总浸润时间，时间越长对质量越好。',
     },
     scatter: {
       title: 'SHAP散点图',
@@ -190,9 +192,19 @@ export default {
       high: '高',
       low: '低',
     },
+    featureDetailAnalysis: {
+      title: '特征相关性分析',
+      featureAnalysisDescription1: '特征相关性分析图是探索数据内部关联的“关系探测器”。它以散点图矩阵形式呈现。在图中，颜色深浅和数字大小直接量化了特征间的相关强度（-1到1之间）。',
+      featureAnalysisDescription2: '通过观察这张图，您可以快速识别高度相关的特征组。例如在raw_weight图中，可以发现由于来料的重量分布对注液及封装结果的影响，当来料质量小于408.5g及大于410.5g时，将对注液和封装的质量产生负面影响。',
+    },
     featureImportance: {
       title: '样本特征影响分析',
+      description: '在单电芯瀑布图中，f(x)为最终质量预测的概率，0为OK，1为NG（注意由于浮点数计算影响，可能会略微大于1或略微小于0）。红色箭头代表特征对质量产生负面影响，蓝色代表特征对质量产生正面影响。',
     },
+  },
+  tabs: {
+    batchSummary: '批次汇总',
+    cellAnalysis: '单电芯分析',
   },
   predictResult: {
     title: '预测结果 - Sample {{index}}',

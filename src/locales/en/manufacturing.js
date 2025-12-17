@@ -179,9 +179,11 @@ export default {
   },
   charts: {
     shap: {
-      title: 'SHAP Feature Importance Summary',
+      title: 'Global Feature Correlation',
       xAxisName: 'Mean |SHAP Value|',
       seriesName: 'Feature Importance',
+      summaryDescription1: 'The batch summary chart is a "global map" for interpreting model decisions. The horizontal axis represents the influence of each feature on the prediction result, with longer bars indicating greater influence. The vertical axis lists all features from top to bottom by importance, helping you quickly identify core variables.',
+      summaryDescription2: 'The color of the points in the chart indicates the feature value (red for high, blue for low), and their distribution reveals how that feature affects the prediction. Through this chart, you can quickly understand what the model relies on for its decisions, thereby trusting the results, optimizing strategies, or pinpointing key influencing factors. For example, "Wetting Total Time" in the chart is the total immersion time during production; a longer time indicates better quality.',
     },
     scatter: {
       title: 'SHAP Scatter Plot',
@@ -190,9 +192,19 @@ export default {
       high: 'High',
       low: 'Low',
     },
+    featureDetailAnalysis: {
+      title: 'Feature Correlation Analysis',
+      featureAnalysisDescription1: 'The feature correlation analysis chart is a "relationship detector" for exploring internal data associations, presented as a scatter plot matrix. In the chart, the depth of color and numerical magnitude directly quantify the strength of correlation between features (between -1 and 1).',
+      featureAnalysisDescription2: 'By observing this chart, you can quickly identify highly correlated feature groups. For example, in the "raw_weight" chart, it can be seen that due to the weight distribution of incoming materials affecting the electrolyte injection and packaging results, when the incoming material quality is less than 408.5g and greater than 410.5g, it will negatively impact the quality of electrolyte injection and packaging.',
+    },
     featureImportance: {
       title: 'Sample Feature Impact Analysis',
+      description: 'In the single-cell waterfall chart, f(x) is the probability of the final quality prediction, where 0 is OK and 1 is NG (note that due to floating-point calculations, it may be slightly greater than 1 or less than 0). Red arrows indicate features having a negative impact on quality, while blue arrows indicate a positive impact.',
     },
+  },
+  tabs: {
+    batchSummary: 'Batch Summary',
+    cellAnalysis: 'Cell Analysis',
   },
   predictResult: {
     title: 'Prediction Results - Sample {{index}}',
