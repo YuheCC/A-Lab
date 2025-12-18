@@ -628,6 +628,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       return { status: 'UNKNOWN', confidence: 0, rawProb: 0, rawLabel: -1 };
     }
 
+    // 处理CE_25和CE_45
+    if(metricData.performance_type === "CE_25" || metricData.performance_type === "CE_45"){
+      return {
+        status: (metricData?.value ?? 0) <= 0 ? 'Positive' : 'Negative',
+        confidence: 0,
+        rawProb: 0,
+        rawLabel: Number(metricData.value)
+      };
+    }
+
     // 根据任务类型处理
     if (metricData.task === 'regression') {
       // 回归任务：使用 value 作为置信度显示
@@ -827,6 +837,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // Helper function to render result badge
   const renderResultBadge = (metric: any, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
+    console.log('metric', metric);
     const isPositive = metric.status === 'Positive';
     const isNegative = metric.status === 'Negative';
     
