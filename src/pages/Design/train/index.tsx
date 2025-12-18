@@ -6,6 +6,7 @@ import { Snackbar, Alert, Dialog, DialogTitle, DialogContent, IconButton, Box, T
 import { trainModel, getBaseModelList } from '../model';
 import type { ModelListItem } from '@/services/model/training';
 import { formatFileSize } from '@/utils/fileUtils';
+import PlaceholderInput from '@/components/PlaceholderInput';
 import './index.less';
 
 const DesignTrainPage: React.FC = () => {
@@ -268,19 +269,17 @@ const DesignTrainPage: React.FC = () => {
           <div className="step-content">
             <div className="form-group">
               <label>{t('design.train.step2.cathode', 'Cathode')}</label>
-              <input
-                type="text"
+              <PlaceholderInput
                 value={cathode}
-                onChange={(e) => setCathode(e.target.value)}
+                onChange={setCathode}
                 placeholder={t('design.train.step2.cathodePlaceholder', 'Polycrystal NCM811, 4 mAh/cm²')}
               />
             </div>
             <div className="form-group">
               <label>{t('design.train.step2.anode', 'Anode')}</label>
-              <input
-                type="text"
+              <PlaceholderInput
                 value={anode}
-                onChange={(e) => setAnode(e.target.value)}
+                onChange={setAnode}
                 placeholder={t('design.train.step2.anodePlaceholder', '12% SiC + Graphite')}
               />
             </div>
@@ -289,10 +288,9 @@ const DesignTrainPage: React.FC = () => {
               <div className="electrolyte-input-group">
                 <div className="electrolyte-field-wrapper">
                   <label className="electrolyte-field-label">Solvent</label>
-                  <input
-                    type="text"
+                  <PlaceholderInput
                     value={solvent}
-                    onChange={(e) => setSolvent(e.target.value)}
+                    onChange={setSolvent}
                     placeholder={t('design.train.step2.solventPlaceholder', 'EC/EMC/DEC')}
                     className="electrolyte-field"
                   />
@@ -300,10 +298,9 @@ const DesignTrainPage: React.FC = () => {
                 <span className="electrolyte-separator">+</span>
                 <div className="electrolyte-field-wrapper">
                   <label className="electrolyte-field-label">Salt</label>
-                  <input
-                    type="text"
+                  <PlaceholderInput
                     value={salt}
-                    onChange={(e) => setSalt(e.target.value)}
+                    onChange={setSalt}
                     placeholder={t('design.train.step2.saltPlaceholder', '1M LiPF6/LiFSI')}
                     className="electrolyte-field"
                   />
@@ -311,10 +308,9 @@ const DesignTrainPage: React.FC = () => {
                 <span className="electrolyte-separator">+</span>
                 <div className="electrolyte-field-wrapper">
                   <label className="electrolyte-field-label">Additive</label>
-                  <input
-                    type="text"
+                  <PlaceholderInput
                     value={additive}
-                    onChange={(e) => setAdditive(e.target.value)}
+                    onChange={setAdditive}
                     placeholder={t('design.train.step2.additivePlaceholder', 'VC/LiDFP')}
                     className="electrolyte-field"
                   />
@@ -323,10 +319,9 @@ const DesignTrainPage: React.FC = () => {
             </div>
             <div className="form-group">
               <label>{t('design.train.step2.cellDesign', 'Cell Design')}</label>
-              <input
-                type="text"
+              <PlaceholderInput
                 value={cellDesign}
-                onChange={(e) => setCellDesign(e.target.value)}
+                onChange={setCellDesign}
                 placeholder={t('design.train.step2.cellDesignPlaceholder', '4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity')}
               />
             </div>
