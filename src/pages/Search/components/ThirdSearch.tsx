@@ -11,7 +11,6 @@ import request from '@/services/request';
 import { urlConfig } from '@/services/config/urlConfig';
 import { getSearchEndpoint } from '@/services/search/endpoints';
 import { buildAutoFetchURL } from '@/services/config/autoFetch';
-import { authFetch } from '@/utils';
 
 // 定义搜索结果的数据类型
 interface SearchResult {
