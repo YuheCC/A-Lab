@@ -38,6 +38,46 @@
 }
 
 // 训练数据集信息样式
+.dataset-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .summary-info {
+    display: flex;
+    gap: 40px;
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .label {
+        font-size: 14px;
+        color: #6c757d;
+      }
+
+      .value {
+        font-size: 20px;
+        font-weight: 600;
+        color: #212529;
+      }
+    }
+  }
+
+  .view-detail-btn {
+    color: #000;
+    border-color: #e5e7eb;
+    text-transform: none;
+    font-weight: 500;
+    
+    &:hover {
+      background-color: #f9fafb;
+      border-color: #d1d5db;
+    }
+  }
+}
+
 .dataset-info {
   .dataset-row {
     display: flex;

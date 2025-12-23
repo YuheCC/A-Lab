@@ -162,6 +162,7 @@ export const trainModel = async (
       ...params,
       namespace: MODEL_NAMESPACE,
     });
+    console.log(response)
     return response;
   } catch (error) {
     console.error('Train model failed:', error);

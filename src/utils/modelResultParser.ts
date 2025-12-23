@@ -58,6 +58,13 @@ function processNewFormatMetric(metricData: NewFormatMetric): { prob: string; la
     return { prob: '0', label: '0' };
   }
 
+  if(metricData.performance_type === "CE_25" || metricData.performance_type === "CE_45"){
+    const value = metricData.value ?? 0;
+    return {
+      prob: (Math.abs(value) * 100).toString(),
+      label: Number(metricData.value).toString()
+    };
+  }
   // 根据任务类型处理
   if (metricData.task === 'regression') {
     // 回归任务：使用 value 作为概率，根据正负判断标签

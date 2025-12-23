@@ -373,10 +373,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   // 执行实际的计算逻辑（在验证通过后调用）
   const performCalculation = async () => {
     const selectedBatterySystem = batterySystemOptions?.find(s => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
-      alert(t('performance.ui.invalidBatterySystem'));
-      return;
-    }
 
     setIsCalculating(true);
     setCalculationError(null);
@@ -392,7 +388,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     try {
       const response = await predictPerformance({
         smiles: additive.trim(),
-        battery_system_id: parseInt(selectedBatterySystem.id),
+        battery_system_id: selectedBatterySystem ? parseInt(selectedBatterySystem.id) : undefined,
         model_id: selectedModel || undefined
       });
 
@@ -443,22 +439,17 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       alert(t('performance.additive.placeholder'));
       return;
     }
-    
-    if (!selectedSystem) {
-      alert(t('performance.ui.pleaseSelectBattery'));
-      return;
-    }
 
     const trimmedAdditive = additive.trim();
-    
+
     // 执行前置分子验证
     const validationResult = await validateSmiles(trimmedAdditive);
-    
+
     if (!validationResult.isValid) {
       // 分子式无效，已经显示错误卡片，不允许继续计算
       return;
     }
-    
+
     // 分子式有效，可以进入计算流程
     await performCalculation();
   };
@@ -479,10 +470,6 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
     }
 
     const selectedBatterySystem = batterySystemOptions?.find((s: BatterySystem) => s.name === selectedSystem);
-    if (!selectedBatterySystem) {
-      alert(t('performance.ui.invalidBatterySystem'));
-      return;
-    }
 
     setIsAnalyzing(true);
     setAnalysisError(null);
@@ -494,7 +481,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
       const currentLang = getCurrentLanguage();
       const analysisParams: LLMAnalysisStreamRequest = {
         id: predictionResults.id,
-        battery_system_id: parseInt(selectedBatterySystem.id),
+        battery_system_id: selectedBatterySystem ? parseInt(selectedBatterySystem.id) : 0,
         lang: currentLang
       };
 
@@ -639,6 +626,16 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
   const processNewFormatMetric = (metricData: NewFormatMetric | undefined) => {
     if (!metricData) {
       return { status: 'UNKNOWN', confidence: 0, rawProb: 0, rawLabel: -1 };
+    }
+
+    // 处理CE_25和CE_45
+    if(metricData.performance_type === "CE_25" || metricData.performance_type === "CE_45"){
+      return {
+        status: (metricData?.value ?? 0) <= 0 ? 'Positive' : 'Negative',
+        confidence: 0,
+        rawProb: 0,
+        rawLabel: Number(metricData.value)
+      };
     }
 
     // 根据任务类型处理
@@ -840,6 +837,7 @@ const PredictionModule: React.FC<PredictionModuleProps> = ({ onResetRef }) => {
 
   // Helper function to render result badge
   const renderResultBadge = (metric: any, metricType: 'cycleLife' | 'ce' | 'ratePerformance') => {
+    console.log('metric', metric);
     const isPositive = metric.status === 'Positive';
     const isNegative = metric.status === 'Negative';
     
