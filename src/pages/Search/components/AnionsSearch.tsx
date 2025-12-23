@@ -3,6 +3,7 @@ import SearchInput from "@/components/Search";
 import { useMemo, useState, useRef, useEffect, useContext, useCallback } from "react";
 import { authFetch, COMMERCIAL_SCORE_MAP, getAPIUrl } from "@/utils";
 import { raiseResponseError } from '@/utils/errorHelpers';
+import { buildAutoFetchURL } from "@/services/config/autoFetch";
 import { findFriends } from "@/services/findFriends";
 import { buildQueryString } from "@/services/buildQueryString";
 import { useAnionsPlotDataStore } from "@/models/usePlotData";
@@ -833,7 +834,7 @@ const AnionsSearch = ({ isPublicUser = false }: { isPublicUser?: boolean }) => {
                 return;
             }
 
-            const searchEndpoint = `${API_URL}/api/llm/search-new`;
+            const searchEndpoint = buildAutoFetchURL('search');
             const molTypeLabel = selectedMolType === 'salt' ? 'primary salt' : selectedMolType;
             const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : molTypeLabel;
             const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';

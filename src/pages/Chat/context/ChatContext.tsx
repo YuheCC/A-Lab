@@ -8,7 +8,8 @@ import { useChat } from '../hooks/useChat';
 import { chatService } from '@/services/chat/chatService';
 import { globalWebSocketManager } from '@/services/chat/wsService';
 import { useMoleculePanel } from '../hooks/useMoleculePanel';
-import { authFetch, getAPIUrl } from '@/utils.js';
+import { authFetch } from '@/utils.js';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import type { QueryLimitInfo, QueryLimitsSummary } from '@/types/queryLimit';
 import { normalizeLimitInfo } from '@/utils/queryLimit';
 import { useAuthStore } from '@/models/useAuth';
@@ -199,8 +200,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // 获取使用次数限制
     const fetchQueryLimit = useCallback(async () => {
         try {
-            const API_URL = getAPIUrl();
-            const response = await authFetch(`${API_URL}/query_limit`, {
+            const queryLimitUrl = buildAutoFetchURL('queryLimit');
+            const response = await authFetch(queryLimitUrl, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

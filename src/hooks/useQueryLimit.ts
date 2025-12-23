@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { authFetch, getAPIUrl } from '@/utils';
+import { authFetch } from '@/utils';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import type { QueryLimitsSummary, QueryLimitInfo } from '@/types/queryLimit';
 import { normalizeLimitInfo } from '@/utils/queryLimit';
 
@@ -55,8 +56,8 @@ export const useQueryLimit = (): UseQueryLimitResult => {
     setLoading(true);
     setError(null);
     try {
-      const API_URL = getAPIUrl();
-      const response = await authFetch(`${API_URL}/query_limit`, {
+      const queryLimitUrl = buildAutoFetchURL('queryLimit');
+      const response = await authFetch(queryLimitUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

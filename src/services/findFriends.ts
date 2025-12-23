@@ -1,4 +1,6 @@
-import { authFetch, getAPIUrl } from "@/utils";
+import request from "@/services/request";
+import { urlConfig } from "@/services/config/urlConfig";
+import { getFindFriendsEndpoint } from "./findFriends/endpoints";
 
 interface FindFriendsOptions {
   smiles: string[];
@@ -35,7 +37,10 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     numResults,
   } = options;
 
-  const API_URL = getAPIUrl();
+  // Get environment-specific endpoint
+  const env = urlConfig.getEnvironment();
+  const endpoint = getFindFriendsEndpoint(env, 'findFriend');
+  const url = urlConfig.buildFullURL(endpoint);
   const computeEnabled = computeLevel !== 'Disabled';
   const hasQuery = !!(queryString && queryString.trim().length > 0);
 
@@ -55,17 +60,17 @@ export async function findFriends<T = any>(options: FindFriendsOptions): Promise
     }),
   };
 
-  const response = await authFetch(`${API_URL}/api/llm/find-friend-with-image`, {
+  const response = await request(url, {
     method: 'POST',
+    data: payload,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch similar molecules: ${response.statusText}`);
+  if ((response as any).ok === false || response.status >= 400) {
+    throw new Error(`Failed to fetch similar molecules: HTTP ${response.status}`);
   }
 
-  const data = await response.json();
+  const data = response.data;
   const molecules: T[] = data.similar_molecules || [];
   const messages: string[] = Array.isArray(data.messages)
     ? data.messages.map((message: any) => String(message))

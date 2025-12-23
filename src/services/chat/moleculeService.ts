@@ -54,14 +54,14 @@ export interface SimilarMolecule {
   reasoning?: string;
 }
 
+import { urlConfig } from '../config/urlConfig';
+import { getMoleculeEndpoint } from './moleculeEndpoints';
+
 class MoleculeService {
   private static instance: MoleculeService;
-  private baseUrl: string;
 
   private constructor() {
-    // Use global BASE_URL via util helper to satisfy TS
-    const { getAPIUrl } = require('@/utils');
-    this.baseUrl = getAPIUrl() || '/api';
+    // No need to store baseUrl, use urlConfig directly
   }
 
   public static getInstance(): MoleculeService {
@@ -156,20 +156,41 @@ class MoleculeService {
 
   async getMoleculeDetails(name: string, userPermissions?: string): Promise<MoleculeDetails> {
     try {
-      const { authFetch } = await import('@/utils');
-      
+      // Get environment-specific endpoint
+      const env = urlConfig.getEnvironment();
+      const endpoint = getMoleculeEndpoint(env, 'moleculeDetails');
+      const baseUrl = urlConfig.buildFullURL(endpoint);
+
       // 使用 molecular_details 接口，参考 MoleculeModal 的实现
       const isHighTier = ['admin', 'enterprise', 'joint'].includes(userPermissions || '');
-      let queryUrl = `${this.baseUrl}/api/molecule_details?query_type=smiles&molecule=${encodeURIComponent(name.trim())}`;
+      const params = new URLSearchParams({
+        query_type: 'smiles',
+        molecule: name.trim(),
+      });
       if (isHighTier) {
-        queryUrl += '&use_35m=true';
+        params.append('use_35m', 'true');
       }
-      
-      const resp = await authFetch(queryUrl, { method: 'GET' });
-      const data = await resp.json();
+
+      const { default: request } = await import('@/services/request');
+      const resp = await request(`${baseUrl}?${params.toString()}`, { method: 'GET' });
+      // Check response status using axios format
+      if ((resp as any).ok === false || resp.status >= 400) {
+        const errorData = resp.data;
+        // 根据错误内容判断是否为不合法的 SMILES
+        if (errorData?.message && typeof errorData.message === 'string') {
+          const errorMsg = errorData.message.toLowerCase();
+          console.log(errorMsg);
+          if (errorMsg.includes('invalid')) {
+            throw new Error('Invalid SMILES string');
+          }
+        }
+        throw new Error(errorData?.detail || errorData?.message || `HTTP ${resp.status}`);
+      }
+
+      const data = resp.data;
       console.log(data);
       // 检查响应状态和错误信息
-      if (!resp.ok || data.error_type) {
+      if (data.error_type) {
         // 根据错误内容判断是否为不合法的 SMILES
         if (data?.message && typeof data.message === 'string') {
           const errorMsg = data.message.toLowerCase();
@@ -178,7 +199,7 @@ class MoleculeService {
             throw new Error('Invalid SMILES string');
           }
         }
-        throw new Error(data?.detail || data?.message || `HTTP ${resp.status}`);
+        throw new Error(data?.detail || data?.message || `API Error`);
       }
       
       // 检查 found 字段和 molecule_details 数组
@@ -203,8 +224,13 @@ class MoleculeService {
 
   async getSimilarMolecules(name: string, type: string = 'all'): Promise<SimilarMolecule[]> {
     try {
+      // Get environment-specific endpoint
+      const env = urlConfig.getEnvironment();
+      const endpoint = getMoleculeEndpoint(env, 'similarMolecules');
+      const url = urlConfig.buildFullURL(endpoint);
+
       const { default: request } = await import('@/services/request');
-      const resp = await request('/molecule/similar', {
+      const resp = await request(url, {
         method: 'GET',
         params: { name, type },
       });

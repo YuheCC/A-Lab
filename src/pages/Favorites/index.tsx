@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { authFetch, getAPIUrl } from '@/utils.js';
+import { buildAutoFetchURL } from '@/services/config/autoFetch';
 import { useAuthStore } from '@/models/useAuth';
 import NodePopup from '@/components/NodePopup';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +143,8 @@ const FavoritesGrid = () => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
-        const response = await authFetch(`${API_URL}/favorites-retrieve`);
+        const favoritesRetrieveUrl = buildAutoFetchURL('favoritesRetrieve');
+        const response = await authFetch(favoritesRetrieveUrl);
 
         if (!response.ok) {
           throw new Error(`${t('favorites.errorLoadingFavorites')}: ${response.status} ${response.statusText}`);
@@ -272,7 +274,8 @@ const FavoritesGrid = () => {
     for (const favorite of favoritesData) {
       try {
         if (favorite.smiles) {
-          const response = await authFetch(`${API_URL}/api/molecule_image?smiles=${encodeURIComponent(favorite.smiles)}`);
+          const moleculeImageUrl = buildAutoFetchURL('moleculeImage');
+          const response = await authFetch(`${moleculeImageUrl}?smiles=${encodeURIComponent(favorite.smiles)}`);
           
           if (response.ok) {
             const blob = await response.blob();
@@ -297,7 +300,8 @@ const FavoritesGrid = () => {
     }
     
     try {
-      const response = await authFetch(`${API_URL}/favorites-delete/${id}`, {
+      const favoritesDeleteUrl = buildAutoFetchURL('favoritesDelete');
+      const response = await authFetch(`${favoritesDeleteUrl}/${id}`, {
         method: 'DELETE'
       });
 
@@ -355,9 +359,12 @@ const FavoritesGrid = () => {
     
     try {
       const deletePromises = selectedMolecules.map(molecule => 
-        authFetch(`${API_URL}/favorites-delete/${molecule.id}`, {
+      {
+        const favoritesDeleteUrl = buildAutoFetchURL('favoritesDelete');
+        authFetch(`${favoritesDeleteUrl}/${molecule.id}`, {
           method: 'DELETE'
         })
+      }
       );
       
       // Wait for all delete requests to complete
