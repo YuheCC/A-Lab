@@ -1,0 +1,29 @@
+// EchartsReact 组件样式
+
+.echarts-react-container {
+  position: relative;
+  background-color: #FFFFFF;
+
+  // 确保图表容器正确显示
+  > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.echarts-react-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+
+  .error-message {
+    color: #999;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+}

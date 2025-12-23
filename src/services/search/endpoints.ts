@@ -10,6 +10,9 @@ export const SEARCH_ENDPOINTS = {
   default: {
     thirdSearch: '/api/sse/search',
   },
+  us: {
+    thirdSearch: '/api/search/sse/search',
+  },
   box: {
     thirdSearch: '/api/search/sse/search',
   },

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MaterialsInput } from '@materialsproject/mp-react-components';
 import { useTranslation } from 'react-i18next';
 import './third.css';
+import { authFetch, getAPIUrl } from '@/utils';
+import { raiseResponseError } from '@/utils/errorHelpers';
 import { useAuthStore } from '@/models/useAuth';
 import { PUBLIC_SEARCH_LOCKED_VALUES } from '@/constants/publicDefaults';
 import { useAccessModals } from '@/hooks/useAccessModals';
@@ -9,7 +11,6 @@ import request from '@/services/request';
 import { urlConfig } from '@/services/config/urlConfig';
 import { getSearchEndpoint } from '@/services/search/endpoints';
 import { buildAutoFetchURL } from '@/services/config/autoFetch';
-import { authFetch } from '@/utils';
 
 // 定义搜索结果的数据类型
 interface SearchResult {

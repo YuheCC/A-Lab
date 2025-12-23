@@ -666,9 +666,15 @@ const InorganicSearch = () => {
         setAmbiguousOptions(null);
 
         try {
-            // Fetch the searched inorganic molecule's properties 
+            // 使用无机分子搜索接口
             const searchEndpoint = buildAutoFetchURL('search');
-            const moleculeResponse = await authFetch(`${searchEndpoint}?query=${encodeURIComponent(searchInput.trim())}&umap_type=inorganic`);
+            const molTypeToSend = selectedMolType === 'additive' ? additiveSubtype : selectedMolType;
+            const molTypeParam = molTypeToSend ? `&mol_type=${encodeURIComponent(molTypeToSend)}` : '';
+
+            // Fetch the searched inorganic molecule's properties 
+            const moleculeResponse = await authFetch(
+                `${searchEndpoint}?query=${encodeURIComponent(trimmedInput)}&umap_type=inorganic${molTypeParam}`
+            );
 
             // Ratelimit handling
             if (moleculeResponse.status === 429) {
