@@ -37,6 +37,18 @@ export const CHAT_ENDPOINTS = {
     delete: '/api/chat/delete',
     update: '/api/chat/update',
   },
+  us: {
+    send: '/api/llm/chat/send',
+    regenerate: '/api/llm/chat/regenerate',
+    list: '/api/llm/chat/list',
+    detail: '/api/llm/chat/detail',
+    create: '/api/llm/chat/new',
+    messageNew: '/api/llm/chat/message/new',
+    messageUpdate: '/api/llm/chat/message/update',
+    save: '/api/llm/chat/save',
+    delete: '/api/llm/chat/delete',
+    update: '/api/llm/chat/update',
+  },
   // box 环境使用旧的 /api/llm/chat 路径
   box: {
     send: '/api/llm/chat/send',

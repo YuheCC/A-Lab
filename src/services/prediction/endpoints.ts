@@ -8,6 +8,13 @@ export const PREDICTION_ENDPOINTS: EndpointConfig<Record<string, string>> = {
     historyDelete: '/api/cellLife/history/delete',
     fileGet: '/api/file/get',
   },
+  us: {
+    modelPredict: '/api/cellLife/model_predict',
+    historyList: '/api/cellLife/history/list',
+    historyDetail: '/api/cellLife/history/detail',
+    historyDelete: '/api/cellLife/history/delete',
+    fileGet: '/api/file/get',
+  },
   box: {
     modelPredict: '/api/cellLife/model_predict',
     historyList: '/api/cellLife/history/list',
@@ -20,6 +27,14 @@ export const PREDICTION_ENDPOINTS: EndpointConfig<Record<string, string>> = {
 export const PERFORMANCE_ENDPOINTS: EndpointConfig<Record<string, string>> = {
   default: {
     batterySystemList: '/api/batterySystem/list',
+    historyList: '/api/cellPerformance/history/list',
+    historyDetail: '/api/cellPerformance/history/detail',
+    historyDelete: '/api/cellPerformance/history/delete',
+    modelPredict: '/api/cellPerformance/model_predict',
+    llmAnalysis: '/api/cellPerformance/llm_analysis',
+  },
+  us: {
+    batterySystemList: '/api/cellPerformance/batterySystem/list',
     historyList: '/api/cellPerformance/history/list',
     historyDetail: '/api/cellPerformance/history/detail',
     historyDelete: '/api/cellPerformance/history/delete',
