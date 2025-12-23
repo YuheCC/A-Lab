@@ -7,7 +7,7 @@ import type { EndpointConfig } from './types';
  */
 export const AUTO_FETCH_ENDPOINTS: EndpointConfig<Record<string, string>> = {
   default: {
-    search: '/search',
+    search: '/api/llm/search-new',
     sseSearch: '/api/sse/search',
     snowflakeQuery: '/snowflake-query',
     mapInit: '/map-init.js',
