@@ -219,11 +219,11 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeModule }) => {
                 <div className="data-info-label">{t('manufacturing.dataLabels.dataType')}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataType`)}</div>
               </div>
-              <div className="data-info-card wide">
+              <div className="data-info-card">
                 <div className="data-info-label">{t('manufacturing.dataLabels.dataSource')}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.dataSource`)}</div>
               </div>
-              <div className="data-info-card wide">
+              <div className="data-info-card">
                 <div className="data-info-label">{t(`manufacturing.modules.${activeModule}.targetLabel`)}</div>
                 <div className="data-info-value">{t(`manufacturing.modules.${activeModule}.target`)}</div>
               </div>
